@@ -66,9 +66,9 @@ def generatebullshit():
             if (x+1) % 3 == 0:
                 # New paragraph after three lines
                 output = output + "\n\n"
-                print (" ")
+                st.write (" ")
     
-    print (cleanSentence(output))
+    st.write (cleanSentence(output))
 
     
 def main():
