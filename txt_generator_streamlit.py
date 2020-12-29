@@ -112,7 +112,7 @@ def generate ():
     #txt2= txt.replace(".", ".\n\n")
     txt2=txt
     txt3 =  re.split('(?=•)|(?=[A-Z])', txt2)
-    st.write ("Meditation script of the day")
+    st.title ("Meditation script of the day")
     for t in txt3:
         st.write (t)
 
