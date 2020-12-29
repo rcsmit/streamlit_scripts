@@ -248,8 +248,8 @@ if st.sidebar.button('GENERATE'):
 tekst = (
     '<hr>Made by Rene Smit. (<a href=\'http://www.twitter.com/rcsmit\'>@rcsmit</a>) <br>'
     'Scripts are used from various meditation videos on Youtube<br>'
-    'Sourcecode : <a href=\"https://github.com/rcsmit/newagebullshitgenerator/edit/main/newagebullshitgenerator.py\">github.com/rcsmit</a>< br>< br>' 
-    '© 2014-15 Seb Pearce (sebpearce.com)< br>'
+    'Sourcecode : <a href=\"https://github.com/rcsmit/newagebullshitgenerator/edit/main/newagebullshitgenerator.py\">github.com/rcsmit</a><br><br>' 
+    '© 2014-15 Seb Pearce (sebpearce.com)<br>'
     'Licensed under the MIT License.')
 
 st.sidebar.markdown(tekst, unsafe_allow_html=True)
