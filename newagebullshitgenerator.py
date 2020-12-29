@@ -5,6 +5,7 @@
 
 import random
 import re
+import streamlit as st
 
 def cleanSentence(sentence):
     # replace 'a [vowel]' with 'an [vowel]' - works
@@ -240,5 +241,15 @@ sentencePatterns = [
      'With our ad_jProduct nProduct, nBenefits is only the beginning.'
 ]
 
-main()
+st.sidebar.title('New Age Bullshit generator')
+if st.sidebar.button('GENERATE'):
+    main()
+
+tekst = (
+    '<hr>Made by Rene Smit. (<a href=\'http://www.twitter.com/rcsmit\'>@rcsmit</a>) <br>'
+    'Scripts are used from various meditation videos on Youtube<br>'
+    'Sourcecode : <a href=\"https://github.com/rcsmit/newagebullshitgenerator/edit/main/newagebullshitgenerator.py\">github.com/rcsmit</a>' 
+    '© 2014-15 Seb Pearce (sebpearce.com)'
+    'Licensed under the MIT License.')
+
 
