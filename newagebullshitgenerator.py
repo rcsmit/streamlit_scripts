@@ -252,4 +252,6 @@ tekst = (
     '© 2014-15 Seb Pearce (sebpearce.com)'
     'Licensed under the MIT License.')
 
+st.sidebar.markdown(tekst, unsafe_allow_html=True)
+
 
