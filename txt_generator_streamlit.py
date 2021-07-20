@@ -22,11 +22,11 @@ def review_generator():
     # https://medium.com/analytics-vidhya/making-a-text-generator-using-markov-chains-e17a67225d10
     text = document
     for d in document:
-        r = open(d, encoding='utf8').read()
+        r = open("input/"+ d, encoding='utf8').read()
         reviews= reviews + r
 
     #reviews = ''.join([i for i in reviews if not i.isdigit()]).replace("\n", " ").split(' ')
-    
+
     index = 1
     chain = {}
     count = 100
@@ -37,7 +37,7 @@ def review_generator():
         else:
             chain[key] = [word]
         index += 1
-    
+
     word1 = random.choice(list(chain.keys()))
     message = word1.capitalize()
 
@@ -74,39 +74,39 @@ corpus = trump.split()
 def make_pairs(corpus):
     for i in range(len(corpus)-1):
         yield (corpus[i], corpus[i+1])
-        
-    
+
+
 def generate ():
     pairs = make_pairs(corpus)
     word_dict = {}
     #print (pairs)
-    
+
     for word_1, word_2 in pairs:
         if word_1 in word_dict.keys():
             word_dict[word_1].append(word_2)
         else:
             word_dict[word_1] = [word_2]
-    
+
     first_word = np.random.choice(corpus)
-    
+
     while first_word.islower():
         first_word = np.random.choice(corpus)
-    
+
     chain = [first_word]
-    
+
     n_words = 300
-    
+
     for i in range(n_words):
         chain.append(np.random.choice(word_dict[chain[-1]]))
-    
+
     ' '.join(chain)
     #print (chain)
-    txt = "" 
-    
+    txt = ""
+
     for i in chain:
         txt += i + " "
     if txt [-2] != " .":
-      
+
         txt +=  "."
 
     #txt2= txt.replace(".", ".\n\n")
