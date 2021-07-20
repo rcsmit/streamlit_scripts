@@ -241,7 +241,7 @@ sentencePatterns = [
      'With our ad_jProduct nProduct, nBenefits is only the beginning.'
 ]
 
-def main:()
+def main():
     st.sidebar.title('New Age Bullshit generator')
     if st.sidebar.button('GENERATE'):
         main_()
