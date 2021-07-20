@@ -57,7 +57,6 @@ def main():
                 st.write (f"{m }")
             else:
                 m = options[n][1].replace(" ","_") # I was too lazy to change it in the list
-
             try:
                 module = dynamic_import(m)
             except Exception as e:
