@@ -16,7 +16,7 @@ import re
 # Trump's speeches here: https://github.com/ryanmcdermott/trump-speeches
 
 
-def review_generator(document):"
+def review_generator(document):
     for d in document:
         r = open("input/"+ d, encoding='utf8').read()
         reviews= reviews + r
