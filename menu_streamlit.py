@@ -54,7 +54,7 @@ def main():
         if menu_choice == options[n][0]:
             if platform.processor() != "":
                 m = "C:\\Users\\rcxsm\\Documents\\phyton_scripts\\streamlit_scripts\\" + options[n][1].replace(" ","_") # I was too lazy to change it in the list
-                st.write (f"{m = }")
+                st.write (f"{m }")
             else:
                 m = options[n][1].replace(" ","_") # I was too lazy to change it in the list
 
