@@ -63,7 +63,7 @@ def review_generator():
 reviews= ""
 text = document
 for d in document:
-        r = open(d, encoding='utf8').read()
+        r = open("input/"+d, encoding='utf8').read()
         reviews= reviews + r
 
 
