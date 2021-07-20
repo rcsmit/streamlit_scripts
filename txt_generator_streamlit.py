@@ -11,17 +11,12 @@ import re
 
 
 # https://github.com/jsvine/markovify
-#document = "joost.txt"
-document = ["meditation.txt","chopra.txt"]
-#document = "maxhavelaar.txt"
-#document = "chopra.txt"
-#document = ["taylorswiftlyrics.txt"]
+# https://medium.com/analytics-vidhya/making-a-text-generator-using-markov-chains-e17a67225d10
+# https://towardsdatascience.com/simulating-text-with-markov-chains-in-python-1a27e6d13fc6
+# Trump's speeches here: https://github.com/ryanmcdermott/trump-speeches
 
 
-
-def review_generator():
-    # https://medium.com/analytics-vidhya/making-a-text-generator-using-markov-chains-e17a67225d10
-    text = document
+def review_generator(document):"
     for d in document:
         r = open("input/"+ d, encoding='utf8').read()
         reviews= reviews + r
@@ -50,34 +45,13 @@ def review_generator():
         message += "."
     message2= message.replace("e", ".XX")
     return message2
-
-
-
-
-# ==============================================================================
-
-# https://towardsdatascience.com/simulating-text-with-markov-chains-in-python-1a27e6d13fc6
-
-# Trump's speeches here: https://github.com/ryanmcdermott/trump-speeches
-
-reviews= ""
-text = document
-for d in document:
-        r = open("input/"+d, encoding='utf8').read()
-        reviews= reviews + r
-
-
-#trump = open(document, encoding='utf8').read()
-trump = reviews
-corpus = trump.split()
-
-
+    
 def make_pairs(corpus):
     for i in range(len(corpus)-1):
         yield (corpus[i], corpus[i+1])
 
 
-def generate ():
+def generate (corpus):
     pairs = make_pairs(corpus)
     word_dict = {}
     #print (pairs)
@@ -118,14 +92,29 @@ def generate ():
         st.write (t)
 
 def main():
-    st.sidebar.title('Meditation generator')
+    st.title('Meditation generator')
+    reviews= ""
+    document_ = ["meditation.txt","chopra.txt", "maxhavelaar.txt", "taylorswiftlyrics.txt"]
+
+    document = st.sidebar.multiselect(
+            "What to show left-axis (multiple possible)", document_, ["meditation.txt"]
+        )
+    text = document
+    for d in document:
+            r = open("input/"+d, encoding='utf8').read()
+            reviews= reviews + r
+
+
+
+    trump = reviews
+    corpus = trump.split()
     if st.sidebar.button('GENERATE'):
-        generate()
+        generate(corpus)
 
     tekst = (
         '<hr>Made by Rene Smit. (<a href=\'http://www.twitter.com/rcsmit\'>@rcsmit</a>) <br>'
         'Scripts are used from various meditation videos on Youtube<br>'
-        'Sourcecode : <a href=\"https://github.com/rcsmit/newagebullshitgenerator/edit/main/txt_generator_streamlit.py\">github.com/rcsmit</a>' )
+        'Sourcecode : <a href=\"https://github.com/rcsmit/">github.com/rcsmit</a>' )
 
     st.sidebar.markdown(tekst, unsafe_allow_html=True)
 

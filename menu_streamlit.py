@@ -20,8 +20,6 @@ def dynamic_import(module):
     return importlib.import_module(module)
 
 def main():
-    st.title ("Streamlit scripts of René Smit")
-
     if platform.processor() != "":
         arr = os.listdir("C:\\Users\\rcxsm\\Documents\\phyton_scripts\\streamlit_scripts")
     else:
@@ -38,7 +36,7 @@ def main():
 
             options.append([menutext, file_])
             counter +=1
-    st.write(options)
+
     query_params = st.experimental_get_query_params() # reading  the choice from the URL..
 
     choice = int(query_params["choice"][0]) if "choice" in query_params else 0 # .. and make it the default value
