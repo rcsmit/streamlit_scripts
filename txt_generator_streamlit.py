@@ -117,13 +117,18 @@ def generate ():
     for t in txt3:
         st.write (t)
 
-st.sidebar.title('Meditation generator')
-if st.sidebar.button('GENERATE'):
-    generate()
+def main():
+    st.sidebar.title('Meditation generator')
+    if st.sidebar.button('GENERATE'):
+        generate()
 
-tekst = (
-    '<hr>Made by Rene Smit. (<a href=\'http://www.twitter.com/rcsmit\'>@rcsmit</a>) <br>'
-    'Scripts are used from various meditation videos on Youtube<br>'
-    'Sourcecode : <a href=\"https://github.com/rcsmit/newagebullshitgenerator/edit/main/txt_generator_streamlit.py\">github.com/rcsmit</a>' )
+    tekst = (
+        '<hr>Made by Rene Smit. (<a href=\'http://www.twitter.com/rcsmit\'>@rcsmit</a>) <br>'
+        'Scripts are used from various meditation videos on Youtube<br>'
+        'Sourcecode : <a href=\"https://github.com/rcsmit/newagebullshitgenerator/edit/main/txt_generator_streamlit.py\">github.com/rcsmit</a>' )
 
-st.sidebar.markdown(tekst, unsafe_allow_html=True)
+    st.sidebar.markdown(tekst, unsafe_allow_html=True)
+
+if __name__ == "__main__":
+
+    main()
