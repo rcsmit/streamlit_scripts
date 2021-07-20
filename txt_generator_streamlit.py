@@ -18,6 +18,7 @@ document = ["meditation.txt","chopra.txt"]
 #document = ["taylorswiftlyrics.txt"]
 
 
+
 def review_generator():
     # https://medium.com/analytics-vidhya/making-a-text-generator-using-markov-chains-e17a67225d10
     text = document
