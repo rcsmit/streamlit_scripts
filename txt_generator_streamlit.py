@@ -87,7 +87,6 @@ def generate (corpus):
     #txt2= txt.replace(".", ".\n\n")
     txt2=txt
     txt3 =  re.split('(?=•)|(?=[A-Z])', txt2)
-    st.title ("Meditation script of the day")
     for t in txt3:
         st.write (t)
 
@@ -108,7 +107,8 @@ def main():
 
     trump = reviews
     corpus = trump.split()
-    if st.sidebar.button('GENERATE'):
+    generate(corpus)
+    if st.sidebar.button('RE-GENERATE'):
         generate(corpus)
 
     tekst = (
