@@ -34,69 +34,85 @@ def select_period_oud(df, field, show_from, show_until):
 
 @st.cache(ttl=60 * 60 * 24)
 def getdata(stn, fromx, until):
-    url =  "https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns=251&vars=ALL&start=20210301&end=20210310"
+    with st.spinner(f"GETTING ALL DATA ..."):
+        #url =  "https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns=251&vars=TEMP&start=18210301&end=20210310"
+        # https://www.knmi.nl/kennis-en-datacentrum/achtergrond/data-ophalen-vanuit-een-script
+        #url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=ALL&start={fromx}&end={until}"
+        url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP&start={fromx}&end={until}"
+        try:
+            df = pd.read_csv(url, delimiter=",", header=None,  comment="#",low_memory=False,)
+        
+        except:
+            st.write("FOUT BIJ HET INLADEN.")
+            st.stop()
+      
+        
+        column_replacements =  [[0, 'STN'],
+                             [1, 'YYYYMMDD'],
+                             [2, 'TG'],
+                            [3, 'TN'],
+                            [4, 'TX'],
+                            [5, 'T10N']]
+        # column_replacements = [[0, 'STN'],
+        #                     [1, 'YYYYMMDD'],
+        #                     [2, 'DDVEC'],
+        #                     [3, 'FHVEC'],
+        #                     [4, 'FG'],
+        #                     [5, 'FHX'],
+        #                     [6, 'FHXH'],
+        #                     [7, 'FHN'],
+        #                     [8, 'FHNH'],
+        #                     [9, 'FXX'],
+        #                     [10, 'FXXH'],
+        #                     [11, 'TG'],
+        #                     [12, 'TN'],
+        #                     [13, 'TNH'],
+        #                     [14, 'TX'],
+        #                     [15, 'TXH'],
+        #                     [16, 'T10N'],
+        #                     [17, 'T10NH'],
+        #                     [18, 'SQ'],
+        #                     [19, 'SP'],
+        #                     [20, 'Q'],
+        #                     [21, 'DR'],
+        #                     [22, 'RH'],
+        #                     [23, 'RHX'],
+        #                     [24, 'RHXH'],
+        #                     [25, 'PG'],
+        #                     [26, 'PX'],
+        #                     [27, 'PXH'],
+        #                     [28, 'PN'],
+        #                     [29, 'PNH'],
+        #                     [30, 'VVN'],
+        #                     [31, 'VVNH'],
+        #                     [32, 'VVX'],
+        #                     [33, 'VVXH'],
+        #                     [34, 'NG'],
+        #                     [35, 'UG'],
+        #                     [36, 'UX'],
+        #                     [37, 'UXH'],
+        #                     [38, 'UN'],
+        #                     [39, 'UNH'],
+        #                     [40, 'EV24']]
 
-    url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=ALL&start={fromx}&end={until}"
-    try:
-        df = pd.read_csv(url, delimiter=",", header=None,  comment="#",low_memory=False,)
-    except:
-        st.write("ERROR")
-        st.stop()
+        for c in column_replacements:
+            df = df.rename(columns={c[0]:c[1]})
 
-    column_replacements = [[0, 'STN'],
-                        [1, 'YYYYMMDD'],
-                        [2, 'DDVEC'],
-                        [3, 'FHVEC'],
-                        [4, 'FG'],
-                        [5, 'FHX'],
-                        [6, 'FHXH'],
-                        [7, 'FHN'],
-                        [8, 'FHNH'],
-                        [9, 'FXX'],
-                        [10, 'FXXH'],
-                        [11, 'TG'],
-                        [12, 'TN'],
-                        [13, 'TNH'],
-                        [14, 'TX'],
-                        [15, 'TXH'],
-                        [16, 'T10N'],
-                        [17, 'T10NH'],
-                        [18, 'SQ'],
-                        [19, 'SP'],
-                        [20, 'Q'],
-                        [21, 'DR'],
-                        [22, 'RH'],
-                        [23, 'RHX'],
-                        [24, 'RHXH'],
-                        [25, 'PG'],
-                        [26, 'PX'],
-                        [27, 'PXH'],
-                        [28, 'PN'],
-                        [29, 'PNH'],
-                        [30, 'VVN'],
-                        [31, 'VVNH'],
-                        [32, 'VVX'],
-                        [33, 'VVXH'],
-                        [34, 'NG'],
-                        [35, 'UG'],
-                        [36, 'UX'],
-                        [37, 'UXH'],
-                        [38, 'UN'],
-                        [39, 'UNH'],
-                        [40, 'EV24']]
-
-    for c in column_replacements:
-        df = df.rename(columns={c[0]:c[1]})
-
-    df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"], format="%Y%m%d")
-    to_divide_by_10 = ["TG", "TX", "TN"]
-    for d in to_divide_by_10:
-        df[d] = df[d]/10
+        df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"], format="%Y%m%d")
+        df["YYYY"]= df['YYYYMMDD'].dt.year
+        to_divide_by_10 = ["TG", "TX", "TN"]
+        for d in to_divide_by_10:
+            df[d] = df[d]/10
+        
 
     return df
 
 def interface():
+    """Kies het weerstation, de begindatum en de einddatum
 
+    Returns:
+        df, het weerstation, begindatum en einddatum (laatste drie als string)
+    """
     weer_stations = [[209, "IJmond"],
                     [210, "Valkenburg Zh"],
                     [215, "Voorschoten"],
@@ -157,13 +173,10 @@ def interface():
         if gekozen_weerstation == w[1]:
             stn = w[0]
 
-
-
-
     DATE_FORMAT = "%m/%d/%Y"
     start_ = "2021-01-01"
     today = datetime.today().strftime("%Y-%m-%d")
-    from_ = st.sidebar.text_input("startdate (yyyy-mm-dd)", start_)
+    from_ = st.sidebar.text_input("startdatum (yyyy-mm-dd)", start_)
 
     try:
         FROM = dt.datetime.strptime(from_, "%Y-%m-%d").date()
@@ -171,7 +184,7 @@ def interface():
         st.error("Please make sure that the startdate is in format yyyy-mm-dd")
         st.stop()
 
-    until_ = st.sidebar.text_input("enddate (yyyy-mm-dd)", today)
+    until_ = st.sidebar.text_input("enddatum (yyyy-mm-dd)", today)
 
     try:
         UNTIL = dt.datetime.strptime(until_, "%Y-%m-%d").date()
@@ -186,26 +199,53 @@ def interface():
     df_getdata = getdata(stn, FROM.strftime("%Y%m%d"), UNTIL.strftime("%Y%m%d"))
 
     df = df_getdata.copy(deep=False)
-    #st.write(df)
-    return df, gekozen_weerstation, from_, until_
 
-def show_plot(df, gekozen_weerstation, from_, until_):
+    mode = st.sidebar.selectbox("Modus", ["per dag", "specifieke dag", "jaargemiddelde"], index=0)
+
+    if mode == "jaargemiddelde":
+        df = df.groupby(["YYYY"], sort=True).mean().reset_index()
+        datefield = "YYYY"
+        title = (f"Gemiddelde jaartemperatuur  van {from_[:4]} - {until_[:4]} in {gekozen_weerstation}")
+
+    elif mode == "specifieke dag":
+        day =  st.sidebar.number_input("Dag",   1,31,1,None,format ="%i" )
+        months = ["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"]
+
+        month = months.index(st.sidebar.selectbox("Maand", months, index=0))+1
+        # month= st.sidebar.number_input("Maand", 1,12,1,None,format ="%i"  )
+        datefield = "YYYY"
+        df = df[(df['YYYYMMDD'].dt.month==month) & (df['YYYYMMDD'].dt.day==day)]
+        title = (f"Gemiddelde temperatuur op {find_date_for_title(day,month)} van {from_[:4]} - {until_[:4]} in {gekozen_weerstation}")
+    else:
+        datefield = "YYYYMMDD"
+        title = (f"Dagtemperatuur van {from_} - {until_} in {gekozen_weerstation}")
+    wdw = st.sidebar.slider("Window smoothing curves", 1, 45, 7)
+    #st.write(df)
+    return df, datefield, title, wdw
+
+def show_plot(df, datefield, title,wdw):
     to_show = [["TG", "Gem. dagtemp", "g"],
                 ["TN", "Min. dagtemp", "b"],
                 ["TX", "Max. dagtemp", "r"],
                 ]
-
+    if len(df) == 1 and datefield =="YYYY":
+        st.warning("Selecteer een grotere tijdsperiode")
+        st.stop()
     with _lock:
         fig1x = plt.figure()
         ax = fig1x.add_subplot(111)
 
         for show in to_show:
-            sma = df[show[0]].rolling(window=7, center=True).mean()
+            sma = df[show[0]].rolling(window=wdw, center=True).mean()
             ax = df[show[0]].plot( label = "_nolegend_",  linestyle="dotted",color = show[2],  linewidth = 0.5)
             ax = sma.plot( label = show[1], color = show[2], linewidth = 0.75)
 
-        ax.set_xticks(df["YYYYMMDD"].index)
-        ax.set_xticklabels(df["YYYYMMDD"].dt.date, fontsize=6, rotation=90)
+        ax.set_xticks(df[datefield].index)
+        if datefield == "YYYY":
+            ax.set_xticklabels(df[datefield], fontsize=6, rotation=90)
+        else:
+
+            ax.set_xticklabels(df[datefield].dt.date, fontsize=6, rotation=90)
         xticks = ax.xaxis.get_major_ticks()
         for i, tick in enumerate(xticks):
                 if i % 10 != 0:
@@ -213,35 +253,18 @@ def show_plot(df, gekozen_weerstation, from_, until_):
 
         plt.xticks()
         plt.grid(which='major', axis = 'y')
-        #matplotlib.pyplot.grid(b=None, which='major', axis='both', **kwargs)
-        plt.title (f"Dagtemperatuur van {from_} - {until_} in {gekozen_weerstation}")
+        plt.title(title)
         plt.legend()
         st.pyplot(fig1x)
 
+def find_date_for_title(day,month):
+    months = ["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"]
+    # ["January", "February",  "March", "April", "May", "June", "July", "August", "September", "Oktober", "November", "December"]
+    return (str(day) + " " + months[month-1])
+
 def main():
-    df, gekozen_weerstation, from_, until_ = interface()
-    #print (df)
-    show_plot (df, gekozen_weerstation, from_, until_)
-main()
+    df,  datefield, title, wdw = interface()
+    show_plot (df,  datefield, title, wdw)
 
-# TO DO :
-
-# OPTIES TOEVEOGEN
-# * gemiddelde jaar tempeatuur over een periode
-# * temperatuur op een bepaalde dag/ ve bepaalde maand door de tijd heen
-
-
-# if mode == "year_avg":
-#     plt.ylabel("Average Temperature of the year\nin degrees Celcius")
-# elif mode == "spec_day":
-#     plt.ylabel(f"Temperatures at {day_in_words} in {PLAATS}\nin degrees Celcius")
-# if mode == "year_avg":
-#     plt.title(f"average year-temperature {FIRST_YEAR} - {LAST_YEAR-1}")
-# elif mode == "spec_day":
-#     plt.title(f"Daytemperature of {day_in_words} in {PLAATS} {FIRST_YEAR} - {LAST_YEAR}")
-# elif mode == "period":
-#     plt.title(f"Average daytemperature of {months[month1-1]} to {months[month2-1]} in {PLAATS} {FIRST_YEAR} - {LAST_YEAR}")
-# elif mode == "month":
-#     plt.title(f"Average daytemperature of {months[month1-1]} {year} in {PLAATS}")
-# elif mode == "year":
-#     plt.title(f"Average daytemperature of {year} in {PLAATS}")
+if __name__ == "__main__":
+    main()
