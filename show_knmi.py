@@ -190,21 +190,20 @@ def interface():
     return df, gekozen_weerstation, from_, until_
 
 def show_plot(df, gekozen_weerstation, from_, until_):
-    TG_sma = df.TG.rolling(window=7, center=True).mean()
-    TN_sma = df.TN.rolling(window=7, center=True).mean()
-    TX_sma = df.TX.rolling(window=7, center=True).mean()
+    to_show = [["TG", "Gem. dagtemp", "g"],
+                ["TN", "Min. dagtemp", "b"],
+                ["TX", "Max. dagtemp", "r"],
+                ]
 
     with _lock:
         fig1x = plt.figure()
         ax = fig1x.add_subplot(111)
-        #plt.plot(df["YYYYMMDD"], df["TG"], label = "Gem. dagtemp")
-        ax = df["TG"].plot( label = "_nolegend_",  linestyle="dotted",color = "g",  linewidth = 0.5)
-        ax = df["TN"].plot( label ="_nolegend_", linestyle="dotted", color = "b", linewidth = 0.5)
-        ax = df["TX"].plot( label = "_nolegend_", linestyle="dotted", color = "r", linewidth = 0.5)
 
-        ax = TG_sma.plot( label = "Gem. dagtemp", color = "g", linewidth = 0.75)
-        ax = TN_sma.plot( label = "Min. dagtemp", color = "b", linewidth = 0.75)
-        ax = TX_sma.plot( label = "Max. dagtemp", color = "r", linewidth = 0.75)
+        for show in to_show:
+            sma = df[show[0]].rolling(window=7, center=True).mean()
+            ax = df[show[0]].plot( label = "_nolegend_",  linestyle="dotted",color = show[2],  linewidth = 0.5)
+            ax = sma.plot( label = show[1], color = show[2], linewidth = 0.75)
+
         ax.set_xticks(df["YYYYMMDD"].index)
         ax.set_xticklabels(df["YYYYMMDD"].dt.date, fontsize=6, rotation=90)
         xticks = ax.xaxis.get_major_ticks()
@@ -224,19 +223,25 @@ def main():
     #print (df)
     show_plot (df, gekozen_weerstation, from_, until_)
 main()
-# Opmerking: door stationsverplaatsingen en veranderingen in waarneemmethodieken zijn deze tijdreeksen van uurwaarden mogelijk inhomogeen! Dat betekent dat deze reeks van gemeten waarden niet geschikt is voor trendanalyse. Voor studies naar klimaatverandering verwijzen we naar de gehomogeniseerde dagreeksen <http://www.knmi.nl/nederland-nu/klimatologie/daggegevens> of de Centraal Nederland Temperatuur <http://www.knmi.nl/kennis-en-datacentrum/achtergrond/centraal-nederland-temperatuur-cnt>.
-#
-# SOURCE: ROYAL NETHERLANDS METEOROLOGICAL INSTITUTE (KNMI)
-# Comment: These time series are inhomogeneous because of station relocations and changes in observation techniques. As a result these series are not suitable for trend analysis. For climate change studies we refer to the homogenized series of daily data <http://www.knmi.nl/nederland-nu/klimatologie/daggegevens> or the Central Netherlands Temperature <http://www.knmi.nl/kennis-en-datacentrum/achtergrond/centraal-nederland-temperatuur-cnt>.
-#
-# STN         LON(east)   LAT(north)  ALT(m)      NAME
-# 235         4.781       52.928      1.20        De Kooy
-# 280         6.585       53.125      5.20        Eelde
-# 260         5.180       52.100      1.90        De Bilt
-# VVN       : Minimum opgetreden zicht / Minimum visibility; 0: <100 m; 1:100-200 m; 2:200-300 m;...; 49:4900-5000 m; 50:5-6 km; 56:6-7 km; 57:7-8 km;...; 79:29-30 km; 80:30-35 km; 81:35-40 km;...; 89: >70 km
-# VVX       : Maximum opgetreden zicht / Maximum visibility; 0: <100 m; 1:100-200 m; 2:200-300 m;...; 49:4900-5000 m; 50:5-6 km; 56:6-7 km; 57:7-8 km;...; 79:29-30 km; 80:30-35 km; 81:35-40 km;...; 89: >70 km)
-# NG        : Etmaalgemiddelde bewolking (bedekkingsgraad van de bovenlucht in achtsten; 9=bovenlucht onzichtbaar) / Mean daily cloud cover (in octants; 9=sky invisible)
-# DR        : Duur van de neerslag (in 0.1 uur) / Precipitation duration (in 0.1 hour)
-# RH        : Etmaalsom van de neerslag (in 0.1 mm) (-1 voor <0.05 mm) / Daily precipitation amount (in 0.1 mm) (-1 for <0.05 mm)
-# EV24      : Referentiegewasverdamping (Makkink) (in 0.1 mm) / Potential evapotranspiration (Makkink) (in 0.1 mm)
-# STN,YYYYMMDD,  VVN,  VVX,   NG,   DR,   RH, EV24
+
+# TO DO :
+
+# OPTIES TOEVEOGEN
+# * gemiddelde jaar tempeatuur over een periode
+# * temperatuur op een bepaalde dag/ ve bepaalde maand door de tijd heen
+
+
+# if mode == "year_avg":
+#     plt.ylabel("Average Temperature of the year\nin degrees Celcius")
+# elif mode == "spec_day":
+#     plt.ylabel(f"Temperatures at {day_in_words} in {PLAATS}\nin degrees Celcius")
+# if mode == "year_avg":
+#     plt.title(f"average year-temperature {FIRST_YEAR} - {LAST_YEAR-1}")
+# elif mode == "spec_day":
+#     plt.title(f"Daytemperature of {day_in_words} in {PLAATS} {FIRST_YEAR} - {LAST_YEAR}")
+# elif mode == "period":
+#     plt.title(f"Average daytemperature of {months[month1-1]} to {months[month2-1]} in {PLAATS} {FIRST_YEAR} - {LAST_YEAR}")
+# elif mode == "month":
+#     plt.title(f"Average daytemperature of {months[month1-1]} {year} in {PLAATS}")
+# elif mode == "year":
+#     plt.title(f"Average daytemperature of {year} in {PLAATS}")
