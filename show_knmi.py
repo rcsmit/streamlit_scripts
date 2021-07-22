@@ -269,6 +269,7 @@ def find_date_for_title(day,month):
 
 def show_warmingstripes (df, title):
     # Based on code of Sebastian Beyer
+    # https://github.com/sebastianbeyer/warmingstripes/blob/master/warmingstripes.py
     
     # the colors in this colormap come from http://colorbrewer2.org
     # the 8 more saturated colors from the 9 blues / 9 reds
