@@ -9,6 +9,8 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import RendererAgg
 _lock = RendererAgg.lock
+from matplotlib.colors import ListedColormap
+import numpy as np
 
 def select_period_oud(df, field, show_from, show_until):
     """Shows two inputfields (from/until and Select a period in a df (helpers.py).
@@ -221,7 +223,7 @@ def interface():
         title = (f"Dagtemperatuur van {from_} - {until_} in {gekozen_weerstation}")
     wdw = st.sidebar.slider("Window smoothing curves", 1, 45, 7)
     #st.write(df)
-    return df, datefield, title, wdw
+    return df, datefield, title, wdw, mode
 
 def show_plot(df, datefield, title,wdw):
     to_show = [["TG", "Gem. dagtemp", "g"],
@@ -262,9 +264,40 @@ def find_date_for_title(day,month):
     # ["January", "February",  "March", "April", "May", "June", "July", "August", "September", "Oktober", "November", "December"]
     return (str(day) + " " + months[month-1])
 
+def show_warmingstripes (df, title):
+    # Based on code of Sebastian Beyer
+    
+    # the colors in this colormap come from http://colorbrewer2.org
+    # the 8 more saturated colors from the 9 blues / 9 reds
+    # https://matplotlib.org/matplotblog/posts/warming-stripes/
+    cmap = ListedColormap([
+        '#08306b', '#08519c', '#2171b5', '#4292c6',
+        '#6baed6', '#9ecae1', '#c6dbef', '#deebf7',
+        '#fee0d2', '#fcbba1', '#fc9272', '#fb6a4a',
+        '#ef3b2c', '#cb181d', '#a50f15', '#67000d',
+    ])
+    # https://github.com/sebastianbeyer/warmingstripes/blob/master/warmingstripes.py
+    temperatures = df['TG'].tolist()
+    stacked_temps = np.stack((temperatures, temperatures))
+    with _lock:
+        # plt.figure(figsize=(4,18))
+        fig, ax = plt.subplots()
+
+        fig = ax.imshow(stacked_temps, cmap=cmap, aspect=40, )
+        plt.gca().set_axis_off()
+
+        plt.title(title)
+        plt.gca().xaxis.set_major_locator(plt.NullLocator())
+        plt.gca().yaxis.set_major_locator(plt.NullLocator())
+        #plt.show()
+        #st.pyplot(fig) - gives an error
+        st.set_option('deprecation.showPyplotGlobalUse', False)
+        st.pyplot()
+
 def main():
-    df,  datefield, title, wdw = interface()
+    df,  datefield, title, wdw, mode = interface()
     show_plot (df,  datefield, title, wdw)
+    if mode !="per dag": show_warmingstripes (df, title)
 
 if __name__ == "__main__":
     main()
