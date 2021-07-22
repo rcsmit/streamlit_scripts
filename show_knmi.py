@@ -208,6 +208,7 @@ def interface():
         df = df.groupby(["YYYY"], sort=True).mean().reset_index()
         datefield = "YYYY"
         title = (f"Gemiddelde jaartemperatuur  van {from_[:4]} - {until_[:4]} in {gekozen_weerstation}")
+        st.sidebar.write("Zorg ervoor dat de einddatum op 31 december valt voor het beste resultaat ")
 
     elif mode == "specifieke dag":
         day =  st.sidebar.number_input("Dag",   1,31,1,None,format ="%i" )
@@ -218,6 +219,8 @@ def interface():
         datefield = "YYYY"
         df = df[(df['YYYYMMDD'].dt.month==month) & (df['YYYYMMDD'].dt.day==day)]
         title = (f"Gemiddelde temperatuur op {find_date_for_title(day,month)} van {from_[:4]} - {until_[:4]} in {gekozen_weerstation}")
+        st.sidebar.write("Zorg ervoor dat de datum in de gekozen tijdrange valt voor het beste resultaat ")
+
     else:
         datefield = "YYYYMMDD"
         title = (f"Dagtemperatuur van {from_} - {until_} in {gekozen_weerstation}")
