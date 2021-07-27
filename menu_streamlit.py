@@ -26,16 +26,24 @@ def main():
         arr = os.listdir()
 
     counter = 1
-    options = [["0. welcome","welcome"]]
-    for file in arr:
-        if file[-2:] =="py" and ( file != "welcome.py" and file !="menu_streamlit.py"):
-            menutext = f"{counter}. {file}"
-            menutext = menutext.replace("_"," ") # I was too lazy to change it in the list
-            menutext = menutext.replace(".py","") # I was too lazy to change it in the list
-            file_ = file.replace(".py","") # I was too lazy to change it in the list
+    options = [["0. welcome","welcome"],
+                ["1. newagebullshitgenerator","newagebullshitgenerator"],
+                ["2. KNMI grafieken","show_knmi"],
+                ["3. Text generator","tx_generator_streamlit"],
+                ["4. YT transcriber","YoutubeTranscriber_streamlit"],
 
-            options.append([menutext, file_])
-            counter +=1
+    ]
+
+
+    # for file in arr:
+    #     if file[-2:] =="py" and ( file != "welcome.py" and file !="menu_streamlit.py"):
+    #         menutext = f"{counter}. {file}"
+    #         menutext = menutext.replace("_"," ") # I was too lazy to change it in the list
+    #         menutext = menutext.replace(".py","") # I was too lazy to change it in the list
+    #         file_ = file.replace(".py","") # I was too lazy to change it in the list
+
+    #         options.append([menutext, file_])
+    #         counter +=1
 
     query_params = st.experimental_get_query_params() # reading  the choice from the URL..
 
