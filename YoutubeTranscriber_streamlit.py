@@ -36,7 +36,7 @@ def do_punctuate(total_text):
 
 def get_video_id(url):
     if url != "":
-        st.info (f"Transcribing {url = }")
+        st.info (f"Transcribing {url }")
         url_parsed = parse.urlparse(url)
         video_id_ = parse.parse_qs(url_parsed.query)
         video_id__ = video_id_['v']
