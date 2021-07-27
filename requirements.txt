@@ -9,4 +9,3 @@ tabulate
 sklearn
 gsheetsdb
 youtube_transcript_api
-urllib
