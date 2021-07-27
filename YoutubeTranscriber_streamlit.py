@@ -1,8 +1,5 @@
 from youtube_transcript_api import YouTubeTranscriptApi
 from urllib import parse
-# from punctuator import Punctuator
-import pyperclip as pc
-import win32clipboard  # part of pywin32
 import streamlit as st
 
 def transcribe_video(video_id, translate, language_from, translate_to, list_languages):
