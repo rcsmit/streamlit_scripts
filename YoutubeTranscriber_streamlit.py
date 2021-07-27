@@ -14,6 +14,11 @@ def transcribe_video(video_id, translate, language_from, translate_to, list_lang
     total_text = ""
     for t in transcript_fetched:
         total_text += (t["text"])+ " "
+
+    st.subheader("*To copy the text, roll over the mouse the box below and click the copy to clipboard icon at the right*")
+    st.code (total_text)
+
+
     st.write(total_text)
     st.subheader("*To copy the text, roll over the mouse the box below and click the copy to clipboard icon at the right*")
     st.code (total_text)
