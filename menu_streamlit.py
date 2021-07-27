@@ -29,7 +29,7 @@ def main():
     options = [["0. welcome","welcome"],
                 ["1. newagebullshitgenerator","newagebullshitgenerator"],
                 ["2. KNMI grafieken","show_knmi"],
-                ["3. Text generator","tx_generator_streamlit"],
+                ["3. Text generator","txt_generator_streamlit"],
                 ["4. YT transcriber","YoutubeTranscriber_streamlit"],
 
     ]
