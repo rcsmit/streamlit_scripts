@@ -11,6 +11,7 @@ from matplotlib.backends.backend_agg import RendererAgg
 _lock = RendererAgg.lock
 from matplotlib.colors import ListedColormap
 import numpy as np
+import matplotlib.dates as mdates
 
 def select_period_oud(df, field, show_from, show_until):
     """Shows two inputfields (from/until and Select a period in a df (helpers.py).
@@ -43,12 +44,12 @@ def getdata(stn, fromx, until):
         url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP&start={fromx}&end={until}"
         try:
             df = pd.read_csv(url, delimiter=",", header=None,  comment="#",low_memory=False,)
-        
+
         except:
             st.write("FOUT BIJ HET INLADEN.")
             st.stop()
-      
-        
+
+
         column_replacements =  [[0, 'STN'],
                              [1, 'YYYYMMDD'],
                              [2, 'TG'],
@@ -102,12 +103,85 @@ def getdata(stn, fromx, until):
 
         df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"], format="%Y%m%d")
         df["YYYY"]= df['YYYYMMDD'].dt.year
+        df["MM"]= df['YYYYMMDD'].dt.month
+        df["DD"]= df['YYYYMMDD'].dt.day
+        df["dayofyear"]= df['YYYYMMDD'].dt.dayofyear
+        month_long_to_short = {"January": "Jan",
+                       "February": "Feb",
+                       "March": "Mar",
+                       "April": "Apr",
+                       "May": "May",
+                       "June": "Jun",
+                       "July": "Jul",
+                       "August": "Aug",
+                       "September": "Sep",
+                       "October": "Oct",
+                       "November": "Nov",
+                       "December": "Dec"
+                      }
+        month_number_to_short = {"1": "Jan",
+                       "2": "Feb",
+                       "3": "Mar",
+                       "4": "Apr",
+                       "5": "May",
+                       "6": "Jun",
+                       "7": "Jul",
+                       "8": "Aug",
+                       "9": "Sep",
+                       "10": "Oct",
+                       "11": "Nov",
+                       "12": "Dec"
+                      }
+        df['month'] = df['MM'].astype(str).map(month_number_to_short)
+        df['year'] = df['YYYY'].astype(str)
+        df['month'] = df['month'].astype(str)
+        df['day'] = df['DD'].astype(str)
+        df['month_year'] = df['month'] + " - " + df['year']
+        df['month_day'] = df['month'] + " - " + df['day']
+
         to_divide_by_10 = ["TG", "TX", "TN"]
         for d in to_divide_by_10:
             df[d] = df[d]/10
-        
+
 
     return df
+def show_jaar_tot_jaar(df, gekozen_weerstation):
+    df.set_index('YYYYMMDD')
+    month_min= st.sidebar.number_input("Beginmaand (van)", 1,12,1,None,format ="%i"  )
+    month_max= st.sidebar.number_input("Eindmaand (tot en met)", 1,12,12,None,format ="%i"  )
+    groeperen = st.sidebar.selectbox("Per dag/maandgemiddelde", ["per_dag", "maandgem"], index=1)
+
+    jaren = df["YYYY"].tolist()
+    df = df[(df['MM'] >= month_min)]
+    df = df[(df['MM'] <= month_max)]
+
+    months_in_order = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+
+    fig, ax = plt.subplots()
+
+    plt.title(f"Maximale dagtemperaturen - gemiddeld per maand in {gekozen_weerstation}")
+
+    if groeperen == "maandgem":
+        df_grouped = df.groupby(["year", "month"] ).mean()
+        df_pivoted = df_grouped.pivot(index='MM', columns='YYYY', values='TX')
+    elif groeperen == "per_dag":
+        df["MD"] = df["month_day"]
+
+        df_grouped = df.groupby(["year", "month_day"] ).mean()
+        df_pivoted = df_grouped.pivot(index='dayofyear', columns='YYYY', values='TX')
+        major_format = mdates.DateFormatter('%b')
+
+        ax.xaxis.set_major_formatter(major_format)
+    plt.grid()
+    ax.plot(df_pivoted)
+    plt.legend(df_pivoted.columns, title=df_pivoted.columns.name)
+
+    st.pyplot(fig)
+    st.write(df_pivoted)
+
+
+
 
 def interface():
     """Kies het weerstation, de begindatum en de einddatum
@@ -176,7 +250,7 @@ def interface():
             stn = w[0]
 
     DATE_FORMAT = "%m/%d/%Y"
-    start_ = "2021-01-01"
+    start_ = "2019-01-01"
     today = datetime.today().strftime("%Y-%m-%d")
     from_ = st.sidebar.text_input("startdatum (yyyy-mm-dd)", start_)
 
@@ -202,9 +276,13 @@ def interface():
 
     df = df_getdata.copy(deep=False)
 
-    mode = st.sidebar.selectbox("Modus", ["per dag", "specifieke dag", "jaargemiddelde"], index=0)
+    mode = st.sidebar.selectbox("Modus", ["per dag", "specifieke dag", "jaargemiddelde", "jaartotjaar"], index=3)
 
-    if mode == "jaargemiddelde":
+    if mode == "jaartotjaar":
+        show_jaar_tot_jaar(df, gekozen_weerstation)
+        datefield, title = None, None
+
+    elif mode == "jaargemiddelde":
         df = df.groupby(["YYYY"], sort=True).mean().reset_index()
         datefield = "YYYY"
         title = (f"Gemiddelde jaartemperatuur  van {from_[:4]} - {until_[:4]} in {gekozen_weerstation}")
@@ -270,7 +348,7 @@ def find_date_for_title(day,month):
 def show_warmingstripes (df, title):
     # Based on code of Sebastian Beyer
     # https://github.com/sebastianbeyer/warmingstripes/blob/master/warmingstripes.py
-    
+
     # the colors in this colormap come from http://colorbrewer2.org
     # the 8 more saturated colors from the 9 blues / 9 reds
     # https://matplotlib.org/matplotblog/posts/warming-stripes/
@@ -300,8 +378,8 @@ def show_warmingstripes (df, title):
 
 def main():
     df,  datefield, title, wdw, mode = interface()
-    show_plot (df,  datefield, title, wdw)
-    if mode !="per dag": show_warmingstripes (df, title)
+    if mode!= "jaartotjaar" : show_plot (df,  datefield, title, wdw)
+    if mode !="per dag" and mode!= "jaartotjaar" : show_warmingstripes (df, title)
 
 if __name__ == "__main__":
     main()
