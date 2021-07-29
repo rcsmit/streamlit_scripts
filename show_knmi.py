@@ -143,8 +143,8 @@ def getdata(stn, fromx, until):
         for d in to_divide_by_10:
             df[d] = df[d]/10
 
-
     return df
+
 def show_jaar_tot_jaar(df, gekozen_weerstation):
     df.set_index('YYYYMMDD')
     month_min= st.sidebar.number_input("Beginmaand (van)", 1,12,1,None,format ="%i"  )
@@ -155,11 +155,7 @@ def show_jaar_tot_jaar(df, gekozen_weerstation):
     df = df[(df['MM'] >= month_min)]
     df = df[(df['MM'] <= month_max)]
 
-    months_in_order = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-
-
     fig, ax = plt.subplots()
-
     plt.title(f"Maximale dagtemperaturen - gemiddeld per maand in {gekozen_weerstation}")
 
     if groeperen == "maandgem":
@@ -167,7 +163,6 @@ def show_jaar_tot_jaar(df, gekozen_weerstation):
         df_pivoted = df_grouped.pivot(index='MM', columns='YYYY', values='TX')
     elif groeperen == "per_dag":
         df["MD"] = df["month_day"]
-
         df_grouped = df.groupby(["year", "month_day"] ).mean()
         df_pivoted = df_grouped.pivot(index='dayofyear', columns='YYYY', values='TX')
         major_format = mdates.DateFormatter('%b')
@@ -179,9 +174,6 @@ def show_jaar_tot_jaar(df, gekozen_weerstation):
 
     st.pyplot(fig)
     st.write(df_pivoted)
-
-
-
 
 def interface():
     """Kies het weerstation, de begindatum en de einddatum
@@ -327,7 +319,6 @@ def show_plot(df, datefield, title,wdw):
         if datefield == "YYYY":
             ax.set_xticklabels(df[datefield], fontsize=6, rotation=90)
         else:
-
             ax.set_xticklabels(df[datefield].dt.date, fontsize=6, rotation=90)
         xticks = ax.xaxis.get_major_ticks()
         for i, tick in enumerate(xticks):
