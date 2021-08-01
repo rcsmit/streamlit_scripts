@@ -2,6 +2,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
+#from scipy.stats import weibull_min
 import pandas as pd
 from statistics import mean
 from matplotlib.backends.backend_agg import RendererAgg
@@ -22,12 +23,16 @@ def read():
     df["Datum"] = pd.to_datetime(df["Datum"], format="%d-%m-%Y")
     return df
 
-def calculate_and_plot(data, acco_name):
+def calculate_and_plot(data, acco_name, modus):
+
     a_in = 1
     loc_in = 0
-
-    a_out, Kappa_out, loc_out, Lambda_out = stats.exponweib.fit(data, f0=a_in,floc=loc_in)
-
+    if modus == "exponweib":
+        a_out, Kappa_out, loc_out, Lambda_out = stats.exponweib.fit(data, f0=a_in,floc=loc_in)
+    else:
+        shape, loc, scale = stats.weibull_min.fit(data, floc=0)
+        Kappa_out = shape
+        Lambda_out = scale
     #Plot
     bins_formula = range( int(max(data))+1)
     binwidth = max(data)/10
@@ -37,7 +42,11 @@ def calculate_and_plot(data, acco_name):
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
         ax3 = ax.twinx()
-        ax3.plot(bins_formula, stats.exponweib.pdf(bins_formula, a=a_out,c=Kappa_out,loc=loc_out,scale = Lambda_out))
+        if modus == "exponweib":
+            ax3.plot(bins_formula, stats.exponweib.pdf(bins_formula, a=a_out,c=Kappa_out,loc=loc_out,scale = Lambda_out))
+        else:
+            ax3.plot(bins_formula, stats.weibull_min(shape, loc, scale).pdf(bins_formula))
+
         ax.hist(data, bins = bins , density=False, alpha=0.5)
         mediaan =Lambda_out *(np.log(2) **(1/Kappa_out))
         mean_data = mean(data)
@@ -54,7 +63,7 @@ def main():
     df = read()
 
     acco_code = ["all","w", "sa", "se", "k", "b"]
-    acco_name = ["all","waikiki", "sahara", "serengeti", "kalahari", "bali"]
+    acco_name = ["All","Waikiki", "Sahara", "Serengeti", "Kalahari", "Bali"]
 
     samenvatting =[]
     for code, name in zip (acco_code, acco_name):
@@ -67,7 +76,7 @@ def main():
         data_selection = df_selection["tijd in minuten"].tolist()
 
 
-        samenvatting_ = calculate_and_plot(data_selection, name)
+        samenvatting_ = calculate_and_plot(data_selection, name, "weibull_min")
         samenvatting.append(samenvatting_)
 
     df_samenvatting = pd.DataFrame(samenvatting, columns = ['Name', 'number', 'Shape', 'scale', 'mediaan', 'mean data'])
