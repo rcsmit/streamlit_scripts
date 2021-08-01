@@ -79,6 +79,9 @@ def main():
     st.subheader("brondata")
     st.write(df.iloc[:, : 7])
 
+    st.write("Google sheet : https://docs.google.com/spreadsheets/d/1Lqddg3Rsq0jhFgL5U-HwvDdo0473QBZtjbAp9ol8kcg/edit#gid=0")
+    st.write("Broncode : https://github.com/rcsmit/streamlit_scripts/schoonmaaktijden.py")
+
 if __name__ == "__main__":
     #caching.clear_cache()
     main()
