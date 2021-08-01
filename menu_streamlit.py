@@ -31,6 +31,7 @@ def main():
                 ["2. KNMI grafieken","show_knmi"],
                 ["3. Text generator","txt_generator_streamlit"],
                 ["4. YT transcriber","YoutubeTranscriber_streamlit"],
+                ["5. Schoonmaaktijden", "schoonmaaktijden"]
 
     ]
 

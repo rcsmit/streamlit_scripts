@@ -1,0 +1,84 @@
+#import scipy.stats as ss
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy import stats
+import pandas as pd
+from statistics import mean
+from matplotlib.backends.backend_agg import RendererAgg
+_lock = RendererAgg.lock
+import streamlit as st
+
+# partly derived from https://stackoverflow.com/a/37036082/4173718
+
+def read():
+    sheet_id = "1Lqddg3Rsq0jhFgL5U-HwvDdo0473QBZtjbAp9ol8kcg"
+    sheet_name = "gegevens"
+    url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
+
+    #url = "C:\\Users\\rcxsm\\Documents\\phyton_scripts\\in\\schoonmaaktijden.csv",
+    df = pd.read_csv(url, delimiter=',')
+    df = df[:-1]  #remove last row which appears to be a Nan
+
+    df["Datum"] = pd.to_datetime(df["Datum"], format="%d-%m-%Y")
+    return df
+
+def calculate_and_plot(data, acco_name):
+    a_in = 1
+    loc_in = 0
+
+    a_out, Kappa_out, loc_out, Lambda_out = stats.exponweib.fit(data, f0=a_in,floc=loc_in)
+
+    #Plot
+    bins_formula = range( int(max(data))+1)
+    binwidth = max(data)/10
+
+    bins = np.arange(min(data), max(data) + binwidth, binwidth)
+    with _lock:
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1)
+        ax3 = ax.twinx()
+        ax3.plot(bins_formula, stats.exponweib.pdf(bins_formula, a=a_out,c=Kappa_out,loc=loc_out,scale = Lambda_out))
+        ax.hist(data, bins = bins , density=False, alpha=0.5)
+        mediaan =Lambda_out *(np.log(2) **(1/Kappa_out))
+        mean_data = mean(data)
+        title =  (f"{acco_name} (n={len(data)})\n\nShape: {round(Kappa_out,2)} - Scale: {round(Lambda_out,2)}\nMediaan : {round(mediaan,2)} - mean data : {round(mean_data,2)}")
+        samenvatting = [acco_name, len(data), round(Kappa_out,2), round(Lambda_out,2), round(mediaan,2), round(mean_data,2)]
+        plt.title(title)
+
+        #st.write (title)
+        # plt.show()
+        st.pyplot(fig)
+    return samenvatting
+def main():
+    st.title("Schoonmaaktijden gefit aan Weibull verdeling")
+    df = read()
+
+    acco_code = ["all","w", "sa", "se", "k", "b"]
+    acco_name = ["all","waikiki", "sahara", "serengeti", "kalahari", "bali"]
+
+    samenvatting =[]
+    for code, name in zip (acco_code, acco_name):
+        #print (acco_name[acco_code.index(code)])
+        if code == "all":
+            df_selection = df.copy(deep=False)
+        else:
+            df_selection = df[df["Type acco"] == code].copy(deep=False)
+
+        data_selection = df_selection["tijd in minuten"].tolist()
+
+
+        samenvatting_ = calculate_and_plot(data_selection, name)
+        samenvatting.append(samenvatting_)
+
+    df_samenvatting = pd.DataFrame(samenvatting, columns = ['Name', 'number', 'Shape', 'scale', 'mediaan', 'mean data'])
+    st.subheader("Samenvatting")
+    try:
+        st.write(df_samenvatting.style.format("{:.2}"))
+    except:
+        st.write(df_samenvatting)
+    st.subheader("brondata")
+    st.write(df.iloc[:, : 7])
+
+if __name__ == "__main__":
+    #caching.clear_cache()
+    main()

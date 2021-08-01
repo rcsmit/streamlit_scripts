@@ -1,4 +1,3 @@
-from os import supports_follow_symlinks
 import pandas as pd
 
 import streamlit as st
@@ -145,7 +144,7 @@ def getdata(stn, fromx, until):
 
     return df
 
-def show_jaar_tot_jaar(df, gekozen_weerstation):
+def show_per_maand(df, gekozen_weerstation, what_to_show):
     df.set_index('YYYYMMDD')
     month_min= st.sidebar.number_input("Beginmaand (van)", 1,12,1,None,format ="%i"  )
     month_max= st.sidebar.number_input("Eindmaand (tot en met)", 1,12,12,None,format ="%i"  )
@@ -160,11 +159,11 @@ def show_jaar_tot_jaar(df, gekozen_weerstation):
 
     if groeperen == "maandgem":
         df_grouped = df.groupby(["year", "month"] ).mean()
-        df_pivoted = df_grouped.pivot(index='MM', columns='YYYY', values='TX')
+        df_pivoted = df_grouped.pivot(index='MM', columns='YYYY', values=what_to_show)
     elif groeperen == "per_dag":
         df["MD"] = df["month_day"]
         df_grouped = df.groupby(["year", "month_day"] ).mean()
-        df_pivoted = df_grouped.pivot(index='dayofyear', columns='YYYY', values='TX')
+        df_pivoted = df_grouped.pivot(index='dayofyear', columns='YYYY', values=what_to_show)
         major_format = mdates.DateFormatter('%b')
 
         ax.xaxis.set_major_formatter(major_format)
@@ -245,6 +244,15 @@ def interface():
     start_ = "2019-01-01"
     today = datetime.today().strftime("%Y-%m-%d")
     from_ = st.sidebar.text_input("startdatum (yyyy-mm-dd)", start_)
+    until_ = st.sidebar.text_input("enddatum (yyyy-mm-dd)", today)
+
+    mode = st.sidebar.selectbox("Modus", ["per dag", "specifieke dag", "jaargemiddelde", "per maand"], index=3)
+    wdw = st.sidebar.slider("Window smoothing curves", 1, 45, 7)
+        #st.write(df)
+    what_to_show = st.sidebar.selectbox("Wat weer te geven", ["temp"], index=0)
+    action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation)
+
+def test_from_until(from_, until_):
 
     try:
         FROM = dt.datetime.strptime(from_, "%Y-%m-%d").date()
@@ -252,7 +260,6 @@ def interface():
         st.error("Please make sure that the startdate is in format yyyy-mm-dd")
         st.stop()
 
-    until_ = st.sidebar.text_input("enddatum (yyyy-mm-dd)", today)
 
     try:
         UNTIL = dt.datetime.strptime(until_, "%Y-%m-%d").date()
@@ -264,45 +271,54 @@ def interface():
         st.warning("Make sure that the end date is not before the start date")
         st.stop()
 
+    return FROM,UNTIL
+
+def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation):
+    FROM, UNTIL = test_from_until(from_, until_)
+    st.write (mode)
     df_getdata = getdata(stn, FROM.strftime("%Y%m%d"), UNTIL.strftime("%Y%m%d"))
 
     df = df_getdata.copy(deep=False)
 
-    mode = st.sidebar.selectbox("Modus", ["per dag", "specifieke dag", "jaargemiddelde", "jaartotjaar"], index=3)
-
-    if mode == "jaartotjaar":
-        show_jaar_tot_jaar(df, gekozen_weerstation)
-        datefield, title = None, None
-
-    elif mode == "jaargemiddelde":
-        df = df.groupby(["YYYY"], sort=True).mean().reset_index()
-        datefield = "YYYY"
-        title = (f"Gemiddelde jaartemperatuur  van {from_[:4]} - {until_[:4]} in {gekozen_weerstation}")
-        st.sidebar.write("Zorg ervoor dat de einddatum op 31 december valt voor het beste resultaat ")
-
-    elif mode == "specifieke dag":
-        day =  st.sidebar.number_input("Dag",   1,31,1,None,format ="%i" )
-        months = ["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"]
-
-        month = months.index(st.sidebar.selectbox("Maand", months, index=0))+1
-        # month= st.sidebar.number_input("Maand", 1,12,1,None,format ="%i"  )
-        datefield = "YYYY"
-        df = df[(df['YYYYMMDD'].dt.month==month) & (df['YYYYMMDD'].dt.day==day)]
-        title = (f"Gemiddelde temperatuur op {find_date_for_title(day,month)} van {from_[:4]} - {until_[:4]} in {gekozen_weerstation}")
-        st.sidebar.write("Zorg ervoor dat de datum in de gekozen tijdrange valt voor het beste resultaat ")
-
-    else:
-        datefield = "YYYYMMDD"
+    if mode == "per maand":
+        what_to_show = 'TX'
+        show_per_maand(df, gekozen_weerstation, what_to_show)
+        datefield = None
         title = (f"Dagtemperatuur van {from_} - {until_} in {gekozen_weerstation}")
-    wdw = st.sidebar.slider("Window smoothing curves", 1, 45, 7)
-    #st.write(df)
-    return df, datefield, title, wdw, mode
+    else:
+        if mode == "per dag":
+            datefield = "YYYYMMDD"
+            title = (f"Dagtemperatuur van {from_} - {until_} in {gekozen_weerstation}")
+        else:
+            if mode == "jaargemiddelde":
+                df = df.groupby(["YYYY"], sort=True).mean().reset_index()
 
-def show_plot(df, datefield, title,wdw):
-    to_show = [["TG", "Gem. dagtemp", "g"],
-                ["TN", "Min. dagtemp", "b"],
-                ["TX", "Max. dagtemp", "r"],
-                ]
+                title = (f"Gemiddelde jaartemperatuur  van {from_[:4]} - {until_[:4]} in {gekozen_weerstation}")
+                st.sidebar.write("Zorg ervoor dat de einddatum op 31 december valt voor het beste resultaat ")
+
+
+            elif mode == "specifieke dag":
+                day =  st.sidebar.number_input("Dag",   1,31,1,None,format ="%i" )
+                months = ["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"]
+                month = months.index(st.sidebar.selectbox("Maand", months, index=0))+1
+                # month= st.sidebar.number_input("Maand", 1,12,1,None,format ="%i"  )
+
+                df = df[(df['YYYYMMDD'].dt.month==month) & (df['YYYYMMDD'].dt.day==day)]
+                title = (f"Gemiddelde temperatuur op {find_date_for_title(day,month)} van {from_[:4]} - {until_[:4]} in {gekozen_weerstation}")
+                st.sidebar.write("Zorg ervoor dat de datum in de gekozen tijdrange valt voor het beste resultaat ")
+            datefield = "YYYY"
+        show_plot (df,  datefield, title, wdw, what_to_show)
+
+
+    show_warmingstripes (df, title)
+
+
+def show_plot(df, datefield, title,wdw, what_to_show):
+    if what_to_show == "temp":
+        to_show = [["TG", "Gem. dagtemp", "g"],
+                    ["TN", "Min. dagtemp", "b"],
+                    ["TX", "Max. dagtemp", "r"],
+                    ]
     if len(df) == 1 and datefield =="YYYY":
         st.warning("Selecteer een grotere tijdsperiode")
         st.stop()
@@ -368,9 +384,8 @@ def show_warmingstripes (df, title):
         st.pyplot()
 
 def main():
-    df,  datefield, title, wdw, mode = interface()
-    if mode!= "jaartotjaar" : show_plot (df,  datefield, title, wdw)
-    if mode !="per dag" and mode!= "jaartotjaar" : show_warmingstripes (df, title)
+    interface()
+
 
 if __name__ == "__main__":
     main()
