@@ -25,7 +25,7 @@ def read():
 
 def calculate_and_plot(data, acco_name, modus):
 
-    a_in = 1
+    a_in = 1 # α = 1 gives the Weibull distribution;
     loc_in = 0
     if modus == "exponweib":
         a_out, Kappa_out, loc_out, Lambda_out = stats.exponweib.fit(data, f0=a_in,floc=loc_in)
@@ -58,12 +58,19 @@ def calculate_and_plot(data, acco_name, modus):
         # plt.show()
         st.pyplot(fig)
     return samenvatting
+
 def main():
-    st.title("Schoonmaaktijden gefit aan Weibull verdeling")
     df = read()
 
     acco_code = ["all","w", "sa", "se", "k", "b"]
     acco_name = ["All","Waikiki", "Sahara", "Serengeti", "Kalahari", "Bali"]
+    # distributions = ["weibull_min",  "exponweib"]
+    # distribution_to_use =  st.sidebar.selectbox(
+    #         "Which distribution to use",
+    #         distributions,
+    #         index=0)
+    distribution_to_use = "weibull_min"
+    st.title(f"Schoonmaaktijden gefit aan Weibull verdeling")
 
     samenvatting =[]
     for code, name in zip (acco_code, acco_name):
@@ -76,7 +83,7 @@ def main():
         data_selection = df_selection["tijd in minuten"].tolist()
 
 
-        samenvatting_ = calculate_and_plot(data_selection, name, "weibull_min")
+        samenvatting_ = calculate_and_plot(data_selection, name, distribution_to_use)
         samenvatting.append(samenvatting_)
 
     df_samenvatting = pd.DataFrame(samenvatting, columns = ['Name', 'number', 'Shape', 'scale', 'mediaan', 'mean data'])
