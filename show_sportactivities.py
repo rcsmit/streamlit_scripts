@@ -9,7 +9,7 @@ from helpers import *
 
 def get_data():
     url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_new.csv"
-    url = "C:\\Users\\rcxsm\\Documents\\phyton_scripts\\in\\garminactivities_new.csv"
+    #url = "C:\\Users\\rcxsm\\Documents\\phyton_scripts\\in\\garminactivities_new.csv"
     df = pd.read_csv(url, delimiter=';')
     df["Datum"] = pd.to_datetime(df["Datum"], format="%d-%m-%Y")
     df = df.sort_values(by=['Datum'])
@@ -181,7 +181,7 @@ def main():
     lijst = ["find km per year",
             "find fastest per distance",
             "find fastest per year",
-            "find fastest activities",       
+            "find fastest activities",
             #"find km per month per year",
             #"find nr activities per month per year",
             "find avg km avg speed per year",
@@ -192,7 +192,7 @@ def main():
     functies = [ find_fastest_per_distance ,
         find_km_per_year ,
         find_fastest_per_year ,
-        find_fastest_activities ,     
+        find_fastest_activities ,
         #find_km_per_month_per_year ,
         #find_nr_activities_per_month_per_year,
         find_avg_km_avg_speed_per_year ,
