@@ -1,6 +1,7 @@
 #import scipy.stats as ss
 import matplotlib.pyplot as plt
 import numpy as np
+import math
 from scipy import stats
 #from scipy.stats import weibull_min
 import pandas as pd
@@ -10,6 +11,30 @@ _lock = RendererAgg.lock
 import streamlit as st
 
 # partly derived from https://stackoverflow.com/a/37036082/4173718
+def calculate_weibull_(x, scale, shape):
+    if x == 0: return 0
+    x_min_1 = 1-np.exp(-1*((x-1/scale)**shape))
+    xx = 1-np.exp(-1*((x/scale)**shape))
+    return (x_min_1 - xx)
+
+def calculate_mean(scale,shape):
+    n = (1+ (1/shape))
+    gamma = math.gamma(n)
+
+    # for t in range (1_000_000):
+    #     gamma += t**(n-1)* np.exp(-t)
+    return scale*gamma
+
+
+def calculate_weibull(x, scale, shape):
+
+    return (shape/scale) * ((x/scale)**(shape - 1)) * np.exp(-1*((x/scale)**shape))
+
+    if x == 0: return 0
+    x_min_1 = 1-np.exp(-1*((x-1/scale)**shape))
+    xx = 1-np.exp(-1*((x/scale)**shape))
+    return (x_min_1 - xx)
+
 
 def read():
     sheet_id = "1Lqddg3Rsq0jhFgL5U-HwvDdo0473QBZtjbAp9ol8kcg"
@@ -35,7 +60,9 @@ def calculate_and_plot(data, acco_name, modus):
         Lambda_out = scale
     #Plot
     bins_formula = range( int(max(data))+1)
+
     binwidth = max(data)/10
+
 
     bins = np.arange(min(data), max(data) + binwidth, binwidth)
     with _lock:
@@ -46,17 +73,21 @@ def calculate_and_plot(data, acco_name, modus):
             ax3.plot(bins_formula, stats.exponweib.pdf(bins_formula, a=a_out,c=Kappa_out,loc=loc_out,scale = Lambda_out))
         else:
             ax3.plot(bins_formula, stats.weibull_min(shape, loc, scale).pdf(bins_formula))
-
+        ax3.plot (bins_formula, calculate_weibull(bins_formula, scale, shape))
         ax.hist(data, bins = bins , density=False, alpha=0.5)
         mediaan =Lambda_out *(np.log(2) **(1/Kappa_out))
         mean_data = mean(data)
-        title =  (f"{acco_name} (n={len(data)})\n\nShape: {round(Kappa_out,2)} - Scale: {round(Lambda_out,2)}\nMediaan : {round(mediaan,2)} - mean data : {round(mean_data,2)}")
-        samenvatting = [acco_name, len(data), round(Kappa_out,2), round(Lambda_out,2), round(mediaan,2), round(mean_data,2)]
+        mean_calc =calculate_mean (scale, shape)
+        title =  (f"{acco_name} (n={len(data)})\n\nShape: {round(Kappa_out,2)} - Scale: {round(Lambda_out,2)}\nMediaan : {round(mediaan,2)} - mean data : {round(mean_data,2)} -  - mean calc : {round(mean_calc,2)}")
+        samenvatting = [acco_name, len(data), round(Kappa_out,2), round(Lambda_out,2), round(mediaan,2), round(mean_data,2), round(mean_calc,2)]
         plt.title(title)
 
         #st.write (title)
         # plt.show()
         st.pyplot(fig)
+
+
+
     return samenvatting
 
 def main():
@@ -86,7 +117,7 @@ def main():
         samenvatting_ = calculate_and_plot(data_selection, name, distribution_to_use)
         samenvatting.append(samenvatting_)
 
-    df_samenvatting = pd.DataFrame(samenvatting, columns = ['Name', 'number', 'Shape', 'scale', 'mediaan', 'mean data'])
+    df_samenvatting = pd.DataFrame(samenvatting, columns = ['Name', 'number', 'Shape', 'scale', 'mediaan', 'mean data', 'mean calc'])
     st.subheader("Samenvatting")
     try:
         st.write(df_samenvatting.style.format("{:.2}"))
