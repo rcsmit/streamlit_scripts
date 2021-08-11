@@ -5,8 +5,6 @@ import seaborn
 import streamlit as st
 from helpers import *
 
-
-
 def get_data():
     url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_new.csv"
     #url = "C:\\Users\\rcxsm\\Documents\\phyton_scripts\\in\\garminactivities_new.csv"
