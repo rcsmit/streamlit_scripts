@@ -17,6 +17,18 @@ def get_data():
     df["count"] = 1
     df = df[df["Activiteittype"] == "Hardlopen"].copy(deep=False)
     df = df[["Datum","Titel", "Afstand","Tijd", "gem_snelh", "count", "MM", "YYYY"]]
+
+    # CALCULATE AVERAGE SPEED
+    df["Tijd"]= df["Tijd"].str.zfill(8)
+    df["hh"] = df["Tijd"].str[:2].astype(int)
+    df["mm"] = df["Tijd"].str[3:5].astype(int)
+    df["ss"] = df["Tijd"].str[-2:].astype(int)
+    df["snelh_new"] = round(((3600 / (df["hh"] * 3600 + df["mm"] *60 + df["ss"]))*df[ "Afstand"]),2)
+    # df = df[round(df["snelh_new"]) != round(df["gem_snelh"])] #CHECK IF THERE ARE DIFFERNCES WITH THE GIVEN SPEED
+
+    st.write (df)
+    st.stop()
+
     return df
 
 def select(df, select_field, van, tot):
@@ -63,13 +75,13 @@ def show_scatter(df, x, what, cat, title):
 
 def show_df(df, heatmap):
     max_value = df.max()
+    st.write(df.style.format(None, na_rep="-", precision=2))
 
-    # #if heatmap == True:
-    # st.write(df.style.format(None, na_rep="-").applymap(lambda x:  cell_background_helper(x,"lineair", max_value,None)).set_precision(2))
-    # st.write(df.style .background_gradient( vmin=0, vmax=max_value))
-    # #else:
-    #st.write(df.style.format(None, na_rep="-").set_precision(2))
-    st.write(df)
+    # if heatmap == True:
+    #     st.write(f"Heatmap {max_value}")
+    #     st.write(df.style.format(None, na_rep="-", precision=2).applymap(lambda x:  cell_background_helper(x,"lineair", max_value,None)))
+    # else:
+    #     st.write(df.style.format(None, na_rep="-", precision=2))
 
 
 def find_fastest_per_distance(df_):
@@ -138,13 +150,16 @@ def find_km_per_year(df):
 
 def find_km_per_month_per_year(df):
     # Aantal activiteiten per maand (per jaar)
+    df["MM"] = df["MM"].astype(str).str.zfill(2)
+
     df_pivot = df.pivot_table(index='MM', columns='YYYY', values='Afstand',  aggfunc='sum', fill_value=0, margins = True)
     show_df(df_pivot, True)
 
 def find_nr_activities_per_month_per_year(df):
     # Aantal activiteiten per maand (per jaar)
+    df["MM"] = df["MM"].astype(str).str.zfill(2)
     df_pivot = df.pivot_table(index='MM', columns='YYYY', values='count',  aggfunc='sum', fill_value=0, margins = True)
-    st.write(df_pivot.dtypes)
+
     show_df(df_pivot, True)
 
 
@@ -180,8 +195,8 @@ def main():
             "find fastest per distance",
             "find fastest per year",
             "find fastest activities",
-            #"find km per month per year",
-            #"find nr activities per month per year",
+            "find km per month per year",
+            "find nr activities per month per year",
             "find avg km avg speed per year",
             "find activities in month",
             "show various scatters",
@@ -191,8 +206,8 @@ def main():
         find_km_per_year ,
         find_fastest_per_year ,
         find_fastest_activities ,
-        #find_km_per_month_per_year ,
-        #find_nr_activities_per_month_per_year,
+        find_km_per_month_per_year ,
+        find_nr_activities_per_month_per_year,
         find_avg_km_avg_speed_per_year ,
         find_activities_in_month ,
         show_various_scatters ,
