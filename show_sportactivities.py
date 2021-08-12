@@ -36,7 +36,7 @@ def get_data(who):
 
         df["gem_snelh"] = df["Distance"].astype(float) / df["Elapsed Time"]*3600
 
-        df.rename(columns={"Distance": "Afstand", "Elapsed Time": "Tijd", "Activity Name": "Titel"})
+        #df.rename(columns={"Distance": "Afstand", "Elapsed Time": "Tijd", "Activity Name": "Titel"})
         df["Afstand"] = df["Distance"].astype(float)
         #df["Tijd"] = df["Elapsed Time"]
         df["hh"] = (df["Elapsed Time"]/3600).astype(int)
