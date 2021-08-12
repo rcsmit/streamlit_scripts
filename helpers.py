@@ -63,3 +63,13 @@ def cell_background_helper(val,method, max, color):
 
 
     return f'background: rgba({color}, {opacity})'
+
+def left(s, amount):
+    return s[:amount]
+
+def right(s, amount):
+    return s[-amount:]
+
+
+def mid(s, offset, amount):
+    return s[offset-1:offset+amount-1]

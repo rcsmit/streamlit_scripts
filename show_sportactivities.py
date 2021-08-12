@@ -5,26 +5,38 @@ import seaborn
 import streamlit as st
 from helpers import *
 
-def get_data():
-    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_new.csv"
-    #url = "C:\\Users\\rcxsm\\Documents\\phyton_scripts\\in\\garminactivities_new.csv"
-    df = pd.read_csv(url, delimiter=';')
-    df["Datum"] = pd.to_datetime(df["Datum"], format="%d-%m-%Y")
-    df = df.sort_values(by=['Datum'])
-    df["YYYY"] = df["Datum"].dt.year
-    df["MM"] = df["Datum"].dt.month
-    df["DD"] = df["Datum"].dt.day
-    df["count"] = 1
-    df = df[df["Activiteittype"] == "Hardlopen"].copy(deep=False)
-    df = df[["Datum","Titel", "Afstand","Tijd", "gem_snelh", "count", "MM", "YYYY"]]
+def get_data(who):
+    if who == "Rene":
+        url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_new.csv"
+        #url = "C:\\Users\\rcxsm\\Documents\\phyton_scripts\\in\\garminactivities_new.csv"
+        df = pd.read_csv(url, delimiter=';')
+        df["Datum"] = pd.to_datetime(df["Datum"], format="%d-%m-%Y")
+        df = df.sort_values(by=['Datum'])
+        df["YYYY"] = df["Datum"].dt.year
+        df["MM"] = df["Datum"].dt.month
+        df["DD"] = df["Datum"].dt.day
+        df["count"] = 1
+        df = df[df["Activiteittype"] == "Hardlopen"].copy(deep=False)
+        df = df[["Datum","Titel", "Afstand","Tijd", "gem_snelh", "count", "MM", "YYYY"]]
 
-    # CALCULATE AVERAGE SPEED
-    df["Tijd"]= df["Tijd"].str.zfill(8)
-    df["hh"] = df["Tijd"].str[:2].astype(int)
-    df["mm"] = df["Tijd"].str[3:5].astype(int)
-    df["ss"] = df["Tijd"].str[-2:].astype(int)
-    df["snelh_new"] = round(((3600 / (df["hh"] * 3600 + df["mm"] *60 + df["ss"]))*df[ "Afstand"]),2)
-    # df = df[round(df["snelh_new"]) != round(df["gem_snelh"])] #CHECK IF THERE ARE DIFFERNCES WITH THE GIVEN SPEED
+        # CALCULATE AVERAGE SPEED
+        df["Tijd"]= df["Tijd"].str.zfill(8)
+        df["hh"] = df["Tijd"].str[:2].astype(int)
+        df["mm"] = df["Tijd"].str[3:5].astype(int)
+        df["ss"] = df["Tijd"].str[-2:].astype(int)
+        df["snelh_new"] = round(((3600 / (df["hh"] * 3600 + df["mm"] *60 + df["ss"]))*df[ "Afstand"]),2)
+        # df = df[round(df["snelh_new"]) != round(df["gem_snelh"])] #CHECK IF THERE ARE DIFFERNCES WITH THE GIVEN SPEED
+    elif who == "Didier":
+        Activity ID,Activity Date,Activity Name,Activity Type,Activity Description,Elapsed Time,Distance,
+        url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/activities_didier.csv"
+        #url = "C:\\Users\\rcxsm\\Documents\\phyton_scripts\\in\\garminactivities_new.csv"
+        df = pd.read_csv(url, delimiter=';')
+        df["Date"] = pd.to_datetime(df["Datum"], format="%b %d, %Y,%H %M %H %p")
+        st.write(df)
+        st.stop()
+    else:
+        st.write("Error in who")
+        st.stop()
 
     st.write (df)
     st.stop()
@@ -190,7 +202,7 @@ def show_various_scatters(df):
     show_scatter(df, "Afstand", "gem_snelh", True, None)
 
 def main():
-    df = get_data().copy(deep=False)
+    df = get_data("Didier").copy(deep=False)
     lijst = ["find km per year",
             "find fastest per distance",
             "find fastest per year",
