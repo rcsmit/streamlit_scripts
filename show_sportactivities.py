@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import seaborn
 import streamlit as st
 from helpers import *
+from streamlit import caching
+
 
 def get_data(who):
     if who == "Rene":
@@ -11,37 +13,65 @@ def get_data(who):
         #url = "C:\\Users\\rcxsm\\Documents\\phyton_scripts\\in\\garminactivities_new.csv"
         df = pd.read_csv(url, delimiter=';')
         df["Datum"] = pd.to_datetime(df["Datum"], format="%d-%m-%Y")
-        df = df.sort_values(by=['Datum'])
-        df["YYYY"] = df["Datum"].dt.year
-        df["MM"] = df["Datum"].dt.month
-        df["DD"] = df["Datum"].dt.day
-        df["count"] = 1
-        df = df[df["Activiteittype"] == "Hardlopen"].copy(deep=False)
-        df = df[["Datum","Titel", "Afstand","Tijd", "gem_snelh", "count", "MM", "YYYY"]]
+        #df = df[df["Activiteittype"] == "Hardlopen"].copy(deep=False)
 
-        # CALCULATE AVERAGE SPEED
-        df["Tijd"]= df["Tijd"].str.zfill(8)
-        df["hh"] = df["Tijd"].str[:2].astype(int)
-        df["mm"] = df["Tijd"].str[3:5].astype(int)
-        df["ss"] = df["Tijd"].str[-2:].astype(int)
-        df["snelh_new"] = round(((3600 / (df["hh"] * 3600 + df["mm"] *60 + df["ss"]))*df[ "Afstand"]),2)
-        # df = df[round(df["snelh_new"]) != round(df["gem_snelh"])] #CHECK IF THERE ARE DIFFERNCES WITH THE GIVEN SPEED
+        act_type_list =  df['Activiteittype'].drop_duplicates().sort_values().tolist()
+        act_type = st.sidebar.selectbox("Welke activiteitssoort",act_type_list, 2)
+
+        df = df[df["Activiteittype"] == act_type].copy(deep=False)
+
+
     elif who == "Didier":
-        Activity ID,Activity Date,Activity Name,Activity Type,Activity Description,Elapsed Time,Distance,
         url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/activities_didier.csv"
-        #url = "C:\\Users\\rcxsm\\Documents\\phyton_scripts\\in\\garminactivities_new.csv"
-        df = pd.read_csv(url, delimiter=';')
-        df["Date"] = pd.to_datetime(df["Datum"], format="%b %d, %Y,%H %M %H %p")
-        st.write(df)
-        st.stop()
+        #url = "C:\\Users\\rcxsm\\Documents\\phyton_scripts\\streamlit_scripts\\input\\activities_didier.csv"
+
+        df = pd.read_csv(url, delimiter=',')
+
+
+        act_type_list =  df['Activity Type'].drop_duplicates().sort_values().tolist()
+        act_type = st.sidebar.selectbox("Welke activiteitssoort",act_type_list, 5)
+
+        df = df[df["Activity Type"] == act_type].copy(deep=False)
+        df["Datum"] = pd.to_datetime(df["Activity Date"], format="%b %d, %Y, %H:%M:%S %p")
+
+        df["gem_snelh"] = df["Distance"].astype(float) / df["Elapsed Time"]*3600
+
+        df.rename(columns={"Distance": "Afstand", "Elapsed Time": "Tijd", "Activity Name": "Titel"})
+        df["Afstand"] = df["Distance"].astype(float)
+        #df["Tijd"] = df["Elapsed Time"]
+        df["hh"] = (df["Elapsed Time"]/3600).astype(int)
+        df["mm"] = ((df["Elapsed Time"] - (df['hh']*3600))/60).astype(int)
+        df["ss"] = (df["Elapsed Time"] - (df['hh']*3600) - (df['mm']*60)).astype(int)
+        df["hh"] = (df["hh"]).astype(int).astype(str).str.zfill(2)
+        df["mm"] = (df["mm"]).astype(int).astype(str).str.zfill(2)
+        df["ss"] = (df["ss"]).astype(int).astype(str).str.zfill(2)
+        df["Tijd"]  = df['hh'] + ":"+ df['mm'] +":"+ df['ss']
+        #df['period'] = df[['Year', 'quarter', ...]].agg('-'.join, axis=1)
+        df["Titel"] = df [ "Activity Name"]
+
+
     else:
-        st.write("Error in who")
+        st.error("Error in who")
         st.stop()
-
-    st.write (df)
-    st.stop()
-
+    df = df.sort_values(by=['Datum'])
+    df["YYYY"] = df["Datum"].dt.year
+    df["MM"] = df["Datum"].dt.month
+    df["DD"] = df["Datum"].dt.day
+    df["count"] = 1
+    df = df[["Datum","Titel", "Afstand","Tijd", "gem_snelh", "count", "MM", "YYYY"]]
     return df
+
+def calculate_average_speed(df):
+    # CALCULATE AVERAGE SPEED, not used atm
+
+    df["Tijd"]= df["Tijd"].str.zfill(8)
+    df["hh"] = df["Tijd"].str[:2].astype(int)
+    df["mm"] = df["Tijd"].str[3:5].astype(int)
+    df["ss"] = df["Tijd"].str[-2:].astype(int)
+    df["snelh_new"] = round(((3600 / (df["hh"] * 3600 + df["mm"] *60 + df["ss"]))*df[ "Afstand"]),2)
+    # df = df[round(df["snelh_new"]) != round(df["gem_snelh"])] #CHECK IF THERE ARE DIFFERNCES WITH THE GIVEN SPEED
+    return df
+
 
 def select(df, select_field, van, tot):
     #df = df[(df[select_field] >= round(van)) & ( df[select_field] <= round(tot) )].copy(deep=False)
@@ -157,8 +187,8 @@ def find_km_per_year(df):
 
     show_bar(df_afstand_jaar, "YYYY", "Afstand", "Afstand per jaar")
     show_bar(df_afstand_jaar, "YYYY", "count", "Aantal per jaar")
-    show_df(df_afstand_jaar[["Afstand"]], True)
-    show_df(df_afstand_jaar[["count"]], True)
+    show_df(df_afstand_jaar[["YYYY", "Afstand"]], True)
+    show_df(df_afstand_jaar[["YYYY", "count"]], True)
 
 def find_km_per_month_per_year(df):
     # Aantal activiteiten per maand (per jaar)
@@ -202,7 +232,8 @@ def show_various_scatters(df):
     show_scatter(df, "Afstand", "gem_snelh", True, None)
 
 def main():
-    df = get_data("Didier").copy(deep=False)
+    who  = st.sidebar.selectbox("Wie",["Didier", "Rene"], index=0)
+    df = get_data(who).copy(deep=False)
     lijst = ["find km per year",
             "find fastest per distance",
             "find fastest per year",
@@ -214,8 +245,8 @@ def main():
             "show various scatters",
             "find biggest distances"]
 
-    functies = [ find_fastest_per_distance ,
-        find_km_per_year ,
+    functies = [ find_km_per_year ,
+        find_fastest_per_distance ,
         find_fastest_per_year ,
         find_fastest_activities ,
         find_km_per_month_per_year ,
