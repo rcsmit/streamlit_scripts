@@ -10,49 +10,28 @@ from streamlit import caching
 def get_data(who):
     if who == "Rene":
         url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_new.csv"
-        #url = "C:\\Users\\rcxsm\\Documents\\phyton_scripts\\in\\garminactivities_new.csv"
+        #url = "C:\\Users\\rcxsm\\Documents\\phyton_scripts\\streamlit_scripts\\input\\garminactivities_new.csv"
         df = pd.read_csv(url, delimiter=';')
+
         df["Datum"] = pd.to_datetime(df["Datum"], format="%d-%m-%Y")
-        #df = df[df["Activiteittype"] == "Hardlopen"].copy(deep=False)
 
-        act_type_list =  df['Activiteittype'].drop_duplicates().sort_values().tolist()
-        act_type = st.sidebar.selectbox("Welke activiteitssoort",act_type_list, 2)
-
-        df = df[df["Activiteittype"] == act_type].copy(deep=False)
-
+        df = filter_df(df, "Activiteittype",2).copy(deep=False)
 
     elif who == "Didier":
         url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/activities_didier.csv"
         #url = "C:\\Users\\rcxsm\\Documents\\phyton_scripts\\streamlit_scripts\\input\\activities_didier.csv"
 
         df = pd.read_csv(url, delimiter=',')
-
-
-        act_type_list =  df['Activity Type'].drop_duplicates().sort_values().tolist()
-        act_type = st.sidebar.selectbox("Welke activiteitssoort",act_type_list, 5)
-
-        df = df[df["Activity Type"] == act_type].copy(deep=False)
-        df["Datum"] = pd.to_datetime(df["Activity Date"], format="%b %d, %Y, %H:%M:%S %p")
-
-        df["gem_snelh"] = df["Distance"].astype(float) / df["Elapsed Time"]*3600
-
-        #df.rename(columns={"Distance": "Afstand", "Elapsed Time": "Tijd", "Activity Name": "Titel"})
-        df["Afstand"] = df["Distance"].astype(float)
-        #df["Tijd"] = df["Elapsed Time"]
-        df["hh"] = (df["Elapsed Time"]/3600).astype(int)
-        df["mm"] = ((df["Elapsed Time"] - (df['hh']*3600))/60).astype(int)
-        df["ss"] = (df["Elapsed Time"] - (df['hh']*3600) - (df['mm']*60)).astype(int)
-        df["hh"] = (df["hh"]).astype(int).astype(str).str.zfill(2)
-        df["mm"] = (df["mm"]).astype(int).astype(str).str.zfill(2)
-        df["ss"] = (df["ss"]).astype(int).astype(str).str.zfill(2)
-        df["Tijd"]  = df['hh'] + ":"+ df['mm'] +":"+ df['ss']
-        #df['period'] = df[['Year', 'quarter', ...]].agg('-'.join, axis=1)
-        df["Titel"] = df [ "Activity Name"]
-
-
+        df = filter_df(df, "Activity Type",5).copy(deep=False)
+        prepare_df_didier(df)
     else:
         st.error("Error in who")
         st.stop()
+    df = last_manipulations_df(df).copy(deep=False)
+
+    return df
+
+def last_manipulations_df(df):
     df = df.sort_values(by=['Datum'])
     df["YYYY"] = df["Datum"].dt.year
     df["MM"] = df["Datum"].dt.month
@@ -61,9 +40,30 @@ def get_data(who):
     df = df[["Datum","Titel", "Afstand","Tijd", "gem_snelh", "count", "MM", "YYYY"]]
     return df
 
+def prepare_df_didier(df):
+    df["Datum"] = pd.to_datetime(df["Activity Date"], format="%b %d, %Y, %H:%M:%S %p")
+    df["gem_snelh"] = df["Distance"].astype(float) / df["Elapsed Time"]*3600
+    df["Afstand"] = df["Distance"].astype(float)
+    df["hh"] = (df["Elapsed Time"]/3600).astype(int)
+    df["mm"] = ((df["Elapsed Time"] - (df['hh']*3600))/60).astype(int)
+    df["ss"] = (df["Elapsed Time"] - (df['hh']*3600) - (df['mm']*60)).astype(int)
+    for xx in ["hh", "mm", "ss"]:
+        df[xx] = (df[xx]).astype(int).astype(str).str.zfill(2)
+    df["Tijd"]  = df['hh'] + ":"+ df['mm'] +":"+ df['ss']
+    df["Titel"] = df [ "Activity Name"]
+
+def filter_df(df, veldnaam, default):
+    act_type_list =  df[veldnaam].drop_duplicates().sort_values().tolist()
+    act_type = st.sidebar.selectbox("Welke activiteitssoort",act_type_list, default)
+    df = df[df[veldnaam] == act_type]
+
+    return df
+
+
+
+
 def calculate_average_speed(df):
     # CALCULATE AVERAGE SPEED, not used atm
-
     df["Tijd"]= df["Tijd"].str.zfill(8)
     df["hh"] = df["Tijd"].str[:2].astype(int)
     df["mm"] = df["Tijd"].str[3:5].astype(int)
@@ -115,8 +115,9 @@ def show_scatter(df, x, what, cat, title):
     # plt.show()
     st.pyplot(fig)
 
-def show_df(df, heatmap):
+def show_df(df, heatmap, title):
     max_value = df.max()
+    st.write(title)
     st.write(df.style.format(None, na_rep="-", precision=2))
 
     # if heatmap == True:
@@ -142,19 +143,14 @@ def find_fastest_per_distance(df_):
             pass # no activities with this distance in this year
     df_pr_of_year = pd.DataFrame(data=new_table_list)
     show_scatter(df_pr_of_year, "Afstand", "gem_snelh", False, "Beste gemiddelde tijd voor de afstand")
-    show_df(df_pr_of_year, True)
+    show_df(df_pr_of_year, True, "Beste gemiddelde tijd voor de afstand")
 
-
-
-def find_fastest_per_year(df):
-    distance = st.sidebar.slider("Distance", 0,30,5)
-    margin = st.sidebar.slider("Distance", 0.0,0.5,0.2,0.05)
+def find_pr_of_year(df, field):
     fields = ["Datum","Titel", "Afstand","Tijd", "gem_snelh", "YYYY"]
-    df = select(df, "Afstand", distance-margin,distance+margin)
     new_table_list = []
     for y in range (2010,2022):
         df_temp = select(df,"YYYY", y, y)
-        df_temp = df_temp.sort_values(by=['gem_snelh'],ascending= False).reset_index(drop=True)
+        df_temp = df_temp.sort_values(by=[field],ascending= False).reset_index(drop=True)
         my_dict = {"Datum":None,"Titel":None,"Afstand":None,"Tijd":None,"gem_snelh":None, "YYYY":None};
         try:
             for f in fields:
@@ -163,46 +159,58 @@ def find_fastest_per_year(df):
         except:
             pass # no activities with this distance in this year
     df_pr_of_year = pd.DataFrame(data=new_table_list)
+    title = (f"Beste van {field} door de jaren heen")
+    show_bar(df_pr_of_year, "YYYY", field, title)
+    show_scatter(df, "YYYY", field, False, None)
+    show_df(df_pr_of_year, True, title)
 
 
-    title = (f"Snelste snelheid door de jaren heen op {distance} km")
-    show_bar(df_pr_of_year, "YYYY", "gem_snelh", title)
-
-    show_scatter(df, "YYYY", "gem_snelh", False, None)
-    show_df(df_pr_of_year, True)
+def find_fastest_per_year(df):
+    distance = st.sidebar.slider("Distance", 0,30,5)
+    margin = st.sidebar.slider("Distance", 0.0,0.5,0.2,0.05)
+    fields = ["Datum","Titel", "Afstand","Tijd", "gem_snelh", "YYYY"]
+    df = select(df, "Afstand", distance-margin,distance+margin)
+    find_pr_of_year(df, "gem_snelh")
 
 
 def find_fastest_activities(df):
     # Snelste activiteiten
     df = df.sort_values(by=['gem_snelh'], ascending = False)
-    show_df(df.head(25), True)
+    show_df(df.head(25), True, "Snelste activiteiten")
     #show_df(df_legenda.style.format(None, na_rep="-").applymap(lambda x:  cell_background_helper(x,"lineair", max_value,None)).set_precision(2))
+    find_pr_of_year(df, "gem_snelh")
 
 
 def find_km_per_year(df):
     # Aantal kilometers per jaar
     df_afstand_jaar = df.groupby(["YYYY"]).sum().reset_index()
     #df_afstand_jaar = df_afstand_jaar[["Afstand"]]
+    df_afstand_jaar["afstand_per_keer_per_jaar"] = df_afstand_jaar["Afstand"] / df_afstand_jaar["count"]
 
 
     show_bar(df_afstand_jaar, "YYYY", "Afstand", "Afstand per jaar")
     show_bar(df_afstand_jaar, "YYYY", "count", "Aantal per jaar")
-    show_df(df_afstand_jaar[["YYYY", "Afstand"]], True)
-    show_df(df_afstand_jaar[["YYYY", "count"]], True)
+    show_bar(df_afstand_jaar, "YYYY", "afstand_per_keer_per_jaar", "Km per activiteit per jaar")
+
+    show_df(df_afstand_jaar[["YYYY", "Afstand"]], True, "Afstand per jaar")
+    show_df(df_afstand_jaar[["YYYY", "count"]], True, "Aantal keren per jaar")
+
+    show_df(df_afstand_jaar[["YYYY", "afstand_per_keer_per_jaar"]], True, "Afstand per keer per jaar")
+
 
 def find_km_per_month_per_year(df):
     # Aantal activiteiten per maand (per jaar)
     df["MM"] = df["MM"].astype(str).str.zfill(2)
 
     df_pivot = df.pivot_table(index='MM', columns='YYYY', values='Afstand',  aggfunc='sum', fill_value=0, margins = True)
-    show_df(df_pivot, True)
+    show_df(df_pivot, True, "km per maand per jaar")
 
 def find_nr_activities_per_month_per_year(df):
     # Aantal activiteiten per maand (per jaar)
     df["MM"] = df["MM"].astype(str).str.zfill(2)
     df_pivot = df.pivot_table(index='MM', columns='YYYY', values='count',  aggfunc='sum', fill_value=0, margins = True)
 
-    show_df(df_pivot, True)
+    show_df(df_pivot, True, "Activiteiten per maand per jaar")
 
 
 def find_avg_km_avg_speed_per_year(df):
@@ -210,7 +218,7 @@ def find_avg_km_avg_speed_per_year(df):
     df_mean = df.groupby(["YYYY"]).mean()
     df_mean = df_mean[["Afstand","gem_snelh"]]
     show_scatter(df_mean, "Afstand", "gem_snelh", False, "Gemiddelde afstand en snelheid per jaar")
-    show_df(df_mean, True)
+    show_df(df_mean, True, "gemiddelde afstand vs gem snelheid per jaar")
 
 def find_activities_in_month(df):
     # Activeitein in een bepaalde maand
@@ -219,11 +227,26 @@ def find_activities_in_month(df):
 
 
     df_maand_jaar = select_maand(df, month, year)
-    show_df(df_maand_jaar, True)
+    months = [
+                    "januari",
+                    "februari",
+                    "maart",
+                    "april",
+                    "mei",
+                    "juni",
+                    "juli",
+                    "augustus",
+                    "september",
+                    "oktober",
+                    "november",
+                    "december",
+                ]
+    show_df(df_maand_jaar, True, f"Activiteiten in {months[month-1]} {year}")
 def find_biggest_distances(df):
     # Verste activiteiten
     df = df.sort_values(by=['Afstand'], ascending = False)
-    show_df(df, True)
+    show_df(df, True, "Grootste afstand")
+    find_pr_of_year(df, "Afstand")
 
 def show_various_scatters(df):
     # Verschillende scatterplots
@@ -236,25 +259,27 @@ def main():
     df = get_data(who).copy(deep=False)
     lijst = ["find km per year",
             "find fastest per distance",
-            "find fastest per year",
+            "find fastest per year for a distance",
             "find fastest activities",
+            "find biggest distances",
             "find km per month per year",
             "find nr activities per month per year",
             "find avg km avg speed per year",
-            "find activities in month",
             "show various scatters",
-            "find biggest distances"]
+            "find activities in certain month",
+            ]
 
     functies = [ find_km_per_year ,
         find_fastest_per_distance ,
         find_fastest_per_year ,
         find_fastest_activities ,
+        find_biggest_distances,
         find_km_per_month_per_year ,
         find_nr_activities_per_month_per_year,
         find_avg_km_avg_speed_per_year ,
-        find_activities_in_month ,
         show_various_scatters ,
-        find_biggest_distances ]
+        find_activities_in_month ,
+         ]
     st.sidebar.subheader("Menu")
     menu_choice = st.sidebar.radio("",lijst, index=0)
     for i, choice in enumerate(lijst):
