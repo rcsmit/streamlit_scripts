@@ -5,6 +5,8 @@ import seaborn
 import streamlit as st
 from helpers import *
 from streamlit import caching
+import numpy as np
+import matplotlib.animation as animation
 
 
 def get_data(who):
@@ -254,6 +256,38 @@ def show_various_scatters(df):
     show_scatter(df, "Datum", "Afstand", False, None)
     show_scatter(df, "Afstand", "gem_snelh", True, None)
 
+def plot_histogram_distance_year(df):
+    y = st.sidebar.slider("Jaar", 2010,2021,2021)
+    df_temp = select(df,"YYYY", y,y)
+    bins = np.arange(min(df_temp["Afstand"]), max(df_temp["Afstand"])+1 ,1)
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+
+    ax.hist(df_temp["Afstand"], bins = bins , density=False, alpha=0.5)
+
+    st.pyplot (fig)
+
+
+
+def plot_histogram_distance_year_animated(df):
+    st.title("Under construction")
+    bins_animated = np.arange(0.5,30.5 ,1)
+
+    def update(curr):
+        y = 2020+curr
+        df_temp = select(df,"YYYY", y, y)
+        data = df_temp["afstand"]
+        if curr == 2021:
+            a.event_source.stop()
+        plt.cla()
+        plt.title(y)
+        plt.hist(data, bins = bins_animated)
+
+    fig = plt.figure()
+    a = animation.FuncAnimation(fig, update, interval = 11)
+
+    st.pyplot(fig)
+
 def main():
     who  = st.sidebar.selectbox("Wie",["Didier", "Rene"], index=0)
     df = get_data(who).copy(deep=False)
@@ -265,6 +299,8 @@ def main():
             "find km per month per year",
             "find nr activities per month per year",
             "find avg km avg speed per year",
+            "plot histogram distance year",
+            "plot histogram distance year animated",
             "show various scatters",
             "find activities in certain month",
             ]
@@ -277,6 +313,8 @@ def main():
         find_km_per_month_per_year ,
         find_nr_activities_per_month_per_year,
         find_avg_km_avg_speed_per_year ,
+        plot_histogram_distance_year,
+        plot_histogram_distance_year_animated,
         show_various_scatters ,
         find_activities_in_month ,
          ]

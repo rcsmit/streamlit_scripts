@@ -43,7 +43,7 @@ def read():
 
     #url = "C:\\Users\\rcxsm\\Documents\\phyton_scripts\\in\\schoonmaaktijden.csv",
     df = pd.read_csv(url, delimiter=',')
-    df = df[:-1]  #remove last row which appears to be a Nan
+    #df = df[:-1]  #remove last row which appears to be a Nan
 
     df["Datum"] = pd.to_datetime(df["Datum"], format="%d-%m-%Y")
     return df
