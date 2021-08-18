@@ -9,7 +9,9 @@ from statistics import mean
 from matplotlib.backends.backend_agg import RendererAgg
 _lock = RendererAgg.lock
 import streamlit as st
-
+import random
+from itertools import cycle
+from streamlit import caching
 # partly derived from https://stackoverflow.com/a/37036082/4173718
 def calculate_weibull_(x, scale, shape):
     if x == 0: return 0
@@ -35,7 +37,7 @@ def calculate_weibull(x, scale, shape):
     xx = 1-np.exp(-1*((x/scale)**shape))
     return (x_min_1 - xx)
 
-
+@st.cache(ttl=60 * 60 * 24)
 def read():
     sheet_id = "1Lqddg3Rsq0jhFgL5U-HwvDdo0473QBZtjbAp9ol8kcg"
     sheet_name = "gegevens"
@@ -48,7 +50,7 @@ def read():
     df["Datum"] = pd.to_datetime(df["Datum"], format="%d-%m-%Y")
     return df
 
-def calculate_and_plot(data, acco_name, modus):
+def calculate_and_plot(data, acco_name, modus, animation):
 
     a_in = 1 # α = 1 gives the Weibull distribution;
     loc_in = 0
@@ -84,27 +86,62 @@ def calculate_and_plot(data, acco_name, modus):
 
         #st.write (title)
         # plt.show()
-        st.pyplot(fig)
+        if animation ==True:
+            placeholder.pyplot(fig)
+        else:
+            st.pyplot(fig)
 
 
 
     return samenvatting
 
-def main():
-    df = read()
 
-    acco_code = ["all","w", "sa", "se", "k", "b"]
-    acco_name = ["All","Waikiki", "Sahara", "Serengeti", "Kalahari", "Bali"]
-    # distributions = ["weibull_min",  "exponweib"]
-    # distribution_to_use =  st.sidebar.selectbox(
-    #         "Which distribution to use",
-    #         distributions,
-    #         index=0)
-    distribution_to_use = "weibull_min"
-    st.title(f"Schoonmaaktijden gefit aan Weibull verdeling")
+
+
+def show_animation(df, acco_codes, acco_names, distribution_to_use ):
+
+    code_ =  st.selectbox("Which accotype to show", acco_names, index=0)
+    code = acco_codes[acco_names.index(code_)]
+
+    if code == "all":
+        df_selection = df.copy(deep=False)
+    else:
+        df_selection = df[df["Type acco"] == code].copy(deep=False)
+
+
+    samenvatting= []
+
+
+    global placeholder
+    i = st.slider("Number of cleans to show", min_value=1, max_value=len(df_selection), value=len(df_selection))
+    placeholder = st.empty()
+    df_to_show = df.iloc[:i]
+    data_selection = df_to_show["tijd in minuten"].tolist()
+    samenvatting_ = calculate_and_plot(data_selection,code_, distribution_to_use, True)
+    st.subheader("brondata")
+    st.write(df_to_show.iloc[:, : 7])
+
+    # placeholder = st.empty()
+    # c = np.arange(1,len(df_selection), dtype=int)
+    # st.write(c)
+    # for i in cycle(c):
+    #     st.write(i.dtype)
+    #     i_ =i.astype(int)
+    #     st.write(i_.dtype)
+    #     j = st.slider("Aantal cleans", min_value=1, max_value=len(df_selection), value=1, key = random.random())
+    #     df_to_show = df.iloc[:j]
+    #     data_selection = df_to_show["tijd in minuten"].tolist()
+    #     samenvatting_ = calculate_and_plot(data_selection, name, distribution_to_use, True)
+    # #     samenvatting.append(samenvatting_)
+
+    # df_samenvatting = pd.DataFrame(samenvatting, columns = ['Name', 'number', 'Shape', 'scale', 'mediaan', 'mean data', 'mean calc'])
+    # print (df_samenvatting)
+
+def show_various_plots(df, acco_codes, acco_names, distribution_to_use):
+
 
     samenvatting =[]
-    for code, name in zip (acco_code, acco_name):
+    for code, name in zip (acco_codes, acco_names):
         #print (acco_name[acco_code.index(code)])
         if code == "all":
             df_selection = df.copy(deep=False)
@@ -114,8 +151,10 @@ def main():
         data_selection = df_selection["tijd in minuten"].tolist()
 
 
-        samenvatting_ = calculate_and_plot(data_selection, name, distribution_to_use)
+        samenvatting_ = calculate_and_plot(data_selection, name, distribution_to_use, False)
         samenvatting.append(samenvatting_)
+
+
 
     df_samenvatting = pd.DataFrame(samenvatting, columns = ['Name', 'number', 'Shape', 'scale', 'mediaan', 'mean data', 'mean calc'])
     st.subheader("Samenvatting")
@@ -123,11 +162,31 @@ def main():
         st.write(df_samenvatting.style.format("{:.2}"))
     except:
         st.write(df_samenvatting)
+
     st.subheader("brondata")
     st.write(df.iloc[:, : 7])
 
-    st.write("Google sheet : https://docs.google.com/spreadsheets/d/1Lqddg3Rsq0jhFgL5U-HwvDdo0473QBZtjbAp9ol8kcg/edit#gid=0")
-    st.write("Broncode : https://github.com/rcsmit/streamlit_scripts/schoonmaaktijden.py")
+def main():
+    df = read()
+
+    acco_codes = ["all","w", "sa", "se", "k", "b"]
+    acco_names = ["All","Waikiki", "Sahara", "Serengeti", "Kalahari", "Bali"]
+    # distributions = ["weibull_min",  "exponweib"]
+    # distribution_to_use =  st.sidebar.selectbox(
+    #         "Which distribution to use",
+    #         distributions,
+    #         index=0)
+    distribution_to_use = "weibull_min"
+    st.title(f"Schoonmaaktijden gefit aan Weibull verdeling")
+    menu_choice = st.sidebar.radio("",["ALL", "interactive"], index=0)
+    if menu_choice == "ALL":
+        show_various_plots(df, acco_codes, acco_names, distribution_to_use)
+    else:
+        show_animation(df, acco_codes, acco_names, distribution_to_use)
+    st.sidebar.write("Attention: Guests are supposed to leave the accomodation clean behind as they found it. These cleaning times are in fact 'make perfect'-times !")
+    st.sidebar.write("Google sheet : https://docs.google.com/spreadsheets/d/1Lqddg3Rsq0jhFgL5U-HwvDdo0473QBZtjbAp9ol8kcg/edit#gid=0")
+    st.sidebar.write("Broncode : https://github.com/rcsmit/streamlit_scripts/schoonmaaktijden.py")
+
 
 if __name__ == "__main__":
     #caching.clear_cache()
