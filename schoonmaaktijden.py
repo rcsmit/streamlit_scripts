@@ -12,6 +12,7 @@ import streamlit as st
 import random
 from itertools import cycle
 from streamlit import caching
+import time
 # partly derived from https://stackoverflow.com/a/37036082/4173718
 def calculate_weibull_(x, scale, shape):
     if x == 0: return 0
@@ -90,6 +91,7 @@ def calculate_and_plot(data, acco_name, modus, animation):
             placeholder.pyplot(fig)
         else:
             st.pyplot(fig)
+        fig = plt.close()
 
 
 
@@ -112,30 +114,41 @@ def show_animation(df, acco_codes, acco_names, distribution_to_use ):
     samenvatting= []
 
 
+
     global placeholder
-    i = st.slider("Number of cleans to show", min_value=1, max_value=len(df_selection), value=len(df_selection))
+    animations = {"None": None, "Slow": 0.4, "Medium": 0.2, "Fast": 0.05}
+    animate = st.sidebar.radio("", options=list(animations.keys()), index=2)
+    animation_speed = animations[animate]
+
+    slider_placeholder = st.empty()
     placeholder = st.empty()
-    df_to_show = df.iloc[:i]
-    data_selection = df_to_show["tijd in minuten"].tolist()
-    samenvatting_ = calculate_and_plot(data_selection,code_, distribution_to_use, True)
-    st.subheader("brondata")
-    st.write(df_to_show.iloc[:, : 7])
 
-    # placeholder = st.empty()
-    # c = np.arange(1,len(df_selection), dtype=int)
-    # st.write(c)
-    # for i in cycle(c):
-    #     st.write(i.dtype)
-    #     i_ =i.astype(int)
-    #     st.write(i_.dtype)
-    #     j = st.slider("Aantal cleans", min_value=1, max_value=len(df_selection), value=1, key = random.random())
-    #     df_to_show = df.iloc[:j]
-    #     data_selection = df_to_show["tijd in minuten"].tolist()
-    #     samenvatting_ = calculate_and_plot(data_selection, name, distribution_to_use, True)
-    # #     samenvatting.append(samenvatting_)
 
-    # df_samenvatting = pd.DataFrame(samenvatting, columns = ['Name', 'number', 'Shape', 'scale', 'mediaan', 'mean data', 'mean calc'])
-    # print (df_samenvatting)
+    if animation_speed:
+
+        c = range(1,len(df_selection)+1)
+        for i in cycle(c):
+            time.sleep(animation_speed)
+
+            #TO FIX:  stap 1 wordt overgeslagen.
+            j = slider_placeholder.slider("Aantal cleans", min_value=1, max_value=len(df_selection), value=i, key = str(random.random()))
+            df_to_show = df_selection.iloc[:j+1]
+            data_selection = df_to_show["tijd in minuten"].tolist()
+            calculate_and_plot(data_selection, code_, distribution_to_use, True)
+        #     samenvatting.append(samenvatting_)
+
+        # df_samenvatting = pd.DataFrame(samenvatting, columns = ['Name', 'number', 'Shape', 'scale', 'mediaan', 'mean data', 'mean calc'])
+        # print (df_samenvatting)
+    else:
+            i = slider_placeholder.slider("Number of cleans to show", min_value=1, max_value=len(df_selection), value=len(df_selection))
+
+            df_to_show = df_selection.iloc[:i]
+            data_selection = df_to_show["tijd in minuten"].tolist()
+            samenvatting_ = calculate_and_plot(data_selection,code_, distribution_to_use, True)
+            st.subheader("brondata")
+            st.write(df_to_show.iloc[:, : 7])
+
+
 
 def show_various_plots(df, acco_codes, acco_names, distribution_to_use):
 
@@ -178,7 +191,7 @@ def main():
     #         index=0)
     distribution_to_use = "weibull_min"
     st.title(f"Schoonmaaktijden gefit aan Weibull verdeling")
-    menu_choice = st.sidebar.radio("",["ALL", "interactive"], index=0)
+    menu_choice = st.sidebar.radio("",["ALL", "interactive"], index=1)
     if menu_choice == "ALL":
         show_various_plots(df, acco_codes, acco_names, distribution_to_use)
     else:
