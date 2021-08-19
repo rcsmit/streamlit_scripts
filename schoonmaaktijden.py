@@ -110,10 +110,7 @@ def show_animation(df, acco_codes, acco_names, distribution_to_use ):
     else:
         df_selection = df[df["Type acco"] == code].copy(deep=False)
 
-
     samenvatting= []
-
-
 
     global placeholder
     animations = {"None": None, "Slow": 0.4, "Medium": 0.2, "Fast": 0.05}
