@@ -192,7 +192,7 @@ def edit_sheet():
     html = '<iframe src="https://docs.google.com/spreadsheets/d/1Lqddg3Rsq0jhFgL5U-HwvDdo0473QBZtjbAp9ol8kcg/edit#gid=0" width"100%" height="100%"></iframe>'
     st.markdown(html, unsafe_allow_html=True)
 
-def list_accos():
+def make_list_accos():
     """Return the acco numbers as list
 
     Returns:
@@ -212,7 +212,7 @@ def check_accos_never_cleaned(df):
     """
     gecleande_accos = df["acco nr"].tolist()
 
-    list_accos = list_accos()
+    list_accos = make_list_accos()
 
     never_cleaned = ""
     for i in list_accos:
@@ -241,7 +241,7 @@ def main():
     #         index=0)
     distribution_to_use = "weibull_min"
     st.title(f"Schoonmaaktijden gefit aan Weibull verdeling")
-    menu_choice = st.sidebar.radio("",["ALL", "interactive", "never cleaned", "edit sheet"], index=2)
+    menu_choice = st.sidebar.radio("",["ALL", "interactive", "never cleaned", "edit sheet"], index=0)
     if menu_choice == "ALL":
         show_various_plots(df, acco_codes, acco_names, distribution_to_use)
     elif menu_choice == "edit sheet":
