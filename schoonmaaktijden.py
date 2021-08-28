@@ -51,6 +51,20 @@ def read():
     df["Datum"] = pd.to_datetime(df["Datum"], format="%d-%m-%Y")
     return df
 
+def lineplot(data, acco_name):
+    data_serie = pd.Series(data)
+    sma = data_serie.rolling(window=5, center=False).mean()
+
+    with _lock:
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1)
+        ax.plot(data, linestyle="dotted")
+        ax.plot(sma)
+        title =  (f"Schoonmaaktijden door de tijd heen - {acco_name} ")
+        plt.title(title)
+        st.pyplot(fig)
+        fig = plt.close()
+
 def calculate_and_plot(data, acco_name, modus, animation):
 
     a_in = 1 # α = 1 gives the Weibull distribution;
@@ -93,24 +107,14 @@ def calculate_and_plot(data, acco_name, modus, animation):
             st.pyplot(fig)
         fig = plt.close()
 
-
-
     return samenvatting
-
-
 
 
 def show_animation(df, acco_codes, acco_names, distribution_to_use ):
 
     code_ =  st.selectbox("Which accotype to show", acco_names, index=0)
     code = acco_codes[acco_names.index(code_)]
-
-    if code == "all":
-        df_selection = df.copy(deep=False)
-    else:
-        df_selection = df[df["Type acco"] == code].copy(deep=False)
-
-    samenvatting= []
+    df_selection = select_data(df, code)
 
     global placeholder
     animations = {"None": None, "Slow": 0.4, "Medium": 0.2, "Fast": 0.05}
@@ -132,10 +136,7 @@ def show_animation(df, acco_codes, acco_names, distribution_to_use ):
             df_to_show = df_selection.iloc[:j+1]
             data_selection = df_to_show["tijd in minuten"].tolist()
             calculate_and_plot(data_selection, code_, distribution_to_use, True)
-        #     samenvatting.append(samenvatting_)
 
-        # df_samenvatting = pd.DataFrame(samenvatting, columns = ['Name', 'number', 'Shape', 'scale', 'mediaan', 'mean data', 'mean calc'])
-        # print (df_samenvatting)
     else:
             i = slider_placeholder.slider("Number of cleans to show", min_value=1, max_value=len(df_selection), value=len(df_selection))
 
@@ -145,26 +146,32 @@ def show_animation(df, acco_codes, acco_names, distribution_to_use ):
             st.subheader("brondata")
             st.write(df_to_show.iloc[:, : 7])
 
+def select_data(df, code):
+    """Select the rows with the right accotype
+
+    Args:
+        df (df): df
+        code (str): the acco type to select
+
+    Returns:
+        list: list with the cleaning times for the given acco type
+    """
+    if code == "all":
+        df_selection = df.copy(deep=False)
+    else:
+        df_selection = df[df["Type acco"] == code].copy(deep=False)
+
+    return df_selection["tijd in minuten"].tolist()
 
 
 def show_various_plots(df, acco_codes, acco_names, distribution_to_use):
-
-
     samenvatting =[]
     for code, name in zip (acco_codes, acco_names):
         #print (acco_name[acco_code.index(code)])
-        if code == "all":
-            df_selection = df.copy(deep=False)
-        else:
-            df_selection = df[df["Type acco"] == code].copy(deep=False)
+        data = select_data(df, code)
 
-        data_selection = df_selection["tijd in minuten"].tolist()
-
-
-        samenvatting_ = calculate_and_plot(data_selection, name, distribution_to_use, False)
+        samenvatting_ = calculate_and_plot(data, name, distribution_to_use, False)
         samenvatting.append(samenvatting_)
-
-
 
     df_samenvatting = pd.DataFrame(samenvatting, columns = ['Name', 'number', 'Shape', 'scale', 'mediaan', 'mean data', 'mean calc'])
     st.subheader("Samenvatting")
@@ -173,10 +180,56 @@ def show_various_plots(df, acco_codes, acco_names, distribution_to_use):
     except:
         st.write(df_samenvatting)
 
+    for code, name in zip (acco_codes, acco_names):
+        data = select_data(df, code)
+        lineplot(data, name)
+
     st.subheader("brondata")
     st.write(df.iloc[:, : 7])
 
+def edit_sheet():
+    html = '<iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQDON7pstUaT3Ftghe6jpDmYQv8iurBHKZbhKE_EYERxIy27KnIPr4zMRmd0FmWThuFanx8HJmr9fr6/pubhtml?widget=true&amp;headers=false"></iframe>'
+    html = '<iframe src="https://docs.google.com/spreadsheets/d/1Lqddg3Rsq0jhFgL5U-HwvDdo0473QBZtjbAp9ol8kcg/edit#gid=0" width"100%" height="100%"></iframe>'
+    st.markdown(html, unsafe_allow_html=True)
+
+def list_accos():
+    """Return the acco numbers as list
+
+    Returns:
+        list: List with acco numbers
+    """
+    list_saharas= list(range(1,23))
+    list_kalaharis =list(range (637,656))
+    list_balis = list(range (621,627))
+    list_waikikis = list(range(627,637))
+    list_serengeti = list(range(659,668))
+    return list_saharas + list_kalaharis+list_balis+list_waikikis+list_serengeti
+
+def check_accos_never_cleaned(df):
+    """Which acco's did Rene clean and which one didnt he clean at all?
+    Args:
+        df (df): the dataframe
+    """
+    gecleande_accos = df["acco nr"].tolist()
+
+    list_accos = list_accos()
+
+    never_cleaned = ""
+    for i in list_accos:
+        if i not in gecleande_accos:
+            never_cleaned = never_cleaned + str(i) + " - "
+    st.write (f"{never_cleaned} is nooit door Rene (geregistreerd) schoongemaakt")
+    st.subheader("Wat heeft hij wel gedaan dan?")
+    for i in list_accos:
+        if i in gecleande_accos:
+            aantal_keer = gecleande_accos.count(i)
+            st.write (f"{i} is  {aantal_keer} keer door Rene schoongemaakt")
+
+
+    st.write(df)
+
 def main():
+
     df = read()
 
     acco_codes = ["all","w", "sa", "se", "k", "b"]
@@ -188,11 +241,18 @@ def main():
     #         index=0)
     distribution_to_use = "weibull_min"
     st.title(f"Schoonmaaktijden gefit aan Weibull verdeling")
-    menu_choice = st.sidebar.radio("",["ALL", "interactive"], index=1)
+    menu_choice = st.sidebar.radio("",["ALL", "interactive", "never cleaned", "edit sheet"], index=2)
     if menu_choice == "ALL":
         show_various_plots(df, acco_codes, acco_names, distribution_to_use)
-    else:
+    elif menu_choice == "edit sheet":
+        edit_sheet()
+    elif menu_choice == "never cleaned":
+        check_accos_never_cleaned(df)
+    elif menu_choice == "interactive":
         show_animation(df, acco_codes, acco_names, distribution_to_use)
+    else:
+        st.write(ËRROR)
+        st.stop()
     st.sidebar.write("Attention: Guests are supposed to leave the accomodation clean behind as they found it. These cleaning times are in fact 'make perfect'-times !")
     st.sidebar.write("Google sheet : https://docs.google.com/spreadsheets/d/1Lqddg3Rsq0jhFgL5U-HwvDdo0473QBZtjbAp9ol8kcg/edit#gid=0")
     st.sidebar.write("Broncode : https://github.com/rcsmit/streamlit_scripts/schoonmaaktijden.py")
