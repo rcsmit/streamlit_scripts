@@ -91,6 +91,7 @@ def getdata(stn, fromx, until):
         df["MM"] = df["YYYYMMDD"].dt.month
         df["DD"] = df["YYYYMMDD"].dt.day
         df["dayofyear"] = df["YYYYMMDD"].dt.dayofyear
+        df["count"] = 1
         month_long_to_short = {
             "January": "Jan",
             "February": "Feb",
@@ -135,26 +136,55 @@ def getdata(stn, fromx, until):
             "neerslag_etmaalsom",
         ]
         for d in to_divide_by_10:
-            df[d] = df[d] / 10
+            try:
+                df[d] = df[d] / 10
+            except:
+                df[d] = None
 
     return df, url
+def show_aantal_kerend(df, gekozen_weerstation, what_to_show_):
 
+    what_to_show_ = what_to_show_ if type(what_to_show_) == list else [what_to_show_]
+
+    df.set_index("YYYYMMDD")
+    (month_min,month_max) = st.sidebar.slider("Maanden (van/tot en met)", 1, 12, (1,12))
+
+    (value_min,value_max) = st.sidebar.slider("Waarde (van/tot en met)", -99, 99, (0,99))
+
+
+    jaren = df["YYYY"].tolist()
+    for what_to_show in what_to_show_:
+        df = df[(df["MM"] >= month_min) & (df["MM"] <= month_max)]
+        df = df[(df[what_to_show] >= value_min) & (df[what_to_show] <= value_max)]
+
+        df_grouped = df.groupby(by=["year"]).sum().reset_index()
+        df_grouped = df_grouped[["year", "count"]]
+
+        fig, ax = plt.subplots()
+        plt.title(f"Aantal keren dat { what_to_show} in {gekozen_weerstation} tussen {value_min} en {value_max} ligt")
+        plt.bar(df_grouped["year"], df_grouped["count"])
+        plt.grid()
+        plt.xticks(rotation=270)
+
+
+        st.pyplot(fig)
+
+        st.write(df_grouped)
+        st.write(df)
 
 def show_per_maand(df, gekozen_weerstation, what_to_show_):
     what_to_show_ = what_to_show_ if type(what_to_show_) == list else [what_to_show_]
 
+
     df.set_index("YYYYMMDD")
-    month_min = st.sidebar.number_input("Beginmaand (van)", 1, 12, 1, None, format="%i")
-    month_max = st.sidebar.number_input(
-        "Eindmaand (tot en met)", 1, 12, 12, None, format="%i"
-    )
+    (month_min,month_max) = st.sidebar.slider("Maanden (van/tot en met)", 1, 12, (1,12))
     groeperen = st.sidebar.selectbox(
         "Per dag/maandgemiddelde", ["per_dag", "maandgem"], index=1
     )
 
     jaren = df["YYYY"].tolist()
-    df = df[(df["MM"] >= month_min)]
-    df = df[(df["MM"] <= month_max)]
+    df = df[(df["MM"] >= month_min) & (df["MM"] <= month_max)]
+
     for what_to_show in what_to_show_:
 
         fig, ax = plt.subplots()
@@ -265,7 +295,7 @@ def interface():
     until_ = st.sidebar.text_input("enddatum (yyyy-mm-dd)", today)
 
     mode = st.sidebar.selectbox(
-        "Modus", ["per dag", "specifieke dag", "jaargemiddelde", "per maand"], index=3
+        "Modus", ["per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "per maand"], index=4
     )
     wdw = st.sidebar.slider("Window smoothing curves", 1, 45, 7)
 
@@ -322,7 +352,7 @@ def list_to_text(what_to_show_):
 
     Returns:
         string: text to use in plottitle
-    """    
+    """
     what_to_show_ = what_to_show_ if type(what_to_show_) == list else [what_to_show_]
     w = ""
     for w_ in what_to_show_:
@@ -347,10 +377,13 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation):
         show_per_maand(df, gekozen_weerstation, what_to_show)
         datefield = None
         title = f"{what_to_show_as_txt} van {from_} - {until_} in {gekozen_weerstation}"
+    elif mode == "aantal keren":
+            show_aantal_kerend(df, gekozen_weerstation, what_to_show)
     else:
         if mode == "per dag":
             datefield = "YYYYMMDD"
             title = f"{what_to_show_as_txt} van {from_} - {until_} in {gekozen_weerstation}"
+
         else:
             datefield = "YYYY"
             if mode == "jaargemiddelde":
@@ -386,7 +419,7 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation):
                 )
         show_plot(df, datefield, title, wdw, what_to_show)
 
-    show_warmingstripes(df, title)
+        show_warmingstripes(df, title)
     st.sidebar.write(f"URL to get data: {url}")
 
 
