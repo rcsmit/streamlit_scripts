@@ -209,9 +209,82 @@ def extra_plot_pmf(df, acco_name, data, bins_formula, bins, shape, scale, binwid
                 y_new.append(y_)
                 temp = 0
 
-        plt.bar(bins_new, y_new, align="center", width=step, label = "PMF_bar", color = "red")
-        plt.hist(data, bins = bins , density=False, alpha=0.5, label = "reality", color = "yellow")
-        title =  (f"Reality to PMF - {acco_name} (n={len(data)})\n\nShape: {round(shape,2)} - Scale: {round(scale,2)}")
+        plt.bar(bins_new, y_new, align="center", width=step,alpha=0.5, label = "PMF_formula", color = "red")
+        plt.hist(data, bins = bins , density=False, alpha=0.5, label = "PMF_reality", color = "yellow")
+        title =  (f"Reality vs. PMF - {acco_name} (n={len(data)})\n\nShape: {round(shape,2)} - Scale: {round(scale,2)}")
+
+        plt.grid()
+        plt.legend()
+        plt.title(title)
+        st.pyplot(fig_extra_plot)
+        fig_extra_plot = plt.close()
+        # correlation, p_value = stats.pearsonr(data, y_new) #first I have te rework the data in frequencies
+
+
+import bisect
+
+def find_ge(a, low, high):
+    i = bisect.bisect_left(a, low)
+    g = bisect.bisect_right(a, high)
+    if i != len(a) and g != len(a):
+        # return a[i:g]
+        return len(a[i:g])
+    raise ValueError
+
+def extra_plot_cdf(df, acco_name, data, bins_formula, bins, shape, scale, binwidth):
+    """Calculate a plot with the real data compared with the data following the formula with given shape and scale
+
+
+    Args:
+        what ([type]): [description]
+        acco_name ([type]): [description]
+        data ([type]): [description]
+        bins_formula ([type]): [description]
+        bins ([type]): [description]
+        shape ([type]): [description]
+        scale ([type]): [description]
+    """
+    totaal_aantal = len(df)
+
+    reeks = df["tijd in minuten"].tolist()
+    reeks.sort()
+    lengte_reeks = len(reeks)
+
+    #reeks_test = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,22,23]
+    #len_reeks_test = len(reeks_test)
+
+
+    with _lock:
+        bins_new = []
+        y_new, y_reality = [],[]
+        fig_extra_plot = plt.figure()
+        cumm_y = 0
+        j=0
+
+        if binwidth == None:
+            step =  round(max(data) / 10)
+        else:
+            step = binwidth
+
+
+        for i in range((max(data)+1)):
+            temp = 0
+            if i % step == 0:
+                y_ = calculate_weibull_cdf_discr(i, scale, shape)
+
+                bins_new.append (i)
+                y_new.append(y_)
+                temp = 0
+
+                lengte_selectie = find_ge(reeks, j,i)
+                cumm_y =+ lengte_selectie / lengte_reeks
+                j=1
+                y_reality.append(cumm_y)
+
+        plt.bar(bins_new, y_new, align="center", width=step,alpha=0.5, label = "CDF_formula", color = "red")
+        plt.bar(bins_new, y_reality, align="center", width=step, alpha=0.5, label = "CDF_reality", color = "yellow")
+        #plt.hist(data, bins = bins , density=False, alpha=0.5, label = "reality", color = "yellow")
+        title =  (f"Reality vs. CDF - {acco_name} (n={len(data)})\n\nShape: {round(shape,2)} - Scale: {round(scale,2)}")
 
         plt.grid()
         plt.legend()
@@ -261,7 +334,7 @@ def calculate_and_plot(df_selection, data, acco_name, modus, animation, binwidth
             # WRONG ax3.plot (bins_formula, calculate_weibull_pdf_wrong(bins_formula, scale, shape), color = "red", label = "old/pdf_wrong", alpha = 0.5)
             ax3.plot (bins_formula, calculate_weibull_pdf(bins_formula, scale, shape), color = "blue", label = "pdf", alpha = 0.5)
             pass
-        ax.hist(data, bins = bins , density=False, alpha=0.5)
+        ax.hist(data, bins = bins , density=False, alpha=0.5, label = "reality")
 
         mediaan =Lambda_out *(np.log(2) **(1/Kappa_out))
         mean_data = mean(data)
@@ -281,7 +354,7 @@ def calculate_and_plot(df_selection, data, acco_name, modus, animation, binwidth
             with st.expander(f"Extra plots {acco_name}" , expanded = False):
                 extra_plot_pmf(df_selection, acco_name, data, bins_formula, bins, shape, scale, binwidth)
 
-
+                extra_plot_cdf(df_selection, acco_name, data, bins_formula, bins, shape, scale, binwidth)
                 # what_list = ["PDF", "CDF", "CHZ"] PDF and CHZ doesnt have an added value for now
 
                 what_list = ["PDF", "CDF","PMF", "CDF_disc",  "CHZ",]
@@ -430,7 +503,7 @@ def main():
 
     st.title(f"Schoonmaaktijden gefit aan Weibull verdeling")
     menu_choice = st.sidebar.radio("",["ALL", "animated", "never cleaned", "edit sheet", "show formulas"], index=0)
-    binwidth = st.sidebar.slider("Binwidth", 1, 20, 10)
+    binwidth = st.sidebar.slider("Binwidth", 1, 20, 6)
     st.sidebar.write("Attention: Guests are supposed to leave the accomodation clean behind as they found it. These cleaning times are in fact 'make perfect'-times !")
     st.sidebar.write("Google sheet : https://docs.google.com/spreadsheets/d/1Lqddg3Rsq0jhFgL5U-HwvDdo0473QBZtjbAp9ol8kcg/edit#gid=0")
     st.sidebar.write("Broncode : https://github.com/rcsmit/streamlit_scripts/schoonmaaktijden.py")
