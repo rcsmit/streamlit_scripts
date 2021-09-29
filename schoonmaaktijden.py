@@ -318,7 +318,6 @@ def calculate_and_plot(df_selection, data, acco_name, modus, animation, binwidth
         Lambda_out = scale
     #Plot
     bins_formula = range( int(max(data))+1)
-
     #binwidth = max(data)/10
 
     bins = np.arange(min(data), max(data) + binwidth, binwidth)
