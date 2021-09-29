@@ -15,10 +15,7 @@ from streamlit import caching
 import time
 # partly derived from https://stackoverflow.com/a/37036082/4173718
 
-# https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.weibull_min.html
-# https://stat.ethz.ch/R-manual/R-devel/library/stats/html/Weibull.html
-# https://www.sciencedirect.com/topics/computer-science/weibull-distribution
-# https://www.itl.nist.gov/div898/handbook/eda/section3/eda3668.htm
+
 
 
 
@@ -121,7 +118,8 @@ def lineplot(data, acco_name):
         ax = fig.add_subplot(1, 1, 1)
         ax.plot(data, linestyle="dotted")
         ax.plot(sma)
-        title =  (f"Schoonmaaktijden door de tijd heen - {acco_name} ")
+        title =  (f"Cleaning times through the time - {acco_name} ")
+        plt.xlabel("Number of cleans")
         plt.title(title)
         st.pyplot(fig)
         fig = plt.close()
@@ -168,7 +166,7 @@ def extra_plot_pmf(df, acco_name, data, bins_formula, bins, shape, scale, binwid
         scale ([type]): [description]
     """
     totaal_aantal = len(df)
-    px = [0.25,0.5,0.75,0.95]
+    px = [0.25,0.5,0.632,0.75,0.95]
     reeks = df["tijd in minuten"].tolist()
     reeks.sort()
     lengte_reeks = len(reeks)
@@ -298,7 +296,7 @@ def show_animation(df, acco_codes, acco_names, distribution_to_use,binwidth ):
 
     code_ =  st.selectbox("Which accotype to show", acco_names, index=0)
     code = acco_codes[acco_names.index(code_)]
-    data_selection = select_data(df, code)
+    df_selection, data_selection = select_data(df, code)
 
     global placeholder
     animations = {"None": None, "Slow": 0.4, "Medium": 0.2, "Fast": 0.05}
@@ -367,7 +365,7 @@ def show_various_plots(df, acco_codes, acco_names, distribution_to_use, binwidth
         st.write(df_samenvatting)
 
     for code, name in zip (acco_codes, acco_names):
-        data = select_data(df, code)
+        df_selection, data = select_data(df, code)
         lineplot(data, name)
 
     st.subheader("brondata")
@@ -466,6 +464,17 @@ def main():
         st.write ("cumm_hazard : y = (x/scale)**shape")
         st.write ("mean : n = (1+ (1/shape)) |  gamma = math.gamma(n) | y = scale*gamma")
         st.write ("pdf_not_used :    x_min_1 = 1-np.exp(-1*((x-1/scale)**shape)) |     xx = 1-np.exp(-1*((x/scale)**shape))| y = (x_min_1 - xx)")
+        st.subheader("Extra info")
+        st.write(" the shape parameter describes the shape of your data’s distribution. Statisticians also refer to it as the Weibull slope because its value equals the slope of the line on a probability plot. Shape value of 2 equals a Rayleigh distribution, which is equivalent to a Chi-square distribution with two degrees of freedom. Shape value near of 3 approximates the normal distribution")
+
+        st.write ("The scale parameter represents the variability present in the distribution. The value of the scale parameter equals the 63.2 percentile in the distribution. 63.2% of the values in the distribution are less than the scale value.")
+        st.write("https://statisticsbyjim.com/probability/weibull-distribution/")
+        st.subheader("Links")
+        st.write("https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.weibull_min.html")
+        st.write("https://stat.ethz.ch/R-manual/R-devel/library/stats/html/Weibull.html")
+        st.write("https://www.sciencedirect.com/topics/computer-science/weibull-distribution")
+        st.write("https://www.itl.nist.gov/div898/handbook/eda/section3/eda3668.htm")
+
     else:
         st.write("ËRROR")
         st.stop()
