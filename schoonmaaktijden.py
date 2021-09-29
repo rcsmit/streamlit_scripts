@@ -105,7 +105,6 @@ def read():
 
 def lineplot(data, acco_name):
     """Maak een plot Schoonmaaktijden door de tijd heen
-
     Args:
         data ([type]): [description]
         acco_name ([type]): [description]
