@@ -193,7 +193,9 @@ def extra_plot_pmf(df, acco_name, data, bins_formula, bins, shape, scale, binwid
 
     with _lock:
         bins_new = []
-        y_new = []
+        y_new, y_reality = [],[]
+        j = 0
+
         fig_extra_plot = plt.figure()
         if binwidth == None:
             step =  round(max(data) / 10)
@@ -209,8 +211,15 @@ def extra_plot_pmf(df, acco_name, data, bins_formula, bins, shape, scale, binwid
                 y_new.append(y_)
                 temp = 0
 
+                lengte_selectie = find_ge(reeks, j,i)
+                cumm_y =+ lengte_selectie / lengte_reeks
+
+                y_reality.append(cumm_y* lengte_reeks )
+                j = i
+
         plt.bar(bins_new, y_new, align="center", width=step,alpha=0.5, label = "PMF_formula", color = "red")
-        plt.hist(data, bins = bins , density=False, alpha=0.5, label = "PMF_reality", color = "yellow")
+        #plt.hist(data, bins = bins , density=False, alpha=0.5, label = "PMF_reality", color = "yellow")
+        plt.bar(bins_new, y_reality, align="center", width=step, alpha=0.5, label = "PMF_reality", color = "yellow")
         title =  (f"Reality vs. PMF - {acco_name} (n={len(data)})\n\nShape: {round(shape,2)} - Scale: {round(scale,2)}")
 
         plt.grid()
@@ -229,7 +238,8 @@ def find_ge(a, low, high):
     if i != len(a) and g != len(a):
         # return a[i:g]
         return len(a[i:g])
-    raise ValueError
+    else:
+        return 0
 
 def extra_plot_cdf(df, acco_name, data, bins_formula, bins, shape, scale, binwidth):
     """Calculate a plot with the real data compared with the data following the formula with given shape and scale
@@ -278,7 +288,7 @@ def extra_plot_cdf(df, acco_name, data, bins_formula, bins, shape, scale, binwid
 
                 lengte_selectie = find_ge(reeks, j,i)
                 cumm_y =+ lengte_selectie / lengte_reeks
-                j=1
+
                 y_reality.append(cumm_y)
 
         plt.bar(bins_new, y_new, align="center", width=step,alpha=0.5, label = "CDF_formula", color = "red")
