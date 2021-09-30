@@ -203,19 +203,20 @@ def extra_plot_pmf(df, acco_name, data, bins_formula, bins, shape, scale, binwid
             step = binwidth
 
 
-        for i in range((max(data)+1)):
-            temp = 0
-            if i % step == 0:
+        for i in range(((reeks[-1])+1+step)):
+
+            if i % step == 0 or i== (reeks[-1]+step+1):
+
                 y_ = len(data) * calculate_weibull_pmf_step(i, scale, shape, step)
                 bins_new.append (i)
                 y_new.append(y_)
-                temp = 0
 
                 lengte_selectie = find_ge(reeks, j,i)
                 cumm_y =+ lengte_selectie / lengte_reeks
 
                 y_reality.append(cumm_y* lengte_reeks )
-                j = i
+                j = i+1
+
 
         plt.bar(bins_new, y_new, align="center", width=step,alpha=0.5, label = "PMF_formula", color = "red")
         #plt.hist(data, bins = bins , density=False, alpha=0.5, label = "PMF_reality", color = "yellow")
@@ -237,9 +238,12 @@ def find_ge(a, low, high):
     g = bisect.bisect_right(a, high)
     if i != len(a) and g != len(a):
         # return a[i:g]
+        #st.write (f"{low}  {high}  {i} {g}  {a[i:g]}")
         return len(a[i:g])
     else:
-        return 0
+        #st.write (f"{low}  {high}  {i} {g}  {a[i:g]} {len(a)} {len(a[i:g])}")
+        return len(a[i:g])
+
 
 def extra_plot_cdf(df, acco_name, data, bins_formula, bins, shape, scale, binwidth):
     """Calculate a plot with the real data compared with the data following the formula with given shape and scale
@@ -277,7 +281,7 @@ def extra_plot_cdf(df, acco_name, data, bins_formula, bins, shape, scale, binwid
             step = binwidth
 
 
-        for i in range((max(data)+1)):
+        for i in range((max(data)+1+binwidth)):
             temp = 0
             if i % step == 0:
                 y_ = calculate_weibull_cdf_discr(i, scale, shape)
@@ -499,6 +503,7 @@ def main():
 
     acco_codes = ["all","w", "sa", "se", "k", "b"]
     acco_names = ["All","Waikiki", "Sahara", "Serengeti", "Kalahari", "Bali"]
+
 
     # distributions = ["weibull_min",  "exponweib"]
     # distribution_to_use =  st.sidebar.selectbox(
