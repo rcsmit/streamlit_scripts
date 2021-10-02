@@ -165,7 +165,7 @@ def extra_plot_pmf(df, acco_name, data, bins_formula, bins, shape, scale, binwid
         scale ([type]): [description]
     """
     totaal_aantal = len(df)
-    px = [0.25,0.5,0.632,0.75,0.95]
+    px = [0.10, 0.25,0.5,0.632,0.75,0.9, 0.95,0.99]
     reeks = df["tijd in minuten"].tolist()
     reeks.sort()
     lengte_reeks = len(reeks)
@@ -214,7 +214,7 @@ def extra_plot_pmf(df, acco_name, data, bins_formula, bins, shape, scale, binwid
                 lengte_selectie = find_ge(reeks, j,i)
                 cumm_y =+ lengte_selectie / lengte_reeks
 
-                y_reality.append(cumm_y* lengte_reeks )
+                y_reality.append(cumm_y * lengte_reeks )
                 j = i+1
 
 
@@ -222,7 +222,9 @@ def extra_plot_pmf(df, acco_name, data, bins_formula, bins, shape, scale, binwid
         #plt.hist(data, bins = bins , density=False, alpha=0.5, label = "PMF_reality", color = "yellow")
         plt.bar(bins_new, y_reality, align="center", width=step, alpha=0.5, label = "PMF_reality", color = "yellow")
         title =  (f"Reality vs. PMF - {acco_name} (n={len(data)})\n\nShape: {round(shape,2)} - Scale: {round(scale,2)}")
-
+        # secax = ax.secondary_xaxis('top', functions=(deg2rad, rad2deg))
+        # secax.set_xlabel('angle [rad]')
+        plt.show()
         plt.grid()
         plt.legend()
         plt.title(title)
@@ -403,7 +405,7 @@ def show_animation(df, acco_codes, acco_names, distribution_to_use,binwidth ):
             # df_to_show = df_selection.iloc[:j+1]
             # data_selection = df_to_show["tijd in minuten"].tolist()
             data_selection_ = data_selection[:j+1]
-            calculate_and_plot(data_selection_, code_, distribution_to_use, True, binwidth)
+            calculate_and_plot(df_selection, data_selection_, code_, distribution_to_use, True, binwidth)
 
     else:
             i = slider_placeholder.slider("Number of cleans to show", min_value=1, max_value=len(data_selection), value=len(data_selection))
@@ -411,7 +413,7 @@ def show_animation(df, acco_codes, acco_names, distribution_to_use,binwidth ):
             # df_to_show = df_selection.iloc[:i]
             # data_selection = df_to_show["tijd in minuten"].tolist()
             data_selection_ = data_selection[:i]
-            samenvatting_ = calculate_and_plot(data_selection_,code_, distribution_to_use, True, binwidth)
+            samenvatting_ = calculate_and_plot(df_selection, data_selection_,code_, distribution_to_use, True, binwidth)
             # st.subheader("brondata")
             # st.write(df_to_show.iloc[:, : 7])
 
@@ -498,12 +500,10 @@ def check_accos_never_cleaned(df):
     st.write(df)
 
 def main():
-
     df = read()
 
     acco_codes = ["all","w", "sa", "se", "k", "b"]
     acco_names = ["All","Waikiki", "Sahara", "Serengeti", "Kalahari", "Bali"]
-
 
     # distributions = ["weibull_min",  "exponweib"]
     # distribution_to_use =  st.sidebar.selectbox(
