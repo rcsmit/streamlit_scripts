@@ -2,3 +2,4 @@ __pycache__/
 gitnore/
 input/gitnore/
 aggrid_examples/
+.streamlit/
