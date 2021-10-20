@@ -45,7 +45,7 @@ def review_generator(document):
         message += "."
     message2= message.replace("e", ".XX")
     return message2
-    
+
 def make_pairs(corpus):
     for i in range(len(corpus)-1):
         yield (corpus[i], corpus[i+1])
@@ -93,7 +93,7 @@ def generate (corpus):
 def main():
     st.title('Meditation generator')
     reviews= ""
-    document_ = ["meditation.txt","chopra.txt", "maxhavelaar.txt", "taylorswiftlyrics.txt"]
+    document_ = ["meditation.txt","chopra.txt", "maxhavelaar.txt", "taylorswiftlyrics.txt","Het-Boek.txt"]
 
     document = st.sidebar.multiselect(
             "What to show left-axis (multiple possible)", document_, ["meditation.txt"]
