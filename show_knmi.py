@@ -438,24 +438,8 @@ def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw):
         {"date": [],  "q10": [], "q25": [], "q50":[] ,"avg": [], "q75": [], "q90": []}
     )
     year_to_show = st.sidebar.number_input("Year to show (2100 for nothing)", 1900, 2100, 2021)
-    #st.write (df)
 
-    months = [
-                    "januari",
-                    "februari",
-                    "maart",
-                    "april",
-                    "mei",
-                    "juni",
-                    "juli",
-                    "augustus",
-                    "september",
-                    "oktober",
-                    "november",
-                    "december",
-                ]
-    month_from = months.index(st.sidebar.selectbox("Month from ", months, index=0)) + 1
-    month_until = months.index(st.sidebar.selectbox("Month until (incl.) ", months, index=11)) + 1
+    (month_from,month_until) = st.sidebar.slider("Months (from/until (incl.))", 1, 12, (1,12))
     if month_from > month_until:
         st.warning("Make sure that the end month is not before the start month")
         st.stop()
@@ -474,7 +458,6 @@ def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw):
                 ]
 
             if len(df__)>0:
-                #st.write(df__[what_to_show].iloc[0])
                 value_in_year_ = df__[what_to_show].iloc[0]
                 value_in_year = value_in_year_[0]
             else:
@@ -483,11 +466,10 @@ def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw):
                 data = df_[what_to_show] #.tolist()
                 #st.write(data)
                 date_ = str(month) + "-"  + str(day)
-                q25 = np.percentile(data, 25)
-                q75 = np.percentile(data, 75)
-                q50 = np.percentile(data, 50)
-
                 q10 = np.percentile(data, 10)
+                q25 = np.percentile(data, 25)
+                q50 = np.percentile(data, 50)
+                q75 = np.percentile(data, 75)
                 q90 = np.percentile(data, 90)
                 avg = data.mean()
 
@@ -510,15 +492,11 @@ def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw):
     columns = ["q10", "q25", "avg", "q50", "q75", "q90", "value_in_year"]
     for c in columns:
         df_quantile[c] = df_quantile[c].rolling(wdw).mean()
-    df_quantile_as_str = df_quantile.astype(str)
-    #st.write( df_quantile_as_str)
     colors = ["red", "blue", ["yellow"]]
     with _lock:
         fig1x = plt.figure()
         ax = fig1x.add_subplot(111)
         idx = 0
-        #for idx, category in enumerate(data.category.unique()):
-        #df_quantile = data[data['category']==category]
         df_quantile.plot(x='date',y='avg', ax=ax, linewidth=0.75,
                         color=colors[idx],
                         label="avg")
@@ -537,25 +515,16 @@ def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw):
                         y2=df_quantile['q90'],
                         alpha=0.15, facecolor=colors[idx])
 
-        # for i, what_to_show in enumerate(what_to_show_):
-        #     sma = df[what_to_show].rolling(window=wdw, center=True).mean()
-        #     ax = df[what_to_show].plot(
-        #         label="_nolegend_",
-        #         linestyle="dotted",
-        #         color=color_list[i],
-        #         linewidth=0.5,
-        #     )
-        #     ax = sma.plot(label=what_to_show, color=color_list[i], linewidth=0.75)
 
-        # ax.set_xticks(df[datefield].index)
+        ax.set_xticks(df_quantile["date"].index)
         # if datefield == "YYYY":
         #     ax.set_xticklabels(df[datefield], fontsize=6, rotation=90)
         # else:
-        #     ax.set_xticklabels(df[datefield].dt.date, fontsize=6, rotation=90)
-        # xticks = ax.xaxis.get_major_ticks()
-        # for i, tick in enumerate(xticks):
-        #     if i % 10 != 0:
-        #         tick.label1.set_visible(False)
+        ax.set_xticklabels(df_quantile["date"], fontsize=6, rotation=90)
+        xticks = ax.xaxis.get_major_ticks()
+        for i, tick in enumerate(xticks):
+            if i % 10 != 0:
+                tick.label1.set_visible(False)
 
         # plt.xticks()
         plt.grid(which="major", axis="y")
