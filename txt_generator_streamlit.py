@@ -100,7 +100,10 @@ def main():
         )
     text = document
     for d in document:
-            r = open("input/"+d, encoding='utf8').read()
+            try:
+                r  = open("input/"+d, encoding='utf8').read()
+            except:
+                r  = open("input/"+d, encoding='ISO-8859-1').read()
             reviews= reviews + r
 
 
