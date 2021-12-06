@@ -15,6 +15,9 @@ from matplotlib.colors import ListedColormap
 import numpy as np
 import matplotlib.dates as mdates
 
+import plotly.express as px
+import plotly.graph_objects as go
+
 
 # INSPRIATION : https://weatherspark.com/m/52666/10/Average-Weather-in-October-in-Utrecht-Netherlands
 # https://radumas.info/blog/tutorial/2017/04/17/percentile-test.html
@@ -299,7 +302,7 @@ def interface():
     until_ = st.sidebar.text_input("enddatum (yyyy-mm-dd)", today)
 
     mode = st.sidebar.selectbox(
-        "Modus", ["per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "per maand", "percentiles"], index=5
+        "Modus", ["per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "per maand", "percentiles"], index=0
     )
     wdw = st.sidebar.slider("Window smoothing curves", 1, 45, 7)
 
@@ -314,7 +317,7 @@ def interface():
         "neerslag_duur",
         "neerslag_etmaalsom",
     ]
-    what_to_show = st.sidebar.multiselect("Wat weer te geven", show_options, "temp_avg")
+    what_to_show = st.sidebar.multiselect("Wat weer te geven", show_options, "temp_max")
 
     return stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation
 
@@ -389,8 +392,10 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation):
         if mode == "per dag":
             datefield = "YYYYMMDD"
             title = f"{what_to_show_as_txt} van {from_} - {until_} in {gekozen_weerstation}"
+            graph_type = "plotly"
 
         else:
+            graph_type = "pyplot"
             datefield = "YYYY"
             if mode == "jaargemiddelde":
                 df = df.groupby(["YYYY"], sort=True).mean().reset_index()
@@ -423,7 +428,7 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation):
                 st.sidebar.write(
                     "Zorg ervoor dat de datum in de gekozen tijdrange valt voor het beste resultaat "
                 )
-        show_plot(df, datefield, title, wdw, what_to_show)
+        show_plot(df, datefield, title, wdw, what_to_show, graph_type)
 
         show_warmingstripes(df, title)
     st.sidebar.write(f"URL to get data: {url}")
@@ -435,8 +440,7 @@ def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw):
         st.stop()
 
     df_quantile = pd.DataFrame(
-        {"date": [],  "q10": [], "q25": [], "q50":[] ,"avg": [], "q75": [], "q90": []}
-    )
+        {"date": [],  "q10": [], "q25": [], "q50":[] ,"avg": [], "q75": [], "q90": []}    )
     year_to_show = st.sidebar.number_input("Year to show (2100 for nothing)", 1900, 2100, 2021)
 
     (month_from,month_until) = st.sidebar.slider("Months (from/until (incl.))", 1, 12, (1,12))
@@ -449,90 +453,170 @@ def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw):
 
     for month in list(range(1,13)):
         for day in list(range(1,32)):
-            df_ = df[
-                    (df["YYYYMMDD"].dt.month == month) & (df["YYYYMMDD"].dt.day == day)
-                ]
-
-            df__ = df[
-                    (df["YYYYMMDD"].dt.year == year_to_show) & (df["YYYYMMDD"].dt.month == month) & (df["YYYYMMDD"].dt.day == day)
-                ]
-
-            if len(df__)>0:
-                value_in_year_ = df__[what_to_show].iloc[0]
-                value_in_year = value_in_year_[0]
+            if month==2 and day==29:
+                pass
             else:
-                value_in_year = None
-            if len(df_)>0:
-                data = df_[what_to_show] #.tolist()
-                #st.write(data)
-                date_ = str(month) + "-"  + str(day)
-                q10 = np.percentile(data, 10)
-                q25 = np.percentile(data, 25)
-                q50 = np.percentile(data, 50)
-                q75 = np.percentile(data, 75)
-                q90 = np.percentile(data, 90)
-                avg = data.mean()
+                df_ = df[
+                        (df["YYYYMMDD"].dt.month == month) & (df["YYYYMMDD"].dt.day == day)
+                    ]
+
+                df__ = df[
+                        (df["YYYYMMDD"].dt.year == year_to_show) & (df["YYYYMMDD"].dt.month == month) & (df["YYYYMMDD"].dt.day == day)
+                    ]
+
+                if len(df__)>0:
+                    value_in_year_ = df__[what_to_show].iloc[0]
+                    value_in_year = value_in_year_[0]
+                else:
+                    value_in_year = None
+                if len(df_)>0:
+                    data = df_[what_to_show] #.tolist()
+                    #st.write(data)
+
+                    date_ = "1900-" +  str(month).zfill(2) + '-' + str(day).zfill(2)
+
+                    q10 = np.percentile(data, 10)
+                    q25 = np.percentile(data, 25)
+                    q50 = np.percentile(data, 50)
+                    q75 = np.percentile(data, 75)
+                    q90 = np.percentile(data, 90)
+                    avg = data.mean()
 
 
-                df_quantile = df_quantile.append(
-                    {
-                        "date": date_,
-                        "q10": q10,
-                        "q25": q25,
-                        "q50": q50,
-                        "avg": avg,
+                    df_quantile = df_quantile.append(
+                        {
+                            "date_": date_,
+                            "q10": q10,
+                            "q25": q25,
+                            "q50": q50,
+                            "avg": avg,
 
-                        "q75": q75,
+                            "q75": q75,
 
-                        "q90": q90,
-                        "value_in_year" : value_in_year
-                        },
-                    ignore_index=True,
-                )
+                            "q90": q90,
+                            "value_in_year" : value_in_year
+                            },
+                        ignore_index=True,
+                    )
+
+    df_quantile['date'] = pd.to_datetime(df_quantile.date_, format='%Y-%m-%d',  errors='coerce')
+
     columns = ["q10", "q25", "avg", "q50", "q75", "q90", "value_in_year"]
     for c in columns:
         df_quantile[c] = df_quantile[c].rolling(wdw).mean()
+        df_quantile[c] = round(df_quantile[c],1)
     colors = ["red", "blue", ["yellow"]]
-    with _lock:
-        fig1x = plt.figure()
-        ax = fig1x.add_subplot(111)
-        idx = 0
-        df_quantile.plot(x='date',y='avg', ax=ax, linewidth=0.75,
-                        color=colors[idx],
-                        label="avg")
-        # df_quantile.plot(x='date',y='q50', ax=ax, linewidth=0.75,
-        #                 color="yellow",
-        #                 label="mediaan",  alpha=0.75)
-        df_quantile.plot(x='date',y='value_in_year', ax=ax,
-                        color="black",  linewidth=0.75,
-                        label=f"value in {year_to_show}")
-        ax.fill_between(df_quantile['date'],
-                        y1=df_quantile['q25'],
-                        y2=df_quantile['q75'],
-                        alpha=0.30, facecolor=colors[idx])
-        ax.fill_between(df_quantile['date'],
-                        y1=df_quantile['q10'],
-                        y2=df_quantile['q90'],
-                        alpha=0.15, facecolor=colors[idx])
+    title = (f" {what_to_show[0]} in {gekozen_weerstation} (percentiles (10/25/avg/75/90/))")
+    graph_type = "plotly"
+    if graph_type == "pyplot":
+
+        with _lock:
+            fig1x = plt.figure()
+            ax = fig1x.add_subplot(111)
+            idx = 0
+            df_quantile.plot(x='date',y='avg', ax=ax, linewidth=0.75,
+                            color=colors[idx],
+                            label="avg")
+            # df_quantile.plot(x='date',y='q50', ax=ax, linewidth=0.75,
+            #                 color="yellow",
+            #                 label="mediaan",  alpha=0.75)
+            df_quantile.plot(x='date',y='value_in_year', ax=ax,
+                            color="black",  linewidth=0.75,
+                            label=f"value in {year_to_show}")
+            ax.fill_between(df_quantile['date'],
+                            y1=df_quantile['q25'],
+                            y2=df_quantile['q75'],
+                            alpha=0.30, facecolor=colors[idx])
+            ax.fill_between(df_quantile['date'],
+                            y1=df_quantile['q10'],
+                            y2=df_quantile['q90'],
+                            alpha=0.15, facecolor=colors[idx])
 
 
-        ax.set_xticks(df_quantile["date"].index)
-        # if datefield == "YYYY":
-        #     ax.set_xticklabels(df[datefield], fontsize=6, rotation=90)
-        # else:
-        ax.set_xticklabels(df_quantile["date"], fontsize=6, rotation=90)
-        xticks = ax.xaxis.get_major_ticks()
-        for i, tick in enumerate(xticks):
-            if i % 10 != 0:
-                tick.label1.set_visible(False)
+            ax.set_xticks(df_quantile["date"].index)
+            # if datefield == "YYYY":
+            #     ax.set_xticklabels(df[datefield], fontsize=6, rotation=90)
+            # else:
+            ax.set_xticklabels(df_quantile["date"], fontsize=6, rotation=90)
+            xticks = ax.xaxis.get_major_ticks()
+            for i, tick in enumerate(xticks):
+                if i % 10 != 0:
+                    tick.label1.set_visible(False)
 
-        # plt.xticks()
-        plt.grid(which="major", axis="y")
-        plt.title(f" {what_to_show[0]} in {gekozen_weerstation} (percentiles (10/25/avg/75/90/))")
-        plt.legend()
-        st.pyplot(fig1x)
+            # plt.xticks()
+            plt.grid(which="major", axis="y")
+            plt.title(title)
+            plt.legend()
+            st.pyplot(fig1x)
+    else:
+        fig = go.Figure()
+        q10 = go.Scatter(
+            name='q10',
+            x=df_quantile["date"],
+            y=df_quantile['q10'] ,
+            mode='lines',
+            line=dict(width=0.5,
+                    color="rgba(255, 188, 0, 0.5)"),
+            fillcolor='rgba(68, 68, 68, 0.1)', fill='tonexty')
 
-def show_plot(df, datefield, title, wdw, what_to_show_):
+        q25 = go.Scatter(
+            name='q25',
+            x=df_quantile["date"],
+            y=df_quantile['q25'] ,
+            mode='lines',
+            line=dict(width=0.5,
+                    color="rgba(255, 188, 0, 0.5)"),
+            fillcolor='rgba(68, 68, 68, 0.2)',
+            fill='tonexty')
+
+        avg = go.Scatter(
+            name=what_to_show[0],
+            x=df_quantile["date"],
+            y=df_quantile["avg"],
+            mode='lines',
+            line=dict(width=0.75,color='rgba(68, 68, 68, 0.8)'),
+            )
+
+        value_in_year__ = go.Scatter(
+            name="2021",
+            x=df_quantile["date"],
+            y=df_quantile["value_in_year"],
+            mode='lines',
+            line=dict(width=0.75,color='rgba(255, 0, 0, 0.8)'),
+            )
+
+        q75 = go.Scatter(
+            name='q75',
+            x=df_quantile["date"],
+            y=df_quantile['q75'] ,
+            mode='lines',
+            line=dict(width=0.5,
+                    color="rgba(255, 188, 0, 0.5)"),
+            fillcolor='rgba(68, 68, 68, 0.1)',
+            fill='tonexty')
+
+
+        q90 = go.Scatter(
+            name='q90',
+            x=df_quantile["date"],
+            y=df_quantile['q90'],
+            mode='lines',
+            line=dict(width=0.5,
+                    color="rgba(255, 188, 0, 0.5)"),
+            fillcolor='rgba(68, 68, 68, 0.1)'
+        )
+
+        data = [q90, q75, q25, q10,avg, value_in_year__ ]
+
+        layout = go.Layout(
+            yaxis=dict(title=what_to_show[0]),
+            title=title,)
+            #, xaxis=dict(tickformat="%d-%m")
+        fig = go.Figure(data=data, layout=layout)
+        fig.update_layout(xaxis=dict(tickformat="%d-%m"))
+        st.plotly_chart(fig, use_container_width=True)
+
+def show_plot(df, datefield, title, wdw, what_to_show_, graph_type):
     what_to_show_ = what_to_show_ if type(what_to_show_) == list else [what_to_show_]
     color_list = [
         "#02A6A8",
@@ -547,34 +631,66 @@ def show_plot(df, datefield, title, wdw, what_to_show_):
     if len(df) == 1 and datefield == "YYYY":
         st.warning("Selecteer een grotere tijdsperiode")
         st.stop()
-    with _lock:
-        fig1x = plt.figure()
-        ax = fig1x.add_subplot(111)
-        for i, what_to_show in enumerate(what_to_show_):
-            sma = df[what_to_show].rolling(window=wdw, center=True).mean()
-            ax = df[what_to_show].plot(
-                label="_nolegend_",
-                linestyle="dotted",
-                color=color_list[i],
-                linewidth=0.5,
+
+    if graph_type=="pyplot"  :
+        with _lock:
+            fig1x = plt.figure()
+            ax = fig1x.add_subplot(111)
+            for i, what_to_show in enumerate(what_to_show_):
+                sma = df[what_to_show].rolling(window=wdw, center=True).mean()
+                ax = df[what_to_show].plot(
+                    label="_nolegend_",
+                    linestyle="dotted",
+                    color=color_list[i],
+                    linewidth=0.5,
+                )
+                ax = sma.plot(label=what_to_show, color=color_list[i], linewidth=0.75)
+
+            ax.set_xticks(df[datefield].index)
+            if datefield == "YYYY":
+                ax.set_xticklabels(df[datefield], fontsize=6, rotation=90)
+            else:
+                ax.set_xticklabels(df[datefield].dt.date, fontsize=6, rotation=90)
+            xticks = ax.xaxis.get_major_ticks()
+            for i, tick in enumerate(xticks):
+                if i % 10 != 0:
+                    tick.label1.set_visible(False)
+
+            plt.xticks()
+            plt.grid(which="major", axis="y")
+            plt.title(title)
+            plt.legend()
+            st.pyplot(fig1x)
+    else:
+        fig = go.Figure()
+        df["sma"] = df[what_to_show_[0]].rolling(window=wdw, center=True).mean()
+
+        sma = go.Scatter(
+            name=what_to_show_[0],
+            x=df[datefield],
+            y= df["sma"],
+            mode='lines',
+            line=dict(width=1,color='rgba(0, 0, 168, 0.8)'),
             )
-            ax = sma.plot(label=what_to_show, color=color_list[i], linewidth=0.75)
+        points = go.Scatter(
+            name="",
+            x=df[datefield],
+            y= df[what_to_show_[0]],
+            mode='markers',
+            showlegend=False,marker=dict(
+            color='LightSkyBlue',
+            size=2))
 
-        ax.set_xticks(df[datefield].index)
-        if datefield == "YYYY":
-            ax.set_xticklabels(df[datefield], fontsize=6, rotation=90)
-        else:
-            ax.set_xticklabels(df[datefield].dt.date, fontsize=6, rotation=90)
-        xticks = ax.xaxis.get_major_ticks()
-        for i, tick in enumerate(xticks):
-            if i % 10 != 0:
-                tick.label1.set_visible(False)
 
-        plt.xticks()
-        plt.grid(which="major", axis="y")
-        plt.title(title)
-        plt.legend()
-        st.pyplot(fig1x)
+        data = [sma,points]
+
+        layout = go.Layout(
+            yaxis=dict(title=what_to_show_[0]),
+            title=title,)
+            #, xaxis=dict(tickformat="%d-%m")
+        fig = go.Figure(data=data, layout=layout)
+        fig.update_layout(xaxis=dict(tickformat="%d-%m"))
+        st.plotly_chart(fig, use_container_width=True)
 
 
 def find_date_for_title(day, month):
