@@ -30,33 +30,29 @@ class QuantGaloreData:
 
     def plt_dataframe(self):
         def find_slope_scipy(x_,y_):
-
             m, b, r_value, p_value, std_err = stats.linregress(x_, y_)
             r_sq = r_value**2
             return m,b,r_sq
 
-        def manipulate_df(df):
+        def calculate_various_columns_df(df):
             df = df.reset_index()
-            x = list(range(0,len(df)))
             std = np.std(self.df['Close'])
             mean = df['Close'].mean()
+            x = list(range(0,len(df)))
             y = df["Close"].to_list()
             m,b,r_sq = find_slope_scipy(x,y)
-            df['trendline'] = (df['rownumber'] *m +b)
             z1 = st.sidebar.number_input("Z-value 1", 0.0,3.0,1.0)
             z2 = st.sidebar.number_input("Z-value 2", 0.0,3.0,1.96)
             if z1 >= z2:
                 st.warning("Z1 has to be smaller than Z2")
                 st.stop()
+            df['trendline'] = (df['rownumber'] *m +b)
             df['trendline_low_1'] = (df['rownumber'] *m +b) - z1 * std
             df['trendline_high_1'] = (df['rownumber'] *m +b) + z1 * std
             df['trendline_low_2'] = (df['rownumber'] *m +b) - z2 * std
             df['trendline_high_2'] = (df['rownumber'] *m +b) + z2 * std
             df['z_from_mean'] = (df['Close'] - mean) / std
             df["z_from_trendline"] =  (df['Close'] - df['trendline']) / std
-
-
-
             return df, std, mean, m, b,z1, z2
 
         def plot_figure1(df, choice,m,b, std):
@@ -158,8 +154,6 @@ class QuantGaloreData:
             #fig.show()
             st.plotly_chart(fig1, use_container_width=True)
 
-
-
         def plot_figure_z_scores(df,choice,  std, mean, from_what):
             z_score = go.Scatter(
                 name="Close",
@@ -184,7 +178,6 @@ class QuantGaloreData:
             st.plotly_chart(fig1, use_container_width=True)
 
         def buy_or_sell(df, std, z1,z2):
-
             # z_from_trendline = (df['trendline'].tail(1) - df['Close'].tail(1)) / std
             z_from_trendline =  round(df.z_from_trendline.iat[-1],2) #  (  df.Close.iat[-1] - df.trendline.iat[-1] ) / std
             st.write (f"Z-score value from trendline = {z_from_trendline}")
@@ -217,7 +210,7 @@ class QuantGaloreData:
 
 
         st.header("Y Finance charts")
-        df, std, mean,m,b, z1,z2 = manipulate_df(self.df)
+        df, std, mean,m,b, z1,z2 = calculate_various_columns_df(self.df)
         choice = self.choice
         plot_figure1(df, choice,m,b, std)
         buy_or_sell(df, std, z1,z2)
