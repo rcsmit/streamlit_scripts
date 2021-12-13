@@ -618,7 +618,7 @@ def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw, centersmooth):
         fig = go.Figure(data=data, layout=layout)
         fig.update_layout(xaxis=dict(tickformat="%d-%m"))
         st.plotly_chart(fig, use_container_width=True)
-
+        # fig.show()
 def show_plot(df, datefield, title, wdw, what_to_show_, graph_type, centersmooth):
     what_to_show_ = what_to_show_ if type(what_to_show_) == list else [what_to_show_]
     color_list = [
