@@ -298,13 +298,16 @@ def interface():
     DATE_FORMAT = "%m/%d/%Y"
     start_ = "2019-01-01"
     today = datetime.today().strftime("%Y-%m-%d")
-    from_ = st.sidebar.text_input("startdatum (yyyy-mm-dd)", start_)
+    from_ = st.sidebar.text_input("startdatum (yyyy-mm-dd) from 1-1-1900", start_)
     until_ = st.sidebar.text_input("enddatum (yyyy-mm-dd)", today)
 
     mode = st.sidebar.selectbox(
         "Modus", ["per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "per maand", "percentiles"], index=0
     )
     wdw = st.sidebar.slider("Window smoothing curves", 1, 45, 7)
+    centersmooth =  st.sidebar.selectbox(
+        "Smooth in center", [True, False], index=0
+        )
 
     show_options = [
         "temp_min",
@@ -319,7 +322,7 @@ def interface():
     ]
     what_to_show = st.sidebar.multiselect("Wat weer te geven", show_options, "temp_max")
 
-    return stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation
+    return stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, centersmooth
 
 
 def check_from_until(from_, until_):
@@ -372,7 +375,7 @@ def list_to_text(what_to_show_):
 
     return w
 
-def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation):
+def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, centersmooth):
     what_to_show_as_txt = list_to_text(what_to_show)
     FROM, UNTIL = check_from_until(from_, until_)
 
@@ -387,7 +390,7 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation):
     elif mode == "aantal keren":
             show_aantal_kerend(df, gekozen_weerstation, what_to_show)
     elif mode == "percentiles":
-        plot_percentiles(df,  gekozen_weerstation, what_to_show, wdw)
+        plot_percentiles(df,  gekozen_weerstation, what_to_show, wdw, centersmooth)
     else:
         if mode == "per dag":
             datefield = "YYYYMMDD"
@@ -428,13 +431,13 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation):
                 st.sidebar.write(
                     "Zorg ervoor dat de datum in de gekozen tijdrange valt voor het beste resultaat "
                 )
-        show_plot(df, datefield, title, wdw, what_to_show, graph_type)
+        show_plot(df, datefield, title, wdw, what_to_show, graph_type, centersmooth)
 
         show_warmingstripes(df, title)
     st.sidebar.write(f"URL to get data: {url}")
 
 
-def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw):
+def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw, centersmooth):
     if len(what_to_show)!=1 :
         st.warning("Choose (only) 1 thing to show")
         st.stop()
@@ -503,7 +506,7 @@ def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw):
 
     columns = ["q10", "q25", "avg", "q50", "q75", "q90", "value_in_year"]
     for c in columns:
-        df_quantile[c] = df_quantile[c].rolling(wdw).mean()
+        df_quantile[c] = df_quantile[c].rolling(window=wdw, center=centersmooth).mean()
         df_quantile[c] = round(df_quantile[c],1)
     colors = ["red", "blue", ["yellow"]]
     title = (f" {what_to_show[0]} in {gekozen_weerstation} (percentiles (10/25/avg/75/90/))")
@@ -616,7 +619,7 @@ def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw):
         fig.update_layout(xaxis=dict(tickformat="%d-%m"))
         st.plotly_chart(fig, use_container_width=True)
 
-def show_plot(df, datefield, title, wdw, what_to_show_, graph_type):
+def show_plot(df, datefield, title, wdw, what_to_show_, graph_type, centersmooth):
     what_to_show_ = what_to_show_ if type(what_to_show_) == list else [what_to_show_]
     color_list = [
         "#02A6A8",
@@ -637,7 +640,7 @@ def show_plot(df, datefield, title, wdw, what_to_show_, graph_type):
             fig1x = plt.figure()
             ax = fig1x.add_subplot(111)
             for i, what_to_show in enumerate(what_to_show_):
-                sma = df[what_to_show].rolling(window=wdw, center=True).mean()
+                sma = df[what_to_show].rolling(window=wdw, center=centersmooth).mean()
                 ax = df[what_to_show].plot(
                     label="_nolegend_",
                     linestyle="dotted",
@@ -663,7 +666,7 @@ def show_plot(df, datefield, title, wdw, what_to_show_, graph_type):
             st.pyplot(fig1x)
     else:
         fig = go.Figure()
-        df["sma"] = df[what_to_show_[0]].rolling(window=wdw, center=True).mean()
+        df["sma"] = df[what_to_show_[0]].rolling(window=wdw, center=centersmooth).mean()
 
         sma = go.Scatter(
             name=what_to_show_[0],
@@ -763,8 +766,8 @@ def show_warmingstripes(df, title):
 
 
 def main():
-    stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation = interface()
-    action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation)
+    stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, centersmooth = interface()
+    action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, centersmooth)
 
 
 if __name__ == "__main__":
