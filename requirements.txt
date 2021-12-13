@@ -3,6 +3,7 @@ matplotlib
 numpy==1.18.1
 pandas
 seaborn
+plotly
 lmfit
 imageio
 tabulate
