@@ -43,6 +43,9 @@ class QuantGaloreData:
             m,b,r_sq = find_slope_scipy(x,y)
             z1 = st.sidebar.number_input("Z-value 1", 0.0,3.0,1.0)
             z2 = st.sidebar.number_input("Z-value 2", 0.0,3.0,1.96)
+            wdw = int( st.sidebar.number_input("Window for bollinger",2,60,20))
+            center_boll = st.sidebar.selectbox("Center bollinger", [True, False], index=0)
+
             if z1 >= z2:
                 st.warning("Z1 has to be smaller than Z2")
                 st.stop()
@@ -53,7 +56,196 @@ class QuantGaloreData:
             df['trendline_high_2'] = (df['rownumber'] *m +b) + z2 * std
             df['z_from_mean'] = (df['Close'] - mean) / std
             df["z_from_trendline"] =  (df['Close'] - df['trendline']) / std
+            df = do_bollinger(df, z1, z2, wdw, center_boll)
             return df, std, mean, m, b,z1, z2
+
+        def do_bollinger_oud(df, z1,z2):
+            # https://medium.com/codex/algorithmic-trading-with-bollinger-bands-in-python-1b0a00c9ef99
+            def create_coll_boll(df, df_temp):
+                std = np.std(df_temp['Close'])
+                df.loc[i, "boll_center"] =  df_temp['Close'].mean()
+                df.loc[i, "boll_high_1"] = df.loc[i, "boll_center"] + z1 * std
+                df.loc[i, "boll_low_1"] = df.loc[i, "boll_center"] - z1* std
+                df.loc[i, "boll_high_2"] = df.loc[i, "boll_center"] + z2 * std
+                df.loc[i, "boll_low_2"] = df.loc[i, "boll_center"] - z2* std
+                return df
+
+            # df["boll_low"],df["boll_center"], df["boll_high"] = None, None, None
+
+
+            if (wdw % 2) != 0:
+                st.error("Please enter an even number for window")
+                st.stop()
+            if center_boll:
+                for i in range(int(wdw/2),int((len(df)-wdw/2))):
+                    df_temp = df.iloc[i-int(wdw/2):i+int(wdw/2), :]
+                    df = create_coll_boll(df, df_temp)
+
+            else:
+                for i in range(20,len(df)):
+                    df_temp = df.iloc[i-20:i, :]
+                    df = create_coll_boll(df, df_temp)
+
+
+            return df
+
+        def do_bollinger(df, z1, z2, wdw, center_boll):
+            #    # https://medium.com/codex/algorithmic-trading-with-bollinger-bands-in-python-1b0a00c9ef99
+            def sma(data, window):
+                sma = data.rolling(window = window, center=center_boll).mean()
+                return sma
+            def bb(data, sma, window):
+                std = data.rolling(window = window, center=center_boll).std()
+                upper_bb_1 = sma + std * z1
+                lower_bb_1 = sma - std * z1
+
+                upper_bb_2 = sma + std * z2
+                lower_bb_2 = sma - std * z2
+
+                return lower_bb_1, lower_bb_2, upper_bb_1, upper_bb_2
+
+            df['boll_center'] = sma(df['Close'], wdw)
+            df['boll_low_1'], df['boll_low_2'], df['boll_high_1'], df['boll_high_2'] = bb(df['Close'], df['boll_center'], wdw)
+            return df
+        def implement_bb_strategy(df, bol_low_1, bol_high_1):
+            #https://medium.com/codex/how-to-calculate-bollinger-bands-of-a-stock-with-python-f9f7d1184fc3
+            buy_price = []
+            sell_price = []
+            bb_signal = []
+            signal = 0
+
+            for i in range(1,len(df)):
+                if df[i-1] > bol_low_1[i-1] and df[i] < bol_low_1[i]:
+                    if signal != 1:
+                        buy_price.append(df[i])
+                        sell_price.append(np.nan)
+                        signal = 1
+                        bb_signal.append(signal)
+                    else:
+                        buy_price.append(np.nan)
+                        sell_price.append(np.nan)
+                        bb_signal.append(0)
+                elif df[i-1] < bol_high_1[i-1] and df[i] > bol_high_1[i]:
+                    if signal != -1:
+                        buy_price.append(np.nan)
+                        sell_price.append(df[i])
+                        signal = -1
+                        bb_signal.append(signal)
+                    else:
+                        buy_price.append(np.nan)
+                        sell_price.append(np.nan)
+                        bb_signal.append(0)
+                else:
+                    buy_price.append(np.nan)
+                    sell_price.append(np.nan)
+                    bb_signal.append(0)
+
+            return buy_price, sell_price, bb_signal
+
+
+
+
+        def plot_boll(df, choice,  buy_price, sell_price, bb_signal):
+
+            buy = go.Scatter(
+                name='BUY',
+                x=df["Date"],
+                y=buy_price ,
+                  mode="markers",  marker_symbol='triangle-up', opacity=0.4,
+                           marker_line_color="midnightblue", marker_color="green",
+                           marker_line_width=0, marker_size=11,
+                         )
+
+
+
+            sell = go.Scatter(
+                name='SELL',
+                x=df["Date"],
+                y=sell_price ,
+                mode="markers",marker_symbol='triangle-down',opacity=0.4,
+                           marker_line_color="midnightblue", marker_color="red",
+                           marker_line_width=0, marker_size=11,
+                         )
+
+
+
+
+            boll_low_2 = go.Scatter(
+                name='boll low 2',
+                x=df["Date"],
+                y=df['boll_low_2'] ,
+                mode='lines',
+                line=dict(width=0.5,
+                        color="rgba(255, 255, 0, 0.8)"),
+                fillcolor='rgba(255,255,0,0.2)',
+                fill='tonexty')
+
+            boll_low_1 = go.Scatter(
+                name='boll low 1',
+                x=df["Date"],
+                y=df['boll_low_1'] ,
+                mode='lines',
+                line=dict(width=0.5,
+                        color="rgba(255, 255, 0, 0.0)"),
+                fillcolor='rgba(255,255,0, 0.4)',
+                fill='tonexty')
+
+            boll = go.Scatter(
+                name="boll",
+                x=df["Date"],
+                y=df["boll_center"],
+                mode='lines',
+                line=dict(width=0.9,color='rgba(255,165,0,1)'),
+                fillcolor='rgba(255,255,0,0.4)',
+                fill='tonexty'
+                )
+
+            boll_high_1 = go.Scatter(
+                name='boll high 1',
+                x=df["Date"],
+                y=df['boll_high_1'] ,
+                mode='lines',
+                line=dict(width=0.5,
+                        color="rgba(255, 255, 0, 0.0)"),
+                fillcolor='rgba(255,255,0, 0.2)',
+                  fill='tonexty'
+                )
+            boll_high_2 = go.Scatter(
+                name='boll high 2',
+                x=df["Date"],
+                y=df['boll_high_2'] ,
+                mode='lines',
+                line=dict(width=0.5,
+                        color="rgba(255, 255, 0, 0.8)"),
+                fillcolor='rgba(255,255,0, 0.0)',
+                   fill='tonexty'
+
+                )
+
+
+
+            close = go.Scatter(
+                name="Close",
+                x=df["Date"],
+                y=df["Close"],
+                mode='lines',
+                line=dict(width=1,color='rgba(0,0,0, 1)'),
+                fillcolor='rgba(68, 68, 68, 0.2)',
+                )
+
+            data = [boll_high_2,boll_high_1, boll, boll_low_1,boll_low_2,close, buy, sell ]
+
+            layout = go.Layout(
+                yaxis=dict(title="USD"),
+                title=f"Bollinger bands - {choice}")
+                #, xaxis=dict(tickformat="%d-%m")
+            fig1 = go.Figure(data=data, layout=layout)
+
+
+            fig1.update_layout(xaxis=dict(tickformat="%d-%m-%Y"))
+
+            #fig.show()
+            st.plotly_chart(fig1, use_container_width=True)
 
         def plot_figure1(df, choice,m,b, std):
 
@@ -87,7 +279,7 @@ class QuantGaloreData:
                 )
 
             trendline_low_2 = go.Scatter(
-                name='trendline low',
+                name='trendline low 2',
                 x=df["Date"],
                 y=df['trendline_low_2'] ,
                 mode='lines',
@@ -97,7 +289,7 @@ class QuantGaloreData:
                 fill='tonexty')
 
             trendline_low_1 = go.Scatter(
-                name='trendline low',
+                name='trendline low 2',
                 x=df["Date"],
                 y=df['trendline_low_1'] ,
                 mode='lines',
@@ -194,9 +386,6 @@ class QuantGaloreData:
                 st.write ("REALLY BUY !")
             st.write("This advice is just a joke ofcourse. Just use your own knowledge and insights.")
 
-
-
-
         def find_z_mean(self):
             # This will call the yahoo finance API and store Bitcoin’s OHLC data on the time interval we set.
             # You can enter in any ticker from all asset classes (futures, stocks, crypto), but for this example,
@@ -211,10 +400,12 @@ class QuantGaloreData:
 
         st.header("Y Finance charts")
         df, std, mean,m,b, z1,z2 = calculate_various_columns_df(self.df)
+        buy_price, sell_price, bb_signal = implement_bb_strategy(df['Close'], df['boll_low_1'], df['boll_high_1'])
+
         choice = self.choice
         plot_figure1(df, choice,m,b, std)
         buy_or_sell(df, std, z1,z2)
-
+        plot_boll(df, choice,  buy_price, sell_price, bb_signal)
         plot_figure_z_scores(df, choice,  std, mean, "z_from_trendline")
         plot_figure_z_scores(df, choice,  std, mean, "z_from_mean")
 
@@ -226,7 +417,7 @@ class QuantGaloreData:
 def main():
 
     QGD = QuantGaloreData()
-    #QGD.print_dataframe()
+    QGD.print_dataframe()
     QGD.plt_dataframe()
 
     st.write()
