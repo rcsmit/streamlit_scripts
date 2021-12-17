@@ -544,6 +544,11 @@ def main():
     show_info()
 
 def input_options():
+    # https://finance.yahoo.com/lookup?s=-usd&.tsrc=fin-srch
+    choicelist_ = ["BTC-USD", "ETH-USD", "XRP-USD", "LUNA1-USD", "SOL1-USD", "DOT1-USD", "DOGE-USD", "ADA-USD", "SHIB-USD", "LTC-USD", "LRC-USD", "CRO-USD"]
+    choicelist = st.sidebar.multiselect("Which coins", choicelist_, ["BTC-USD", "ETH-USD"])
+    #choicelist = ["BTC-USD"]
+
     st.sidebar.write("TOP")
     period_top = st.sidebar.selectbox("Period", ["1d","5d","1mo","3mo","6mo","1y","2y","5y","10y","ytd","max"], 2)
     interval_top =st.sidebar.selectbox("Interval", [ "1m","2m","5m","15m","30m","60m","90m","1h","1d","5d","1wk","1mo","3mo"],8)
@@ -563,9 +568,6 @@ def input_options():
     ma1=st.sidebar.number_input("MA1 (short)", 1,100,12 )
     ma2=st.sidebar.number_input("MA1 (short)", 1,100,26)
 
-    # https://finance.yahoo.com/lookup?s=-usd&.tsrc=fin-srch
-    choicelist = ["BTC-USD", "ETH-USD", "XRP-USD", "LUNA1-USD", "SOL1-USD", "DOT1-USD", "DOGE-USD", "ADA-USD", "SHIB-USD", "LTC-USD", "LRC-USD", "CRO-USD"]
-    #choicelist = ["BTC-USD"]
     return period_top, interval_top, period_left,interval_left,period_right,interval_right,which_to_show,time_zone,wdw,center_boll,z1,z2,ma1,ma2,choicelist
 
 def show_info():
@@ -637,7 +639,7 @@ def show_plot_macd(df,choice,x_as_label, ma1, ma2):
         plot_macd(df, choice,  buy_price, sell_price, macd_signal, x_as_label)
 
     else:
-        with st.expander(f"MACD 1 - {choice} not interesting" ):
+        with st.expander(f"Moving averages - {choice} not interesting" ):
             plot_macd(df, choice,  buy_price, sell_price, macd_signal, x_as_label)
 
     buy_price, sell_price, macd_signal, signal_macd = implement_macd_strategie_2(df['Close'], df['MACD_Line'], df['Signal_Line'])
