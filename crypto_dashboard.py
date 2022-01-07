@@ -679,3 +679,5 @@ def show_graph_in_column(time_zone, wdw, center_boll, z1, z2,  choice, period, i
             show_plot_macd(df, choice, x_as_label, ma1, ma2)
 
 main()
+
+# https://towardsdatascience.com/detection-of-price-support-and-resistance-levels-in-python-baedc44c34c9

@@ -33,7 +33,8 @@ def main():
                 ["4. YT transcriber","YoutubeTranscriber_streamlit"],
                 ["5. Schoonmaaktijden", "schoonmaaktijden"],
                 ["6. Show sportactivities", "show_sportactivities"],
-                ["7. YFinance info", "yfinance_info"]
+                ["7. YFinance info", "yfinance_info"],
+                ["8. Crypto portfolio", "crypto_portfolio"]
 
     ]
 
