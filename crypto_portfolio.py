@@ -143,7 +143,10 @@ def input_options():
 
 
 def main():
-    st.set_page_config(layout="wide")
+    try:
+        st.set_page_config(layout="wide")
+    except:
+        pass
     st.header("Crypto dashboard / watchlist of René Smit")
     interval_top,choicelist= input_options()
     df =  make_database(choicelist, interval_top)
