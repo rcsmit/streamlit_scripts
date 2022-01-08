@@ -26,6 +26,7 @@ def get_data(choice,  interval):
     except:
         pass
     df = df[["Date", column_name]]
+    st.write (df)
     return df
 
 def calculate_assets(df, choice, transactions):
