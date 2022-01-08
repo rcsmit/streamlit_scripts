@@ -40,10 +40,10 @@ def calculate_assets(df, choice, transactions):
         for j in range(len(transactions)):
 
             if df.loc[i, "Date_y_m_d"] == transactions[j][0] and choice ==transactions[j][1]:
-                df.at[i, quantity_column] = df.at[i-1, quantity_column] + transactions[j][2]
+                df.loc[i, quantity_column] = df.loc[i-1, quantity_column] + transactions[j][2]
                 break
             else:
-                df.at[i, quantity_column] = df.at[i-1,quantity_column]
+                df.loc[i, quantity_column] = df.loc[i-1,quantity_column]
     df[asset_column] = df[quantity_column] * df[close_column]
     return df
 
