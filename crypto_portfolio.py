@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 import streamlit as st
+import datetime as dt
 # from scipy import stats
 # import datetime as dt
 
@@ -26,12 +27,12 @@ def get_data(choice,  interval):
     except:
         pass
     df = df[["Date", column_name]]
-    st.write (df)
+
     return df
 
 def calculate_assets(df, choice, transactions):
     df["Date_y_m_d"] = df["Date"].dt.strftime("%Y-%m-%d")
-    st.write(df)
+
     close_column = "close_" + choice
     quantity_column = "quantity_" + choice
     asset_column = "asset_" + choice
@@ -48,7 +49,7 @@ def calculate_assets(df, choice, transactions):
     return df
 
 def make_scatter(df, name, y, color):
-    st.write(df)
+
     df=df[1:]
     scat =  go.Scatter(
         name=name,
@@ -60,7 +61,7 @@ def make_scatter(df, name, y, color):
     return scat
 def plot(df, choicelist):
     color = ["0,255,0", "255,0,0", "0,0,255", "255,255,0", "0,255,255", "255,0,255"]
-    print (df)
+
     # AANTALLEN
     what = []
     for i,c  in enumerate(choicelist):
