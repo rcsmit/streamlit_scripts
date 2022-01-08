@@ -31,7 +31,7 @@ def get_data(choice,  interval):
 
 def calculate_assets(df, choice, transactions):
     df["Date_y_m_d"] = df["Date"].dt.strftime("%Y-%m-%d")
-
+    st.write(df)
     close_column = "close_" + choice
     quantity_column = "quantity_" + choice
     asset_column = "asset_" + choice
