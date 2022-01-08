@@ -48,6 +48,7 @@ def calculate_assets(df, choice, transactions):
     return df
 
 def make_scatter(df, name, y, color):
+    st.write(df)
     df=df[1:]
     scat =  go.Scatter(
         name=name,
