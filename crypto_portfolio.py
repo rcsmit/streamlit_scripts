@@ -27,12 +27,10 @@ def get_data(choice,  interval):
     except:
         pass
     df = df[["Date", column_name]]
-
+    df["Date_y_m_d"] = df["Date"].dt.strftime("%Y-%m-%d")
     return df
 
 def calculate_assets(df, choice, transactions):
-    df["Date_y_m_d"] = df["Date"].dt.strftime("%Y-%m-%d")
-
     close_column = "close_" + choice
     quantity_column = "quantity_" + choice
     asset_column = "asset_" + choice
