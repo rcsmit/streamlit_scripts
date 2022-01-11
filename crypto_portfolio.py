@@ -125,6 +125,7 @@ def make_database(choicelist, interval):
         c_name = "quantity_"+choice
         df_total[c_name] = 0.0
     df_total["Date_y_m_d"] = df_total["Date"].dt.strftime("%Y-%m-%d")
+    print (df_total)
     return df_total
 def get_transactions():
     """Get the transactions. Later these will be loaded from a .csv or googlesheet
