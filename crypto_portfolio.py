@@ -63,17 +63,20 @@ def plot(df, choicelist):
     color = ["0,255,0", "255,0,0", "0,0,255", "255,255,0", "0,255,255", "255,0,255"]
 
     # AANTALLEN
-    what = []
-    for i,c  in enumerate(choicelist):
-        print (i)
-        c_ = "quantity_"+c
-        what.append([c_,c_,color[i]])
+    # what = []
+    # for i,c  in enumerate(choicelist):
+    #     print (i)
+    #     c_ = "quantity_"+c
+    #     what.append([c_,c_,color[i]])
+
+    what = [[ "quantity_"+c, "quantity_"+c,color[i]] for  i,c  in enumerate(choicelist)]
 
 
-    data = []
-    for w in what:
-        w_ = make_scatter(df, w[0], w[1], w[2])
-        data.append(w_)
+    data = [  make_scatter(df, w[0], w[1], w[2] )   for w in what   ]
+    # data = []
+    # for w in what:
+    #     w_ = make_scatter(df, w[0], w[1], w[2])
+    #     data.append(w_)
 
     layout = go.Layout(
         yaxis=dict(title="USD"),

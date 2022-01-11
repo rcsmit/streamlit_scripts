@@ -34,8 +34,8 @@ def main():
                 ["5. Schoonmaaktijden", "schoonmaaktijden"],
                 ["6. Show sportactivities", "show_sportactivities"],
                 ["7. YFinance info", "yfinance_info"],
-                ["8. Crypto portfolio", "crypto_portfolio"]
-
+                ["8. Crypto portfolio", "crypto_portfolio"],
+                ["9. strftime_test", "strftime_test"]
     ]
 
 
