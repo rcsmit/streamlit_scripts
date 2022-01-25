@@ -31,6 +31,7 @@ def get_data(choice,  interval):
     return df
 
 def calculate_assets(df, choice, transactions):
+    st.write(transactions)
     close_column = "close_" + choice
     quantity_column = "quantity_" + choice
     asset_column = "asset_" + choice
@@ -134,6 +135,8 @@ def get_transactions():
     #               date           ticker      quantity
     transactions = [['2021-11-28', "BTC-USD",  0.00128752] ,
                     ['2021-11-28', "ETH-USD", 0.01774314]]
+    transactions = [['2021-11-28', "BTC-USD",  0.128752] ,
+                    ['2021-11-28', "ETH-USD", 0.1774314]]
                     # ,
                     # ['2021-12-15', "BTC-USD", -4.0],
                     # ['2021-12-17', "ETH-USD", -5.0]]
