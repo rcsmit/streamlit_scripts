@@ -160,6 +160,7 @@ def main():
 
     for choice in choicelist:
         df = calculate_assets(df, choice, transactions)
+    st.write(df)
     plot(df, choicelist)
 
 if __name__ == "__main__":
