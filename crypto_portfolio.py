@@ -31,7 +31,7 @@ def get_data(choice,  interval):
     return df
 
 def calculate_assets(df, choice, transactions):
-    st.write(transactions)
+
     close_column = "close_" + choice
     quantity_column = "quantity_" + choice
     asset_column = "asset_" + choice
@@ -61,21 +61,9 @@ def make_scatter(df, name, y, color):
 def plot(df, choicelist):
     color = ["0,255,0", "255,0,0", "0,0,255", "255,255,0", "0,255,255", "255,0,255"]
 
-    # AANTALLEN
-    # what = []
-    # for i,c  in enumerate(choicelist):
-    #     print (i)
-    #     c_ = "quantity_"+c
-    #     what.append([c_,c_,color[i]])
-
     what = [[ "quantity_"+c, "quantity_"+c,color[i]] for  i,c  in enumerate(choicelist)]
 
-
     data = [  make_scatter(df, w[0], w[1], w[2] )   for w in what   ]
-    # data = []
-    # for w in what:
-    #     w_ = make_scatter(df, w[0], w[1], w[2])
-    #     data.append(w_)
 
     layout = go.Layout(
         yaxis=dict(title="USD"),
@@ -125,7 +113,8 @@ def make_database(choicelist, interval):
                         )
         c_name = "quantity_"+choice
         df_total[c_name] = 0.0
-    df_total["Date_y_m_d"] = str(df_total["Date"].dt.strftime("%Y-%m-%d"))
+    #df_total["Date_y_m_d"] = str(df_total["Date"].dt.strftime("%Y-%m-%d"))
+    df_total["Date_y_m_d"] =(df_total["Date"].dt.strftime("%Y-%m-%d"))
     print (df_total)
     return df_total
 def get_transactions():
@@ -135,8 +124,7 @@ def get_transactions():
     #               date           ticker      quantity
     transactions = [['2021-11-28', "BTC-USD",  0.00128752] ,
                     ['2021-11-28', "ETH-USD", 0.01774314]]
-    transactions = [['2021-11-28', "BTC-USD",  0.128752] ,
-                    ['2021-11-28', "ETH-USD", 0.1774314]]
+
                     # ,
                     # ['2021-12-15', "BTC-USD", -4.0],
                     # ['2021-12-17', "ETH-USD", -5.0]]
@@ -152,10 +140,6 @@ def input_options():
 
 
 def main():
-    # try:
-    #     st.set_page_config(layout="wide")
-    # except:
-    #     pass
     st.header("Crypto dashboard / watchlist of René Smit")
     interval_top,choicelist= input_options()
     df =  make_database(choicelist, interval_top)
