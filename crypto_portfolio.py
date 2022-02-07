@@ -14,7 +14,7 @@ def get_data(choice,  interval):
     """Retreat the data from Yahoo Finance
     """
 
-    data = yf.download(tickers=(choice), start="2021-11-28",interval=interval,group_by='ticker',auto_adjust=True,prepost=False)
+    data = yf.download(tickers=(choice), start="2021-11-27",interval=interval,group_by='ticker',auto_adjust=True,prepost=False)
     df = pd.DataFrame(data)
     if len(df) == 0:
         st.error(f"No data or wrong input - {choice}")
@@ -47,13 +47,12 @@ def calculate_assets(df, choice, transactions):
     quantity_column = "quantity_" + choice
     asset_column = "asset_" + choice
 
-    #for i in range(1, len(df)):
-    for i in range(1, 5):
+    for i in range(1, len(df)):
         for j in range(len(transactions)):
-            st.write(f".{df.loc[i, 'Date_y_m_d']}. == .{transactions[j][0]}. | .{choice}. == .{transactions[j][1]}.")
+            #st.write(f".{df.loc[i, 'Date_y_m_d']}. == .{transactions[j][0]}. | .{choice}. == .{transactions[j][1]}.")
             if df.loc[i, "Date_y_m_d"] == transactions[j][0] and choice ==transactions[j][1]:
-                st.write ("HIT")
-                st.write(f".{df.loc[i, 'Date_y_m_d']}. == .{transactions[j][0]}. | .{choice}. == .{transactions[j][1]}.")
+                # st.write ("HIT")
+                # st.write(f".{df.loc[i, 'Date_y_m_d']}. == .{transactions[j][0]}. | .{choice}. == .{transactions[j][1]}.")
 
                 df.loc[i, quantity_column] = df.loc[i-1, quantity_column] + transactions[j][2]
                 break
