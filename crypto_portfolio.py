@@ -11,6 +11,9 @@ import datetime as dt
 
 
 def get_data(choice,  interval):
+    """Retreat the data from Yahoo Finance
+    """
+
     data = yf.download(tickers=(choice), start="2021-11-28",interval=interval,group_by='ticker',auto_adjust=True,prepost=False)
     df = pd.DataFrame(data)
     if len(df) == 0:
@@ -31,14 +34,21 @@ def get_data(choice,  interval):
     return df
 
 def calculate_assets(df, choice, transactions):
+    """Calculate the worth of the portfolio
+    Args:
+        df ([type]): [description]
+        choice ([type]): [description]
+        transactions ([type]): [description]
 
+    Returns:
+        [type]: [description]
+    """
     close_column = "close_" + choice
     quantity_column = "quantity_" + choice
     asset_column = "asset_" + choice
 
     for i in range(1, len(df)):
         for j in range(len(transactions)):
-
             if df.loc[i, "Date_y_m_d"] == transactions[j][0] and choice ==transactions[j][1]:
                 df.loc[i, quantity_column] = df.loc[i-1, quantity_column] + transactions[j][2]
                 break
@@ -48,7 +58,8 @@ def calculate_assets(df, choice, transactions):
     return df
 
 def make_scatter(df, name, y, color):
-
+    """Generate the line
+    """
     df=df[1:]
     scat =  go.Scatter(
         name=name,
@@ -59,6 +70,11 @@ def make_scatter(df, name, y, color):
                 color=f"rgba({color}, 0.8)"))
     return scat
 def plot(df, choicelist):
+    """Makethe plot
+    Args:
+        df ([type]): [description]
+        choicelist ([type]): [description]
+    """
     color = ["0,255,0", "255,0,0", "0,0,255", "255,255,0", "0,255,255", "255,0,255"]
 
     what = [[ "quantity_"+c, "quantity_"+c,color[i]] for  i,c  in enumerate(choicelist)]
@@ -116,6 +132,7 @@ def make_database(choicelist, interval):
     #df_total["Date_y_m_d"] = str(df_total["Date"].dt.strftime("%Y-%m-%d"))
     df_total["Date_y_m_d"] =(df_total["Date"].dt.strftime("%Y-%m-%d"))
     print (df_total)
+    print (df_total.dtypes)
     return df_total
 def get_transactions():
     """Get the transactions. Later these will be loaded from a .csv or googlesheet
