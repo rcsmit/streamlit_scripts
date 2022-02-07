@@ -49,7 +49,7 @@ def calculate_assets(df, choice, transactions):
 
     for i in range(1, len(df)):
         for j in range(len(transactions)):
-            #print(f".{df.loc[i, 'Date_y_m_d']}. == .{transactions[j][0]}. | .{choice}. == .{transactions[j][1]}.")
+            print(f".{df.loc[i, 'Date_y_m_d']}. == .{transactions[j][0]}. | .{choice}. == .{transactions[j][1]}.")
             if df.loc[i, "Date_y_m_d"] == transactions[j][0] and choice ==transactions[j][1]:
                 st.write ("HIT")
                 st.write(f".{df.loc[i, 'Date_y_m_d']}. == .{transactions[j][0]}. | .{choice}. == .{transactions[j][1]}.")
