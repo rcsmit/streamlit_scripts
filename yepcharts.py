@@ -10,10 +10,11 @@ def get_song_list(country_chosen_long, country_chosen_abbr):
     mydoc = minidom.parse(urlopen(xml1))
     items = mydoc.getElementsByTagName('title')
 
-    st.write(f'Hitlist for  {country_chosen_long}')
+    st.write(f'iTunes Hitlist for  {country_chosen_long}')
     for i, elem in enumerate(items):
         # print(elem.attributes['id'].value)
-        st.write (f"{i}. {elem.firstChild.data}")
+        if i!=0:
+            st.write (f"{i}. {elem.firstChild.data}")
     # # one specific item's data
     # print('\nItem #2 data:')
     # print(items[1].firstChild.data)
