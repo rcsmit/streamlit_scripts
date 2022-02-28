@@ -35,8 +35,8 @@ def main():
                 ["6. Show sportactivities", "show_sportactivities"],
                 ["7. YFinance info", "yfinance_info"],
                 ["8. Crypto portfolio", "crypto_portfolio"],
-                ["9. Yepcharts", "yepcharts"],
-                ["10. aggrid test", "aggrid_test"]
+                ["9. Yepcharts", "yepcharts"]
+
     ]
 
 
