@@ -142,6 +142,7 @@ def get_transactions():
     """Get the transactions. Later these will be loaded from a .csv or googlesheet
     """
     # assumed that buy/sell is at close-price. Negative is sell, positive is buy
+    # TODO: Transaction costs. Real buying price
     #               date           ticker      quantity
     transactions = [['2021-11-28', "BTC-USD",  0.00128752] ,
                     ['2021-11-28', "ETH-USD", 0.01774314]]
