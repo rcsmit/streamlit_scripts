@@ -15,10 +15,6 @@ from streamlit import caching
 import time
 # partly derived from https://stackoverflow.com/a/37036082/4173718
 
-
-
-
-
 def calculate_weibull_pdf(x, scale, shape):
 
     return (shape/scale) * ((x/scale)**(shape - 1)) * np.exp(-1*((x/scale)**shape))
