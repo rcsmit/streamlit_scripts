@@ -134,7 +134,7 @@ def f(x):
 def read(sheet_id):
     filetype = 'google_sheet'
     filetype = 'xls'
-    #file = 'C:\Users\rcxsm\Documents\phyton_scripts'
+    #file = 'C:\Users\rcxsm\Documents\pyhton_scripts'
 
     if filetype == 'csv':
         try:

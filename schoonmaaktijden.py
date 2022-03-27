@@ -96,7 +96,7 @@ def read():
     sheet_name = "gegevens"
     url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
 
-    #url = "C:\\Users\\rcxsm\\Documents\\phyton_scripts\\in\\schoonmaaktijden.csv",
+    #url = "C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\in\\schoonmaaktijden.csv",
     df = pd.read_csv(url, delimiter=',')
     #df = df[:-1]  #remove last row which appears to be a Nan
 

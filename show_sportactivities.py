@@ -12,7 +12,7 @@ import matplotlib.animation as animation
 def get_data(who):
     if who == "Rene":
         url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_new.csv"
-        #url = "C:\\Users\\rcxsm\\Documents\\phyton_scripts\\streamlit_scripts\\input\\garminactivities_new.csv"
+        #url = "C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\streamlit_scripts\\input\\garminactivities_new.csv"
         df = pd.read_csv(url, delimiter=';')
 
         df["Datum"] = pd.to_datetime(df["Datum"], format="%d-%m-%Y")
@@ -21,7 +21,7 @@ def get_data(who):
 
     elif who == "Didier":
         url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/activities_didier.csv"
-        #url = "C:\\Users\\rcxsm\\Documents\\phyton_scripts\\streamlit_scripts\\input\\activities_didier.csv"
+        #url = "C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\streamlit_scripts\\input\\activities_didier.csv"
 
         df = pd.read_csv(url, delimiter=',')
         df = filter_df(df, "Activity Type",5).copy(deep=False)

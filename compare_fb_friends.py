@@ -1,10 +1,10 @@
 import pandas as pd
-url1 ="C:\\Users\\rcxsm\\Documents\\phyton_scripts\\in\\friendlist2012.csv"
-url2 = "C:\\Users\\rcxsm\\Documents\\phyton_scripts\\in\\facebookfriends_nov2018.csv"
-#url3 = "C:\\Users\\rcxsm\\Documents\\phyton_scripts\\in\\facebookfriends_nov2020.csv"
-url3 = "C:\\Users\\rcxsm\\Documents\\phyton_scripts\\in\\facebookfriends_nov_2020b.csv"
-#url4 ="C:\\Users\\rcxsm\\Documents\\phyton_scripts\\in\\friends_aug2021.csv"
-url4 ="C:\\Users\\rcxsm\\Documents\\phyton_scripts\\in\\facebookfrends_aug_2021.csv"
+url1 ="C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\in\\friendlist2012.csv"
+url2 = "C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\in\\facebookfriends_nov2018.csv"
+#url3 = "C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\in\\facebookfriends_nov2020.csv"
+url3 = "C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\in\\facebookfriends_nov_2020b.csv"
+#url4 ="C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\in\\friends_aug2021.csv"
+url4 ="C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\in\\facebookfrends_aug_2021.csv"
 df1 = pd.read_csv(url1, delimiter=';')
 df2 = pd.read_csv(url2, delimiter=',')
 df3 = pd.read_csv(url3, delimiter=';')
