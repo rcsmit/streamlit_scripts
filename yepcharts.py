@@ -26,7 +26,8 @@ def get_song_list(country_chosen_long, country_chosen_abbr):
     #     print(elem.firstChild.data)
 
 def interface():
-    countries_abbr = ["nl","gb","fr","de ","it","es","pt","us","be","se ","au","at","ca ","dk","fi","gr","ie","il","jp","lu","mx","nz","no","ch"]
+    countries_abbr = ["nl","gb","fr","de","it","es","pt","us","be","se","au","at","ca","dk","fi","gr",
+                      "ie","il","jp","lu","mx","nz","no","ch"]
     countries_long = ["Netherlands","Great Britain","France","Germany","Italy","Spain","Portugal","United States of America","Belgium","Sweden",
                     "Australia","Austria","Canada","Danmark","Finland","Greece","Ireland","Isarel","Japan","Luxembourg","Mexico,New Zealand","Norway","Switserland"]
     country_chosen_long = st.sidebar.selectbox("Country", countries_long, index=0)
