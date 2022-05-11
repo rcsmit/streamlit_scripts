@@ -321,8 +321,11 @@ def interface():
         "neerslag_etmaalsom",
     ]
     what_to_show = st.sidebar.multiselect("Wat weer te geven", show_options, "temp_max")
-
-    return stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, centersmooth
+    if len(what_to_show)==1:
+        graph_type = st.sidebar.selectbox("Graph type (plotly=interactive)", ["pyplot", "plotly"], index=1)
+    else:
+        graph_type = "pyplot"
+    return stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, centersmooth, graph_type
 
 
 def check_from_until(from_, until_):
@@ -375,7 +378,7 @@ def list_to_text(what_to_show_):
 
     return w
 
-def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, centersmooth):
+def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, centersmooth, graph_type):
     what_to_show_as_txt = list_to_text(what_to_show)
     FROM, UNTIL = check_from_until(from_, until_)
 
@@ -395,12 +398,15 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, cen
         if mode == "per dag":
             datefield = "YYYYMMDD"
             title = f"{what_to_show_as_txt} van {from_} - {until_} in {gekozen_weerstation}"
-            graph_type = "plotly"
+            #graph_type = "plotly"
+            # graph_type = "pyplot" #too slow
 
         else:
-            graph_type = "pyplot"
+            #graph_type = "pyplot"
             datefield = "YYYY"
             if mode == "jaargemiddelde":
+
+                #graph_type = "plotly"
                 df = df.groupby(["YYYY"], sort=True).mean().reset_index()
 
                 title = f"{what_to_show_as_txt}  van {from_[:4]} - {until_[:4]} in {gekozen_weerstation}"
@@ -408,6 +414,7 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, cen
                     "Zorg ervoor dat de einddatum op 31 december valt voor het beste resultaat "
                 )
             elif mode == "specifieke dag":
+                #graph_type = "plotly"
                 day = st.sidebar.number_input("Dag", 1, 31, 1, None, format="%i")
                 months = [
                     "januari",
@@ -694,7 +701,8 @@ def show_plot(df, datefield, title, wdw, what_to_show_, graph_type, centersmooth
         fig = go.Figure(data=data, layout=layout)
         fig.update_layout(xaxis=dict(tickformat="%d-%m"))
         st.plotly_chart(fig, use_container_width=True)
-
+    df =df[[datefield,what_to_show_[0]]]
+    st.write(df)
 
 def find_date_for_title(day, month):
     months = [
@@ -766,8 +774,8 @@ def show_warmingstripes(df, title):
 
 
 def main():
-    stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, centersmooth = interface()
-    action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, centersmooth)
+    stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, centersmooth, graph_type = interface()
+    action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, centersmooth, graph_type)
 
 
 if __name__ == "__main__":
