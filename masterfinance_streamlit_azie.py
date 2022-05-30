@@ -5,19 +5,22 @@ Created on Tue Oct 20 17:34:44 2020
 @author: rcxsm
 """
 
+from socketserver import DatagramRequestHandler
 import pandas as pd
 import numpy as np
 #import openpyxl
 import streamlit as st
 import datetime as dt
 from datetime import datetime, timedelta
-
+from datetime import date
+ 
 import plotly.express as px
 import plotly.graph_objects as go
 
 from plotly.subplots import make_subplots
 import traceback
 
+#import datetime
 
 def select_period_oud(df, field, show_from, show_until):
     """Shows two inputfields (from/until and Select a period in a df.
@@ -154,17 +157,20 @@ def read(sheet_id):
             st.warning("error met laden")
             st.stop()
     elif filetype == 'xls':
-        file = "C:\\Users\\rcxsm\\Documents\\xls\\masterfinance_.xlsm"   
+        #file = "C:\\Users\\rcxsm\\Documents\\xls\\masterfinance_.xlsm"  
+        file = r"C:\Users\rcxsm\Documents\xls\kasboeken_azie.xlsx"
+        file = r"C:\Users\rcxsm\Documents\wereknd 28052022 1247a1753.xlsx"
         sheet = sheet_id
         try:
-            df = pd.read_excel (file,
+            df_x = pd.read_excel (file,
                                 sheet_name= sheet,
                                 header=0,
-                                usecols= "a,b,f,h,k,l,m,n",
-                                names=["id","bron","datum","bedrag",
-                       "tegenpartij","in_uit","hoofdrub","rubriek"],)
+                                usecols= "a,b, e,g, h,r",
+                                names=["id","country_year", "datum","in_uit", "rubriek","bedrag"],)
+
+
             #df["datum"] = pd.to_datetime(df["datum"], format="%Y-%m-%d")
-            df.datum=pd.to_datetime(df.datum,errors='coerce', dayfirst=True)
+            df_x.datum=pd.to_datetime(df_x.datum,errors='coerce', dayfirst=True)
         except Exception as e:
             st.warning("error met laden")
             st.warning(f"{e}")
@@ -181,58 +187,42 @@ def read(sheet_id):
     else:
         st.write("type doesnt exist")
         pass
+    df = df_x[(df_x["country_year"] != "TRANSIT2020") & (df_x["in_uit"] != "IN") & (df_x["rubriek"]!= "TODO") & (df_x["rubriek"]!= "TINA_ISA") & (df_x["rubriek"]!= "MISC__")& (df_x["rubriek"]!= "KRUIS")& (df_x["rubriek"]!= "KRUIS_UIT") & (df_x["rubriek"]!= "KRUIS_DERDEN")& (df_x["rubriek"]!= "PLANE")& (df_x["rubriek"]!= "BANK_KRUIS")]
     df['jaar']=df['datum'].dt.strftime('%Y')
     df['maand']=df['datum'].dt.strftime('%m')
     df['invbedrag']= df['bedrag']* -1
     df['maand_']=df['datum'].dt.strftime('%Y-%m')
-    return df
+    lijst_met_country_year  =  df["country_year"].drop_duplicates().sort_values().tolist()
+    
+    def numOfDays(date1, date2):
+        return (date2-date1).days
+    lijst0 =[]
+    for c_y in lijst_met_country_year:
+        dfcy= df[df["country_year"] == c_y]
+        min_ = min(dfcy['datum'])
+        max_ = max(dfcy['datum'])
+        #st.write(f'{c_y}  {min_.strftime("%d/%m/%Y")}  {max_.strftime("%d/%m/%Y")} {numOfDays(min_, max_)+1}')
+        lijst0.append([c_y,min_.strftime("%d/%m/%Y"),max_.strftime("%d/%m/%Y"),numOfDays(min_, max_)+1])
+
+    df_country_year_days_ = pd.DataFrame(lijst0, columns =['country_year', 'start', 'eind', 'aantal_dagen'])
+    totaal_dagen = df_country_year_days_["aantal_dagen"].sum()
+ 
+    df1 =  pd.DataFrame({'country_year': ['Total'], 'aantal_dagen': [totaal_dagen]})
+   
+
+    data = [df_country_year_days_, df1]
+    df_country_year_days = pd.concat(data).reset_index(drop=True)
+    #df_country_year_days = df_country_year_days.append(dict, ignore_index = True)
+  
+    #st.write(df_country_year_days)
+
+
+    return df, df_country_year_days
 
 def totalen_per_rub(df):
     st.header(f"Totalen per rubriek over de hele periode")
-    rapport = df.groupby(["hoofdrub", "rubriek"])["bedrag"].sum()
+    rapport = df.groupby(["rubriek"])["bedrag"].sum()
     st.write(rapport)
-
-def in_and_out_per_period(df, period):
-    st.header(f"IN EN UIT PER {period}")
-    table = pd.pivot_table(df, values='bedrag', index=[period],
-            columns=['in_uit'],  aggfunc=np.sum,fill_value=0).reset_index()
-    
-    table["UIT_TOT"] =  table["UIT"] + table["UIT_AZIE"]  + table["UIT_AZIE_VOORAF"]
-    table["verschil"] = table["IN"] + table["UIT"] + table["UIT_AZIE"]  + table["UIT_AZIE_VOORAF"]
-    st.write(table) 
-    table_met_som = pd.pivot_table(df, values='bedrag', index=[period],
-            columns=['in_uit'], margins=True, aggfunc=np.sum,fill_value=0).reset_index()
-
-    barchart_in_uit(table,  f"Inkomsten en uitgaven per {period}", period)
-    barchart(table,"verschil", f"Saldo van inkomsten en uitgaven per {period}", period)
-    st.write(table_met_som)
-
-def uitgaven_per_period(df, period,modus):
-    st.header(f"UITGAVES PER {period}")
-    df.datum=pd.to_datetime(df.datum)
-    df.datum=df['datum'].dt.strftime('%Y-%m-%d')
-    table_uitg = df[(df["in_uit"] == "UIT" )| (df["in_uit"] == "UIT_AZIE") | (df["in_uit"] == "_AZIE_VOORAF")]
-    table_uitg_azie = df[ (df["in_uit"] == "UIT_AZIE")]
-    table_uitg["bedrag"] = table_uitg["bedrag"]*-1
-
-    table_uitg_pivot = pd.pivot_table(table_uitg, values='bedrag', index=[period],
-            columns=[modus], aggfunc=np.sum, fill_value=0, margins=False).round().reset_index()  #.plot.bar(stacked=True)
-    table_uitg_pivot_azie = pd.pivot_table(table_uitg_azie, values='bedrag', index=[period],
-            columns=[modus], aggfunc=np.sum, fill_value=0, margins=True).round().reset_index()  #.plot.bar(stacked=True)
-
-    columnlist =  table_uitg_pivot.columns.tolist()
-    columnlist = columnlist[1:]
-    fig = px.bar( table_uitg_pivot , x=period, y=columnlist, barmode = 'stack', title=f"Uitgaven per {period}")
-    st.plotly_chart(fig)
-
-    table_w =  table_uitg_pivot.astype(str)
-    table_w_azie =  table_uitg_pivot_azie.astype(str)
-    st.subheader("pivottable")
-    st.write(table_w)
-    st.write (" TABLE W AZIE")
-    st.write(table_w_azie)
-    save_df(table_w_azie, "Table vanuit masterfinance")
-
 
 def save_df(df, name):
     """  _ _ _ """
@@ -242,6 +232,83 @@ def save_df(df, name):
     df.to_csv(name_, index=False, compression=compression_opts)
 
     print("--- Saving " + name_ + " ---")
+
+def uitgaven_categorie_per_country_year(df, df_country_year_days, period,modus):
+    st.header(f"UITGAVES PER country_year")
+    df.datum=pd.to_datetime(df.datum)
+    df.datum=df['datum'].dt.strftime('%Y-%m-%d')
+    table_uitg = df
+
+    table_uitg_pivot = pd.pivot_table(table_uitg, values='bedrag', index=["country_year"],
+            columns=[modus], aggfunc=np.sum,  margins = False, fill_value=0).round().reset_index()  #.plot.bar(stacked=True)
+    table_uitg_pivot_with_sum = pd.pivot_table(table_uitg, values='bedrag', index=["country_year"],
+            columns=[modus], aggfunc=np.sum,  margins = True, margins_name='Total', fill_value=0).round().reset_index()  #.plot.bar(stacked=True)
+    table_uitg_pivot_only_sum = table_uitg_pivot_with_sum[["country_year","Total"]]
+
+    numbers_df_country_year_days = df_country_year_days[["aantal_dagen"]]
+    # st.write(table_uitg_pivot_with_sum.values[:,0])
+    # st.write(df_country_year_days.values[:,3])
+    #table_country_year_per_dag = table_uitg_pivot_with_sum.values[:,1:]/df_country_year_days.values[:,3]
+    table_uitg_pivot_with_sum_only_num = table_uitg_pivot_with_sum._get_numeric_data() 
+    table_country_year_per_dag = table_uitg_pivot_with_sum_only_num.div(df_country_year_days.iloc[:,3], axis='rows').round(2)
+
+
+
+    #df5=  df1.div(df3.iloc[:,0], axis='rows')
+    columnlist =  table_uitg_pivot.columns.tolist()
+    columnlist = columnlist[1:]
+    fig = px.bar( table_uitg_pivot , x="country_year", y=columnlist, barmode = 'stack', title=f"Uitgaven per country_year (euro)")
+    st.plotly_chart(fig)
+    
+    frames = [df_country_year_days, table_country_year_per_dag ]
+    result = pd.concat(frames, axis=1)
+    st.write(result)
+    result1 = result.iloc[:-1 , :]
+    result_without_total = result1.iloc[:, :-1 ]
+
+    table_w =  table_uitg_pivot_with_sum.astype(str)
+ 
+    
+    table_w4 = result.astype(str)
+    st.subheader("pivottable country year")
+    st.write(table_w)
+
+    st.subheader("Per countryyear per dag")
+   
+    st.write(table_w4)
+    columnlist =  result_without_total.columns.tolist()
+    columnlist = columnlist[4:]
+    fig = px.bar( result_without_total , x="country_year", y=columnlist, barmode = 'stack', title=f"Uitgaven per dag (euro)")
+    st.plotly_chart(fig)
+
+
+    #save_df(table_w2, "table_uitg_only_sum")
+
+def uitgaven_per_period(df, period,modus):
+    st.header(f"UITGAVES PER {period}")
+    df.datum=pd.to_datetime(df.datum)
+    df.datum=df['datum'].dt.strftime('%Y-%m-%d')
+    table_uitg = df # df[(df["in_uit"] == "UIT" )| (df["in_uit"] == "UIT_AZIE") | (df["in_uit"] == "_AZIE_VOORAF")]
+    #st.write(table_uitg)
+    #table_uitg["bedrag"] = table_uitg["bedrag"]*-1
+
+    table_uitg_pivot = pd.pivot_table(table_uitg, values='bedrag', index=[period],
+            columns=[modus], aggfunc=np.sum,  margins = False, fill_value=0).round().reset_index()  #.plot.bar(stacked=True)
+    table_uitg_pivot_with_sum = pd.pivot_table(table_uitg, values='bedrag', index=[period],
+            columns=[modus], aggfunc=np.sum,  margins = True, margins_name='Total', fill_value=0).round().reset_index()  #.plot.bar(stacked=True)
+    table_uitg_pivot_only_sum = table_uitg_pivot_with_sum[[period,"Total"]]
+    columnlist =  table_uitg_pivot.columns.tolist()
+    columnlist = columnlist[1:]
+    fig = px.bar( table_uitg_pivot , x=period, y=columnlist, barmode = 'stack', title=f"Uitgaven per {period} (euro)")
+    st.plotly_chart(fig)
+
+    table_w =  table_uitg_pivot_with_sum.astype(str)
+    table_w2 =  table_uitg_pivot_only_sum.astype(str)
+    
+    st.subheader(f"pivottable per {period}")
+    st.write(table_w)
+    st.write(table_w2)
+    #save_df(table_w2, "table_uitg_only_sum")
 
 def uitgaves_categorie_per_period(df,hr, modus, period):
     df = df.fillna(0)
@@ -269,7 +336,7 @@ def uitgaves_categorie_per_period(df,hr, modus, period):
 
 def interface_selectperiod():
     DATE_FORMAT = "%m/%d/%Y"
-    start_ = "2021-01-01"
+    start_ = "2017-01-01"
     today = datetime.today().strftime("%Y-%m-%d")
     from_ = st.sidebar.text_input("startdate (yyyy-mm-dd)", start_)
 
@@ -311,23 +378,25 @@ def main():
     #     st.warning ("Enter the right password to enter")
     #    st.stop()
     sheet_id = "INVOER"
-    df = read(sheet_id)
+    df, df_country_year_days = read(sheet_id)
     FROM, UNTIL = interface_selectperiod()
 
     df = select_period_oud(df, "datum", FROM, UNTIL)
-    lijst_met_hoofdrubrieken  =  df['hoofdrub'].drop_duplicates().sort_values().tolist()
+    # lijst_met_hoofdrubrieken  =  df['hoofdrub'].drop_duplicates().sort_values().tolist()
     lijst_met_rubrieken  =  df['rubriek'].drop_duplicates().sort_values().tolist()
     period =  st.sidebar.selectbox("Period",["jaar", "maand_"], index=1)
-    modus_ =  st.sidebar.selectbox("Modus",["hoofdrubriek", "rubriek"], index=0)
-
+    #modus_ =  st.sidebar.selectbox("Modus",["hoofdrubriek", "rubriek"], index=1)
+    modus_ = 'rubriek'
     if modus_ == "hoofdrubriek":
         modus = 'hoofdrub'
-        rubriek =  st.sidebar.selectbox("Hoofdrubriek",lijst_met_hoofdrubrieken, index=3)
+        # rubriek =  st.sidebar.selectbox("Hoofdrubriek",lijst_met_hoofdrubrieken, index=3)
+        rubriek = "Foo"
     else:
         modus = 'rubriek'
         rubriek =  st.sidebar.selectbox("Rubriek",lijst_met_rubrieken, index=16)
-    in_and_out_per_period(df, period)
+  
     uitgaven_per_period(df, period, modus)
+    uitgaven_categorie_per_country_year(df, df_country_year_days, period,modus)
     uitgaves_categorie_per_period(df,rubriek,modus, period)
     totalen_per_rub(df)
 
