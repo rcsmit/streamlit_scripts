@@ -133,7 +133,7 @@ def getdata(stn, fromx, until):
         df["day"] = df["DD"].astype(str)
         df["month_year"] = df["month"] + " - " + df["year"]
         df["month_day"] = df["month"] + " - " + df["day"]
-
+        
         to_divide_by_10 = [
             "temp_avg",
             "temp_min",
@@ -191,33 +191,104 @@ def show_per_maand(df, gekozen_weerstation, what_to_show_):
 
     jaren = df["YYYY"].tolist()
     df = df[(df["MM"] >= month_min) & (df["MM"] <= month_max)]
-
+    df['DD'] = df['DD'].astype(str).str.zfill(2)
+    df['MM'] = df['MM'].astype(str).str.zfill(2)
+    df["mmdd"] = df["MM"] +"-" + df["DD"]
+    #df["day_month"] = df['DD'] +"-"+df['MM']
+    # st.write("df")
+    # st.write (df)
+    # print(df.dtypes)
+    df["year"] = df["year"].astype(str)
+            
     for what_to_show in what_to_show_:
-
-        fig, ax = plt.subplots()
-        plt.title(f"{ what_to_show} - gemiddeld per maand in {gekozen_weerstation}")
-
         if groeperen == "maandgem":
-            df_grouped = df.groupby(["year", "month"]).mean()
+            df_grouped = df.groupby(["year", "MM"]).mean().reset_index()
+            # st.write("df_grouped")
+            df_grouped ["year"] = df_grouped ["year"].astype(str)
+            # st.write (df_grouped)
             df_pivoted = df_grouped.pivot(
-                index="MM", columns="YYYY", values=what_to_show
-            )
+                index="MM", columns="year", values=what_to_show
+            ).reset_index()
+            st.write(df_pivoted)
         elif groeperen == "per_dag":
             df["MD"] = df["month_day"]
-            df_grouped = df.groupby(["year", "month_day"]).mean()
-            df_pivoted = df_grouped.pivot(
-                index="dayofyear", columns="YYYY", values=what_to_show
-            )
-            major_format = mdates.DateFormatter("%b")
+            #df_grouped = df.groupby(["year", "dayofyear"]).mean().reset_index()
+            df_grouped = df.groupby(["year", "mmdd"]).mean().reset_index()
+            # st.write("df_grouped")
+            # st.write(df_grouped)
+            df_grouped ["year"] = df_grouped ["year"].astype(str)
+            #df_pivoted = df_grouped.pivot(                index="dayofyear", columns="year", values=what_to_show            )
+            df_pivoted = df_grouped.pivot(                index="mmdd", columns="year", values=what_to_show            ).reset_index()
+        
+        xx = "plotly"
+        x = df_pivoted.astype(str)
+        # st.write("df_pivoted")
+        # st.write(x)
+        if xx == "plotly":
+            fig = go.Figure()
+            #df["sma"] = df_pivoted[what_to_show].rolling(window=wdw, center=centersmooth).mean()
+            #st.write(df_pivoted.columns)
+            # for c in df_pivoted.columns:
+            #     print (c)
+            #     print ("linne 224")
+            #     print (pd.Series(df_pivoted.index.values))
+            if groeperen == "maandgem":
+                sma = [go.Scatter(x=pd.Series(df_pivoted.MM), y=df_pivoted[c],  
+                   mode='lines', name=f'{c}')
+                   for c in df_pivoted.columns[1:]]
+            else:
+                sma = [go.Scatter(x=[pd.Series(df_pivoted.index.values),df_pivoted.mmdd], y=df_pivoted[c],  
+                   mode='lines',  line=dict(width=.7), name=f'{c}')
+                    for c in df_pivoted.columns[1:]]
+            # points = [go.Scatter(x=pd.Series(df_pivoted.index.values), y=df_pivoted[c], 
+            #        mode='markers', name=f'{c}')                  
+            #         for c in df_pivoted.columns]
+            # sma = go.Scatter(
+            #     name=what_to_show_[0],
+            #     x=df[datefield],
+            #     y= df["sma"],
+            #     mode='lines',
+            #     line=dict(width=1,color='rgba(0, 0, 168, 0.8)'),
+            #     )
+            # points = go.Scatter(
+            #     name="",
+            #     x=df[datefield],
+            #     y= df[what_to_show_[0]],
+            #     mode='markers',
+            #     showlegend=False,marker=dict(
+            #     color='LightSkyBlue',
+            #     size=2))
 
-            ax.xaxis.set_major_formatter(major_format)
-        plt.grid()
-        ax.plot(df_pivoted)
-        plt.legend(df_pivoted.columns, title=df_pivoted.columns.name)
 
-        st.pyplot(fig)
-        st.subheader(f"Data of {what_to_show}")
-        st.write(df_pivoted)
+            data = sma
+            title = (f"{ what_to_show} -  {gekozen_weerstation}")
+            layout = go.Layout(
+                # xaxis=dict(label=df_pivoted["mm-dd"]),
+                yaxis=dict(title=what_to_show), 
+                title=title,)
+                #, xaxis=dict(tickformat="%d-%m")
+            fig = go.Figure(data=data, layout=layout)
+            #fig.update_layout(xaxis=dict(tickformat="%m-%d"))
+            st.plotly_chart(fig, use_container_width=True)
+        
+        
+        
+        else:
+
+            fig, ax = plt.subplots()
+            plt.title(f"{ what_to_show} - gemiddeld per maand in {gekozen_weerstation}")
+
+           
+            if groeperen == "per_dag":
+                major_format = mdates.DateFormatter("%b")
+                ax.xaxis.set_major_formatter(major_format)
+            plt.grid()
+            ax.plot(df_pivoted)
+            plt.legend(df_pivoted.columns, title=df_pivoted.columns.name)
+
+            st.pyplot(fig)
+            st.subheader(f"Data of {what_to_show}")
+            st.write(df_pivoted)
 
 
 def get_weerstations():
@@ -302,7 +373,7 @@ def interface():
     until_ = st.sidebar.text_input("enddatum (yyyy-mm-dd)", today)
 
     mode = st.sidebar.selectbox(
-        "Modus", ["per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "per maand", "percentiles"], index=0
+        "Modus", ["per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "per dag/maand in div jaren", "percentiles"], index=0
     )
     wdw = st.sidebar.slider("Window smoothing curves", 1, 45, 7)
     centersmooth =  st.sidebar.selectbox(
@@ -386,7 +457,7 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, cen
 
     df = df_getdata.copy(deep=False)
 
-    if mode == "per maand":
+    if mode == "per dag/maand in div jaren":
         show_per_maand(df, gekozen_weerstation, what_to_show)
         datefield = None
         title = f"{what_to_show_as_txt} van {from_} - {until_} in {gekozen_weerstation}"
@@ -409,7 +480,7 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, cen
                 #graph_type = "plotly"
                 df = df.groupby(["YYYY"], sort=True).mean().reset_index()
 
-                title = f"{what_to_show_as_txt}  van {from_[:4]} - {until_[:4]} in {gekozen_weerstation}"
+                title = f"Jaargemiddelde {what_to_show_as_txt}  van {from_[:4]} - {until_[:4]} in {gekozen_weerstation}"
                 st.sidebar.write(
                     "Zorg ervoor dat de einddatum op 31 december valt voor het beste resultaat "
                 )
@@ -442,6 +513,7 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, cen
 
         show_warmingstripes(df, title)
     st.sidebar.write(f"URL to get data: {url}")
+    st.sidebar.write("Link to map with KNMI stations https://www.google.com/maps/d/u/0/edit?mid=1ePEzqJ4_aNyyTwF5FyUM6XiqhLZPSBjN&ll=52.17534745851063%2C5.197922250000001&z=7")
 
 
 def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw, centersmooth):
@@ -656,7 +728,7 @@ def show_plot(df, datefield, title, wdw, what_to_show_, graph_type, centersmooth
                 )
                 ax = sma.plot(label=what_to_show, color=color_list[i], linewidth=0.75)
 
-            ax.set_xticks(df[datefield].index)
+            ax.set_xticks(df[datefield])
             if datefield == "YYYY":
                 ax.set_xticklabels(df[datefield], fontsize=6, rotation=90)
             else:
@@ -699,7 +771,7 @@ def show_plot(df, datefield, title, wdw, what_to_show_, graph_type, centersmooth
             title=title,)
             #, xaxis=dict(tickformat="%d-%m")
         fig = go.Figure(data=data, layout=layout)
-        fig.update_layout(xaxis=dict(tickformat="%d-%m"))
+        fig.update_layout(xaxis=dict(tickformat="%d-%m-%Y"))
         st.plotly_chart(fig, use_container_width=True)
     df =df[[datefield,what_to_show_[0]]]
     st.write(df)
