@@ -172,58 +172,39 @@ def show_aantal_kerend(df, gekozen_weerstation, what_to_show_):
         plt.bar(df_grouped["year"], df_grouped["count"])
         plt.grid()
         plt.xticks(rotation=270)
-
-
         st.pyplot(fig)
-
         st.write(df_grouped)
         st.write(df)
 
 def show_per_maand(df, gekozen_weerstation, what_to_show_, groeperen, graph_type):
     what_to_show_ = what_to_show_ if type(what_to_show_) == list else [what_to_show_]
-
-
     df.set_index("YYYYMMDD")
     (month_min,month_max) = st.sidebar.slider("Maanden (van/tot en met)", 1, 12, (1,12))
-    # groeperen = st.sidebar.selectbox(
-    #     "Per dag/maandgemiddelde", ["per_dag", "maandgem"], index=1
-    # )
 
     jaren = df["YYYY"].tolist()
     df = df[(df["MM"] >= month_min) & (df["MM"] <= month_max)]
     df['DD'] = df['DD'].astype(str).str.zfill(2)
     df['MM'] = df['MM'].astype(str).str.zfill(2)
     df["mmdd"] = df["MM"] +"-" + df["DD"]
-    #df["day_month"] = df['DD'] +"-"+df['MM']
-    # st.write("df")
-    # st.write (df)
-    # print(df.dtypes)
+
     df["year"] = df["year"].astype(str)
             
     for what_to_show in what_to_show_:
         if groeperen == "maandgem":
             df_grouped = df.groupby(["year", "MM"]).mean().reset_index()
-            # st.write("df_grouped")
+     
             df_grouped ["year"] = df_grouped ["year"].astype(str)
-            # st.write (df_grouped)
+     
             df_pivoted = df_grouped.pivot(
                 index="MM", columns="year", values=what_to_show
             ).reset_index()
-            #st.write(df_pivoted)
         elif groeperen == "per_dag":
             df["MD"] = df["month_day"]
-            #df_grouped = df.groupby(["year", "dayofyear"]).mean().reset_index()
             df_grouped = df.groupby(["year", "mmdd"]).mean().reset_index()
-            # st.write("df_grouped")
-            # st.write(df_grouped)
             df_grouped ["year"] = df_grouped ["year"].astype(str)
-            #df_pivoted = df_grouped.pivot(                index="dayofyear", columns="year", values=what_to_show            )
             df_pivoted = df_grouped.pivot(                index="mmdd", columns="year", values=what_to_show            ).reset_index()
         
-        xx = "plotly"
-        x = df_pivoted.astype(str)
-        # st.write("df_pivoted")
-        # st.write(x)
+    
         if graph_type == "plotly":
             fig = go.Figure()
             #df["sma"] = df_pivoted[what_to_show].rolling(window=wdw, center=centersmooth).mean()
@@ -356,12 +337,9 @@ def interface():
     until_ = st.sidebar.text_input("enddatum (yyyy-mm-dd)", today)
 
     mode = st.sidebar.selectbox(
-        "Modus", ["doorlopend per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "per dag in div jaren", "per maand in div jaren", "percentiles"], index=0
+        "Modus", ["doorlopend per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "per dag in div jaren", "per maand in div jaren", "percentiles", "help"], index=0
     )
-    wdw = st.sidebar.slider("Window smoothing curves", 1, 45, 7)
-    centersmooth =  st.sidebar.selectbox(
-        "Smooth in center", [True, False], index=0
-        )
+   
 
     show_options = [
         "temp_min",
@@ -375,13 +353,18 @@ def interface():
         "neerslag_etmaalsom",
     ]
     what_to_show = st.sidebar.multiselect("Wat weer te geven", show_options, "temp_max")
-    if len(what_to_show)==1:
-        graph_type = st.sidebar.selectbox("Graph type (plotly=interactive)", ["pyplot", "plotly"], index=1)
-    else:
-        graph_type = "pyplot"
+    #if len(what_to_show)==1:
+    graph_type = st.sidebar.selectbox("Graph type (plotly=interactive)", ["pyplot", "plotly"], index=1)
+    #else:
+    #    graph_type = "pyplot"
+
+    wdw = st.sidebar.slider("Window smoothing curves", 1, 45, 7)
+    centersmooth =  st.sidebar.selectbox(
+        "Smooth in center", [True, False], index=0
+        )
+    st.sidebar.write("Smoothing niet aanwezig bij alle niet altijd")
     return stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, centersmooth, graph_type
-
-
+    
 def check_from_until(from_, until_):
     """Checks whethe start- and enddate are valid.
 
@@ -439,8 +422,10 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, cen
     df_getdata, url = getdata(stn, FROM.strftime("%Y%m%d"), UNTIL.strftime("%Y%m%d"))
 
     df = df_getdata.copy(deep=False)
+    if mode == "help":
+        help()
 
-    if mode == "per dag in div jaren":
+    elif mode == "per dag in div jaren":
         show_per_maand(df, gekozen_weerstation, what_to_show, "per_dag", graph_type)
         datefield = None
         title = f"{what_to_show_as_txt} van {from_} - {until_} in {gekozen_weerstation}"
@@ -715,8 +700,8 @@ def show_plot(df, datefield, title, wdw, what_to_show_, graph_type, centersmooth
                     linewidth=0.5,
                 )
                 ax = sma.plot(label=what_to_show, color=color_list[i], linewidth=0.75)
-
-            ax.set_xticks(df[datefield])
+            
+            #ax.set_xticks(df[datefield]) #TOFIX : this gives an strange graph
             if datefield == "YYYY":
                 ax.set_xticklabels(df[datefield], fontsize=6, rotation=90)
             else:
@@ -732,35 +717,36 @@ def show_plot(df, datefield, title, wdw, what_to_show_, graph_type, centersmooth
             plt.legend()
             st.pyplot(fig1x)
     else:
-        fig = go.Figure()
-        df["sma"] = df[what_to_show_[0]].rolling(window=wdw, center=centersmooth).mean()
+        for what_to_show_x in what_to_show_:
+            fig = go.Figure()
+            df["sma"] = df[what_to_show_x].rolling(window=wdw, center=centersmooth).mean()
 
-        sma = go.Scatter(
-            name=what_to_show_[0],
-            x=df[datefield],
-            y= df["sma"],
-            mode='lines',
-            line=dict(width=1,color='rgba(0, 0, 168, 0.8)'),
-            )
-        points = go.Scatter(
-            name="",
-            x=df[datefield],
-            y= df[what_to_show_[0]],
-            mode='markers',
-            showlegend=False,marker=dict(
-            color='LightSkyBlue',
-            size=2))
+            sma = go.Scatter(
+                name=what_to_show_x,
+                x=df[datefield],
+                y= df["sma"],
+                mode='lines',
+                line=dict(width=1,color='rgba(0, 0, 168, 0.8)'),
+                )
+            points = go.Scatter(
+                name="",
+                x=df[datefield],
+                y= df[what_to_show_x],
+                mode='markers',
+                showlegend=False,marker=dict(
+                color='LightSkyBlue',
+                size=2))
 
 
-        data = [sma,points]
+            data = [sma,points]
 
-        layout = go.Layout(
-            yaxis=dict(title=what_to_show_[0]),
-            title=title,)
-            #, xaxis=dict(tickformat="%d-%m")
-        fig = go.Figure(data=data, layout=layout)
-        fig.update_layout(xaxis=dict(tickformat="%d-%m-%Y"))
-        st.plotly_chart(fig, use_container_width=True)
+            layout = go.Layout(
+                yaxis=dict(title=what_to_show_x),
+                title=title,)
+                #, xaxis=dict(tickformat="%d-%m")
+            fig = go.Figure(data=data, layout=layout)
+            fig.update_layout(xaxis=dict(tickformat="%d-%m-%Y"))
+            st.plotly_chart(fig, use_container_width=True)
     df =df[[datefield,what_to_show_[0]]]
     st.write(df)
 
@@ -831,6 +817,56 @@ def show_warmingstripes(df, title):
         # st.pyplot(fig) - gives an error
         st.set_option("deprecation.showPyplotGlobalUse", False)
         st.pyplot()
+
+
+def help():
+    st.header("Help")
+    st.write ("Hier zijn de verschillende mogelijkheden")
+    st.subheader("Doorlopend per dag")
+    st.write("Wat was de temperatuur in de loop van de tijd?")
+    st.image("img_knmi/doorlopend_per_dag.png")
+
+    st.subheader("Aantal keren")
+    st.write("Hoeveel tropische dagen hebben we gehad in een bepaaalde periode?")
+    st.image("img_knmi/aantal_keren.png")
+
+    st.subheader("Specifieke dag")
+    st.write("Welke temperatuur was het op nieuwjaarsdag door de loop van de tijd?")
+    st.image("img_knmi/specifieke_dag.png")
+
+    st.subheader("Jaargemiddelde")
+    st.write("Wat was het jaargemiddelde?")
+    st.image("img_knmi/jaargemiddelde.png")
+    st.write("Kies hier volledige jaren als periode")
+
+    st.subheader("Per dag in div jaren")
+    st.write("Kan ik 2021 met 2021 per dag vergelijken?")
+    st.image("img_knmi/per_dag_div_jaren_2020_2021.png")
+
+
+    st.subheader("Per maand in diverse jaren")
+    st.write("Kan ik 2021 met 2021 per maaand vergelijken?")
+    st.image("img_knmi/per_maand_div_jaren_2020_2021.png")
+
+
+
+
+    st.subheader("Percentiles")
+    st.write("Wat zijn de uitschieters in het jaar? - kies hiervoor een lange periode")
+    st.image("img_knmi/percentiles.png")
+    st.subheader("Weerstations")
+    st.write("Link to map with KNMI stations https://www.google.com/maps/d/u/0/edit?mid=1ePEzqJ4_aNyyTwF5FyUM6XiqhLZPSBjN&ll=52.17534745851063%2C5.197922250000001&z=7")
+    st.image("img_knmi/weerstations.png")
+
+                
+    st.image(
+            "https://raw.githubusercontent.com/rcsmit/COVIDcases/main/buymeacoffee.png"
+        )
+
+    st.markdown(
+        '<a href="https://www.buymeacoffee.com/rcsmit" target="_blank">If you are happy with this dashboard, you can buy me a coffee</a>',
+        unsafe_allow_html=True,
+    )
 
 
 def main():
