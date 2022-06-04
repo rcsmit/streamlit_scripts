@@ -44,7 +44,7 @@ def select_period_oud(df, field, show_from, show_until):
     return df
 
 
-@st.cache(ttl=60 * 60 * 24)
+@st.cache(ttl=60 * 60 * 24, suppress_st_warning=True)
 def getdata(stn, fromx, until):
     with st.spinner(f"GETTING ALL DATA ..."):
         # url =  "https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns=251&vars=TEMP&start=18210301&end=20210310"
@@ -148,7 +148,24 @@ def getdata(stn, fromx, until):
             except:
                 df[d] = None
 
+    download_button(df)
     return df, url
+
+def download_button(df):    
+    csv = convert_df(df)
+
+    st.sidebar.download_button(
+        label="Download data as CSV",
+        data=csv,
+        file_name='df_knmi.csv',
+        mime='text/csv',
+    )
+
+@st.cache
+def convert_df(df):
+     # IMPORTANT: Cache the conversion to prevent computation on every rerun
+     return df.to_csv().encode('utf-8')
+
 def show_aantal_kerend(df, gekozen_weerstation, what_to_show_):
 
     what_to_show_ = what_to_show_ if type(what_to_show_) == list else [what_to_show_]
