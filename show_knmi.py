@@ -317,6 +317,10 @@ def interface():
     Returns:
         df, het weerstation, begindatum en einddatum (laatste drie als string)
     """
+    mode = st.sidebar.selectbox(
+        "Modus", ["doorlopend per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "per dag in div jaren", "per maand in div jaren", "percentiles", "show weerstations", "help"], index=0
+    )
+   
     weer_stations = get_weerstations()
     weerstation_namen = []
     for w in weer_stations:
@@ -336,10 +340,7 @@ def interface():
     from_ = st.sidebar.text_input("startdatum (yyyy-mm-dd) from 1-1-1900", start_)
     until_ = st.sidebar.text_input("enddatum (yyyy-mm-dd)", today)
 
-    mode = st.sidebar.selectbox(
-        "Modus", ["doorlopend per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "per dag in div jaren", "per maand in div jaren", "percentiles", "show weerstations", "help"], index=0
-    )
-   
+    
 
     show_options = [
         "temp_min",
@@ -832,7 +833,7 @@ def show_weerstations():
     )
     df_map = df_map[["original_Name", "lat", "lon"]]
     #df_map = df_map.head(1)
-    st.write(df_map)
+    
     #st.map(data=df_map, zoom=None, use_container_width=True)
 
     # Adding code so we can have map default to the center of the data
@@ -872,6 +873,7 @@ def show_weerstations():
              longitude=midpoint[1],
             latitude=midpoint[0],
             pitch=0,
+            zoom=6,
         ),
         layers=[layer1, layer2
             
@@ -879,7 +881,7 @@ def show_weerstations():
     ))
 
 
-    
+    st.write(df_map)
 
 
 def help():
