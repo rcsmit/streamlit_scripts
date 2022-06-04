@@ -489,8 +489,7 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, cen
 
         show_warmingstripes(df, title)
     st.sidebar.write(f"URL to get data: {url}")
-    st.sidebar.write("Link to map with KNMI stations https://www.google.com/maps/d/u/0/edit?mid=1ePEzqJ4_aNyyTwF5FyUM6XiqhLZPSBjN&ll=52.17534745851063%2C5.197922250000001&z=7")
-
+  
 
 def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw, centersmooth):
     if len(what_to_show)!=1 :
@@ -882,6 +881,9 @@ def show_weerstations():
 
 
     st.write(df_map)
+
+    st.sidebar.write("Link to map with KNMI stations on Google Maps https://www.google.com/maps/d/u/0/edit?mid=1ePEzqJ4_aNyyTwF5FyUM6XiqhLZPSBjN&ll=52.17534745851063%2C5.197922250000001&z=7")
+
 
 
 def help():
