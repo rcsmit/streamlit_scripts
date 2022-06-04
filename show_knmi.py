@@ -337,7 +337,7 @@ def interface():
     until_ = st.sidebar.text_input("enddatum (yyyy-mm-dd)", today)
 
     mode = st.sidebar.selectbox(
-        "Modus", ["doorlopend per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "per dag in div jaren", "per maand in div jaren", "percentiles", "help"], index=0
+        "Modus", ["doorlopend per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "per dag in div jaren", "per maand in div jaren", "percentiles", "show weerstations", "help"], index=0
     )
    
 
@@ -424,6 +424,8 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, cen
     df = df_getdata.copy(deep=False)
     if mode == "help":
         help()
+    elif mode == "show weerstations":
+        show_weerstations()
 
     elif mode == "per dag in div jaren":
         show_per_maand(df, gekozen_weerstation, what_to_show, "per_dag", graph_type)
@@ -817,6 +819,66 @@ def show_warmingstripes(df, title):
         # st.pyplot(fig) - gives an error
         st.set_option("deprecation.showPyplotGlobalUse", False)
         st.pyplot()
+
+def show_weerstations():
+    MAPBOX = "pk.eyJ1IjoicmNzbWl0IiwiYSI6Ii1IeExqOGcifQ.EB6Xcz9f-ZCzd5eQMwSKLQ"
+    # original_Name
+    df_map=  pd.read_csv(
+        "img_knmi/weerstations.csv",
+        #"img_knmi/leeg.csv",
+        comment="#",
+        delimiter=",",
+        low_memory=False,
+    )
+    df_map = df_map[["original_Name", "lat", "lon"]]
+    #df_map = df_map.head(1)
+    st.write(df_map)
+    st.map(data=df_map, zoom=None, use_container_width=True)
+
+    # Adding code so we can have map default to the center of the data
+    midpoint = (np.average(df_map['lat']), np.average(df_map['lon']))
+    import pydeck as pdk
+    tooltip = {
+            "html":
+                "{original_Name} <br/>"
+            }
+        
+    layer1= pdk.Layer(
+            'ScatterplotLayer',     # Change the `type` positional argument here
+                df_map,
+                get_position=['lon', 'lat'],
+                auto_highlight=True,
+                get_radius=4000,          # Radius is given in meters
+                get_fill_color=[180, 0, 200, 140],  # Set an RGBA value for fill
+                pickable=True)
+    layer2 =  pdk.Layer(
+                    type="TextLayer",
+                    data=df_map,
+                    pickable=False,
+                    get_position=["lon", "lat"],
+                    get_text="original_Name",
+                    get_color=[0, 0, 0],
+                    get_angle=0,
+                    sizeScale= 0.5,
+                    # Note that string constants in pydeck are explicitly passed as strings
+                    # This distinguishes them from columns in a data set
+                    getTextAnchor= '"middle"',
+                    get_alignment_baseline='"bottom"'
+                )
+
+    st.pydeck_chart(pdk.Deck(
+        map_style='mapbox://styles/mapbox/light-v9',
+        initial_view_state=pdk.ViewState(
+          
+            pitch=0,
+        ),
+        layers=[layer1, layer2
+            
+        ],tooltip = tooltip
+    ))
+
+
+    
 
 
 def help():
