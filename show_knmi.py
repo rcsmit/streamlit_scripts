@@ -833,7 +833,7 @@ def show_weerstations():
     df_map = df_map[["original_Name", "lat", "lon"]]
     #df_map = df_map.head(1)
     st.write(df_map)
-    st.map(data=df_map, zoom=None, use_container_width=True)
+    #st.map(data=df_map, zoom=None, use_container_width=True)
 
     # Adding code so we can have map default to the center of the data
     midpoint = (np.average(df_map['lat']), np.average(df_map['lon']))
@@ -869,7 +869,8 @@ def show_weerstations():
     st.pydeck_chart(pdk.Deck(
         map_style='mapbox://styles/mapbox/light-v9',
         initial_view_state=pdk.ViewState(
-          
+             longitude=midpoint[1],
+            latitude=midpoint[0],
             pitch=0,
         ),
         layers=[layer1, layer2
