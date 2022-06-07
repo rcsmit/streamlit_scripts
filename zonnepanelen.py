@@ -76,7 +76,7 @@ def get_data():
 def convert_df(df):
      # IMPORTANT: Cache the conversion to prevent computation on every rerun
      return df.to_csv().encode('utf-8')
-     
+
 def download_button(df):    
     csv = convert_df(df)
 
@@ -90,7 +90,7 @@ def download_button(df):
 def make_plot(df, x_axis, y_axis):
         #fig = px.Figure()
        
-        data = [px.scatter(x=df[x_axis], y=df[y_axis], trendline="ols" )]
+        data = [px.scatter(x=df[x_axis], y=df[y_axis], trendline="ols", )]
         title = (f"{y_axis} vs {x_axis}")
         layout = go.Layout(
             xaxis=dict(title=x_axis),
@@ -98,7 +98,7 @@ def make_plot(df, x_axis, y_axis):
             title=title,)
             #, xaxis=dict(tickformat="%d-%m")
         #fig = px.figure(data=data, layout=layout)
-        fig = px.scatter(df, x=x_axis, y=y_axis, trendline="ols")
+        fig = px.scatter(df, x=x_axis, y=y_axis, trendline="ols", hover_data=["date",x_axis, y_axis ])
         # fig.add_trace(go.Scatter(x=df[x_axis], y=df[y_axis], mode='markers',))
        
         st.plotly_chart(fig, use_container_width=True)
