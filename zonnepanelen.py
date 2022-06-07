@@ -99,7 +99,8 @@ def make_plot(df, x_axis, y_axis):
         st.plotly_chart(fig, use_container_width=True)
    
 def regression(df):
-    # https://timeseriesreasoning.com/contents/negative-binomial-regression-model/
+    st.header("The Negative Binomial Regression Model")
+    st.write("https://timeseriesreasoning.com/contents/negative-binomial-regression-model/")
 
     mask = np.random.rand(len(df)) < 0.8
     df_train = df[mask]
@@ -219,6 +220,8 @@ def sklearn(df):
     #plt.show()
     st.pyplot(fig1x)
 def main():
+
+    st.title("De relatie tussen Zonnepanelenopbrengst en meteorologische omstandigheden")
     df = get_data()
     print (df)
     fields=["id","STN","YYYYMMDD","temp_avg","temp_min","temp_max","T10N","zonneschijnduur","perc_max_zonneschijnduur",
