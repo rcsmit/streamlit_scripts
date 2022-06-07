@@ -11,3 +11,4 @@ sklearn
 gsheetsdb
 youtube_transcript_api
 yfinance
+patsy
