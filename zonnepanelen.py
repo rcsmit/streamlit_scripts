@@ -36,7 +36,10 @@ from sklearn.model_selection import train_test_split
 from sklearn import datasets, linear_model, metrics
 
 def get_data():
-    file = r"data\zonnepanelen.csv"
+    file = "data\\zonnepanelen.csv"
+    #file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\data\zonnepanelen.csv"
+    file = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/data/zonnepanelen.csv"
+    #st.write(file)
     try:
         df = pd.read_csv(
             file,
@@ -65,7 +68,8 @@ def get_data():
         #     except:
         #         df[d] = None
     except:
-        print ("Error loading data")
+        st.error ("Error loading data")
+        st.stop()
     return df
 
 def download_button(df):    
