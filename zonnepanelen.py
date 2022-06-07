@@ -101,7 +101,7 @@ def make_plot(df, x_axis, y_axis):
         alpha = model.iloc[0]["px_fit_results"].params[0]
         beta = model.iloc[0]["px_fit_results"].params[1]
         # st.write (f"Alfa {alpha} - beta {beta}")
-        st.write (f"y =  {round(alpha,2)} *x + {round(beta,2)}")
+        st.write (f"y =  {round(alpha,4)} *x + {round(beta,4)}")
         r2 = px.get_trendline_results(fig).px_fit_results.iloc[0].rsquared
         st.write(f"R2 = {r2}")
         try:
