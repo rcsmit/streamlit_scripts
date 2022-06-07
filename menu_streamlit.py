@@ -36,9 +36,9 @@ def main():
                 ["7. YFinance info", "yfinance_info"],
                 ["8. Crypto portfolio", "crypto_portfolio"],
                 ["9. Yepcharts", "yepcharts"],
-                ["10. Zonnepanelen", "zonnepanelen"]
+                ["10. Zonnepanelen", "zonnepanelen"]]
 
-    ]
+    
 
 
 
