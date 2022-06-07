@@ -5,15 +5,15 @@ import pandas as pd
 # glob_straling	neerslag_duur	neerslag_etmaalsom	YYYY	MM	DD	dayofyear	count	month	year	
 # day	month_year	month_day	date	value_kwh
 
-from imghdr import what
+#from imghdr import what
 import pandas as pd
 import numpy as np
 
 import streamlit as st
-from streamlit import caching
-import datetime as dt
+#from streamlit import caching
+#import datetime as dt
 
-from datetime import datetime
+#from datetime import datetime
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import RendererAgg
 
@@ -25,16 +25,14 @@ import statsmodels.formula.api as smf
 import scipy
 
 _lock = RendererAgg.lock
-from matplotlib.colors import ListedColormap
+#from matplotlib.colors import ListedColormap
 import numpy as np
-import matplotlib.dates as mdates
+#import matplotlib.dates as mdates
 
-import plotly.express as px
+#import plotly.express as px
 import plotly.graph_objects as go
 
 from sklearn.model_selection import train_test_split
-import matplotlib.pyplot as plt
-import numpy as np
 from sklearn import datasets, linear_model, metrics
 
 def get_data():
