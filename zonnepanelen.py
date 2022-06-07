@@ -29,7 +29,7 @@ _lock = RendererAgg.lock
 import numpy as np
 #import matplotlib.dates as mdates
 
-#import plotly.express as px
+import plotly.express as px
 import plotly.graph_objects as go
 
 from sklearn.model_selection import train_test_split
@@ -83,21 +83,42 @@ def download_button(df):
     )
 
 def make_plot(df, x_axis, y_axis):
-        fig = go.Figure()
+        #fig = px.Figure()
        
-        data = [go.Scatter(x=df[x_axis], y=df[y_axis], mode='markers', )]
+        data = [px.scatter(x=df[x_axis], y=df[y_axis], trendline="ols" )]
         title = (f"{y_axis} vs {x_axis}")
         layout = go.Layout(
             xaxis=dict(title=x_axis),
             yaxis=dict(title=y_axis), 
             title=title,)
             #, xaxis=dict(tickformat="%d-%m")
-        fig = go.Figure(data=data, layout=layout)
-
+        #fig = px.figure(data=data, layout=layout)
+        fig = px.scatter(df, x=x_axis, y=y_axis, trendline="ols")
         # fig.add_trace(go.Scatter(x=df[x_axis], y=df[y_axis], mode='markers',))
        
         st.plotly_chart(fig, use_container_width=True)
+        model = px.get_trendline_results(fig)
+        alpha = model.iloc[0]["px_fit_results"].params[0]
+        beta = model.iloc[0]["px_fit_results"].params[1]
+        # st.write (f"Alfa {alpha} - beta {beta}")
+        st.write (f"y =  {round(alpha,2)} *x + {round(beta,2)}")
+        r2 = px.get_trendline_results(fig).px_fit_results.iloc[0].rsquared
+        st.write(f"R2 = {r2}")
+        try:
+            c = round(df[x_axis].corr(df[y_axis]), 3)
+            st.write(f"Correlatie {x_axis} vs {y_axis}= {c}")
+        except:
+            st.write("_")
    
+def find_correlations(df):
+    factors =  ["temp_avg","temp_min","temp_max","T10N","zonneschijnduur","perc_max_zonneschijnduur",
+          "glob_straling","neerslag_duur","neerslag_etmaalsom"]
+    result = "value_kwh"
+    st.header("Correlaties")
+    for f in factors:
+        c = round(df[f].corr(df[result]), 3)
+        st.write(f"Correlatie {f} vs {result} = {c}")
+        
 def regression(df):
     st.header("The Negative Binomial Regression Model")
     st.write("https://timeseriesreasoning.com/contents/negative-binomial-regression-model/")
@@ -165,7 +186,8 @@ def sklearn(df):
     #        "glob_straling","neerslag_duur","neerslag_etmaalsom","value_kwh"]
     factors = ["temp_max","zonneschijnduur","glob_straling","neerslag_etmaalsom","value_kwh"]
     df = df[factors]
-    # https://www.geeksforgeeks.org/linear-regression-python-implementation/
+    st.header("Lineaire regressie met sklearn")
+    st.write("https://www.geeksforgeeks.org/linear-regression-python-implementation/")
 
     # load the boston dataset
     # boston = datasets.load_boston(return_X_y=False)
@@ -223,13 +245,14 @@ def main():
 
     st.title("De relatie tussen Zonnepanelenopbrengst en meteorologische omstandigheden")
     df = get_data()
-    print (df)
+    #print (df)
     fields=["id","STN","YYYYMMDD","temp_avg","temp_min","temp_max","T10N","zonneschijnduur","perc_max_zonneschijnduur",
             "glob_straling","neerslag_duur","neerslag_etmaalsom","YYYY","MM","DD","dayofyear","count","month","year",
             "day","month_year","month_day","date","value_kwh"]
     x_axis = st.sidebar.selectbox("X-as",fields, index = 3)
     y_axis = st.sidebar.selectbox("Y-as",fields, index=23)
     make_plot(df, x_axis, y_axis)
+    find_correlations(df)
     regression(df)
 
     sklearn(df)
