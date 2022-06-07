@@ -245,6 +245,7 @@ def main():
 
     st.title("De relatie tussen Zonnepanelenopbrengst en meteorologische omstandigheden")
     df = get_data()
+
     #print (df)
     fields=["id","STN","YYYYMMDD","temp_avg","temp_min","temp_max","T10N","zonneschijnduur","perc_max_zonneschijnduur",
             "glob_straling","neerslag_duur","neerslag_etmaalsom","YYYY","MM","DD","dayofyear","count","month","year",
@@ -256,5 +257,5 @@ def main():
     regression(df)
 
     sklearn(df)
-    
+    download_button(df)
 main()
