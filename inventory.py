@@ -50,16 +50,17 @@ def show_link():
 def main():
     df = read()
     accotype =  st.sidebar.multiselect("Acotype",["Waikiki","Fiji","Sahara","Kalahari 1","Kalahri 2","Serengeti XL","Serengetti L"], "Waikiki")
-    accotype_lst = accotype
+    
+    accotype_str = " & ".join([str(item) for item in accotype])
     languages = st.sidebar.multiselect("Languages", ["Nederlands", "English","Deutsch","Italiano","Franҁais", "Polski"],["Nederlands", "English"])
-    st.header(f"Inventory for {accotype} at Camping De Schatberg")
+    st.header(f"Inventory for {accotype_str} at Camping De Schatberg")
     
     for a in accotype:
         df[a] = df[a].fillna(0)
         if (len(accotype) ==1):
             df = df[df[a]>0] #TO DO : filter out when multiple acco's have 0 pcs of a certain item
         df[a] = df[a].astype(int)
-    to_show =  languages + accotype_lst
+    to_show =  languages + accotype
     file_name = "_".join([str(item) for item in to_show])
     df = df[to_show]
     df = df.reset_index(drop=True)
