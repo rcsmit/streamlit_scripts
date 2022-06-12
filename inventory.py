@@ -50,7 +50,6 @@ def show_link():
 def main():
     df = read()
     accotype =  st.sidebar.multiselect("Acotype",["Waikiki","Fiji","Sahara","Kalahari 1","Kalahri 2","Serengeti XL","Serengetti L"], "Waikiki")
-    
     accotype_str = " & ".join([str(item) for item in accotype])
     languages = st.sidebar.multiselect("Languages", ["Nederlands", "English","Deutsch","Italiano","Franҁais", "Polski"],["Nederlands", "English"])
     st.header(f"Inventory for {accotype_str} at Camping De Schatberg")
