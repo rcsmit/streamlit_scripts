@@ -49,22 +49,41 @@ def show_link():
 
 def main():
     df = read()
-    accotype =  st.sidebar.multiselect("Acotype",["Waikiki","Fiji","Sahara","Kalahari 1","Kalahri 2","Serengeti XL","Serengetti L"], "Waikiki")
-    accotype_str = " & ".join([str(item) for item in accotype])
-    languages = st.sidebar.multiselect("Languages", ["Nederlands", "English","Deutsch","Italiano","Franҁais", "Polski"],["Nederlands", "English"])
+    accotype_possible = ["Waikiki","Fiji","Sahara","Kalahari 1","Kalahri 2","Serengeti XL","Serengetti L"]
+    accotype_chosen =  st.sidebar.multiselect("Acotype",accotype_possible, "Waikiki")
+    
+    accotype_str = " & ".join([str(item) for item in accotype_chosen])
+    
+    languages_possible = ["Nederlands", "English","Deutsch","Italiano","Franҁais", "Dansk", "Polski"]
+    languages_chosen = st.sidebar.multiselect("Languages", languages_possible ,["Nederlands", "English"])
     st.header(f"Inventory for {accotype_str} at Camping De Schatberg")
     
-    for a in accotype:
+    for a in accotype_chosen:
         df[a] = df[a].fillna(0)
-        if (len(accotype) ==1):
+        if (len(accotype_chosen) ==1):
             df = df[df[a]>0] #TO DO : filter out when multiple acco's have 0 pcs of a certain item
         df[a] = df[a].astype(int)
-    to_show =  languages + accotype
+    to_show =  languages_chosen + accotype_chosen
     file_name = "_".join([str(item) for item in to_show])
     df = df[to_show]
     df = df.reset_index(drop=True)
     show_df(df)
     download_button(df, file_name)
     show_link()
+
+    disclaimer_nl = "Lijst is indicatief en niet juridisch bindend"
+    disclaimer_en = "List is indicative and not legally binding"
+    disclaimer_fr = "La liste est indicative et non juridiquement contraignante"
+    disclaimer_de = "Die Liste ist indikativ und nicht rechtlich bindend"
+    disclaimer_it = "L'elenco è indicativo e non giuridicamente vincolante"
+    disclaimer_dk = "Listen er vejledende og ikke juridisk bindende"
+    disclaimer_pl = "Lista ma charakter orientacyjny i nie jest prawnie wiążąca"
+    disclaimers = [disclaimer_nl, disclaimer_en, disclaimer_fr, disclaimer_de, disclaimer_it, disclaimer_dk, disclaimer_pl
+    ]
+    for l in languages_possible:
+        if l in languages_chosen:
+            index = languages_possible.index(l)
+            st.write(f" * {disclaimers[index]}")
+
 if __name__ == "__main__":
     main()
