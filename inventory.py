@@ -40,12 +40,12 @@ def show_df(df):
     # Inject CSS with Markdown
     st.markdown(hide_dataframe_row_index, unsafe_allow_html=True)
     st.write(df)
-    
+
 def main():
     df = read()
     accotype =  st.sidebar.selectbox("Acotype",["Wakiki","Fiji","Sahara","Kalahari 1","Kalahri 2","Serengeti XL","Serengetti L"], index=1)
     accotype_lst = [accotype]
-    languages = st.sidebar.multiselect("Languages", ["Nederlands", "English","Deutsch","Italiano","Franҁais"],["Nederlands", "English"])
+    languages = st.sidebar.multiselect("Languages", ["Nederlands", "English","Deutsch","Italiano","Franҁais", "Polski"],["Nederlands", "English"])
     st.header(f"Inventory for {accotype} at Camping De Schatberg")
     df[accotype] = df[accotype].fillna(0)
     df = df[df[accotype]>0]
