@@ -63,7 +63,7 @@ def show_disclaimer(languages_possible, languages_chosen):
 
 
 def main():
-    accotype_possible = ["Waikiki","Fiji","Sahara","Kalahari 1","Kalahri 2","Serengeti XL","Serengetti L"]
+    accotype_possible = ["Waikiki","Fiji","Sahara","Kalahari 1","Kalahri 2","Serengeti XL","Serengetti L", "€"]
     languages_possible = ["Nederlands", "English","Deutsch","Italiano","Franҁais", "Dansk", "Polski"]
     
     accotype_chosen =  st.sidebar.multiselect("Accotype",accotype_possible, "Waikiki")
@@ -78,7 +78,10 @@ def main():
         df[a] = df[a].fillna(0)
         if (len(accotype_chosen) ==1): #TO DO : filter out when multiple acco's have 0 pcs of a certain item
             df = df[df[a]>0] 
-        df[a] = df[a].astype(int)
+        if a == "€":
+            df[a] = df[a].astype(str)
+        else:
+            df[a] = df[a].astype(int)
     to_show =  languages_chosen + accotype_chosen
     file_name = "_".join([str(item) for item in to_show])
     df = df[to_show]
