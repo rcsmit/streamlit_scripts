@@ -39,23 +39,32 @@ def show_df(df):
 
     # Inject CSS with Markdown
     st.markdown(hide_dataframe_row_index, unsafe_allow_html=True)
-    st.write(df)
+    #st.write(df)
+    st.table(df)
+
+def show_link():
+    url = "https://docs.google.com/spreadsheets/d/1toDWxbZwLg4qyLnsjnmKnA_V5q_4yAqnkAsH0W4FiTY/edit#gid=353184161"
+    url_ = f"<a href='{url}' target='_blank'>Link to Google Sheet</a>"
+    st.sidebar.markdown(url_, unsafe_allow_html=True)
 
 def main():
     df = read()
-    accotype =  st.sidebar.selectbox("Acotype",["Wakiki","Fiji","Sahara","Kalahari 1","Kalahri 2","Serengeti XL","Serengetti L"], index=1)
-    accotype_lst = [accotype]
+    accotype =  st.sidebar.multiselect("Acotype",["Waikiki","Fiji","Sahara","Kalahari 1","Kalahri 2","Serengeti XL","Serengetti L"], "Waikiki")
+    accotype_lst = accotype
     languages = st.sidebar.multiselect("Languages", ["Nederlands", "English","Deutsch","Italiano","Franҁais", "Polski"],["Nederlands", "English"])
     st.header(f"Inventory for {accotype} at Camping De Schatberg")
-    df[accotype] = df[accotype].fillna(0)
-    df = df[df[accotype]>0]
-    df[accotype] = df[accotype].astype(int)
+    
+    for a in accotype:
+        df[a] = df[a].fillna(0)
+        if (len(accotype) ==1):
+            df = df[df[a]>0] #TO DO : filter out when multiple acco's have 0 pcs of a certain item
+        df[a] = df[a].astype(int)
     to_show =  languages + accotype_lst
     file_name = "_".join([str(item) for item in to_show])
     df = df[to_show]
     df = df.reset_index(drop=True)
     show_df(df)
     download_button(df, file_name)
-
+    show_link()
 if __name__ == "__main__":
     main()
