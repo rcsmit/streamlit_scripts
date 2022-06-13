@@ -42,7 +42,7 @@ def show_df(df):
     if len(df)>0:
         st.table(df)
     else:
-        st.warning ("No items gevonden")
+        st.warning ("No items found")
 
 def show_link():
     url = "https://docs.google.com/spreadsheets/d/1toDWxbZwLg4qyLnsjnmKnA_V5q_4yAqnkAsH0W4FiTY/edit#gid=353184161"
