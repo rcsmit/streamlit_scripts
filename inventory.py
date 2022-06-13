@@ -39,7 +39,10 @@ def show_df(df):
     # Inject CSS with Markdown
     st.markdown(hide_dataframe_row_index, unsafe_allow_html=True)
     #st.write(df)
-    st.table(df)
+    if len(df)>0:
+        st.table(df)
+    else:
+        st.warning ("No items gevonden")
 
 def show_link():
     url = "https://docs.google.com/spreadsheets/d/1toDWxbZwLg4qyLnsjnmKnA_V5q_4yAqnkAsH0W4FiTY/edit#gid=353184161"
@@ -68,24 +71,38 @@ def main():
     
     accotype_chosen =  st.sidebar.multiselect("Accotype",accotype_possible, "Waikiki")
     languages_chosen = st.sidebar.multiselect("Languages", languages_possible ,["Nederlands", "English"])
-    
+    item_search = st.sidebar.text_input("Search for item")
     accotype_str = " & ".join([str(item) for item in accotype_chosen])
     st.header(f"Inventory for {accotype_str} at Camping De Schatberg")
     
     df = read()
+    df = df.dropna(subset=accotype_chosen, how='all')
     
     for a in accotype_chosen:
         df[a] = df[a].fillna(0)
-        if (len(accotype_chosen) ==1): #TO DO : filter out when multiple acco's have 0 pcs of a certain item
-            df = df[df[a]>0] 
         if a == "€":
             df[a] = df[a].astype(str)
         else:
             df[a] = df[a].astype(int)
+    
+  
     to_show =  languages_chosen + accotype_chosen
     file_name = "_".join([str(item) for item in to_show])
     df = df[to_show]
     df = df.reset_index(drop=True)
+
+    df = df[(df['Nederlands'].str.contains(item_search,case=False, na=False)) 
+            | (df['English'].str.contains(item_search,case=False, na=False)) 
+            | (df['Deutsch'].str.contains(item_search,case=False, na=False)) 
+            | (df['Italiano'].str.contains(item_search,case=False, na=False)) 
+            | (df['Franҁais'].str.contains(item_search,case=False, na=False)) 
+            | (df['Dansk'].str.contains(item_search,case=False, na=False)) 
+            | (df['Polski'].str.contains(item_search,case=False, na=False))  ]
+        
+     
+    
+
+
     show_df(df)
     show_disclaimer(languages_possible, languages_chosen)
 
