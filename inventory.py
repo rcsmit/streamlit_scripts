@@ -63,7 +63,7 @@ def show_disclaimer(languages_possible, languages_chosen):
 
 
 def main():
-    accotype_possible = ["Waikiki","Fiji","Sahara","Kalahari 1","Kalahri 2","Serengeti XL","Serengetti L", "€"]
+    accotype_possible = ["Waikiki","Bali","Sahara","Kalahari 1","Kalahri 2","Serengeti XL","Serengetti L", "€"]
     languages_possible = ["Nederlands", "English","Deutsch","Italiano","Franҁais", "Dansk", "Polski"]
     
     accotype_chosen =  st.sidebar.multiselect("Accotype",accotype_possible, "Waikiki")
