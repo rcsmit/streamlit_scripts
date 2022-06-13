@@ -1,9 +1,9 @@
 import pandas as pd
 import streamlit as st
 
-def read():
+def read(sheet_name):
     sheet_id = "1toDWxbZwLg4qyLnsjnmKnA_V5q_4yAqnkAsH0W4FiTY"
-    sheet_name = "Schatberg2022"
+    
     url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
     df = pd.read_csv(url, delimiter=',')
     return df
@@ -66,16 +66,31 @@ def show_disclaimer(languages_possible, languages_chosen):
 
 
 def main():
+
+    #sheet_name = "Schatberg2022"
+    sheet_name = st.sidebar.selectbox("Location", ["Schatberg2022", "Default2022"], index=0) # TODO: read the names 
+                                                                                             # of the sheets automatically
     accotype_possible = ["Waikiki","Bali","Sahara","Kalahari 1","Kalahri 2","Serengeti XL","Serengetti L", "€"]
     languages_possible = ["Nederlands", "English","Deutsch","Italiano","Franҁais", "Dansk", "Polski"]
     
     accotype_chosen =  st.sidebar.multiselect("Accotype",accotype_possible, "Waikiki")
     languages_chosen = st.sidebar.multiselect("Languages", languages_possible ,["Nederlands", "English"])
-    item_search = st.sidebar.text_input("Search for item")
-    accotype_str = " & ".join([str(item) for item in accotype_chosen])
+    
+    item_search = st.sidebar.text_input("Search for item") 
+    
+    if len(accotype_chosen) == 0:
+        st.warning ("Choose at least one accotype")
+        st.stop()
+
+    if len(languages_chosen) == 0:
+        st.warning ("Choose at least one language")
+        st.stop()
+
+    accotype_str = " & ".join([str(item) for item in accotype_chosen])    
     st.header(f"Inventory for {accotype_str} at Camping De Schatberg")
     
-    df = read()
+
+    df = read(sheet_name)
     df = df.dropna(subset=accotype_chosen, how='all')
     
     for a in accotype_chosen:
