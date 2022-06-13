@@ -88,8 +88,7 @@ def main():
   
     to_show =  languages_chosen + accotype_chosen
     file_name = "_".join([str(item) for item in to_show])
-    df = df[to_show]
-    df = df.reset_index(drop=True)
+    
 
     df = df[(df['Nederlands'].str.contains(item_search,case=False, na=False)) 
             | (df['English'].str.contains(item_search,case=False, na=False)) 
@@ -99,7 +98,8 @@ def main():
             | (df['Dansk'].str.contains(item_search,case=False, na=False)) 
             | (df['Polski'].str.contains(item_search,case=False, na=False))  ]
         
-     
+    df = df[to_show]
+    df = df.reset_index(drop=True)
     
 
 
