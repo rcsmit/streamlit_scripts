@@ -194,8 +194,7 @@ def show_aantal_kerend(df_, gekozen_weerstation, what_to_show_):
 
         
         df = df_[(df_["MM"] >= month_min) & (df_["MM"] <= month_max)].reset_index().copy(deep=True)
-        st.write(len(df))
-        st.write(df)
+     
         # TODO :  this should be easier: 
         for i in range(len(df)):
             #if ((df.loc[i, what_to_show]  >= value_min) & (df.loc[i,what_to_show] <= value_max)):
@@ -212,7 +211,7 @@ def show_aantal_kerend(df_, gekozen_weerstation, what_to_show_):
         title = (f"Aantal keren dat { what_to_show} in {gekozen_weerstation} tussen {value_min} en {value_max} ligt\n")
 
         if month_min ==1 & month_max ==12:
-            st.write("compleet jaar")
+            st.write("compleet jaar") # FIXIT : werkt niet
 
         else:
             title += f"in de maanden {months.get(str(month_min))} tot en met {months.get(str(month_max))}"
