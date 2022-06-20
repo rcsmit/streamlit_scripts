@@ -167,6 +167,8 @@ def convert_df(df):
      return df.to_csv().encode('utf-8')
 
 def show_aantal_kerend(df_, gekozen_weerstation, what_to_show_):
+    # TODO : stacked bargraphs met meerdere condities
+    # https://twitter.com/Datagraver/status/1535200978814869504/photo/1
     months = {
             "1": "Jan",
             "2": "Feb",
@@ -218,7 +220,13 @@ def show_aantal_kerend(df_, gekozen_weerstation, what_to_show_):
         plt.title(title)
         plt.bar(df_grouped["year"], df_grouped["count_"])
         plt.grid()
+        xticks = ax.xaxis.get_major_ticks()
+        if len(xticks)>10:
+            for i, tick in enumerate(xticks):
+                    if i % int(len(xticks)/10) != 0:
+                        tick.label1.set_visible(False)
         plt.xticks(rotation=270)
+        
         st.pyplot(fig)
         st.write(df_grouped)
         df_ = df[(df["count_"] >0)].copy(deep=True)
