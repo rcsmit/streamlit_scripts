@@ -166,25 +166,40 @@ def convert_df(df):
      # IMPORTANT: Cache the conversion to prevent computation on every rerun
      return df.to_csv().encode('utf-8')
 
-def show_aantal_kerend(df, gekozen_weerstation, what_to_show_):
-
+def show_aantal_kerend(df_, gekozen_weerstation, what_to_show_):
+    months = {
+            "1": "Jan",
+            "2": "Feb",
+            "3": "Mar",
+            "4": "Apr",
+            "5": "May",
+            "6": "Jun",
+            "7": "Jul",
+            "8": "Aug",
+            "9": "Sep",
+            "10": "Oct",
+            "11": "Nov",
+            "12": "Dec",
+        }
     what_to_show_ = what_to_show_ if type(what_to_show_) == list else [what_to_show_]
 
-    df.set_index("YYYYMMDD")
+    df_.set_index("YYYYMMDD")
     (month_min,month_max) = st.sidebar.slider("Maanden (van/tot en met)", 1, 12, (1,12))
 
     (value_min,value_max) = st.sidebar.slider("Waarde (van/tot en met)", -99, 99, (0,99))
 
 
-    jaren = df["YYYY"].tolist()
+    #jaren = df["YYYY"].tolist()
     for what_to_show in what_to_show_:
 
         
-        df = df[(df["MM"] >= month_min) & (df["MM"] <= month_max)]
-        
+        df = df_[(df_["MM"] >= month_min) & (df_["MM"] <= month_max)].reset_index().copy(deep=True)
+        st.write(len(df))
+        st.write(df)
         # TODO :  this should be easier: 
         for i in range(len(df)):
-            if ((df.loc[i, what_to_show]  >= value_min) & (df.loc[i,what_to_show] <= value_max)):
+            #if ((df.loc[i, what_to_show]  >= value_min) & (df.loc[i,what_to_show] <= value_max)):
+            if ((df[what_to_show].iloc[i]  >= value_min) & (df[what_to_show].iloc[i] <= value_max)):
                 df.loc[i,"count_"] = 1
             else:
                 df.loc[i,"count_"] = 0
@@ -194,7 +209,14 @@ def show_aantal_kerend(df, gekozen_weerstation, what_to_show_):
 
         fig, ax = plt.subplots()
         plt.set_loglevel('WARNING') #Avoid : Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-        plt.title(f"Aantal keren dat { what_to_show} in {gekozen_weerstation} tussen {value_min} en {value_max} ligt")
+        title = (f"Aantal keren dat { what_to_show} in {gekozen_weerstation} tussen {value_min} en {value_max} ligt\n")
+
+        if month_min ==1 & month_max ==12:
+            st.write("compleet jaar")
+
+        else:
+            title += f"in de maanden {months.get(str(month_min))} tot en met {months.get(str(month_max))}"
+        plt.title(title)
         plt.bar(df_grouped["year"], df_grouped["count_"])
         plt.grid()
         plt.xticks(rotation=270)
