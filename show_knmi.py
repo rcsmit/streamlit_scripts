@@ -178,20 +178,30 @@ def show_aantal_kerend(df, gekozen_weerstation, what_to_show_):
 
     jaren = df["YYYY"].tolist()
     for what_to_show in what_to_show_:
-        df = df[(df["MM"] >= month_min) & (df["MM"] <= month_max)]
-        df = df[(df[what_to_show] >= value_min) & (df[what_to_show] <= value_max)]
 
-        df_grouped = df.groupby(by=["year"]).sum().reset_index()
-        df_grouped = df_grouped[["year", "count"]]
+        
+        df = df[(df["MM"] >= month_min) & (df["MM"] <= month_max)]
+        
+        # TODO :  this should be easier: 
+        for i in range(len(df)):
+            if ((df.loc[i, what_to_show]  >= value_min) & (df.loc[i,what_to_show] <= value_max)):
+                df.loc[i,"count_"] = 1
+            else:
+                df.loc[i,"count_"] = 0
+        
+        df_grouped = df.groupby(by=["year"]).sum().reset_index() # werkt maar geeft geen 0 waardes weer 
+        df_grouped = df_grouped[["year", "count_"]]
 
         fig, ax = plt.subplots()
+        plt.set_loglevel('WARNING') #Avoid : Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
         plt.title(f"Aantal keren dat { what_to_show} in {gekozen_weerstation} tussen {value_min} en {value_max} ligt")
-        plt.bar(df_grouped["year"], df_grouped["count"])
+        plt.bar(df_grouped["year"], df_grouped["count_"])
         plt.grid()
         plt.xticks(rotation=270)
         st.pyplot(fig)
         st.write(df_grouped)
-        st.write(df)
+        df_ = df[(df["count_"] >0)].copy(deep=True)
+        st.write(df_)
 
 def show_per_maand(df, gekozen_weerstation, what_to_show_, groeperen, graph_type):
     what_to_show_ = what_to_show_ if type(what_to_show_) == list else [what_to_show_]
