@@ -66,11 +66,11 @@ def show_disclaimer(languages_possible, languages_chosen):
 
 
 def main():
-
+    print ("--------------------------------------------------")
     #sheet_name = "Schatberg2022"
     sheet_name = st.sidebar.selectbox("Location", ["Schatberg2022", "Default2022"], index=0) # TODO: read the names 
                                                                                              # of the sheets automatically
-    accotype_possible = ["Waikiki","Bali","Sahara","Kalahari 1","Kalahri 2","Serengeti XL","Serengetti L", "€"]
+    accotype_possible = ["Waikiki","Bali","Sahara","Kalahari 1","Kalahari 2","Serengeti XL","Serengetti L", "€"]
     languages_possible = ["Nederlands", "English","Deutsch","Italiano","Franҁais", "Dansk", "Polski"]
     
     accotype_chosen =  st.sidebar.multiselect("Accotype",accotype_possible, "Waikiki")
@@ -86,40 +86,112 @@ def main():
         st.warning ("Choose at least one language")
         st.stop()
 
-    accotype_str = " & ".join([str(item) for item in accotype_chosen])    
-    st.header(f"Inventory for {accotype_str} at Camping De Schatberg")
     
+
+    output = st.sidebar.selectbox("Output", ["Together", "Seperate"], index=0)   
 
     df = read(sheet_name)
-    df = df.dropna(subset=accotype_chosen, how='all')
+    for a in accotype_possible:
+        if a != "€":
+            som = df[a].sum()
+            print (f"{a} - {som}")
+    print ("------------")
+    if output == "Together":
+        accotype_str = " & ".join([str(item) for item in accotype_chosen])    
+        st.header(f"Inventory for {accotype_str} at Camping De Schatberg")
     
-    for a in accotype_chosen:
-        df[a] = df[a].fillna(0)
-        if a == "€":
-            df[a] = df[a].astype(str)
-        else:
-            df[a] = df[a].astype(int)
-    
-  
-    to_show =  languages_chosen + accotype_chosen
-    file_name = "_".join([str(item) for item in to_show])
-    
-
-    df = df[(df['Nederlands'].str.contains(item_search,case=False, na=False)) 
-            | (df['English'].str.contains(item_search,case=False, na=False)) 
-            | (df['Deutsch'].str.contains(item_search,case=False, na=False)) 
-            | (df['Italiano'].str.contains(item_search,case=False, na=False)) 
-            | (df['Franҁais'].str.contains(item_search,case=False, na=False)) 
-            | (df['Dansk'].str.contains(item_search,case=False, na=False)) 
-            | (df['Polski'].str.contains(item_search,case=False, na=False))  ]
+        df = df.dropna(subset=accotype_chosen, how='all')
         
-    df = df[to_show]
-    df = df.reset_index(drop=True)
+        for a in accotype_chosen:
+            df[a] = df[a].fillna(0)
+            if a == "€":
+                df[a] = df[a].astype(str)
+            else:
+                df[a] = df[a].astype(int)
+        
     
+        to_show =  languages_chosen + accotype_chosen
+        file_name = "_".join([str(item) for item in to_show])
+        
+
+        df = df[(df['Nederlands'].str.contains(item_search,case=False, na=False)) 
+                | (df['English'].str.contains(item_search,case=False, na=False)) 
+                | (df['Deutsch'].str.contains(item_search,case=False, na=False)) 
+                | (df['Italiano'].str.contains(item_search,case=False, na=False)) 
+                | (df['Franҁais'].str.contains(item_search,case=False, na=False)) 
+                | (df['Dansk'].str.contains(item_search,case=False, na=False)) 
+                | (df['Polski'].str.contains(item_search,case=False, na=False))  ]
+            
+        df = df[to_show]
+        df = df.reset_index(drop=True)
+        
 
 
-    show_df(df)
-    show_disclaimer(languages_possible, languages_chosen)
+        show_df(df)
+
+
+
+        show_disclaimer(languages_possible, languages_chosen)
+        for a in accotype_possible:
+            if a != "€":
+                som = df[a].sum()
+                print (f"{a} - {som}")
+    elif output ==  "Seperate":
+        for acco_ in accotype_chosen:
+           
+            st.header(f"Inventory for {acco_} at Camping De Schatberg")
+            
+            df_ = df.dropna(subset=acco_, how='all').copy(deep=True)
+
+                # Waikiki - 171.0
+                # Bali - 133.0
+                # Sahara - 125.0
+                # Kalahari 1 - 165.0
+                # Kalahri 2 - 159.0
+                # Serengeti XL - 179.0
+                # Serengetti L - 167.0
+            
+                # Waikiki - 171
+                # Sahara - 111
+                # Bali - 113
+                # Kalahri 2 - 123
+                # Kalahari 1 - 123
+                # Serengeti XL - 124
+                # Serengetti L - 120
+
+                
+        
+            df_[acco_] = df_[acco_].fillna(0)
+            if acco_ == "€":
+                df_[acco_] = df_[acco_].astype(str)
+            else:
+                df_[acco_] = df_[acco_].astype(int)
+        
+        
+            to_show =  languages_chosen + [acco_]
+            file_name = "_".join([str(item) for item in to_show])
+            
+
+            df_ = df_[(df_['Nederlands'].str.contains(item_search,case=False, na=False)) 
+                    | (df_['English'].str.contains(item_search,case=False, na=False)) 
+                    | (df_['Deutsch'].str.contains(item_search,case=False, na=False)) 
+                    | (df_['Italiano'].str.contains(item_search,case=False, na=False)) 
+                    | (df_['Franҁais'].str.contains(item_search,case=False, na=False)) 
+                    | (df_['Dansk'].str.contains(item_search,case=False, na=False)) 
+                    | (df_['Polski'].str.contains(item_search,case=False, na=False))  ]
+                
+            df__ = df_[to_show]
+            df__ = df__.reset_index(drop=True)
+            
+
+
+            show_df(df__)
+            show_disclaimer(languages_possible, languages_chosen)
+            print (f"{acco_} - {df__[acco_].sum()}")
+
+
+    else:
+        st.error("Error in output")
 
     # sidebar
     download_button(df, file_name)
