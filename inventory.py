@@ -132,7 +132,7 @@ def main():
 
 
         show_disclaimer(languages_possible, languages_chosen)
-        for a in accotype_possible:
+        for a in accotype_chosen:
             if a != "€":
                 som = df[a].sum()
                 print (f"{a} - {som}")
