@@ -72,8 +72,10 @@ def group_data(df):
 
     Returns:
         _type_: _description_
-    """    
+    """   
+    df =  make_date_columns(df) 
     df = df[(df["number_of_acco"] != 0)]
+   
     for y in ["2019", "2021", "2022"]:
         df_a = df[(df["jaar"] == y)]
     for c in ["number_of_acco", "bezet", "vertrek_totaal", "wissel", "new_arrival"]:
