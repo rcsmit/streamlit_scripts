@@ -23,7 +23,7 @@ def read_csv():
     return df
 def read():
     file = r"C:\Users\rcxsm\Downloads\planning 2019-2022.xlsm"
-    sheet = "EXPORT_dummy"
+    sheet = "EXPORT"
     try:
         df = pd.read_excel(
             file,
@@ -219,7 +219,13 @@ def select_months(df_):
     return df_
 
 def main():
-    df_ = read_csv()
+    pw = st.sidebar.text_input("Password", "****", type="password")
+    if pw == st.secrets["PASSWORD"]:
+        st.sidebar.write("Pasword ok")
+        df_ = read()
+    else:
+        st.sidebar.write("Enter the right password")
+        df_ = read_csv()
     
     # df = df_[(df_["maand"] == '07')].copy(deep=True)
     a = ["ALLES"]
@@ -230,7 +236,7 @@ def main():
     acco_types_list = a + acco_types
 
     choice = st.sidebar.selectbox("Accotype", acco_types_list, index=0)
-
+    
     df_ = select_months(df_)
     if choice != "ALLES":
         show_graph_for_selection(df_, choice)
