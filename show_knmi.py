@@ -691,7 +691,7 @@ def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw, centersmooth):
             )
 
         value_in_year__ = go.Scatter(
-            name="2021",
+            name=year_to_show,
             x=df_quantile["date"],
             y=df_quantile["value_in_year"],
             mode='lines',
