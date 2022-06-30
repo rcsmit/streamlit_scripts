@@ -88,7 +88,7 @@ def main():
 
     
 
-    output = st.sidebar.selectbox("Output", ["Together", "Seperate"], index=0)   
+    output = st.sidebar.selectbox("Output", ["Together", "Seperate", "etiketjes"], index=0)   
 
     df = read(sheet_name)
     for a in accotype_possible:
@@ -96,7 +96,48 @@ def main():
             som = df[a].sum()
             print (f"{a} - {som}")
     print ("------------")
-    if output == "Together":
+    if output == "etiketjes":
+        sheet_name = "voorraad2022juni"
+        sheet_id = "1toDWxbZwLg4qyLnsjnmKnA_V5q_4yAqnkAsH0W4FiTY"
+        url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
+        df = pd.read_csv(url, delimiter=',').sort_values(by=['locatie'])
+        
+        kastdeurtjes = df["locatie"].drop_duplicates()
+        # CSS to inject contained in a string
+        hide_table_row_index = """
+                    <style>
+                    tbody th {display:none}
+                    .col_heading {display:none}
+                    .row_heading {display:none}
+                    .blank {display:none}
+                    </style>
+                    """
+
+        # Inject CSS with Markdown
+        st.markdown(hide_table_row_index, unsafe_allow_html=True)
+        from docx import Document
+        from docx.shared import Inches
+
+        mydoc = Document()
+        
+        for k in kastdeurtjes:
+            df_=df[df["locatie"]== k].copy(deep=True)
+            list_ = df_["Nederlands"].tolist()
+            try: 
+                mydoc.add_heading(f"Kast nr. {int(k)}", level=1)
+                st.subheader(f"Kast nr. {int(k)}")
+            except:
+                st.subheader(f"Kast nr. {k}")
+            for l in list_:
+                mydoc.add_paragraph(l)
+            st.table(list_)
+            #st.subheader(f"________________________________________________")
+        file_name = "kastdeurtjes.csv"
+        print ("saving to doc")
+        
+        mydoc.save(r"C:\Users\rcxsm\Documents\kasten_schatberg_2022.docx")
+    
+    elif output == "Together":
         accotype_str = " & ".join([str(item) for item in accotype_chosen])    
         st.header(f"Inventory for {accotype_str} at Camping De Schatberg")
     
