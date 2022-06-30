@@ -239,7 +239,7 @@ def main():
         st.sidebar.write("Pasword ok")
         df_ = read_google_sheets()
     else:
-        st.sidebar.write("Enter the right password")
+        st.sidebar.write("Enter the right password. Showing dummy data.")
         df_ = read_csv()
     
     # df = df_[(df_["maand"] == '07')].copy(deep=True)
