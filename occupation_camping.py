@@ -21,6 +21,19 @@ def read_csv():
     )
 
     return df
+
+def read_google_sheets():
+    sheet_id = st.secrets["google_sheet_occupation"]
+    sheet_name = "EXPORT"
+    url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
+
+    df = pd.read_csv(url, delimiter=',')
+    df["in_house"] = df["bezet"] + df["wissel"] + df["new_arrival"]
+    df = make_date_columns(df)
+    
+    
+    return df
+
 def read():
     file = r"C:\Users\rcxsm\Downloads\planning 2019-2022.xlsm"
     sheet = "EXPORT"
@@ -50,6 +63,8 @@ def read():
     return df
 
 def make_date_columns(df):
+
+    df['datum'] = pd.to_datetime(df.datum, format='%d-%m-%Y')
     df["jaar"] = df["datum"].dt.strftime("%Y")
     df["maand"] = df["datum"].dt.strftime("%m").astype(str).str.zfill(2)
     df["dag"] = df["datum"].dt.strftime("%d").astype(str).str.zfill(2)
@@ -222,7 +237,7 @@ def main():
     pw = st.sidebar.text_input("Password", "****", type="password")
     if pw == st.secrets["PASSWORD"]:
         st.sidebar.write("Pasword ok")
-        df_ = read()
+        df_ = read_google_sheets()
     else:
         st.sidebar.write("Enter the right password")
         df_ = read_csv()
