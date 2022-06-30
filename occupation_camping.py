@@ -2,10 +2,11 @@ import pandas as pd
 import streamlit as st
 import numpy as np
 def read_csv():
+
+    url="https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/planning_2019-2022_dummy.csv"
     df = pd.read_csv(
-        "masterfinance.csv",
-        names=["id","bron","datum","bedrag",
-                "tegenpartij","hoofdrub","rubriek"],
+        url,
+
 
         dtype={
             "bron": "category",
@@ -18,6 +19,8 @@ def read_csv():
         encoding='latin-1'  ,
         dayfirst=True
     )
+
+    return df
 def read():
     file = r"C:\Users\rcxsm\Downloads\planning 2019-2022.xlsm"
     sheet = "EXPORT_dummy"
@@ -214,7 +217,7 @@ def select_months(df_):
     return df_
 
 def main():
-    df_ = read()
+    df_ = read_csv()
     
     # df = df_[(df_["maand"] == '07')].copy(deep=True)
     a = ["ALLES"]
