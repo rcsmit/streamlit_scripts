@@ -166,7 +166,7 @@ def group_data(df):
     print(df_pivot)
     return df_pivot, df_pivot_in_house, df_pivot_number_of_acco, df_pivot_arrivals 
 
-def make_graph(df, df_grouped_in_house, df_pivot_number_of_acco, df_pivot_arrivals,  what_to_show_, datefield, acco_type):
+def make_graph(df, df_grouped_in_house, df_pivot_number_of_acco, df_pivot_arrivals,  what_to_show_, datefield, acco_type, prijs_per_nacht):
     # doesnt work well
     df[datefield] = df[datefield].astype(str)
     df["datum_"] = pd.to_datetime(df[datefield], format="%m-%d")
@@ -179,11 +179,12 @@ def make_graph(df, df_grouped_in_house, df_pivot_number_of_acco, df_pivot_arriva
         try:
             number_of_acco = df_pivot_number_of_acco[what_to_show_x].sum()
             aantal_nachten_bezet = df_grouped_in_house[what_to_show_x].sum()
+            omzet =round(aantal_nachten_bezet * prijs_per_nacht)
             aantal_acco = number_of_acco / len(df_pivot_number_of_acco)
             number_of_arrivals = df_pivot_arrivals[what_to_show_x].sum()
             gemiddelde_verblijfsduur = aantal_nachten_bezet / number_of_arrivals
             st.write(f"{what_to_show_x} - Aantal acco's {int(aantal_acco)} - Gemiddelde bezetting {round((aantal_nachten_bezet/number_of_acco*100),1)}% - Gemiddelde verblijfsduur {round(gemiddelde_verblijfsduur,1)} nachten")
-            # Aantal nachten bezet {aantal_in_house}
+            st.write(f"Aantal nachten bezet {aantal_nachten_bezet} - omzet {omzet}")
             if what_to_show_x == "2022":
                 width = 2
                 opacity = 1
@@ -214,13 +215,13 @@ def make_graph(df, df_grouped_in_house, df_pivot_number_of_acco, df_pivot_arriva
     fig.update_layout(xaxis=dict(tickformat="%d-%m"))
     st.plotly_chart(fig, use_container_width=True)
 
-def show_graph_for_selection(df_, choice):
+def show_graph_for_selection(df_, choice,prijs_per_nacht):
     st.subheader(f"Bezetting voor {choice}")
     if choice != "ALLES":
         df_ = df_[df_["acco_type"] == choice]
     df_grouped, df_grouped_in_house, df_pivot_number_of_acco, df_pivot_arrivals  = group_data(df_)
     make_graph(
-        df_grouped, df_grouped_in_house, df_pivot_number_of_acco, df_pivot_arrivals, ["2019", "2021", "2022"], "maand_dag", choice
+        df_grouped, df_grouped_in_house, df_pivot_number_of_acco, df_pivot_arrivals, ["2019", "2021", "2022"], "maand_dag", choice, prijs_per_nacht
     )
 def select_months(df_):
     (month_from,month_until) = st.sidebar.slider("Months (from/until (incl.))", 1, 12, (1,12))
@@ -251,13 +252,13 @@ def main():
     acco_types_list = a + acco_types
 
     choice = st.sidebar.selectbox("Accotype", acco_types_list, index=0)
-    
+    prijs_per_nacht = st.sidebar.number_input("Prijs per nacht", 0,1000,120)
     df_ = select_months(df_)
     if choice != "ALLES":
-        show_graph_for_selection(df_, choice)
+        show_graph_for_selection(df_, choice, prijs_per_nacht)
     else:
         for a in acco_types_list:
-            show_graph_for_selection(df_, a)
+            show_graph_for_selection(df_, a, prijs_per_nacht)
 
 
 
