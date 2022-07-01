@@ -19,7 +19,8 @@ def read_csv():
         encoding='latin-1'  ,
         dayfirst=True
     )
-
+    df_ = make_date_columns(df_)
+    df_["in_house"] = df_["bezet"] + df_["wissel"] + df_["new_arrival"]
   
     url_prijzen = f"https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/prijzen_dummy.csv"
 
@@ -29,9 +30,10 @@ def read_csv():
     df_prijzen_stacked = df_prijzen.melt('acco_type', var_name='maand_int', value_name='price_per_night')
     st.write(df_prijzen_stacked)
     #.set_index('acco_type').stack().rename(columns={'price_per_night':'month'})
-    df_["maand_str"] = df_["maand_int"].astype(str)
+    #df_["maand_str"] = df_["maand_int"].astype(str)
     df_prijzen_stacked["maand_str"] = df_prijzen_stacked["maand_int"].astype(str)
-    df = pd.merge(df_, df_prijzen_stacked,how="outer", on=["acco_type","maand_str"])
+    st.write(df_)
+    df = pd.merge(df_, df_prijzen_stacked,how="outer", left_on=["acco_type", "maand"], right_on=["acco_type","maand_int"])
 
     df["omzet"] = df["in_house"] * df["price_per_night"]
    
