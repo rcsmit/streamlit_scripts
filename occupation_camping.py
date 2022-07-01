@@ -12,7 +12,7 @@ def read_data(real_data):
 
     else:
         url="https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/planning_2019-2022_dummy.csv"
-        url_prijzen = f"https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/planning_2019-2022/prijzen_dummy.csv"
+        url_prijzen = f"https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/prijzen_dummy.csv"
    
     df_ = pd.read_csv(
         url,
