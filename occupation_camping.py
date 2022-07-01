@@ -1,32 +1,55 @@
 import pandas as pd
 import streamlit as st
 import numpy as np
+def read_csv():
 
-def read_data(real_data):
-    if real_data = True:
-        sheet_id = st.secrets["google_sheet_occupation"]
-        sheet_name = "EXPORT"
-        url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
-        sheet_name_prijzen = "prijzen"
-        url_prijzen = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name_prijzen}"
-
-    else:
-        url="https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/planning_2019-2022_dummy.csv"
-        url_prijzen = f"https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/prijzen_dummy.csv"
-   
+    url="https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/planning_2019-2022_dummy.csv"
     df_ = pd.read_csv(
         url,
+
+
+        dtype={
+            "bron": "category",
+            "hoofdrub": "category",
+            "rubriek": "category",
+
+        },
         delimiter=';',
         parse_dates=["datum"],
         encoding='latin-1'  ,
         dayfirst=True
     )
 
+  
+    url_prijzen = f"https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/prijzen_dummy.csv"
 
+    df_prijzen = pd.read_csv(url_prijzen, delimiter=';')
+    
+    #df_prijzen_stacked = df_prijzen.stack()
+    df_prijzen_stacked = df_prijzen.melt('acco_type', var_name='maand_int', value_name='price_per_night')
+    st.write(df_prijzen_stacked)
+    #.set_index('acco_type').stack().rename(columns={'price_per_night':'month'})
+    df_["maand_str"] = df_["maand_int"].astype(str)
+    df_prijzen_stacked["maand_str"] = df_prijzen_stacked["maand_int"].astype(str)
+    df = pd.merge(df_, df_prijzen_stacked,how="outer", on=["acco_type","maand_str"])
+
+    df["omzet"] = df["in_house"] * df["price_per_night"]
+   
+
+    return df
+
+def read_google_sheets():
+    sheet_id = st.secrets["google_sheet_occupation"]
+    sheet_name = "EXPORT"
+    url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
+
+    df_ = pd.read_csv(url, delimiter=',')
     df_["in_house"] = df_["bezet"] + df_["wissel"] + df_["new_arrival"]
     df_ = make_date_columns(df_)
     df_["maand_int"] = df_["datum"].dt.strftime("%m").astype(int)
 
+    sheet_name_prijzen = "prijzen"
+    url_prijzen = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name_prijzen}"
 
     df_prijzen = pd.read_csv(url_prijzen, delimiter=',')
     #df_prijzen_stacked = df_prijzen.stack()
@@ -37,8 +60,40 @@ def read_data(real_data):
     df = pd.merge(df_, df_prijzen_stacked,how="outer", on=["acco_type","maand_str"])
 
     df["omzet"] = df["in_house"] * df["price_per_night"]
+   
+    
+    
     return df
 
+
+
+def read():
+    file = r"C:\Users\rcxsm\Downloads\planning 2019-2022.xlsm"
+    sheet = "EXPORT"
+    try:
+        df = pd.read_excel(
+            file,
+            sheet_name=sheet,
+            header=0,
+            usecols="a,c,d,g,h,i,r",
+            names=[
+                "datum",
+                "number_of_acco",
+                "bezet",
+                "vertrek_totaal",
+                "wissel",
+                "new_arrival",
+                "acco_type",
+            ],
+        )
+        # df["datum"] = pd.to_datetime(df["datum"], format="%Y-%m-%d")
+        df.datum = pd.to_datetime(df.datum, errors="coerce", dayfirst=True)
+        df["in_house"] = df["bezet"] + df["wissel"] + df["new_arrival"]
+    except Exception as e:
+        print("error reading xls file")
+    df = make_date_columns(df)
+    print(df)
+    return df
 
 def make_date_columns(df):
 
@@ -250,10 +305,10 @@ def main():
     pw = st.sidebar.text_input("Password", "****", type="password")
     if pw == st.secrets["PASSWORD"]:
         st.sidebar.write("Pasword ok")
-        df_ = read_data(True)
+        df_ = read_google_sheets()
     else:
         st.sidebar.write("Enter the right password. Showing dummy data.")
-        df_ = read_data(False)
+        df_ = read_csv()
     
     # df = df_[(df_["maand"] == '07')].copy(deep=True)
     a = ["ALLES"]
