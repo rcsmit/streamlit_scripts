@@ -1,66 +1,44 @@
 import pandas as pd
 import streamlit as st
 import numpy as np
-def read_csv():
 
-    url="https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/planning_2019-2022_dummy.csv"
-    df = pd.read_csv(
+def read_data(real_data):
+    if real_data = True:
+        sheet_id = st.secrets["google_sheet_occupation"]
+        sheet_name = "EXPORT"
+        url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
+        sheet_name_prijzen = "prijzen"
+        url_prijzen = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name_prijzen}"
+
+    else:
+        url="https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/planning_2019-2022_dummy.csv"
+        url_prijzen = f"https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/planning_2019-2022/prijzen_dummy.csv"
+   
+    df_ = pd.read_csv(
         url,
-
-
-        dtype={
-            "bron": "category",
-            "hoofdrub": "category",
-            "rubriek": "category",
-
-        },
         delimiter=';',
         parse_dates=["datum"],
         encoding='latin-1'  ,
         dayfirst=True
     )
 
+
+    df_["in_house"] = df_["bezet"] + df_["wissel"] + df_["new_arrival"]
+    df_ = make_date_columns(df_)
+    df_["maand_int"] = df_["datum"].dt.strftime("%m").astype(int)
+
+
+    df_prijzen = pd.read_csv(url_prijzen, delimiter=',')
+    #df_prijzen_stacked = df_prijzen.stack()
+    df_prijzen_stacked = df_prijzen.melt('acco_type', var_name='maand_int', value_name='price_per_night')
+    #.set_index('acco_type').stack().rename(columns={'price_per_night':'month'})
+    df_["maand_str"] = df_["maand_int"].astype(str)
+    df_prijzen_stacked["maand_str"] = df_prijzen_stacked["maand_int"].astype(str)
+    df = pd.merge(df_, df_prijzen_stacked,how="outer", on=["acco_type","maand_str"])
+
+    df["omzet"] = df["in_house"] * df["price_per_night"]
     return df
 
-def read_google_sheets():
-    sheet_id = st.secrets["google_sheet_occupation"]
-    sheet_name = "EXPORT"
-    url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
-
-    df = pd.read_csv(url, delimiter=',')
-    df["in_house"] = df["bezet"] + df["wissel"] + df["new_arrival"]
-    df = make_date_columns(df)
-    
-    
-    return df
-
-def read():
-    file = r"C:\Users\rcxsm\Downloads\planning 2019-2022.xlsm"
-    sheet = "EXPORT"
-    try:
-        df = pd.read_excel(
-            file,
-            sheet_name=sheet,
-            header=0,
-            usecols="a,c,d,g,h,i,r",
-            names=[
-                "datum",
-                "number_of_acco",
-                "bezet",
-                "vertrek_totaal",
-                "wissel",
-                "new_arrival",
-                "acco_type",
-            ],
-        )
-        # df["datum"] = pd.to_datetime(df["datum"], format="%Y-%m-%d")
-        df.datum = pd.to_datetime(df.datum, errors="coerce", dayfirst=True)
-        df["in_house"] = df["bezet"] + df["wissel"] + df["new_arrival"]
-    except Exception as e:
-        print("error reading xls file")
-    df = make_date_columns(df)
-    print(df)
-    return df
 
 def make_date_columns(df):
 
@@ -161,12 +139,21 @@ def group_data(df):
         fill_value=0,
     ).reset_index()
     
+    df_pivot_omzet = pd.pivot_table(
+        df_grouped_date,
+        values="omzet",
+        index=["maand_dag"],
+        columns=["jaar"],
+        aggfunc=np.sum,
+        fill_value=0,
+    ).reset_index()
+    
 
     df_pivot = df_pivot.sort_values(by=["maand_dag"])
     print(df_pivot)
-    return df_pivot, df_pivot_in_house, df_pivot_number_of_acco, df_pivot_arrivals 
+    return df_pivot, df_pivot_in_house, df_pivot_number_of_acco, df_pivot_arrivals, df_pivot_omzet 
 
-def make_graph(df, df_grouped_in_house, df_pivot_number_of_acco, df_pivot_arrivals,  what_to_show_, datefield, acco_type, prijs_per_nacht):
+def make_graph(df, df_grouped_in_house, df_pivot_number_of_acco, df_pivot_arrivals,df_pivot_omzet,  what_to_show_, datefield, acco_type, prijs_per_nacht_fixed):
     # doesnt work well
     df[datefield] = df[datefield].astype(str)
     df["datum_"] = pd.to_datetime(df[datefield], format="%m-%d")
@@ -175,16 +162,38 @@ def make_graph(df, df_grouped_in_house, df_pivot_number_of_acco, df_pivot_arriva
 
     fig = go.Figure()
     title = f"Bezetting {acco_type}"
+    df_info =  pd.DataFrame()
     for what_to_show_x in what_to_show_:
         try:
             number_of_acco = df_pivot_number_of_acco[what_to_show_x].sum()
             aantal_nachten_bezet = df_grouped_in_house[what_to_show_x].sum()
-            omzet =round(aantal_nachten_bezet * prijs_per_nacht)
+            totale_omzet = df_pivot_omzet[what_to_show_x].sum()
+            omzet_fixed_price =round(aantal_nachten_bezet * prijs_per_nacht_fixed)
             aantal_acco = number_of_acco / len(df_pivot_number_of_acco)
             number_of_arrivals = df_pivot_arrivals[what_to_show_x].sum()
+            gem_prijs_per_nacht = totale_omzet / aantal_nachten_bezet
             gemiddelde_verblijfsduur = aantal_nachten_bezet / number_of_arrivals
-            st.write(f"{what_to_show_x} - Aantal acco's {int(aantal_acco)} - Gemiddelde bezetting {round((aantal_nachten_bezet/number_of_acco*100),1)}% - Gemiddelde verblijfsduur {round(gemiddelde_verblijfsduur,1)} nachten")
-            st.write(f"Aantal nachten bezet {aantal_nachten_bezet} - omzet {omzet}")
+            what_to_show_x_int = int(what_to_show_x)
+            df__ =  pd.DataFrame([ {
+                                "year" : what_to_show_x_int,
+                                "Aantal_accos": int(aantal_acco),
+                                "Gemiddelde_bezetting_(%)" : round((aantal_nachten_bezet/number_of_acco*100),1),
+                                "Gemiddelde_verblijfsduur_(nacht)" : round(gemiddelde_verblijfsduur,1),
+                                "Aantal_nachten_bezet" : aantal_nachten_bezet,
+                               
+                                "gemiddelde_prijs_per_nacht_(euro)" : round(gem_prijs_per_nacht,2),
+                                "omzet_(euro)" : totale_omzet, 
+
+                                 }]
+                            )           
+
+            df_info = pd.concat([df_info, df__],axis = 0)   
+            
+            
+            
+            # st.write(f"{what_to_show_x} - Aantal acco's {int(aantal_acco)} - Gemiddelde bezetting {round((aantal_nachten_bezet/number_of_acco*100),1)}% - Gemiddelde verblijfsduur {round(gemiddelde_verblijfsduur,1)} nachten")
+            # st.write(f"Aantal nachten bezet {aantal_nachten_bezet} - omzet (via prijslijst) {totale_omzet:_}  - gemiddelde prijs per nacht (via prijslijst) {round(gem_prijs_per_nacht,2)}")
+            # # - omzet (via fixed price) {omzet_fixed_price}
             if what_to_show_x == "2022":
                 width = 2
                 opacity = 1
@@ -206,6 +215,9 @@ def make_graph(df, df_grouped_in_house, df_pivot_number_of_acco, df_pivot_arriva
         except:
             # this acco wasnt there in that year
             pass
+   
+    df_info = df_info.set_index("year").transpose()
+    st.write (df_info.style.format("{:.2f}"))
 
     layout = go.Layout(
         yaxis=dict(title=f"Bezetting {acco_type} (%)"),
@@ -215,13 +227,13 @@ def make_graph(df, df_grouped_in_house, df_pivot_number_of_acco, df_pivot_arriva
     fig.update_layout(xaxis=dict(tickformat="%d-%m"))
     st.plotly_chart(fig, use_container_width=True)
 
-def show_graph_for_selection(df_, choice,prijs_per_nacht):
+def show_graph_for_selection(df_, choice,prijs_per_nacht_fixed):
     st.subheader(f"Bezetting voor {choice}")
     if choice != "ALLES":
         df_ = df_[df_["acco_type"] == choice]
-    df_grouped, df_grouped_in_house, df_pivot_number_of_acco, df_pivot_arrivals  = group_data(df_)
+    df_grouped, df_grouped_in_house, df_pivot_number_of_acco, df_pivot_arrivals,df_pivot_omzet  = group_data(df_)
     make_graph(
-        df_grouped, df_grouped_in_house, df_pivot_number_of_acco, df_pivot_arrivals, ["2019", "2021", "2022"], "maand_dag", choice, prijs_per_nacht
+        df_grouped, df_grouped_in_house, df_pivot_number_of_acco, df_pivot_arrivals,df_pivot_omzet, ["2019", "2021", "2022"], "maand_dag", choice, prijs_per_nacht_fixed
     )
 def select_months(df_):
     (month_from,month_until) = st.sidebar.slider("Months (from/until (incl.))", 1, 12, (1,12))
@@ -238,10 +250,10 @@ def main():
     pw = st.sidebar.text_input("Password", "****", type="password")
     if pw == st.secrets["PASSWORD"]:
         st.sidebar.write("Pasword ok")
-        df_ = read_google_sheets()
+        df_ = read_data(True)
     else:
         st.sidebar.write("Enter the right password. Showing dummy data.")
-        df_ = read_csv()
+        df_ = read_data(False)
     
     # df = df_[(df_["maand"] == '07')].copy(deep=True)
     a = ["ALLES"]
@@ -252,13 +264,13 @@ def main():
     acco_types_list = a + acco_types
 
     choice = st.sidebar.selectbox("Accotype", acco_types_list, index=0)
-    prijs_per_nacht = st.sidebar.number_input("Prijs per nacht", 0,1000,120)
+    prijs_per_nacht_fixed = st.sidebar.number_input("Prijs per nacht", 0,1000,120)
     df_ = select_months(df_)
     if choice != "ALLES":
-        show_graph_for_selection(df_, choice, prijs_per_nacht)
+        show_graph_for_selection(df_, choice, prijs_per_nacht_fixed)
     else:
         for a in acco_types_list:
-            show_graph_for_selection(df_, a, prijs_per_nacht)
+            show_graph_for_selection(df_, a, prijs_per_nacht_fixed)
 
 
 

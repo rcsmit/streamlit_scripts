@@ -119,7 +119,7 @@ def get_data_from_file():
         df = df[df['Author'] != 'x'].reset_index()
         return df
     else:
-        st.warning("you need to upload a csv or excel file")
+        st.warning("You need to upload a csv or excel file. Files are not stored anywhere after the processing of this script")
         st.stop()
 def manipulate_df(df):
     ### changing datatype of "Date" column.
@@ -340,7 +340,7 @@ def most_common_words(df):
 
     continuous_columns = [['Letter_Count', 'Word_Count']]
     #messages_df[continuous_columns].describe()
-    st.write(f"Number of lettes: {messages_df['Letter_Count'].sum()} - Number of words {messages_df['Word_Count'].sum()}")
+    st.write(f"Number of letters: {messages_df['Letter_Count'].sum()} - Number of words {messages_df['Word_Count'].sum()}")
 
     fig = plt.figure()
 
@@ -351,17 +351,20 @@ def most_common_words(df):
     plt.ylabel('Frequency')
     plt.title('most common number of words in a message')
     st.pyplot(fig)
+
+    # doesnt work
+    # st.subheader("Number of letters by author")
+    # total_letter_count_grouped_by_author = messages_df[['Author', 'Letter_Count']].groupby('Author').sum()
+    # sorted_total_letter_count_grouped_by_author = total_letter_count_grouped_by_author.sort_values('Letter_Count', ascending=False)
+    # top_10_sorted_total_letter_count_grouped_by_author = sorted_total_letter_count_grouped_by_author.head(10)
+    # st.write(top_10_sorted_total_letter_count_grouped_by_author)
+    # fig2 = plt.figure()
     
-    fig2 = plt.figure()
-    total_letter_count_grouped_by_author = messages_df[['Author', 'Letter_Count']].groupby('Author').sum()
-    sorted_total_letter_count_grouped_by_author = total_letter_count_grouped_by_author.sort_values('Letter_Count', ascending=False)
-    top_10_sorted_total_letter_count_grouped_by_author = sorted_total_letter_count_grouped_by_author.head(10)
-    st.write(top_10_sorted_total_letter_count_grouped_by_author)
-    top_10_sorted_total_letter_count_grouped_by_author.plot.bar()
-    plt.xlabel('Number of Letters')
-    plt.ylabel('Authors')
-    plt.title ("Number of letters by author")
-    st.pyplot(fig2)
+    # top_10_sorted_total_letter_count_grouped_by_author.plot.bar()
+    # plt.xlabel('Number of Letters')
+    # plt.ylabel('Authors')
+    # plt.title ("Number of letters by author")
+    # st.pyplot(fig2)
 
 def count_words_by_author(messages_df, author):
     if author != None:
