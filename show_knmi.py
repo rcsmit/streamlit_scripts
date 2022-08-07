@@ -374,7 +374,7 @@ def interface():
         df, het weerstation, begindatum en einddatum (laatste drie als string)
     """
     mode = st.sidebar.selectbox(
-        "Modus (kies HELP voor hulp)", ["doorlopend per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "per dag in div jaren", "per maand in div jaren", "percentiles", "show weerstations", "help"], index=0
+        "Modus (kies HELP voor hulp)", ["doorlopend per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "per dag in div jaren", "per maand in div jaren", "percentiles", "polar_plot", "show weerstations", "help"], index=0
     )
    
     weer_stations = get_weerstations()
@@ -497,6 +497,9 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, cen
             show_aantal_kerend(df, gekozen_weerstation, what_to_show)
     elif mode == "percentiles":
         plot_percentiles(df,  gekozen_weerstation, what_to_show, wdw, centersmooth)
+    elif mode == "polar_plot":
+        polar_plot(df,  gekozen_weerstation, what_to_show, wdw, centersmooth)
+        
     else:
         if mode == "doorlopend per dag":
             datefield = "YYYYMMDD"
@@ -826,6 +829,88 @@ def find_date_for_title(day, month):
     # ["January", "February",  "March", "April", "May", "June", "July", "August", "September", "Oktober", "November", "December"]
     return str(day) + " " + months[month - 1]
 
+def  polar_plot(df2,  gekozen_weerstation, what_to_show, wdw, centersmooth):
+    # https://scipython.com/blog/visualizing-the-temperature-in-cambridge-uk/
+    # import numpy as np
+    # import pandas as pd
+    # import matplotlib.pyplot as plt
+    # from matplotlib import cm
+    # from matplotlib.colors import Normalize
+    # from mpl_toolkits.mplot3d import Axes3D
+    #plt.rcParams['text.usetex'] = True
+ 
+    for w in what_to_show:   
+        st.subheader(w)
+        df2["YYYYMMDD_"] = pd.to_datetime(df2["YYYYMMDD"], format="%Y%m%d")
+
+
+        # Convert the timestamp to the number of seconds since the start of the year.
+        df2['secs'] = (df2.YYYYMMDD_ - pd.to_datetime(df2.YYYYMMDD.dt.year, format='%Y')).dt.total_seconds()
+        # Approximate the angle as the number of seconds for the timestamp divide by
+        # the number of seconds in an average year.
+        df2['angle'] = df2['secs'] / (365.25 * 24 * 60) * 2 * np.pi
+
+        # For the colourmap, the minimum is the largest multiple of 5 not greater than
+        # the smallest value of T; the maximum is the smallest multiple of 5 not less
+        # than the largest value of T, e.g. (-3.2, 40.2) -> (-5, 45).
+        Tmin = 5 * np.floor(df2[w].min() / 5)
+        Tmax = 5 * np.ceil(df2[w].max() / 5)
+
+        # Normalization of the colourmap.
+        # norm = Normalize(vmin=Tmin, vmax=Tmax)
+        # c = norm(df2[w])
+
+            
+
+        def plot_polar():
+            import plotly.express as px
+        
+            fig = px.scatter_polar(df2, r=w, color='YYYY', theta='angle',  hover_data=['YYYYMMDD'])
+            fig.update_layout(coloraxis={"colorbar":{"dtick":1}})
+            st.plotly_chart(fig)
+
+
+            # fig = plt.figure()
+            # ax = fig.add_subplot(projection='polar')
+            # # We prefer 1 January (0 deg) on the left, but the default is to the
+            # # right, so offset by 180 deg.
+            # ax.set_theta_offset(np.pi)
+            # cmap = cm.turbo
+            # ax.scatter(df2['angle'], df2[w], c=cmap(c), s=2)
+
+            # # Tick labels.
+            # ax.set_xticks(np.arange(0, 2 * np.pi, np.pi / 6))
+            # ax.set_xticklabels(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            #                     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
+            # ax.set_yticks([])
+
+            # # Add and title the colourbar.
+            # # cbar = fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap),
+            # #                     ax=ax, orientation='vertical', pad=0.1)
+            # # cbar.ax.set_title(r'Temp')
+
+            # st.pyplot(fig)
+
+        def plot_3d():
+            fig = plt.figure()
+            ax = fig.add_subplot(projection='3d')
+            cmap = cm.turbo
+            X = df2[w] * np.cos(df2['angle'] + np.pi)
+            Y = df2[w] * np.sin(df2['angle'] + np.pi)
+            z = df2.YYYYMMDD.dt.year
+            ax.scatter(X, Y, z, c=cmap(c), s=2)
+
+            ax.set_xticks([])
+            ax.set_yticks([])
+            cbar = fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap),
+                                ax=ax, orientation='horizontal', pad=-0.02, shrink=0.6)
+            #cbar.ax.set_title(r'$T\;/^\circ\mathrm{C}$')
+            st.pyplot(fig)
+
+        plot_polar()
+        #plot_3d()
+
+    
 
 def show_warmingstripes(df, title):
     # Based on code of Sebastian Beyer

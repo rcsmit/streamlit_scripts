@@ -208,7 +208,7 @@ def group_data(df):
 
     df_pivot = df_pivot.sort_values(by=["maand_dag"])
     print(df_pivot)
-    return df_pivot, df_pivot_in_house, df_pivot_number_of_acco, df_pivot_arrivals, df_pivot_omzet 
+    return df_pivot, df_pivot_in_house, df_pivot_number_of_acco, df_pivot_arrivals, df_pivot_omzet, df_grouped_date 
 
 def make_graph(df, df_grouped_in_house, df_pivot_number_of_acco, df_pivot_arrivals,df_pivot_omzet,  what_to_show_, datefield, acco_type, prijs_per_nacht_fixed):
     # doesnt work well
@@ -288,10 +288,61 @@ def show_graph_for_selection(df_, choice,prijs_per_nacht_fixed):
     st.subheader(f"Bezetting voor {choice}")
     if choice != "ALLES":
         df_ = df_[df_["acco_type"] == choice]
-    df_grouped, df_grouped_in_house, df_pivot_number_of_acco, df_pivot_arrivals,df_pivot_omzet  = group_data(df_)
+    df_grouped, df_grouped_in_house, df_pivot_number_of_acco, df_pivot_arrivals,df_pivot_omzet,df_grouped_date  = group_data(df_)
     make_graph(
         df_grouped, df_grouped_in_house, df_pivot_number_of_acco, df_pivot_arrivals,df_pivot_omzet, ["2019", "2021", "2022"], "maand_dag", choice, prijs_per_nacht_fixed
     )
+    if choice == "ALLES":
+        col1,col2= st.columns(2)
+        with col1:
+            year ="2019"
+            show_count( df_grouped_date,"arrivals", year)
+        with col2:
+            year ="2021"
+            show_count( df_grouped_date,"arrivals", year)
+     
+        year ="2022"
+        show_count( df_grouped_date,"arrivals", year)
+        col1,col2= st.columns(2)
+        with col1:
+            year ="2019"
+            show_count( df_grouped_date,"departures", year)
+        with col2:
+            year ="2021"
+            show_count( df_grouped_date,"departures", year)
+        year ="2022"
+        show_count( df_grouped_date,"departures", year)
+     
+ 
+def show_count( df_grouped_date, what, year):
+    print(df_grouped_date)
+    if year != None:
+        df_grouped_date_selection = df_grouped_date[df_grouped_date["jaar"]==year]
+        title=f"Days with most {what} in {year}"
+    else:
+        df_grouped_date_selection = df_grouped_date
+        title=f"Days with most {what}"
+    what_df = df_grouped_date_selection[["dag_maand", what]].sort_values(what, ascending=False)
+    what_df =  what_df[what_df[what]!=0]
+    st.subheader(title)
+    st.write(what_df.head(30))
+    import plotly.express as px
+    max_value =int(what_df[what].max())
+    sum = what_df[what].sum()
+    st.write (f"Total {sum}")
+    fig = px.histogram(what_df, x=what, nbins=max_value)
+    fig.update_layout(
+    title_text=title, # title of plot
+    xaxis_title_text='Value', # xaxis label
+    yaxis_title_text='Count', # yaxis label
+    bargap=0.2, # gap between bars of adjacent location coordinates
+    bargroupgap=0.1 # gap between bars of the same location coordinates
+)
+
+    #fig.show()
+    st.plotly_chart(fig, use_container_width=True)
+    
+
 def select_months(df_):
     (month_from,month_until) = st.sidebar.slider("Months (from/until (incl.))", 1, 12, (1,12))
     if month_from > month_until:
