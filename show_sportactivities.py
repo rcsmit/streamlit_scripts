@@ -221,7 +221,8 @@ def find_avg_km_avg_speed_per_year(df):
     df_mean = df_mean[["Afstand","gem_snelh"]]
     show_scatter(df_mean, "Afstand", "gem_snelh", False, "Gemiddelde afstand en snelheid per jaar")
     show_df(df_mean, True, "gemiddelde afstand vs gem snelheid per jaar")
-
+def show_all(df):
+    st.write(df)
 def find_activities_in_month(df):
     # Activeitein in een bepaalde maand
     month = st.sidebar.slider("Maand", 7,12,1)
@@ -303,6 +304,7 @@ def main():
             "plot histogram distance year animated",
             "show various scatters",
             "find activities in certain month",
+            "show all activities",
             ]
 
     functies = [ find_km_per_year ,
@@ -317,6 +319,7 @@ def main():
         plot_histogram_distance_year_animated,
         show_various_scatters ,
         find_activities_in_month ,
+        show_all
          ]
     st.sidebar.subheader("Menu")
     menu_choice = st.sidebar.radio("",lijst, index=0)

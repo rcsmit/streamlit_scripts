@@ -419,7 +419,7 @@ def interface():
     centersmooth =  st.sidebar.selectbox(
         "Smooth in center", [True, False], index=0
         )
-    st.sidebar.write("Smoothing niet aanwezig bij alle niet altijd")
+    st.sidebar.write("Smoothing niet altijd aanwezig")
     return stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, centersmooth, graph_type
     
 def check_from_until(from_, until_):
@@ -498,7 +498,10 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, cen
     elif mode == "percentiles":
         plot_percentiles(df,  gekozen_weerstation, what_to_show, wdw, centersmooth)
     elif mode == "polar_plot":
-        polar_plot(df,  gekozen_weerstation, what_to_show, wdw, centersmooth)
+        how = st.sidebar.selectbox(
+            "Scatter / line", ["scatter", "line"], index=0
+            )
+        polar_plot(df,  what_to_show, how)
         
     else:
         if mode == "doorlopend per dag":
@@ -557,7 +560,7 @@ def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw, centersmooth):
 
     df_quantile = pd.DataFrame(
         {"date": [],  "q10": [], "q25": [], "q50":[] ,"avg": [], "q75": [], "q90": []}    )
-    year_to_show = st.sidebar.number_input("Year to show (2100 for nothing)", 1900, 2100, 2021)
+    year_to_show = st.sidebar.number_input("Year to highlight (2100 for nothing)", 1900, 2100, 2021)
 
     (month_from,month_until) = st.sidebar.slider("Months (from/until (incl.))", 1, 12, (1,12))
     if month_from > month_until:
@@ -829,7 +832,7 @@ def find_date_for_title(day, month):
     # ["January", "February",  "March", "April", "May", "June", "July", "August", "September", "Oktober", "November", "December"]
     return str(day) + " " + months[month - 1]
 
-def  polar_plot(df2,  gekozen_weerstation, what_to_show, wdw, centersmooth):
+def  polar_plot(df2,   what_to_show, how):
     # https://scipython.com/blog/visualizing-the-temperature-in-cambridge-uk/
     # import numpy as np
     # import pandas as pd
@@ -837,7 +840,7 @@ def  polar_plot(df2,  gekozen_weerstation, what_to_show, wdw, centersmooth):
     # from matplotlib import cm
     # from matplotlib.colors import Normalize
     # from mpl_toolkits.mplot3d import Axes3D
-    #plt.rcParams['text.usetex'] = True
+    # plt.rcParams['text.usetex'] = True
  
     for w in what_to_show:   
         st.subheader(w)
@@ -846,30 +849,58 @@ def  polar_plot(df2,  gekozen_weerstation, what_to_show, wdw, centersmooth):
 
         # Convert the timestamp to the number of seconds since the start of the year.
         df2['secs'] = (df2.YYYYMMDD_ - pd.to_datetime(df2.YYYYMMDD.dt.year, format='%Y')).dt.total_seconds()
+     
         # Approximate the angle as the number of seconds for the timestamp divide by
         # the number of seconds in an average year.
-        df2['angle'] = df2['secs'] / (365.25 * 24 * 60) * 2 * np.pi
-
-        # For the colourmap, the minimum is the largest multiple of 5 not greater than
-        # the smallest value of T; the maximum is the smallest multiple of 5 not less
-        # than the largest value of T, e.g. (-3.2, 40.2) -> (-5, 45).
-        Tmin = 5 * np.floor(df2[w].min() / 5)
-        Tmax = 5 * np.ceil(df2[w].max() / 5)
-
-        # Normalization of the colourmap.
-        # norm = Normalize(vmin=Tmin, vmax=Tmax)
-        # c = norm(df2[w])
-
-            
+        df2['angle'] = df2['secs'] / (365.25 * 86400) *360  #   * 2 * np.pi
 
         def plot_polar():
+            months = [
+                "januari",
+                "februari",
+                "maart",
+                "april",
+                "mei",
+                "juni",
+                "juli",
+                "augustus",
+                "september",
+                "oktober",
+                "november",
+                "december",
+            ]
             import plotly.express as px
-        
-            fig = px.scatter_polar(df2, r=w, color='YYYY', theta='angle',  hover_data=['YYYYMMDD'])
-            fig.update_layout(coloraxis={"colorbar":{"dtick":1}})
+            if how == "line":
+                fig = px.line_polar(df2, r=w, color='YYYY', theta='angle',color_discrete_sequence=px.colors.sequential.Plasma_r, line_close=False, hover_data=['YYYYMMDD'])
+            elif how == "scatter":
+                fig = px.scatter_polar(df2, r=w, color='YYYY', theta='angle', hover_data=['YYYYMMDD'])
+
+            else:
+                st.error("Error in HOW")
+            fig.update_layout(coloraxis={"colorbar":{"dtick":1}}) #only integers in legeenda
+            labelevery = 6
+            fig.update_layout(
+                polar={
+                    "angularaxis": {
+                        "tickmode": "array",
+                        "tickvals": list(range(0, 360, 180 // labelevery)),
+                        "ticktext": months,
+                    }
+                }
+            )
             st.plotly_chart(fig)
 
+            # MATPLOTLIB
+            # For the colourmap, the minimum is the largest multiple of 5 not greater than
+            # the smallest value of T; the maximum is the smallest multiple of 5 not less
+            # than the largest value of T, e.g. (-3.2, 40.2) -> (-5, 45).
+            Tmin = 5 * np.floor(df2[w].min() / 5)
+            Tmax = 5 * np.ceil(df2[w].max() / 5)
+            # Normalization of the colourmap.
+            # norm = Normalize(vmin=Tmin, vmax=Tmax)
+            # c = norm(df2[w])
 
+    
             # fig = plt.figure()
             # ax = fig.add_subplot(projection='polar')
             # # We prefer 1 January (0 deg) on the left, but the default is to the

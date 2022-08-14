@@ -197,7 +197,7 @@ squares = [
     [71, 'Rajoguna', '', 'Rajoguna is an activity in consciousness, or active consciousness. A player who has reached the eighth row, but who has failed in an attempt to realize Cosmic Consciousness, is carried forward by the forces of karma, activity. This activity is the cause of all suffering, it presupposes the presence of a figure who inevitably falls victim to his ambitions and the expectation of the fruits of the activity. Any obstacle to the desired goal gives rise to pain and suffering.',1, 0],
     [72, 'Tamoguna', '', 'Tamoguna hides the truth so that the rope seems to be a snake, and the snake - a rope. Darkness is the main sign of Tamoguna, and its nature is passivity. The player who gets here immediately leaves the level of cosmic forces and returns to earth to search for a new way of climbing. What happens next depends only on the player and that One, which is the Truth.',0, 0],
         ]
-specials= (
+specials_oud= (
             #ladders
             [10,23],
             [17,69],
@@ -221,6 +221,29 @@ specials= (
             [44,9],
             [52,35],
             [72,51])
+
+specials = (#ladders
+    [1,38],
+    [4,14],
+    [9,31],
+    [21,42],
+    [28,84],
+    [36,44],
+    [51,67],
+    [71,91],
+    [80,100],
+
+    #snakes
+    [16,6],
+    [47,26],
+    [49,11],
+    [56,53],
+    [62,19],
+    [64,60],
+    [87,24],
+    [93,73],
+    [95,75],
+    [98,78])
 results=[]
 
 def throw_dice(numberofrounds):
