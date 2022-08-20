@@ -1,4 +1,6 @@
-Activiteittype;;Datum;Tijd_x;Titel;Afstand;Tijd;gem_snelh;Gem_HS;Max_HS;Gem_loopcadans;Max_loopcadans;Gemiddeld_tempo
+Activiteittype;Leeg;Datum;Tijd_x;Titel;Afstand;Tijd;gem_snelh;Gem_HS;Max_HS;Gem_loopcadans;Max_loopcadans;Gemiddeld_tempo
+Activiteittype,Datum,Favoriet,Titel,Afstand,Calorieën,Tijd,Gem. HS,Max. HS,Gem. loopcadans,Max. loopcadans,Gemiddeld tempo,Beste tempo,Totale stijging,Totale daling,Gem. staplengte,Gemiddelde verticale ratio,Gem. verticale oscillatie,Gem. grondcontacttijd,Gem. loopcadans,Max. loopcadans,Training Stress Score®,Gem. vermogen,Max. vermogen,Grit,Flow,Gemiddelde Swolf,Gem. slagsnelheid,Totaal herhalingen,Duiktijd,Min. temp.,Oppervlakte-interval,Decompressie,Beste rondetijd,Aantal ronden,Max. temp.,Tijd bewogen,Verstreken tijd,Minimum hoogte,Maximum hoogte
+
 Hardlopen;;31-5-2010;15:41;Serris Hardlopen;5.75;00:30:11;11.43;;;;;11.4
 Hardlopen;;4-6-2010;14:36;Stadskanaal Hardlopen;4.5;00:23:22;11.55;;;;;11.6
 Hardlopen;;9-6-2010;14:26;Stadskanaal Hardlopen;4.12;00:26:17;9.41;;;;;9.4
