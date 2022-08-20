@@ -11,13 +11,22 @@ import matplotlib.animation as animation
 
 def get_data(who):
     if who == "Rene":
-        url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_new.csv"
+        url_oud = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_new.csv"
+        url_2022 = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2022.csv"
         #url = "C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\streamlit_scripts\\input\\garminactivities_new.csv"
-        df = pd.read_csv(url, delimiter=';')
+        df_oud = pd.read_csv(url_oud, delimiter=';')
+        df_2022 = pd.read_csv(url_2022, delimiter=';')
 
-        df["Datum"] = pd.to_datetime(df["Datum"], format="%d-%m-%Y")
+        df["Datum_x"] = pd.to_datetime(df["Datum"], format="%d-%m-%Y")
 
         df = filter_df(df, "Activiteittype",2).copy(deep=False)
+
+        df_2022["Leeg"] = None
+        df_2022['Datum_x'] = pd.to_datetime(df['Datum']).dt.date
+        df_2022['Tijd_x'] = pd.to_datetime(df['Datum']).dt.time
+        df_2022 = df_2022[["Activiteittype","Leeg","Datum_x","Tijd_x","Titel","Afstand","Tijd","gem_snelh","Gem_HS","Max_HS","Gem_loopcadans","Max_loopcadans","Gemiddeld_tempo"]]
+        st.write(df_2022)
+        df = df_oud + df_2022
 
     elif who == "Didier":
         url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/activities_didier.csv"
@@ -290,7 +299,7 @@ def plot_histogram_distance_year_animated(df):
     st.pyplot(fig)
 
 def main():
-    who  = st.sidebar.selectbox("Wie",["Didier", "Rene"], index=0)
+    who  = st.sidebar.selectbox("Wie",["Didier", "Rene"], index=1)
     df = get_data(who).copy(deep=False)
     lijst = ["find km per year",
             "find fastest per distance",
