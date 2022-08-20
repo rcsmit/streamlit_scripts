@@ -16,25 +16,20 @@ def get_data(who):
         #url = "C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\streamlit_scripts\\input\\garminactivities_new.csv"
         df_oud = pd.read_csv(url_oud, delimiter=';')
         df_2022 = pd.read_csv(url_2022, delimiter=',')
-
+        
         df_oud["Datum_x"] = pd.to_datetime(df_oud["Datum"], format="%d-%m-%Y")
         df_oud["Datum_xy"] = pd.to_datetime(df_oud["Datum"], format="%d-%m-%Y")
         
 
         df_2022["Leeg"] = None
-     
+       
         df_2022['Datum_x'] = pd.to_datetime(df_2022['Datum']).dt.date
         df_2022["Datum_xy"] = pd.to_datetime(df_2022["Datum"], format="%Y-%m-%d %H:%M:%S")
         
         df_2022["Tijd_xy"] = pd.to_datetime(df_2022["Datum"], format="%Y-%m-%d %H:%M:%S")
         df_2022['Tijd_x'] = pd.to_datetime(df_2022['Tijd_xy']).dt.strftime('%H:%M:%S')
         df_2022['Tijd_y'] = pd.to_datetime(df_2022['Tijd']).dt.time
-        # df_2022['Tijd_h'] = pd.to_datetime(df_2022['Tijd']).dt.hour
-
-        # df_2022['Tijd_m'] = pd.to_datetime(df_2022['Tijd']).dt.minute
-        # df_2022['Tijd_s'] = pd.to_datetime(df_2022['Tijd']).dt.second
-        # df_2022['Tijd_seconds'] = (df_2022['Tijd_h']*3600) + (df_2022['Tijd_m']*60) + df_2022['Tijd_s'] 
-     
+       
         
         df_2022['Gem_HS'] = df_2022['Gem. HS']
         df_2022['Max_HS'] = df_2022['Max. HS']
@@ -51,7 +46,7 @@ def get_data(who):
         df['Tijd_seconds'] = (df['Tijd_h']*3600) + (df['Tijd_m']*60) + df['Tijd_s'] 
         df['gem_snelh'] = df['Afstand'] / df['Tijd_seconds'] * 3600.0 
 
-        df = filter_df(df, "Activiteittype",2).copy(deep=False)
+        df = filter_df(df, "Activiteittype",1).copy(deep=False)
         
     elif who == "Didier":
         url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/activities_didier.csv"
