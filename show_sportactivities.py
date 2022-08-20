@@ -15,19 +15,44 @@ def get_data(who):
         url_2022 = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2022.csv"
         #url = "C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\streamlit_scripts\\input\\garminactivities_new.csv"
         df_oud = pd.read_csv(url_oud, delimiter=';')
-        df_2022 = pd.read_csv(url_2022, delimiter=';')
+        df_2022 = pd.read_csv(url_2022, delimiter=',')
 
-        df["Datum_x"] = pd.to_datetime(df["Datum"], format="%d-%m-%Y")
-
-        df = filter_df(df, "Activiteittype",2).copy(deep=False)
+        df_oud["Datum_x"] = pd.to_datetime(df_oud["Datum"], format="%d-%m-%Y")
+        df_oud["Datum_xy"] = pd.to_datetime(df_oud["Datum"], format="%d-%m-%Y")
+        
 
         df_2022["Leeg"] = None
-        df_2022['Datum_x'] = pd.to_datetime(df['Datum']).dt.date
-        df_2022['Tijd_x'] = pd.to_datetime(df['Datum']).dt.time
-        df_2022 = df_2022[["Activiteittype","Leeg","Datum_x","Tijd_x","Titel","Afstand","Tijd","gem_snelh","Gem_HS","Max_HS","Gem_loopcadans","Max_loopcadans","Gemiddeld_tempo"]]
-        st.write(df_2022)
-        df = df_oud + df_2022
+     
+        df_2022['Datum_x'] = pd.to_datetime(df_2022['Datum']).dt.date
+        df_2022["Datum_xy"] = pd.to_datetime(df_2022["Datum"], format="%Y-%m-%d %H:%M:%S")
+        
+        df_2022["Tijd_xy"] = pd.to_datetime(df_2022["Datum"], format="%Y-%m-%d %H:%M:%S")
+        df_2022['Tijd_x'] = pd.to_datetime(df_2022['Tijd_xy']).dt.strftime('%H:%M:%S')
+        df_2022['Tijd_y'] = pd.to_datetime(df_2022['Tijd']).dt.time
+        # df_2022['Tijd_h'] = pd.to_datetime(df_2022['Tijd']).dt.hour
 
+        # df_2022['Tijd_m'] = pd.to_datetime(df_2022['Tijd']).dt.minute
+        # df_2022['Tijd_s'] = pd.to_datetime(df_2022['Tijd']).dt.second
+        # df_2022['Tijd_seconds'] = (df_2022['Tijd_h']*3600) + (df_2022['Tijd_m']*60) + df_2022['Tijd_s'] 
+     
+        
+        df_2022['Gem_HS'] = df_2022['Gem. HS']
+        df_2022['Max_HS'] = df_2022['Max. HS']
+        df_2022["Gem_loopcadans"] = df_2022['Gem. loopcadans']
+        df_2022["Max_loopcadans"] = df_2022['Max. loopcadans']
+        df_2022["Gemiddeld_tempo"] = df_2022['Gemiddeld tempo']
+        df_2022["gem_snelh"] = None
+        df_2022 = df_2022[["Activiteittype","Leeg","Datum_xy","Tijd_x","Titel","Afstand","Tijd","gem_snelh","Gem_HS","Max_HS","Gem_loopcadans","Max_loopcadans","Gemiddeld_tempo"]]
+       
+        df = df_2022.append(df_oud, ignore_index=False)
+        df['Tijd_h'] = pd.to_datetime(df['Tijd']).dt.hour
+        df['Tijd_m'] = pd.to_datetime(df['Tijd']).dt.minute
+        df['Tijd_s'] = pd.to_datetime(df['Tijd']).dt.second
+        df['Tijd_seconds'] = (df['Tijd_h']*3600) + (df['Tijd_m']*60) + df['Tijd_s'] 
+        df['gem_snelh'] = df['Afstand'] / df['Tijd_seconds'] * 3600.0 
+
+        df = filter_df(df, "Activiteittype",2).copy(deep=False)
+        
     elif who == "Didier":
         url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/activities_didier.csv"
         #url = "C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\streamlit_scripts\\input\\activities_didier.csv"
@@ -43,12 +68,15 @@ def get_data(who):
     return df
 
 def last_manipulations_df(df):
-    df = df.sort_values(by=['Datum'])
-    df["YYYY"] = df["Datum"].dt.year
-    df["MM"] = df["Datum"].dt.month
-    df["DD"] = df["Datum"].dt.day
+    print (df.dtypes)
+    df = df.sort_values(by=['Datum_xy'])
+    df["YYYY"] = df["Datum_xy"].dt.year
+    df["MM"] = df["Datum_xy"].dt.month
+    df["DD"] = df["Datum_xy"].dt.day
     df["count"] = 1
-    df = df[["Datum","Titel", "Afstand","Tijd", "gem_snelh", "count", "MM", "YYYY"]]
+    df = df[["Datum_xy","Titel", "Tijd_h","Tijd_m","Tijd_s","Tijd_seconds", "Afstand","Tijd", "gem_snelh", "count", "MM", "YYYY"]]
+
+ 
     return df
 
 def prepare_df_didier(df):
@@ -83,6 +111,33 @@ def calculate_average_speed(df):
     # df = df[round(df["snelh_new"]) != round(df["gem_snelh"])] #CHECK IF THERE ARE DIFFERNCES WITH THE GIVEN SPEED
     return df
 
+def in_between(df):
+    print (df.dtypes)
+    what = st.sidebar.selectbox("Wat", [ "Tijd_h","Tijd_m","Tijd_seconds", "Afstand","Tijd", "gem_snelh","YYYY", "MM" ], index=3) 
+    min = df[what].min().astype(int) -1
+    max = df[what].max().astype(int) +1
+    van = st.sidebar.number_input("From", 0, max, 0)
+    tot = st.sidebar.number_input("Until (incl.)", 0, max, max)
+    # st.write(min,max)
+    # (van,tot)=  st.sidebar.slider("van", 0,100,value = (0,100))
+    # tot=  st.sidebar.slider("tot", 0,9999,1)
+    if what == "Tijd_m":
+        df = df[(df["Tijd_h"] == 0)].copy(deep=False)
+        
+    df = select(df, what, van, tot)
+    df = df.sort_values(by=[what])
+    st.write(f"Aantal activiteiten {len(df)}")
+    
+    st.write(f"Totale afstand {df['Afstand'].sum()}" )
+    
+    seconds= df["Tijd_seconds"].sum()
+    m, s = divmod(seconds, 60)
+    h, m = divmod(m, 60)
+    ts = f'{h:d}:{m:02d}:{s:02d}'
+
+
+    st.write(f"Totale tijd {ts}" )
+    st.write(df)
 
 def select(df, select_field, van, tot):
     #df = df[(df[select_field] >= round(van)) & ( df[select_field] <= round(tot) )].copy(deep=False)
@@ -157,9 +212,9 @@ def find_fastest_per_distance(df_):
     show_df(df_pr_of_year, True, "Beste gemiddelde tijd voor de afstand")
 
 def find_pr_of_year(df, field):
-    fields = ["Datum","Titel", "Afstand","Tijd", "gem_snelh", "YYYY"]
+    fields = ["Datum_xy","Titel", "Afstand","Tijd", "gem_snelh", "YYYY"]
     new_table_list = []
-    for y in range (2010,2022):
+    for y in range (2010,2025):
         df_temp = select(df,"YYYY", y, y)
         df_temp = df_temp.sort_values(by=[field],ascending= False).reset_index(drop=True)
         my_dict = {"Datum":None,"Titel":None,"Afstand":None,"Tijd":None,"gem_snelh":None, "YYYY":None};
@@ -262,8 +317,8 @@ def find_biggest_distances(df):
 
 def show_various_scatters(df):
     # Verschillende scatterplots
-    show_scatter(df, "Datum", "gem_snelh", False, None)
-    show_scatter(df, "Datum", "Afstand", False, None)
+    show_scatter(df, "Datum_xy", "gem_snelh", False, None)
+    show_scatter(df, "Datum_xy", "Afstand", False, None)
     show_scatter(df, "Afstand", "gem_snelh", True, None)
 
 def plot_histogram_distance_year(df):
@@ -314,6 +369,7 @@ def main():
             "show various scatters",
             "find activities in certain month",
             "show all activities",
+            "in between"
             ]
 
     functies = [ find_km_per_year ,
@@ -328,7 +384,8 @@ def main():
         plot_histogram_distance_year_animated,
         show_various_scatters ,
         find_activities_in_month ,
-        show_all
+        show_all,
+        in_between
          ]
     st.sidebar.subheader("Menu")
     menu_choice = st.sidebar.radio("",lijst, index=0)

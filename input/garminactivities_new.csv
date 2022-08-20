@@ -1,6 +1,4 @@
 Activiteittype;Leeg;Datum;Tijd_x;Titel;Afstand;Tijd;gem_snelh;Gem_HS;Max_HS;Gem_loopcadans;Max_loopcadans;Gemiddeld_tempo
-Activiteittype,Datum,Favoriet,Titel,Afstand,Calorieën,Tijd,Gem. HS,Max. HS,Gem. loopcadans,Max. loopcadans,Gemiddeld tempo,Beste tempo,Totale stijging,Totale daling,Gem. staplengte,Gemiddelde verticale ratio,Gem. verticale oscillatie,Gem. grondcontacttijd,Gem. loopcadans,Max. loopcadans,Training Stress Score®,Gem. vermogen,Max. vermogen,Grit,Flow,Gemiddelde Swolf,Gem. slagsnelheid,Totaal herhalingen,Duiktijd,Min. temp.,Oppervlakte-interval,Decompressie,Beste rondetijd,Aantal ronden,Max. temp.,Tijd bewogen,Verstreken tijd,Minimum hoogte,Maximum hoogte
-
 Hardlopen;;31-5-2010;15:41;Serris Hardlopen;5.75;00:30:11;11.43;;;;;11.4
 Hardlopen;;4-6-2010;14:36;Stadskanaal Hardlopen;4.5;00:23:22;11.55;;;;;11.6
 Hardlopen;;9-6-2010;14:26;Stadskanaal Hardlopen;4.12;00:26:17;9.41;;;;;9.4
@@ -208,7 +206,7 @@ Hardlopen;;21-8-2011;11:12;Naamloos;4.7;00:24:52;11.34;145;177;;;05:17
 Hardlopen;;23-8-2011;09:55;Moeder veronique in het park binnenlaten;11.19;00:53:37;12.52;150;172;;;04:47
 Hardlopen;;27-8-2011;11:24;Naamloos;4.72;00:21:54;12.93;156;166;;;04:38
 Hardlopen;;31-8-2011;17:23;begrafenis man rosaline op maandag en lunchdate met henrieke dinsdag&;13.5;01:05:35;12.35;153;172;;;04:51
-Hardlopen;;4-9-2011;;Rondjes lac;5.0;23:04;12.90;;;;;
+Hardlopen;;4-9-2011;;Rondjes lac;5.0;00:23:04;12.90;;;;;
 Hardlopen;;8-9-2011;15:56;Naamloos;15;01:26:39;10.39;139;168;;;05:47
 Hardlopen;;12-9-2011;11:16;Naamloos;6.27;00:29:19;12.83;149;168;;;04:41
 Hardlopen;;15-9-2011;11:08;Naamloos;2.6;00:13:22;11.67;138;156;;;05:09
@@ -1039,7 +1037,7 @@ Fietsen;;23-9-2020;15:50;Horst aan de Maas Fietsen;8.86;00:26:55;19.75;97;122;;;
 Fietsen;;24-9-2020;19:19;Horst aan de Maas Fietsen;8.79;00:24:31;21.51;115;132;;;21.5
 Hardlopen;;26-9-2020;18:54;Horst aan de Maas Hardlopen;7.85;00:40:55;11.51;137;171;180;186;05:13
 Hardlopen;;28-9-2020;18:53;Horst aan de Maas Hardlopen;5.5;00:24:27;13.5;147;177;182;188;04:27
-Cardio;;29-9-2020;18:05;Horst aan de Maas Cardio;7.23;00:22:38;19.17;104;122;116;120;19.2
+Fietsen;;29-9-2020;18:05;Horst aan de Maas Fietsen;7.23;00:22:38;19.17;104;122;116;120;19.2
 Fietsen;;29-9-2020;16:28;Horst aan de Maas Fietsen;14.66;00:44:26;19.8;101;136;;;19.8
 Hardlopen;;1-10-2020;15:44;Stadskanaal Hardlopen;5.5;00:28:30;11.58;135;148;182;194;05:11
 Hardlopen;;3-10-2020;16:41;Stadskanaal Hardlopen;1.01;00:05:53;10.3;127;153;176;182;05:50
@@ -1154,7 +1152,7 @@ Hardlopen;;1-6-2021;19:07;Horst aan de Maas Hardlopen;7.5;00:34:58;12.87;146;171
 Hardlopen;;3-6-2021;19:05;Horst aan de Maas Hardlopen;6.47;00:30:01;12.93;146;157;178;186;04:38
 Hardlopen;;5-6-2021;19:08;Horst aan de Maas Hardlopen;10;00:54:04;11.1;131;142;180;186;05:24
 Fietsen;;6-6-2021;16:45;Horst aan de Maas Fietsen;6.76;00:21:01;19.3;127;162;;;19.3
-Cardio;;6-6-2021;18:13;Peel en Maas Cardio;7.73;00:28:09;16.48;89;122;116;118;16.5
+Fietsen;;6-6-2021;18:13;Peel en Maas Fietsen;7.73;00:28:09;16.48;89;122;116;118;16.5
 Hardlopen;;7-6-2021;19:43;Horst aan de Maas Hardlopen;5.03;00:21:55;13.77;150;167;178;190;04:22
 Hardlopen;;9-6-2021;18:03;Arnhem Hardlopen;6;00:29:12;12.33;141;161;182;188;04:52
 Fietsen;;9-6-2021;12:38;Horst aan de Maas Fietsen;8.29;00:27:30;18.09;97;125;;;18.1
