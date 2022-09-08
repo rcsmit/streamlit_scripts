@@ -40,7 +40,7 @@ def main():
     if replace_to_numbers:
         runif = st.sidebar.number_input("Percentage om te zetten in nummers (ongeveer)", 0,100,50)
     #new_string = make_breezer_taal(string, replace_to_numbers, runif)
-    if st.button("GO !"):
+    if st.sidebar.button("GO !"):
         new_string = make_breezer_taal(string, replace_to_numbers, runif)
         st.write (new_string)
     else:
