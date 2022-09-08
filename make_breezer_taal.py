@@ -39,6 +39,9 @@ def main():
     replace_to_numbers = st.sidebar.selectbox("Replace [e,i,o,a] to numbers", [True, False], index=0)
     if replace_to_numbers:
         runif = st.sidebar.number_input("Percentage om te zetten in nummers (ongeveer)", 0,100,50)
+
+    else:
+        runif = None
     #new_string = make_breezer_taal(string, replace_to_numbers, runif)
     if st.sidebar.button("GO !"):
         new_string = make_breezer_taal(string, replace_to_numbers, runif)
