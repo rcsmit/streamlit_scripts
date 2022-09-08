@@ -13,7 +13,9 @@ def make_breezer_taal(string, replace_to_numbers):
     new_string = ""
     teller = 0
     for s in string:   
-        if replace_to_numbers:
+        if replace_to_numbers == False:
+            break
+        else:
             if s == "e":
                 new_string += "3"
             elif s == "i":
@@ -22,7 +24,7 @@ def make_breezer_taal(string, replace_to_numbers):
                 new_string += "0"
             elif s == "a":
                 new_string +="4"
-            break
+            
         
         if teller %2 ==0:
             new_string += s.upper()
