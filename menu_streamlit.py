@@ -38,7 +38,8 @@ def main():
                 ["9. Yepcharts", "yepcharts"],
                 ["10. Zonnepanelen", "zonnepanelen"],
                 ["11. Occupation Camping", "occupation_camping"],
-                ["12. Whatsapp analyzer", "whatsapp_analyzer"]
+                ["12. Whatsapp analyzer", "whatsapp_analyzer"],
+                ["12. Breezertaal converter", "make_breezer_taal"]
                 ]
 
     

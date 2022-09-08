@@ -19,7 +19,7 @@ from plotly.subplots import make_subplots
 import traceback
 
 
-def select_period_oud(df, field, show_from, show_until):
+def select_period_oud(df, field, show_from, show_until, years):
     """Shows two inputfields (from/until and Select a period in a df.
     Args:
         df (df): dataframe
@@ -35,17 +35,21 @@ def select_period_oud(df, field, show_from, show_until):
         show_until = "2030-1-1"
     #"Date_statistics"
     mask = (df[field].dt.date >= show_from) & (df[field].dt.date <= show_until)
+
+
     df = df.loc[mask]
     df = df.reset_index()
+    
+    # TODO: alleen de jaren laten zien die in de datumrange vallen
+
+    mask = (df['jaar'].isin(years))
+    df = df.loc[mask]
+    df = df.reset_index()
+
+
     return df
 
 
-def save_df(df, name):
-    """  Saves the df """
-    name_ =  name + ".csv"
-    compression_opts = dict(method=None, archive_name=name_)
-    df.to_csv(name_, index=False, compression=compression_opts)
-    print("--- Saving " + name_ + " ---")
 
 def barchart (table,hr, titel, period):
     fig = go.Figure()
@@ -165,6 +169,7 @@ def read(sheet_id):
                        "tegenpartij","in_uit","hoofdrub","rubriek"],)
             #df["datum"] = pd.to_datetime(df["datum"], format="%Y-%m-%d")
             df.datum=pd.to_datetime(df.datum,errors='coerce', dayfirst=True)
+            
         except Exception as e:
             st.warning("error met laden")
             st.warning(f"{e}")
@@ -192,14 +197,34 @@ def totalen_per_rub(df):
     rapport = df.groupby(["hoofdrub", "rubriek"])["bedrag"].sum()
     st.write(rapport)
 
+def save_df(df, name):
+    """  _ _ _ """
+    OUTPUT_DIR = (
+        "C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\"
+    )
+
+
+    name_ = OUTPUT_DIR + name + ".csv"
+    compression_opts = dict(method=None, archive_name=name_)
+    df.to_csv(name_, index=False, compression=compression_opts)
+
+    print("--- Saving " + name_ + " ---")
+
+
 def in_and_out_per_period(df, period):
     st.header(f"IN EN UIT PER {period}")
     table = pd.pivot_table(df, values='bedrag', index=[period],
             columns=['in_uit'],  aggfunc=np.sum,fill_value=0).reset_index()
-    
-    table["UIT_TOT"] =  table["UIT"] + table["UIT_AZIE"]  + table["UIT_AZIE_VOORAF"]
-    table["verschil"] = table["IN"] + table["UIT"] + table["UIT_AZIE"]  + table["UIT_AZIE_VOORAF"]
+    st.write(table)
+
+    # for index, row in table.iterrows():
+    #     table.at[index,"UIT_TOT"] = row.UIT + row.UIT_VL + row.UIT_AZIE + row.UIT_AZIE_VOORAF
+    #     table.at[index,"verschil"] = row.IN + row.UIT + row.UIT_VL + row.UIT_AZIE + row.UIT_AZIE_VOORAF
+
+    table["UIT_TOT"] =  table["UIT"] + table["UIT_VL"] + table["UIT_AZIE"]  + table["UIT_AZIE_VOORAF"]
+    table["verschil"] = table["IN"] + table["UIT"] + table["UIT_VL"]+ table["UIT_AZIE"]  + table["UIT_AZIE_VOORAF"]
     st.write(table) 
+    #save_df(table, "IN_OUT_PER_YEAR")
     table_met_som = pd.pivot_table(df, values='bedrag', index=[period],
             columns=['in_uit'], margins=True, aggfunc=np.sum,fill_value=0).reset_index()
 
@@ -207,17 +232,35 @@ def in_and_out_per_period(df, period):
     barchart(table,"verschil", f"Saldo van inkomsten en uitgaven per {period}", period)
     st.write(table_met_som)
 
+def costs_per_day(df):
+    # jaar, dagen in NL, dagen in Azie
+    days =  [[2017,245,120],
+                [2018,245,120],
+                [2019,222,143],
+                [2020,184,181],
+                [2021,318,47],
+                [2022,170,195]]
+
 def uitgaven_per_period(df, period,modus):
     st.header(f"UITGAVES PER {period}")
     df.datum=pd.to_datetime(df.datum)
     df.datum=df['datum'].dt.strftime('%Y-%m-%d')
     table_uitg = df[(df["in_uit"] == "UIT" )| (df["in_uit"] == "UIT_AZIE") | (df["in_uit"] == "_AZIE_VOORAF")]
     table_uitg_azie = df[ (df["in_uit"] == "UIT_AZIE")]
-    table_uitg["bedrag"] = table_uitg["bedrag"]*-1
+    # print (table_uitg.dtypes)
+    # for i in range(len(table_uitg)):
+    #     #table_uitg.iloc[i,5]= table_uitg.iloc[i,5]*-1
+    #     table_uitg.at[i,'bedrag']= table_uitg.at[i,'bedrag']*-1
+    # table_uitg['bedrag_'] = table_uitg.apply(lambda x: x['bedrag']*-1, axis=1)
+    # table_uitg["bedrag"] = table_uitg["bedrag"]*-1
 
-    table_uitg_pivot = pd.pivot_table(table_uitg, values='bedrag', index=[period],
+    # afgeraden!
+    # for index, row in table_uitg.iterrows():
+    #     df.at[index,'bedrag'] = row.bedrag *-1
+
+    table_uitg_pivot = pd.pivot_table(table_uitg, values='invbedrag', index=[period],
             columns=[modus], aggfunc=np.sum, fill_value=0, margins=False).round().reset_index()  #.plot.bar(stacked=True)
-    table_uitg_pivot_azie = pd.pivot_table(table_uitg_azie, values='bedrag', index=[period],
+    table_uitg_pivot_azie = pd.pivot_table(table_uitg_azie, values='invbedrag', index=[period],
             columns=[modus], aggfunc=np.sum, fill_value=0, margins=True).round().reset_index()  #.plot.bar(stacked=True)
 
     columnlist =  table_uitg_pivot.columns.tolist()
@@ -232,6 +275,35 @@ def uitgaven_per_period(df, period,modus):
     st.write (" TABLE W AZIE")
     st.write(table_w_azie)
     save_df(table_w_azie, "Table vanuit masterfinance")
+
+def sunburst_chart(df, years_to_show):
+    st.header("Sunburst diagram")
+    df = df.fillna(0)
+    # df = df[df["rubriek"] == "kruis"]
+    # df = df[df["jaar"] == "2019"]
+
+    # st.write(df)
+
+
+    df = df.replace("zorgtoeslag", "zorgverzekering")
+  
+    df_sunburst = df.groupby(["jaar", "in_uit","hoofdrub", "rubriek"]).sum().reset_index()
+    df_sunburst = df_sunburst[df_sunburst["in_uit"] != "IN"]
+   
+    st.write(df_sunburst)
+    show_sunburst(years_to_show, df_sunburst)
+    for y in years_to_show:
+        df_sunburst_year = df_sunburst[df_sunburst['jaar'] == y]
+        if len(df_sunburst_year) >0 :
+            show_sunburst(y, df_sunburst_year)
+
+def show_sunburst(years_to_show, df_sunburst):
+    st.subheader(f" -- {years_to_show} ---")
+    fig = px.sunburst(df_sunburst,
+                  path=["in_uit","hoofdrub", "rubriek"],
+                  values="invbedrag",
+                  title=f"Uitgaven {years_to_show}",width=750, height=750,)  
+    st.plotly_chart(fig)
 
 
 def save_df(df, name):
@@ -269,7 +341,7 @@ def uitgaves_categorie_per_period(df,hr, modus, period):
 
 def interface_selectperiod():
     DATE_FORMAT = "%m/%d/%Y"
-    start_ = "2021-01-01"
+    start_ = "2016-01-01"
     today = datetime.today().strftime("%Y-%m-%d")
     from_ = st.sidebar.text_input("startdate (yyyy-mm-dd)", start_)
 
@@ -314,7 +386,10 @@ def main():
     df = read(sheet_id)
     FROM, UNTIL = interface_selectperiod()
 
-    df = select_period_oud(df, "datum", FROM, UNTIL)
+    years_possible   =  df['jaar'].drop_duplicates().sort_values().tolist()
+    years = st.sidebar.multiselect("Jaren",years_possible, years_possible)
+
+    df = select_period_oud(df, "datum", FROM, UNTIL, years)
     lijst_met_hoofdrubrieken  =  df['hoofdrub'].drop_duplicates().sort_values().tolist()
     lijst_met_rubrieken  =  df['rubriek'].drop_duplicates().sort_values().tolist()
     period =  st.sidebar.selectbox("Period",["jaar", "maand_"], index=1)
@@ -327,9 +402,18 @@ def main():
         modus = 'rubriek'
         rubriek =  st.sidebar.selectbox("Rubriek",lijst_met_rubrieken, index=16)
     in_and_out_per_period(df, period)
+    sunburst_chart(df, years)
     uitgaven_per_period(df, period, modus)
     uitgaves_categorie_per_period(df,rubriek,modus, period)
     totalen_per_rub(df)
+    
 
 if __name__ == "__main__":
+    import os
+    import datetime
+
+    print(f"--------------{datetime.datetime.now()}-------------------------")
+
+    os.system('cls')
+
     main()
