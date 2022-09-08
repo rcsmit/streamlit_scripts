@@ -1,7 +1,8 @@
 # klein scriptje om een string in hoofdletters om te zetten
 import streamlit as st
+from random import random
 
-def make_breezer_taal(string, replace_to_numbers):
+def make_breezer_taal(string, replace_to_numbers, runif):
     """Make breezerlanguage. 
 
     Args:
@@ -17,9 +18,12 @@ def make_breezer_taal(string, replace_to_numbers):
 
     for s in string:   
         if replace_to_numbers:
-            if s in s1:
-                new_string += s2[s1.index(s)]
-                continue
+
+            r = int(random()*100)
+            if r<runif: 
+                if s in s1:
+                    new_string += s2[s1.index(s)]
+                    continue
         
         if teller %2 ==0:
             new_string += s.upper()
@@ -34,8 +38,8 @@ def main():
     string = st.sidebar.text_input("String to convert (in lowercase)" , standard_string)
     replace_to_numbers = st.sidebar.selectbox(
         "Replace [e,i,o,a] to numbers", [True, False], index=0
-        )
-    new_string = make_breezer_taal(string, replace_to_numbers)
+    runif = st.sidebar.number_input("Percentage om te zetten in nummers", 0,100,50)
+    new_string = make_breezer_taal(string, replace_to_numbers, runif)
     st.write (new_string)
 
 if __name__ == "__main__":
