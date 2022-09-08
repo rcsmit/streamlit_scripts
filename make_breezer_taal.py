@@ -15,6 +15,8 @@ def make_breezer_taal(string):
     for s in string:   
         if s == "e":
             new_string += "3"
+        elif s == "i":
+            new_string += "!"
         elif s == "o":
             new_string += "0"
         elif s == "a":
