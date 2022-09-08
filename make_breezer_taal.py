@@ -30,7 +30,7 @@ def make_breezer_taal(string, replace_to_numbers):
 
 def main():
     st.header("Breezertaal converter")
-    standard_string = "De meeste dromen zijn bedrog, maar als ik wakker ben dan droom ik nog"
+    standard_string = "De meeste dromen zijn bedrog, maar als ik wakker word naast jou dan droom ik nog"
     string = st.sidebar.text_input("String to convert (in lowercase)" , standard_string)
     replace_to_numbers = st.sidebar.selectbox(
         "Replace [e,i,o,a] to numbers", [True, False], index=0
