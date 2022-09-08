@@ -18,7 +18,7 @@ def make_breezer_taal(string, replace_to_numbers):
     for s in string:   
         if replace_to_numbers:
             if s in s1:
-                new_string + = s2[s1.index(s)]
+                new_string += s2[s1.index(s)]
                 continue
             # if s == "e":
             #     new_string += "3"
