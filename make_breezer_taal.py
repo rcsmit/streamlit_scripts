@@ -43,6 +43,7 @@ def main():
     else:
         runif = None
     #new_string = make_breezer_taal(string, replace_to_numbers, runif)
+    st.write (new_string)
     if st.sidebar.button("GO !"):
         new_string = make_breezer_taal(string, replace_to_numbers, runif)
         st.write (new_string)
