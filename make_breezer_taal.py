@@ -16,16 +16,16 @@ def make_breezer_taal(string, replace_to_numbers):
         if replace_to_numbers:
             if s == "e":
                 new_string += "3"
-                break
+                continue 
             elif s == "i":
                 new_string += "!"
-                break
+                continue 
             elif s == "o":
                 new_string += "0"
-                break
+                continue 
             elif s == "a":
                 new_string +="4"
-                break
+                continue 
         
         if teller %2 ==0:
             new_string += s.upper()
