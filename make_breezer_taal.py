@@ -22,12 +22,13 @@ def make_breezer_taal(string, replace_to_numbers):
                 new_string += "0"
             elif s == "a":
                 new_string +="4"
+            break
+        
+        if teller %2 ==0:
+            new_string += s.upper()
         else:
-            if teller %2 ==0:
-                new_string += s.upper()
-            else:
-                new_string +=s
-            teller +=1
+            new_string +=s
+        teller +=1
     return new_string
 
 def main():
