@@ -29,7 +29,7 @@ def make_breezer_taal(string):
 
 def main():
     st.header("Breezertaal converter")
-    standard_string = "orem ipsum dolor sit amet, consectetur adipiscing elit. Sed nunc orci, euismod nec venenatis sit amet, pulvinar sed nibh. Donec condimentum id nunc ultrices maximus."
+    standard_string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nunc orci, euismod nec venenatis sit amet, pulvinar sed nibh. Donec condimentum id nunc ultrices maximus."
     string = st.sidebar.text_input("String to convert (in lowercase)" , standard_string)
 
     new_string = make_breezer_taal(string)
