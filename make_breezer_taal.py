@@ -39,7 +39,7 @@ def main():
     standard_string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nunc orci, euismod nec venenatis sit amet, pulvinar sed nibh. Donec condimentum id nunc ultrices maximus."
     string = st.sidebar.text_input("String to convert (in lowercase)" , standard_string)
     replace_to_numbers = st.sidebar.selectbox(
-        "Replace to numbers", [True, False], index=0
+        "Replace [e,i,o,a] to numbers", [True, False], index=0
         )
     new_string = make_breezer_taal(string, replace_to_numbers)
     st.write (new_string)
