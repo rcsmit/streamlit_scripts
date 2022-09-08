@@ -39,7 +39,7 @@ def main():
                 ["10. Zonnepanelen", "zonnepanelen"],
                 ["11. Occupation Camping", "occupation_camping"],
                 ["12. Whatsapp analyzer", "whatsapp_analyzer"],
-                ["12. Breezertaal converter", "make_breezer_taal"]
+                ["13. Breezertaal converter", "make_breezer_taal"]
                 ]
 
     
@@ -65,7 +65,7 @@ def main():
     with st.sidebar.expander('MENU: Choose a script | scroll down for options/parameters',  expanded=True):
         menu_choice = st.radio("",menuchoicelist, index=choice)
 
-    st.sidebar.markdown("<h1>- - - - - - - - - - - - - - - - - - </h1>", unsafe_allow_html=True)
+    st.sidebar.markdown("- - - - - - - - - - - - - - - - - - ", unsafe_allow_html=True)
     st.experimental_set_query_params(choice=menuchoicelist.index(menu_choice)) # setting the choice in the URL
 
     for n, l in enumerate(options):
