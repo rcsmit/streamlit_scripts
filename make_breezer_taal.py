@@ -20,18 +20,6 @@ def make_breezer_taal(string, replace_to_numbers):
             if s in s1:
                 new_string += s2[s1.index(s)]
                 continue
-            # if s == "e":
-            #     new_string += "3"
-            #     continue 
-            # elif s == "i":
-            #     new_string += "!"
-            #     continue 
-            # elif s == "o":
-            #     new_string += "0"
-            #     continue 
-            # elif s == "a":
-            #     new_string +="4"
-            #     continue 
         
         if teller %2 ==0:
             new_string += s.upper()
@@ -42,7 +30,7 @@ def make_breezer_taal(string, replace_to_numbers):
 
 def main():
     st.header("Breezertaal converter")
-    standard_string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nunc orci, euismod nec venenatis sit amet, pulvinar sed nibh. Donec condimentum id nunc ultrices maximus."
+    standard_string = "De meeste dromen zijn bedrog, maar als ik wakker ben dan droom ik nog"
     string = st.sidebar.text_input("String to convert (in lowercase)" , standard_string)
     replace_to_numbers = st.sidebar.selectbox(
         "Replace [e,i,o,a] to numbers", [True, False], index=0
