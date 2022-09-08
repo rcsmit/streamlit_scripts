@@ -12,20 +12,26 @@ def make_breezer_taal(string, replace_to_numbers):
     """        
     new_string = ""
     teller = 0
+    s1= ["e", "i", "o","a"]
+    s2= ["3", "!", "0", "4"]
+
     for s in string:   
         if replace_to_numbers:
-            if s == "e":
-                new_string += "3"
-                continue 
-            elif s == "i":
-                new_string += "!"
-                continue 
-            elif s == "o":
-                new_string += "0"
-                continue 
-            elif s == "a":
-                new_string +="4"
-                continue 
+            if s is in s1:
+                new_string + = s2[s1.index(s)]
+                continue
+            # if s == "e":
+            #     new_string += "3"
+            #     continue 
+            # elif s == "i":
+            #     new_string += "!"
+            #     continue 
+            # elif s == "o":
+            #     new_string += "0"
+            #     continue 
+            # elif s == "a":
+            #     new_string +="4"
+            #     continue 
         
         if teller %2 ==0:
             new_string += s.upper()
