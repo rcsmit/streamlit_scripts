@@ -11,7 +11,7 @@ _lock = RendererAgg.lock
 import streamlit as st
 import random
 from itertools import cycle
-from streamlit import caching
+#from streamlit import caching
 import time
 # partly derived from https://stackoverflow.com/a/37036082/4173718
 

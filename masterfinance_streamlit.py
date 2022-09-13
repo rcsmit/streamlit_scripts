@@ -291,11 +291,13 @@ def sunburst_chart(df, years_to_show):
     df_sunburst = df_sunburst[df_sunburst["in_uit"] != "IN"]
    
     st.write(df_sunburst)
-    show_sunburst(years_to_show, df_sunburst)
+    # show_sunburst(years_to_show, df_sunburst)
+    show_sunburst_annotated(years_to_show, df_sunburst)
     for y in years_to_show:
         df_sunburst_year = df_sunburst[df_sunburst['jaar'] == y]
         if len(df_sunburst_year) >0 :
-            show_sunburst(y, df_sunburst_year)
+            # show_sunburst(y, df_sunburst_year)
+            show_sunburst_annotated(y, df_sunburst_year)
 
 def show_sunburst(years_to_show, df_sunburst):
     st.subheader(f" -- {years_to_show} ---")
@@ -304,6 +306,75 @@ def show_sunburst(years_to_show, df_sunburst):
                   values="invbedrag",
                   title=f"Uitgaven {years_to_show}",width=750, height=750,)  
     st.plotly_chart(fig)
+
+def show_sunburst_annotated(years_to_show, df):
+    # https://stackoverflow.com/questions/70129355/value-annotations-around-plotly-sunburst-diagram
+    st.subheader(f" -- {years_to_show} ---")
+    st.write (df)
+    from math import sin,cos,pi
+
+    aaa = 'in_uit'
+    bbb = 'hoofdrub'
+    ccc = 'rubriek'
+    ddd = "invbedrag"
+
+    fig = px.sunburst(df, path=[aaa, bbb, ccc], values=ddd, width=600, height=600, title=f"Uitgaven {years_to_show}",)
+    totals_groupby =  df.groupby([aaa, bbb, ccc]).sum()
+    totals_groupby["aaa_sum"] = getattr(df.groupby([aaa, bbb, ccc]), ddd).sum().groupby(level=aaa).transform('sum')
+    totals_groupby["aaa_bbb_sum"] = getattr(df.groupby([aaa, bbb, ccc]), ddd).sum().groupby(level=[aaa,bbb]).transform('sum')
+    totals_groupby["aaa_bbb_ccc_sum"] = getattr(df.groupby([aaa, bbb, ccc]), ddd).sum().groupby(level=[aaa,bbb,ccc]).transform('sum')
+    totals_groupby = totals_groupby.sort_values(by=["aaa_sum","aaa_bbb_sum","aaa_bbb_ccc_sum"], ascending=[0,0,0])
+    #st.write(totals_groupby)
+
+   
+    ## calculate the angle subtended by each category
+    sum_ddd = getattr(df,ddd).sum()
+    delta_angles = 360*totals_groupby[ddd] / sum_ddd
+   
+    # for i in range(len(totals_groupby)):
+    #     #st.write(totals_groupby.iat[i,4])
+    #     if totals_groupby.iat[i,4] < sum_ddd/20:
+    #         totals_groupby.iat[i,4] = None
+
+    annotations = [format(v,".0f") for v in  getattr(totals_groupby,ddd).values]
+    
+    ## calculate cumulative sum starting from 0, then take a rolling mean 
+    ## to get the angle where the annotations should go
+    angles_in_degrees = pd.concat([pd.DataFrame(data=[0]),delta_angles]).cumsum().rolling(window=2).mean().dropna().values
+
+    def get_xy_coordinates(angles_in_degrees, r=1):
+        return [r*cos(angle*pi/180) for angle in angles_in_degrees], [r*sin(angle*pi/180) for angle in angles_in_degrees]
+        #return [r*cos(angle) for angle in angles_in_degrees], [r*sin(angle) for angle in angles_in_degrees]
+
+    x_coordinates, y_coordinates = get_xy_coordinates(angles_in_degrees, r=1.5)
+    fig.add_trace(go.Scatter(
+        x=x_coordinates,
+        y=y_coordinates,
+        mode="text",
+        text=annotations,
+        hoverinfo="skip",
+        textfont=dict(size=14)
+    ))
+
+    padding = 0.50
+    fig.update_layout( margin=dict(l=20, r=20, t=20, b=20),
+        
+        xaxis=dict(
+            range=[-1 - padding, 1 + padding], 
+            showticklabels=False
+        ), 
+        yaxis=dict(
+            range=[-1 - padding, 1 + padding],
+            showticklabels=False
+        ),
+        plot_bgcolor='rgba(0,0,0,0)',
+        autosize=False,
+        width=800,
+        height=800,
+    )
+    st.plotly_chart(fig)
+
+
 
 
 def save_df(df, name):
@@ -342,7 +413,7 @@ def uitgaves_categorie_per_period(df,hr, modus, period):
 def interface_selectperiod():
     DATE_FORMAT = "%m/%d/%Y"
     start_ = "2016-01-01"
-    today = datetime.today().strftime("%Y-%m-%d")
+    today = datetime.date.today().strftime("%Y-%m-%d")
     from_ = st.sidebar.text_input("startdate (yyyy-mm-dd)", start_)
 
     try:
@@ -411,9 +482,9 @@ def main():
 if __name__ == "__main__":
     import os
     import datetime
+    os.system('cls')
 
     print(f"--------------{datetime.datetime.now()}-------------------------")
 
-    os.system('cls')
-
+    
     main()

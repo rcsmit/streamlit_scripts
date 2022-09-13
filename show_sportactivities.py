@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn
 import streamlit as st
 from helpers import *
-from streamlit import caching
+#from streamlit import caching
 import numpy as np
 import matplotlib.animation as animation
 
