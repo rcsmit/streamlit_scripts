@@ -147,21 +147,18 @@ def select_maand(df, maand, jaar):
 def show_bar(df, x, what,  title):
     if title == None:
         title = (f"{x} - {what}")
-   
     fig = px.bar(df, x=x, y=what,title=title)
     st.plotly_chart(fig)
 
-    # fig, ax = plt.subplots()
-    # plt.bar(df[x], df[what])
-    
-    # plt.grid()
-    # st.pyplot(fig)
+   
 def show_scatter(df, x, what, cat, title):
     s=10 if len(df)<=20 else 3
-    
+    if title == None:
+        title = (f"{x} - {what}")
     #seaborn.set(style='ticks')
-    fig, ax = plt.subplots()
+    
     if cat == True:
+        fig, ax = plt.subplots()
         cat_ = df['YYYY'].to_numpy()
         #we converting it into categorical data
         cat_col = df['YYYY'].astype('category')
@@ -171,15 +168,13 @@ def show_scatter(df, x, what, cat, title):
         legend1 = ax.legend(*scatter.legend_elements(),
                  bbox_to_anchor=(1.1, 1), loc='upper left', ncol=1)
         ax.add_artist(legend1)
-    else:
-        plt.scatter(df[x], df[what], s=s)
-    if title == None:
-        plt.title(f"{x} - {what}")
-    else:
         plt.title(title)
-    plt.grid()
-    # plt.show()
-    st.pyplot(fig)
+        plt.grid()
+        # plt.show()
+        st.pyplot(fig)
+    else:
+        fig = px.scatter(df, x=x, y=what,title=title)
+        st.plotly_chart(fig)
 
 def show_df(df, heatmap, title):
     max_value = df.max()
@@ -195,24 +190,27 @@ def show_df(df, heatmap, title):
 
 def find_fastest_per_distance(df_):
     
-    fields = ["Datum","Titel", "Afstand","Tijd", "gem_snelh", "YYYY"]
+    fields = ["Datum_xy","Titel", "Afstand","Tijd", "gem_snelh", "YYYY"]
     new_table_list = []
+  
     for y in range (1,30):
         df_temp = select(df_,"Afstand", y-0.1,y+0.1)
+        
         df_temp = df_temp.sort_values(by=['gem_snelh'],ascending= False).reset_index(drop=True)
         my_dict = {"Datum":None,"Titel":None,"Afstand":None,"Tijd":None,"gem_snelh":None, "YYYY":None};
-        #try:
-        for f in fields:
-            my_dict[f] = (df_temp.at[0, f])
-        new_table_list.append(my_dict)
-        #except:
-            # #st.write (f"Nothing for {y}")
-            # pass # no activities with this distance in this year
+        try:
+            for f in fields:
+                
+                my_dict[f] = (df_temp.at[0, f])
+            new_table_list.append(my_dict)
+        except:
+            #st.write (f"Nothing for {y}")
+            pass # no activities with this distance
     df_pr_of_year = pd.DataFrame(data=new_table_list)
 
-    show_df(df_pr_of_year, True, "Beste gemiddelde tijd voor de afstand")
-    show_scatter(df_pr_of_year, "Afstand", "gem_snelh", False, "Beste gemiddelde tijd voor de afstand")
-    show_df(df_pr_of_year, True, "Beste gemiddelde tijd voor de afstand")
+    
+    show_scatter(df_pr_of_year, "Afstand", "gem_snelh", False, "Beste gemiddelde snelheid voor de afstand")
+    show_df(df_pr_of_year, True, "Beste gemiddelde snelheid voor de afstand")
 
 def find_pr_of_year(df, field):
     fields = ["Datum_xy","Titel", "Afstand","Tijd", "gem_snelh", "YYYY"]
