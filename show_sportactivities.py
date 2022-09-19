@@ -8,6 +8,7 @@ from helpers import *
 import numpy as np
 import matplotlib.animation as animation
 
+import plotly.express as px
 
 def get_data(who):
     if who == "Rene":
@@ -144,16 +145,20 @@ def select_maand(df, maand, jaar):
     return df
 
 def show_bar(df, x, what,  title):
-    fig, ax = plt.subplots()
-    plt.bar(df[x], df[what])
     if title == None:
-        plt.title(f"{x} - {what}")
-    else:
-        plt.title(title)
-    plt.grid()
-    st.pyplot(fig)
+        title = (f"{x} - {what}")
+   
+    fig = px.bar(df, x=x, y=what, title)
+    st.plotly_chart(fig)
+
+    # fig, ax = plt.subplots()
+    # plt.bar(df[x], df[what])
+    
+    # plt.grid()
+    # st.pyplot(fig)
 def show_scatter(df, x, what, cat, title):
     s=10 if len(df)<=20 else 3
+    
     #seaborn.set(style='ticks')
     fig, ax = plt.subplots()
     if cat == True:
