@@ -208,6 +208,8 @@ def find_fastest_per_distance(df_):
             #st.write (f"Nothing for {y}")
             pass # no activities with this distance in this year
     df_pr_of_year = pd.DataFrame(data=new_table_list)
+
+    show_df(df_pr_of_year, True, "Beste gemiddelde tijd voor de afstand")
     show_scatter(df_pr_of_year, "Afstand", "gem_snelh", False, "Beste gemiddelde tijd voor de afstand")
     show_df(df_pr_of_year, True, "Beste gemiddelde tijd voor de afstand")
 
