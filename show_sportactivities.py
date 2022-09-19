@@ -148,7 +148,7 @@ def show_bar(df, x, what,  title):
     if title == None:
         title = (f"{x} - {what}")
    
-    fig = px.bar(df, x=x, y=what, title)
+    fig = px.bar(df, x=x, y=what,title=title)
     st.plotly_chart(fig)
 
     # fig, ax = plt.subplots()
