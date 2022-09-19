@@ -1,19 +1,14 @@
-from lib2to3.pgen2.pgen import DFAState
+
 import pandas as pd
 
 # id	STN	YYYYMMDD	temp_avg	temp_min	temp_max	T10N	zonneschijnduur	perc_max_zonneschijnduur	
 # glob_straling	neerslag_duur	neerslag_etmaalsom	YYYY	MM	DD	dayofyear	count	month	year	
 # day	month_year	month_day	date	value_kwh
 
-#from imghdr import what
 import pandas as pd
 import numpy as np
 
 import streamlit as st
-##from streamlit import caching
-#import datetime as dt
-
-#from datetime import datetime
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import RendererAgg
 
@@ -25,9 +20,9 @@ import statsmodels.formula.api as smf
 import scipy
 
 _lock = RendererAgg.lock
-#from matplotlib.colors import ListedColormap
+
 import numpy as np
-#import matplotlib.dates as mdates
+
 
 import plotly.express as px
 import plotly.graph_objects as go
@@ -87,20 +82,10 @@ def download_button(df):
         mime='text/csv',
     )
 
-def make_plot(df, x_axis, y_axis, regression):
-        #fig = px.Figure()
-       
-        data = [px.scatter(x=df[x_axis], y=df[y_axis], trendline="ols", )]
+def make_plot(df, x_axis, y_axis, regression):  
         title = (f"{y_axis} vs {x_axis}")
-        layout = go.Layout(
-            xaxis=dict(title=x_axis),
-            yaxis=dict(title=y_axis), 
-            title=title,)
-            #, xaxis=dict(tickformat="%d-%m")
-        #fig = px.figure(data=data, layout=layout)
-        fig = px.scatter(df, x=x_axis, y=y_axis, trendline="ols", hover_data=["date",x_axis, y_axis ])
-        # fig.add_trace(go.Scatter(x=df[x_axis], y=df[y_axis], mode='markers',))
-       
+        fig = px.scatter(df, x=x_axis, y=y_axis, trendline="ols", title=title, hover_data=["date",x_axis, y_axis ])
+        
         st.plotly_chart(fig, use_container_width=True)
         if regression:
             model = px.get_trendline_results(fig)
@@ -115,7 +100,7 @@ def make_plot(df, x_axis, y_axis, regression):
                 st.write(f"Correlatie {x_axis} vs {y_axis}= {c}")
             except:
                 st.write("_")
-   
+
 def find_correlations(df):
     factors =  ["temp_avg","temp_min","temp_max","T10N","zonneschijnduur","perc_max_zonneschijnduur",
           "glob_straling","neerslag_duur","neerslag_etmaalsom"]
@@ -181,10 +166,9 @@ def regression(df):
 
     fig1x = plt.figure()
     fig1x.suptitle('Predicted versus actual value_kwh')
-    predicted, = plt.plot(X_test.index, predicted_counts, 'go-', label='Predicted value_kwh')
-    actual, = plt.plot(X_test.index, actual_counts, 'ro-', label='Actual value_kwh')
+    predicted, = plt.plot(X_test.index, predicted_counts, 'g', linewidth=1, label='Predicted value_kwh')
+    actual, = plt.plot(X_test.index, actual_counts, 'r', linewidth=1, label='Actual value_kwh')
     plt.legend(handles=[predicted, actual])
-    # plt.show()
     st.pyplot(fig1x)
 
 def sklearn(df):
