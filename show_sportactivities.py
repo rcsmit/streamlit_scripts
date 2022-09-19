@@ -194,20 +194,20 @@ def show_df(df, heatmap, title):
 
 
 def find_fastest_per_distance(df_):
-    st.write(df_)
+    
     fields = ["Datum","Titel", "Afstand","Tijd", "gem_snelh", "YYYY"]
     new_table_list = []
     for y in range (1,30):
         df_temp = select(df_,"Afstand", y-0.1,y+0.1)
         df_temp = df_temp.sort_values(by=['gem_snelh'],ascending= False).reset_index(drop=True)
         my_dict = {"Datum":None,"Titel":None,"Afstand":None,"Tijd":None,"gem_snelh":None, "YYYY":None};
-        try:
-            for f in fields:
-                my_dict[f] = (df_temp.at[0, f])
-            new_table_list.append(my_dict)
-        except:
-            #st.write (f"Nothing for {y}")
-            pass # no activities with this distance in this year
+        #try:
+        for f in fields:
+            my_dict[f] = (df_temp.at[0, f])
+        new_table_list.append(my_dict)
+        #except:
+            # #st.write (f"Nothing for {y}")
+            # pass # no activities with this distance in this year
     df_pr_of_year = pd.DataFrame(data=new_table_list)
 
     show_df(df_pr_of_year, True, "Beste gemiddelde tijd voor de afstand")
