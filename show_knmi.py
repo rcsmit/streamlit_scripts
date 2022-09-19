@@ -16,6 +16,7 @@ import numpy as np
 import matplotlib.dates as mdates
 
 import plotly.express as px
+import math
 import plotly.graph_objects as go
 
 
@@ -43,14 +44,44 @@ def select_period_oud(df, field, show_from, show_until):
     df = df.reset_index()
     return df
 
+def rh2q(rh, t, p ):
+    """[summary]
 
+    Args:
+        rh ([type]): rh min
+        t ([type]): temp max
+
+    Returns:
+        [type]: [description]
+    """
+    # https://archive.eol.ucar.edu/projects/ceop/dm/documents/refdata_report/eqns.html
+
+    #Td = math.log(e/6.112)*243.5/(17.67-math.log(e/6.112))
+    es = 6.112 * math.exp((17.67 * t)/(t + 243.5))
+    e = es * (rh / 100)
+    q_ = (0.622 * e)/(p - (0.378 * e)) * 1000
+    return round(q_,2)
+
+def rh2ah(rh, t ):
+    """[summary]
+
+    Args:
+        rh ([type]): rh min
+        t ([type]): temp max
+
+    Returns:
+        [type]: [description]
+    """
+    # return (6.112 * ((17.67 * t) / (math.exp(t) + 243.5)) * rh * 2.1674) / (273.15 + t ) # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7831640/
+
+    return (6.112 * math.exp((17.67 * t) / (t + 243.5)) * rh * 2.1674) / (273.15 + t )
 @st.cache(ttl=60 * 60 * 24, suppress_st_warning=True)
 def getdata(stn, fromx, until):
     with st.spinner(f"GETTING ALL DATA ..."):
         # url =  "https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns=251&vars=TEMP&start=18210301&end=20210310"
         # https://www.knmi.nl/kennis-en-datacentrum/achtergrond/data-ophalen-vanuit-een-script
         # url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=ALL&start={fromx}&end={until}"
-        url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH&start={fromx}&end={until}"
+        url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start={fromx}&end={until}"
         try:
             df = pd.read_csv(
                 url,
@@ -75,7 +106,8 @@ def getdata(stn, fromx, until):
         # Q         : Globale straling (in J/cm2) / Global radiation (in J/cm2)
         # DR        : Duur van de neerslag (in 0.1 uur) / Precipitation duration (in 0.1 hour)
         # RH        : Etmaalsom van de neerslag (in 0.1 mm) (-1 voor <0.05 mm) / Daily precipitation amount (in 0.1 mm) (-1 for <0.05 mm)
-
+        # UN        : Minimale relatieve vochtigheid (in procenten)
+        # UX        : Maximale relatieve vochtigheid (in procenten)
         column_replacements = [
             [0, "STN"],
             [1, "YYYYMMDD"],
@@ -88,6 +120,8 @@ def getdata(stn, fromx, until):
             [8, "glob_straling"],
             [9, "neerslag_duur"],
             [10, "neerslag_etmaalsom"],
+            [11, "RH_min"],
+            [12, "RH_max"]
         ]
 
         for c in column_replacements:
@@ -148,6 +182,11 @@ def getdata(stn, fromx, until):
             except:
                 df[d] = None
 
+    df["spec_humidity_knmi_derived"] = df.apply(lambda x: rh2q(x['RH_min'],x['temp_max'], 1020),axis=1)
+    df["abs_humidity_knmi_derived"] =df.apply(lambda x: rh2ah(x['RH_min'],x['temp_max']),axis=1)
+    df["globale_straling_log10"] = np.log10(df["glob_straling"])
+
+
     download_button(df)
     return df, url
 
@@ -193,7 +232,7 @@ def show_aantal_kerend(df_, gekozen_weerstation, what_to_show_):
 
     #jaren = df["YYYY"].tolist()
     for what_to_show in what_to_show_:
-
+        st.subheader(what_to_show)
         
         df = df_[(df_["MM"] >= month_min) & (df_["MM"] <= month_max)].reset_index().copy(deep=True)
      
@@ -204,33 +243,52 @@ def show_aantal_kerend(df_, gekozen_weerstation, what_to_show_):
                 df.loc[i,"count_"] = 1
             else:
                 df.loc[i,"count_"] = 0
+        df = df[df["count_"] == 1]
         
-        df_grouped = df.groupby(by=["year"]).sum().reset_index() # werkt maar geeft geen 0 waardes weer 
-        df_grouped = df_grouped[["year", "count_"]]
-
-        fig, ax = plt.subplots()
-        plt.set_loglevel('WARNING') #Avoid : Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+        df_grouped_aantal_keren = df.groupby(by=["year"]).sum().reset_index() # werkt maar geeft geen 0 waardes weer 
         title = (f"Aantal keren dat { what_to_show} in {gekozen_weerstation} tussen {value_min} en {value_max} ligt\n")
 
-        if month_min ==1 & month_max ==12:
-            st.write("compleet jaar") # FIXIT : werkt niet
+        plot_df_grouped(gekozen_weerstation, months, month_min, month_max, value_min, value_max, what_to_show, df, df_grouped_aantal_keren, "count_", title)
 
-        else:
-            title += f"in de maanden {months.get(str(month_min))} tot en met {months.get(str(month_max))}"
-        plt.title(title)
-        plt.bar(df_grouped["year"], df_grouped["count_"])
-        plt.grid()
-        xticks = ax.xaxis.get_major_ticks()
-        if len(xticks)>10:
-            for i, tick in enumerate(xticks):
-                    if i % int(len(xticks)/10) != 0:
-                        tick.label1.set_visible(False)
-        plt.xticks(rotation=270)
+
+        df_grouped_som = df.groupby(by=["year"]).sum().reset_index() # werkt maar geeft geen 0 waardes weer 
+        title = (f"Som van {what_to_show} in {gekozen_weerstation} tussen {value_min} en {value_max}")
+        plot_df_grouped(gekozen_weerstation, months, month_min, month_max, value_min, value_max, what_to_show, df, df_grouped_som, what_to_show, title)
+
+        df_grouped_mean = df.groupby(by=["year"]).mean().reset_index() # werkt maar geeft geen 0 waardes weer 
+        title = (f"Gemiddelde van {what_to_show} in {gekozen_weerstation} tussen {value_min} en {value_max}")
+        plot_df_grouped(gekozen_weerstation, months, month_min, month_max, value_min, value_max, what_to_show, df, df_grouped_mean, what_to_show, title)
+
+
+def plot_df_grouped(gekozen_weerstation, months, month_min, month_max, value_min, value_max, what_to_show, df, df_grouped, veldnaam, title):
+    # fig, ax = plt.subplots()
+    # plt.set_loglevel('WARNING') #Avoid : Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+    
+    if month_min ==1 & month_max ==12:
+        st.write("compleet jaar") # FIXIT : werkt niet
+
+    else:
+        title += f" in de maanden {months.get(str(month_min))} tot en met {months.get(str(month_max))}"
+
+    fig = px.bar(df_grouped, x='year', y=veldnaam, title=title)
+    st.plotly_chart(fig)
+ 
+
+
+    # plt.title(title)
+    # plt.bar(df_grouped["year"], df_grouped[veldnaam])
+    # plt.grid()
+    # xticks = ax.xaxis.get_major_ticks()
+    # if len(xticks)>10:
+    #     for i, tick in enumerate(xticks):
+    #             if i % int(len(xticks)/10) != 0:
+    #                 tick.label1.set_visible(False)
+    # plt.xticks(rotation=270)
         
-        st.pyplot(fig)
-        st.write(df_grouped)
-        df_ = df[(df["count_"] >0)].copy(deep=True)
-        st.write(df_)
+    # st.pyplot(fig)
+    st.write(df_grouped)
+    # df_ = df[(df["count_"] >0)].copy(deep=True)
+    # st.write(df_)
 
 def show_per_maand(df, gekozen_weerstation, what_to_show_, groeperen, graph_type):
     what_to_show_ = what_to_show_ if type(what_to_show_) == list else [what_to_show_]
@@ -407,8 +465,9 @@ def interface():
         "perc_max_zonneschijnduur",
         "glob_straling",
         "neerslag_duur",
-        "neerslag_etmaalsom",
+        "neerslag_etmaalsom","RH_min","RH_max","spec_humidity_knmi_derived","abs_humidity_knmi_derived","globale_straling_log10",
     ]
+
     what_to_show = st.sidebar.multiselect("Wat weer te geven", show_options, "temp_max")
     #if len(what_to_show)==1:
     graph_type = st.sidebar.selectbox("Graph type (plotly=interactive)", ["pyplot", "plotly"], index=1)
@@ -781,8 +840,10 @@ def show_plot(df, datefield, title, wdw, what_to_show_, graph_type, centersmooth
             plt.legend()
             st.pyplot(fig1x)
     else:
+        fig = go.Figure()
+        data=[]
         for what_to_show_x in what_to_show_:
-            fig = go.Figure()
+            #fig = go.Figure()
             df["sma"] = df[what_to_show_x].rolling(window=wdw, center=centersmooth).mean()
 
             sma = go.Scatter(
@@ -790,27 +851,34 @@ def show_plot(df, datefield, title, wdw, what_to_show_, graph_type, centersmooth
                 x=df[datefield],
                 y= df["sma"],
                 mode='lines',
-                line=dict(width=1,color='rgba(0, 0, 168, 0.8)'),
+                line=dict(width=2,
+                #color='rgba(0, 0, 168, 0.8)'
+                ),
                 )
             points = go.Scatter(
                 name="",
                 x=df[datefield],
                 y= df[what_to_show_x],
                 mode='markers',
-                showlegend=False,marker=dict(
-                color='LightSkyBlue',
-                size=2))
+                showlegend=False,
+                marker=dict(
+                #color='LightSkyBlue',
+                size=1))
 
 
-            data = [sma,points]
-
+            #data = [sma,points]
+            data.append(sma)
+            data.append(points)
             layout = go.Layout(
                 yaxis=dict(title=what_to_show_x),
                 title=title,)
                 #, xaxis=dict(tickformat="%d-%m")
-            fig = go.Figure(data=data, layout=layout)
-            fig.update_layout(xaxis=dict(tickformat="%d-%m-%Y"))
-            st.plotly_chart(fig, use_container_width=True)
+            # fig = go.Figure(data=data, layout=layout)
+            # fig.update_layout(xaxis=dict(tickformat="%d-%m-%Y"))
+            # st.plotly_chart(fig, use_container_width=True)
+        fig = go.Figure(data=data, layout=layout)
+        fig.update_layout(xaxis=dict(tickformat="%d-%m-%Y"))
+        st.plotly_chart(fig, use_container_width=True)
     df =df[[datefield,what_to_show_[0]]]
     st.write(df)
 
@@ -869,7 +937,7 @@ def  polar_plot(df2,   what_to_show, how):
                 "november",
                 "december",
             ]
-            import plotly.express as px
+            
             if how == "line":
                 fig = px.line_polar(df2, r=w, color='YYYY', theta='angle',color_discrete_sequence=px.colors.sequential.Plasma_r, line_close=False, hover_data=['YYYYMMDD'])
             elif how == "scatter":

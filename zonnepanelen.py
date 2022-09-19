@@ -87,7 +87,7 @@ def download_button(df):
         mime='text/csv',
     )
 
-def make_plot(df, x_axis, y_axis):
+def make_plot(df, x_axis, y_axis, regression):
         #fig = px.Figure()
        
         data = [px.scatter(x=df[x_axis], y=df[y_axis], trendline="ols", )]
@@ -102,18 +102,19 @@ def make_plot(df, x_axis, y_axis):
         # fig.add_trace(go.Scatter(x=df[x_axis], y=df[y_axis], mode='markers',))
        
         st.plotly_chart(fig, use_container_width=True)
-        model = px.get_trendline_results(fig)
-        alpha = model.iloc[0]["px_fit_results"].params[0]
-        beta = model.iloc[0]["px_fit_results"].params[1]
-        # st.write (f"Alfa {alpha} - beta {beta}")
-        st.write (f"y =  {round(alpha,4)} *x + {round(beta,4)}")
-        r2 = px.get_trendline_results(fig).px_fit_results.iloc[0].rsquared
-        st.write(f"R2 = {r2}")
-        try:
-            c = round(df[x_axis].corr(df[y_axis]), 3)
-            st.write(f"Correlatie {x_axis} vs {y_axis}= {c}")
-        except:
-            st.write("_")
+        if regression:
+            model = px.get_trendline_results(fig)
+            alpha = model.iloc[0]["px_fit_results"].params[0]
+            beta = model.iloc[0]["px_fit_results"].params[1]
+            # st.write (f"Alfa {alpha} - beta {beta}")
+            st.write (f"y =  {round(alpha,4)} *x + {round(beta,4)}")
+            r2 = px.get_trendline_results(fig).px_fit_results.iloc[0].rsquared
+            st.write(f"R2 = {r2}")
+            try:
+                c = round(df[x_axis].corr(df[y_axis]), 3)
+                st.write(f"Correlatie {x_axis} vs {y_axis}= {c}")
+            except:
+                st.write("_")
    
 def find_correlations(df):
     factors =  ["temp_avg","temp_min","temp_max","T10N","zonneschijnduur","perc_max_zonneschijnduur",
@@ -255,12 +256,18 @@ def main():
     fields=["id","STN","YYYYMMDD","temp_avg","temp_min","temp_max","T10N","zonneschijnduur","perc_max_zonneschijnduur",
             "glob_straling","neerslag_duur","neerslag_etmaalsom","YYYY","MM","DD","dayofyear","count","month","year",
             "day","month_year","month_day","date","value_kwh"]
-    x_axis = st.sidebar.selectbox("X-as",fields, index = 3)
-    y_axis = st.sidebar.selectbox("Y-as",fields, index=23)
-    make_plot(df, x_axis, y_axis)
+    
+    
+    x_axis = st.sidebar.selectbox("X-as scatter",fields, index = 3)
+    y_axis = st.sidebar.selectbox("Y-as door de tijd/scatter",fields, index=23)
+    st.subheader("Door de tijd")
+    make_plot(df, "YYYYMMDD", y_axis, False)
+    st.subheader("Scatter")
+    make_plot(df, x_axis, y_axis, True)
     find_correlations(df)
     regression(df)
 
     sklearn(df)
     download_button(df)
+    st.sidebar.write("KNMI data is van STN286, Nieuw Beerta")
 main()
