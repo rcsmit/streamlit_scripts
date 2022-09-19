@@ -194,6 +194,7 @@ def show_df(df, heatmap, title):
 
 
 def find_fastest_per_distance(df_):
+    st.write(df_)
     fields = ["Datum","Titel", "Afstand","Tijd", "gem_snelh", "YYYY"]
     new_table_list = []
     for y in range (1,30):
