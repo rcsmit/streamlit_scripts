@@ -31,9 +31,9 @@ from sklearn.model_selection import train_test_split
 from sklearn import datasets, linear_model, metrics
 
 def get_data():
-    file = "data\\zonnepanelen.csv"
+    file = "input\\zonnepanelen.csv"
     #file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\data\zonnepanelen.csv"
-    file = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/data/zonnepanelen.csv"
+    file = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/zonnepanelen.csv"
     #st.write(file)
     try:
         df = pd.read_csv(
