@@ -114,8 +114,8 @@ def main():
     st.write("* Alleenstaand, geen kinderen, onder 65 jaar")
 
     tabeldata=[]   
-  
-    for inkomen in range(1000,100_000,1000):
+    max_value_ink = st.sidebar.number_input("Maximum waarde bruto inkomen",0,10_000_000,110_000,1000)
+    for inkomen in range(0,max_value_ink ,1000):
         regel = calculate_nettoloon(inkomen)
         tabeldata.append(regel)
        
