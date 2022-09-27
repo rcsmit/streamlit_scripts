@@ -121,10 +121,9 @@ geneticParameters = generate_Initial_Parameters()
 # now call curve_fit without passing bounds from the genetic algorithm,
 # just in case the best fit parameters are aoutside those bounds
 #popt, pcov = curve_fit(func, xdata, ydata, geneticParameters)
+
+
 popt, pcov = curve_fit(func, xdata, ydata)
-
-
-# popt, pcov = curve_fit(func, xdata, ydata)
 
 # poptarray
 # Optimal values for the parameters so that the sum of the squared residuals 
