@@ -146,4 +146,10 @@ def main():
         #plotly.offline.plot(subfig)
         st.subheader(to_show)
         st.plotly_chart(fig) 
-main()
+    st.write("belastingdruk_% = inkomstenbelasting / bruto inkomen")
+    st.write("Netto inkomen = bruto inkomen - inkomstenbelasting")
+    st.write("Besteedbaar inkomen = netto inkomen + huurtoeslag + zorgtoeslag")
+    st.write("ONDER VOORBEHOUD VAN FOUTEN")
+    st.write("Zie ook https://www.rijksoverheid.nl/documenten/kamerstukken/2021/09/21/tabellen-marginale-druk-pakket-belastingplan-2022")
+if __name__ == "__main__":
+    main()
