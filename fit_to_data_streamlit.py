@@ -86,10 +86,10 @@ def sigmoidal(x, a, b, c):
             https://en.wikipedia.org/wiki/sigmoidal_function '''
         return a * np.exp(-b * np.exp(-c * x))
 
-def func_(x, a, b):
+def func(x, a, b):
     return (a + b* x)
 
-def func(x, a, r):
+def func_(x, a, r):
     '''Exponential growth  function.'''
     return (a * ((1+r)**x))
 
@@ -120,7 +120,8 @@ geneticParameters = generate_Initial_Parameters()
 
 # now call curve_fit without passing bounds from the genetic algorithm,
 # just in case the best fit parameters are aoutside those bounds
-popt, pcov = curve_fit(func, xdata, ydata, geneticParameters)
+#popt, pcov = curve_fit(func, xdata, ydata, geneticParameters)
+popt, pcov = curve_fit(func, xdata, ydata)
 
 
 # popt, pcov = curve_fit(func, xdata, ydata)
@@ -145,7 +146,8 @@ RMSE = np.sqrt(MSE) # Root Mean Squared Error, RMSE
 Rsquared = 1.0 - (np.var(absError) / np.var(ydata))
 
 st.write()
-st.write(f'Formula: y = ({popt[0]} * ((1+{popt[1]})**x))') #  {popt[0]} * x + {popt[1]}')
+#st.write(f'Formula: y = ({popt[0]} * ((1+{popt[1]})**x))') #  {popt[0]} * x + {popt[1]}')
+st.write(f'Formula: y = {popt[0]} * x + {popt[1]}') #  {popt[0]} * x + {popt[1]}')
 st.write(f'Root Mean Squared Error, RMSE: {RMSE}' )
 st.write(f'R-squared: {Rsquared}')
 
