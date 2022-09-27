@@ -15,7 +15,8 @@ _lock = RendererAgg.lock
 
 def main():
     if platform.processor() != "":   
-        file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\eigen_bijdrage2022.csv"   
+        file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\eigen_bijdrage2022.csv" 
+        #file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\zorgtoeslag.csv"   
     else: 
         file = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/eigen_bijdrage2022.csv"
 
