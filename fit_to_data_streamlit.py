@@ -40,7 +40,7 @@ def main():
 
         pass
         # Functions to calculate values a,b  and c ##########################
-        def func(x, a, b, c):
+        def func_(x, a, b, c):
             return (a*np.sin(b*x))+(c * np.exp(x))
 
     
@@ -87,8 +87,13 @@ def main():
                 https://en.wikipedia.org/wiki/sigmoidal_function '''
             return a * np.exp(-b * np.exp(-c * x))
 
-    def func(x, a, b):
+    def func_(x, a, b):
         return (a + b* x)
+
+    def func(x, a, b):
+
+        #https://wetten.overheid.nl/BWBR0008659/2022-01-01 art. 19.2
+        return ((a * x**2) + (b *x))
 
     def func_(x, a, r):
         '''Exponential growth  function.'''
@@ -147,14 +152,27 @@ def main():
 
     st.write()
     #st.write(f'Formula: y = ({popt[0]} * ((1+{popt[1]})**x))') #  {popt[0]} * x + {popt[1]}')
-    st.write(f'Formula: y = {popt[0]} * x + {popt[1]}') #  {popt[0]} * x + {popt[1]}')
+    st.write(f'Formula: y =   (({popt[0]} * x^2) + ({popt[1]} *x))')
+    #st.write(f'Formula: y = {popt[0]} * x + {popt[1]}') #  {popt[0]} * x + {popt[1]}')
     st.write(f'Root Mean Squared Error, RMSE: {RMSE}' )
     st.write(f'R-squared: {Rsquared}')
 
     st.write()
 
+    a_2022 = 5.96879*10**-7
+    b_2022 = 0.002363459319
 
+
+
+    a_2021= 6.23385*10**-7
+    b_2021= 0.002453085056
     fig =  plt.figure()
+
+
+    plt.plot(xdata, func(xdata, a_2021,b_2021), 'b-',
+            label='ministeriele regeling 2021' ) 
+    plt.plot(xdata, func(xdata, a_2022,b_2022), 'b--',
+            label='ministeriele regeling 2022' ) 
     plt.plot(xdata, func(xdata, *popt), 'r--',
             label='fit: a=%5.3f, b=%5.3f' % tuple(popt)) # c=%5.3f
     plt.plot(xdata, ydata, 'g-',

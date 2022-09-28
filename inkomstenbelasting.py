@@ -77,19 +77,39 @@ def calculate_zorgtoeslag(inkomen):
     return zorgtoeslag
 
 def calculate_huurtoeslag(inkomen):
-    huur = 700
-    if huur < 233.99:
-        huurtoeslag = 0
-    if huur >233.99 and huur <442.46:
-        huurtoeslag = 100* (huur-233.99)
-    if huur >442.46 and huur < 633.25:
-        x = huur - 442.46
-        huurtoeslag = (442.46-233.99) + 0.65*x
-    if huur > 633.25 and huur < 763.47:
-        y = huur - 633.25
-        huurtoeslag = (442.46-233.99) + (0.65*(633.25-442.46)) + (0.4* y)
-    huurtoeslag = 0
-    return huurtoeslag
+    # aleenstaande- en wonende werkende man uit 1980, 36 uur per week werkend, huur = 700
+    if inkomen <= 17000 : huurtoeslag = 355
+    if inkomen == 18000 : huurtoeslag = 340
+    if inkomen == 19000 : huurtoeslag = 315
+    if inkomen == 20000 : huurtoeslag = 290
+    if inkomen == 21000 : huurtoeslag = 263
+    if inkomen == 22000 : huurtoeslag =	 235
+    if inkomen == 23000	: huurtoeslag =	 206
+    if inkomen == 24000	: huurtoeslag =	 175
+    if inkomen == 25000	: huurtoeslag =	 146
+    if inkomen == 26000	: huurtoeslag =	 125
+    if inkomen == 27000	: huurtoeslag =	 102
+    if inkomen == 28000	: huurtoeslag =	 80
+    if inkomen == 29000	: huurtoeslag =	 56
+    if inkomen == 30000	: huurtoeslag =	 32
+    if inkomen == 31000	: huurtoeslag =	 14
+
+    if inkomen >=32000 : huurtoeslag = 0  
+   
+    huurtoeslag_ = huurtoeslag *12
+    # huur = 700
+    # if huur < 233.99:
+    #     huurtoeslag = 0
+    # if huur >233.99 and huur <442.46:
+    #     huurtoeslag = 100* (huur-233.99)
+    # if huur >442.46 and huur < 633.25:
+    #     x = huur - 442.46
+    #     huurtoeslag = (442.46-233.99) + 0.65*x
+    # if huur > 633.25 and huur < 763.47:
+    #     y = huur - 633.25
+    #     huurtoeslag = (442.46-233.99) + (0.65*(633.25-442.46)) + (0.4* y)
+    # huurtoeslag = 0
+    return huurtoeslag_
 
   
 def calculate_nettoloon(inkomen):
@@ -107,6 +127,11 @@ def calculate_nettoloon(inkomen):
     regel = [inkomen,  inkomensten_belasting, heffingskorting, arbeidskorting,te_betalen_belasting, netto_loon, huurtoeslag, zorgtoeslag]
     return regel
 
+def salaris_per_maand(max_value_ink):
+    st.subheader("Salaris per maand excl. vakantiegeld")
+    for inkomen in range(0,max_value_ink,1000):
+        
+        st.write(f"{inkomen} - {round(inkomen/12/1.08,2)}")
 
 def main():
     st.header("Inkomstenbelasting 2022")
@@ -114,25 +139,35 @@ def main():
     st.write("* Alleenstaand, geen kinderen, onder 65 jaar")
 
     tabeldata=[]   
-    max_value_ink = st.sidebar.number_input("Maximum waarde bruto inkomen",0,10_000_000,110_000,1000)
-    for inkomen in range(0,max_value_ink ,1000):
+    max_value_ink = int(st.sidebar.number_input("Maximum waarde bruto inkomen",0,10_000_000,110_000,1000))
+    stappen = int(st.sidebar.number_input("Stappen",0,10_000,1_000,1000))
+    for inkomen in range(0,max_value_ink,stappen):
         regel = calculate_nettoloon(inkomen)
         tabeldata.append(regel)
        
     df = pd.DataFrame(tabeldata, columns = ["inkomen",  "inkomensten_belasting", "heffingskorting", "arbeidskorting","te_betalen_belasting", "nettoloon", "huurtoeslag","zorgtoeslag"])
     df["belastingdruk_%"] = round(  df["te_betalen_belasting"]/df["inkomen"]*100,2)
     df["besteedbaar_inkomen"] =  df["nettoloon"]+ df["zorgtoeslag"]+ df["huurtoeslag"]
-
+    df["toeslagen"] =  df["zorgtoeslag"]+ df["huurtoeslag"]
     df['te_betalen_belasting_diff'] = df['te_betalen_belasting'].diff()
     df['besteedbaar_inkomen_diff'] = df['besteedbaar_inkomen'].diff()
+    df["toeslagen_diff"] = df["toeslagen"].diff()
     st.write (df)
     # https://stackoverflow.com/questions/62853539/plotly-how-to-plot-on-secondary-y-axis-with-plotly-express
     
-    to_show_ = ["nettoloon","besteedbaar_inkomen", "te_betalen_belasting", "belastingdruk_%", "zorgtoeslag", "besteedbaar_inkomen_diff", "te_betalen_belasting_diff"]
-    for to_show in to_show_:
-        
-        fig = px.line(df,x="inkomen",y=df[to_show])
-
+    to_show_ = ["nettoloon","besteedbaar_inkomen", "te_betalen_belasting", "belastingdruk_%", "zorgtoeslag", "huurtoeslag","toeslagen", ["huurtoeslag","zorgtoeslag","toeslagen"], "toeslagen_diff", "besteedbaar_inkomen_diff", "te_betalen_belasting_diff"]
+    for to_show in to_show_:    
+        fig = px.line(df,x="inkomen",y=to_show)
+        #fig.layout.yaxis.title=to_show
+        # if type(to_show) == list :
+        #     fig = px.Figure()
+        #     for ts in to_show:
+        #         #fig = px.line(df,x="inkomen",y=df[ts])
+        #         fig.add_trace( px.line(df,x="inkomen",y=df[ts]))
+        #         fig.layout.yaxis.title="bedragen"
+        # else:
+        #     fig = px.line(df,x="inkomen",y=to_show)
+        #     fig.layout.yaxis.title=to_show
 
         # in het geval van een secundaire y-as
         # fig2 = px.line(df,x="inkomen",y="belastingdruk")
@@ -141,11 +176,12 @@ def main():
         # subfig.add_traces(fig.data + fig2.data)
         # subfig.for_each_trace(lambda t: t.update(line=dict(color=t.marker.color)))
         fig.layout.xaxis.title="Bruto inkomen per jaar"
-        fig.layout.yaxis.title=to_show
+        
         #subfig.layout.yaxis2.title="Percentage"
         #plotly.offline.plot(subfig)
         st.subheader(to_show)
         st.plotly_chart(fig) 
+    salaris_per_maand(max_value_ink)
     st.write("belastingdruk_% = inkomstenbelasting / bruto inkomen")
     st.write("Netto inkomen = bruto inkomen - inkomstenbelasting")
     st.write("Besteedbaar inkomen = netto inkomen + huurtoeslag + zorgtoeslag")
