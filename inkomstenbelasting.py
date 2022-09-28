@@ -61,9 +61,20 @@ def calculate_zorgtoeslag(toetsingsinkomen):
         zorgtoeslag = standaardpremie - normpremie        
     return zorgtoeslag
 def calculate_huurtoeslag(inkomen, rekenhuur,huishouden,number_household):
+    """Huur toeslag berekenen
+
+    Args:
+        inkomen (int): Inkomen per jaar
+        rekenhuur (int): Huur per maand
+        huishouden (string): Een-of meerpersoons huishouden, met of zonder AOW: "EP", "MP, "EPAOW", "MPAOW"
+        number_household (int): Aantal mensen in het huishouden
+
+    Returns:
+        int : huurtoeslag bedrag per jaar
+    """    
     # https://www.volkshuisvestingnederland.nl/onderwerpen/huurtoeslag/werking-en-berekening-huurtoeslag
     # https://wetten.overheid.nl/BWBR0008659/2022-01-01
-
+    # https://www.rigo.nl/wp-content/uploads/2007/06/De-huurtoeslag.pdf
 
     #https://download.belastingdienst.nl/toeslagen/docs/berekening_huurtoeslag_tg0831z21fd.pdf
 
@@ -153,6 +164,16 @@ def salaris_per_maand(max_value_ink):
     for inkomen in range(0,max_value_ink,1000):
         
         st.write(f"{inkomen} - {round(inkomen/12/1.08,2)}")
+        
+def create_df(tabeldata):
+    df = pd.DataFrame(tabeldata, columns = ["inkomen",  "inkomensten_belasting", "heffingskorting", "arbeidskorting","te_betalen_belasting", "nettoloon", "huurtoeslag","zorgtoeslag"])
+    df["belastingdruk_%"] = round(  df["te_betalen_belasting"]/df["inkomen"]*100,2)
+    df["besteedbaar_inkomen"] =  df["nettoloon"]+ df["zorgtoeslag"]+ df["huurtoeslag"]
+    df["toeslagen"] =  df["zorgtoeslag"]+ df["huurtoeslag"]
+    df['te_betalen_belasting_diff'] = df['te_betalen_belasting'].diff()
+    df['besteedbaar_inkomen_diff'] = df['besteedbaar_inkomen'].diff()
+    df["toeslagen_diff"] = df["toeslagen"].diff()
+    return df
 
 def main():
     st.header("Inkomstenbelasting 2022")
@@ -166,13 +187,7 @@ def main():
         regel = calculate_nettoloon(inkomen)
         tabeldata.append(regel)
        
-    df = pd.DataFrame(tabeldata, columns = ["inkomen",  "inkomensten_belasting", "heffingskorting", "arbeidskorting","te_betalen_belasting", "nettoloon", "huurtoeslag","zorgtoeslag"])
-    df["belastingdruk_%"] = round(  df["te_betalen_belasting"]/df["inkomen"]*100,2)
-    df["besteedbaar_inkomen"] =  df["nettoloon"]+ df["zorgtoeslag"]+ df["huurtoeslag"]
-    df["toeslagen"] =  df["zorgtoeslag"]+ df["huurtoeslag"]
-    df['te_betalen_belasting_diff'] = df['te_betalen_belasting'].diff()
-    df['besteedbaar_inkomen_diff'] = df['besteedbaar_inkomen'].diff()
-    df["toeslagen_diff"] = df["toeslagen"].diff()
+    df = create_df(tabeldata)
     st.write (df)
     # https://stackoverflow.com/questions/62853539/plotly-how-to-plot-on-secondary-y-axis-with-plotly-express
     
@@ -209,5 +224,7 @@ def main():
     st.write("Besteedbaar inkomen = netto inkomen + huurtoeslag + zorgtoeslag")
     st.write("ONDER VOORBEHOUD VAN FOUTEN")
     st.write("Zie ook https://www.rijksoverheid.nl/documenten/kamerstukken/2021/09/21/tabellen-marginale-druk-pakket-belastingplan-2022")
+
+
 if __name__ == "__main__":
     main()
