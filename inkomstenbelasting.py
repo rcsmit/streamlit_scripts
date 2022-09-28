@@ -46,70 +46,89 @@ def calculate_arbeidskorting(inkomen):
    
     return round(arbeidskorting)
 
-
-def calculate_zorgtoeslag(inkomen):
-    # https://www.vergelijkdezorgverzekeringen.nl/zorgtoeslag/
-    # https://www.belastingdienst.nl/wps/wcm/connect/nl/zorgtoeslag/content/hoeveel-zorgtoeslag
+def calculate_zorgtoeslag(toetsingsinkomen):
+# https://www.belastingdienst.nl/wps/wcm/connect/nl/zorgtoeslag/content/hoeveel-zorgtoeslag
+# https://download.belastingdienst.nl/toeslagen/docs/berekening_zorgtoeslag_tg0821z21fd.pdf
     # zorgtoeslag = (-0.0114* inkomen) + 365.15
-    if inkomen <= 22000 : zorgtoeslag = 111
-    if inkomen == 22000 : zorgtoeslag =	 111
-    if inkomen == 22500	: zorgtoeslag =	 109
-    if inkomen == 23000	: zorgtoeslag =	 104
-    if inkomen == 23500	: zorgtoeslag =	 98
-    if inkomen == 24000	: zorgtoeslag =	 92
-    if inkomen == 24500	: zorgtoeslag =	 87
-    if inkomen == 25000	: zorgtoeslag =	 81
-    if inkomen == 25500	: zorgtoeslag =	 75
-    if inkomen == 26000	: zorgtoeslag =	 69
-    if inkomen == 26500	: zorgtoeslag =	 64
-    if inkomen == 27000	: zorgtoeslag =	 58
-    if inkomen == 27500	: zorgtoeslag =	 52
-    if inkomen == 28000	: zorgtoeslag =	 47
-    if inkomen == 28500	: zorgtoeslag =	 41
-    if inkomen == 29000	: zorgtoeslag =	 35
-    if inkomen == 29500	: zorgtoeslag =	 30
-    if inkomen == 30000	: zorgtoeslag =	 24
-    if inkomen == 30500	: zorgtoeslag =	 18
-    if inkomen == 31000	: zorgtoeslag =	 13
-    if inkomen == 31500	: zorgtoeslag =	 7
-    if inkomen >31998 : zorgtoeslag = 0  
-    zorgtoeslag = zorgtoeslag*12
+    if toetsingsinkomen >31998 :
+        zorgtoeslag = 0 
+    else:
+        standaardpremie = 1749
+        drempelinkomen = 22356
+        z = (toetsingsinkomen - drempelinkomen)
+        if z<0:z=0
+        normpremie = (0.01848 * drempelinkomen )+ (0.1361 * z)
+        zorgtoeslag = standaardpremie - normpremie        
     return zorgtoeslag
+def calculate_huurtoeslag(inkomen, rekenhuur,huishouden,number_household):
+    # https://www.volkshuisvestingnederland.nl/onderwerpen/huurtoeslag/werking-en-berekening-huurtoeslag
+    # https://wetten.overheid.nl/BWBR0008659/2022-01-01
 
-def calculate_huurtoeslag(inkomen):
-    # aleenstaande- en wonende werkende man uit 1980, 36 uur per week werkend, huur = 700
-    if inkomen <= 17000 : huurtoeslag = 355
-    if inkomen == 18000 : huurtoeslag = 340
-    if inkomen == 19000 : huurtoeslag = 315
-    if inkomen == 20000 : huurtoeslag = 290
-    if inkomen == 21000 : huurtoeslag = 263
-    if inkomen == 22000 : huurtoeslag =	 235
-    if inkomen == 23000	: huurtoeslag =	 206
-    if inkomen == 24000	: huurtoeslag =	 175
-    if inkomen == 25000	: huurtoeslag =	 146
-    if inkomen == 26000	: huurtoeslag =	 125
-    if inkomen == 27000	: huurtoeslag =	 102
-    if inkomen == 28000	: huurtoeslag =	 80
-    if inkomen == 29000	: huurtoeslag =	 56
-    if inkomen == 30000	: huurtoeslag =	 32
-    if inkomen == 31000	: huurtoeslag =	 14
 
-    if inkomen >=32000 : huurtoeslag = 0  
-   
-    huurtoeslag_ = huurtoeslag *12
-    # huur = 700
-    # if huur < 233.99:
-    #     huurtoeslag = 0
-    # if huur >233.99 and huur <442.46:
-    #     huurtoeslag = 100* (huur-233.99)
-    # if huur >442.46 and huur < 633.25:
-    #     x = huur - 442.46
-    #     huurtoeslag = (442.46-233.99) + 0.65*x
-    # if huur > 633.25 and huur < 763.47:
-    #     y = huur - 633.25
-    #     huurtoeslag = (442.46-233.99) + (0.65*(633.25-442.46)) + (0.4* y)
-    # huurtoeslag = 0
-    return huurtoeslag_
+    #https://download.belastingdienst.nl/toeslagen/docs/berekening_huurtoeslag_tg0831z21fd.pdf
+
+    # Eenpersoons
+    if huishouden == "EP":
+        a,b,minimuminkomensijkpunt,  minimumnormhuur, basishuur_min = 5.96879*10**-7, 0.002363459319, 17350, 220.68, 237.62
+    elif huishouden == "MP":
+        a,b,minimuminkomensijkpunt,  minimumnormhuur, basishuur_min = 3.42858*10**-7, 0.002093692299,22500,220.68,237.62
+    elif huishouden == "EPAOW":
+        a,b,minimuminkomensijkpunt,  minimumnormhuur, basishuur_min = 8.00848*10**-7,  -0.003802527235, 19075,218.86,235.8
+    elif huishouden == "MPAOW":
+        a,b,minimuminkomensijkpunt,  minimumnormhuur, basishuur_min = 4.99095*10**-7, -0.004173489348,25450,217.05,233.99
+    else:
+        print (" ERROR in huishouden")
+
+    taakstellingsbedrag = 16.94
+    kwaliteitskortingsgrens = 442.46
+    aftoppingsgrens = 633.25 if number_household <=2 else 678.66
+    maximale_huurgrens = 763.47
+
+    if rekenhuur > maximale_huurgrens :
+        huurtoeslag, basishuur,A,B,C = 0,0,0,0,0
+    else:
+        if inkomen<minimuminkomensijkpunt:
+            basishuur = basishuur_min
+         
+        else:   
+            basishuur = (a*(inkomen**2) + (b* inkomen)) + taakstellingsbedrag
+            if basishuur <basishuur_min : 
+                basishuur = basishuur_min
+
+        # DEEL A
+        rr = rekenhuur if rekenhuur <= kwaliteitskortingsgrens else  kwaliteitskortingsgrens
+
+        A = rr - basishuur
+        if A <0: A=0
+        # print(f"{A} = {rr} - {basishuur}")
+        #DEEL B
+        if rekenhuur>kwaliteitskortingsgrens:
+            ss=rekenhuur if rekenhuur <=aftoppingsgrens else  aftoppingsgrens
+
+            tt = basishuur if basishuur>=kwaliteitskortingsgrens else  kwaliteitskortingsgrens
+            
+            B = 0.65*(ss-tt)
+            
+            if B<0:B=0
+            # print (f"B: {B} =  0.65*({ss}-{tt})")
+        else:
+            B=0
+        
+        # DEEL C
+        # – Het gaat om een eenpersoonshuishouden.
+        # – Iemand in het huishouden heeft op de datum van berekening de AOW‑leeftijd of is ouder.
+        # – De woning is aangepast vanwege een handicap
+        if rekenhuur > aftoppingsgrens:
+            uu = basishuur if basishuur>=aftoppingsgrens else aftoppingsgrens
+            C = 0.4*(rekenhuur-uu)
+            if C<0:C=0
+            # print (f"{C} = 0.4*({rekenhuur}-{uu}) ")
+        else:
+            C = 0 
+        huurtoeslag = (A+B+C)*12        
+
+    return huurtoeslag
+
 
   
 def calculate_nettoloon(inkomen):
@@ -122,7 +141,9 @@ def calculate_nettoloon(inkomen):
         te_betalen_belasting = 0
 
     netto_loon = inkomen - te_betalen_belasting
-    huurtoeslag = calculate_huurtoeslag(inkomen)
+    
+
+    huurtoeslag = calculate_huurtoeslag(inkomen,  700, "EP",1)
     zorgtoeslag = calculate_zorgtoeslag(inkomen)
     regel = [inkomen,  inkomensten_belasting, heffingskorting, arbeidskorting,te_betalen_belasting, netto_loon, huurtoeslag, zorgtoeslag]
     return regel
@@ -155,7 +176,7 @@ def main():
     st.write (df)
     # https://stackoverflow.com/questions/62853539/plotly-how-to-plot-on-secondary-y-axis-with-plotly-express
     
-    
+
     to_show_ = ["nettoloon","besteedbaar_inkomen", "te_betalen_belasting", "belastingdruk_%", "zorgtoeslag", "huurtoeslag","toeslagen", ["huurtoeslag","zorgtoeslag","toeslagen"], "toeslagen_diff", "besteedbaar_inkomen_diff", "te_betalen_belasting_diff"]
     for to_show in to_show_:    
         fig = px.line(df,x="inkomen",y=to_show)

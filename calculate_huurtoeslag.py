@@ -1,79 +1,81 @@
-def calculate_huurtoeslag(inkomen, huur):
+def calculate_huurtoeslag(inkomen, rekenhuur,huishouden,number_household):
     # https://www.volkshuisvestingnederland.nl/onderwerpen/huurtoeslag/werking-en-berekening-huurtoeslag
     # https://wetten.overheid.nl/BWBR0008659/2022-01-01
 
-    # gevonden met fitter
-    # a = 5.680160068245925*10**-7
-    # b = 0.0038134086872441313
 
-    #https://wetten.overheid.nl/BWBR0045799/2022-01-01 2022
-    a = 5.96879*10**-7
-    b = 0.002363459319
+    #https://download.belastingdienst.nl/toeslagen/docs/berekening_huurtoeslag_tg0831z21fd.pdf
 
-    # 2021 https://wetten.overheid.nl/BWBR0044343/2021-01-01
-    # a= 6.23385*10**-7
-    # b= 0.002453085056
-
-    WMLmaand =  1264.80 # https://wetten.overheid.nl/BWBR0002638/2022-08-02/#HoofdstukII_Artikel8 8.1.a
-    minimuminkomensijkpunt = 17350 # (0.81 *12*WMLmaand) + 572 #eenpersoonshuishoudens
-    _minimuminkomensijkpunt = (1.08 *12*WMLmaand) + 144 #eenpersoonshuishoudens
-    
-    if huur > 763.47:
-        huurtoeslag = 0
+    # Eenpersoons
+    if huishouden == "EP":
+        a,b,minimuminkomensijkpunt,  minimumnormhuur, basishuur_min = 5.96879*10**-7, 0.002363459319, 17350, 220.68, 237.62
+    elif huishouden == "MP":
+        a,b,minimuminkomensijkpunt,  minimumnormhuur, basishuur_min = 3.42858*10**-7, 0.002093692299,22500,220.68,237.62
+    elif huishouden == "EPAOW":
+        a,b,minimuminkomensijkpunt,  minimumnormhuur, basishuur_min = 8.00848*10**-7,  -0.003802527235, 19075,218.86,235.8
+    elif huishouden == "MPAOW":
+        a,b,minimuminkomensijkpunt,  minimumnormhuur, basishuur_min = 4.99095*10**-7, -0.004173489348,25450,217.05,233.99
     else:
-        if inkomen < minimuminkomensijkpunt:
-    
-            normhuur = 220.68
-        else:
-            normhuur = a*(inkomen**2) + (b* inkomen)
-        # if normhuur > 448.57:
-        #     normhuur = 448.57
-        
+        print (" ERROR in huishouden")
 
-        # 100% tussen de minimale basishuur (inkomensafhankelijke eigen bijdrage) en de kwaliteitskortingsgrens (€442,46)
-        # 65% tussen de kwaliteitskortingsgrens en de aftoppingsgrens (€633,25 of €678,66)
-        # 40% voor de meeste huurders tussen de aftoppingsgrens en de maximale huurgrens (€763,47).
-        basishuur = 220.68-1.82
-        kwaliteitskortingsgrens = 442.46
-        aftoppingsgrens = 663.25
-        maximale_huurgrens = 763.47
-        a,b,c = 0,0,0
+    taakstellingsbedrag = 16.94
+    kwaliteitskortingsgrens = 442.46
+    aftoppingsgrens = 633.25 if number_household <=2 else 678.66
+    maximale_huurgrens = 763.47
 
+    if rekenhuur > maximale_huurgrens :
+        huurtoeslag, basishuur,A,B,C = 0,0,0,0,0
+    else:
+        if inkomen<minimuminkomensijkpunt:
+            basishuur = basishuur_min
+         
+        else:   
+            basishuur = (a*(inkomen**2) + (b* inkomen)) + taakstellingsbedrag
+            if basishuur <basishuur_min : 
+                basishuur = basishuur_min
 
-       
-        if huur < normhuur:
-            pass
+        # DEEL A
+        rr = rekenhuur if rekenhuur <= kwaliteitskortingsgrens else  kwaliteitskortingsgrens
 
-        elif huur >normhuur and kwaliteitskortingsgrens <442.46:
-            a = 1.00* (huur-normhuur)
-        elif huur >kwaliteitskortingsgrens and huur < aftoppingsgrens:
-            a = 1.00* (kwaliteitskortingsgrens-normhuur)
-            b  = 0.65 * (huur- kwaliteitskortingsgrens)
+        A = rr - basishuur
+        if A <0: A=0
+        # print(f"{A} = {rr} - {basishuur}")
+        #DEEL B
+        if rekenhuur>kwaliteitskortingsgrens:
+            ss=rekenhuur if rekenhuur <=aftoppingsgrens else  aftoppingsgrens
 
-        elif huur > aftoppingsgrens and huur < maximale_huurgrens:
-            a = 1.00* (kwaliteitskortingsgrens-normhuur)
-            b  = 0.65 * (aftoppingsgrens - kwaliteitskortingsgrens)
-            c = 0.4 * (huur -aftoppingsgrens)
+            tt = basishuur if basishuur>=kwaliteitskortingsgrens else  kwaliteitskortingsgrens
             
-
-        elif huur > maximale_huurgrens:
-            a = 1.00* (kwaliteitskortingsgrens-normhuur)
-            b  = 0.65 * (aftoppingsgrens - kwaliteitskortingsgrens)
-            c = 0.4 * (maximale_huurgrens -aftoppingsgrens)
+            B = 0.65*(ss-tt)
+            
+            if B<0:B=0
+            # print (f"B: {B} =  0.65*({ss}-{tt})")
+        else:
+            B=0
         
-        huurtoeslag = a+b+c
-        
-        if huurtoeslag<0 :
-            huurtoeslag=0
-      
+        # DEEL C
+        # – Het gaat om een eenpersoonshuishouden.
+        # – Iemand in het huishouden heeft op de datum van berekening de AOW‑leeftijd of is ouder.
+        # – De woning is aangepast vanwege een handicap
+        if rekenhuur > aftoppingsgrens:
+            uu = basishuur if basishuur>=aftoppingsgrens else aftoppingsgrens
+            C = 0.4*(rekenhuur-uu)
+            if C<0:C=0
+            # print (f"{C} = 0.4*({rekenhuur}-{uu}) ")
+        else:
+            C = 0 
+        huurtoeslag = A+B+C        
 
-    return huurtoeslag, normhuur,a,b,c
+    return huurtoeslag, basishuur,A,B,C
 
 def main():
-    max_value_ink = 50_000
-    huur = 700
-    for inkomen in range(0,max_value_ink ,1000):
-        huurtoeslag, normhuur,a,b,c = calculate_huurtoeslag(inkomen, huur)
-        print (f"{inkomen} | {int(huurtoeslag)} | {int(normhuur)} | {int(a)} | {int(b)} |{int(c)}")
+    max_value_ink = 35_000
+    for inkomen in range(16_000,max_value_ink ,1000):
+        huur = 700
+    
+        huishouden = "EP"
+
+        number_household=1
+        huurtoeslag, basishuur,a,b,c = calculate_huurtoeslag(inkomen, huur, huishouden,number_household)
+        print (f"{inkomen=} | {round(huurtoeslag,2)=} || {int(basishuur)=} | {int(a)} | {int(b)} |{int(c)}")
 
 main()
