@@ -155,6 +155,7 @@ def main():
     st.write (df)
     # https://stackoverflow.com/questions/62853539/plotly-how-to-plot-on-secondary-y-axis-with-plotly-express
     
+    
     to_show_ = ["nettoloon","besteedbaar_inkomen", "te_betalen_belasting", "belastingdruk_%", "zorgtoeslag", "huurtoeslag","toeslagen", ["huurtoeslag","zorgtoeslag","toeslagen"], "toeslagen_diff", "besteedbaar_inkomen_diff", "te_betalen_belasting_diff"]
     for to_show in to_show_:    
         fig = px.line(df,x="inkomen",y=to_show)
