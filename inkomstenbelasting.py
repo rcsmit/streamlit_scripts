@@ -142,7 +142,7 @@ def calculate_huurtoeslag(inkomen, rekenhuur,huishouden,number_household):
 
 
   
-def calculate_nettoloon(inkomen):
+def calculate_nettoloon(inkomen,rekenhuur,huishouden,number_household):
     inkomensten_belasting = calculate_inkomstenbelasting(inkomen)
     heffingskorting = calculate_heffingskorting(inkomen)
     arbeidskorting = calculate_arbeidskorting(inkomen)
@@ -152,9 +152,7 @@ def calculate_nettoloon(inkomen):
         te_betalen_belasting = 0
 
     netto_loon = inkomen - te_betalen_belasting
-    
-
-    huurtoeslag = calculate_huurtoeslag(inkomen,  700, "EP",1)
+    huurtoeslag = calculate_huurtoeslag(inkomen,  rekenhuur,huishouden,number_household)
     zorgtoeslag = calculate_zorgtoeslag(inkomen)
     regel = [inkomen,  inkomensten_belasting, heffingskorting, arbeidskorting,te_betalen_belasting, netto_loon, huurtoeslag, zorgtoeslag]
     return regel
@@ -164,7 +162,7 @@ def salaris_per_maand(max_value_ink):
     for inkomen in range(0,max_value_ink,1000):
         
         st.write(f"{inkomen} - {round(inkomen/12/1.08,2)}")
-        
+
 def create_df(tabeldata):
     df = pd.DataFrame(tabeldata, columns = ["inkomen",  "inkomensten_belasting", "heffingskorting", "arbeidskorting","te_betalen_belasting", "nettoloon", "huurtoeslag","zorgtoeslag"])
     df["belastingdruk_%"] = round(  df["te_betalen_belasting"]/df["inkomen"]*100,2)
@@ -177,14 +175,19 @@ def create_df(tabeldata):
 
 def main():
     st.header("Inkomstenbelasting 2022")
-    st.write("* Alleen inkomen uit arbeid")
-    st.write("* Alleenstaand, geen kinderen, onder 65 jaar")
+   
 
     tabeldata=[]   
     max_value_ink = int(st.sidebar.number_input("Maximum waarde bruto inkomen",0,10_000_000,110_000,1000))
     stappen = int(st.sidebar.number_input("Stappen",0,10_000,1_000,1000))
+    rekenhuur = int(st.sidebar.number_input("Rekenhuur",0,10000,700))
+    huishouden = st.sidebar.selectbox("Type huishouden", ["EP", "MP", "EPAOW", "MPAOW"], index=0)
+    if huishouden =="EP" or huishouden =="EPAOW":
+        number_household = 1
+    else: 
+        number_household = int(st.sidebar.number_input("Aantal mensen in huishouden",0,10000,1))
     for inkomen in range(0,max_value_ink,stappen):
-        regel = calculate_nettoloon(inkomen)
+        regel = calculate_nettoloon(inkomen,rekenhuur,huishouden,number_household)
         tabeldata.append(regel)
        
     df = create_df(tabeldata)
