@@ -2,8 +2,7 @@ import pandas as pd
 import streamlit as st
 
 def read(sheet_name):
-    sheet_id = "1toDWxbZwLg4qyLnsjnmKnA_V5q_4yAqnkAsH0W4FiTY"
-    
+    sheet_id = "1toDWxbZwLg4qyLnsjnmKnA_V5q_4yAqnkAsH0W4FiTY"  
     url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
     df = pd.read_csv(url, delimiter=',')
     return df
@@ -64,7 +63,6 @@ def show_disclaimer(languages_possible, languages_chosen):
             index = languages_possible.index(l)
             st.write(f" * {disclaimers[index]}")
 
-
 def main():
     print ("--------------------------------------------------")
     #sheet_name = "Schatberg2022"
@@ -85,8 +83,6 @@ def main():
     if len(languages_chosen) == 0:
         st.warning ("Choose at least one language")
         st.stop()
-
-    
 
     output = st.sidebar.selectbox("Output", ["Together", "Seperate", "etiketjes"], index=0)   
 
@@ -150,10 +146,8 @@ def main():
             else:
                 df[a] = df[a].astype(int)
         
-    
         to_show =  languages_chosen + accotype_chosen
-        file_name = "_".join([str(item) for item in to_show])
-        
+        file_name = "_".join([str(item) for item in to_show]) 
 
         df = df[(df['Nederlands'].str.contains(item_search,case=False, na=False)) 
                 | (df['English'].str.contains(item_search,case=False, na=False)) 
@@ -165,12 +159,8 @@ def main():
             
         df = df[to_show]
         df = df.reset_index(drop=True)
-        
-
-
+    
         show_df(df)
-
-
 
         show_disclaimer(languages_possible, languages_chosen)
         for a in accotype_chosen:
@@ -179,40 +169,17 @@ def main():
                 print (f"{a} - {som}")
     elif output ==  "Seperate":
         for acco_ in accotype_chosen:
-           
             st.header(f"Inventory for {acco_} at Camping De Schatberg")
-            
             df_ = df.dropna(subset=acco_, how='all').copy(deep=True)
-
-                # Waikiki - 171.0
-                # Bali - 133.0
-                # Sahara - 125.0
-                # Kalahari 1 - 165.0
-                # Kalahri 2 - 159.0
-                # Serengeti XL - 179.0
-                # Serengetti L - 167.0
-            
-                # Waikiki - 171
-                # Sahara - 111
-                # Bali - 113
-                # Kalahri 2 - 123
-                # Kalahari 1 - 123
-                # Serengeti XL - 124
-                # Serengetti L - 120
-
-                
-        
             df_[acco_] = df_[acco_].fillna(0)
             if acco_ == "€":
                 df_[acco_] = df_[acco_].astype(str)
             else:
                 df_[acco_] = df_[acco_].astype(int)
         
-        
             to_show =  languages_chosen + [acco_]
             file_name = "_".join([str(item) for item in to_show])
             
-
             df_ = df_[(df_['Nederlands'].str.contains(item_search,case=False, na=False)) 
                     | (df_['English'].str.contains(item_search,case=False, na=False)) 
                     | (df_['Deutsch'].str.contains(item_search,case=False, na=False)) 
@@ -223,17 +190,13 @@ def main():
                 
             df__ = df_[to_show]
             df__ = df__.reset_index(drop=True)
-            
-
 
             show_df(df__)
             show_disclaimer(languages_possible, languages_chosen)
             print (f"{acco_} - {df__[acco_].sum()}")
 
-
     else:
         st.error("Error in output")
-
     # sidebar
     download_button(df, file_name)
     show_link()
