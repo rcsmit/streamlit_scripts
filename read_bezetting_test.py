@@ -11,11 +11,17 @@ import streamlit as st
 from keys import * # secret file with the prices
 import plotly.express as px
 import plotly.graph_objects as go
-
+import requests
 test = False  # To test or not to test (to see if the fillcolors in the sheet are right.)
 
 excel_file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\dummy_occupation.xlsx"
-wb = load_workbook(excel_file, data_only=True)
+excel_file = r"https://github.com/rcsmit/streamlit_scripts/blob/main/input/dummy_occupation.xlsx?raw=true"
+
+
+import urllib.request
+urllib.request.urlretrieve(excel_file, "test.xlsx")
+
+wb = load_workbook("test.xlsx", data_only=True)
 start_month, end_month = 3, 10
 year_ = [2022]
 (start_month,end_month) = st.sidebar.slider("Months (from/until (incl.))", 1, 12, (3,10))
