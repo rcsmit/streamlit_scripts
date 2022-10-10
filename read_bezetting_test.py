@@ -1,24 +1,22 @@
 # GENERATE BUSINESS INTELLIGENCE COMING FROM A PLANNING SHEET
 
-
-import openpyxl
 from datetime import datetime
 import string
 import pandas as pd
-import plotly
+
 from openpyxl import load_workbook
 import streamlit as st
-from keys import * # secret file with the prices
 import plotly.express as px
 import plotly.graph_objects as go
-import requests
+import urllib.request
+
 test = False  # To test or not to test (to see if the fillcolors in the sheet are right.)
 
 excel_file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\dummy_occupation.xlsx"
 excel_file = r"https://github.com/rcsmit/streamlit_scripts/blob/main/input/dummy_occupation.xlsx?raw=true"
 
 
-import urllib.request
+
 urllib.request.urlretrieve(excel_file, "test.xlsx")
 
 wb = load_workbook("test.xlsx", data_only=True)
@@ -66,7 +64,7 @@ def find_fill_color(cell):
 
     theme = sh_2022[cell].fill.start_color.theme
     tint = sh_2022[cell].fill.start_color.tint
-    st.write(f"{valx = } {theme=} {tint=}")
+    st.write(f"Valx = {valx  } | Theme = {theme} ||Tint = {tint}")
 
     # val = int(sh_2022[cell].fill.start_color.index, 16)
     # st.write (val)
