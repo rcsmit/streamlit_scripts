@@ -1,3 +1,7 @@
+# VEROUDERD. GEBRUIK "read_bezetting.py"
+# DIT BESTAND GEBRUIKT DE TOTALEN DIE DOOR EXCEL WORDEN GEGENEREERD (adh het optellen van de kleuren in een kolom)
+
+
 import pandas as pd
 import streamlit as st
 import numpy as np

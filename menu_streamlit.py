@@ -37,11 +37,12 @@ def main():
                 ["8. Crypto portfolio", "crypto_portfolio"],
                 ["9. Yepcharts", "yepcharts"],
                 ["10. Zonnepanelen", "zonnepanelen"],
-                ["11. Occupation Camping", "occupation_camping"],
+                ["11. Occupation Camping", "read_bezetting_test"], #was occupation_camping
                 ["12. Whatsapp analyzer", "whatsapp_analyzer"],
                 ["13. Breezertaal converter", "make_breezer_taal"],
                 ["14. Fit to data", "fit_to_data_streamlit"],
-                ["15. Inkomstenbelasting", "inkomstenbelasting"]
+                ["15. Inkomstenbelasting", "inkomstenbelasting"],
+                
                 ]
 
     
