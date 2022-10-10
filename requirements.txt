@@ -14,5 +14,4 @@ yfinance
 patsy
 statsmodels
 latex
-urllib
 openpyxl
