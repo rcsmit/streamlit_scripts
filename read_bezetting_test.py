@@ -12,14 +12,16 @@ import urllib.request
 
 test = False  # To test or not to test (to see if the fillcolors in the sheet are right.)
 
-excel_file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\dummy_occupation.xlsx"
-excel_file = r"https://github.com/rcsmit/streamlit_scripts/blob/main/input/dummy_occupation.xlsx?raw=true"
+local = True
+if local:
+    excel_file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\dummy_occupation.xlsx"
+    wb = load_workbook(excel_file, data_only=True)
+else:
+    excel_file = r"https://github.com/rcsmit/streamlit_scripts/blob/main/input/dummy_occupation.xlsx?raw=true"
+    urllib.request.urlretrieve(excel_file, "test.xlsx")
+    wb = load_workbook("test.xlsx", data_only=True)
 
 
-
-urllib.request.urlretrieve(excel_file, "test.xlsx")
-
-wb = load_workbook("test.xlsx", data_only=True)
 start_month, end_month = 3, 10
 year_ = [2022]
 (start_month,end_month) = st.sidebar.slider("Months (from/until (incl.))", 1, 12, (3,10))
@@ -66,6 +68,7 @@ def find_fill_color(cell):
     tint = sh_2022[cell].fill.start_color.tint
     st.write(f"Valx = {valx  } | Theme = {theme} ||Tint = {tint}")
 
+    # DOESNT WORK
     # val = int(sh_2022[cell].fill.start_color.index, 16)
     # st.write (val)
     # #hex_color = "%06x" % (val && 0xFFFFFF)
@@ -500,7 +503,7 @@ def make_complete_df(columns_to_use, year):
     
     
     df = df[df["acco_type"].isin(selection_list_accos)]
-   
+    st.write(df)
     return df
 
 def make_date_columns(df):
