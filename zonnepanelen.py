@@ -54,7 +54,7 @@ def calculate_zonne_energie(temp_avg, temp_max, glob_straling, windsnelheid_avg)
 def get_data():
 
     # file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\knmi_nw_beerta.csv"
-    file = #https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/knmi_nw_beerta.csv"
+    file = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/knmi_nw_beerta.csv"
     df_nw_beerta=  pd.read_csv(
             file,
             delimiter=",",
