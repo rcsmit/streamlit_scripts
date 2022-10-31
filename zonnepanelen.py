@@ -103,7 +103,7 @@ def calculate_zonne_energie(temp_avg, temp_max, glob_straling, windsnelheid_avg,
     PVpot_t = Pr_t*(Gt/Gstc) * daglengte
   
     return PVpot_t
-
+@st.cache
 def get_data():
 
     # file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\knmi_nw_beerta.csv"
