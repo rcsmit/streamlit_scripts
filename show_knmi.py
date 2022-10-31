@@ -57,10 +57,15 @@ def rh2q(rh, t, p ):
     # https://archive.eol.ucar.edu/projects/ceop/dm/documents/refdata_report/eqns.html
 
     #Td = math.log(e/6.112)*243.5/(17.67-math.log(e/6.112))
-    es = 6.112 * math.exp((17.67 * t)/(t + 243.5))
-    e = es * (rh / 100)
-    q_ = (0.622 * e)/(p - (0.378 * e)) * 1000
-    return round(q_,2)
+    try:
+        es = 6.112 * math.exp((17.67 * t)/(t + 243.5))
+        e = es * (rh / 100)
+        q_ = (0.622 * e)/(p - (0.378 * e)) * 1000
+        x  = round(q_,2)
+    except:
+        x= None
+
+    return x  
 
 def rh2ah(rh, t ):
     """[summary]
@@ -73,8 +78,11 @@ def rh2ah(rh, t ):
         [type]: [description]
     """
     # return (6.112 * ((17.67 * t) / (math.exp(t) + 243.5)) * rh * 2.1674) / (273.15 + t ) # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7831640/
-
-    return (6.112 * math.exp((17.67 * t) / (t + 243.5)) * rh * 2.1674) / (273.15 + t )
+    try: 
+        x= (6.112 * math.exp((17.67 * t) / (t + 243.5)) * rh * 2.1674) / (273.15 + t )
+    except:
+        x= None
+    return  x
 @st.cache(ttl=60 * 60 * 24, suppress_st_warning=True)
 def getdata(stn, fromx, until):
     with st.spinner(f"GETTING ALL DATA ..."):
