@@ -292,7 +292,7 @@ def main():
     
     
     x_axis = st.sidebar.selectbox("X-as scatter",fields, index = 3)
-    y_axis = st.sidebar.selectbox("Y-as door de tijd/scatter",fields, index=23)
+    y_axis = st.sidebar.selectbox("Y-as door de tijd/scatter",fields, index=24)
     st.subheader("Door de tijd")
     make_plot(df, "YYYYMMDD", y_axis, False)
     st.subheader("Scatter")
