@@ -407,7 +407,7 @@ def main():
     sklearn(df)
     download_button(df)
     st.sidebar.write("KNMI data is van STN286, Nieuw Beerta")
-
+    st.sidebar.write("CODE: https://github.com/rcsmit/streamlit_scripts/blob/main/zonnepanelen.py")
 
     # https://www.weerstationhaaksbergen.nl/weather/index.php/Weblog/zonnestraling-en-zonnepanelen.html
 main()
