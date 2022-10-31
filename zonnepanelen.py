@@ -1,4 +1,3 @@
-
 import pandas as pd
 
 # id	STN	YYYYMMDD	temp_avg	temp_min	temp_max	T10N	zonneschijnduur	perc_max_zonneschijnduur	
