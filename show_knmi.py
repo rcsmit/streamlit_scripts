@@ -1025,7 +1025,9 @@ def  polar_plot(df2,   what_to_show, how):
 
     
 
-def show_warmingstripes(df, title):
+def show_warmingstripes(df_, title):
+    df = df_.groupby(df_["year"], sort=True).mean().reset_index()
+    #df_grouped = df.groupby([df[valuefield]], sort=True).sum().reset_index()
     # Based on code of Sebastian Beyer
     # https://github.com/sebastianbeyer/warmingstripes/blob/master/warmingstripes.py
 
