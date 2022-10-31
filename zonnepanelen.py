@@ -30,7 +30,51 @@ import plotly.graph_objects as go
 from sklearn.model_selection import train_test_split
 from sklearn import datasets, linear_model, metrics
 
+def calculate_zonne_energie(temp_avg, temp_max, glob_straling, windsnelheid_avg):
+    # https://twitter.com/karin_vdwiel/status/1516393097101512712
+    # https://www.knmi.nl/over-het-knmi/nieuws/van-weersverwachting-naar-energieverwachting
+    # https://www.sciencedirect.com/science/article/pii/S1364032119302862?via%3Dihub
+    # https://www.nrel.gov/docs/fy03osti/35645.pdf
+    gamma = -0.005
+    Tref = 25
+    c1 = 4.3
+    c2 = 0.943
+    c3 = 0.028
+    c4 = -1.528
+
+    T_a_day_t = (temp_avg + temp_max) / 2
+    Gt= glob_straling
+    Gstc = 1000
+    Vt = windsnelheid_avg
+    Tcell_t = c1 + c2* T_a_day_t + c3*Gt + c4 *Vt
+    Pr_t = 1 + (gamma*(Tcell_t-Tref))
+    PVpot_t = Pr_t*(Gt/Gstc)
+    
+    return PVpot_t
+
 def get_data():
+
+    # file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\knmi_nw_beerta.csv"
+    file = #https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/knmi_nw_beerta.csv"
+    df_nw_beerta=  pd.read_csv(
+            file,
+            delimiter=",",
+            
+            low_memory=False,
+        )
+
+    print (df_nw_beerta.dtypes)
+    df_nw_beerta["YYYYMMDD"] = pd.to_datetime(df_nw_beerta["YYYYMMDD"], format="%Y%m%d")
+    df_nw_beerta["windsnelheid_avg"] = df_nw_beerta["FG"] # (in 0.1 m/s) / Daily mean windspeed (in 0.1 m/s)
+    df_nw_beerta["temp_avg"] =df_nw_beerta["TG"] # Etmaalgemiddelde temperatuur (in 0.1 graden Celsius) / Daily mean temperature in (0.1 degrees Celsius)
+    df_nw_beerta["temp_min"] =df_nw_beerta["TN"]#Minimum temperatuur (in 0.1 graden Celsius) / Minimum temperature (in 0.1 degrees Celsius)
+    df_nw_beerta["temp_max"]  =df_nw_beerta["TX"]  #    = Maximum temperatuur (in 0.1 graden Celsius) / Maximum temperature (in 0.1 degrees Celsius)
+    df_nw_beerta["zonneschijnduur"] = df_nw_beerta["SQ"]#        = Zonneschijnduur (in 0.1 uur) berekend uit de globale straling (-1 voor <0.05 uur) / Sunshine duration (in 0.1 hour) calculated from global radiation (-1 for <0.05 hour)
+    df_nw_beerta["perc_max_zonneschijnduur"] =df_nw_beerta["SP"]#       = Percentage van de langst mogelijke zonneschijnduur / Percentage of maximum potential sunshine duration
+    df_nw_beerta["glob_straling"] =df_nw_beerta["Q"]  #      = Globale straling (in J/cm2) / Global radiation (in J/cm2)
+    df_nw_beerta["neerslag_duur"] =df_nw_beerta["DR"]#      = Duur van de neerslag (in 0.1 uur) / Precipitation duration (in 0.1 hour)
+    df_nw_beerta["neerslag_etmaalsom"] =df_nw_beerta["RH"]#       = Etmaalsom van de neerslag (in 0.1 mm) (-1 voor <0.05 mm) / Daily precipitation amount (in 0.1 mm) (-1 for <0.05 mm)
+    df_nw_beerta['zonne_energie'] = df_nw_beerta.apply(lambda x: calculate_zonne_energie(x["temp_avg"],     x["temp_max"], x["glob_straling"] , x["windsnelheid_avg"]), axis=1)
     file = "input\\zonnepanelen.csv"
     #file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\data\zonnepanelen.csv"
     file = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/zonnepanelen.csv"
@@ -49,6 +93,8 @@ def get_data():
         df["dayofyear"] = df["YYYYMMDD"].dt.dayofyear
         df["count"] = 1
 
+        df= df[["YYYYMMDD", "YYYY","MM","DD","dayofyear","count","month","year",
+            "day","month_year","month_day","date","value_kwh"]]
         # to_divide_by_10 = [
         #     "temp_avg",
         #     "temp_min",
@@ -65,7 +111,11 @@ def get_data():
     except:
         st.error ("Error loading data")
         st.stop()
-    return df
+
+    df_ = pd.merge(df_nw_beerta, df, how="inner", on = "YYYYMMDD")
+    st.write(df_)
+    print (df_)
+    return df_
 
 @st.cache
 def convert_df(df):
@@ -238,7 +288,7 @@ def main():
 
     #print (df)
     fields=["id","STN","YYYYMMDD","temp_avg","temp_min","temp_max","T10N","zonneschijnduur","perc_max_zonneschijnduur",
-            "glob_straling","neerslag_duur","neerslag_etmaalsom","YYYY","MM","DD","dayofyear","count","month","year",
+            "glob_straling","zonne_energie", "neerslag_duur","neerslag_etmaalsom","YYYY","MM","DD","dayofyear","count","month","year",
             "day","month_year","month_day","date","value_kwh"]
     
     
