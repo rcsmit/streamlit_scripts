@@ -32,7 +32,7 @@ from sklearn import datasets, linear_model, metrics
 
 import numpy as np
 
-def daylength(dayOfYear, lat):
+def daylength_brock(dayOfYear, lat):
     """Computes the length of the day (the time between sunrise and
     sunset) given the day of the year and latitude of the location.
     Function uses the Brock model for the computations.
@@ -66,13 +66,27 @@ def daylength(dayOfYear, lat):
         hourAngle = np.rad2deg(np.arccos(-np.tan(latInRad) * np.tan(np.deg2rad(declinationOfEarth))))
         return 2.0*hourAngle/15.0
 
+    import math
+
+def daylength_CBM(day_of_year, latitude):
+    # https://www.dataliftoff.com/plotting-hours-of-daylight-in-python-with-matplotlib/
+    # formula per Ecological Modeling, volume 80 (1995) pp. 87-95, called "A Model Comparison for Daylength as a Function of Latitude and Day of the Year."
+    # see more details - http://mathforum.org/library/drmath/view/56478.html
+    # Latitude in degrees, postive for northern hemisphere, negative for southern
+    # Day 1 = Jan 1
+
+    P = math.asin(0.39795 * math.cos(0.2163108 + 2 * math.atan(0.9671396 * math.tan(.00860 * (day_of_year - 186)))))
+    pi = math.pi
+    day_light_hours = 24 - (24 / pi) * math.acos((math.sin(0.8333 * pi / 180) + math.sin(latitude * pi / 180) * math.sin(P)) / (math.cos(latitude * pi / 180) * math.cos(P)))
+    return  day_light_hours
+
 def calculate_zonne_energie(temp_avg, temp_max, glob_straling, windsnelheid_avg,dayOfYear):
     # https://twitter.com/karin_vdwiel/status/1516393097101512712
     # https://www.knmi.nl/over-het-knmi/nieuws/van-weersverwachting-naar-energieverwachting
     # https://www.sciencedirect.com/science/article/pii/S1364032119302862?via%3Dihub
     # https://www.nrel.gov/docs/fy03osti/35645.pdf
     lat = 52.9268737
-    daglengte = 12# daylength(dayOfYear, lat)
+    daglengte = daylength_CBM(dayOfYear, lat)
     gamma = -0.005
     Tref = 25
     c1 = 4.3
@@ -114,7 +128,7 @@ def get_data():
     df_nw_beerta["neerslag_etmaalsom"] =df_nw_beerta["RH"]/10#       = Etmaalsom van de neerslag (in 0.1 mm) (-1 voor <0.05 mm) / Daily precipitation amount (in 0.1 mm) (-1 for <0.05 mm)
     df_nw_beerta["dayofyear"] =  df_nw_beerta["YYYYMMDD"].dt.dayofyear
     lat = 52.9268737
-    df_nw_beerta["daglengte"]  = df_nw_beerta.apply(lambda x: daylength(x["dayofyear"], lat), axis=1)
+    df_nw_beerta["daglengte"]  = df_nw_beerta.apply(lambda x: daylength_CBM(x["dayofyear"], lat), axis=1)
     df_nw_beerta['zonne_energie_theoretisch'] = df_nw_beerta.apply(lambda x: calculate_zonne_energie(x["temp_avg"],     x["temp_max"], x["glob_straling"] , x["windsnelheid_avg"], x["dayofyear"]), axis=1)
     file = "input\\zonnepanelen.csv"
     #st.write (df_nw_beerta)
