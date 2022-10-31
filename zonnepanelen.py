@@ -17,7 +17,8 @@ import statsmodels.api as sm
 import matplotlib.pyplot as plt
 import statsmodels.formula.api as smf
 import scipy
-
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
 _lock = RendererAgg.lock
 
 import numpy as np
@@ -29,11 +30,49 @@ import plotly.graph_objects as go
 from sklearn.model_selection import train_test_split
 from sklearn import datasets, linear_model, metrics
 
-def calculate_zonne_energie(temp_avg, temp_max, glob_straling, windsnelheid_avg):
+import numpy as np
+
+def daylength(dayOfYear, lat):
+    """Computes the length of the day (the time between sunrise and
+    sunset) given the day of the year and latitude of the location.
+    Function uses the Brock model for the computations.
+    For more information see, for example,
+    Forsythe et al., "A model comparison for daylength as a
+    function of latitude and day of year", Ecological Modelling,
+    1995.
+    https://gist.github.com/anttilipp/ed3ab35258c7636d87de6499475301ce
+    https://sci-hub.se/https://doi.org/10.1016/0304-3800(94)00034-F
+
+    Parameters
+    ----------
+    dayOfYear : int
+        The day of the year. 1 corresponds to 1st of January
+        and 365 to 31st December (on a non-leap year).
+    lat : float
+        Latitude of the location in degrees. Positive values
+        for north and negative for south.
+    Returns
+    -------
+    d : float
+        Daylength in hours.
+    """
+    latInRad = np.deg2rad(lat)
+    declinationOfEarth = 23.45*np.sin(np.deg2rad(360.0*(283.0+dayOfYear)/365.0))
+    if -np.tan(latInRad) * np.tan(np.deg2rad(declinationOfEarth)) <= -1.0:
+        return 24.0
+    elif -np.tan(latInRad) * np.tan(np.deg2rad(declinationOfEarth)) >= 1.0:
+        return 0.0
+    else:
+        hourAngle = np.rad2deg(np.arccos(-np.tan(latInRad) * np.tan(np.deg2rad(declinationOfEarth))))
+        return 2.0*hourAngle/15.0
+
+def calculate_zonne_energie(temp_avg, temp_max, glob_straling, windsnelheid_avg,dayOfYear):
     # https://twitter.com/karin_vdwiel/status/1516393097101512712
     # https://www.knmi.nl/over-het-knmi/nieuws/van-weersverwachting-naar-energieverwachting
     # https://www.sciencedirect.com/science/article/pii/S1364032119302862?via%3Dihub
     # https://www.nrel.gov/docs/fy03osti/35645.pdf
+    lat = 52.9268737
+    daglengte = 12# daylength(dayOfYear, lat)
     gamma = -0.005
     Tref = 25
     c1 = 4.3
@@ -42,13 +81,13 @@ def calculate_zonne_energie(temp_avg, temp_max, glob_straling, windsnelheid_avg)
     c4 = -1.528
 
     T_a_day_t = (temp_avg + temp_max) / 2
-    Gt= glob_straling
+    Gt= glob_straling   #/10000# (van cm2 naar m2)
     Gstc = 1000
     Vt = windsnelheid_avg
     Tcell_t = c1 + c2* T_a_day_t + c3*Gt + c4 *Vt
     Pr_t = 1 + (gamma*(Tcell_t-Tref))
-    PVpot_t = Pr_t*(Gt/Gstc)
-    
+    PVpot_t = Pr_t*(Gt/Gstc) * daglengte
+  
     return PVpot_t
 
 def get_data():
@@ -62,19 +101,24 @@ def get_data():
             low_memory=False,
         )
 
-    print (df_nw_beerta.dtypes)
+   
     df_nw_beerta["YYYYMMDD"] = pd.to_datetime(df_nw_beerta["YYYYMMDD"], format="%Y%m%d")
-    df_nw_beerta["windsnelheid_avg"] = df_nw_beerta["FG"] # (in 0.1 m/s) / Daily mean windspeed (in 0.1 m/s)
-    df_nw_beerta["temp_avg"] =df_nw_beerta["TG"] # Etmaalgemiddelde temperatuur (in 0.1 graden Celsius) / Daily mean temperature in (0.1 degrees Celsius)
-    df_nw_beerta["temp_min"] =df_nw_beerta["TN"]#Minimum temperatuur (in 0.1 graden Celsius) / Minimum temperature (in 0.1 degrees Celsius)
-    df_nw_beerta["temp_max"]  =df_nw_beerta["TX"]  #    = Maximum temperatuur (in 0.1 graden Celsius) / Maximum temperature (in 0.1 degrees Celsius)
-    df_nw_beerta["zonneschijnduur"] = df_nw_beerta["SQ"]#        = Zonneschijnduur (in 0.1 uur) berekend uit de globale straling (-1 voor <0.05 uur) / Sunshine duration (in 0.1 hour) calculated from global radiation (-1 for <0.05 hour)
+    df_nw_beerta["windsnelheid_avg"] = df_nw_beerta["FG"] /10 # (in 0.1 m/s) / Daily mean windspeed (in 0.1 m/s)
+    df_nw_beerta["temp_avg"] =df_nw_beerta["TG"]/10 # Etmaalgemiddelde temperatuur (in 0.1 graden Celsius) / Daily mean temperature in (0.1 degrees Celsius)
+    df_nw_beerta["temp_min"] =df_nw_beerta["TN"]/10#Minimum temperatuur (in 0.1 graden Celsius) / Minimum temperature (in 0.1 degrees Celsius)
+    df_nw_beerta["temp_max"]  =df_nw_beerta["TX"]/10  #    = Maximum temperatuur (in 0.1 graden Celsius) / Maximum temperature (in 0.1 degrees Celsius)
+    df_nw_beerta["zonneschijnduur"] = df_nw_beerta["SQ"]/10#        = Zonneschijnduur (in 0.1 uur) berekend uit de globale straling (-1 voor <0.05 uur) / Sunshine duration (in 0.1 hour) calculated from global radiation (-1 for <0.05 hour)
     df_nw_beerta["perc_max_zonneschijnduur"] =df_nw_beerta["SP"]#       = Percentage van de langst mogelijke zonneschijnduur / Percentage of maximum potential sunshine duration
     df_nw_beerta["glob_straling"] =df_nw_beerta["Q"]  #      = Globale straling (in J/cm2) / Global radiation (in J/cm2)
-    df_nw_beerta["neerslag_duur"] =df_nw_beerta["DR"]#      = Duur van de neerslag (in 0.1 uur) / Precipitation duration (in 0.1 hour)
-    df_nw_beerta["neerslag_etmaalsom"] =df_nw_beerta["RH"]#       = Etmaalsom van de neerslag (in 0.1 mm) (-1 voor <0.05 mm) / Daily precipitation amount (in 0.1 mm) (-1 for <0.05 mm)
-    df_nw_beerta['zonne_energie'] = df_nw_beerta.apply(lambda x: calculate_zonne_energie(x["temp_avg"],     x["temp_max"], x["glob_straling"] , x["windsnelheid_avg"]), axis=1)
+    df_nw_beerta["neerslag_duur"] =df_nw_beerta["DR"]/10#      = Duur van de neerslag (in 0.1 uur) / Precipitation duration (in 0.1 hour)
+    df_nw_beerta["neerslag_etmaalsom"] =df_nw_beerta["RH"]/10#       = Etmaalsom van de neerslag (in 0.1 mm) (-1 voor <0.05 mm) / Daily precipitation amount (in 0.1 mm) (-1 for <0.05 mm)
+    df_nw_beerta["dayofyear"] =  df_nw_beerta["YYYYMMDD"].dt.dayofyear
+    lat = 52.9268737
+    df_nw_beerta["daglengte"]  = df_nw_beerta.apply(lambda x: daylength(x["dayofyear"], lat), axis=1)
+    df_nw_beerta['zonne_energie_theoretisch'] = df_nw_beerta.apply(lambda x: calculate_zonne_energie(x["temp_avg"],     x["temp_max"], x["glob_straling"] , x["windsnelheid_avg"], x["dayofyear"]), axis=1)
     file = "input\\zonnepanelen.csv"
+    #st.write (df_nw_beerta)
+   
     #file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\data\zonnepanelen.csv"
     file = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/zonnepanelen.csv"
     #st.write(file)
@@ -91,9 +135,10 @@ def get_data():
         df["DD"] = df["YYYYMMDD"].dt.day
         df["dayofyear"] = df["YYYYMMDD"].dt.dayofyear
         df["count"] = 1
+        df["value_kwh_gemeten"] = df["value_kwh"]
 
         df= df[["YYYYMMDD", "YYYY","MM","DD","dayofyear","count","month","year",
-            "day","month_year","month_day","date","value_kwh"]]
+            "day","month_year","month_day","date","value_kwh_gemeten"]]
         # to_divide_by_10 = [
         #     "temp_avg",
         #     "temp_min",
@@ -131,12 +176,55 @@ def download_button(df):
         mime='text/csv',
     )
 
-def make_plot(df, x_axis, y_axis, regression):  
-        title = (f"{y_axis} vs {x_axis}")
-        fig = px.scatter(df, x=x_axis, y=y_axis, trendline="ols", title=title, hover_data=["date",x_axis, y_axis ])
+def make_plot(df, x_axis, y_axis, regression,y_axis2):
         
-        st.plotly_chart(fig, use_container_width=True)
-        if regression:
+        if y_axis2 == None:
+            title = (f"{y_axis} vs {x_axis}")
+            fig = px.scatter(df, x=x_axis, y=y_axis, trendline="ols", title=title, hover_data=["date",x_axis, y_axis ])
+            fig.layout.xaxis.title=x_axis
+            fig.layout.yaxis.title=y_axis
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+
+            # https://stackoverflow.com/questions/62853539/plotly-how-to-plot-on-secondary-y-axis-with-plotly-express
+            title = (f"{y_axis} & {y_axis2} vs {x_axis}")
+
+                        
+            fig = go.Figure()
+
+            fig.add_trace(go.Scatter(
+                x=df[x_axis], y=df[y_axis],
+                name=y_axis,
+                mode='markers',
+                marker_color='rgba(152, 0, 0, .8)'
+            ))
+
+            fig.add_trace(go.Scatter(
+                x=df[x_axis], y=df[y_axis2],
+                name=y_axis2,
+                mode='markers',
+                marker_color='rgba(255, 182, 193, .9)'
+            ))
+
+
+            # subfig = make_subplots(specs=[[{"secondary_y": True}]])  
+            # fig = px.scatter(df, x=x_axis, y=y_axis, trendline="ols", title=title,  marker_color='rgba(152, 0, 0, .8)', hover_data=["date",x_axis, y_axis ])
+            
+            # fig2 = px.scatter(df, x=x_axis, y=y_axis2, trendline="ols", title=title,  hover_data=["date",x_axis, y_axis2 ])
+
+            # fig2.update_traces(yaxis="y2")
+
+            # subfig.add_traces(fig.data + fig2.data)
+            # subfig.layout.xaxis.title=x_axis
+            # subfig.layout.yaxis.title=y_axis
+           
+            # subfig.layout.yaxis2.title=y_axis2
+
+            # subfig.for_each_trace(lambda t: t.update(marker=dict(color=t.marker.color)))
+            st.plotly_chart(fig, use_container_width=True)
+            #subfig.show()
+            
+        if regression and y_axis2 == None:
             model = px.get_trendline_results(fig)
             alpha = model.iloc[0]["px_fit_results"].params[0]
             beta = model.iloc[0]["px_fit_results"].params[1]
@@ -153,7 +241,7 @@ def make_plot(df, x_axis, y_axis, regression):
 def find_correlations(df):
     factors =  ["temp_avg","temp_min","temp_max","T10N","zonneschijnduur","perc_max_zonneschijnduur",
           "glob_straling","neerslag_duur","neerslag_etmaalsom"]
-    result = "value_kwh"
+    result = "value_kwh_gemeten"
     st.header("Correlaties")
     for f in factors:
         c = round(df[f].corr(df[result]), 3)
@@ -169,7 +257,7 @@ def regression(df):
     print('Training data set length='+str(len(df_train)))
     print('Testing data set length='+str(len(df_test)))
     st.subheader("STEP 1: We will now configure and fit the Poisson regression model on the training data set.")
-    expr = """value_kwh ~  temp_max + T10N + zonneschijnduur + perc_max_zonneschijnduur + glob_straling + neerslag_duur + neerslag_etmaalsom"""
+    expr = """value_kwh_gemeten ~  temp_max + T10N + zonneschijnduur + perc_max_zonneschijnduur + glob_straling + neerslag_duur + neerslag_etmaalsom"""
     #Set up the X and y matrices for the training and testing data sets. patsy makes this really simple.
 
     y_train, X_train = dmatrices(expr, df_train, return_type='dataframe')
@@ -179,7 +267,7 @@ def regression(df):
     st.write (poisson_training_results.summary())
     st.subheader("STEP 2: We will now fit the auxiliary OLS regression model on the data set and use the fitted model to get the value of α.")
     df_train['BB_LAMBDA'] = poisson_training_results.mu
-    df_train['AUX_OLS_DEP'] = df_train.apply(lambda x: ((x['value_kwh'] - x['BB_LAMBDA'])**2 - x['BB_LAMBDA']) / x['BB_LAMBDA'], axis=1)
+    df_train['AUX_OLS_DEP'] = df_train.apply(lambda x: ((x['value_kwh_gemeten'] - x['BB_LAMBDA'])**2 - x['BB_LAMBDA']) / x['BB_LAMBDA'], axis=1)
     ols_expr = """AUX_OLS_DEP ~ BB_LAMBDA - 1"""
     aux_olsr_results = smf.ols(ols_expr, df_train).fit()
     st.write("Print the regression params ( coefficient is the α):")
@@ -211,19 +299,19 @@ def regression(df):
     predictions_summary_frame = nb2_predictions.summary_frame()
     st.write(predictions_summary_frame)
     predicted_counts=predictions_summary_frame['mean']
-    actual_counts = y_test['value_kwh']
+    actual_counts = y_test['value_kwh_gemeten']
 
     fig1x = plt.figure()
-    fig1x.suptitle('Predicted versus actual value_kwh')
-    predicted, = plt.plot(X_test.index, predicted_counts, 'g', linewidth=1, label='Predicted value_kwh')
-    actual, = plt.plot(X_test.index, actual_counts, 'r', linewidth=1, label='Actual value_kwh')
+    fig1x.suptitle('Predicted versus actual value_kwh_gemeten')
+    predicted, = plt.plot(X_test.index, predicted_counts, 'g', linewidth=1, label='Predicted value_kwh_gemeten')
+    actual, = plt.plot(X_test.index, actual_counts, 'r', linewidth=1, label='Actual value_kwh_gemeten')
     plt.legend(handles=[predicted, actual])
     st.pyplot(fig1x)
 
 def sklearn(df):
     #factors = ["temp_avg","temp_min","temp_max","T10N","zonneschijnduur","perc_max_zonneschijnduur",
     #        "glob_straling","neerslag_duur","neerslag_etmaalsom","value_kwh"]
-    factors = ["temp_max","zonneschijnduur","glob_straling","neerslag_etmaalsom","value_kwh"]
+    factors = ["temp_max","zonneschijnduur","glob_straling","neerslag_etmaalsom","value_kwh_gemeten"]
     df = df[factors]
     st.header("Lineaire regressie met sklearn")
     st.write("https://www.geeksforgeeks.org/linear-regression-python-implementation/")
@@ -238,7 +326,7 @@ def sklearn(df):
     # splitting X and y into training and testing sets
     
     # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=1)
-    X_train, X_test, y_train, y_test = train_test_split(df.drop(["value_kwh"], axis=1), df["value_kwh"], test_size=1 / 3)
+    X_train, X_test, y_train, y_test = train_test_split(df.drop(["value_kwh_gemeten"], axis=1), df["value_kwh_gemeten"], test_size=1 / 3)
 
     
     # create linear regression object
@@ -286,17 +374,19 @@ def main():
     df = get_data()
 
     #print (df)
-    fields=["id","STN","YYYYMMDD","temp_avg","temp_min","temp_max","T10N","zonneschijnduur","perc_max_zonneschijnduur",
-            "glob_straling","zonne_energie", "neerslag_duur","neerslag_etmaalsom","YYYY","MM","DD","dayofyear","count","month","year",
-            "day","month_year","month_day","date","value_kwh"]
+    fields=[None,"id","STN","YYYYMMDD","temp_avg","temp_min","temp_max","T10N","zonneschijnduur","perc_max_zonneschijnduur",
+            "glob_straling","zonne_energie_theoretisch", "neerslag_duur","neerslag_etmaalsom","YYYY","MM","DD","dayofyear","count","month","year",
+            "day","month_year","month_day","date","value_kwh_gemeten", "daglengte"]
     
     
-    x_axis = st.sidebar.selectbox("X-as scatter",fields, index = 3)
-    y_axis = st.sidebar.selectbox("Y-as door de tijd/scatter",fields, index=24)
+    x_axis = st.sidebar.selectbox("X-as scatter",fields, index = 4)
+    y_axis = st.sidebar.selectbox("Y-as door de tijd/scatter",fields, index=25)
+    y_axis2 = st.sidebar.selectbox("Sec. Y-as  door de tijd/scatter",fields, index=0)
     st.subheader("Door de tijd")
-    make_plot(df, "YYYYMMDD", y_axis, False)
+    make_plot(df, "YYYYMMDD", y_axis, False,  y_axis2)
+
     st.subheader("Scatter")
-    make_plot(df, x_axis, y_axis, True)
+    make_plot(df, x_axis, y_axis, True,  y_axis2)
     find_correlations(df)
     regression(df)
 
