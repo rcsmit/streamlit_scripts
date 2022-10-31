@@ -189,7 +189,7 @@ def getdata(stn, fromx, until):
                 df[d] = df[d] / 10
             except:
                 df[d] = None
-
+    st.write(df)
     df["spec_humidity_knmi_derived"] = df.apply(lambda x: rh2q(x['RH_min'],x['temp_max'], 1020),axis=1)
     df["abs_humidity_knmi_derived"] =df.apply(lambda x: rh2ah(x['RH_min'],x['temp_max']),axis=1)
     df["globale_straling_log10"] = np.log10(df["glob_straling"])
