@@ -83,6 +83,13 @@ def rh2ah(rh, t ):
     except:
         x= None
     return  x
+
+def log10(t):
+    try:
+        x = np.log10(t)
+    except:
+        x = None
+    return x
 @st.cache(ttl=60 * 60 * 24, suppress_st_warning=True)
 def getdata(stn, fromx, until):
     with st.spinner(f"GETTING ALL DATA ..."):
@@ -189,11 +196,10 @@ def getdata(stn, fromx, until):
                 df[d] = df[d] / 10
             except:
                 df[d] = None
-    st.write(df)
+
     df["spec_humidity_knmi_derived"] = df.apply(lambda x: rh2q(x['RH_min'],x['temp_max'], 1020),axis=1)
     df["abs_humidity_knmi_derived"] =df.apply(lambda x: rh2ah(x['RH_min'],x['temp_max']),axis=1)
-    df["globale_straling_log10"] = np.log10(df["glob_straling"])
-
+    df["globale_straling_log10"] =df.apply(lambda x: log10(x['glob_straling']),axis=1) #  np.log10(df["glob_straling"])
 
     download_button(df)
     return df, url
