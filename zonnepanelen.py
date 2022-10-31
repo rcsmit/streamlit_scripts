@@ -256,5 +256,5 @@ def main():
     st.sidebar.write("KNMI data is van STN286, Nieuw Beerta")
 
 
-    // https://www.weerstationhaaksbergen.nl/weather/index.php/Weblog/zonnestraling-en-zonnepanelen.html
+    # https://www.weerstationhaaksbergen.nl/weather/index.php/Weblog/zonnestraling-en-zonnepanelen.html
 main()

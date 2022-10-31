@@ -1,6 +1,7 @@
 # https://www.analyticsvidhya.com/blog/2021/04/whatsapp-group-chat-analyzer-using-python/
 import re
 import pandas as pd
+#pd.options.mode.chained_assignment = None #ignore SettingWithCopyWarning
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -17,7 +18,7 @@ from seaborn import *
 import streamlit as st
 #from floweaver import *
 import plotly.graph_objects as go
-
+from datetime import datetime
 from collections import Counter
 from  itertools import chain
 
@@ -89,7 +90,7 @@ def get_data_from_url():
                 messageBuffer.append(line)
     df = pd.DataFrame(parsedData, columns=['Date', 'Time', 'Author', 'Message']) # Initialising a pandas Dataframe.
     df = df[df['Author'] != 'x'].reset_index()
-
+   
     return df
 
 
@@ -123,10 +124,28 @@ def get_data_from_file():
         st.stop()
 def manipulate_df(df):
     ### changing datatype of "Date" column.
-
+    df["date_time_str"] = df["Date"] + " " + df["Time"]
+    
+    df["date_time"] = pd.to_datetime(df['date_time_str'], format='%d-%m-%Y %H:%M')# datetime.strptime(df["date_time_str"], '%m/%d/%y %H:%M:%S')
+    df["date_time_diff_sec"] = df["date_time"].diff().dt.seconds
+    df["initiatior"] =None
+    df["responsetime_on_others"] = None
+    
+    df.loc[0,"initiatior"] = df.loc[0,"Author"]
+    for i in range(1,len(df)):
+        
+        if df.loc[i,"date_time_diff_sec"] > (3600*6):
+            df.loc[i,"initiatior"] = df.loc[i,"Author"]
+        if df.loc[i,"Author"] != df.loc[i-1,"Author"]:
+            df.loc[i,"responsetime_on_others"] = df.loc[i, "date_time_diff_sec"]
+           
+    
     df["Date"] = pd.to_datetime(df["Date"], format="%d-%m-%Y") # %H:%M:%S")
     df["Month_Year"] =  pd.to_datetime(df['Date']).dt.strftime('%Y-%m')
     df["Day_Month_Year"] =  pd.to_datetime(df['Date']).dt.strftime('%d-%m-%Y')
+
+ 
+   
 
     ### Droping Nan values from dataset
     # df = df.dropna()
@@ -148,12 +167,13 @@ def manipulate_df(df):
     }
     df['Day'] = df['Date'].dt.weekday.map(weeks)
     ### Rearranging the columns for better understanding
-    df = df[['Date','Day','Time','Author','Message', "Month_Year", "Day_Month_Year"]]
+    df = df[['Date','Day','Time','Author','Message', "Month_Year", "Day_Month_Year", "initiatior", "date_time_diff_sec","responsetime_on_others" ]]
+    st.write(df)
     ### Changing the datatype of column "Day".
     #df['Day'] = df['Day'].astype('category')
     df.loc[:, 'Day'] = df.loc[:, 'Day'].astype('category')
     ### Looking newborn dataset.
-
+   
     ### Counting number of letters in each message
     df['Letters'] = df['Message'].apply(lambda s : len(s))
     ### Counting number of word's in each message
@@ -166,7 +186,7 @@ def manipulate_df(df):
     MEDIAPATTERN = r'<Media weggelaten>'
     df['Media_Count'] = df.Message.apply(lambda x : re.findall(MEDIAPATTERN, x)).str.len()
     media = np.sum(df.Media_Count)
-
+    
     return df, links, media
 
 def generate_teltabel(df, auteurs):
@@ -290,27 +310,6 @@ def who_reacts_who(df):
 
     flows = generate_flows(df)
     plot_sankey(values1, values2, auteurs)
-
-
-def main():
-    df = get_data_from_file()
-    #df = get_data_from_url()
-    df, links, media = manipulate_df(df)
-    st.subheader("Show Totals")
-    show_totals(df)
-    st.subheader("Show messages author")
-
-    show_messages_author(df)
-    st.subheader("Most commom words")
-
-    most_common_words(df)
-    st.subheader("Who reacts who")
-    who_reacts_who(df)
-    #wordcloud(df)
-    st.subheader("Rest")
-    rest(df)
-
-    st.write("Based on the work of https://www.analyticsvidhya.com/blog/2021/04/whatsapp-group-chat-analyzer-using-python/")
 
 
 def most_common_words(df):
@@ -473,8 +472,15 @@ def rest(df):
     active_day = df['Day'].sort_index(ascending=False).value_counts()
     a_d = active_day.head(10)
     barplot(a_d, "Day", "No. of messages", 'Mostly active day of Week in the Group',False)
-
-
+  
+    #  ## Top-10 Media Contributor of Group
+    init1 = df['initiatior'].value_counts()
+    
+    top10 = init1.head(10)
+    try:
+        barplot(top10, 'Author', "No. of initiating", 'Who initiates most',False)
+    except:
+        st.warning ("Er zijn geen grotere tussenpozen dan ingesteld bij de initiator functie")
 
     ## Top-10 Media Contributor of Group
     mm = df[df['Message'] == '<Media weggelaten>']
@@ -642,6 +648,31 @@ def mostly_active_author(df):
     #     palette = sns.cubehelix_palette(18)
     # )
     # st.pyplot(fig)
+
+
+def main():
+    #df = get_data_from_file()
+    df = get_data_from_url()
+    
+    df, links, media = manipulate_df(df)
+
+    
+    st.subheader("Show Totals")
+    show_totals(df)
+    
+    st.subheader("Show messages author")
+
+    show_messages_author(df)
+    st.subheader("Most commom words")
+
+    most_common_words(df)
+    st.subheader("Who reacts who")
+    who_reacts_who(df)
+    #wordcloud(df)
+    st.subheader("Rest")
+    rest(df)
+
+    st.write("Based on the work of https://www.analyticsvidhya.com/blog/2021/04/whatsapp-group-chat-analyzer-using-python/")
 
 
 main()
