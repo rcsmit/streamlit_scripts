@@ -74,7 +74,7 @@ def daylength_CBM(day_of_year, latitude):
     # see more details - http://mathforum.org/library/drmath/view/56478.html
     # Latitude in degrees, postive for northern hemisphere, negative for southern
     # Day 1 = Jan 1
-
+    import math
     P = math.asin(0.39795 * math.cos(0.2163108 + 2 * math.atan(0.9671396 * math.tan(.00860 * (day_of_year - 186)))))
     pi = math.pi
     day_light_hours = 24 - (24 / pi) * math.acos((math.sin(0.8333 * pi / 180) + math.sin(latitude * pi / 180) * math.sin(P)) / (math.cos(latitude * pi / 180) * math.cos(P)))
@@ -150,9 +150,15 @@ def get_data():
         df["dayofyear"] = df["YYYYMMDD"].dt.dayofyear
         df["count"] = 1
         df["value_kwh_gemeten"] = df["value_kwh"]
-
+        df["year"] = df["YYYY"].astype(str)
+        df["month"] = df["month"].astype(str)
+        df["day"] = df["DD"].astype(str)
+        df["month_year"] = df["month"] + " - " + df["year"]
+        #df["year_month"] = df["year"] + " - " +  df["MM"].astype(str).str.zfill(2)
+        df["year_month"] =   df["MM"].astype(str).str.zfill(2)  + "/" +  df["year"]
+        df["year_month"] = pd.to_datetime(df["year_month"], format="%m/%Y")
         df= df[["YYYYMMDD", "YYYY","MM","DD","dayofyear","count","month","year",
-            "day","month_year","month_day","date","value_kwh_gemeten"]]
+            "day","month_year","month_day","year_month","date","value_kwh_gemeten"]]
         # to_divide_by_10 = [
         #     "temp_avg",
         #     "temp_min",
@@ -190,11 +196,14 @@ def download_button(df):
         mime='text/csv',
     )
 
-def make_plot(df, x_axis, y_axis, regression,y_axis2):
+def make_plot(df, x_axis, y_axis, regression,y_axis2, datefield,how):
         
         if y_axis2 == None:
             title = (f"{y_axis} vs {x_axis}")
-            fig = px.scatter(df, x=x_axis, y=y_axis, trendline="ols", title=title, hover_data=["date",x_axis, y_axis ])
+            if how=="line":
+                fig = px.line(df, x=x_axis, y=y_axis, title=title,) #  hover_data=[datefield,x_axis, y_axis ]
+            else:
+                fig = px.scatter(df, x=x_axis, y=y_axis, trendline="ols", title=title,) #  hover_data=[datefield,x_axis, y_axis ]
             fig.layout.xaxis.title=x_axis
             fig.layout.yaxis.title=y_axis
             st.plotly_chart(fig, use_container_width=True)
@@ -205,20 +214,34 @@ def make_plot(df, x_axis, y_axis, regression,y_axis2):
 
                         
             fig = go.Figure()
+            if how =="line":
+                fig.add_trace(go.Scatter(
+                    x=df[x_axis], y=df[y_axis],
+                    name=y_axis,
+                    mode='lines',
+                    marker_color='rgba(152, 0, 0, .8)'
+                ))
 
-            fig.add_trace(go.Scatter(
-                x=df[x_axis], y=df[y_axis],
-                name=y_axis,
-                mode='markers',
-                marker_color='rgba(152, 0, 0, .8)'
-            ))
+                fig.add_trace(go.Scatter(
+                    x=df[x_axis], y=df[y_axis2],
+                    name=y_axis2,
+                    mode='lines',
+                    marker_color='rgba(255, 182, 193, .9)'
+                ))
+            else:
+                fig.add_trace(go.Scatter(
+                    x=df[x_axis], y=df[y_axis],
+                    name=y_axis,
+                    mode='markers',
+                    marker_color='rgba(152, 0, 0, .8)'
+                ))
 
-            fig.add_trace(go.Scatter(
-                x=df[x_axis], y=df[y_axis2],
-                name=y_axis2,
-                mode='markers',
-                marker_color='rgba(255, 182, 193, .9)'
-            ))
+                fig.add_trace(go.Scatter(
+                    x=df[x_axis], y=df[y_axis2],
+                    name=y_axis2,
+                    mode='markers',
+                    marker_color='rgba(255, 182, 193, .9)'
+                ))
 
 
             # subfig = make_subplots(specs=[[{"secondary_y": True}]])  
@@ -386,9 +409,21 @@ def main():
 
     st.title("De relatie tussen Zonnepanelenopbrengst en meteorologische omstandigheden")
     df = get_data()
-
+    groupby_ = st.sidebar.selectbox("Groupby", [True, False], index=1)
+    if groupby_:
+        groupby_how = st.sidebar.selectbox("Groupby", ["year", "year_month"], index=1)
+        groupby_what = st.sidebar.selectbox("Groupby",["sum", "mean"], index=1)
+        if groupby_what == "sum":
+            df = df.groupby([df[groupby_how]], sort = True).sum().reset_index()
+        elif groupby_what == "mean":
+            df = df.groupby([df[groupby_how]], sort = True).mean().reset_index()
+        datefield = groupby_how
+    else:
+        datefield = "YYYYMMDD"
+    st.write(df)
+    
     #print (df)
-    fields=[None,"id","STN","YYYYMMDD","temp_avg","temp_min","temp_max","T10N","zonneschijnduur","perc_max_zonneschijnduur",
+    fields=[None,"id","STN",datefield,"temp_avg","temp_min","temp_max","T10N","zonneschijnduur","perc_max_zonneschijnduur",
             "glob_straling","zonne_energie_theoretisch", "neerslag_duur","neerslag_etmaalsom","YYYY","MM","DD","dayofyear","count","month","year",
             "day","month_year","month_day","date","value_kwh_gemeten", "daglengte"]
     
@@ -397,10 +432,13 @@ def main():
     y_axis = st.sidebar.selectbox("Y-as door de tijd/scatter",fields, index=25)
     y_axis2 = st.sidebar.selectbox("Sec. Y-as  door de tijd/scatter",fields, index=0)
     st.subheader("Door de tijd")
-    make_plot(df, "YYYYMMDD", y_axis, False,  y_axis2)
+    if groupby_:
+        make_plot(df, datefield, y_axis, False,  y_axis2, datefield, "line")
+    else:
+        make_plot(df, datefield, y_axis, False,  y_axis2, datefield, "scatter")
 
     st.subheader("Scatter")
-    make_plot(df, x_axis, y_axis, True,  y_axis2)
+    make_plot(df, x_axis, y_axis, True,  y_axis2, datefield, "scatter")
     find_correlations(df)
     regression(df)
 

@@ -181,6 +181,7 @@ def getdata(stn, fromx, until):
         df["month"] = df["month"].astype(str)
         df["day"] = df["DD"].astype(str)
         df["month_year"] = df["month"] + " - " + df["year"]
+        df["year_month"] = df["year"] + " - " +  df["MM"].astype(str).str.zfill(2)
         df["month_day"] = df["month"] + " - " + df["day"]
         
         to_divide_by_10 = [
@@ -200,8 +201,8 @@ def getdata(stn, fromx, until):
     df["spec_humidity_knmi_derived"] = df.apply(lambda x: rh2q(x['RH_min'],x['temp_max'], 1020),axis=1)
     df["abs_humidity_knmi_derived"] =df.apply(lambda x: rh2ah(x['RH_min'],x['temp_max']),axis=1)
     df["globale_straling_log10"] =df.apply(lambda x: log10(x['glob_straling']),axis=1) #  np.log10(df["glob_straling"])
-
-    download_button(df)
+   
+    #download_button(df)
     return df, url
 
 def download_button(df):    
@@ -550,8 +551,21 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, cen
     FROM, UNTIL = check_from_until(from_, until_)
 
     df_getdata, url = getdata(stn, FROM.strftime("%Y%m%d"), UNTIL.strftime("%Y%m%d"))
-
     df = df_getdata.copy(deep=False)
+    groupby_ = st.sidebar.selectbox("Groupby", [True, False], index=1)
+    if groupby_:
+        groupby_how = st.sidebar.selectbox("Groupby", ["year", "year_month"], index=1)
+        groupby_what = st.sidebar.selectbox("Groupby",["sum", "mean"], index=1)
+        if groupby_what == "sum":
+            df = df.groupby([df[groupby_how]], sort = True).sum().reset_index()
+        elif groupby_what == "mean":
+            df = df.groupby([df[groupby_how]], sort = True).mean().reset_index()
+        datefield = groupby_how
+    else:
+        datefield = "YYYYMMDD"
+    st.write(df)
+    download_button(df)
+    
     if mode == "help":
         help()
     elif mode == "show weerstations":
@@ -578,7 +592,7 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, cen
         
     else:
         if mode == "doorlopend per dag":
-            datefield = "YYYYMMDD"
+            # datefield = "YYYYMMDD"
             title = f"{what_to_show_as_txt} van {from_} - {until_} in {gekozen_weerstation}"
             #graph_type = "plotly"
             # graph_type = "pyplot" #too slow
@@ -621,8 +635,10 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, cen
                     "Zorg ervoor dat de datum in de gekozen tijdrange valt voor het beste resultaat "
                 )
         show_plot(df, datefield, title, wdw, what_to_show, graph_type, centersmooth)
-
-        show_warmingstripes(df, title)
+        try:
+            show_warmingstripes(df, title)
+        except:
+            pass
     st.sidebar.write(f"URL to get data: {url}")
   
 
