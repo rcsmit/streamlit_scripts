@@ -6,7 +6,7 @@ import pandas as pd
 
 import pandas as pd
 import numpy as np
-
+pd.options.mode.chained_assignment = None  # default='warn'
 import streamlit as st
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import RendererAgg
@@ -129,8 +129,6 @@ def get_data():
             
             low_memory=False,
         )
-
-   
     df_nw_beerta["YYYYMMDD"] = pd.to_datetime(df_nw_beerta["YYYYMMDD"], format="%Y%m%d")
     df_nw_beerta["windsnelheid_avg"] = df_nw_beerta["FG"] /10 # (in 0.1 m/s) / Daily mean windspeed (in 0.1 m/s)
     df_nw_beerta["temp_avg"] =df_nw_beerta["TG"]/10 # Etmaalgemiddelde temperatuur (in 0.1 graden Celsius) / Daily mean temperature in (0.1 degrees Celsius)
@@ -160,7 +158,7 @@ def get_data():
             
             low_memory=False,
         )
-        df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"], format="%d/%m/%Y")
+        df["YYYYMMDD"] = pd.to_datetime(df["date"], format="%d/%m/%Y")
         df["YYYY"] = df["YYYYMMDD"].dt.year
         df["MM"] = df["YYYYMMDD"].dt.month
         df["DD"] = df["YYYYMMDD"].dt.day
@@ -315,7 +313,10 @@ def regression(df):
     print('Training data set length='+str(len(df_train)))
     print('Testing data set length='+str(len(df_test)))
     st.subheader("STEP 1: We will now configure and fit the Poisson regression model on the training data set.")
-    expr = "value_kwh_gemeten ~  temp_max + T10N + zonneschijnduur + perc_max_zonneschijnduur + glob_straling + neerslag_duur + neerslag_etmaalsom + zonne_energie_theoretisch"
+    #expr = "value_kwh_gemeten ~  temp_max + T10N + zonneschijnduur + perc_max_zonneschijnduur + glob_straling + neerslag_duur + neerslag_etmaalsom + zonne_energie_theoretisch"
+    #expr = "value_kwh_gemeten ~  temp_max + windsnelheid_avg + zonneschijnduur + perc_max_zonneschijnduur + glob_straling + neerslag_etmaalsom"
+    expr = "value_kwh_gemeten ~  temp_max + windsnelheid_avg +  glob_straling"
+    
     #Set up the X and y matrices for the training and testing data sets. patsy makes this really simple.
 
     y_train, X_train = dmatrices(expr, df_train, return_type='dataframe')
@@ -353,15 +354,15 @@ def regression(df):
 
     
     st.subheader("STEP 3: We supply the value of alpha found in STEP 2 into the statsmodels.genmod.families.family.NegativeBinomial class, and train the NB2 model on the training data set.")
-    try:
-        # st.write (y_train)
-        # st.write(X_train)
-        nb2_training_results = sm.GLM(y_train, X_train,family=sm.families.NegativeBinomial(alpha=aux_olsr_results.params[0])).fit()
-        st.write("As before, we’ll print the training summary:")
+    
+    # st.write (y_train)
+    # st.write(X_train)
+    nb2_training_results = sm.GLM(y_train, X_train,family=sm.families.NegativeBinomial(alpha=aux_olsr_results.params[0])).fit()
+    st.write("As before, we’ll print the training summary:")
 
-        st.write(nb2_training_results.summary())  
-    except:    
-        st.warning ("ERROR")
+    st.write(nb2_training_results.summary())  
+    # except:    
+    #     st.warning ("ERROR")
     st.subheader("STEP 4: Let’s make some predictions using our trained NB2 model.")
     try:
         nb2_predictions = nb2_training_results.get_prediction(X_test)
@@ -384,7 +385,12 @@ def regression(df):
 def sklearn(df):
     #factors = ["temp_avg","temp_min","temp_max","T10N","zonneschijnduur","perc_max_zonneschijnduur",
     #        "glob_straling","neerslag_duur","neerslag_etmaalsom","value_kwh"]
-    factors = ["temp_max","zonneschijnduur","glob_straling","neerslag_etmaalsom","value_kwh_gemeten"]
+  
+    
+
+    #factors = ["temp_max","zonneschijnduur","perc_max_zonneschijnduur","windsnelheid_avg", "glob_straling","neerslag_etmaalsom","value_kwh_gemeten"]
+    factors = ["temp_max","windsnelheid_avg", "glob_straling","value_kwh_gemeten"]
+    
     df = df[factors]
     st.header("Lineaire regressie met sklearn")
     st.write("https://www.geeksforgeeks.org/linear-regression-python-implementation/")
@@ -414,6 +420,7 @@ def sklearn(df):
     
     # variance score: 1 means perfect prediction
     st.write('Variance score: {}'.format(reg.score(X_test, y_test)))
+    
     
     # plot for residual error
     
