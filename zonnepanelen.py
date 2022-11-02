@@ -80,13 +80,28 @@ def daylength_CBM(day_of_year, latitude):
     day_light_hours = 24 - (24 / pi) * math.acos((math.sin(0.8333 * pi / 180) + math.sin(latitude * pi / 180) * math.sin(P)) / (math.cos(latitude * pi / 180) * math.cos(P)))
     return  day_light_hours
 
+def calculate_zonne_energie_twee(temp_avg, temp_max, glob_straling, windsnelheid_avg,dayOfYear):
+   
+    
+    gamma = -0.0035
+    Tref = 25
+        
+
+ 
+    Tcell_t = temp_max
+    Pr_t = 1 + (gamma*(Tcell_t-Tref))
+    PVpot_t = Pr_t*glob_straling
+  
+    return PVpot_t/1000
+
 def calculate_zonne_energie(temp_avg, temp_max, glob_straling, windsnelheid_avg,dayOfYear):
     # https://twitter.com/karin_vdwiel/status/1516393097101512712
     # https://www.knmi.nl/over-het-knmi/nieuws/van-weersverwachting-naar-energieverwachting
     # https://www.sciencedirect.com/science/article/pii/S1364032119302862?via%3Dihub
     # https://www.nrel.gov/docs/fy03osti/35645.pdf
     lat = 52.9268737
-    daglengte = daylength_CBM(dayOfYear, lat)
+    daglengte = 1 # waarschijnlijk is de KNMI waarde de totaal vd dag, dus daglengte doet er niet meer toe
+    # daglengte = daylength_CBM(dayOfYear, lat)
     gamma = -0.005
     Tref = 25
     c1 = 4.3
@@ -103,7 +118,7 @@ def calculate_zonne_energie(temp_avg, temp_max, glob_straling, windsnelheid_avg,
     PVpot_t = Pr_t*(Gt/Gstc) * daglengte
   
     return PVpot_t
-@st.cache
+#@st.cache
 def get_data():
 
     # file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\knmi_nw_beerta.csv"
@@ -130,6 +145,8 @@ def get_data():
     lat = 52.9268737
     df_nw_beerta["daglengte"]  = df_nw_beerta.apply(lambda x: daylength_CBM(x["dayofyear"], lat), axis=1)
     df_nw_beerta['zonne_energie_theoretisch'] = df_nw_beerta.apply(lambda x: calculate_zonne_energie(x["temp_avg"],     x["temp_max"], x["glob_straling"] , x["windsnelheid_avg"], x["dayofyear"]), axis=1)
+    df_nw_beerta['zonne_energie_theoretisch_twee'] = df_nw_beerta.apply(lambda x: calculate_zonne_energie_twee(x["temp_avg"],     x["temp_max"], x["glob_straling"] , x["windsnelheid_avg"], x["dayofyear"]), axis=1)
+    
     file = "input\\zonnepanelen.csv"
     #st.write (df_nw_beerta)
    
@@ -177,11 +194,10 @@ def get_data():
         st.stop()
 
     df_ = pd.merge(df_nw_beerta, df, how="inner", on = "YYYYMMDD")
-    st.write(df_)
-    print (df_)
+   
     return df_
 
-@st.cache
+#@st.cache
 def convert_df(df):
      # IMPORTANT: Cache the conversion to prevent computation on every rerun
      return df.to_csv().encode('utf-8')
@@ -260,7 +276,10 @@ def make_plot(df, x_axis, y_axis, regression,y_axis2, datefield,how):
             # subfig.for_each_trace(lambda t: t.update(marker=dict(color=t.marker.color)))
             st.plotly_chart(fig, use_container_width=True)
             #subfig.show()
-            
+        try:    
+            st.write(px.get_trendline_results(fig).px_fit_results.iloc[0].summary())
+        except:
+            pass
         if regression and y_axis2 == None:
             model = px.get_trendline_results(fig)
             alpha = model.iloc[0]["px_fit_results"].params[0]
@@ -269,6 +288,8 @@ def make_plot(df, x_axis, y_axis, regression,y_axis2, datefield,how):
             st.write (f"y =  {round(alpha,4)} *x + {round(beta,4)}")
             r2 = px.get_trendline_results(fig).px_fit_results.iloc[0].rsquared
             st.write(f"R2 = {r2}")
+            
+
             try:
                 c = round(df[x_axis].corr(df[y_axis]), 3)
                 st.write(f"Correlatie {x_axis} vs {y_axis}= {c}")
@@ -277,7 +298,7 @@ def make_plot(df, x_axis, y_axis, regression,y_axis2, datefield,how):
 
 def find_correlations(df):
     factors =  ["temp_avg","temp_min","temp_max","T10N","zonneschijnduur","perc_max_zonneschijnduur",
-          "glob_straling","neerslag_duur","neerslag_etmaalsom"]
+          "glob_straling","neerslag_duur","neerslag_etmaalsom", "zonne_energie_theoretisch", "zonne_energie_theoretisch_twee"]
     result = "value_kwh_gemeten"
     st.header("Correlaties")
     for f in factors:
@@ -287,14 +308,14 @@ def find_correlations(df):
 def regression(df):
     st.header("The Negative Binomial Regression Model")
     st.write("https://timeseriesreasoning.com/contents/negative-binomial-regression-model/")
-
+    # df = df[df["value_kwh_gemeten"] > 0]
     mask = np.random.rand(len(df)) < 0.8
     df_train = df[mask]
     df_test = df[~mask]
     print('Training data set length='+str(len(df_train)))
     print('Testing data set length='+str(len(df_test)))
     st.subheader("STEP 1: We will now configure and fit the Poisson regression model on the training data set.")
-    expr = """value_kwh_gemeten ~  temp_max + T10N + zonneschijnduur + perc_max_zonneschijnduur + glob_straling + neerslag_duur + neerslag_etmaalsom"""
+    expr = "value_kwh_gemeten ~  temp_max + T10N + zonneschijnduur + perc_max_zonneschijnduur + glob_straling + neerslag_duur + neerslag_etmaalsom + zonne_energie_theoretisch"
     #Set up the X and y matrices for the training and testing data sets. patsy makes this really simple.
 
     y_train, X_train = dmatrices(expr, df_train, return_type='dataframe')
@@ -302,6 +323,14 @@ def regression(df):
 
     poisson_training_results = sm.GLM(y_train, X_train, family=sm.families.Poisson()).fit()
     st.write (poisson_training_results.summary())
+
+    # The p-value for each term tests the null hypothesis that the coefficient is equal to zero (no effect). 
+    # A low p-value (< 0.05) indicates that you can reject the null hypothesis.
+    #  In other words, a predictor that has a low p-value is likely to be a meaningful addition 
+    # to your model because changes in the predictor's value are related to changes in the response variable.
+    #  if the p-value  is greater than the common alpha level of 0.05 : indicates that it is not statistically significant.
+    # https://blog.minitab.com/en/adventures-in-statistics-2/how-to-interpret-regression-analysis-results-p-values-and-coefficients
+
     st.subheader("STEP 2: We will now fit the auxiliary OLS regression model on the data set and use the fitted model to get the value of α.")
     df_train['BB_LAMBDA'] = poisson_training_results.mu
     df_train['AUX_OLS_DEP'] = df_train.apply(lambda x: ((x['value_kwh_gemeten'] - x['BB_LAMBDA'])**2 - x['BB_LAMBDA']) / x['BB_LAMBDA'], axis=1)
@@ -324,26 +353,33 @@ def regression(df):
 
     
     st.subheader("STEP 3: We supply the value of alpha found in STEP 2 into the statsmodels.genmod.families.family.NegativeBinomial class, and train the NB2 model on the training data set.")
-    nb2_training_results = sm.GLM(y_train, X_train,family=sm.families.NegativeBinomial(alpha=aux_olsr_results.params[0])).fit()
-    st.write("As before, we’ll print the training summary:")
+    try:
+        # st.write (y_train)
+        # st.write(X_train)
+        nb2_training_results = sm.GLM(y_train, X_train,family=sm.families.NegativeBinomial(alpha=aux_olsr_results.params[0])).fit()
+        st.write("As before, we’ll print the training summary:")
 
-    st.write(nb2_training_results.summary())  
-
+        st.write(nb2_training_results.summary())  
+    except:    
+        st.warning ("ERROR")
     st.subheader("STEP 4: Let’s make some predictions using our trained NB2 model.")
-    nb2_predictions = nb2_training_results.get_prediction(X_test)
-    st.write ("Let’s print out the predictions:")
+    try:
+        nb2_predictions = nb2_training_results.get_prediction(X_test)
+        st.write ("Let’s print out the predictions:")
 
-    predictions_summary_frame = nb2_predictions.summary_frame()
-    st.write(predictions_summary_frame)
-    predicted_counts=predictions_summary_frame['mean']
-    actual_counts = y_test['value_kwh_gemeten']
+        predictions_summary_frame = nb2_predictions.summary_frame()
+        st.write(predictions_summary_frame)
+        predicted_counts=predictions_summary_frame['mean']
+        actual_counts = y_test['value_kwh_gemeten']
 
-    fig1x = plt.figure()
-    fig1x.suptitle('Predicted versus actual value_kwh_gemeten')
-    predicted, = plt.plot(X_test.index, predicted_counts, 'g', linewidth=1, label='Predicted value_kwh_gemeten')
-    actual, = plt.plot(X_test.index, actual_counts, 'r', linewidth=1, label='Actual value_kwh_gemeten')
-    plt.legend(handles=[predicted, actual])
-    st.pyplot(fig1x)
+        fig1x = plt.figure()
+        fig1x.suptitle('Predicted versus actual value_kwh_gemeten')
+        predicted, = plt.plot(X_test.index, predicted_counts, 'g', linewidth=1, label='Predicted value_kwh_gemeten')
+        actual, = plt.plot(X_test.index, actual_counts, 'r', linewidth=1, label='Actual value_kwh_gemeten')
+        plt.legend(handles=[predicted, actual])
+        st.pyplot(fig1x)
+    except:
+        st.warning ("ERROR")
 
 def sklearn(df):
     #factors = ["temp_avg","temp_min","temp_max","T10N","zonneschijnduur","perc_max_zonneschijnduur",
@@ -424,12 +460,12 @@ def main():
     
     #print (df)
     fields=[None,"id","STN",datefield,"temp_avg","temp_min","temp_max","T10N","zonneschijnduur","perc_max_zonneschijnduur",
-            "glob_straling","zonne_energie_theoretisch", "neerslag_duur","neerslag_etmaalsom","YYYY","MM","DD","dayofyear","count","month","year",
+            "glob_straling","zonne_energie_theoretisch","zonne_energie_theoretisch_twee", "neerslag_duur","neerslag_etmaalsom","YYYY","MM","DD","dayofyear","count","month","year",
             "day","month_year","month_day","date","value_kwh_gemeten", "daglengte"]
     
     
     x_axis = st.sidebar.selectbox("X-as scatter",fields, index = 4)
-    y_axis = st.sidebar.selectbox("Y-as door de tijd/scatter",fields, index=25)
+    y_axis = st.sidebar.selectbox("Y-as door de tijd/scatter",fields, index=26)
     y_axis2 = st.sidebar.selectbox("Sec. Y-as  door de tijd/scatter",fields, index=0)
     st.subheader("Door de tijd")
     if groupby_:
