@@ -209,8 +209,7 @@ def get_data():
     # file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\data\zonnepanelen.csv"
     file = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/zonnepanelen.csv"
     # st.write(file)
-    #try:
-    if 1 ==1:
+    try:
         df = pd.read_csv(
             file,
             delimiter=";",
@@ -248,12 +247,12 @@ def get_data():
             ]
         ]
 
-    # except:
-    #     st.error("Error loading data")
-    #     st.stop()
+    except:
+        st.error("Error loading data")
+        st.stop()
 
     df_ = pd.merge(df_nw_beerta, df, how="inner", on="YYYYMMDD")
-
+    
     return df_
 
 
@@ -469,16 +468,17 @@ def regression(df):
 
     # st.write (y_train)
     # st.write(X_train)
-    nb2_training_results = sm.GLM(
-        y_train,
-        X_train,
-        family=sm.families.NegativeBinomial(alpha=aux_olsr_results.params[0]),
-    ).fit()
-    st.write("As before, we’ll print the training summary:")
+    try:
+        nb2_training_results = sm.GLM(
+            y_train,
+            X_train,
+            family=sm.families.NegativeBinomial(alpha=aux_olsr_results.params[0]),
+        ).fit()
+        st.write("As before, we’ll print the training summary:")
 
-    st.write(nb2_training_results.summary())
-    # except:
-    #     st.warning ("ERROR")
+        st.write(nb2_training_results.summary())
+    except:
+        st.warning ("ERROR")
     st.subheader("STEP 4: Let’s make some predictions using our trained NB2 model.")
     try:
         nb2_predictions = nb2_training_results.get_prediction(X_test)
@@ -605,7 +605,8 @@ def main():
         datefield = groupby_how
     else:
         datefield = "YYYYMMDD"
-    #st.write(df)
+    df = df.fillna(0)
+    st.write(df)
 
     # print (df)
     fields = [
