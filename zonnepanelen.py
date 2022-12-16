@@ -34,6 +34,8 @@ from sklearn import datasets, linear_model, metrics
 
 import numpy as np
 
+# TODO : https://towardsdatascience.com/solar-panel-power-generation-analysis-7011cc078900
+
 
 def daylength_brock(dayOfYear: int, lat: int) -> float:
     """Computes the length of the day (the time between sunrise and
