@@ -20,6 +20,9 @@ def transcribe_video(video_id, translate, language_from, translate_to, list_lang
 
 
     st.write(total_text)
+    num_words = len(total_text.split())
+
+    st.write(f"Number of words {num_words} / number of characters {len(total_text)} / number of tokens {len(total_text)/4} ")
     st.subheader("*To copy the text, roll over the mouse the box below and click the copy to clipboard icon at the right*")
     st.code (total_text)
 
@@ -27,6 +30,9 @@ def transcribe_video(video_id, translate, language_from, translate_to, list_lang
         '<br><br><a href="http://bark.phon.ioc.ee/punctuator" target="_blank">Go to Punctuator to punctuate the text</a>',
         unsafe_allow_html=True)
 
+    st.sidebar.markdown(
+        '<br><br><a href="https://beta.openai.com/playground/" target="_blank">Or go to Open AI playground to punctuate the text</a>',
+        unsafe_allow_html=True)
 
 def do_punctuate(total_text):
     # VERY VERY SLOW !!!!!

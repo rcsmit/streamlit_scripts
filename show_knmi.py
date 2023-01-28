@@ -635,10 +635,10 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, cen
                     "Zorg ervoor dat de datum in de gekozen tijdrange valt voor het beste resultaat "
                 )
         show_plot(df, datefield, title, wdw, what_to_show, graph_type, centersmooth)
-        try:
-            show_warmingstripes(df, title)
-        except:
-            pass
+        #try:
+        show_warmingstripes(df, title)
+        # except:
+        #     pass
     st.sidebar.write(f"URL to get data: {url}")
   
 
@@ -1091,7 +1091,83 @@ def show_warmingstripes(df_, title):
         # st.pyplot(fig) - gives an error
         st.set_option("deprecation.showPyplotGlobalUse", False)
         st.pyplot()
+        show_warmingstripes_matplotlib(df_, title)
 
+def show_warmingstripes_matplotlib(df_, title):
+    # https://matplotlib.org/matplotblog/posts/warming-stripes/
+    st.subheader("Code from Matplotlib site")
+    df = df_.groupby(df_["year"], sort=True).mean().reset_index()
+    avg_temperature = df["temp_avg"].mean()
+    df["anomaly"] = df["temp_avg"]-avg_temperature
+
+    #stacked_temps = np.stack((temperatures, temperatures))
+    import matplotlib.pyplot as plt
+    from matplotlib.patches import Rectangle
+    from matplotlib.collections import PatchCollection
+    from matplotlib.colors import ListedColormap
+    import pandas as pd
+    # Then we define our time limits, our reference period for the neutral color and the range around it for maximum saturation.
+
+    FIRST = int( df["year"].min())
+    LAST = int(df["year"].max())  # inclusive
+
+
+    # Reference period for the center of the color scale
+
+    FIRST_REFERENCE = FIRST
+    LAST_REFERENCE = LAST
+    LIM = 2 # degrees
+
+    #Here we use pandas to read the fixed width text file, only the first two columns, which are the year and the deviation from the mean from 1961 to 1990.
+
+    # data from
+
+    # https://www.metoffice.gov.uk/hadobs/hadcrut4/data/current/time_series/HadCRUT.4.6.0.0.annual_ns_avg.txt
+
+ 
+    anomaly = df['anomaly'].tolist()
+  
+    reference = sum(anomaly)/len(anomaly)
+    # This is our custom colormap, we could also use one of the colormaps that come with matplotlib, e.g. coolwarm or RdBu.
+
+    # the colors in this colormap come from http://colorbrewer2.org
+
+    # the 8 more saturated colors from the 9 blues / 9 reds
+
+    cmap = ListedColormap([
+        '#08306b', '#08519c', '#2171b5', '#4292c6',
+        '#6baed6', '#9ecae1', '#c6dbef', '#deebf7',
+        '#fee0d2', '#fcbba1', '#fc9272', '#fb6a4a',
+        '#ef3b2c', '#cb181d', '#a50f15', '#67000d',
+    ])
+    # We create a figure with a single axes object that fills the full area of the figure and does not have any axis ticks or labels.
+
+    fig = plt.figure(figsize=(10, 5))
+
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.set_axis_off()
+    # Finally, we create bars for each year, assign the data, colormap and color limits and add it to the axes.
+
+    # create a collection with a rectangle for each year
+
+    col = PatchCollection([
+        Rectangle((y, 0), 1, 1)
+        for y in range(FIRST, LAST + 1)
+    ])
+
+    # set data, colormap and color limits
+
+    col.set_array(anomaly)
+    col.set_cmap(cmap)
+    col.set_clim(reference - LIM, reference + LIM)
+    ax.add_collection(col)
+    #Make sure the axes limits are correct and save the figure.
+
+    ax.set_ylim(0, 1)
+    ax.set_xlim(FIRST, LAST + 1)
+
+    fig.savefig('warming-stripes.png')
+    st.pyplot(fig)
 def show_weerstations():
     MAPBOX = "pk.eyJ1IjoicmNzbWl0IiwiYSI6Ii1IeExqOGcifQ.EB6Xcz9f-ZCzd5eQMwSKLQ"
     # original_Name

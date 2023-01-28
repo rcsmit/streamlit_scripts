@@ -12,27 +12,46 @@ from plotly.subplots import make_subplots
 
 
 def calculate_inkomstenbelasting(inkomen):
-    grens_2022 = 69399
-    grens_2021 = 68508
-    grens = grens_2022
+    grens_2023 = 73031
+   
+    grens = grens_2023
     if inkomen < grens:
-        belasting = inkomen*0.3707
+        belasting = inkomen*0.3693
     else:
-        belasting = (grens*0.3707)+((inkomen-grens)* 0.495)
+        belasting = (grens*0.3693)+((inkomen-grens)* 0.495)
   
     return round(belasting)
 
+  
+
 def calculate_heffingskorting(inkomen):
-    if inkomen < 21317:
-        heffingskorting = 2888
-    elif inkomen>69398:
+    if inkomen < 22261:
+        heffingskorting = 3070
+    elif inkomen>73031:
         heffingskorting = 0
     else:
-        heffingskorting =  2888 - (0.06007 * (inkomen-  21317))
+        heffingskorting =  3070 - (0.06095 * (inkomen-  22660))
+   
     return round(heffingskorting)
-
 def calculate_arbeidskorting(inkomen):
-    
+    arbeidskorting = 0
+    if inkomen <=10741:
+        arbeidskorting =	0.08321 * inkomen
+    if inkomen >= 10741 and inkomen<23201:
+        arbeidskorting =  884 + (0.29861* (inkomen - 10740))
+
+    if inkomen >= 23201 and inkomen<37691:
+        arbeidskorting =  4605 + (0.03085 * (inkomen -  23200))
+	
+    if inkomen >= 37691 and inkomen<115295:
+        arbeidskorting =  5052 - (0.06510 * (inkomen - 37690))
+    if inkomen >= 115295:
+        arbeidskorting = 0
+   
+    return round(arbeidskorting)
+
+def calculate_arbeidskorting_2022(inkomen):
+    arbeidskorting = 0
     if inkomen <=10350:
         arbeidskorting =	0.04541 * inkomen
     if inkomen >= 10351 and inkomen<22357:
@@ -48,9 +67,32 @@ def calculate_arbeidskorting(inkomen):
    
     return round(arbeidskorting)
 
+
+def calculate_heffingskorting_2022(inkomen):
+    if inkomen < 21317:
+        heffingskorting = 2888
+    elif inkomen>69398:
+        heffingskorting = 0
+    else:
+        heffingskorting =  2888 - (0.06007 * (inkomen-  21317))
+    return round(heffingskorting)
+
+  
+def calculate_inkomstenbelasting_2022(inkomen):
+    grens_2022 = 69399
+    grens_2021 = 68508
+    grens = grens_2022
+    if inkomen < grens:
+        belasting = inkomen*0.3707
+    else:
+        belasting = (grens*0.3707)+((inkomen-grens)* 0.495)
+  
+    return round(belasting)
+
 def calculate_zorgtoeslag(toetsingsinkomen):
 # https://www.belastingdienst.nl/wps/wcm/connect/nl/zorgtoeslag/content/hoeveel-zorgtoeslag
 # https://download.belastingdienst.nl/toeslagen/docs/berekening_zorgtoeslag_tg0821z21fd.pdf
+# via https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/themaoverstijgend/brochures_en_publicaties/brochures_en_publicaties_intermediair
     # zorgtoeslag = (-0.0114* inkomen) + 365.15
     if toetsingsinkomen >31998 :
         zorgtoeslag = 0 
@@ -194,7 +236,76 @@ def calculate_huurtoeslag(inkomen, rekenhuur,huishouden,number_household):
 
     return huurtoeslag
   
+def calculate_nettoloon_simpel (inkomen):
+    inkomensten_belasting = calculate_inkomstenbelasting(inkomen)
+    heffingskorting = calculate_heffingskorting(inkomen)
+    arbeidskorting = calculate_arbeidskorting(inkomen)
+
+    te_betalen_belasting = inkomensten_belasting - heffingskorting - arbeidskorting
+    if te_betalen_belasting <0:
+        te_betalen_belasting = 0
+
+    netto_loon = inkomen - te_betalen_belasting
+    # print (f"{inkomen=} {netto_loon=}- {inkomensten_belasting=} - {heffingskorting=} - {arbeidskorting=}")
+    return netto_loon
+
+def calculate_nettoloon_simpel_2022 (inkomen):
+    inkomensten_belasting = calculate_inkomstenbelasting_2022(inkomen)
+    heffingskorting = calculate_heffingskorting_2022(inkomen)
+    arbeidskorting = calculate_arbeidskorting_2022(inkomen)
+
+    te_betalen_belasting = inkomensten_belasting - heffingskorting - arbeidskorting
+    if te_betalen_belasting <0:
+        te_betalen_belasting = 0
+
+    netto_loon = inkomen - te_betalen_belasting
+    return netto_loon
+
+def twee_vs_drie():
+    """Bereken het verschil in inkomstenbelasting tussen 2022 en 2023
+    """    
+    import pandas as pd
+
+    import plotly.express as px
+    import plotly
+    plotly.offline.init_notebook_mode(connected=True)
+    list = []
+    for i in range(1000,200000,1000):
+        twee = calculate_nettoloon_simpel_2022(i)
+        drie = calculate_nettoloon_simpel(i)
+        list.append([i,twee,drie,i-twee,i-drie,drie-twee])
+    columns = ["bruto_inkomen", "2022", "2023","te_betalen_2022", "te betalen_2023", "verschil"] 
+    df = pd.DataFrame(list, columns=columns)#.set_index("months_working")
+    df["bruto_maand"] = (df["bruto_inkomen"]/12)
+    df["verschil_maand"] = df["verschil"]/12
+    df["netto_maand_2023"] = df["2023"]/12
+    print (df)
+    fig = px.line(df, x="bruto_inkomen", y=["2022","2023","te_betalen_2022", "te betalen_2023"], title = "Netto loon 2022&2023 vs inkomen")
+    plotly.offline.plot(fig)
+    # fig2 = px.line(df, x="bruto_inkomen", y=["verschil"], title = "Netto loon 2022&2023 vs inkomen")
+    # plotly.offline.plot(fig2)
+    # fig3 = px.line(df, x="bruto_maand", y=["netto_maand_2023"], title = "Netto 2023 en Verschil per maand vs salaris per maand")
+    # plotly.offline.plot(fig3)
+    # fig3 = px.line(df, x="bruto_maand", y=["verschil_maand"], title = "Netto 2023 en Verschil per maand vs salaris per maand")
+    # plotly.offline.plot(fig3)
+
 def calculate_nettoloon(inkomen,rekenhuur,huishouden,number_household, toeslagpartner,aantal_kinderen, aantal_kinderen_12_15, aantal_kinderen_16_17):
+    """_summary_
+
+    Args:
+        inkomen (_type_): _description_
+        rekenhuur (_type_): _description_
+        huishouden (_type_): _description_
+        number_household (_type_): _description_
+        toeslagpartner (_type_): _description_
+        aantal_kinderen (_type_): _description_
+        aantal_kinderen_12_15 (_type_): _description_
+        aantal_kinderen_16_17 (_type_): _description_
+
+    Returns:
+        _type_: inkomen,  inkomensten_belasting, heffingskorting, arbeidskorting,te_betalen_belasting, netto_loon, huurtoeslag, zorgtoeslag, kindgebonden_budget
+ 
+    """
     inkomensten_belasting = calculate_inkomstenbelasting(inkomen)
     heffingskorting = calculate_heffingskorting(inkomen)
     arbeidskorting = calculate_arbeidskorting(inkomen)
