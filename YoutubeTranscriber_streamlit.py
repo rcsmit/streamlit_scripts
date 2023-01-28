@@ -14,15 +14,15 @@ def transcribe_video(video_id, translate, language_from, translate_to, list_lang
     total_text = ""
     for t in transcript_fetched:
         total_text += (t["text"])+ " "
+    st.write(total_text)
+    num_words = len(total_text.split())
 
+    st.info(f"Number of words {num_words} / number of characters {len(total_text)} / number of tokens {int(len(total_text)/4)} (max.  4097) ")
+    
     st.subheader("*To copy the text, roll over the mouse the box below and click the copy to clipboard icon at the right*")
     st.code (total_text)
 
 
-    st.write(total_text)
-    num_words = len(total_text.split())
-
-    st.write(f"Number of words {num_words} / number of characters {len(total_text)} / number of tokens {len(total_text)/4} ")
     st.subheader("*To copy the text, roll over the mouse the box below and click the copy to clipboard icon at the right*")
     st.code (total_text)
 
