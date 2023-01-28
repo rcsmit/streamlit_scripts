@@ -7,7 +7,7 @@ plotly
 lmfit
 imageio
 tabulate
-sklearn
+scikit-learn
 gsheetsdb
 youtube_transcript_api
 yfinance
