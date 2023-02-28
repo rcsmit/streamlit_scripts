@@ -5,7 +5,7 @@ import numpy as np
 import streamlit as st
 #from streamlit import caching
 import datetime as dt
-
+import scipy.stats as stats
 from datetime import datetime
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import RendererAgg
@@ -90,7 +90,7 @@ def log10(t):
     except:
         x = None
     return x
-@st.cache(ttl=60 * 60 * 24, suppress_st_warning=True)
+@st.cache_data (ttl=60 * 60 * 24)
 def getdata(stn, fromx, until):
     with st.spinner(f"GETTING ALL DATA ..."):
         # url =  "https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns=251&vars=TEMP&start=18210301&end=20210310"
@@ -215,7 +215,7 @@ def download_button(df):
         mime='text/csv',
     )
 
-@st.cache
+@st.cache_data 
 def convert_df(df):
      # IMPORTANT: Cache the conversion to prevent computation on every rerun
      return df.to_csv().encode('utf-8')
@@ -874,6 +874,35 @@ def show_plot(df, datefield, title, wdw, what_to_show_, graph_type, centersmooth
         data=[]
         for what_to_show_x in what_to_show_:
             #fig = go.Figure()
+            avg = round(df[what_to_show_x].mean(),1)
+            std = round(df[what_to_show_x].std(),1)
+            sem = df[what_to_show_x].sem()
+
+            lower68 = round(df[what_to_show_x].quantile(0.16),1)
+            upper68 = round(df[what_to_show_x].quantile(0.84),1)
+
+
+            lower95 = round(df[what_to_show_x].quantile(0.025),1)
+            upper95 = round(df[what_to_show_x].quantile(0.975),1)
+
+
+            # Quantiles and (mean + 2*std) are two different measures of dispersion, which can be used to understand the distribution of a dataset.
+
+            # Quantiles divide a dataset into equal-sized groups, based on the values of the dataset. For example, the median is the 50th percentile, which divides the dataset into two equal-sized groups. Similarly, the 25th percentile divides the dataset into two groups, with 25% of the values below the 25th percentile and 75% of the values above the 25th percentile.
+
+            # On the other hand, (mean + 2*std) represents a range of values that are within two standard deviations of the mean. This is sometimes used as a rule of thumb to identify outliers, since values that are more than two standard deviations away from the mean are relatively rare.
+
+            # The main difference between quantiles and (mean + 2std) is that quantiles divide the dataset into equal-sized groups based on the values, while (mean + 2std) represents a range of values based on the mean and standard deviation. In other words, quantiles are based on the actual values of the dataset, while (mean + 2*std) is based on the mean and standard deviation, which are summary statistics of the dataset.
+
+            # It's also worth noting that (mean + 2std) assumes that the data is normally distributed, while quantiles can be used for any distribution. Therefore, if the data is not normally distributed, (mean + 2std) may not be a reliable measure of dispersion.
+            # confidence interval for the mean
+            ci = stats.t.interval(0.95, len(df[what_to_show_x])-1, loc=df[what_to_show_x].mean(), scale=sem)
+
+            # print confidence interval
+          
+
+
+            st.info(f"{what_to_show_x} | mean = {avg} | std= {std} | quantiles (68%) [{lower68}, {upper68}] | quantiles (95%) [{lower95}, {upper95}]")
             df["sma"] = df[what_to_show_x].rolling(window=wdw, center=centersmooth).mean()
 
             sma = go.Scatter(
@@ -909,8 +938,8 @@ def show_plot(df, datefield, title, wdw, what_to_show_, graph_type, centersmooth
         fig = go.Figure(data=data, layout=layout)
         fig.update_layout(xaxis=dict(tickformat="%d-%m-%Y"))
         st.plotly_chart(fig, use_container_width=True)
-    df =df[[datefield,what_to_show_[0]]]
-    st.write(df)
+    #df =df[[datefield,what_to_show_[0]]]
+    #st.write(df)
 
 def find_date_for_title(day, month):
     months = [
