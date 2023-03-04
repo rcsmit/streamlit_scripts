@@ -971,8 +971,6 @@ def  polar_plot(df2,   what_to_show, how):
     for w in what_to_show:   
         st.subheader(w)
         df2["YYYYMMDD_"] = pd.to_datetime(df2["YYYYMMDD"], format="%Y%m%d")
-
-
         # Convert the timestamp to the number of seconds since the start of the year.
         df2['secs'] = (df2.YYYYMMDD_ - pd.to_datetime(df2.YYYYMMDD.dt.year, format='%Y')).dt.total_seconds()
      
