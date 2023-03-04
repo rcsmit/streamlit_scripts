@@ -91,9 +91,9 @@ def from_baht():
         y=["creditcard", "debitcard", "street"],
         title="From Baht to Euro",
     )
-    plotly.offline.init_notebook_mode(connected=True)
-    plotly.offline.plot(fig)
-
+    # plotly.offline.init_notebook_mode(connected=True)
+    # plotly.offline.plot(fig)
+    st.plotly(fig)
 
 def from_euro():
     x=[]
@@ -144,9 +144,10 @@ def from_euro():
         ],
         title="From Euro to Baht",
     )
-    plotly.offline.init_notebook_mode(connected=True)
-    plotly.offline.plot(fig)
+    # plotly.offline.init_notebook_mode(connected=True)
+    # plotly.offline.plot(fig)
 
+     st.plotly(fig)
 
 def calculate_from_euro(i):
     cc = (i - cost_creditcard_fix - (cost_atm / rate_cc)) * rate_cc
