@@ -49,7 +49,7 @@ rate_xe = 35.77
 rate_street = rate_yfinance * 0.98 # 0.98637 # 35.11
 rate_with_conversion = 33.66 / 36.90399 * rate_yfinance
 print(
-    f"rate_yfinance={rate_yfinanc} / rate_street={rate_street} / / rate_dc={rate_dc} / rate_cc={rate_cc} / rate_with_conversion=rate_with_conversion={rate_with_conversion}"
+    f"rate_yfinance={rate_yfinance} / rate_street={rate_street} / / rate_dc={rate_dc} / rate_cc={rate_cc} / rate_with_conversion=rate_with_conversion={rate_with_conversion}"
 )
 
 
