@@ -183,12 +183,14 @@ def how_much_baht_do_i_get_for_x_euro(i):
     cc, dc, cc_with_conv, dc_with_conv, street = calculate_from_euro(i)
     print(f"EURO {i} -> BAHT : cc={cc} dc={dc} cc_with_conv={cc_with_conv} dc_with_conv={dc_with_conv} street={street}")
 
+def main():
+    from_baht()
+    from_euro()
+    how_much_euro_do_i_get_for_x_baht(30000)
+    how_much_baht_do_i_get_for_x_euro(846.13)
 
-from_baht()
-from_euro()
-how_much_euro_do_i_get_for_x_baht(30000)
-how_much_baht_do_i_get_for_x_euro(846.13)
-
+if __name__ == "__main__":
+    main()
 
 # 56 dec 1646 exchange rate Rabobank 36.62453   835,03
 # 26 decv exchange rate XE 36.9278
