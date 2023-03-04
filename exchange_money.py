@@ -1,3 +1,9 @@
+# WHAT IS THE BEST WAY TO EXCHANGE MONEY IN THAILAND?
+# Exchange cash or take it from ATM
+#
+# Calculation to find the Break Even Point
+
+
 # import streamlit as st
 import pandas as pd
 import yfinance as yf
