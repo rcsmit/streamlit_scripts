@@ -147,7 +147,7 @@ def from_euro():
     # plotly.offline.init_notebook_mode(connected=True)
     # plotly.offline.plot(fig)
 
-     st.plotly(fig)
+    st.plotly(fig)
 
 def calculate_from_euro(i):
     cc = (i - cost_creditcard_fix - (cost_atm / rate_cc)) * rate_cc
