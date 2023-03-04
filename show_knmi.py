@@ -887,7 +887,7 @@ def show_plot(df, datefield, title, wdw, what_to_show_, graph_type, centersmooth
 
 
             # Quantiles and (mean + 2*std) are two different measures of dispersion, which can be used to understand the distribution of a dataset.
-
+ 
             # Quantiles divide a dataset into equal-sized groups, based on the values of the dataset. For example, the median is the 50th percentile, which divides the dataset into two equal-sized groups. Similarly, the 25th percentile divides the dataset into two groups, with 25% of the values below the 25th percentile and 75% of the values above the 25th percentile.
 
             # On the other hand, (mean + 2*std) represents a range of values that are within two standard deviations of the mean. This is sometimes used as a rule of thumb to identify outliers, since values that are more than two standard deviations away from the mean are relatively rare.
@@ -923,7 +923,6 @@ def show_plot(df, datefield, title, wdw, what_to_show_, graph_type, centersmooth
                 marker=dict(
                 #color='LightSkyBlue',
                 size=1))
-
 
             #data = [sma,points]
             data.append(sma)
