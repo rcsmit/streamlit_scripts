@@ -21,7 +21,7 @@ def main():
 
     layer_list = df['Layer'].unique().tolist()
 
-    layers_to_show = st.sidebar.multiselect("Layers to show", layer_list,[])
+    layers_to_show = st.sidebar.multiselect("Layers to show", layer_list,["Conscious_communities"])
     if layers_to_show == []:
         st.error("Choose a layer")
         st.stop()
