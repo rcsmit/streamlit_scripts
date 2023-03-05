@@ -42,7 +42,9 @@ def main():
                 ["13. Breezertaal converter", "make_breezer_taal"],
                 ["14. Fit to data", "fit_to_data_streamlit"],
                 ["15. Inkomstenbelasting", "inkomstenbelasting"],
-                ["16. Exchange money", "exchange_money"]
+                ["16. Exchange money", "exchange_money"],
+                ["17. Conscious communities", "conscious_communities"]
+                
                 
                 ]
 

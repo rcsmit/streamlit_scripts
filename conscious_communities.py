@@ -1,0 +1,48 @@
+import streamlit as st
+import pandas as pd
+import folium
+
+def read():
+    #https://docs.google.com/spreadsheets/d/1pOuO8Z3w61VOpdcXVyKwyZRoZMmQG9AFCNQrAd-I5P0/edit?usp=sharing
+    sheet_id = "1pOuO8Z3w61VOpdcXVyKwyZRoZMmQG9AFCNQrAd-I5P0"
+    sheet_name="MASTER"  
+    url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
+    df = pd.read_csv(url, delimiter=',')
+    return df
+
+df = read()
+df["LAT"] = df["LAT"].astype(float)
+df["LON"] = df["LON"].astype(float)
+
+
+from streamlit_folium import st_folium
+from folium.features import DivIcon
+
+
+m = folium.Map(location=[0, -122.4194], zoom_start=1)
+
+for index, row in df.iterrows():
+    #folium.Marker(location=[row["LAT"], row["LON"]], tooltip=row["Name"]).add_to(m)
+    if row["remarks"] != "None":
+        remarks = row["remarks"]
+    else:
+        remarks = " "
+    depot_node = (row["LAT"], row["LON"])            
+    folium.CircleMarker(location=depot_node,
+                               radius=3,    
+                               color='red',
+                               fill_color ='red',
+                               fill_opacity=0.7,
+                              ).add_to(m)
+    folium.map.Marker(depot_node,
+                      icon=DivIcon(
+                          icon_size=(30,30),
+                          icon_anchor=(5,14),
+                          html=f'<div style="font-size: 10pt">%s</div>' % row["Name"],
+                      ),tooltip=remarks
+                     ).add_to(m)
+    
+# Display the map in Streamlit
+# call to render Folium map in Streamlit
+st_data = st_folium(m, width=725, returned_objects=[])
+
