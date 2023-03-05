@@ -3,7 +3,7 @@ import pandas as pd
 import folium
 from streamlit_folium import st_folium
 from folium.features import DivIcon
-
+from folium import plugins
 def read():
     #https://docs.google.com/spreadsheets/d/1pOuO8Z3w61VOpdcXVyKwyZRoZMmQG9AFCNQrAd-I5P0/edit?usp=sharing
     sheet_id = "1pOuO8Z3w61VOpdcXVyKwyZRoZMmQG9AFCNQrAd-I5P0"
@@ -26,8 +26,11 @@ def main():
         st.error("Choose a layer")
         st.stop()
     df = df[df['Layer'].isin(layers_to_show)]
-    m = folium.Map(location=[0.6, 52.2], zoom_start=2)
-
+   
+    
+    attribution= "CartoDB Positron"
+    m = folium.Map(location=[10.5074, 52.2], zoom_start=2,  tiles = "CartoDB Positron", attr=attribution)
+    plugins.Geocoder().add_to(m)
     for index, row in df.iterrows():
         #folium.Marker(location=[row["LAT"], row["LON"]], tooltip=row["Name"]).add_to(m)
         if row["remarks"] != "None":
