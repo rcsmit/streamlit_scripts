@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import folium
+from streamlit_folium import st_folium
+from folium.features import DivIcon
 
 def read():
     #https://docs.google.com/spreadsheets/d/1pOuO8Z3w61VOpdcXVyKwyZRoZMmQG9AFCNQrAd-I5P0/edit?usp=sharing
@@ -15,8 +17,7 @@ df["LAT"] = df["LAT"].astype(float)
 df["LON"] = df["LON"].astype(float)
 
 
-from streamlit_folium import st_folium
-from folium.features import DivIcon
+
 
 
 m = folium.Map(location=[0, -122.4194], zoom_start=1)
