@@ -14,7 +14,7 @@ def read():
 
 
 def main():
-
+    st.header("Conscious communities and ecovillages around the world")
     df = read()
     df["LAT"] = df["LAT"].astype(float)
     df["LON"] = df["LON"].astype(float)
@@ -55,8 +55,26 @@ def main():
     # Display the map in Streamlit
     # call to render Folium map in Streamlit
     st_data = st_folium(m, width=1500, returned_objects=[])
+    credits()
 
-
+def credits():
+     
+    credits = """"
+        <h1>Conscious Communities - credits</h1>
+        <p>With contributions of
+        <ul>
+        <li>People who replied on numerous discussions in forums and facebookgroups, for example: (membership needed)</li>
+            <ul>
+            <li><a href='https://www.facebook.com/groups/KohPhanganCC/permalink/5430226180393792/' target='_blank'>https://www.facebook.com/groups/KohPhanganCC/permalink/5430226180393792/</a></li>
+            <li><a href='https://www.facebook.com/groups/KohPhanganCC/permalink/4541454629270956/' target='_blank'>https://www.facebook.com/groups/KohPhanganCC/permalink/4541454629270956</a></li>
+            <li><a href='https://www.facebook.com/groups/KohPhanganCC/permalink/1600295400053575/' target='_blank'>https://www.facebook.com/groups/KohPhanganCC/permalink/1600295400053575/</a></li>
+            <li><a href='https://www.facebook.com/groups/KohPhanganCC/posts/5737144509701956/' target='_blank'>https://www.facebook.com/groups/KohPhanganCC/posts/5737144509701956/</a></li>
+            <li><a href='https://www.facebook.com/groups/348616157134904' target='_blank'>https://www.facebook.com/groups/348616157134904</a></li>
+            </ul>
+        <li><a href='https://asliinwonderland.com/2021/07/02/conscious-communities-across-the-globe/' target='_blank'>Asli In Wonderland</a></li>
+        <li><a href='https://goo.gl/maps/sxXi5DZjhh2WTJJb6' target='_blank'>Hippie spirit places around the world</a> by <a href='https://www.instagram.com/peggy.anke' target='_blank'>Peggy Anke</a></li>
+        </ul>"""
+    st.write(credits, unsafe_allow_html=True)
 if __name__ == "__main__":
     
     main()
