@@ -73,6 +73,8 @@ def credits():
             </ul>
         <li><a href='https://asliinwonderland.com/2021/07/02/conscious-communities-across-the-globe/' target='_blank'>Asli In Wonderland</a></li>
         <li><a href='https://goo.gl/maps/sxXi5DZjhh2WTJJb6' target='_blank'>Hippie spirit places around the world</a> by <a href='https://www.instagram.com/peggy.anke' target='_blank'>Peggy Anke</a></li>
+        <li><a href='https://www.pureportugal.co.uk/blogs/communities-in-portugal/'>Communities in Portugal by Jazz Meyer</a></li>
+        
         </ul>"""
     st.write(credits, unsafe_allow_html=True)
 if __name__ == "__main__":
