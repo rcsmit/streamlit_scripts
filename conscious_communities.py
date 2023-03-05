@@ -12,38 +12,49 @@ def read():
     df = pd.read_csv(url, delimiter=',')
     return df
 
-df = read()
-df["LAT"] = df["LAT"].astype(float)
-df["LON"] = df["LON"].astype(float)
+
+def main():
+
+    df = read()
+    df["LAT"] = df["LAT"].astype(float)
+    df["LON"] = df["LON"].astype(float)
+
+    layer_list = df['Layer'].unique().tolist()
+
+    layers_to_show = st.sidebar.multiselect("Layers to show", layer_list,[])
+    if layers_to_show == []:
+        st.error("Choose a layer")
+        st.stop()
+    df = df[df['Layer'].isin(layers_to_show)]
+    m = folium.Map(location=[0.6, 52.2], zoom_start=2)
+
+    for index, row in df.iterrows():
+        #folium.Marker(location=[row["LAT"], row["LON"]], tooltip=row["Name"]).add_to(m)
+        if row["remarks"] != "None":
+            remarks = row["remarks"]
+        else:
+            remarks = " "
+        depot_node = (row["LAT"], row["LON"])            
+        folium.CircleMarker(location=depot_node,
+                                radius=3,    
+                                color='red',
+                                fill_color ='red',
+                                fill_opacity=0.7,
+                                ).add_to(m)
+        folium.map.Marker(depot_node,
+                        icon=DivIcon(
+                            icon_size=(30,30),
+                            icon_anchor=(5,14),
+                            html=f'<div style="font-size: 10pt">%s</div>' % row["Name"],
+                        ),tooltip=remarks
+                        ).add_to(m)
+        
+    # Display the map in Streamlit
+    # call to render Folium map in Streamlit
+    st_data = st_folium(m, width=1500, returned_objects=[])
 
 
-
-
-
-m = folium.Map(location=[0, -122.4194], zoom_start=1)
-
-for index, row in df.iterrows():
-    #folium.Marker(location=[row["LAT"], row["LON"]], tooltip=row["Name"]).add_to(m)
-    if row["remarks"] != "None":
-        remarks = row["remarks"]
-    else:
-        remarks = " "
-    depot_node = (row["LAT"], row["LON"])            
-    folium.CircleMarker(location=depot_node,
-                               radius=3,    
-                               color='red',
-                               fill_color ='red',
-                               fill_opacity=0.7,
-                              ).add_to(m)
-    folium.map.Marker(depot_node,
-                      icon=DivIcon(
-                          icon_size=(30,30),
-                          icon_anchor=(5,14),
-                          html=f'<div style="font-size: 10pt">%s</div>' % row["Name"],
-                      ),tooltip=remarks
-                     ).add_to(m)
+if __name__ == "__main__":
     
-# Display the map in Streamlit
-# call to render Folium map in Streamlit
-st_data = st_folium(m, width=725, returned_objects=[])
+    main()
 
