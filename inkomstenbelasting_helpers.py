@@ -250,11 +250,13 @@ def calculate_nettoloon_simpel (inkomen):
     return netto_loon
 
 def calculate_nettoloon_simpel_2022 (inkomen):
+    #print (f"inkomen = {inkomen}")
     inkomensten_belasting = calculate_inkomstenbelasting_2022(inkomen)
     heffingskorting = calculate_heffingskorting_2022(inkomen)
     arbeidskorting = calculate_arbeidskorting_2022(inkomen)
 
     te_betalen_belasting = inkomensten_belasting - heffingskorting - arbeidskorting
+    #print (f"{te_betalen_belasting=}")
     if te_betalen_belasting <0:
         te_betalen_belasting = 0
 
@@ -320,3 +322,5 @@ def calculate_nettoloon(inkomen,rekenhuur,huishouden,number_household, toeslagpa
     kindgebonden_budget =  calculate_kindgebonden_budget(inkomen, toeslagpartner,aantal_kinderen, aantal_kinderen_12_15, aantal_kinderen_16_17)
     regel = [inkomen,  inkomensten_belasting, heffingskorting, arbeidskorting,te_betalen_belasting, netto_loon, huurtoeslag, zorgtoeslag, kindgebonden_budget]
     return regel
+
+#print(calculate_nettoloon_simpel_2022 (1000+(2150*7*1.18)))
