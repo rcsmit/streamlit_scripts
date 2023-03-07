@@ -82,15 +82,13 @@ def credits():
         <p>With contributions of
         <ul>
         <li>People who replied on numerous discussions in forums and facebookgroups, for example: (membership needed)</li>
-            <ul>
-
+            <li><ul>
             <li><a href='https://www.facebook.com/groups/consciousnomadsworld/posts/503477371648781' target='_blank'>https://www.facebook.com/groups/consciousnomadsworld/posts/503477371648781</a></li>
             <li><a href='https://www.facebook.com/groups/KohPhanganCC/permalink/5430226180393792/' target='_blank'>https://www.facebook.com/groups/KohPhanganCC/permalink/5430226180393792/</a></li>
             <li><a href='https://www.facebook.com/groups/KohPhanganCC/permalink/4541454629270956/' target='_blank'>https://www.facebook.com/groups/KohPhanganCC/permalink/4541454629270956</a></li>
             <li><a href='https://www.facebook.com/groups/KohPhanganCC/permalink/1600295400053575/' target='_blank'>https://www.facebook.com/groups/KohPhanganCC/permalink/1600295400053575/</a></li>
             <li><a href='https://www.facebook.com/groups/KohPhanganCC/posts/5737144509701956/' target='_blank'>https://www.facebook.com/groups/KohPhanganCC/posts/5737144509701956/</a></li>
-            <li><a href='https://www.facebook.com/groups/348616157134904' target='_blank'>https://www.facebook.com/groups/348616157134904</a></li>
-            </ul>
+            <li><a href='https://www.facebook.com/groups/348616157134904' target='_blank'>https://www.facebook.com/groups/348616157134904</a></li></ul></li>
         <li><a href='https://asliinwonderland.com/2021/07/02/conscious-communities-across-the-globe/' target='_blank'>Asli In Wonderland</a></li>
         <li><a href='https://goo.gl/maps/sxXi5DZjhh2WTJJb6' target='_blank'>Hippie spirit places around the world</a> by <a href='https://www.instagram.com/peggy.anke' target='_blank'>Peggy Anke</a></li>
         <li><a href='https://www.pureportugal.co.uk/blogs/communities-in-portugal/'>Communities in Portugal by Jazz Meyer</a></li></ul>
