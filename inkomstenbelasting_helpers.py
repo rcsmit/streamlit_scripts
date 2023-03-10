@@ -1,14 +1,18 @@
-import streamlit as st
+# import streamlit as st
 
-from re import X
-import pandas as pd
-import plotly.express as px
-import plotly
-from plotly.subplots import make_subplots
+# from re import X
+# import pandas as pd
+# import plotly.express as px
+# import plotly
+# from plotly.subplots import make_subplots
 
 
 #tarieven 2023
 # https://www2.deloitte.com/nl/nl/pages/tax/articles/belastingplan-2023-overzicht-maatregelen-loonbelasting-inkomstenbelasting.html
+
+
+# https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/themaoverstijgend/brochures_en_publicaties/handboek-loonheffingen-2022
+# https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/themaoverstijgend/brochures_en_publicaties/rekenvoorschriften-voor-de-geautomatiseerde-loonadministratie-januari-2022
 
 
 def calculate_inkomstenbelasting(inkomen):
@@ -22,7 +26,11 @@ def calculate_inkomstenbelasting(inkomen):
   
     return round(belasting)
 
-  
+def calculate_arbeidskorting_niet_alle_maanden_werken(maandsalaris, aantal_maanden):
+    arbeidskorting_per_maand = calculate_arbeidskorting_2022(maandsalaris*12)/12
+    totale_arbeidskorting = arbeidskorting_per_maand * aantal_maanden
+    return totale_arbeidskorting
+
 
 def calculate_heffingskorting(inkomen):
     if inkomen < 22261:
@@ -66,7 +74,6 @@ def calculate_arbeidskorting_2022(inkomen):
         arbeidskorting = 0
    
     return round(arbeidskorting)
-
 
 def calculate_heffingskorting_2022(inkomen):
     if inkomen < 21317:
@@ -236,10 +243,12 @@ def calculate_huurtoeslag(inkomen, rekenhuur,huishouden,number_household):
 
     return huurtoeslag
   
-def calculate_nettoloon_simpel (inkomen):
+def calculate_nettoloon_simpel (maand_inkomen, aantal_maanden):
+    inkomen = maand_inkomen * aantal_maanden
+    arbeidskorting = calculate_arbeidskorting_niet_alle_maanden_werken(1600,4)
     inkomensten_belasting = calculate_inkomstenbelasting(inkomen)
     heffingskorting = calculate_heffingskorting(inkomen)
-    arbeidskorting = calculate_arbeidskorting(inkomen)
+    #arbeidskorting = calculate_arbeidskorting(inkomen)
 
     te_betalen_belasting = inkomensten_belasting - heffingskorting - arbeidskorting
     if te_betalen_belasting <0:
@@ -291,7 +300,7 @@ def twee_vs_drie():
     # fig3 = px.line(df, x="bruto_maand", y=["verschil_maand"], title = "Netto 2023 en Verschil per maand vs salaris per maand")
     # plotly.offline.plot(fig3)
 
-def calculate_nettoloon(inkomen,rekenhuur,huishouden,number_household, toeslagpartner,aantal_kinderen, aantal_kinderen_12_15, aantal_kinderen_16_17):
+def calculate_nettoloon(maand_inkomen,aantal_maanden,rekenhuur,huishouden,number_household, toeslagpartner,aantal_kinderen, aantal_kinderen_12_15, aantal_kinderen_16_17):
     """_summary_
 
     Args:
@@ -308,9 +317,11 @@ def calculate_nettoloon(inkomen,rekenhuur,huishouden,number_household, toeslagpa
         _type_: inkomen,  inkomensten_belasting, heffingskorting, arbeidskorting,te_betalen_belasting, netto_loon, huurtoeslag, zorgtoeslag, kindgebonden_budget
  
     """
+    inkomen = maand_inkomen * aantal_maanden
     inkomensten_belasting = calculate_inkomstenbelasting(inkomen)
     heffingskorting = calculate_heffingskorting(inkomen)
     arbeidskorting = calculate_arbeidskorting(inkomen)
+    arbeidskorting = calculate_arbeidskorting_niet_alle_maanden_werken(1600,4)
 
     te_betalen_belasting = inkomensten_belasting - heffingskorting - arbeidskorting
     if te_betalen_belasting <0:
@@ -323,4 +334,5 @@ def calculate_nettoloon(inkomen,rekenhuur,huishouden,number_household, toeslagpa
     regel = [inkomen,  inkomensten_belasting, heffingskorting, arbeidskorting,te_betalen_belasting, netto_loon, huurtoeslag, zorgtoeslag, kindgebonden_budget]
     return regel
 
-#print(calculate_nettoloon_simpel_2022 (1000+(2150*7*1.18)))
+# #print(calculate_nettoloon_simpel_2022 (1000+(2150*7*1.18)))
+# print ( calculate_nettoloon_simpel(1600,4))

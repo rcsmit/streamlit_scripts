@@ -49,7 +49,7 @@ def main():
     if (aantal_kinderen < aantal_kinderen_12_15+aantal_kinderen_16_17):
         st.error("Aantal kinderen klopt niet")
         st.stop()
-    regel = calculate_nettoloon(inkomen,rekenhuur,huishouden,number_household, toeslagpartner,aantal_kinderen, aantal_kinderen_12_15, aantal_kinderen_16_17)
+    regel = calculate_nettoloon(inkomen/12,12,rekenhuur,huishouden,number_household, toeslagpartner,aantal_kinderen, aantal_kinderen_12_15, aantal_kinderen_16_17)
     tabeldata.append(regel)
     
     df = create_df(tabeldata)

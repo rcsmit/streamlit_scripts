@@ -43,7 +43,8 @@ def main():
                 ["14. Fit to data", "fit_to_data_streamlit"],
                 ["15. Inkomstenbelasting", "inkomstenbelasting"],
                 ["16. Exchange money", "exchange_money"],
-                ["17. Conscious communities", "conscious_communities"]
+                ["17. Conscious communities", "conscious_communities"],
+                ["17. Balans prognose", "balans_prognose"]
                 
                 
                 ]
