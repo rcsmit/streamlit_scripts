@@ -245,7 +245,7 @@ def calculate_huurtoeslag(inkomen, rekenhuur,huishouden,number_household):
   
 def calculate_nettoloon_simpel (maand_inkomen, aantal_maanden):
     inkomen = maand_inkomen * aantal_maanden
-    arbeidskorting = calculate_arbeidskorting_niet_alle_maanden_werken(1600,4)
+    arbeidskorting = calculate_arbeidskorting_niet_alle_maanden_werken(maand_inkomen, aantal_maanden)
     inkomensten_belasting = calculate_inkomstenbelasting(inkomen)
     heffingskorting = calculate_heffingskorting(inkomen)
     #arbeidskorting = calculate_arbeidskorting(inkomen)
@@ -255,7 +255,7 @@ def calculate_nettoloon_simpel (maand_inkomen, aantal_maanden):
         te_betalen_belasting = 0
 
     netto_loon = inkomen - te_betalen_belasting
-    # print (f"{inkomen=} {netto_loon=}- {inkomensten_belasting=} - {heffingskorting=} - {arbeidskorting=}")
+    #print (f"{inkomen=} {netto_loon=}- {inkomensten_belasting=} - {heffingskorting=} - {arbeidskorting=} {te_betalen_belasting=}")
     return netto_loon
 
 def calculate_nettoloon_simpel_2022 (inkomen):
@@ -335,4 +335,6 @@ def calculate_nettoloon(maand_inkomen,aantal_maanden,rekenhuur,huishouden,number
     return regel
 
 # #print(calculate_nettoloon_simpel_2022 (1000+(2150*7*1.18)))
-# print ( calculate_nettoloon_simpel(1600,4))
+
+for i in range(4,9):
+    calculate_nettoloon_simpel(2150*1.18,i)
