@@ -145,13 +145,13 @@ def make_graph_values(income,fixed_monthly_costs, monthly_costs_nl,various_nl, m
         list_total.append(row)
     columns = ["number_of_month_working_nl", "number_of_months_in_asia","number_of_months_in_nl","salary_gross_year_excl_extras","transition_payment","extras","  total_income_gross ","pensioen_bijdrage ","total_income_netto","expenses_fix","expenses_nl","expenses_asia","expenses_asia_extra","expenses_total"," delta"]
     total_df = pd.DataFrame(list_total, columns=columns)#.set_index("months_working")
-    fig = px.line(total_df, x="number_of_month_working_nl", y=columns, title = f"Various values in relation of number of months working with an income of {income}, year total")
+    fig = px.line(total_df, x="number_of_month_working_nl", y=columns, title = f"Various values in relation of number of months working with a monthly income of {income}, year total")
     fig.add_hline(y=0)
     st.plotly_chart(fig)
     #plotly.offline.plot(fig)
 
     total_df_diff = total_df.diff().reset_index()
-    fig2 = px.line(total_df_diff, x="index", y=columns, title = f"Various values in relation of number of months working with an income of {income}, difference")
+    fig2 = px.line(total_df_diff, x="index", y=columns, title = f"Various values in relation of number of months working with a monthly income of {income}, difference")
     fig2.add_hline(y=0)
     st.plotly_chart(fig2)
    
