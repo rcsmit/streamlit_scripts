@@ -90,7 +90,7 @@ def calculate_year_delta(fixed_monthly_costs, monthly_costs_nl,various_nl, month
         print(f"uit totaal : {int(expenses_total/n)}")
         print(f"delta : {int((total_income_netto-expenses_total)/n)}")
         print(f"")
-    row = [number_of_month_working_nl,number_of_months_in_asia,number_of_months_in_nl,salary_gross_year,transition_payment,extras,  total_income_gross ,pensioen_bijdrage , total_income_netto,  expenses_fix,expenses_nl,expenses_asia,expenses_asia_extra,  expenses_total, delta]
+    row = [number_of_month_working_nl,number_of_months_in_asia,number_of_months_in_nl,salary_gross_year,transition_payment,extras,  total_income_gross ,pensioen_bijdrage , total_income_netto,  expenses_fix,expenses_nl,expenses_asia,expenses_asia_extra,  expenses_total, delta, belastingen]
     if what_to_return == "delta":
         to_return = delta
     else:
@@ -143,7 +143,7 @@ def make_graph_values(income,fixed_monthly_costs, monthly_costs_nl,various_nl, m
         row = calculate_year_delta(fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run,
                                     income, number_of_month_working_nl, False, what_to_return="row")
         list_total.append(row)
-    columns = ["number_of_month_working_nl", "number_of_months_in_asia","number_of_months_in_nl","salary_gross_year_excl_extras","transition_payment","extras","  total_income_gross ","pensioen_bijdrage ","total_income_netto","expenses_fix","expenses_nl","expenses_asia","expenses_asia_extra","expenses_total"," delta"]
+    columns = ["number_of_month_working_nl", "number_of_months_in_asia","number_of_months_in_nl","salary_gross_year_excl_extras","transition_payment","extras","  total_income_gross ","pensioen_bijdrage ","total_income_netto","expenses_fix","expenses_nl","expenses_asia","expenses_asia_extra","expenses_total"," delta", "belastingen"]
     total_df = pd.DataFrame(list_total, columns=columns)#.set_index("months_working")
     fig = px.line(total_df, x="number_of_month_working_nl", y=columns, title = f"Various values in relation of number of months working with a monthly income of {income}, year total")
     fig.add_hline(y=0)
