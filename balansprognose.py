@@ -162,6 +162,7 @@ def make_graph_values(income,months_nl_non_working,monthly_costs_nl_non_working,
     total_df = pd.DataFrame(list_total, columns=columns)#.set_index("months_working")
 
     total_df = total_df[["number_of_month_working_nl", "delta"]]
+    columns = ["delta"]
     fig = px.line(total_df, x="number_of_month_working_nl", y=columns, title = f"Various values in relation of number of months working with a monthly income of {income}, year total")
     fig.add_hline(y=0)
     st.plotly_chart(fig)
