@@ -7,7 +7,7 @@ import plotly
 # plotly.offline.init_notebook_mode(connected=True)
 
       
-def calculate_year_delta(fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run,
+def calculate_year_delta(months_nl_non_working,monthly_costs_nl_non_working,fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run,
                         salary_gross_month, number_of_month_working_nl, output, what_to_return):
     """Calculate the difference of income and expenses in a year.
 
@@ -39,8 +39,10 @@ def calculate_year_delta(fixed_monthly_costs, monthly_costs_nl,various_nl, month
     """
 
     
-    number_of_months_in_asia = 12 - (number_of_month_working_nl+1) if number_of_month_working_nl<12 else 0 
-    number_of_months_in_nl = number_of_month_working_nl+1 if number_of_month_working_nl<12 else 12
+    
+     
+    number_of_months_in_asia = 12 - (number_of_month_working_nl+months_nl_non_working) if number_of_month_working_nl+ months_nl_non_working<12 else 0 
+    number_of_months_in_nl = number_of_month_working_nl+months_nl_non_working if number_of_month_working_nl+ months_nl_non_working <12 else 12
     salary_gross_year = number_of_month_working_nl * salary_gross_month
             
     # calculate "vakantiedagen" + "vakantietoeslag" + "transitievergoeding"
@@ -48,7 +50,6 @@ def calculate_year_delta(fixed_monthly_costs, monthly_costs_nl,various_nl, month
     extras = salary_gross_year * 0.1 + salary_gross_year *0.08 + transition_payment
 
     total_income_gross = salary_gross_year + extras
-
 
     pensioen_bijdrage = calculate_pensioenbijdrage(salary_gross_month, number_of_month_working_nl)
     if number_of_month_working_nl == 0:
@@ -58,8 +59,22 @@ def calculate_year_delta(fixed_monthly_costs, monthly_costs_nl,various_nl, month
     belastingen = total_income_gross - pensioen_bijdrage-  total_income_netto 
     #total_income_netto =  nettoloon - pensioen_bijdrage
     expenses_fix = (fixed_monthly_costs*12)
-    expenses_nl =  (monthly_costs_nl*number_of_months_in_nl) + various_nl
+    expenses_nl =  (monthly_costs_nl*number_of_months_in_nl) + various_nl + (months_nl_non_working*monthly_costs_nl_non_working)
     expenses_asia =((monthly_costs_asia+insurance_asia)*number_of_months_in_asia)
+
+    inkomsten_belasting = calculate_inkomstenbelasting(total_income_gross- pensioen_bijdrage)
+    heffingskorting = calculate_heffingskorting(total_income_gross - pensioen_bijdrage)
+    arbeidskorting = calculate_arbeidskorting_niet_alle_maanden_werken(salary_gross_month, number_of_month_working_nl)
+    if inkomsten_belasting - heffingskorting - arbeidskorting >0 :
+        belastingen_nieuw = inkomsten_belasting - heffingskorting - arbeidskorting 
+        # er is een (klein) verschil tussen belastingen en belastingen_nieuw, verdwijnt als je de extra's en de pensioenbijdrage
+        # op 0 zet
+    else:
+        belastingen_nieuw = 0
+    if total_income_gross == 0:
+        belastingdruk = 0
+    else:
+        belastingdruk = round((belastingen/(total_income_gross- pensioen_bijdrage))*100,1)
     if number_of_months_in_asia>0:
         expenses_asia_extra =return_flighttickets+flighttickets_visa_run  + various_asia + (int(number_of_months_in_asia/3)*flight_tickets_asia) + visas_asia
         expenses_asia +=expenses_asia_extra
@@ -90,7 +105,7 @@ def calculate_year_delta(fixed_monthly_costs, monthly_costs_nl,various_nl, month
         print(f"uit totaal : {int(expenses_total/n)}")
         print(f"delta : {int((total_income_netto-expenses_total)/n)}")
         print(f"")
-    row = [number_of_month_working_nl,number_of_months_in_asia,number_of_months_in_nl,salary_gross_year,transition_payment,extras,  total_income_gross ,pensioen_bijdrage , total_income_netto,  expenses_fix,expenses_nl,expenses_asia,expenses_asia_extra,  expenses_total, delta, belastingen]
+    row = [number_of_month_working_nl,number_of_months_in_asia,number_of_months_in_nl,salary_gross_year,transition_payment,extras,  total_income_gross ,pensioen_bijdrage , total_income_netto,  expenses_fix,expenses_nl,expenses_asia,expenses_asia_extra,  expenses_total, delta, belastingen,belastingen_nieuw, inkomsten_belasting, arbeidskorting, heffingskorting,arbeidskorting+ heffingskorting,  belastingdruk]
     if what_to_return == "delta":
         to_return = delta
     else:
@@ -112,7 +127,7 @@ def calculate_pensioenbijdrage(salary_gross_month, number_of_month_working_nl):
     pensioen_bijdrage = 0 if  pensioen_bijdrage_ < 0 else pensioen_bijdrage_
     return pensioen_bijdrage
 
-def main_solver_how_much_salary(fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run,min_delta, max_delta):
+def main_solver_how_much_salary(months_nl_non_working,monthly_costs_nl_non_working,fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run,min_delta, max_delta):
     """ Solves how many months I have to work for which salary to have a delta in between 0 and 100
     """    
     list_total=[]
@@ -120,7 +135,7 @@ def main_solver_how_much_salary(fixed_monthly_costs, monthly_costs_nl,various_nl
     salaries = list(range (100,25000,1))
     for number_of_month_working_nl in range (0,13):
         for salary_gross_month in salaries:
-            delta = calculate_year_delta(fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run,
+            delta = calculate_year_delta(months_nl_non_working,monthly_costs_nl_non_working,fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run,
                                          salary_gross_month=salary_gross_month,number_of_month_working_nl=number_of_month_working_nl, output=False, what_to_return="delta")
             if delta>=min_delta and delta <=max_delta: 
                 row =[number_of_month_working_nl, salary_gross_month, delta]
@@ -132,7 +147,7 @@ def main_solver_how_much_salary(fixed_monthly_costs, monthly_costs_nl,various_nl
     fig = px.line(total_df, x="months_working", y="grensinkomen", title = "Minimal salary when working a certain amount of months")
     #plotly.offline.plot(fig)
     st.plotly_chart(fig)
-def make_graph_values(income,fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run):
+def make_graph_values(income,months_nl_non_working,monthly_costs_nl_non_working,fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run):
     """Makes graph of Various values in relation of number of months working. 
 
     Args:
@@ -140,10 +155,10 @@ def make_graph_values(income,fixed_monthly_costs, monthly_costs_nl,various_nl, m
     """    
     list_total = []
     for number_of_month_working_nl in range (0,13):
-        row = calculate_year_delta(fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run,
+        row = calculate_year_delta(months_nl_non_working,monthly_costs_nl_non_working,fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run,
                                     income, number_of_month_working_nl, False, what_to_return="row")
         list_total.append(row)
-    columns = ["number_of_month_working_nl", "number_of_months_in_asia","number_of_months_in_nl","salary_gross_year_excl_extras","transition_payment","extras","  total_income_gross ","pensioen_bijdrage ","total_income_netto","expenses_fix","expenses_nl","expenses_asia","expenses_asia_extra","expenses_total"," delta", "belastingen"]
+    columns = ["number_of_month_working_nl", "number_of_months_in_asia","number_of_months_in_nl","salary_gross_year_excl_extras","transition_payment","extras","  total_income_gross ","pensioen_bijdrage ","total_income_netto","expenses_fix","expenses_nl","expenses_asia","expenses_asia_extra","expenses_total"," delta", "werkelijk_te_betalen_belastingen", "werkelijk_te_betalen_belastingen_new", "inkomsten_belasting", "arbeidskorting", "heffingskorting", "totale_korting", "belastingdruk"]
     total_df = pd.DataFrame(list_total, columns=columns)#.set_index("months_working")
     fig = px.line(total_df, x="number_of_month_working_nl", y=columns, title = f"Various values in relation of number of months working with a monthly income of {income}, year total")
     fig.add_hline(y=0)
@@ -159,7 +174,7 @@ def make_graph_values(income,fixed_monthly_costs, monthly_costs_nl,various_nl, m
     #     plotly.offline.plot(fig2)
 
 
-def main_solver_how_many_months(fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run,min_delta, max_delta):
+def main_solver_how_many_months(months_nl_non_working,monthly_costs_nl_non_working,fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run,min_delta, max_delta):
     """How many months do I have to work?
     """     
     list_total=[]
@@ -170,7 +185,7 @@ def main_solver_how_many_months(fixed_monthly_costs, monthly_costs_nl,various_nl
         
         for number_of_month_working_nl_ in range (0,122):
             number_of_month_working_nl = number_of_month_working_nl_/10
-            delta = calculate_year_delta(fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run,
+            delta = calculate_year_delta(months_nl_non_working,monthly_costs_nl_non_working,fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run,
                                          salary_gross_month=salary_gross_month,number_of_month_working_nl=number_of_month_working_nl, output=False, what_to_return="delta")
             if delta>min_delta and delta <=max_delta:        
                 row =[number_of_month_working_nl, salary_gross_month, delta]
@@ -187,7 +202,7 @@ def main_solver_how_many_months(fixed_monthly_costs, monthly_costs_nl,various_nl
     st.plotly_chart(fig)
    
 
-def calculate_delta_main(fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run):
+def calculate_delta_main(months_nl_non_working,monthly_costs_nl_non_working,fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run):
     """_summary_
 
     Args:
@@ -212,7 +227,7 @@ def calculate_delta_main(fixed_monthly_costs, monthly_costs_nl,various_nl, month
     
             total_capital = 12250
             for y in range(0,1):  # later we want to know what the total capital is after x years 
-                delta = calculate_year_delta(fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run, salary_gross_month=salary_gross_month,number_of_month_working_nl=number_of_month_working_nl, output=False, what_to_return="delta")
+                delta = calculate_year_delta(months_nl_non_working,monthly_costs_nl_non_working,fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run, salary_gross_month=salary_gross_month,number_of_month_working_nl=number_of_month_working_nl, output=False, what_to_return="delta")
                 total_capital = total_capital +delta
                 row.append(int(delta))
         list_total.append(row)
@@ -238,7 +253,10 @@ def main():
     st.warning("Tax calculation and extras is based on my personal situation. This calculation is only a rough estimate. Use with care!")
     proposed_salary_month =st.sidebar.number_input("Proposed salary per month",0,10000,2150)
     fixed_monthly_costs = st.sidebar.number_input("Fixed monthly costs ('vaste lasten')",0,10000,80)
-    monthly_costs_nl =  st.sidebar.number_input("Monthly costs NL",0,10000,350)
+    months_nl_non_working =  st.sidebar.number_input("Number of months NL non-working",0,12,1)
+    monthly_costs_nl_non_working =  st.sidebar.number_input("Monthly costs NL non-working",0,10000,50)
+
+    monthly_costs_nl =  st.sidebar.number_input("Monthly costs NL working",0,10000,350)
     various_nl =  st.sidebar.number_input("Various NL (Total)",0,10000,200)
     monthly_costs_asia =  st.sidebar.number_input("Monthly costs Asia",0,10000,int(350 + (7000/36.5)))
     insurance_asia =  st.sidebar.number_input("Insurance Asia (per month)",0,10000,60)
@@ -250,9 +268,9 @@ def main():
     min_delta = 0 # st.sidebar.number_input("min_delta",None,None,0) 
     max_delta = 100# st.sidebar.number_input("max_delta",None,None,100) 
 
-    make_graph_values(proposed_salary_month,fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run)
+    make_graph_values(proposed_salary_month,months_nl_non_working,monthly_costs_nl_non_working,fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run)
     
-    calculate_delta_main(fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run)
+    calculate_delta_main(months_nl_non_working,monthly_costs_nl_non_working,fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run)
 
     #
     # print(calculate_nettoloon_simpel (28563))
@@ -265,9 +283,9 @@ def main():
     # print(calculate_year_delta(salary_gross_month=2150,number_of_month_working_nl=12, output=True, what_to_return="delta"))
     # print(calculate_year_delta(salary_gross_month=2150,number_of_month_working_nl=6, output=True))
     #main()
-    main_solver_how_much_salary(fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run,min_delta, max_delta)
+    main_solver_how_much_salary(months_nl_non_working,monthly_costs_nl_non_working,fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run,min_delta, max_delta)
 
-    main_solver_how_many_months(fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run,min_delta, max_delta)
+    main_solver_how_many_months(months_nl_non_working,monthly_costs_nl_non_working,fixed_monthly_costs, monthly_costs_nl,various_nl, monthly_costs_asia, insurance_asia, various_asia, flight_tickets_asia, visas_asia,return_flighttickets, flighttickets_visa_run,min_delta, max_delta)
 
 
 if __name__ == "__main__":
