@@ -100,8 +100,8 @@ def make_graph_values(x):
         x : object with various variables
     """    
     list_total = []
-    for number_of_month_working_nl_ in range (0,13):
-        x.number_of_month_working_nl = number_of_month_working_nl_
+    for number_of_month_working_nl_ in range (0,121):
+        x.number_of_month_working_nl = number_of_month_working_nl_ / 10
 
         row = calculate_year_delta(x, what_to_return="row")
         list_total.append(row)
@@ -180,7 +180,7 @@ def calculate_delta_main(x):
     """    
     
     list_total=[]
-    for number_of_month_working_nl_ in range (0,130-x.months_nl_non_working*10,10):
+    for number_of_month_working_nl_ in range (0,130-x.months_nl_non_working*10,5):
         row=[number_of_month_working_nl_/10]
         salaries = list(range (1000,3000,100))
         for salary_gross_month in salaries:
