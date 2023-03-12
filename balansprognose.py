@@ -181,7 +181,7 @@ def calculate_delta_main(x):
     
     list_total=[]
     for number_of_month_working_nl_ in range (0,130-x.months_nl_non_working*10,10):
-        row=[number_of_month_working_nl_]
+        row=[number_of_month_working_nl_/10]
         salaries = list(range (1000,3000,100))
         for salary_gross_month in salaries:
             total_capital = 12250
