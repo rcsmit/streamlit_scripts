@@ -229,10 +229,10 @@ class CommonParameters:
         )
         self.various_nl = st.sidebar.number_input("Various NL (Total)", 0, 10000, 200)
         self.monthly_costs_asia = st.sidebar.number_input(
-            "Monthly costs Asia", 0, 10000, int(350 + (7000 / 36.5))
-        )
-        self.insurance_asia = st.sidebar.number_input("Insurance Asia (per month)", 0, 10000, 60)
-        self.various_asia = st.sidebar.number_input("Various Asia", 0, 10000, 200)
+            "Monthly costs Asia", 0, 10000, 650)
+        
+        self.insurance_asia = st.sidebar.number_input("Travel insurance Asia (per month)", 0, 10000, 70)
+        self.various_asia = st.sidebar.number_input("Various Asia total", 0, 10000, 200)
         self.flight_tickets_asia = st.sidebar.number_input(
             "Flight tickets Asia (per 3 mnd)", 0, 10000, 200
         )  # per 3 mnd  = (int(i/3)) * flight_tickets_asia
@@ -241,11 +241,11 @@ class CommonParameters:
             "Return Flights NL-Asia", 0, 10000, 1100
         )
         self.flighttickets_visa_run = st.sidebar.number_input(
-            "Flight tickets Visa Run", 0, 10000, 0
+            "Flight tickets Visa Runs (total)", 0, 10000, 0
         )  # integrated in montly costs asia 400 / flightickets asia
         self.min_delta = 0  # st.sidebar.number_input("min_delta",None,None,0)
         self.max_delta = 100  # st.sidebar.number_input("max_delta",None,None,100)
-        self.calculate_extras = st.sidebar.selectbox("Include extras", [True,False], index=0)
+        self.calculate_extras = st.sidebar.selectbox("Include extras (vak.geld/-dgn, transtieverg.)", [True,False], index=0)
         self.debug = st.sidebar.selectbox("Show all lines/graphs", [True,False], index=1)
         self.show_output = False #st.sidebar.selectbox("Show output", [True,False], index=1)
              
