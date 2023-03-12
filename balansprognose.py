@@ -10,21 +10,8 @@ import plotly
 def calculate_year_delta(x, what_to_return):
     """Calculate the difference of income and expenses in a year.
 
-
     Args:
-        x.fixed_x.monthly_costs (_type_): _description_
-        x.monthly_costs_nl (_type_): _description_
-        x.various_nl (_type_): _description_
-        x.monthly_costs_asia (_type_): _description_
-        x.insurance_asia (_type_): _description_
-        x.various_asia (_type_): _description_
-        x.flight_tickets_asia (_type_): _description_
-        x.visas_asia (_type_): _description_
-        x.return_flighttickets (_type_): _description_
-        x.flighttickets_visa_run (_type_): _description_
-        x.salary_gross (int): What is my gross salary per month?
-        x.number_of_month_working_nl (int): How many months in the year do I work?
-        x.output (bool): _description_
+        x (oject) : various variables
         what_to_return (str): "delta" or "row"
 
     Returns:
@@ -36,29 +23,26 @@ def calculate_year_delta(x, what_to_return):
                     nettoloon ,total_income_netto,  expenses_fix,expenses_nl,expenses_asia,  expenses_total, delta]
 
     """
-
     
-    
-     
     number_of_months_in_asia = 12 - (x.number_of_month_working_nl+x.months_nl_non_working) if x.number_of_month_working_nl+x.months_nl_non_working<12 else 0 
     number_of_months_in_nl = x.number_of_month_working_nl+x.months_nl_non_working if x.number_of_month_working_nl+x.months_nl_non_working <12 else 12
     salary_gross_year = x.number_of_month_working_nl * x.proposed_salary_month
             
     # calculate "vakantiedagen" + "vakantietoeslag" + "transitievergoeding"
-    transition_payment = (x.number_of_month_working_nl/12)*(1/3)*x.proposed_salary_month if x.number_of_month_working_nl>0 else 0
     if x.calculate_extras:
+        transition_payment = (x.number_of_month_working_nl/12)*(1/3)*x.proposed_salary_month if x.number_of_month_working_nl>0 else 0
         extras = salary_gross_year * 0.1 + salary_gross_year *0.08 + transition_payment
     else:
-        extras = 0
+        transition_payment = 0
+        extras = 0 
     total_income_gross = salary_gross_year + extras
-
     pensioen_bijdrage = calculate_pensioenbijdrage(x.proposed_salary_month, x.number_of_month_working_nl)
     if x.number_of_month_working_nl == 0:
         total_income_netto = 0
     else:
         total_income_netto = calculate_nettoloon_simpel ((total_income_gross- pensioen_bijdrage)/x.number_of_month_working_nl, x.number_of_month_working_nl)
     belastingen = total_income_gross - pensioen_bijdrage-  total_income_netto 
-    #total_income_netto =  nettoloon - pensioen_bijdrage
+
     expenses_fix = (x.fixed_monthly_costs*12)
     expenses_nl =  (x.monthly_costs_nl*number_of_months_in_nl) + x.various_nl + (x.months_nl_non_working*x.monthly_costs_nl_non_working)
     expenses_asia =((x.monthly_costs_asia+x.insurance_asia)*number_of_months_in_asia)
@@ -85,7 +69,6 @@ def calculate_year_delta(x, what_to_return):
         expenses_asia = 0
     expenses_total = expenses_fix + expenses_nl + expenses_asia
     delta = total_income_netto-expenses_total
-    
 
     row = [x.number_of_month_working_nl,delta, number_of_months_in_asia,number_of_months_in_nl,salary_gross_year,transition_payment,extras,  total_income_gross ,pensioen_bijdrage , total_income_netto,  expenses_fix,expenses_nl,expenses_asia,expenses_asia_extra,  expenses_total,  
            belastingen,belastingen_nieuw, inkomsten_belasting, arbeidskorting, heffingskorting,arbeidskorting+ heffingskorting,  belastingdruk]
@@ -95,13 +78,12 @@ def calculate_year_delta(x, what_to_return):
         to_return = row
     return to_return
 
-
 def calculate_pensioenbijdrage(salary_gross_month, number_of_month_working_nl):
     """Calculates pensioenbijdrage
 
     Args:
-        x.salary_gross_month (int): salary
-        x.number_of_month_working_nl (int): how many months do I work
+        salary_gross_month (int): salary
+        number_of_month_working_nl (int): how many months do I work
 
     Returns:
         int : amount of pensioenbijdrage
@@ -115,7 +97,7 @@ def make_graph_values(x):
     """Makes graph of Various values in relation of number of months working. 
 
     Args:
-        income (int): income
+        x : object with various variables
     """    
     list_total = []
     for number_of_month_working_nl_ in range (0,13):
@@ -138,9 +120,7 @@ def make_graph_values(x):
         fig2 = px.line(total_df_diff, x="index", y=columns, title = f"Various values in relation of number of months working with a monthly income of {x.proposed_salary_month}, difference")
         fig2.add_hline(y=0)
         st.plotly_chart(fig2)
-  
-    
-    #     plotly.offline.plot(fig2)
+        # plotly.offline.plot(fig2)
 
 def main_solver_how_much_salary(x):
     """ Solves how many months I have to work for which salary to have a delta in between 0 and 100
@@ -148,10 +128,8 @@ def main_solver_how_much_salary(x):
     list_total=[]
     row=[]
     salaries = list(range (100,25000,1))
-    #for x.number_of_month_working_nl in range (0,13):
     for number_of_month_working_nl in range (0,13-x.months_nl_non_working):    
         for salary_gross_month in salaries:
-
             x.proposed_salary_month = salary_gross_month
             x.number_of_month_working_nl = number_of_month_working_nl
             delta = calculate_year_delta(x, what_to_return= "delta")
@@ -171,11 +149,8 @@ def main_solver_how_many_months(x):
     """     
     list_total=[]
     salaries = list(range (100,10000,1))
-    for salary_gross_month in salaries:
-    
+    for salary_gross_month in salaries: 
         row=[]
-        
-        #for x.number_of_month_working_nl_ in range (0,122):
         for number_of_month_working_nl_ in range (0,122-x.months_nl_non_working*10):
             x.proposed_salary_month = salary_gross_month
             x.number_of_month_working_nl = number_of_month_working_nl_/10
@@ -195,25 +170,13 @@ def main_solver_how_many_months(x):
     # plotly.offline.plot(fig)
     st.plotly_chart(fig)
     x.number_of_month_working_nl = 0
-    x.salary_gross_month = 0
-   
-    
-            
+    x.salary_gross_month = 0          
 
 def calculate_delta_main(x):
-    """_summary_
+    """Calculate the delta with various salaries over various months working
 
     Args:
-        x.fixed_x.monthly_costs (_type_): _description_
-        x.monthly_costs_nl (_type_): _description_
-        x.various_nl (_type_): _description_
-        x.monthly_costs_asia (_type_): _description_
-        x.insurance_asia (_type_): _description_
-        x.various_asia (_type_): _description_
-        flight_tickets_asia (_type_): _description_
-        x.visas_asia (_type_): _description_
-        x.return_flighttickets (_type_): _description_
-        x.flighttickets_visa_run (_type_): _description_
+
     """    
     
     list_total=[]
@@ -221,7 +184,6 @@ def calculate_delta_main(x):
         row=[number_of_month_working_nl_]
         salaries = list(range (1000,3000,100))
         for salary_gross_month in salaries:
-    
             total_capital = 12250
             for y in range(0,1):  # later we want to know what the total capital is after x years 
                 x.proposed_salary_month = salary_gross_month
@@ -230,20 +192,13 @@ def calculate_delta_main(x):
                 total_capital = total_capital +delta
                 row.append(int(delta))
         list_total.append(row)
-     
     columns = ["months_working"] + salaries
-
     total_df = pd.DataFrame(list_total, columns=columns)#.set_index("months_working")
     st.subheader ("Yearly change in total capital")
-    # total_df_diff = total_df.diff()
-    
-    # print (total_df_diff)
-
     fig = px.line(total_df, x="months_working", y=salaries, title = "Change in total capital vs months working with different monthly wages")
     fig.add_hline(y=0)
     # plotly.offline.plot(fig)
     st.plotly_chart(fig)
-    #st.write (total_df)
 
 class CommonParameters:
     """We use use a class to store the common parameters as instance variables. 
@@ -293,9 +248,7 @@ class CommonParameters:
         self.calculate_extras = st.sidebar.selectbox("Include extras", [True,False], index=0)
         self.debug = st.sidebar.selectbox("Show all lines/graphs", [True,False], index=1)
         self.show_output = False #st.sidebar.selectbox("Show output", [True,False], index=1)
-        
-        
-        
+             
 def main():
     st.header("Various calculations about the total amount of money gained/lost vs. number of months working")
     st.write("Calculation to support the article <a href='https://rcsmit.medium.com/how-to-be-on-part-time-retirement-with-a-minimum-wage-job-355e675322c5'>'How to be on a part time retirement'</a> ", unsafe_allow_html=True)
@@ -307,7 +260,6 @@ def main():
     calculate_delta_main(common_param)
     main_solver_how_much_salary(common_param)
     main_solver_how_many_months(common_param)
-
 
 if __name__ == "__main__":
     main()
