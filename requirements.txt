@@ -20,3 +20,4 @@ folium
 streamlit_folium
 opencv-python-headless
 mediapipe
+libgl1
