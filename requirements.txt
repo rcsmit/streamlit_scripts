@@ -18,6 +18,5 @@ openpyxl
 openai
 folium
 streamlit_folium
-opencv-python
 opencv-python-headless
 mediapipe
