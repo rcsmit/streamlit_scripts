@@ -16,6 +16,7 @@ statsmodels
 latex
 openpyxl
 openai
-
 folium
 streamlit_folium
+cv2
+mediapipe
