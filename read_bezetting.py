@@ -1,47 +1,57 @@
-# GENERATE BUSINESS INTELLIGENCE COMING FROM A PLANNING SHEET
-
+import openpyxl
 from datetime import datetime
 import string
 import pandas as pd
-
+import plotly
 from openpyxl import load_workbook
 import streamlit as st
+from keys import * # secret file with the prices
 import plotly.express as px
 import plotly.graph_objects as go
-import urllib.request
 
 test = False  # To test or not to test (to see if the fillcolors in the sheet are right.)
 
-local = True
-if local:
-    excel_file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\dummy_occupation.xlsx"
-    wb = load_workbook(excel_file, data_only=True)
-else:
-    excel_file = r"https://github.com/rcsmit/streamlit_scripts/blob/main/input/dummy_occupation.xlsx?raw=true"
-    urllib.request.urlretrieve(excel_file, "test.xlsx")
-    wb = load_workbook("test.xlsx", data_only=True)
-
-
+excel_file = r"C:\Users\rcxsm\Downloads\bezetting2022.xlsm"
+wb = load_workbook(excel_file, data_only=True)
 start_month, end_month = 3, 10
-year_ = [2022]
+year_ = [2019, 2021, 2022]
 (start_month,end_month) = st.sidebar.slider("Months (from/until (incl.))", 1, 12, (3,10))
 
 if start_month > end_month:
     st.warning("Make sure that the end month is not before the start month")
     st.stop()
 
-year = st.sidebar.multiselect("Years", year_, year_)
-selection_list_accos_ = ['ALPHA' ,'BRAVO']
-selection_list_accos = st.sidebar.multiselect("Which acco's", selection_list_accos_,selection_list_accos_)
-sh_2022 = wb["TEST"]
+year = st.sidebar.multiselect("Jaren", year_, year_)
+selection_list_accos_ = ['WAIKIKI' ,'BALI',  'KALAHARI1', 'KALAHARI2', 'SERENGETTI XL', 'SERENGETTI L', 'SAHARA']
+selection_list_accos = st.sidebar.multiselect("Welke acco's", selection_list_accos_,selection_list_accos_)
+sh_2022 = wb["ALLES2022"]
+sh_2021 = wb["ALLES2021"]
+sh_2019 = wb["ALLES2019"]
 
-
-    # rij met de name, startrow, eindrow
+    # rij met de naam, startrij, eindrij
 to_do_2022 = [
     [1, 4, 9],  # bal
     [11, 14, 23],  # wai
-
-] 
+    [25, 28, 40],  # kal1
+    [41, 42, 48],  # kal2
+    [50, 53, 61],  # ser xl
+    [62, 63, 70],  # ser L
+    [71, 75, 88],
+]  # sahara
+to_do_2021 = [
+    [1, 4, 9],  # bal
+    [11, 14, 23],  # wai
+    [25, 28, 47],  # kal1
+    [49, 52, 60],  # ser xl
+    [62, 65, 86],
+]  # sahara
+to_do_2019 = [
+    [3, 4, 9],  # bal 6
+    [11, 12, 21],  # wai 10
+    [23, 24, 36],  # kal1  13
+    [38, 39, 47],  # sahara 9
+    [49, 50, 58], #  ser xl 9
+]  # 
 
 
 def find_fill_color(cell):
@@ -66,13 +76,12 @@ def find_fill_color(cell):
 
     theme = sh_2022[cell].fill.start_color.theme
     tint = sh_2022[cell].fill.start_color.tint
-    st.write(f"Valx = {valx  } | Theme = {theme} ||Tint = {tint}")
+    st.write(f"{valx = } {theme=} {tint=}")
 
-    # DOESNT WORK
-    # val = int(sh_2022[cell].fill.start_color.index, 16)
-    # st.write (val)
-    # #hex_color = "%06x" % (val && 0xFFFFFF)
-    # st.write(hex_color)
+    val = int(sh_2022[cell].fill.start_color.index, 16)
+    st.write (val)
+    #hex_color = "%06x" % (val && 0xFFFFFF)
+    st.write(hex_color)
     
 
 def retrieve_prijzen():
@@ -80,8 +89,8 @@ def retrieve_prijzen():
     Returns:
         df: Table with the prices
     """    
-    sheet_id_prijzen = "1eNdn6mAglADaqOuRyQAHkx-yFgd-2mlK_fACLIHoJNk"
-    sheet_name_prijzen = "TEST"
+    # sheet_id prijzen = in keys.py
+    sheet_name_prijzen = "prijzen"
     url_prijzen = f"https://docs.google.com/spreadsheets/d/{sheet_id_prijzen}/gviz/tq?tqx=out:csv&sheet={sheet_name_prijzen}"
 
     df_prijzen = pd.read_csv(url_prijzen, delimiter=",")
@@ -151,11 +160,11 @@ def create_table_per_accotype_per_month(df, year):
         for m in range(start_month, end_month + 1):
             rij = [months[m - 1]]
             for acco in selection_list_accos:
-                
+
                 df_acco = df[
                     (df["acco_type"] == acco) & (df["maand_str"] == str(m))
                 ].reset_index()
-                
+
                 in_tabel_te_plaatsen = round(print_businessinfo(df_acco, w, year), 1)
                 rij.append(in_tabel_te_plaatsen)
 
@@ -180,7 +189,6 @@ def print_businessinfo(df_acco, what, year):
     Returns:
         _type_: _description_
     """
-   
     aantal_boekingen =  df_acco["wissel"].sum() + df_acco["new_arrival"].sum()
     if what == None:
         st.write(f"-----{year}-----")
@@ -313,10 +321,15 @@ def make_booking_table(year):
     Args:
         year (int): the year of which you want the booking table
     """
-    year__ = year
+
     columns_to_use = generate_columns_to_use()
-  
-    st.subheader("Booking table")
+    year__ = year
+    if year == 2019:
+        to_do = to_do_2019
+        sh = sh_2019
+    if year == 2021:
+        to_do = to_do_2021
+        sh = sh_2021
     if year == 2022:
         to_do = to_do_2022
         sh = sh_2022
@@ -326,10 +339,10 @@ def make_booking_table(year):
         
         acco_type = str(sh["a" + str(t[0])].value)
         for r in range(t[1],t[2]+1):
-            print (r)
+            
             acco_number_cell = "a" + str(r)
             acco_number = str(sh[acco_number_cell].value)
-            for c in columns_to_use:
+            for c in columns_to_use[1:]:
                 
                 cell_ = c +str(r)
                 datum_ = str(sh[c + "2"].value)
@@ -349,7 +362,6 @@ def make_booking_table(year):
                     valx = val
                 except:
                     valx = sh[cell_].fill.start_color.theme
-                
                 if valx == 9:  # licht groen
                     checkin_date  = datum
                     guest_name = str(sh[c + str(r)].value)
@@ -387,7 +399,8 @@ def make_booking_table(year):
     )
     df['number_of_days'] = df['number_of_days'].dt.days.astype('int16')
     st.subheader(f"Distribution of length of stay in {year__}")
-    st.write (df)
+    print (df)
+    st.write(f"Number of stays : {len(df)}")
     st.write (f"Number of days total : {df['number_of_days'].sum()}")
     st.write (f"Number of days min : {df['number_of_days'].min()}")
     st.write (f"Number of days max : {df['number_of_days'].max()}")
@@ -396,10 +409,10 @@ def make_booking_table(year):
 
     freq_tabel = df['number_of_days'].value_counts()
     fig = px.histogram(df, x="number_of_days")
-    #plotly.offline.plot(fig)
+    # plotly.offline.plot(fig)
+    
     st.plotly_chart(fig, use_container_width=True)
-    st.write("Frequency table")
-    st.write (freq_tabel)
+    print (freq_tabel)
   
 
 def make_complete_df(columns_to_use, year):
@@ -413,6 +426,12 @@ def make_complete_df(columns_to_use, year):
         df: dataframe
     """
     list_complete = []
+    if year == 2019:
+        to_do = to_do_2019
+        sh = sh_2019
+    if year == 2021:
+        to_do = to_do_2021
+        sh = sh_2021
     if year == 2022:
         to_do = to_do_2022
         sh = sh_2022
@@ -504,7 +523,6 @@ def make_complete_df(columns_to_use, year):
     
     
     df = df[df["acco_type"].isin(selection_list_accos)]
-    st.write(df)
     return df
 
 def make_date_columns(df):
@@ -548,7 +566,7 @@ def  make_occopuation_graph_per_acco(df_):
                 pass
         layout = go.Layout(
                     yaxis=dict(title=f"Bezetting (%)"),
-                    title=f"Bezetting per acco type ({a}) in {y}",
+                    title=f"Bezetting per acco type in {y}",
                 )
         fig = go.Figure(data=data, layout=layout)
         fig.update_layout(xaxis=dict(tickformat="%d-%m"))
@@ -563,7 +581,7 @@ def  make_occopuation_graph(df_all_years_grouped):
     df_all_years_grouped = df_all_years_grouped.sort_values(by='datum') 
     df_all_years_grouped["jaar"] = df_all_years_grouped["jaar"].astype(str)
     df_all_years_pivot = df_all_years_grouped.pivot(index=['maand_dag','datum_'], columns='jaar', values='occupation').reset_index()
-    #st.write(df_all_years_pivot) 
+    
     for y in year:
         y_=str(y)
         if y_ == "2022":
@@ -592,7 +610,7 @@ def  make_occopuation_graph(df_all_years_grouped):
     #fig.show()
     #plotly.offline.plot(fig)
     st.plotly_chart(fig, use_container_width=True)
-    #st.write(df_all_years_pivot)
+    st.write(df_all_years_pivot)
     
 def most_checkins_out(df_all_years_grouped):
 
@@ -627,12 +645,12 @@ def calculate_occupation(df):
 
 def generate_and_show_info_all_years():
     df_all_years =  pd.DataFrame()
-
+    #year=[2019,2021,2022]
     list,columns = [], ["year","omzet_eur","aantal_acco","omzet_per_acco","bezetting_%","aantal_boekingen","gem_verblijfsduur","aantal_overnachtingen","aantal_overnachtingen_per_acco"]
     for y in year:
         columns_to_use = generate_columns_to_use()
         df_ = make_complete_df(columns_to_use, y)
-       
+
         if test:
             create_check_table_per_accotype(df_)
         else:
@@ -640,16 +658,13 @@ def generate_and_show_info_all_years():
             df = pd.merge(
                 df_, df_prijzen_stacked, how="inner", on=["acco_type", "maand_str"]
             )
-        
             df["omzet"] = df["in_house"] * df["price_per_night"]
-         
             row = print_businessinfo(df, None, y)
             list.append(row)
             create_table_per_accotype_per_month(df, y)
             
         df_all_years = pd.concat([df_all_years, df_], axis=0).sort_values(by='datum')
     total_df = pd.DataFrame(list, columns=columns)
-    st.write(total_df)
     
     st.subheader("Info over alle jaren")
     st.table(total_df)
@@ -658,15 +673,14 @@ def generate_and_show_info_all_years():
 
 def main():
     df_all_years = generate_and_show_info_all_years()
-    
+
 
     df_all_years_non_grouped= make_date_columns(df_all_years)
     df_all_years_grouped = df_all_years_non_grouped.groupby(["datum"]).sum().reset_index()
-    
     df_all_years_grouped = calculate_occupation(df_all_years_grouped)
     df_all_years_non_grouped = calculate_occupation(df_all_years_non_grouped)
-    
-   
+
+    # st.write( df)
     #df=df.groupby('Name').agg({'Missed':'sum', 'Credit':'sum','Grade':'mean'}).rename(columns=d)
     # df_all_years_grouped_maand_omzet = df_all_years_non_grouped.groupby(["jaar", "maand"]).sum().reset_index().pivot(index='jaar', columns='maand', values='omzet_eur')
 
@@ -674,10 +688,10 @@ def main():
     make_occopuation_graph(df_all_years_grouped)  
     make_occopuation_graph_per_acco(df_all_years_non_grouped)  
     most_checkins_out(df_all_years_grouped)
-    make_booking_table(2022)
+
 
     
 if __name__ == "__main__":
     main()
-    #find_fill_color("B4")
-    
+    #find_fill_color("H80")
+    make_booking_table(2022)
