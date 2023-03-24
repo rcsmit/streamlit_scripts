@@ -18,3 +18,5 @@ openpyxl
 openai
 folium
 streamlit_folium
+opencv-python
+mediapipe

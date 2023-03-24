@@ -611,7 +611,17 @@ def  make_occopuation_graph(df_all_years_grouped):
     #plotly.offline.plot(fig)
     st.plotly_chart(fig, use_container_width=True)
     st.write(df_all_years_pivot)
+    save_df(df_all_years_pivot,"bezetting_per_jaar.csv")
     
+def save_df(df, name):
+    """  _ _ _ """
+    name_ =  name + ".csv"
+    compression_opts = dict(method=None, archive_name=name_)
+    df.to_csv(name_, index=False, compression=compression_opts)
+
+    print("--- Saving " + name_ + " ---")
+
+
 def most_checkins_out(df_all_years_grouped):
 
     for y in year:
