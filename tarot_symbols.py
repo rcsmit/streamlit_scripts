@@ -240,13 +240,13 @@ def show_symbols(first_choice, second_choice, cards):
    
     if first_choice =="All":
         for card in cards:
-            df_card = df_symbols[df_symbols["Name of Card"] == card].groupby(['Name of Card','Symbolic Element'])['Symbolic Meaning'].agg(' '.join).reset_index()
+            df_card = df_symbols[df_symbols["Name of Card"] == card] #.groupby(['Name of Card','Symbolic Element'])['Symbolic Meaning'].agg(' '.join).reset_index()
    
             show_symbols_for_specific_card(card,  df_card)
     elif first_choice == "Major":
         card = second_choice
         
-        df_card = df_symbols[df_symbols["Name of Card"] == card].groupby(['Name of Card','Symbolic Element'])['Symbolic Meaning'].agg(' '.join).reset_index()
+        df_card = df_symbols[df_symbols["Name of Card"] == card] #.groupby(['Name of Card','Symbolic Element'])['Symbolic Meaning'].agg(' '.join).reset_index()
    
         show_symbols_for_specific_card(card,  df_card)
     else:
