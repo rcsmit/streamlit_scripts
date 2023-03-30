@@ -1,6 +1,6 @@
 import openai
 
-from keys import * # secret file with the prices
+from keys_dummy import 
 import random
 import pandas as pd
     
