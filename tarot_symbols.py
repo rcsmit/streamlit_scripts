@@ -234,7 +234,7 @@ def show_symbols(first_choice, second_choice, cards):
     sheet_name = "symbols"
     url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
 
-    df_symbols = pd.read_csv(url, delimiter=",")
+    df_symbols_ = pd.read_csv(url, delimiter=",")
     df_symbols = df_symbols_.groupby(['Name of Card','Symbolic Element'])['Symbolic Meaning'].agg(' '.join).reset_index()
     
     if first_choice =="All":
