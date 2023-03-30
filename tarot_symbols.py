@@ -273,9 +273,13 @@ def show_symbols_for_specific_card(card,df_card):
     col1, col2 = st.columns(2)
         
     with col1:
+        col1.width = 0.2
+
         # Display the resized image
         st.image(resized_image, caption=card, use_column_width=False)  
     with col2:
+
+        col1.width = 0.8
                 # Display an empty spacer to reserve space for the image   
         df_card = df_card[["Name of Card","Symbolic Element","Symbolic Meaning"]]
     
