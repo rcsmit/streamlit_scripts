@@ -280,7 +280,7 @@ def show_symbols_for_specific_card(card,df_card):
         st.table (df_card)
 
 #give_symbolic(cards)
-first_choice = st.sidebar.selectbox("Choose All/Major/Suit", ["All", "Major", "Cups", "Swords", "Wands", "Pentacles"], 0)
+first_choice = st.sidebar.selectbox("Choose All/Major/Suit", ["All", "Major", "Cups", "Swords", "Wands", "Pentacles"], 1)
 if first_choice == "All":
     second_choice = None
 elif first_choice == "Major":
