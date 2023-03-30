@@ -277,7 +277,7 @@ def show_symbols_for_specific_card(card,df_card):
                 # Display an empty spacer to reserve space for the image   
         df_card = df_card[["Name of Card","Symbolic Element","Symbolic Meaning"]]
     
-        st.write (df_card)
+        st.table (df_card)
 
 
 def main():
