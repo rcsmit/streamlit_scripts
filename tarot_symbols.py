@@ -249,6 +249,10 @@ def show_symbols(first_choice, second_choice, cards):
         df_card = df_symbols[df_symbols["Name of Card"] == card].groupby(['Name of Card','Symbolic Element'])['Symbolic Meaning'].agg(' / '.join).reset_index()
    
         show_symbols_for_specific_card(card,  df_card)
+    elif first_choice == "Symbols":
+        df_card = df_symbols.groupby(['Symbolic Element'])['Symbolic Meaning'].agg(' / '.join).reset_index()
+        st.table(df_card)
+   
     else:
         card = f"{second_choice} of {first_choice}"
         df_card = df_symbols[(df_symbols["Suit"] == first_choice) & (df_symbols["Number_txt"] == second_choice)].groupby(['Name of Card','Symbolic Element'])['Symbolic Meaning'].agg(' / '.join).reset_index()
@@ -294,12 +298,15 @@ def main():
 
     st.header("Tarot card symbols")
     #give_symbolic(cards)
-    first_choice = st.sidebar.selectbox("Choose All/Major/Suit", ["All", "Major", "Cups", "Swords", "Wands", "Pentacles"], 1)
+    first_choice = st.sidebar.selectbox("Choose All/Major/Suit/Symbols", ["All", "Major", "Cups", "Swords", "Wands", "Pentacles", "Symbols"], 1)
     if first_choice == "All":
         second_choice = None
     elif first_choice == "Major":
         major_arcana = cards[:22]
         second_choice = st.sidebar.selectbox ("Choose a card", major_arcana, index = 0)
+    elif first_choice == "Symbols":
+        second_choice = None
+    
     else:
         minor_arcana_numbers = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Page", "Knight", "Queen", "King"]
         second_choice = st.sidebar.selectbox ("Second choice", minor_arcana_numbers, index = 0)
