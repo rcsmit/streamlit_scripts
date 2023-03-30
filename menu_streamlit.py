@@ -44,7 +44,9 @@ def main():
                 ["15. Inkomstenbelasting", "inkomstenbelasting"],
                 ["16. Exchange money", "exchange_money"],
                 ["17. Conscious communities", "conscious_communities"],
-                ["17. How Much Month I need to work", "balansprognose"]
+                ["18. How Much Month I need to work", "balansprognose"],
+                ["19. Tarot Symbols", "tarot_symbols"]
+
                 
                 
                 ]

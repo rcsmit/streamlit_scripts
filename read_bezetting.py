@@ -399,6 +399,8 @@ def make_booking_table(year):
     )
     df['number_of_days'] = df['number_of_days'].dt.days.astype('int16')
     st.subheader(f"Distribution of length of stay in {year__}")
+    print (f"Distribution of length of stay in {year__}")
+    print ("regel 402")
     print (df)
     st.write(f"Number of stays : {len(df)}")
     st.write (f"Number of days total : {df['number_of_days'].sum()}")
@@ -412,7 +414,10 @@ def make_booking_table(year):
     # plotly.offline.plot(fig)
     
     st.plotly_chart(fig, use_container_width=True)
+    print ("regel 415")
     print (freq_tabel)
+
+    return df # df_bookingtable
   
 
 def make_complete_df(columns_to_use, year):
@@ -704,4 +709,10 @@ def main():
 if __name__ == "__main__":
     main()
     #find_fill_color("H80")
-    make_booking_table(2022)
+    df_bookingtable = make_booking_table(2022)
+    print ("regel713")
+    print(df_bookingtable)
+    df_grouped = df_bookingtable.groupby(["acco_type","acco_number"], sort=True).sum().reset_index()
+    df_grouped["occupation"] = round((df_grouped["number_of_days"] / (30+31+30+31+31+30) *100),1)  #183 nachten, maart laten we buiten beschouwing
+    st.subheader("Occupation per accomodation 2022")
+    st.write (df_grouped)
