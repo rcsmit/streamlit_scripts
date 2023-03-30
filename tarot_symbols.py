@@ -1,6 +1,6 @@
 import openai
 
-from keys_dummy import 
+from keys_dummy import *
 import random
 import pandas as pd
     
