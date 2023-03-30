@@ -279,20 +279,21 @@ def show_symbols_for_specific_card(card,df_card):
     
         st.table (df_card)
 
-#give_symbolic(cards)
-first_choice = st.sidebar.selectbox("Choose All/Major/Suit", ["All", "Major", "Cups", "Swords", "Wands", "Pentacles"], 1)
-if first_choice == "All":
-    second_choice = None
-elif first_choice == "Major":
-    major_arcana = cards[:22]
-    second_choice = st.sidebar.selectbox ("Choose a card", major_arcana, index = 0)
-else:
-    minor_arcana_numbers = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Page", "Knight", "Queen", "King"]
-    second_choice = st.sidebar.selectbox ("Second choice", minor_arcana_numbers, index = 0)
 
 def main():
 
     st.header("Tarot card symbols")
+    #give_symbolic(cards)
+    first_choice = st.sidebar.selectbox("Choose All/Major/Suit", ["All", "Major", "Cups", "Swords", "Wands", "Pentacles"], 1)
+    if first_choice == "All":
+        second_choice = None
+    elif first_choice == "Major":
+        major_arcana = cards[:22]
+        second_choice = st.sidebar.selectbox ("Choose a card", major_arcana, index = 0)
+    else:
+        minor_arcana_numbers = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Page", "Knight", "Queen", "King"]
+        second_choice = st.sidebar.selectbox ("Second choice", minor_arcana_numbers, index = 0)
+
     show_symbols(first_choice, second_choice, cards)
 
     st.info("The symbols and the meanings are retrieved by Chat-GPT. The immages is the actual 1909 deck, no longer under copyright. This image scanned by Holly Voley and retrieved from https://www.sacred-texts.com/tarot by Wikipedia-contributers")
