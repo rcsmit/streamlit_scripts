@@ -235,21 +235,24 @@ def show_symbols(first_choice, second_choice, cards):
     url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
 
     df_symbols_ = pd.read_csv(url, delimiter=",")
-    df_symbols_ = df_symbols_.fillna('_')
-    df_symbols = df_symbols_.groupby(['Name of Card','Symbolic Element'])['Symbolic Meaning'].agg(' '.join).reset_index()
-    
+    df_symbols = df_symbols_.fillna('_')
+    # df_symbols = df_symbols_.groupby(['Name of Card','Symbolic Element'])['Symbolic Meaning'].agg(' '.join).reset_index()
+   
     if first_choice =="All":
         for card in cards:
-            df_card = df_symbols[df_symbols["Name of Card"] == card]
+            df_card = df_symbols[df_symbols["Name of Card"] == card].groupby(['Name of Card','Symbolic Element'])['Symbolic Meaning'].agg(' '.join).reset_index()
+   
             show_symbols_for_specific_card(card,  df_card)
     elif first_choice == "Major":
         card = second_choice
         
-        df_card = df_symbols[df_symbols["Name of Card"] == card]
+        df_card = df_symbols[df_symbols["Name of Card"] == card].groupby(['Name of Card','Symbolic Element'])['Symbolic Meaning'].agg(' '.join).reset_index()
+   
         show_symbols_for_specific_card(card,  df_card)
     else:
         card = f"{second_choice} of {first_choice}"
-        df_card = df_symbols[(df_symbols["Suit"] == first_choice) & (df_symbols["Number_txt"] == second_choice)]
+        df_card = df_symbols[(df_symbols["Suit"] == first_choice) & (df_symbols["Number_txt"] == second_choice)].groupby(['Name of Card','Symbolic Element'])['Symbolic Meaning'].agg(' '.join).reset_index()
+   
         show_symbols_for_specific_card(card, df_card)
 
 
