@@ -119,6 +119,24 @@ def plot(df, choicelist):
     fig2 = go.Figure(data=data2, layout=layout)
     st.plotly_chart(fig2, use_container_width=True)
 
+        # create the figure
+    fig3 = go.Figure()
+
+    # add the BTC trace
+    fig3.add_trace(go.Scatter(x=df['Date'], y=df['close_BTC-USD'], name='BTC', yaxis='y'))
+
+    # add the ETH trace
+    fig3.add_trace(go.Scatter(x=df['Date'], y=df['close_ETH-USD'], name='ETH', yaxis='y2'))
+
+    # set the layout
+    fig3.update_layout(title='BTC/ETH rates',
+                    yaxis=dict(title='BTC', titlefont=dict(color='blue')),
+                    yaxis2=dict(title='ETH', titlefont=dict(color='red'), overlaying='y', side='right'))
+
+    # show the figure
+    #fig3.show()
+    st.plotly_chart(fig3, use_container_width=True)
+
 def make_database(choicelist, interval):
     first = True
     for choice in choicelist:
