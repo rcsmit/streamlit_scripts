@@ -7,21 +7,21 @@ from helpers import *
 #from streamlit import caching
 import numpy as np
 import matplotlib.animation as animation
+import datetime as dt
+from datetime import datetime, timedelta
 
 import plotly.express as px
 
 def get_data(who):
     if who == "Rene":
         url_new = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_new.csv"
-        url_new = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\garminactivities_new.csv"
         url_2022 = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2022.csv"
         url_2023a = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2023a.csv"
         
-        url_new = "C:\\Users\\rcxsm\\Documents\\python_scripts\\streamlit_scripts\\input\\garminactivities_new.csv"
         df_new = pd.read_csv(url_new, delimiter=';')
         df_2022 = pd.read_csv(url_2022, delimiter=',')
         df_2023a = pd.read_csv(url_2023a, delimiter=',')
-        
+    
        
         for idx, d in enumerate([df_new, df_2022,df_2023a]):
             if idx == 0:
@@ -132,31 +132,73 @@ def calculate_average_speed(df):
 
 def in_between(df):
     print (df.dtypes)
-    what = st.sidebar.selectbox("Wat", [ "Tijd_h","Tijd_m","Tijd_seconds", "Afstand","Tijd", "gem_snelh","YYYY", "MM" ], index=3) 
-    min = df[what].min().astype(int) -1
-    max = df[what].max().astype(int) +1
-    van = st.sidebar.number_input("From", 0, max, 0)
-    tot = st.sidebar.number_input("Until (incl.)", 0, max, max)
-    # st.write(min,max)
-    # (van,tot)=  st.sidebar.slider("van", 0,100,value = (0,100))
-    # tot=  st.sidebar.slider("tot", 0,9999,1)
-    if what == "Tijd_m":
-        df = df[(df["Tijd_h"] == 0)].copy(deep=False)
+    what = st.sidebar.selectbox("Wat", [ "Tijd_h","Tijd_m","Tijd_seconds", "Afstand","Tijd", "gem_snelh","YYYY", "MM", "dates" ], index=3) 
+    if what == "dates":
+
+        #"Date_statistics"
         
-    df = select(df, what, van, tot)
-    df = df.sort_values(by=[what])
-    st.write(f"Aantal activiteiten {len(df)}")
-    
-    st.write(f"Totale afstand {df['Afstand'].sum()}" )
-    
-    seconds= df["Tijd_seconds"].sum()
-    m, s = divmod(seconds, 60)
-    h, m = divmod(m, 60)
-    ts = f'{h:d}:{m:02d}:{s:02d}'
+
+        start_ = "2023-04-01"
+        today = datetime.today().strftime("%Y-%m-%d")
+        from_ = st.sidebar.text_input("startdate (yyyy-mm-dd)", start_)
+
+        try:
+            FROM = dt.datetime.strptime(from_, "%Y-%m-%d").date()
+        except:
+            st.error("Please make sure that the startdate is in format yyyy-mm-dd")
+            st.stop()
+
+        until_ = st.sidebar.text_input("enddate (yyyy-mm-dd)", today)
+
+        try:
+            UNTIL = dt.datetime.strptime(until_, "%Y-%m-%d").date()
+        except:
+            st.error("Please make sure that the enddate is in format yyyy-mm-dd")
+            st.stop()
+
+        if FROM >= UNTIL:
+            st.warning("Make sure that the end date is not before the start date")
+            st.stop()
+        
+        field = "Datum_xy"
+        mask = (df[field].dt.date >= FROM) & (df[field].dt.date <= UNTIL)
+        df = df.loc[mask]
+        df = df.reset_index()
+        st.write(f"Totale afstand {df['Afstand'].sum()} km" )
+        st.write(f"Gemiddelde snelheid (ongewogen) {round(df['gem_snelh'].mean(),2)} km/h" )
+        total_time_sec = df['Tijd_seconds'].sum()
+        total_distance = df['Afstand'].sum()
+        
+        gem_snelh = total_distance / total_time_sec * 3600.0
+        
+        
+        st.write(f"Gemiddelde snelheid (gewogen) {round(gem_snelh,2)} km/h" )
+        st.write(df)
+    else:
+        min = df[what].min().astype(int) -1
+        max = df[what].max().astype(int) +1
+        van = st.sidebar.number_input("From", 0, max, 0)
+        tot = st.sidebar.number_input("Until (incl.)", 0, max, max)
+        # st.write(min,max)
+        # (van,tot)=  st.sidebar.slider("van", 0,100,value = (0,100))
+        # tot=  st.sidebar.slider("tot", 0,9999,1)
+        if what == "Tijd_m":
+            df = df[(df["Tijd_h"] == 0)].copy(deep=False)
+            
+        df = select(df, what, van, tot)
+        df = df.sort_values(by=[what])
+        st.write(f"Aantal activiteiten {len(df)}")
+        
+        st.write(f"Totale afstand {df['Afstand'].sum()}" )
+        
+        seconds= df["Tijd_seconds"].sum()
+        m, s = divmod(seconds, 60)
+        h, m = divmod(m, 60)
+        ts = f'{h:d}:{m:02d}:{s:02d}'
 
 
-    st.write(f"Totale tijd {ts}" )
-    st.write(df)
+        st.write(f"Totale tijd {ts}" )
+        st.write(df)
 
 def select(df, select_field, van, tot):
     #df = df[(df[select_field] >= round(van)) & ( df[select_field] <= round(tot) )].copy(deep=False)
