@@ -29,8 +29,6 @@ def get_data(who):
             else:
                 create_extra_date_time_columns(d,"not_new")
        
-        
-      
         df_2022 = rename_columns(df_2022)
         df_2023a = rename_columns(df_2023a)
            
