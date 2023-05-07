@@ -14,38 +14,30 @@ def get_data(who):
     if who == "Rene":
         url_oud = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_new.csv"
         url_2022 = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2022.csv"
+        url_2023a = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2023a.csv"
+        
         #url = "C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\streamlit_scripts\\input\\garminactivities_new.csv"
         df_oud = pd.read_csv(url_oud, delimiter=';')
         df_2022 = pd.read_csv(url_2022, delimiter=',')
+        df_2023a = pd.read_csv(url_2023a, delimiter=',')
         
-        df_oud["Datum_x"] = pd.to_datetime(df_oud["Datum"], format="%d-%m-%Y")
-        df_oud["Datum_xy"] = pd.to_datetime(df_oud["Datum"], format="%d-%m-%Y")
+       
+        for d in [df_oud, df_2022,df_2023a]:
+            create_extra_date_time_columns(d)
+       
         
+        for d in [df_2022,df_2023a]:
+            # todo : rename the columns in df_oud
+            df_2022 = rename_columns(df_2022)
+            df_2023a = rename_columns(df_2023a)
+        
+       
+        
+        df_tm_2022 = df_2022.append(df_oud, ignore_index=False)
 
-        df_2022["Leeg"] = None
+        df = df_20223a.append(df_tm_2022, ignore_index=False)
+
        
-        df_2022['Datum_x'] = pd.to_datetime(df_2022['Datum']).dt.date
-        df_2022["Datum_xy"] = pd.to_datetime(df_2022["Datum"], format="%Y-%m-%d %H:%M:%S")
-        
-        df_2022["Tijd_xy"] = pd.to_datetime(df_2022["Datum"], format="%Y-%m-%d %H:%M:%S")
-        df_2022['Tijd_x'] = pd.to_datetime(df_2022['Tijd_xy']).dt.strftime('%H:%M:%S')
-        df_2022['Tijd_y'] = pd.to_datetime(df_2022['Tijd']).dt.time
-       
-        
-        df_2022['Gem_HS'] = df_2022['Gem. HS']
-        df_2022['Max_HS'] = df_2022['Max. HS']
-        df_2022["Gem_loopcadans"] = df_2022['Gem. loopcadans']
-        df_2022["Max_loopcadans"] = df_2022['Max. loopcadans']
-        df_2022["Gemiddeld_tempo"] = df_2022['Gemiddeld tempo']
-        df_2022["gem_snelh"] = None
-        df_2022 = df_2022[["Activiteittype","Leeg","Datum_xy","Tijd_x","Titel","Afstand","Tijd","gem_snelh","Gem_HS","Max_HS","Gem_loopcadans","Max_loopcadans","Gemiddeld_tempo"]]
-       
-        df = df_2022.append(df_oud, ignore_index=False)
-        df['Tijd_h'] = pd.to_datetime(df['Tijd']).dt.hour
-        df['Tijd_m'] = pd.to_datetime(df['Tijd']).dt.minute
-        df['Tijd_s'] = pd.to_datetime(df['Tijd']).dt.second
-        df['Tijd_seconds'] = (df['Tijd_h']*3600) + (df['Tijd_m']*60) + df['Tijd_s'] 
-        df['gem_snelh'] = df['Afstand'] / df['Tijd_seconds'] * 3600.0 
 
         df = filter_df(df, "Activiteittype",1).copy(deep=False)
         
@@ -61,6 +53,29 @@ def get_data(who):
         st.stop()
     df = last_manipulations_df(df).copy(deep=False)
 
+    return df
+
+def create_extra_date_time_columns(df):
+    df['Datum_x'] = pd.to_datetime(df['Datum']).dt.date
+    df["Datum_xy"] = pd.to_datetime(df["Datum"], format="%Y-%m-%d %H:%M:%S")
+        
+    df["Tijd_xy"] = pd.to_datetime(df["Datum"], format="%Y-%m-%d %H:%M:%S")
+    df['Tijd_x'] = pd.to_datetime(df['Tijd_xy']).dt.strftime('%H:%M:%S')
+    df['Tijd_y'] = pd.to_datetime(df['Tijd']).dt.time
+    df['Tijd_h'] = pd.to_datetime(df['Tijd']).dt.hour
+    df['Tijd_m'] = pd.to_datetime(df['Tijd']).dt.minute
+    df['Tijd_s'] = pd.to_datetime(df['Tijd']).dt.second
+    df['Tijd_seconds'] = (df['Tijd_h']*3600) + (df['Tijd_m']*60) + df['Tijd_s'] 
+    df['gem_snelh'] = df['Afstand'] / df['Tijd_seconds'] * 3600.0 
+
+def rename_columns(df):
+    df['Gem_HS'] = df['Gem. HS']
+    df['Max_HS'] = df['Max. HS']
+    df["Gem_loopcadans"] = df['Gem. loopcadans']
+    df["Max_loopcadans"] = df['Max. loopcadans']
+    df["Gemiddeld_tempo"] = df['Gemiddeld tempo']
+    df["gem_snelh"] = None
+    df = df[["Activiteittype","Leeg","Datum_xy","Tijd_x","Titel","Afstand","Tijd","gem_snelh","Gem_HS","Max_HS","Gem_loopcadans","Max_loopcadans","Gemiddeld_tempo"]]
     return df
 
 def last_manipulations_df(df):
