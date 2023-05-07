@@ -1,7 +1,7 @@
 # import streamlit as st
 
 # from re import X
-# import pandas as pd
+import pandas as pd
 # import plotly.express as px
 # import plotly
 # from plotly.subplots import make_subplots
@@ -335,6 +335,100 @@ def calculate_nettoloon(maand_inkomen,aantal_maanden,rekenhuur,huishouden,number
     return regel
 
 # #print(calculate_nettoloon_simpel_2022 (1000+(2150*7*1.18)))
+def main_aantal_maanden():
 
-for i in range(4,9):
-    calculate_nettoloon_simpel(2150*1.18,i)
+    # Define the salaries and number of months
+    #salaries = range(1000, 11000, 1000)
+    salaries = range(1500, 5000, 200)
+    num_months = range(1, 13)
+
+    # Create an empty DataFrame
+    df = pd.DataFrame()
+
+    # Add the months as columns
+    for month in num_months:
+        df[f"{month} months"] = ""
+
+    # Add the salaries and percentage of salary earned per month for each month
+    for salary in salaries:
+        row = []
+        sup =0
+        for month in num_months:
+            
+            if month == 0:
+                percentage = 0
+            else:
+                bruto = month*salary*1.18
+                netto = calculate_nettoloon_simpel(salary*1.18,month)
+                te_betalen = bruto - netto
+                percentage = round(te_betalen/bruto*100,1)
+            # zet de percentage te betalen belasting in een tabel
+            #row.append(f"{percentage:.1f}%")
+
+            # zet het extra netto salaris voor een maand meer werken in een tabel
+            row.append(int(netto-sup))
+            sup= netto
+
+            # zet de te betalen belasting in een tabel
+            #row.append(f"{int((te_betalen/month)/salary*100)}%")
+
+            
+        
+        df_row = pd.Series(row, index=df.columns)
+        df = pd.concat([df, df_row.to_frame().T])
+
+    # Set the index to the salaries
+    df.set_index(pd.Index([f"EUR {salary}" for salary in salaries]), inplace=True)
+
+    # Display the DataFrame
+    print(df)
+
+def main_aantal_uren_per_week():
+
+    # Define the salaries and number of months
+    #salaries = range(1000, 11000, 1000)
+    salaries = range(1500, 2500, 100)
+    parttime_perc = range(10,110,10)
+
+    # Create an empty DataFrame
+    df = pd.DataFrame()
+
+    # Add the months as columns
+    for perc in parttime_perc:
+        df[f"{perc} %"] = ""
+
+    # Add the salaries and percentage of salary earned per month for each month
+    for salary in salaries:
+        row = []
+        sup =0
+        for perc in parttime_perc:
+            
+            bruto = perc*salary*1.18/100*12
+            netto = calculate_nettoloon_simpel(perc*salary*1.18/100,12)
+            te_betalen = bruto - netto
+            percentage = round(te_betalen/bruto*100,1)
+            #row.append(netto)
+            # zet de percentage te betalen belasting in een tabel
+            #row.append(f"{percentage:.1f}%")
+
+            # zet het extra netto salaris voor een maand meer werken in een tabel
+            row.append(int(netto-sup))
+            sup= netto
+
+            # zet de te betalen belasting in een tabel
+            #row.append(f"{int((te_betalen/month)/salary*100)}%")
+
+            
+        
+        df_row = pd.Series(row, index=df.columns)
+        df = pd.concat([df, df_row.to_frame().T])
+
+    # Set the index to the salaries
+    df.set_index(pd.Index([f"EUR {salary}" for salary in salaries]), inplace=True)
+
+    # Display the DataFrame
+    print(df)
+
+   
+
+main_aantal_uren_per_week()

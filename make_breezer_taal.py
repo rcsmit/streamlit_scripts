@@ -2,6 +2,29 @@
 import streamlit as st
 from random import random
 
+def by_chat_gpt(string, replace_to_numbers, runif):
+    s1 = {"e": "3", "i": "!", "o": "0", "a": "4"}
+
+    random_numbers = [random.randint(0, 99) for _ in range(len(string))] if replace_to_numbers else []
+
+    # MORE PYTHONIC
+    for i, s in enumerate(string):
+        if replace_to_numbers and random_numbers[i] < runif and s in s1:
+            new_string += s1[s]
+        else:
+            new_string += s.upper() if i % 2 == 0 else s
+
+
+    # even more pythonc
+    new_string = "".join(
+        s1.get(s, s.upper() if i % 2 == 0 else s)
+        if replace_to_numbers and r < runif else s.upper() if i % 2 == 0 else s
+        for i, (s, r) in enumerate(zip(string, random_numbers))
+    )
+
+    
+    return new_string
+
 def make_breezer_taal(string, replace_to_numbers, runif):
     """Make breezerlanguage. 
 
@@ -31,6 +54,7 @@ def make_breezer_taal(string, replace_to_numbers, runif):
             new_string +=s
         teller +=1
     return new_string
+
 
 def main():
     st.header("Breezertaal converter")

@@ -32,7 +32,7 @@ def get_data(who):
             df_2023a = rename_columns(df_2023a)
         
        
-        
+        a
         df_tm_2022 = df_2022.append(df_oud, ignore_index=False)
 
         df = df_20223a.append(df_tm_2022, ignore_index=False)

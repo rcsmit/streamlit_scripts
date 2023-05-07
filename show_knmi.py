@@ -19,7 +19,6 @@ import plotly.express as px
 import math
 import plotly.graph_objects as go
 
-
 # INSPRIATION : https://weatherspark.com/m/52666/10/Average-Weather-in-October-in-Utrecht-Netherlands
 # https://radumas.info/blog/tutorial/2017/04/17/percentile-test.html
 def select_period_oud(df, field, show_from, show_until):
@@ -347,10 +346,23 @@ def show_per_maand(df, gekozen_weerstation, what_to_show_, groeperen, graph_type
                    mode='lines', name=f'{c}')
                    for c in df_pivoted.columns[1:]]
             else:
-                sma = [go.Scatter(x=[pd.Series(df_pivoted.index.values),df_pivoted.mmdd], y=df_pivoted[c],  
-                   mode='lines',  line=dict(width=.7), name=f'{c}')
-                    for c in df_pivoted.columns[1:]]
+                # sma = [go.Scatter(x=[pd.Series(df_pivoted.index.values),df_pivoted.mmdd], y=df_pivoted[c],  
+                #    mode='lines',  line=dict(width=.7), name=f'{c}')
+                #     for c in df_pivoted.columns[1:]]
         
+
+                        # create the traces
+                sma = []
+                list_years = df_pivoted.columns[1:]
+                try:
+                    highlight_year = st.sidebar.selectbox("Highlight year", list_years,len(list_years)-1)
+                except:
+                    pass
+                for i, col in enumerate(df_pivoted.columns[1:]):
+                    line_width = 0.7 if col != highlight_year  else 3  # make last column thicker
+                    trace = go.Scatter(x=[df_pivoted.index, df_pivoted.mmdd], y=df_pivoted[col],
+                                    mode='lines', line=dict(width=line_width), name=col)
+                    sma.append(trace)
 
             data = sma
             title = (f"{ what_to_show} -  {gekozen_weerstation}")
