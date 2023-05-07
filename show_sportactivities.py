@@ -12,32 +12,39 @@ import plotly.express as px
 
 def get_data(who):
     if who == "Rene":
-        url_oud = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_new.csv"
+        url_new = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_new.csv"
+        url_new = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\garminactivities_new.csv"
         url_2022 = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2022.csv"
         url_2023a = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2023a.csv"
         
-        #url = "C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\streamlit_scripts\\input\\garminactivities_new.csv"
-        df_oud = pd.read_csv(url_oud, delimiter=';')
+        url_new = "C:\\Users\\rcxsm\\Documents\\python_scripts\\streamlit_scripts\\input\\garminactivities_new.csv"
+        df_new = pd.read_csv(url_new, delimiter=';')
         df_2022 = pd.read_csv(url_2022, delimiter=',')
         df_2023a = pd.read_csv(url_2023a, delimiter=',')
         
        
-        for d in [df_oud, df_2022,df_2023a]:
-            create_extra_date_time_columns(d)
+        for idx, d in enumerate([df_new, df_2022,df_2023a]):
+            if idx == 0:
+                create_extra_date_time_columns(d,"new")
+            else:
+                create_extra_date_time_columns(d,"not_new")
        
         
-        for d in [df_2022,df_2023a]:
-            # todo : rename the columns in df_oud
-            df_2022 = rename_columns(df_2022)
-            df_2023a = rename_columns(df_2023a)
+      
+        df_2022 = rename_columns(df_2022)
+        df_2023a = rename_columns(df_2023a)
+           
+       
         
-       
-        a
-        df_tm_2022 = df_2022.append(df_oud, ignore_index=False)
+        df_tm_2022 = df_2022.append(df_new, ignore_index=False)
 
-        df = df_20223a.append(df_tm_2022, ignore_index=False)
+        df = df_2023a.append(df_tm_2022, ignore_index=False)
 
-       
+        df['Tijd_h'] = pd.to_datetime(df['Tijd']).dt.hour
+        df['Tijd_m'] = pd.to_datetime(df['Tijd']).dt.minute
+        df['Tijd_s'] = pd.to_datetime(df['Tijd']).dt.second
+        df['Tijd_seconds'] = (df['Tijd_h']*3600) + (df['Tijd_m']*60) + df['Tijd_s'] 
+        df['gem_snelh'] = df['Afstand'] / df['Tijd_seconds'] * 3600.0 
 
         df = filter_df(df, "Activiteittype",1).copy(deep=False)
         
@@ -55,18 +62,19 @@ def get_data(who):
 
     return df
 
-def create_extra_date_time_columns(df):
-    df['Datum_x'] = pd.to_datetime(df['Datum']).dt.date
-    df["Datum_xy"] = pd.to_datetime(df["Datum"], format="%Y-%m-%d %H:%M:%S")
+def create_extra_date_time_columns(df, what):
+    if what == "new":
+        df["Datum_x"] = pd.to_datetime(df["Datum"], format="%d-%m-%Y")
+        df["Datum_xy"] = pd.to_datetime(df["Datum"], format="%d-%m-%Y")
+    else:
+        df['Datum_x'] = pd.to_datetime(df['Datum']).dt.date
+        df["Datum_xy"] = pd.to_datetime(df["Datum"], format="%Y-%m-%d %H:%M:%S", infer_datetime_format=True)
         
-    df["Tijd_xy"] = pd.to_datetime(df["Datum"], format="%Y-%m-%d %H:%M:%S")
-    df['Tijd_x'] = pd.to_datetime(df['Tijd_xy']).dt.strftime('%H:%M:%S')
-    df['Tijd_y'] = pd.to_datetime(df['Tijd']).dt.time
-    df['Tijd_h'] = pd.to_datetime(df['Tijd']).dt.hour
-    df['Tijd_m'] = pd.to_datetime(df['Tijd']).dt.minute
-    df['Tijd_s'] = pd.to_datetime(df['Tijd']).dt.second
-    df['Tijd_seconds'] = (df['Tijd_h']*3600) + (df['Tijd_m']*60) + df['Tijd_s'] 
-    df['gem_snelh'] = df['Afstand'] / df['Tijd_seconds'] * 3600.0 
+        df["Tijd_xy"] = pd.to_datetime(df["Datum"], format="%Y-%m-%d %H:%M:%S")
+        df['Tijd_x'] = pd.to_datetime(df['Tijd_xy']).dt.strftime('%H:%M:%S')
+        df['Tijd_y'] = pd.to_datetime(df['Tijd']).dt.time
+        df["Leeg"] = None
+        df["gem_snelh"] = None
 
 def rename_columns(df):
     df['Gem_HS'] = df['Gem. HS']
