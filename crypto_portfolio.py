@@ -73,12 +73,14 @@ def make_scatter(df, name, y, color):
         line=dict(width=0.8,
                 color=f"rgba({color}, 0.8)"))
     return scat
-def plot(df, choicelist):
+def plot(df, choicelist,logarithmic):
     """Makethe plot
     Args:
         df ([type]): [description]
         choicelist ([type]): [description]
     """
+
+    # QUANTITY
     color = ["0,255,0", "255,0,0", "0,0,255", "255,255,0", "0,255,255", "255,0,255"]
 
     what = [[ "quantity_"+c, "quantity_"+c,color[i]] for  i,c  in enumerate(choicelist)]
@@ -119,7 +121,7 @@ def plot(df, choicelist):
     fig2 = go.Figure(data=data2, layout=layout)
     st.plotly_chart(fig2, use_container_width=True)
 
-        # create the figure
+    # KOERS BTC/ETH
     fig3 = go.Figure()
 
     # add the BTC trace
@@ -129,10 +131,19 @@ def plot(df, choicelist):
     fig3.add_trace(go.Scatter(x=df['Date'], y=df['close_ETH-USD'], name='ETH', yaxis='y2'))
 
     # set the layout
-    fig3.update_layout(title='BTC/ETH rates',
-                    yaxis=dict(title='BTC', titlefont=dict(color='blue')),
-                    yaxis2=dict(title='ETH', titlefont=dict(color='red'), overlaying='y', side='right'))
+    if logarithmic:
+        yaxis_type = 'log'
+    else:
+        yaxis_type = 'linear'
 
+    fig3.update_layout(
+        title='BTC/ETH rates',
+        yaxis=dict(title='BTC', titlefont=dict(color='blue'), type=yaxis_type),
+        yaxis2=dict(title='ETH', titlefont=dict(color='red'), overlaying='y', side='right', type=yaxis_type)
+    )
+
+    # Display the plot
+    
     # show the figure
     #fig3.show()
     st.plotly_chart(fig3, use_container_width=True)
@@ -175,20 +186,21 @@ def input_options():
     choicelist_ = ["BTC-USD", "ETH-USD", "XRP-USD", "LUNA1-USD", "SOL1-USD", "DOT1-USD", "DOGE-USD", "ADA-USD", "SHIB-USD", "LTC-USD", "LRC-USD", "CRO-USD"]
     choicelist = st.sidebar.multiselect("Which coins", choicelist_, ["BTC-USD", "ETH-USD"])
     interval_top = "1d"# st.sidebar.selectbox("Interval", [ "1m","2m","5m","15m","30m","60m","90m","1h","1d","5d","1wk","1mo","3mo"],8)
-
-    return  interval_top,choicelist
+    logarithmic = st.sidebar.selectbox("Y axis logarithmic", [True,False], index = 1)
+    
+    return  interval_top,choicelist, logarithmic
 
 
 def main():
     st.header("Crypto dashboard / watchlist of René Smit")
-    interval_top,choicelist= input_options()
+    interval_top,choicelist, logarithmic= input_options()
     df =  make_database(choicelist, interval_top)
     transactions = get_transactions()
 
     for choice in choicelist:
         df = calculate_assets(df, choice, transactions)
     st.write(df)
-    plot(df, choicelist)
+    plot(df, choicelist, logarithmic)
 
 if __name__ == "__main__":
     main()

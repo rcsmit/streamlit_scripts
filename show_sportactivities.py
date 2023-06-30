@@ -34,9 +34,11 @@ def get_data(who):
            
        
         
-        df_tm_2022 = df_2022.append(df_new, ignore_index=False)
+        #df_tm_2022 = df_2022.append(df_new, ignore_index=False)
+        df_tm_2022 = pd.concat([df_2022, df_new], ignore_index=False)
 
-        df = df_2023a.append(df_tm_2022, ignore_index=False)
+        #df = df_2023a.append(df_tm_2022, ignore_index=False)
+        df = pd.concat([df_2023a, df_tm_2022], ignore_index=False)
 
         df['Tijd_h'] = pd.to_datetime(df['Tijd']).dt.hour
         df['Tijd_m'] = pd.to_datetime(df['Tijd']).dt.minute
@@ -158,20 +160,7 @@ def in_between(df):
             st.warning("Make sure that the end date is not before the start date")
             st.stop()
         
-        field = "Datum_xy"
-        mask = (df[field].dt.date >= FROM) & (df[field].dt.date <= UNTIL)
-        df = df.loc[mask]
-        df = df.reset_index()
-        st.write(f"Totale afstand {df['Afstand'].sum()} km" )
-        st.write(f"Gemiddelde snelheid (ongewogen) {round(df['gem_snelh'].mean(),2)} km/h" )
-        total_time_sec = df['Tijd_seconds'].sum()
-        total_distance = df['Afstand'].sum()
-        
-        gem_snelh = total_distance / total_time_sec * 3600.0
-        
-        
-        st.write(f"Gemiddelde snelheid (gewogen) {round(gem_snelh,2)} km/h" )
-        st.write(df)
+        in_between_two_dates(df, FROM, UNTIL, True)
     else:
         min = df[what].min().astype(int) -1
         max = df[what].max().astype(int) +1
@@ -197,6 +186,35 @@ def in_between(df):
 
         st.write(f"Totale tijd {ts}" )
         st.write(df)
+
+def in_between_two_dates(df, FROM, UNTIL, output):
+
+    """Calculate various values in between dates
+
+    Returns:
+        _type_: number_of_activities, distance, avg_speed
+    """
+
+    field = "Datum_xy"
+    mask = (df[field].dt.date >= FROM) & (df[field].dt.date <= UNTIL)
+    df = df.loc[mask]
+    df = df.reset_index()
+    total_time_sec = df['Tijd_seconds'].sum()
+    total_distance = df['Afstand'].sum()
+        
+    gem_snelh = total_distance / total_time_sec * 3600.0
+            
+    if output:
+        st.write(f"Aantal activiteiten {len(df)}")
+        st.write(f"Totale afstand {round(df['Afstand'].sum(),1)} km" )
+        st.write(f"Gemiddelde snelheid (ongewogen) {round(df['gem_snelh'].mean(),2)} km/h" )
+        
+            
+        st.write(f"Gemiddelde snelheid (gewogen) {round(gem_snelh,2)} km/h" )
+        st.write(df)
+    else:
+        return len(df), round(df['Afstand'].sum(),1), round(gem_snelh,2)
+
 
 def select(df, select_field, van, tot):
     #df = df[(df[select_field] >= round(van)) & ( df[select_field] <= round(tot) )].copy(deep=False)
@@ -326,6 +344,63 @@ def find_km_per_year(df):
     show_df(df_afstand_jaar[["YYYY", "count"]], True, "Aantal keren per jaar")
 
     show_df(df_afstand_jaar[["YYYY", "afstand_per_keer_per_jaar"]], True, "Afstand per keer per jaar")
+def add_end_date(shoe_list):
+        
+    # Get the current date
+    today = dt.date.today()
+
+    # Iterate over the shoe_list list
+    for i in range(len(shoe_list)):
+        # Get the current event and date
+        date_str = shoe_list[i][0]
+        
+        # Convert the date string to a datetime object
+        date = dt.datetime.strptime(date_str, '%d/%m/%Y').date()
+        
+        # Calculate the previous date
+        if i < len(shoe_list) - 1:
+            next_date = dt.datetime.strptime(shoe_list[i+1][0], '%d/%m/%Y').date()
+            previous_date = next_date - dt.timedelta(days=1)
+        else:
+            previous_date = today - dt.timedelta(days=1)
+        
+        # Add the previous date to the shoe_list list
+        shoe_list[i].append(previous_date.strftime('%d/%m/%Y'))
+    return shoe_list
+
+def shoe_distances(df):
+    shoe_list = [["28/07/2010", "brooks gts9"],
+                ["15/01/2011", "saucony pro ride 3"], #roodgrijswit
+                ["18/04/2011", "Nike Lunar Eclips+"],  #grijsgeelpaars
+                ["09/03/2012", "Nike Lunar Eclips"], # water reppelent
+                ["25/04/2013", "nike lunareclipse 3"], #zwart geel
+                ["31/07/2014", "nike lunarglide 6"],
+                ["13/03/2016", "Lunarglide 7"],
+                ["14/09/2018", "lunarglide 9"],
+                ["14/04/2021", "Zoom 37"],
+                ["14/02/2023", "Asics GT2000 10"]]
+    shoe_list = add_end_date(shoe_list)
+    table = []
+    for shoe in shoe_list:
+        
+        start = dt.datetime.strptime(shoe[0], '%d/%m/%Y').date()
+        until =  dt.datetime.strptime(shoe[2], '%d/%m/%Y').date()
+        # Calculate the difference in days
+        days_diff = (until - start).days
+
+        # Calculate the difference in years
+        years_diff = until.year - start.year
+
+        
+        number_of_activities, distance, avg_speed = in_between_two_dates(df, start ,  until, False )
+        table.append([shoe[1],shoe[0],shoe[2],days_diff,round(days_diff/365,1), number_of_activities, distance, avg_speed])
+    cols = ["shoe_name", "start", "end", "days", "years", "activities", "distance", "avg_speed"]
+    
+    # Create the DataFrame
+    df = pd.DataFrame(table, columns=cols)
+
+    # Print the DataFrame
+    st.write(df)
 
 
 def find_km_per_month_per_year(df):
@@ -433,7 +508,8 @@ def main():
             "show various scatters",
             "find activities in certain month",
             "show all activities",
-            "in between"
+            "in between",
+            "shoe distances"
             ]
 
     functies = [ find_km_per_year ,
@@ -449,7 +525,8 @@ def main():
         show_various_scatters ,
         find_activities_in_month ,
         show_all,
-        in_between
+        in_between,
+        shoe_distances
          ]
     st.sidebar.subheader("Menu")
     menu_choice = st.sidebar.radio("",lijst, index=0)

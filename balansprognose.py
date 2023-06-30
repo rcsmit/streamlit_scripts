@@ -212,7 +212,7 @@ class CommonParameters:
         #      x.return_flighttickets, x.flighttickets_visa_run,extras, debug):
         
         self.proposed_salary_month = st.sidebar.number_input(
-            "Proposed salary per month", 0, 10000, 2150
+            "Proposed salary per month", 0, 10000, 2130
         )
         self.fixed_monthly_costs = st.sidebar.number_input(
             "Fixed monthly costs ('vaste lasten')", 0, 10000, 80
@@ -225,20 +225,20 @@ class CommonParameters:
         )
 
         self.monthly_costs_nl = st.sidebar.number_input(
-            "Monthly costs NL working", 0, 10000, 350
+            "Monthly costs NL working", 0, 10000, 450
         )
         self.various_nl = st.sidebar.number_input("Various NL (Total)", 0, 10000, 200)
         self.monthly_costs_asia = st.sidebar.number_input(
             "Monthly costs Asia", 0, 10000, 650)
         
-        self.insurance_asia = st.sidebar.number_input("Travel insurance Asia (per month)", 0, 10000, 70)
+        self.insurance_asia = st.sidebar.number_input("Travel insurance Asia (per month)", 0, 10000, 75)
         self.various_asia = st.sidebar.number_input("Various Asia total", 0, 10000, 200)
         self.flight_tickets_asia = st.sidebar.number_input(
             "Flight tickets Asia (per 3 mnd)", 0, 10000, 200
         )  # per 3 mnd  = (int(i/3)) * flight_tickets_asia
         self.visas_asia = st.sidebar.number_input("Visas Asia", 0, 10000, 100)
         self.return_flighttickets = st.sidebar.number_input(
-            "Return Flights NL-Asia", 0, 10000, 1100
+            "Return Flights NL-Asia", 0, 10000, 1200
         )
         self.flighttickets_visa_run = st.sidebar.number_input(
             "Flight tickets Visa Runs (total)", 0, 10000, 0

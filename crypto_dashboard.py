@@ -227,100 +227,111 @@ def draw_buy_sell_candlestick_close(df, buy_price, sell_price, x_as_label):
 
     return buy,sell,candlestick,close
 
-def plot_trendline(df, choice,m,b, std, x_as_label):
+def plot_trendline(df, choice,m,b, std, x_as_label,  logarithmic):
+    if logarithmic:
+        close = go.Scatter(
+            name="Close",
+            x=df[x_as_label],
+            y=df["Close"],
+            mode='lines',
+            line=dict(width=0.75,color='rgba(0,0,255, 1)'))
+            
+        data = [close]
+        title = f"{choice} (y axis logarithmic)"
+    
+    else:
+        low = go.Scatter(
+            name='Low',
+            x=df[x_as_label],
+            y=df['Low'] ,
+            mode='lines',
+            line=dict(width=0.5,
+                    color="rgba(0,0,255, 0.5)"),
+            fillcolor='rgba(68, 68, 68, 0.2)',
+            fill='tonexty')
 
-    low = go.Scatter(
-        name='Low',
-        x=df[x_as_label],
-        y=df['Low'] ,
-        mode='lines',
-        line=dict(width=0.5,
-                color="rgba(0,0,255, 0.5)"),
-        fillcolor='rgba(68, 68, 68, 0.2)',
-        fill='tonexty')
+        close = go.Scatter(
+            name="Close",
+            x=df[x_as_label],
+            y=df["Close"],
+            mode='lines',
+            line=dict(width=0.75,color='rgba(0,0,255, 0.8)'),
+            fillcolor='rgba(68, 68, 68, 0.2)',
+            fill='tonexty')
+    
+        high = go.Scatter(
+            name='High',
+            x=df[x_as_label],
+            y=df['High'] ,
+            mode='lines',
+            line=dict(width=0.5,
+                    color="rgba(0,0,255, 0.5)"),
+            fillcolor='rgba(68, 68, 68, 0.1)',
+            )
 
-    close = go.Scatter(
-        name="Close",
-        x=df[x_as_label],
-        y=df["Close"],
-        mode='lines',
-        line=dict(width=0.75,color='rgba(0,0,255, 0.8)'),
-        fillcolor='rgba(68, 68, 68, 0.2)',
-        fill='tonexty')
+        trendline_low_2 = go.Scatter(
+            name='trendline low 2',
+            x=df[x_as_label],
+            y=df['trendline_low_2'] ,
+            mode='lines',
+            line=dict(width=0.5,
+                    color="rgba(255, 255, 0, 0.8)"),
+            fillcolor='rgba(255,255,0,0.2)',
+            fill='tonexty')
 
-    high = go.Scatter(
-        name='High',
-        x=df[x_as_label],
-        y=df['High'] ,
-        mode='lines',
-        line=dict(width=0.5,
-                color="rgba(0,0,255, 0.5)"),
-        fillcolor='rgba(68, 68, 68, 0.1)',
-        )
+        trendline_low_1 = go.Scatter(
+            name='trendline low 2',
+            x=df[x_as_label],
+            y=df['trendline_low_1'] ,
+            mode='lines',
+            line=dict(width=0.5,
+                    color="rgba(255, 255, 0, 0.0)"),
+            fillcolor='rgba(255,255,0, 0.4)',
+            fill='tonexty')
 
-    trendline_low_2 = go.Scatter(
-        name='trendline low 2',
-        x=df[x_as_label],
-        y=df['trendline_low_2'] ,
-        mode='lines',
-        line=dict(width=0.5,
-                color="rgba(255, 255, 0, 0.8)"),
-        fillcolor='rgba(255,255,0,0.2)',
-        fill='tonexty')
-
-    trendline_low_1 = go.Scatter(
-        name='trendline low 2',
-        x=df[x_as_label],
-        y=df['trendline_low_1'] ,
-        mode='lines',
-        line=dict(width=0.5,
-                color="rgba(255, 255, 0, 0.0)"),
-        fillcolor='rgba(255,255,0, 0.4)',
-        fill='tonexty')
-
-    trendline = go.Scatter(
-        name="trendline",
-        x=df[x_as_label],
-        y=df["trendline"],
-        mode='lines',
-        line=dict(width=0.9,color='rgba(255,165,0,1)'),
-        fillcolor='rgba(255,255,0,0.4)',
-        fill='tonexty'
-        )
-
-    trendline_high_1 = go.Scatter(
-        name='trendline high 1',
-        x=df[x_as_label],
-        y=df['trendline_high_1'] ,
-        mode='lines',
-        line=dict(width=0.5,
-                color="rgba(255, 255, 0, 0.0)"),
-        fillcolor='rgba(255,255,0, 0.2)',
+        trendline = go.Scatter(
+            name="trendline",
+            x=df[x_as_label],
+            y=df["trendline"],
+            mode='lines',
+            line=dict(width=0.9,color='rgba(255,165,0,1)'),
+            fillcolor='rgba(255,255,0,0.4)',
             fill='tonexty'
-        )
-    trendline_high_2 = go.Scatter(
-        name='trendline high 2',
-        x=df[x_as_label],
-        y=df['trendline_high_2'] ,
-        mode='lines',
-        line=dict(width=0.5,
-                color="rgba(255, 255, 0, 0.8)"),
-        fillcolor='rgba(255,255,0, 0.0)',
-            fill='tonexty'
+            )
 
-        )
+        trendline_high_1 = go.Scatter(
+            name='trendline high 1',
+            x=df[x_as_label],
+            y=df['trendline_high_1'] ,
+            mode='lines',
+            line=dict(width=0.5,
+                    color="rgba(255, 255, 0, 0.0)"),
+            fillcolor='rgba(255,255,0, 0.2)',
+                fill='tonexty'
+            )
+        trendline_high_2 = go.Scatter(
+            name='trendline high 2',
+            x=df[x_as_label],
+            y=df['trendline_high_2'] ,
+            mode='lines',
+            line=dict(width=0.5,
+                    color="rgba(255, 255, 0, 0.8)"),
+            fillcolor='rgba(255,255,0, 0.0)',
+                fill='tonexty'
 
+            )
 
-
-    data = [high, close, low,trendline_high_2,trendline_high_1, trendline, trendline_low_1,trendline_low_2 ]
-
+        title = f"{choice} | trendline = {round(m,1)} * x + {round(b,1)} | std = {round(std,2)}"
+        data = [high, close, low,trendline_high_2,trendline_high_1, trendline, trendline_low_1,trendline_low_2 ]
+        
     layout = go.Layout(
         yaxis=dict(title="USD"),
-        title=f"{choice} | trendline = {round(m,1)} * x + {round(b,1)} | std = {round(std,2)}",)
+        title=title,)
         #, xaxis=dict(tickformat="%d-%m")
+    
     fig1 = go.Figure(data=data, layout=layout)
-
-
+    if logarithmic:
+        fig1.update_layout(        yaxis_type='log'    )
     fig1.update_layout(xaxis=dict(tickformat="%d-%m-%Y"))
 
     #fig.show()
@@ -529,17 +540,17 @@ def main():
 
 
 
-    period_top, interval_top, period_left, interval_left, period_right, interval_right, which_to_show, time_zone, wdw, center_boll, z1, z2, ma1, ma2, choicelist = input_options()
+    period_top, interval_top, period_left, interval_left, period_right, interval_right, which_to_show, time_zone, wdw, center_boll, z1, z2, ma1, ma2, choicelist,logarithmic = input_options()
     # choicelist = ["BTC-USD"]
     for choice in choicelist:
-        show_graph_in_column(time_zone, wdw, center_boll, z1, z2, choice, period_top, interval_top,"top", ma1, ma2)
+        show_graph_in_column(time_zone, wdw, center_boll, z1, z2, choice, period_top, interval_top,"top", ma1, ma2, logarithmic)
 
         col1, col2 = st.columns(2)
         with col1:
-            show_graph_in_column(time_zone, wdw, center_boll, z1, z2, choice, period_left, interval_left, which_to_show, ma1, ma2)
+            show_graph_in_column(time_zone, wdw, center_boll, z1, z2, choice, period_left, interval_left, which_to_show, ma1, ma2, logarithmic)
 
         with col2:
-            show_graph_in_column(time_zone, wdw, center_boll, z1, z2,  choice, period_right, interval_right, which_to_show, ma1, ma2)
+            show_graph_in_column(time_zone, wdw, center_boll, z1, z2,  choice, period_right, interval_right, which_to_show, ma1, ma2, logarithmic)
         st.markdown("<hr", unsafe_allow_html=True)
     show_info()
 
@@ -560,7 +571,9 @@ def input_options():
     period_right = st.sidebar.selectbox("Period ", ["1d","5d","1mo","3mo","6mo","1y","2y","5y","10y","ytd","max"], 0)
     interval_right =st.sidebar.selectbox("Interval", [ "1m","2m","5m","15m","30m","60m","90m","1h","1d","5d","1wk","1mo","3mo"],0)
     which_to_show = st.sidebar.selectbox("Which to show", ["Bollinger", "MACD", "Both"],2)
-    time_zone = st.sidebar.selectbox("Tijdzone", ["Europe/Amsterdam", "Asia/Bangkok"],1)
+    logarithmic = st.sidebar.selectbox("Y axis logarithmic", [True,False], index = 1)
+    
+    time_zone = st.sidebar.selectbox("Tijdzone", ["CET", "CEST", "ICT"],1)
     wdw = int( st.sidebar.number_input("Window Moving Average",2,60,20))
     center_boll = st.sidebar.selectbox("Center Moving Average", [True, False], index=1)
     z1 = st.sidebar.number_input("Z-value 1", 0.0,3.0,1.0)
@@ -568,7 +581,7 @@ def input_options():
     ma1=st.sidebar.number_input("MA1 (short)", 1,100,12 )
     ma2=st.sidebar.number_input("MA1 (short)", 1,100,26)
 
-    return period_top, interval_top, period_left,interval_left,period_right,interval_right,which_to_show,time_zone,wdw,center_boll,z1,z2,ma1,ma2,choicelist
+    return period_top, interval_top, period_left,interval_left,period_right,interval_right,which_to_show,time_zone,wdw,center_boll,z1,z2,ma1,ma2,choicelist, logarithmic
 
 def show_info():
     st.write()
@@ -653,7 +666,7 @@ def show_plot_macd(df,choice,x_as_label, ma1, ma2):
                         #st.info(f"{choice} not interesting" )
 
 
-def show_graph_in_column(time_zone, wdw, center_boll, z1, z2,  choice, period, interval, which_to_show, ma1, ma2):
+def show_graph_in_column(time_zone, wdw, center_boll, z1, z2,  choice, period, interval, which_to_show, ma1, ma2, logarithmic):
     ma1,ma2 = int(ma1), int(ma2)
     interval_datetime = ["1m","2m","5m","15m","30m","60m","90m","1h"]
     if interval in interval_datetime:
@@ -665,11 +678,12 @@ def show_graph_in_column(time_zone, wdw, center_boll, z1, z2,  choice, period, i
     if df is not None:
         df, m,b,std= calculate_various_columns_df(df, wdw, center_boll, z1,z2)
 
-        if x_as_label == "Datetime":
-            df['Datetime'] = df['Datetime'].dt.tz_convert(time_zone)
-
+        # if x_as_label == "Datetime":
+        #     #df['Datetime'] = df['Datetime'].dt.tz_convert(time_zone)
+        #     df['Datetime'] = pd.to_datetime(df['Datetime']).dt.tz_localize('time_zone')
+        #     df['Date'] = pd.to_datetime(df['Date']).dt.tz_localize('UTC')
         if which_to_show=="top":
-            plot_trendline(df, choice,m,b,std, x_as_label)
+            plot_trendline(df, choice,m,b,std, x_as_label, logarithmic)
 
         if which_to_show =="Bollinger" or which_to_show =="Both":
 
@@ -681,3 +695,14 @@ def show_graph_in_column(time_zone, wdw, center_boll, z1, z2,  choice, period, i
 main()
 
 # https://towardsdatascience.com/detection-of-price-support-and-resistance-levels-in-python-baedc44c34c9
+
+# De berekening van de MACD verloopt als volgt:
+
+# MA1 = Exponentiële Moving Average op basis van slotkoersen, over periode X, is standaard 12 dagen
+# MA2 = Exponentiële Moving Average op basis van slotkoersen, over periode X, is standaard 26 dagen
+# Bereken het verschil van deze Moving Averages:
+
+# MACD1 = MA1 - MA2
+# Neem nu opnieuw een Moving Average van deze waarde:
+
+# MACD2 = Exponentiële Moving Average berekend uit (MACD1) op basis van de laatste X-waardes, standaard 9.
