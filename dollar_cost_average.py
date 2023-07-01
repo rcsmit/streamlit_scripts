@@ -105,6 +105,11 @@ def make_plots(results_df, investment_interval, initial_investment):
     # Create line graphs for each column
     for column in columns_to_plot:
         fig = px.line(results_df, x='Date', y=column, title=column)
+        if column == "rendement (%)":
+        # Add horizontal line at y = 100
+            fig.add_shape(type="line", x0=results_df['Date'].min(), x1=results_df['Date'].max(),
+                        y0=100, y1=100, line=dict(color="red", dash="dash"))
+
         st.plotly_chart(fig)
 
    
