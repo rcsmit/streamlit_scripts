@@ -101,7 +101,7 @@ def make_plots(results_df, investment_interval, initial_investment):
     
 
     st.plotly_chart(fig)
-    columns_to_plot = ["Bitcoin Rate","Investment Amount (BTC)", "Total Investments (BTC)","rendement (%)"]                
+    columns_to_plot = ["rendement (%)","Bitcoin Rate","Investment Amount (BTC)", "Total Investments (BTC)"]                
     # Create line graphs for each column
     for column in columns_to_plot:
         fig = px.line(results_df, x='Date', y=column, title=column)
