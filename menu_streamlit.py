@@ -45,7 +45,8 @@ def main():
                 ["16. Exchange money", "exchange_money"],
                 ["17. Conscious communities", "conscious_communities"],
                 ["18. How Much Month I need to work", "balansprognose"],
-                ["19. Tarot Symbols", "tarot_symbols"]
+                ["19. Tarot Symbols", "tarot_symbols"],
+                ["20. Dollar Cost Average", "dollar_cost_average"]
 
                 
                 

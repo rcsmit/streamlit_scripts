@@ -105,7 +105,7 @@ def create_check_table_per_accotype(df, y):
     for acco in list_of_accotypes_:
         
         df_acco = df[df["acco_type"] == acco].reset_index()
-        df_acco = df_acco.groupby([df_acco["datum"]], sort=True).sum().reset_index()
+        df_acco = df_acco.groupby([df_acco["datum"]], sort=True)[["geel","wissel","new_arrival", "vertrek_no_clean", "vertrek_clean"]].sum().reset_index()
         #df_acco = df_acco.groupby(["datum"]["geel","wissel","new_arrival", "vertrek_no_clean", "vertrek_clean"], sort=True).sum().reset_index()
         df_acco = df_acco.assign(bezet_saldo=None)
         df_acco.loc[0, "bezet_saldo"] = 0
@@ -129,10 +129,13 @@ def create_check_table_per_accotype(df, y):
                     - df_acco.loc[i, "vertrek_clean"]
                 )
         df_acco["verschil_bezet"] = df_acco["bezet_theorie"] - df_acco["bezet_saldo"]
-     
+        
+        
         df_acco_test = df_acco[df_acco["verschil_bezet"] != 0]
         if len(df_acco_test) == 0:
             st.write(f"{y} - {acco} OK")
+            with st.expander("DF"):
+                st.write (df_acco)
            
         else:
             st.error(f"ERROR IN BOOKINGSSCHEMA {y} - {acco} ")
@@ -324,6 +327,10 @@ def make_booking_table(wb_2023):
                         acco_number = 645
                     if acco_number == "kal 25m2 654":
                         acco_number = 654
+                    if acco_number == "25m2 641":
+                        acco_number = 641
+                    if acco_number == "25m2 655":
+                        acco_number = 655
 
                     for c in columns_to_use[1:]:
                         cell_ = c + str(r)
@@ -978,7 +985,7 @@ def generate_info_all_years(df_mutation, years, selection_list_accos):
 
 def babypackanalyse(df, y):
     st.header(f"Babypack analyse - {y}")
-
+    df =df.copy()
     df["babypack_old"] = df["guest_name"].str.contains("baby").astype(int)
     df["kst"] = df["guest_name"].str.contains("kst").astype(int)
     df["bb"] = df["guest_name"].str.contains(" bb").astype(int)
@@ -1047,6 +1054,7 @@ def deken_analyse(df_bookingtable, year):
         df_bookingtable_filtered = df_bookingtable[
             df_bookingtable["guest_name"].str.match(".*[0-9]p$")
         ]
+        df_bookingtable_filtered = df_bookingtable_filtered.copy()
         # extract the number before 'xp' in each row and store it in a new column
         df_bookingtable_filtered["number_of_guests"] = df_bookingtable_filtered[
             "guest_name"
@@ -1077,7 +1085,7 @@ def deken_analyse(df_bookingtable, year):
         )
 
         # create a date range to cover all possible dates
-        date_range = pd.date_range(start="2022-06-15", end="2022-09-13", freq="D")
+        date_range = pd.date_range(start=f"{year}-06-15", end=f"{year}-09-13", freq="D")
 
         # initialize a dictionary to store the totals for each date
         totals = {}
@@ -1109,7 +1117,7 @@ def deken_analyse(df_bookingtable, year):
         )
         # plotly.offline.plot(fig)
         st.write(
-            "Freq table total  number_of_guests in Sahara start='2022-06-15', end='2022-09-13' "
+            f"Freq table total  number_of_guests in Sahara start='{year}-06-15', end='{year}-09-13' "
         )
         st.plotly_chart(fig, use_container_width=True)
         st.write(
@@ -1121,22 +1129,36 @@ def deken_analyse(df_bookingtable, year):
 
         # get list of unique dates
         # dates = df_bookingtable_filtered['checkin_date'].unique()
-        dates = pd.date_range(start="2022-06-15", end="2022-09-13", freq="D")
+        dates = pd.date_range(start=f"{year}-06-15", end=f"{year}-09-13", freq="D")
         # create empty dataframe to store results
         result_df = pd.DataFrame()
 
         # loop over dates and compute total number of guests in each room
+
         for date in dates:
             df_filtered = df_bookingtable_filtered[
                 (df_bookingtable_filtered["checkin_date"] <= date)
                 & (df_bookingtable_filtered["checkout_date"] > date)
-            ]
+            ].copy()
 
-            # result_df[date] = df_grouped
-
-            # df_grouped.columns = ['acco_number', 'number_of_guests', "date"]
+            # Set the value using .loc
             df_filtered["date"] = date
-            result_df = pd.concat([result_df, df_filtered])
+
+            # Concatenate the filtered DataFrame to the result_df
+            result_df = pd.concat([result_df, df_filtered], ignore_index=True)
+
+
+        # for date in dates:
+        #     df_filtered = df_bookingtable_filtered[
+        #         (df_bookingtable_filtered["checkin_date"] <= date)
+        #         & (df_bookingtable_filtered["checkout_date"] > date)
+        #     ]
+
+        #     # result_df[date] = df_grouped
+
+        #     # df_grouped.columns = ['acco_number', 'number_of_guests', "date"]
+        #     df_filtered["date"] = date
+        #     result_df = pd.concat([result_df, df_filtered])
         # transpose the result dataframe
 
         # df_grouped = result_df.groupby(['acco_number'])['number_of_guests'].sum().reset_index()
@@ -1150,6 +1172,15 @@ def deken_analyse(df_bookingtable, year):
         st.write("Bezetting per tent per dag")
         # display result
         st.write(df_pivot)
+
+        # Calculate the total number of guests per day
+        df_pivot['Total'] = df_pivot.sum(axis=1)
+
+        # Create the graph using Plotly Express
+        fig = px.line(df_pivot, x=df_pivot.index, y='Total', title='Total Number of Guests per Day')
+
+        # Show the graph
+        st.plotly_chart(fig)
     else:
         st.error(f"Geen boekingen in Sahara in jaar {year}")
 
@@ -1246,7 +1277,7 @@ def cleaning_numbers_period(df_bookingtable):
 def show_bookingtable_period(df):
     """Show and save a bookingtable for a certain period"""
     
-   
+    df = df.copy()
     #df_bookingtable = make_bookingtable_period()
     st.write(df)
     st.write(f"Aantal : {len(df)}")
@@ -1341,6 +1372,9 @@ def make_checkin_outlist(df_bookingtable):
 
     start_date = dt.datetime.strptime(date_to_check_from, "%Y-%m-%d").date()
     end_date = dt.datetime.strptime(date_to_check_until, "%Y-%m-%d").date()
+    if start_date > end_date:
+        st.error("Enddate cannot be before startdate")
+        st.stop()
     current_datetime = dt.datetime.now()
     current_datetime_str = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -1416,7 +1450,7 @@ def find_unequal_rows(df, columm_maxxton, column_csv, name_test):
         unequal_rows = unequal_rows[unequal_rows['First Name'] != 'Miraculous']
 
     if name_test == "Land van herkomst (obv distributiekanaal)" or name_test == "Land van herkomst (obv country)":
-        known_exceptions = [20945, 25927, 31007, 54432, 70038, 64860, 47840]
+        known_exceptions = [20945, 25927, 31007, 54432, 70038, 64860, 47840, 73200]
         unequal_rows = unequal_rows[~unequal_rows['Reservation Number'].isin(known_exceptions)]
 
 
@@ -1437,9 +1471,19 @@ def find_unequal_rows(df, columm_maxxton, column_csv, name_test):
         st.write(f"Number: {len(unequal_rows)}")
 
 def compare_files(data_csv, data_maxxton):
+
     """Compare the maxxton file with the data in Maxxton.
     """    
    
+    # SUPRESS WARNINGES
+    #  SettingWithCopyWarning: 
+    # A value is trying to be set on a copy of a slice from a DataFrame.
+    # Try using .loc[row_indexer,col_indexer] = value instead
+
+    # See the caveats in the documentation:
+    # https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+    data_maxxton = data_maxxton.copy()
+    data_csv = data_csv.copy()
 
     # Filter the DataFrame to remove rows where accommodation type starts with 'pitch'
     data_maxxton = data_maxxton[~data_maxxton["Accommodation Type"].str.startswith("Pitch")]
@@ -1496,7 +1540,7 @@ def compare_files(data_csv, data_maxxton):
     )
     data_csv = data_csv[data_csv["bookingsnumber"] != 0]
     # data_csv["language"] = data_csv["language"].str.upper()
-    data_csv.loc[:, "language"] = data_csv.loc[:,"language"].str.upper()
+    data_csv["language"] = data_csv.loc[:,"language"].str.upper()
     df = pd.merge(
         data_maxxton,
         data_csv,
@@ -1615,24 +1659,29 @@ def add_on_list(data_csv):
 
     # Set 'checkin_date' column as the index
     filtered_data.set_index('checkin_date', inplace=True)
-
+    
     # Resample the data by week, starting from Monday (M) and ending on Sunday (W-SUN)
-    weekly_table = filtered_data.resample('W-MON').sum()
-
+    weekly_table = filtered_data.resample('W-MON')['sng_linnen', 'dbl_linnen', 'kst', 'bb'].sum()
+    
     # Display the new table with summed values per week
     st.subheader("Add-ons per week")
     #st.write(weekly_table)
 
     # Calculate the sum of all rows in the weekly table
-    total_sum = weekly_table.sum(axis=0)
+    total_sum = weekly_table[['sng_linnen', 'dbl_linnen', 'kst', 'bb']].sum(axis=0)
 
     # Create a new DataFrame with the total sum as an extra row
     total_row = pd.DataFrame([total_sum], columns=weekly_table.columns, index=['Total'])
     table_with_total = pd.concat([weekly_table, total_row])
-
+    
     # Display the table with the total sum as an extra row
-    st.write(table_with_total)
+    st.write(table_with_total) 
+    #Serialization of dataframe to Arrow table was unsuccessful due to: 
+    # ("object of type <class 'str'> cannot be converted to int", 
+    # 'Conversion failed for column None with type object').
+    #  Applying automatic fixes for column types to make the dataframe Arrow-compatible.
 
+    
 
 def make_and_show_pivot_tables(df, df_bookingtable):
     show_omzet_per_maand_per_jaar(df)
@@ -1797,7 +1846,7 @@ def main():
             "Bookingtable",
             "Add-on list",
             "Cleaning numbers month",
-            "---- INTELLIGENCCE ---",
+            "---- INTELLIGENCE ---",
             "Analyse",
             "pivot tables",
             "occupation graph",
@@ -1847,6 +1896,8 @@ def main():
     #     )
     years = [2019, 2021, 2022, 2023]
     # years = st.sidebar.multiselect("Jaren", year_, [2021, 2022, 2023])
+
+    print (f"--- ({what_to_do}) ---")
     if what_to_do.startswith("---"):
         pass
     else:
@@ -1890,8 +1941,10 @@ def main():
             df_bookingtable_year =  df_bookingtable[df_bookingtable["year_int"] == y]
             show_info_number_of_days(df_bookingtable_year,y)
     elif what_to_do == "dekenanalyse":
-        df_bookingtable_year =  df_bookingtable[df_bookingtable["year_int"] == 2022]
-        deken_analyse(df_bookingtable_year, 2022)
+        for y in [2022,2023]:
+            st.subheader(f"Dekenanalyse {y}")
+            df_bookingtable_year =  df_bookingtable[df_bookingtable["year_int"] == y]
+            deken_analyse(df_bookingtable_year, y)
 
     elif what_to_do == "babypackanalyse" :
         df_bookingtable_year =  df_bookingtable[df_bookingtable["year_int"] == 2022]
