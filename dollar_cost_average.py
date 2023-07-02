@@ -177,7 +177,7 @@ def rendement_various_starting_dates(investment_interval, initial_investment):
                                            (1 / rendement_df['years']) - 1) * 100
 
     # deleting last row (always 0% rendement since you just bought it)
-    rendement_df = rendement_df.drop(df.index[-1])
+    rendement_df = rendement_df.iloc[:-1]
     
     
     # Plotting with Plotly
