@@ -205,7 +205,7 @@ def rendement_various_starting_dates(investment_interval, initial_investment):
     
     
     # Plotting with Plotly
-    for y_ in ['Rendement']: #'rendement per year_DCA', 'rendement per year_lumpsum' 
+    for y_ in ['Rendement','rendement per year_DCA']: #'rendement per year_DCA', 'rendement per year_lumpsum' 
         fig = px.line(rendement_df, x='Date', y=y_, markers=False)
         fig.add_shape(type="line", x0=results_df['Date'].min(), x1=results_df['Date'].max(),
                             y0=100, y1=100, line=dict(color="red", dash="dash"))
