@@ -128,12 +128,28 @@ def rendement_various_starting_dates(investment_interval, initial_investment):
     df = get_data ("BTC-USD","1d", "2017-01-01")
     df['Date'] = pd.to_datetime(df['Date'])
 
+    start_date_ = st.sidebar.text_input("Start date", '2017-01-01')
+    end_date_ = st.sidebar.text_input("End date", '2099-12-31')
     
-    st.subheader("Rendement with various starting dates (1st of month since 1/1/2017)")
     rendement_data = []
-    start_date = pd.Timestamp('2017-01-01')
-    end_date = pd.Timestamp.today()
-     
+    try:
+        start_date = pd.Timestamp(start_date_)
+        if end_date_ == '2099-12-31':
+            end_date = pd.Timestamp.today()
+        else:
+            end_date = pd.Timestamp(end_date_)
+    except:
+        st.error("Error. Is the date in the right format? (yyyy-mm-dd) ?")
+        st.stop()
+
+    df=df[(df['Date'] >= start_date) & (df['Date'] <= end_date ) ] 
+
+    if len(df)==0:
+        st.error("No values found. Is the start date before the end date?")
+        st.stop()
+    
+    st.subheader(f"Rendement with various starting dates (1st of month since {start_date_})")
+    
     date_range = pd.date_range(start=start_date, end=end_date, freq='MS')
     
     for i,date in enumerate(date_range):
@@ -187,8 +203,8 @@ def rendement_various_starting_dates(investment_interval, initial_investment):
                             y0=100, y1=100, line=dict(color="red", dash="dash"))
         fig.update_layout(title=y_, xaxis_title='Date', yaxis_title=y_)
         st.plotly_chart(fig)
+
     fig = px.line(df, x='Date', y='close_BTC-USD', markers=False)
-   
     fig.update_layout(title='BTC-USD', xaxis_title='Date', yaxis_title='BTC-USD')
     st.plotly_chart(fig)
 
