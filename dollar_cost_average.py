@@ -133,7 +133,7 @@ def rendement_various_starting_dates(investment_interval, initial_investment):
     rendement_data = []
     start_date = pd.Timestamp('2017-01-01')
     end_date = pd.Timestamp.today()
-    
+     
     date_range = pd.date_range(start=start_date, end=end_date, freq='MS')
     
     for i,date in enumerate(date_range):
