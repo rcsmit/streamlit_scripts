@@ -171,9 +171,13 @@ def rendement_various_starting_dates(investment_interval, initial_investment):
         total_investments_USD = results_df['Total Investments (USD)'].iloc[-1]
         total_portefeuille_value_USD = results_df['Total Portefeuille Value (USD)'].iloc[-1]
         bitcoin_rate = results_df['Bitcoin Rate'].iloc[-1]
+
+        lumpsum_result = total_investments_USD / results_df['Bitcoin Rate'].iloc[0] * bitcoin_rate
+
         rendement_data.append({'Date': date, 'Rendement': last_rendement, 'Bitcoin rate': bitcoin_rate,
                                'total_investments_USD':total_investments_USD,
-                               'total_portefeuille_value_USD':total_portefeuille_value_USD })
+                               'total_portefeuille_value_USD':total_portefeuille_value_USD,
+                               'lumpsum_result':lumpsum_result })
 
 
     rendement_df = pd.DataFrame(rendement_data)
@@ -188,7 +192,11 @@ def rendement_various_starting_dates(investment_interval, initial_investment):
     rendement_df['years'] = (today - rendement_df['Date']).dt.days / 365
 
     # Calculate the rendement per year using Pandas
-    rendement_df['rendement per year'] = ((rendement_df['total_portefeuille_value_USD'] / 
+    rendement_df['rendement per year_DCA'] = ((rendement_df['total_portefeuille_value_USD'] / 
+                                           rendement_df['total_investments_USD']) ** 
+                                           (1 / rendement_df['years']) - 1) * 100
+    
+    rendement_df['rendement per year_lumpsum'] = ((rendement_df['lumpsum_result'] / 
                                            rendement_df['total_investments_USD']) ** 
                                            (1 / rendement_df['years']) - 1) * 100
 
@@ -197,12 +205,20 @@ def rendement_various_starting_dates(investment_interval, initial_investment):
     
     
     # Plotting with Plotly
-    for y_ in ['Rendement', 'rendement per year', ]:
+    for y_ in ['Rendement']: #'rendement per year_DCA', 'rendement per year_lumpsum' 
         fig = px.line(rendement_df, x='Date', y=y_, markers=False)
         fig.add_shape(type="line", x0=results_df['Date'].min(), x1=results_df['Date'].max(),
                             y0=100, y1=100, line=dict(color="red", dash="dash"))
         fig.update_layout(title=y_, xaxis_title='Date', yaxis_title=y_)
         st.plotly_chart(fig)
+
+    fig = px.line(rendement_df, x='Date', y=['rendement per year_DCA', 'rendement per year_lumpsum'], markers=False)
+    fig.update_layout(title='DCA vs lumpsum', xaxis_title='Date')
+    fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
+    
+    st.plotly_chart(fig)
+
+
 
     fig = px.line(df, x='Date', y='close_BTC-USD', markers=False)
     fig.update_layout(title='BTC-USD', xaxis_title='Date', yaxis_title='BTC-USD')
