@@ -176,10 +176,10 @@ def rendement_various_starting_dates(investment_interval, initial_investment):
                                            rendement_df['total_investments_USD']) ** 
                                            (1 / rendement_df['years']) - 1) * 100
 
-    # Print the DataFrame
+    # deleting last row (always 0% rendement since you just bought it)
+    rendement_df = rendement_df.drop(df.index[-1])
     
-    with st.expander("Rendement DF"):
-        st.write(rendement_df)
+    
     # Plotting with Plotly
     for y_ in ['Rendement', 'rendement per year', ]:
         fig = px.line(rendement_df, x='Date', y=y_, markers=False)
@@ -191,6 +191,9 @@ def rendement_various_starting_dates(investment_interval, initial_investment):
    
     fig.update_layout(title='BTC-USD', xaxis_title='Date', yaxis_title='BTC-USD')
     st.plotly_chart(fig)
+
+    with st.expander("Rendement DF"):
+        st.write(rendement_df)
 
 
     
