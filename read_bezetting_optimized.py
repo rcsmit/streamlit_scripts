@@ -25,7 +25,6 @@ def clear_cache():
         st.write("Cache is cleared")
     st.stop()
 
-
 def find_fill_color():
 
     """Find fill color of a cell in 2023-tabblad
@@ -61,11 +60,9 @@ def find_fill_color():
     st.write(f"Cel = {cell}")
     st.write(f"{valx = } {theme=} {tint=}")
 
-
     st.write(f"{val = }")
     # hex_color = "%06x" % (val && 0xFFFFFF)
     # st.write(hex_color)
-
 
 @st.cache_data
 def retrieve_prijzen():
@@ -84,19 +81,18 @@ def retrieve_prijzen():
     df_prijzen = pd.read_csv(url_prijzen, delimiter=",")
     # df_prijzen_stacked = df_prijzen.stack()
     df_prijzen_stacked = df_prijzen.melt(
-        "acco_type", var_name="maand_int", value_name="price_per_night"
+        "acco_type", var_name="month_int", value_name="price_per_night"
     )
-    df_prijzen_stacked["maand_str"] = df_prijzen_stacked["maand_int"].astype(str)
+    df_prijzen_stacked["month_str"] = df_prijzen_stacked["month_int"].astype(str)
     # .set_index('acco_type').stack().rename(columns={'price_per_night':'month'})
     return df_prijzen_stacked
-
 
 def create_check_table_per_accotype(df, y):
     """Generate tables per accotype to see if the sheet is 100% correct (fill colors right*).
        The last column has to be zero
 
         * a booking starts with green
-        * a booking end with cyaan (wissel) or red (checkout)
+        * a booking end with cyaan (back_to_back) or red (checkout)
     Args:
         df (_type_): _description_
         y : year
@@ -110,12 +106,12 @@ def create_check_table_per_accotype(df, y):
     for acco in list_of_accotypes_:
         
         df_acco = df[df["acco_type"] == acco].reset_index()
-        df_acco = df_acco.groupby([df_acco["datum"]], sort=True)[["geel","wissel","new_arrival", "vertrek_no_clean", "vertrek_clean"]].sum().reset_index()
-        #df_acco = df_acco.groupby(["datum"]["geel","wissel","new_arrival", "vertrek_no_clean", "vertrek_clean"], sort=True).sum().reset_index()
+        df_acco = df_acco.groupby([df_acco["date"]], sort=True)[["geel","back_to_back","new_arrival", "vertrek_no_clean", "vertrek_clean"]].sum().reset_index()
+        #df_acco = df_acco.groupby(["date"]["geel","back_to_back","new_arrival", "vertrek_no_clean", "vertrek_clean"], sort=True).sum().reset_index()
         df_acco = df_acco.assign(bezet_saldo=None)
         df_acco.loc[0, "bezet_saldo"] = 0
         df_acco["bezet_theorie"] = (
-            df_acco["geel"] + df_acco["wissel"] + df_acco["new_arrival"]
+            df_acco["geel"] + df_acco["back_to_back"] + df_acco["new_arrival"]
         )
         for i in range(1, len(df_acco)):
             if y == "2023":
@@ -153,25 +149,24 @@ def create_check_table_per_accotype(df, y):
     if year_ok:
         st.write(f"{y} is okay")
 
-
 def generate_businessinfo(df_mutations):
     """print and return the business intelligence
     Args:
         df_mutations (_type_): df met info over accos
         df_mutation : df met de mutaties
-        y : jaar
+        y : year
         
     Returns:
         _type_: _description_
     """
     st.write(df_mutations)
-    aantal_boekingen = df_mutations["wissel"].sum() + df_mutations["new_arrival"].sum()
+    aantal_boekingen = df_mutations["back_to_back"].sum() + df_mutations["new_arrival"].sum()
 
     if (df_mutations["aantal"].mean() * len(df_mutations) - df_mutations["out_of_order"].sum()) != 0:
-        bezetting = round(
+        occupation = round(
             (
                 df_mutations["geel"].sum()
-                + df_mutations["wissel"].sum()
+                + df_mutations["back_to_back"].sum()
                 + df_mutations["new_arrival"].sum()
             )
             / (
@@ -183,20 +178,20 @@ def generate_businessinfo(df_mutations):
         )
 
     else:
-        bezetting = 0
+        occupation = 0
     aantal_overnachtingen = (
-        df_mutations["geel"].sum() + df_mutations["wissel"].sum() + df_mutations["new_arrival"].sum()
+        df_mutations["geel"].sum() + df_mutations["back_to_back"].sum() + df_mutations["new_arrival"].sum()
     )
 
-    if (df_mutations["wissel"].sum() + df_mutations["new_arrival"].sum()) != 0:
-        # De verblijfsduur is vertekend als je het per maand, per acco bekijkt in rustige maanden, zie bijv. bali, september 2019 (maar 1 aankomst, maar mensen die nog vanuit augustus aanwezig zijn)
+    if (df_mutations["back_to_back"].sum() + df_mutations["new_arrival"].sum()) != 0:
+        # De verblijfsduur is vertekend als je het per month, per acco bekijkt in rustige maanden, zie bijv. bali, september 2019 (maar 1 aankomst, maar mensen die nog vanuit augustus aanwezig zijn)
         verblijfsduur = round(
             (
                 df_mutations["geel"].sum()
-                + df_mutations["wissel"].sum()
+                + df_mutations["back_to_back"].sum()
                 + df_mutations["new_arrival"].sum()
             )
-            / (df_mutations["wissel"].sum() + df_mutations["new_arrival"].sum()),
+            / (df_mutations["back_to_back"].sum() + df_mutations["new_arrival"].sum()),
             2,
         )
 
@@ -205,7 +200,7 @@ def generate_businessinfo(df_mutations):
     omzet = df_mutations["omzet"].sum()
 
     st.write(f"{aantal_boekingen=}")
-    st.write(f"{bezetting=}")
+    st.write(f"{occupation=}")
     st.write(f"{aantal_overnachtingen=}")
     st.write(f"{verblijfsduur=}")
     st.write(f"{omzet=}")
@@ -242,7 +237,6 @@ def generate_columns_to_use():
     alphabet_to_use = alphabet_to_use[1:]
     return alphabet_to_use
 
-
 def add_row(
     list,
     acco_type,
@@ -250,8 +244,8 @@ def add_row(
     guest_name,
     checkin_date,
     checkout_date,
-    wissel_in,
-    wissel_uit,
+    back_to_back_in,
+    back_to_back_out,
 ):
     """Add a row to the bookingslist. Called from make_booking_table()
 
@@ -284,13 +278,12 @@ def add_row(
             guest_name,
             checkin_date,
             checkout_date,
-            wissel_in,
-            wissel_uit,
+            back_to_back_in,
+            back_to_back_out,
             number_of_days,
         ]
     )
     return list
-
 
 # @st.cache_data()
 def make_booking_table(wb_2023):
@@ -339,15 +332,15 @@ def make_booking_table(wb_2023):
 
                     for c in columns_to_use[1:]:
                         cell_ = c + str(r)
-                        datum_ = str(sh[c + "2"].value)
+                        date_ = str(sh[c + "2"].value)
 
                         try:
-                            datum2 = datetime.strptime(datum_, "%Y-%m-%d %M:%H:%S")
-                            datum = datetime.strftime(datum2, "%Y-%m-%d")
-                            month = datum2.month
-                            year = datum2.year
+                            date2 = datetime.strptime(date_, "%Y-%m-%d %M:%H:%S")
+                            date = datetime.strftime(date2, "%Y-%m-%d")
+                            month = date2.month
+                            year = date2.year
                         except Exception:
-                            datum = None
+                            date = None
                             month = None
                             year = None
 
@@ -361,17 +354,17 @@ def make_booking_table(wb_2023):
                         #     print (f"{sh} {r}  {c} {valx} {sh[c + str(r)].value}")
                         if valx == 9 or valx == "FF70AD47":  # licht groen
                             first_guest = True
-                            checkin_date = datum
+                            checkin_date = date
                             # if (guest_name == "" or guest_name == None) and first_guest == True:
                             #     guest_name = "ERROR"
                             # else:
                             guest_name = str(sh[c + str(r)].value)
                             #st.write(f"--{r}--{sh}---{val} --{cell_}- {guest_name}")
-                            wissel_in = False
+                            back_to_back_in = False
 
                         elif valx == "FFFF0000":  # rood
-                            checkout_date = datum
-                            wissel_uit = False
+                            checkout_date = date
+                            back_to_back_out = False
                             list = add_row(
                                 list,
                                 acco_type,
@@ -379,13 +372,13 @@ def make_booking_table(wb_2023):
                                 guest_name,
                                 checkin_date,
                                 checkout_date,
-                                wissel_in,
-                                wissel_uit,
+                                back_to_back_in,
+                                back_to_back_out,
                             )
                             guest_name = "_"
                         elif valx == "FF7030A0":  # paars
-                            checkout_date = datum
-                            wissel_uit = False
+                            checkout_date = date
+                            back_to_back_out = False
                             list = add_row(
                                 list,
                                 acco_type,
@@ -393,16 +386,16 @@ def make_booking_table(wb_2023):
                                 guest_name,
                                 checkin_date,
                                 checkout_date,
-                                wissel_in,
-                                wissel_uit,
+                                back_to_back_in,
+                                back_to_back_out,
                             )
                         elif valx == 5:  # bruin
                             pass
                         elif valx == 0 or valx == 6:  # zwart of grijs
                             pass
                         elif valx == "FF00B0F0":  # lichtblauw / cyaan
-                            checkout_date = datum
-                            wissel_uit = True
+                            checkout_date = date
+                            back_to_back_out = True
 
                             list = add_row(
                                 list,
@@ -411,12 +404,12 @@ def make_booking_table(wb_2023):
                                 guest_name,
                                 checkin_date,
                                 checkout_date,
-                                wissel_in,
-                                wissel_uit,
+                                back_to_back_in,
+                                back_to_back_out,
                             )
-                            checkin_date = datum
+                            checkin_date = date
                             guest_name = str(sh[c + str(r)].value)
-                            wissel_in = True
+                            back_to_back_in = True
 
                         elif valx == "FFFFFF00":  # geel / bezet
                             pass
@@ -430,8 +423,8 @@ def make_booking_table(wb_2023):
             "guest_name",
             "checkin_date",
             "checkout_date",
-            "wissel_in",
-            "wissel_uit",
+            "back_to_back_in",
+            "back_to_back_out",
             "number_of_days",
         ],
     )
@@ -440,7 +433,6 @@ def make_booking_table(wb_2023):
     # placeholder_what.empty()
     # placeholder_progress.empty()
     return df
-
 
 def extract_info(df):
     """Extracts nationality, guest name, linnen, babypack and bookingnumber and puts in a new column
@@ -466,7 +458,6 @@ def extract_info(df):
 
     # fill missing values with 'NL'
     df["language"] = df["language"].fillna("nl")
-
 
     df["guest_name_booking"] = df["guest_name"].str.split().str[0]
     # Extract the text and store it in a new column
@@ -495,18 +486,17 @@ def extract_info(df):
         (df["babypack_old"] == 1) | (df["kst"] == 1) | (df["bb"] == 1), 1, 0
     )
 
-    df["bookingsnumber"] = df["guest_name"].str.extract(r"(\d+)").fillna(0).astype(int)
+    df["booking_number"] = df["guest_name"].str.extract(r"(\d+)").fillna(0).astype(int)
     # Function to format the numbers
     def format_number(number):
         formatted_number = format(number, ",")
         return formatted_number.replace(",", "")
 
     # Apply the formatting function to the 'Number' column
-    df["bookingsnumber"] = df["bookingsnumber"].apply(format_number)
+    df["booking_number"] = df["booking_number"].apply(format_number)
     df["guest_name"] = df["guest_name"].str.replace(r'^de_\s', 'de', regex=True)
     df["guest_name"] = df["guest_name"].str.replace(r'^van de_\s', 'van de', regex=True)
     return df
-
 
 def show_info_from_bookingtable(df, year):
     """Print the languages, linnen and babypacks
@@ -522,11 +512,10 @@ def show_info_from_bookingtable(df, year):
     st.write(f"Total babypack {df['babypack'].sum()}")
     # get the frequency table for the 'values' column
 
-    st.subheader(f"Talenverdeling in {year}")
+    st.subheader(f"Distribution of languages in {year}")
     freq_table = df["language"].value_counts()
     st.write(freq_table)
-    st.write(f"Totaal aantal boekingen :{len(df)}")
-
+    st.write(f"Total number of bookings :{len(df)}")
 
 def select_to_do_and_sheet(wb_2023, year):
 
@@ -536,14 +525,6 @@ def select_to_do_and_sheet(wb_2023, year):
     Returns:
         _type_: _description_
     """    
-    #st.write(f"select_to_do_and_sheet({year})")
-    #excel_file = r"C:\Users\rcxsm\Downloads\bezetting2022.xlsm"
-    #wb = load_workbook(excel_file, data_only=True)
-    #excel_file_2023 = r"C:\Users\rcxsm\Downloads\bezetting2023a.xlsm"
-    
-    # excel_file_2023 = st.file_uploader("upload FK file", type={"xlsx", "csv", "txt"})
-
-    
 
     sh_2022 = [wb_2023["ALLES2022"]]
     sh_2021 = [wb_2023["ALLES2021"]]
@@ -617,7 +598,6 @@ def select_to_do_and_sheet(wb_2023, year):
 
     return to_do, sheets #, sh_0
 
-
 def show_info_number_of_days(df,y):
     #df["number_of_days"] = df["number_of_days"].dt.days.astype("int16")
     st.subheader(f"Distribution of length of stay in {y}")
@@ -634,7 +614,6 @@ def show_info_number_of_days(df,y):
     # plotly.offline.plot(fig)
 
     st.plotly_chart(fig, use_container_width=True)
-
 
 def replace_acco_types(accotype_2023):
     # Define the string to be modified
@@ -679,11 +658,10 @@ def replace_acco_types(accotype_2023):
 
     return accotype_original
 
-
 # @st.cache_data
 def make_mutation_df(wb_2023):
     """Generate the dataframe
-        Columns: ['acco_type', 'aantal', 'datum',"month","year", "new_arrival","vertrek_no_clean", "vertrek_clean", "wissel", "geel"])
+        Columns: ['acco_type', 'aantal', 'date',"month","year", "new_arrival","vertrek_no_clean", "vertrek_clean", "back_to_back", "geel"])
 
     Args:
         columns_to_use (list with strings): which columns to scrape, eg. from "A to ... ZZ "
@@ -731,18 +709,18 @@ def make_mutation_df(wb_2023):
                     vertrek_no_clean = 0
                     vertrek_clean = 0
                     vertrek_totaal = 0
-                    wissel = 0
+                    back_to_back = 0
                     geel = 0
                     out_of_order = 0
                     new_arrival = 0
                     try:
-                        datum = str(sh[a + "2"].value)
-                        datum2 = datetime.strptime(datum, "%Y-%m-%d %M:%H:%S")
-                        datum3 = datetime.strftime(datum2, "%Y-%m-%d")
-                        month = int(datum2.month)
-                        year = datum2.year
+                        date = str(sh[a + "2"].value)
+                        date2 = datetime.strptime(date, "%Y-%m-%d %M:%H:%S")
+                        date3 = datetime.strftime(date2, "%Y-%m-%d")
+                        month = int(date2.month)
+                        year = date2.year
                     except Exception:
-                        datum3 = "STOP"
+                        date3 = "STOP"
                         month = 0
 
                     if year == 2023:
@@ -756,9 +734,9 @@ def make_mutation_df(wb_2023):
                             (10, 5): "STOP",
                         }
 
-                        datum3 = stop_conditions.get((month, ix), datum3)
+                        date3 = stop_conditions.get((month, ix), date3)
 
-                    if datum3 != "STOP":
+                    if date3 != "STOP":
                         for i in ii:
                             val = sh[i].fill.start_color.rgb
                             try:
@@ -776,7 +754,7 @@ def make_mutation_df(wb_2023):
                             elif valx == 0 or valx == 6:  # zwart of grijs
                                 out_of_order += 1
                             elif valx == "FF00B0F0":  # lichtblauw / cyaan
-                                wissel += 1
+                                back_to_back += 1
                             elif valx == "FFFFFF00":  # geel / bezet
                                 geel += 1
                             elif valx == 9 or valx == "FF70AD47":  # licht groen
@@ -785,13 +763,13 @@ def make_mutation_df(wb_2023):
                         row = [
                             acco_type,
                             aantal,
-                            datum3,
+                            date3,
                             month,
                             year,
                             new_arrival,
                             vertrek_no_clean,
                             vertrek_clean,
-                            wissel,
+                            back_to_back,
                             geel,
                             out_of_order,
                         ]
@@ -801,21 +779,21 @@ def make_mutation_df(wb_2023):
         columns=[
             "acco_type",
             "aantal",
-            "datum",
+            "date",
             "month",
             "year",
             "new_arrival",
             "vertrek_no_clean",
             "vertrek_clean",
-            "wissel",
+            "back_to_back",
             "geel",
             "out_of_order",
         ],
     )
     df_mutation["in_house"] = (
-        df_mutation["geel"] + df_mutation["new_arrival"] + df_mutation["wissel"]
+        df_mutation["geel"] + df_mutation["new_arrival"] + df_mutation["back_to_back"]
     )
-    df_mutation["maand_str"] = df_mutation["month"].astype(str)
+    df_mutation["month_str"] = df_mutation["month"].astype(str)
     # df_mutation = df_mutation[
     #     (df_mutation["month"] >= start_month) & (df_mutation["month"] <= end_month)
     # ]
@@ -831,7 +809,7 @@ def make_mutation_df(wb_2023):
             df_mutation,
             df_prijzen_stacked,
             how="inner",
-            on=["acco_type", "maand_str"],
+            on=["acco_type", "month_str"],
         )
     df_mutations_met_omzet["omzet"] = (
             df_mutations_met_omzet["in_house"]
@@ -841,44 +819,40 @@ def make_mutation_df(wb_2023):
     # placeholder_progress.empty()
     return df_mutations_met_omzet
 
-
 def make_date_columns(df):
-    datumvelden = ["datum", "checkin_date", "Arrival Date"]
-    for d in datumvelden:
+    datefields = ["date", "checkin_date", "Arrival Date"]
+    for d in datefields:
         try:
-            df["datum"] = pd.to_datetime(df[d], format="%Y-%m-%d")
+            df["date"] = pd.to_datetime(df[d], format="%Y-%m-%d")
         except Exception:
             pass
-    df["jaar"] = df["datum"].dt.strftime("%Y")
-    df["year"] = df["datum"].dt.strftime("%Y")
-    df["year_int"] = df["datum"].dt.strftime("%Y").astype(int)
-    df["maand"] = df["datum"].dt.strftime("%m").astype(str).str.zfill(2)
-    df["dag"] = df["datum"].dt.strftime("%d").astype(str).str.zfill(2)
-    df["maand_dag"] = df["maand"] + "-" + df["dag"]
-    df["dag_maand"] = df["dag"] + "-" + df["maand"]
-    df["datum_str"] = df["datum"].astype(str)
-    df["datum_"] = pd.to_datetime(df["maand_dag"], format="%m-%d")
+    df["year"] = df["date"].dt.strftime("%Y")
+    df["year_int"] = df["date"].dt.strftime("%Y").astype(int)
+    df["month"] = df["date"].dt.strftime("%m").astype(str).str.zfill(2)
+    df["day"] = df["date"].dt.strftime("%d").astype(str).str.zfill(2)
+    df["month_day"] = df["month"] + "-" + df["day"]
+    df["day_month"] = df["day"] + "-" + df["month"]
+    df["date_str"] = df["date"].astype(str)
+    df["date_"] = pd.to_datetime(df["month_day"], format="%m-%d")
     # convert the date column to a datetime data type
     return df
-
 
 def make_occupuation_graph(df___):
     """_summary_
 
     GIVES AN ERROR ValueError: Index contains duplicate entries, cannot reshape
 
-
     Args:
         df_ (_type_): _description_
 
     """
     st.subheader("Occupation all accomodationtypes, all years")
-    df_grouped_by_date_year = df___.groupby(["year","datum", "dag_maand"])[["aantal", "in_house"]].sum().sort_values(by="datum").reset_index()
+    df_grouped_by_date_year = df___.groupby(["year","date", "day_month"])[["aantal", "in_house"]].sum().sort_values(by="date").reset_index()
     df_grouped_by_date_year["occupation"] = round(df_grouped_by_date_year["in_house"]/ df_grouped_by_date_year["aantal"]*100,1)
        
   
-    df_grouped_by_date_year["dag_maand_dt"] = pd.to_datetime(df_grouped_by_date_year["dag_maand"], format="%d-%m")
-    pivot_table = df_grouped_by_date_year.pivot_table(index="dag_maand_dt", columns="year", values="occupation")
+    df_grouped_by_date_year["day_month_dt"] = pd.to_datetime(df_grouped_by_date_year["day_month"], format="%d-%m")
+    pivot_table = df_grouped_by_date_year.pivot_table(index="day_month_dt", columns="year", values="occupation")
 
     figz = go.Figure()
     for column in pivot_table.columns:
@@ -892,25 +866,24 @@ def make_occupuation_graph(df___):
     for y in years:
         st.subheader(y)
         df_mutations_year = df___[df___["year"] == str(y)]
-        df_grouped_by_date = df_mutations_year.groupby("datum")[["aantal", "in_house"]].sum().sort_values(by="datum").reset_index()
+        df_grouped_by_date = df_mutations_year.groupby("date")[["aantal", "in_house"]].sum().sort_values(by="date").reset_index()
         df_grouped_by_date["occupation"] = round(df_grouped_by_date["in_house"]/ df_grouped_by_date["aantal"]*100,1)
         
         
-        df__ = df_mutations_year.groupby(["datum", "acco_type"])[["aantal", "in_house"]].sum().sort_values(by="datum").reset_index()
+        df__ = df_mutations_year.groupby(["date", "acco_type"])[["aantal", "in_house"]].sum().sort_values(by="date").reset_index()
         df__["occupation"] = round(df__["in_house"]/ df__["aantal"]*100,1)
         
         
         width, opacity = 1, 1
 
-
-        fig1 = go.Figure(data=go.Scatter(x=df_grouped_by_date["datum"], y=df_grouped_by_date["occupation"], mode="lines"))
+        fig1 = go.Figure(data=go.Scatter(x=df_grouped_by_date["date"], y=df_grouped_by_date["occupation"], mode="lines"))
         st.plotly_chart(fig1, use_container_width=True)
         
     
         fig = go.Figure()
     
         df_all_years_pivot_a = df__.pivot(
-            index=["datum"], columns="acco_type", values="occupation"
+            index=["date"], columns="acco_type", values="occupation"
         ).fillna(0).reset_index()
     
         
@@ -922,7 +895,7 @@ def make_occupuation_graph(df___):
                 # niet alle accomodaties zijn gebruikt in alle jaren
                 points = go.Scatter(
                     name=a,
-                    x=df_all_years_pivot_a["datum"],
+                    x=df_all_years_pivot_a["date"],
                     y=df_all_years_pivot_a[a],
                     line=dict(width=width),
                     opacity=opacity,
@@ -933,17 +906,14 @@ def make_occupuation_graph(df___):
             except Exception:
                 pass
         layout = go.Layout(
-            yaxis=dict(title=f"Bezetting (%)"),
-            title=f"Bezetting per acco type ",
+            yaxis=dict(title=f"Occupation (%)"),
+            title=f"Occupation per acco type ",
         )
         fig = go.Figure(data=data, layout=layout)
         fig.update_layout(xaxis=dict(tickformat="%d-%m"))
         # fig.show()
         # plotly.offline.plot(fig)
         st.plotly_chart(fig, use_container_width=True)
-
-
-
 
 def save_df(df, name):
     """_ _ _"""
@@ -953,9 +923,6 @@ def save_df(df, name):
 
     print("--- Saving " + name_ + " ---")
 
-
-
-
 def check_mutation_table(df_mutation):
    
     for y in ["2023"]:
@@ -964,7 +931,6 @@ def check_mutation_table(df_mutation):
         print(f"------------{y}-----------")
         create_check_table_per_accotype(df_mutation_year, y)
 
-
 def generate_info_all_years(df_mutation, years, selection_list_accos):
    
     info, columns = [], [
@@ -972,7 +938,7 @@ def generate_info_all_years(df_mutation, years, selection_list_accos):
         "omzet_eur",
         "aantal_acco",
         "omzet_per_acco",
-        "bezetting_%",
+        "occupation_%",
         "aantal_boekingen",
         "gem_verblijfsduur",
         "aantal_overnachtingen",
@@ -983,10 +949,9 @@ def generate_info_all_years(df_mutation, years, selection_list_accos):
         row = generate_businessinfo(df_mutation, y, selection_list_accos)
         info.append(row)
        
-    df_info_per_jaar = pd.DataFrame(info, columns=columns)
+    df_info_per_year = pd.DataFrame(info, columns=columns)
 
-    return  df_info_per_jaar
-
+    return  df_info_per_year
 
 def babypackanalyse(df, y):
     st.subheader(f"Babypack analyse - {y}")
@@ -995,7 +960,7 @@ def babypackanalyse(df, y):
     df["kst"] = df["guest_name"].str.contains("kst").astype(int)
     df["bb"] = df["guest_name"].str.contains(" bb").astype(int)
     df["babypack"] = np.where(
-        (df["babypack_old"] == 1) | (df["kst"] == 1) | (df["bb"] == 1), 1, 0
+        (df["babypack_old"] >= 1) | (df["kst"] >= 1) | (df["bb"] >= 1), 1, 0
     )
 
     # NOG AANPASSEN
@@ -1036,12 +1001,22 @@ def babypackanalyse(df, y):
     )
     st.plotly_chart(fig, use_container_width=True)
     freq_tabel = df_babypacks["total_babypacks"].value_counts()
-    st.write("Aantal dagen dat x babypacks in gebruik zijn")
+    st.write("Aantal days dat x babypacks in gebruik zijn")
     st.write(freq_tabel)
     st.write(
         f"Maximum aantal totaal aantal babypacks {df_babypacks['total_babypacks'].max()}"
     )
 
+    if y == 2023:
+        date_to_check_ = st.sidebar.date_input("Date to check from")
+    
+        desired_date = dt.datetime.combine(date_to_check_, dt.datetime.min.time())
+        guests_with_babybed = df[(df['checkin_date'] <= desired_date) & (df['checkout_date'] >= desired_date) & (df['bb'] >= 1)]
+        guests_with_highchair = df[(df['checkin_date'] <= desired_date) & (df['checkout_date'] >= desired_date) & (df['kst'] >= 1)]
+        st.subheader("Guests with babybed")
+        st.write(guests_with_babybed)
+        st.subheader("Guests with highchair")
+        st.write(guests_with_highchair)
 
 def deken_analyse(df_bookingtable, year):
     """Calculate how many blankets we need on stock, based on the maximum occupation of the sahara's in 2022
@@ -1152,29 +1127,13 @@ def deken_analyse(df_bookingtable, year):
             # Concatenate the filtered DataFrame to the result_df
             result_df = pd.concat([result_df, df_filtered], ignore_index=True)
 
-
-        # for date in dates:
-        #     df_filtered = df_bookingtable_filtered[
-        #         (df_bookingtable_filtered["checkin_date"] <= date)
-        #         & (df_bookingtable_filtered["checkout_date"] > date)
-        #     ]
-
-        #     # result_df[date] = df_grouped
-
-        #     # df_grouped.columns = ['acco_number', 'number_of_guests', "date"]
-        #     df_filtered["date"] = date
-        #     result_df = pd.concat([result_df, df_filtered])
-        # transpose the result dataframe
-
-        # df_grouped = result_df.groupby(['acco_number'])['number_of_guests'].sum().reset_index()
-
         result_df["acco_number"] = result_df["acco_number"].astype(str).str.zfill(2)
         #result_df["acco_number"] = result_df["acco_number"].astype(int)
         df_pivot = result_df.pivot_table(
             index="date", columns="acco_number", values="number_of_guests", aggfunc="sum"
         )
 
-        st.write("Bezetting per tent per dag")
+        st.write("occupation per tent per day")
         # display result
         st.write(df_pivot)
 
@@ -1187,9 +1146,7 @@ def deken_analyse(df_bookingtable, year):
         # Show the graph
         st.plotly_chart(fig)
     else:
-        st.error(f"Geen boekingen in Sahara in jaar {year}")
-
-
+        st.error(f"Geen boekingen in Sahara in year {year}")
 
 def checkin_outlist(df_bookingtable, date_to_check_, current_date_day_of_week):
 
@@ -1208,7 +1165,7 @@ def checkin_outlist(df_bookingtable, date_to_check_, current_date_day_of_week):
         df_bookingtable["checkout_date"] == date_to_check_
     ]
     df_bookingtable_out = df_bookingtable_out[
-        ["acco_number", "guest_name", "wissel_uit"]
+        ["acco_number", "guest_name", "back_to_back_out"]
     ]
     st.subheader(
         f"Checkouts {current_date_day_of_week} {date_to_check_} - aantal = {len(df_bookingtable_out)} "
@@ -1220,7 +1177,7 @@ def checkin_outlist(df_bookingtable, date_to_check_, current_date_day_of_week):
         df_bookingtable["checkin_date"] == date_to_check_
     ]
     df_bookingtable_in = df_bookingtable_in[
-        ["acco_number", "guest_name", "checkout_date",  "wissel_in"]
+        ["acco_number", "guest_name", "checkout_date",  "back_to_back_in"]
     ]
     st.subheader(
         f"Checkins {current_date_day_of_week} {date_to_check_} - aantal = {len(df_bookingtable_in)}"
@@ -1231,10 +1188,6 @@ def checkin_outlist(df_bookingtable, date_to_check_, current_date_day_of_week):
     nr_in = len(df_bookingtable_in)
     nr_out = len(df_bookingtable_out)
     return nr_in, nr_out
-
-
-
-
 
 def cleaning_numbers_period(df_bookingtable):
     """Make an table to use for the form of the cleaning company
@@ -1252,7 +1205,7 @@ def cleaning_numbers_period(df_bookingtable):
     df_bookingtable_out = df_bookingtable[    (df_bookingtable["checkout_date"] >= date_to_check_from) & (df_bookingtable["checkout_date"] <= date_to_check_until)]
     
     df_bookingtable_out = df_bookingtable_out[
-        ["checkout_date","acco_number", "guest_name", "acco_type","wissel_uit"]
+        ["checkout_date","acco_number", "guest_name", "acco_type","back_to_back_out"]
     ]
 
     # Define the conditions and corresponding values for the 'to_clean' column
@@ -1277,7 +1230,6 @@ def cleaning_numbers_period(df_bookingtable):
     )
    
     return 
-
 
 def show_bookingtable_period(df):
     """Show and save a bookingtable for a certain period"""
@@ -1323,7 +1275,6 @@ def show_bookingtable_period(df):
         df_selection = summary_df[summary_df[x_] >=afkapgrens]
         st.write(f"Aantal {x_} groter of gelijk dan {afkapgrens} = {len(df_selection)}")
 
-
     # Print the summary table
     
     for y_ in ["Number of Check-ins", "Number of Check-outs"]:
@@ -1333,7 +1284,6 @@ def show_bookingtable_period(df):
         st.plotly_chart(fig, use_container_width=True)
 
     return
-
 
 def select_period(df_mutation, df_bookingtable):
   
@@ -1350,7 +1300,6 @@ def select_period(df_mutation, df_bookingtable):
         st.error("Enddate cannot be before start date")
         st.stop()
 
-
     # convert date columns to datetime format
     df_bookingtable["checkin_date"] = pd.to_datetime(df_bookingtable["checkin_date"])
     df_bookingtable["checkout_date"] = pd.to_datetime(df_bookingtable["checkout_date"])
@@ -1361,11 +1310,10 @@ def select_period(df_mutation, df_bookingtable):
     ]
     
     df_mutation = df_mutation[
-                (df_mutation["datum"] <= end_date )
-                  & (df_mutation["datum"] >= start_date)
+                (df_mutation["date"] <= end_date )
+                  & (df_mutation["date"] >= start_date)
     ]
     return df_mutation, df_bookingtable
-
 
 def make_checkin_outlist(df_bookingtable):
     date_to_check_from = st.sidebar.date_input("Date to check from_").strftime(
@@ -1405,7 +1353,6 @@ def make_checkin_outlist(df_bookingtable):
     st.header(f"Versie: {current_datetime_str}")
     st.write(f"Periode : {date_to_check_from} - {date_to_check_until}")
     st.write(f"Aantal in = {nr_in_totaal} / Aantal uit = {nr_out_totaal}")
-
 
 # Function to calculate Levenshtein distance between two strings
 def levenshtein_distance(s, t):
@@ -1458,12 +1405,10 @@ def find_unequal_rows(df, columm_maxxton, column_csv, name_test):
         known_exceptions = [20945, 25927, 31007, 54432, 70038, 64860, 47840, 73200]
         unequal_rows = unequal_rows[~unequal_rows['Reservation Number'].isin(known_exceptions)]
 
-
     if name_test == "Accomodation type":
         unequal_rows["acco_type"] = unequal_rows["acco_type"].str.replace(' ', '_')
         unequal_rows['length_column_Accommodation Type'] = unequal_rows['Accommodation Type'].apply(lambda x: len(str(x)))
         unequal_rows['length_column_acco_type'] = unequal_rows["acco_type"].apply(lambda x: len(str(x)))
-
 
     if len(unequal_rows) == 0:
         st.write(f":white_check_mark: All {name_test} are the same")
@@ -1538,16 +1483,15 @@ def compare_files(data_csv, data_maxxton):
         print ("There is no column for Country / Distribution Channel in file")
         
 
-
     #data_csv = make_bookingtable_period(data_csv)  # pd.read_csv(bookingtable)
-    data_csv["bookingsnumber"] = data_csv["bookingsnumber"].astype(int)
+    data_csv["booking_number"] = data_csv["booking_number"].astype(int)
     data_csv["checkin_date"] = pd.to_datetime(
         data_csv["checkin_date"], format="%Y-%m-%d"
     )
     data_csv["checkout_date"] = pd.to_datetime(
         data_csv["checkout_date"], format="%Y-%m-%d"
     )
-    data_csv = data_csv[data_csv["bookingsnumber"] != 0]
+    data_csv = data_csv[data_csv["booking_number"] != 0]
     # data_csv["language"] = data_csv["language"].str.upper()
     
     data_csv["language"] = data_csv.loc[:,"language"].str.upper()
@@ -1556,7 +1500,7 @@ def compare_files(data_csv, data_maxxton):
         data_csv,
         how="inner",
         left_on="Reservation Number",
-        right_on="bookingsnumber",
+        right_on="booking_number",
     )
     df = df[df["First Name"] != "Miraculous"]
 
@@ -1606,7 +1550,7 @@ def compare_files(data_csv, data_maxxton):
             st.write(f"Number: {len(matched_rows)}")
     # Perform an anti-join to get rows where there is no common element
     anti_join = data_maxxton[
-        ~data_maxxton["Reservation Number"].isin(data_csv["bookingsnumber"])
+        ~data_maxxton["Reservation Number"].isin(data_csv["booking_number"])
     ]
     if len(anti_join) == 0:
         st.subheader("Maxxton vs Excel")
@@ -1619,9 +1563,9 @@ def compare_files(data_csv, data_maxxton):
         st.write(f"Number: {len(anti_join)}")
 
     # Perform an anti-join to get rows where there is no common element
-    # anti_join2 = data_maxxton[~data_maxxton['Reservation Number'].isin(data_csv['bookingsnumber'])]
+    # anti_join2 = data_maxxton[~data_maxxton['Reservation Number'].isin(data_csv['booking_number'])]
     anti_join2 = data_csv[
-        ~data_csv["bookingsnumber"].isin(data_maxxton["Reservation Number"])
+        ~data_csv["booking_number"].isin(data_maxxton["Reservation Number"])
     ]
     if len(anti_join2) == 0:
         st.subheader("Excel vs Maxxton")
@@ -1631,9 +1575,6 @@ def compare_files(data_csv, data_maxxton):
 
         st.write(anti_join2)
         st.write(f"Number: {len(anti_join2)}")
-
-
-
 
 def add_on_list(data_csv):
     """
@@ -1647,7 +1588,7 @@ def add_on_list(data_csv):
     """
 
     #data_csv = make_bookingtable_period()  # pd.read_csv(bookingtable)
-    data_csv = data_csv[["checkin_date", "acco_number", "guest_name", "bookingsnumber", "sng_linnen", "dbl_linnen", "kst", "bb"]]
+    data_csv = data_csv[["checkin_date", "acco_number", "guest_name", "booking_number", "sng_linnen", "dbl_linnen", "kst", "bb"]]
     
     # Create a boolean mask indicating rows with non-zero values in any of the specified columns
     mask = (data_csv['sng_linnen'] != 0) | (data_csv['dbl_linnen'] != 0) | (data_csv['kst'] != 0) | (data_csv['bb'] != 0)
@@ -1661,7 +1602,6 @@ def add_on_list(data_csv):
     st.write(filtered_data)
 
     # Group by 'checkin_date' and calculate the sum of the columns
-    #sum_table = filtered_data.groupby('checkin_date').sum()
     sum_table = filtered_data.groupby('checkin_date')[['sng_linnen', 'dbl_linnen', 'kst', 'bb']].sum()
     
     # Display the new table with the summed values
@@ -1695,130 +1635,153 @@ def add_on_list(data_csv):
     
 
 def make_and_show_pivot_tables(df, df_bookingtable):
-    show_omzet_per_maand_per_jaar(df)
-    show_bezetting_per_maand_per_jaar(df)
-    show_occupation_per_accotype_per_month(df)
-    show_verblijfsduur_aantal_boekingen_per_maand(df_bookingtable)
-    show_average_stay_per_accotype_per_month(df_bookingtable)
+    
 
-def show_omzet_per_maand_per_jaar(df):
-    """
-    Displays the omzet (revenue) per maand (month) per jaar (year) as a pivot table.
+    def show_omzet_per_month_per_year(df):
+        """
+        Displays the omzet (revenue) per month (month) per year (year) as a pivot table.
 
-    Args:
-        df (pandas.DataFrame): The input DataFrame containing the data.
+        Args:
+            df (pandas.DataFrame): The input DataFrame containing the data.
 
-    Returns:
-        None: The resulting pivot table is displayed using the st.write() function.
+        Returns:
+            None: The resulting pivot table is displayed using the st.write() function.
 
-    Example:
-        show_omzet_per_maand_per_jaar(df)
-    """
-    st.subheader("Omzet per maand per jaar")
-    pivot_df = pd.pivot_table(df, values='omzet', index='maand', columns='year', aggfunc='sum')
-    # Display the resulting pivot table
-    st.write(pivot_df)
-
-def show_bezetting_per_maand_per_jaar(df):
-    st.subheader("Bezetting per maand per jaar")
-    # Assuming your dataframe is named 'df'
-    grouped_df = df.groupby(['year', 'month']).agg({'in_house': 'sum', 'aantal': 'sum'})
-    grouped_df['occupation'] = round( grouped_df['in_house'] / grouped_df['aantal']*100,1)
-    pivot_df = pd.pivot_table(grouped_df, values='occupation', index='month', columns='year').fillna(0)
-
-    # Display the resulting pivot table
-    st.write(pivot_df)
-
-def show_occupation_per_accotype_per_month(df):
-    st.subheader("Bezetting per accotype, per maand voor een bepaald jaar")
-    # Assuming your dataframe is named 'df'
-    for y in [2023]: #2019,2021,2022,
-        st.subheader(f"{y}")
-        # Filter dataframe for the desired year
-        filtered_df = df[df['year'] == str(y)]
-        st.write(filtered_df)
-        # Group by month and acco_type, calculate occupation
-        grouped_df = filtered_df.groupby(['month', 'acco_type']).agg({'in_house': 'sum', 'aantal': 'sum', "omzet": 'sum'})
-        grouped_df['occupation'] =  round( grouped_df['in_house'] / grouped_df['aantal']*100,1)
-
-        # Create pivot table
-        pivot_df = pd.pivot_table(grouped_df, values='occupation', index='month', columns='acco_type')
-        st.subheader("Bezetting")
+        Example:
+            show_omzet_per_month_per_year(df)
+        """
+        st.subheader("Omzet per month per year")
+        pivot_df = pd.pivot_table(df, values='omzet', index='month', columns='year', aggfunc='sum')
         # Display the resulting pivot table
         st.write(pivot_df)
 
-        # Create pivot table
-        pivot_df_omzet = pd.pivot_table(grouped_df, values='omzet', index='month', columns='acco_type')
-        st.subheader("Omzet")
+    def show_occupation_per_month_per_year(df):
+        """_summary_
+
+        Args:
+            df (_type_): _description_
+        """    
+        st.subheader("occupation per month per year")
+        # Assuming your dataframe is named 'df'
+        grouped_df = df.groupby(['year', 'month']).agg({'in_house': 'sum', 'aantal': 'sum'})
+        grouped_df['occupation'] = round( grouped_df['in_house'] / grouped_df['aantal']*100,1)
+        pivot_df = pd.pivot_table(grouped_df, values='occupation', index='month', columns='year').fillna(0)
+
         # Display the resulting pivot table
-        st.write(pivot_df_omzet)
+        st.write(pivot_df)
 
+    def show_occupation_per_accotype_per_month(df):
+        """_summary_
 
+        Args:
+            df (_type_): _description_
+        """    
+        st.subheader("occupation per accotype, per month voor een bepaald year")
+        # Assuming your dataframe is named 'df'
+        for y in [2023]: #2019,2021,2022,
+            st.subheader(f"{y}")
+            # Filter dataframe for the desired year
+            filtered_df = df[df['year'] == str(y)]
+            st.write(filtered_df)
+            # Group by month and acco_type, calculate occupation
+            grouped_df = filtered_df.groupby(['month', 'acco_type']).agg({'in_house': 'sum', 'aantal': 'sum', "omzet": 'sum'})
+            grouped_df['occupation'] =  round( grouped_df['in_house'] / grouped_df['aantal']*100,1)
 
+            # Create pivot table
+            pivot_df = pd.pivot_table(grouped_df, values='occupation', index='month', columns='acco_type')
+            st.subheader("occupation")
+            # Display the resulting pivot table
+            st.write(pivot_df)
 
-def show_verblijfsduur_aantal_boekingen_per_maand(df_bookingtable):
-    # Step 1: Filter relevant columns
-    df_filtered = df_bookingtable[['acco_type', 'checkin_date', 'maand','jaar', 'number_of_days']].copy()
+            # Create pivot table
+            pivot_df_omzet = pd.pivot_table(grouped_df, values='omzet', index='month', columns='acco_type')
+            st.subheader("Omzet")
+            # Display the resulting pivot table
+            st.write(pivot_df_omzet)
 
-    # Step 2: Convert 'checkin_date' to datetime
-    df_filtered['checkin_date'] = pd.to_datetime(df_filtered['checkin_date'])
+    def show_verblijfsduur_aantal_boekingen_per_month(df_bookingtable):
+        """_summary_
 
-    # Iterate over unique years
-    unique_years = df_filtered['jaar'].unique()
-    for year in unique_years:
-        # Step 3: Filter by year
-        df_year = df_filtered[df_filtered['jaar'] == year]
+        Args:
+            df_bookingtable (_type_): _description_
+        """
 
-        # Step 4: Create pivot table
-        pivot_table = df_year.pivot_table(index='acco_type', columns='maand', values='number_of_days', aggfunc='mean', fill_value=0)
-        # Step 5: Round the values in the pivot table
-        pivot_table = pivot_table.round(1)  # Round to 2 decimal places
+        # Step 1: Filter relevant columns
+        df_filtered = df_bookingtable[['acco_type', 'checkin_date', 'month','year', 'number_of_days']].copy()
 
-        # Step 4: Create pivot table
-        pivot_table_aantal = df_year.pivot_table(index='acco_type', columns='maand', values='number_of_days', aggfunc='count', fill_value=0)
+        # Step 2: Convert 'checkin_date' to datetime
+        df_filtered['checkin_date'] = pd.to_datetime(df_filtered['checkin_date'])
 
-        # Step 5: Do something with the pivot table for each year
-        
-        st.subheader(f"{year} - Gemidelde verblijfsduur")
-        st.write(pivot_table)
-        st.subheader(f"{year} - Aantal boekingen")
-        st.write(pivot_table_aantal)
-
-   
-def show_average_stay_per_accotype_per_month(df_bookingtable):
-        
-    # Step 1: Filter relevant columns
-    df_filtered = df_bookingtable[['acco_type', 'checkin_date', 'maand','year', 'number_of_days']].copy()
-
-    # Step 2: Convert 'checkin_date' to datetime
-    df_filtered['checkin_date'] = pd.to_datetime(df_filtered['checkin_date'])
-
-    # Step 3: Get unique years and months
-    unique_years = df_filtered['year'].unique()
-    unique_months = df_filtered['maand'].unique()
-    unique_months.sort()
-    
-    # Step 4: Iterate over acco_types
-    unique_acco_types = df_filtered['acco_type'].unique()
-    for acco_type in unique_acco_types:
-        # Create an empty DataFrame to store the pivot table for each acco_type
-        pivot_table = pd.DataFrame(index=unique_years, columns=unique_months)
-
-        # Step 5: Iterate over years
+        # Iterate over unique years
+        unique_years = df_filtered['year'].unique()
         for year in unique_years:
-            # Step 6: Filter by year and acco_type
-            df_year_acco = df_filtered[(df_filtered['year'] == year) & (df_filtered['acco_type'] == acco_type)]
+            # Step 3: Filter by year
+            df_year = df_filtered[df_filtered['year'] == year]
 
-            # Step 7: Calculate average stay for each month
-            for month in unique_months:
-                avg_stay = df_year_acco[df_year_acco['maand'] == month]['number_of_days'].mean()
-                pivot_table.loc[year, month] = round(avg_stay, 2)
-        st.subheader(f"Average stay {acco_type}")
-        st.write(pivot_table)
+            # Step 4: Create pivot table
+            pivot_table = df_year.pivot_table(index='acco_type', columns='month', values='number_of_days', aggfunc='mean', fill_value=0)
+            # Step 5: Round the values in the pivot table
+            pivot_table = pivot_table.round(1)  # Round to 2 decimal places
+
+            # Step 4: Create pivot table
+            pivot_table_aantal = df_year.pivot_table(index='acco_type', columns='month', values='number_of_days', aggfunc='count', fill_value=0)
+
+            # Step 5: Do something with the pivot table for each year
+            
+            st.subheader(f"{year} - Gemidelde verblijfsduur")
+            st.write(pivot_table)
+            st.subheader(f"{year} - Aantal boekingen")
+            st.write(pivot_table_aantal)
+
+    
+    def show_average_stay_per_accotype_per_month(df_bookingtable):
+        """show_average_stay_per_accotype_per_month
+
+        Args:
+            df_bookingtable (_type_): _description_
+        """        
+        # Step 1: Filter relevant columns
+        df_filtered = df_bookingtable[['acco_type', 'checkin_date', 'month','year', 'number_of_days']].copy()
+
+        # Step 2: Convert 'checkin_date' to datetime
+        df_filtered['checkin_date'] = pd.to_datetime(df_filtered['checkin_date'])
+
+        # Step 3: Get unique years and months
+        unique_years = df_filtered['year'].unique()
+        unique_months = df_filtered['month'].unique()
+        unique_months.sort()
+        
+        # Step 4: Iterate over acco_types
+        unique_acco_types = df_filtered['acco_type'].unique()
+        for acco_type in unique_acco_types:
+            # Create an empty DataFrame to store the pivot table for each acco_type
+            pivot_table = pd.DataFrame(index=unique_years, columns=unique_months)
+
+            # Step 5: Iterate over years
+            for year in unique_years:
+                # Step 6: Filter by year and acco_type
+                df_year_acco = df_filtered[(df_filtered['year'] == year) & (df_filtered['acco_type'] == acco_type)]
+
+                # Step 7: Calculate average stay for each month
+                for month in unique_months:
+                    avg_stay = df_year_acco[df_year_acco['month'] == month]['number_of_days'].mean()
+                    pivot_table.loc[year, month] = round(avg_stay, 2)
+            st.subheader(f"Average stay {acco_type}")
+            st.write(pivot_table)
+
+    show_omzet_per_month_per_year(df)
+    show_occupation_per_month_per_year(df)
+    show_occupation_per_accotype_per_month(df)
+    show_verblijfsduur_aantal_boekingen_per_month(df_bookingtable)
+    show_average_stay_per_accotype_per_month(df_bookingtable)
 
 @st.cache_data()
 def get_data_local():
-    
+    """Get the data if the script is run locally
+
+    Returns:
+        df: the various dataframes
+    """    
     excel_file_2023 = r"C:\Users\rcxsm\Downloads\bezetting2023a.xlsm"
     maxxton_file = r"C:\Users\rcxsm\Downloads\ReservationDetails.xlsx"
        
@@ -1837,13 +1800,6 @@ def get_data_local():
 
 #@st.cache_data()
 def upload_files():
-   
-
-
-    
-    #excel_file_2023 = r"C:\Users\rcxsm\Downloads\bezetting2023a.xlsm"
-    # maxxton_file = r"C:\Users\rcxsm\Downloads\ReservationDetails.xlsx"
-       
     excel_file_2023 = st.sidebar.file_uploader("Choose the Henriette file", type='xlsm')
     maxxton_file = st.sidebar.file_uploader("Choose the Maxxton file", type='xlsx')
     if (excel_file_2023 is not None) and (maxxton_file is not None):
@@ -1858,7 +1814,6 @@ def upload_files():
     else:
         st.error("Please upload the files")
         st.stop()
-
 
 def get_data(wb_2023, df_maxxton):
         s1 = int(time.time())
@@ -1907,7 +1862,9 @@ def main():
         df_mutation, df_bookingtable, df_maxxton = get_data(wb_2023, df_maxxton)
         df_mutation, df_bookingtable, df_maxxton = make_cache_data(df_mutation, df_bookingtable, df_maxxton)
     
-    keuze = st.sidebar.selectbox("Compare Files / Complete menu", ["Compare Files", "Complete menu"], index=0)
+    ix = 1 if platform.processor() != "" else  0
+    
+    keuze = st.sidebar.selectbox("Compare Files / Complete menu", ["Compare Files", "Complete menu"], index=ix)
 
     if keuze == "Compare Files":
         what_to_do =  "Compare files"
