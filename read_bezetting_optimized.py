@@ -80,7 +80,7 @@ def retrieve_prijzen():
     
         url_prijzen = r"C:\Users\rcxsm\Downloads\prijzen.csv"
     else:
-        url_prijzen = "https://github.com/rcsmit/streamlit_scripts/tree/main/input/prijzen_dummy.csv"
+        url_prijzen = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/prijzen_dummy.csv"
     df_prijzen = pd.read_csv(url_prijzen, delimiter=",")
     # df_prijzen_stacked = df_prijzen.stack()
     df_prijzen_stacked = df_prijzen.melt(
