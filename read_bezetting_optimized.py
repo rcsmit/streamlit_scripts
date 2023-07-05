@@ -1572,13 +1572,11 @@ def compare_files(data_csv, data_maxxton):
         try:
             find_unequal_rows(df, c[0], c[1], c[2])
         except Exception:
-            st.write(f":question: Error comparing {c[2]}")
-        # except ValueError as e:
-        #     st.write(f"Error comparing {c[2]}")
-        #     st.write(f"Error: {str(e)}")
-    # Create a new column 'similarity_score' in the DataFrame to store the similarity scores
-
+            st.write(f":question: Cannot compare {c[2]} - probably column missing in one of the files")
+        
+    
     st.subheader("Last names - levenshtein_distance")
+    # Create a new column 'similarity_score' in the DataFrame to store the similarity scores
     df['similarity_score'] = df.apply(compare_last_names, axis=1)
 
     # Set a threshold for similarity score (e.g., 0.8)
