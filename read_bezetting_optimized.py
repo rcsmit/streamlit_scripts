@@ -1588,7 +1588,7 @@ def compare_files(data_csv, data_maxxton):
     mismatched_rows = df[df['similarity_score'] < threshold]
     matched_rows = df[df['similarity_score'] >= threshold]
     if len(mismatched_rows) == 0:
-        st.write("All last names are almost the same")
+        st.write(":white_check_mark: All last names are almost the same")
     else:
     # Print the mismatched rows
         mismatched_rows_x = mismatched_rows[["Reservation Number", "Last Name","guest_name_booking", 'similarity_score']]
@@ -1611,10 +1611,10 @@ def compare_files(data_csv, data_maxxton):
     ]
     if len(anti_join) == 0:
         st.subheader("Maxxton vs Excel")
-        st.write("All reservations in Maxxton are in registred in Excel")
+        st.write(":white_check_mark: All reservations in Maxxton are in registred in Excel")
 
     else:
-        st.subheader("Reservations in Maxton but not in Excel (forgotten to put in?)")
+        st.subheader(":question: Reservations in Maxton but not in Excel (forgotten to put in?)")
 
         st.write(anti_join)
         st.write(f"Number: {len(anti_join)}")
@@ -1626,9 +1626,9 @@ def compare_files(data_csv, data_maxxton):
     ]
     if len(anti_join2) == 0:
         st.subheader("Excel vs Maxxton")
-        st.write("All reservations in Excel are in Maxxton")
+        st.write(":white_check_mark: All reservations in Excel are in Maxxton")
     else:
-        st.subheader("Reservations in the Excel file but not in Maxxton (cancelled?)")
+        st.subheader(":question: Reservations in the Excel file but not in Maxxton (cancelled or not paid?)")
 
         st.write(anti_join2)
         st.write(f"Number: {len(anti_join2)}")
@@ -1845,8 +1845,8 @@ def upload_files():
     #excel_file_2023 = r"C:\Users\rcxsm\Downloads\bezetting2023a.xlsm"
     # maxxton_file = r"C:\Users\rcxsm\Downloads\ReservationDetails.xlsx"
        
-    excel_file_2023 = st.file_uploader("Choose the Henriette file", type='xlsm')
-    maxxton_file = st.file_uploader("Choose the Maxxton file", type='xlsx')
+    excel_file_2023 = st.sidebar.file_uploader("Choose the Henriette file", type='xlsm')
+    maxxton_file = st.sidebar.file_uploader("Choose the Maxxton file", type='xlsx')
     if (excel_file_2023 is not None) and (maxxton_file is not None):
         s1 = int(time.time())
         wb_2023 = load_workbook(excel_file_2023, data_only=True) 
@@ -1906,38 +1906,43 @@ def main():
         
         df_mutation, df_bookingtable, df_maxxton = get_data(wb_2023, df_maxxton)
         df_mutation, df_bookingtable, df_maxxton = make_cache_data(df_mutation, df_bookingtable, df_maxxton)
+    
+    keuze = st.sidebar.selectbox("What to do", ["Compare Files", "Complete menu"], index=0)
 
-    what_to_do = st.sidebar.radio(
-        "What to do",
-        (
-            "Hello",
-             "--- OPERATIONS ---",
-            "Checkin/out list",
-            "Bookingtable",
-            "Add-on list",
-            "Cleaning numbers month",
-            "---- INTELLIGENCE ---",
-            "Analyse",
-            "pivot tables",
-            "occupation graph",
-            
-            "show info from bookingtable",
+    if keuze == "Compare Files":
+        what_to_do =  "Compare files"
+    else:
+        what_to_do = st.sidebar.radio(
+            "What to do",
+            (
+                "Hello",
+                "--- OPERATIONS ---",
+                "Checkin/out list",
+                "Bookingtable",
+                "Add-on list",
+                "Cleaning numbers month",
+                "---- INTELLIGENCE ---",
+                "Analyse",
+                "pivot tables",
+                "occupation graph",
+                
+                "show info from bookingtable",
 
-            "info number of days",
-           
+                "info number of days",
+            
 
-            "dekenanalyse",
-            "babypackanalyse",
-            
-            "---- UTILITIES ---",
-            "Find color",
-            "Compare files",
-            "Check Excel File", 
-            "Clear cache",
-            
-        ),
-        0,
-    )
+                "dekenanalyse",
+                "babypackanalyse",
+                
+                "---- UTILITIES ---",
+                "Find color",
+                "Compare files",
+                "Check Excel File", 
+                "Clear cache",
+                
+            ),
+            0,
+        )
 
   
     
