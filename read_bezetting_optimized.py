@@ -1809,7 +1809,8 @@ def show_average_stay_per_accotype_per_month(df_bookingtable):
                 pivot_table.loc[year, month] = round(avg_stay, 2)
         st.subheader(f"Average stay {acco_type}")
         st.write(pivot_table)
-
+        
+@st.cache_data()
 def get_data_local():
     
     excel_file_2023 = r"C:\Users\rcxsm\Downloads\bezetting2023a.xlsm"
