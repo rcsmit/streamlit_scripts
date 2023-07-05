@@ -2022,8 +2022,10 @@ def main():
             deken_analyse(df_bookingtable_year, y)
 
     elif what_to_do == "babypackanalyse" :
-        df_bookingtable_year =  df_bookingtable[df_bookingtable["year_int"] == 2022]
-        babypackanalyse(df_bookingtable_year, 2022)
+        for y in [2022,2023]:
+            st.subheader(f"Babypackanalyse {y}")
+            df_bookingtable_year =  df_bookingtable[df_bookingtable["year_int"] == y]
+            babypackanalyse(df_bookingtable_year, y)
 
     # UTILITIES
     elif what_to_do == "Find color":
