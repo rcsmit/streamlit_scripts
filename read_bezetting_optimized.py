@@ -1589,9 +1589,10 @@ def compare_files(data_csv, data_maxxton):
         st.write(":white_check_mark: All last names are almost the same")
     else:
     # Print the mismatched rows
+        mismatched_rows = mismatched_rows.sort_values("similarity_score", ascending=True)
         mismatched_rows_x = mismatched_rows[["Reservation Number", "Last Name","guest_name_booking", 'similarity_score']]
         mismatched_rows_x = mismatched_rows_x.sort_values("similarity_score", ascending=True)
-
+        
         st.write(mismatched_rows_x)
 
         with st.expander("All colums"):
