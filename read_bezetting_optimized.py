@@ -1906,7 +1906,7 @@ def main():
         df_mutation, df_bookingtable, df_maxxton = get_data(wb_2023, df_maxxton)
         df_mutation, df_bookingtable, df_maxxton = make_cache_data(df_mutation, df_bookingtable, df_maxxton)
     
-    keuze = st.sidebar.selectbox("What to do", ["Compare Files", "Complete menu"], index=0)
+    keuze = st.sidebar.selectbox("Compare Files / Complete menu", ["Compare Files", "Complete menu"], index=0)
 
     if keuze == "Compare Files":
         what_to_do =  "Compare files"
