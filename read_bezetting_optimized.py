@@ -1466,9 +1466,9 @@ def find_unequal_rows(df, columm_maxxton, column_csv, name_test):
 
 
     if len(unequal_rows) == 0:
-        st.write(f"All {name_test} are the same")
+        st.write(f":white_check_mark: All {name_test} are the same")
     else:
-        st.write(f"unequal rows {name_test}")
+        st.write(f":heavy_exclamation_mark: There are some unequal rows {name_test}")
         st.write(unequal_rows)
         with st.expander("Only the colums"):
             unequal_rows_x = unequal_rows[[columm_maxxton, column_csv]]
@@ -1504,7 +1504,7 @@ def compare_files(data_csv, data_maxxton):
     try:
         data_maxxton["Booking country"] = data_maxxton["Distribution Channel"].str[-2:]
     except Exception:
-        print ("Distribution Channel in file")
+        print ("There is no column for distribution Channel in file")
     # Mapping of original values to replacement values
     value_map_acc = {
         "Safari tent Serengeti XL Glamping Soleil": "SERENGETI XL",
@@ -1535,7 +1535,8 @@ def compare_files(data_csv, data_maxxton):
             data_maxxton.loc[
                 data_maxxton["Country"].str.startswith(original_value), "Country",] = replacement_value.upper()
     except Exception:
-        pass
+        print ("There is no column for Country / Distribution Channel in file")
+        
 
 
     #data_csv = make_bookingtable_period(data_csv)  # pd.read_csv(bookingtable)
@@ -1571,7 +1572,7 @@ def compare_files(data_csv, data_maxxton):
         try:
             find_unequal_rows(df, c[0], c[1], c[2])
         except Exception:
-            st.write(f"Error comparing {c[2]}")
+            st.write(f":question: Error comparing {c[2]}")
         # except ValueError as e:
         #     st.write(f"Error comparing {c[2]}")
         #     st.write(f"Error: {str(e)}")
