@@ -1857,6 +1857,7 @@ def upload_files():
         print(f"Uploading  took {str(s2x)} seconds ....)")
         return wb_2023, df_maxxton
     else:
+        st.error("Please upload the files")
         st.stop()
 
 
