@@ -13,6 +13,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
 import sys
+import platform
 
 def clear_cache():
     """Clears the cache
@@ -1805,26 +1806,79 @@ def show_average_stay_per_accotype_per_month(df_bookingtable):
         st.subheader(f"Average stay {acco_type}")
         st.write(pivot_table)
 
-
-@st.cache_data()
-def get_data():
-    s1 = int(time.time())
+def get_data_local():
+    
     excel_file_2023 = r"C:\Users\rcxsm\Downloads\bezetting2023a.xlsm"
-    
-    wb_2023 = load_workbook(excel_file_2023, data_only=True)    
-    df_mutation= make_mutation_df(wb_2023)
-
-    df_bookingtable = make_booking_table(wb_2023)
-
     maxxton_file = r"C:\Users\rcxsm\Downloads\ReservationDetails.xlsx"
+       
+    s1 = int(time.time())
+    wb_2023 = load_workbook(excel_file_2023, data_only=True) 
+    df_maxxton = pd.read_excel(maxxton_file)   
     
-    # Load the Excel file
-    df_maxxton = pd.read_excel(maxxton_file)
+    df_mutation= make_mutation_df(wb_2023)
+    df_bookingtable = make_booking_table(wb_2023)
     s2 = int(time.time())
     s2x = s2 - s1
     print(" ")  # to compensate the  sys.stdout.flush()
+    print(f"Uploading and making df_mutation and df_booking  took {str(s2x)} seconds ....)")
+    return df_mutation, df_bookingtable, df_maxxton
+    
 
-    print(f"Downloading  took {str(s2x)} seconds ....)")
+#@st.cache_data()
+def upload_files():
+   
+
+
+    
+    #excel_file_2023 = r"C:\Users\rcxsm\Downloads\bezetting2023a.xlsm"
+    # maxxton_file = r"C:\Users\rcxsm\Downloads\ReservationDetails.xlsx"
+       
+    excel_file_2023 = st.file_uploader("Choose the Henriette file", type='xlsm')
+    maxxton_file = st.file_uploader("Choose the Maxxton file", type='xlsx')
+    if (excel_file_2023 is not None) and (maxxton_file is not None):
+        s1 = int(time.time())
+        wb_2023 = load_workbook(excel_file_2023, data_only=True) 
+        df_maxxton = pd.read_excel(maxxton_file)   
+        s2 = int(time.time())
+        s2x = s2 - s1
+       
+        print(f"Uploading  took {str(s2x)} seconds ....)")
+        return wb_2023, df_maxxton
+    else:
+        st.stop()
+
+
+def get_data(wb_2023, df_maxxton):
+        s1 = int(time.time())
+        df_mutation= make_mutation_df(wb_2023)
+
+        df_bookingtable = make_booking_table(wb_2023)
+        s2 = int(time.time())
+        s2x = s2 - s1
+        print(" ")  # to compensate the  sys.stdout.flush()
+        print(f"Making df_mutation and df_booking  took {str(s2x)} seconds ....)")
+        return df_mutation, df_bookingtable, df_maxxton
+
+@st.cache_data()
+def make_cache_data(df_mutation, df_bookingtable, df_maxxton):
+
+    """Making a cache with the various dataframes. 
+
+    Caching get_dat() gives this error : 
+        Cannot hash argument 'wb_2023' (of type `openpyxl.workbook.workbook.Workbook`) in 'get_data'.
+
+        To address this, you can tell Streamlit not to hash this argument by adding a
+        leading underscore to the argument's name in the function signature:
+
+        ```
+        @st.cache_data
+        def get_data(_wb_2023, ...):
+            ...
+        ```
+
+    Returns:
+        _type_: the same dataframes
+    """    
     return df_mutation, df_bookingtable, df_maxxton
 
 def main():       
@@ -1832,10 +1886,14 @@ def main():
     # https://github.com/onedrive/onedrive-sdk-python
     # https://github.com/vgrem/Office365-REST-Python-Client#Working-with-OneDrive-API
 
+    if platform.processor() != "":
+        df_mutation, df_bookingtable, df_maxxton = get_data_local()
+    else:
 
-
-    df_mutation, df_bookingtable, df_maxxton = get_data()
-    
+        wb_2023, df_maxxton = upload_files()
+        
+        df_mutation, df_bookingtable, df_maxxton = get_data(wb_2023, df_maxxton)
+        df_mutation, df_bookingtable, df_maxxton = make_cache_data(df_mutation, df_bookingtable, df_maxxton)
 
     what_to_do = st.sidebar.radio(
         "What to do",
