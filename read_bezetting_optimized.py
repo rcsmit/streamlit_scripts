@@ -989,7 +989,7 @@ def generate_info_all_years(df_mutation, years, selection_list_accos):
 
 
 def babypackanalyse(df, y):
-    st.header(f"Babypack analyse - {y}")
+    st.subheader(f"Babypack analyse - {y}")
     df =df.copy()
     df["babypack_old"] = df["guest_name"].str.contains("baby").astype(int)
     df["kst"] = df["guest_name"].str.contains("kst").astype(int)
@@ -2017,13 +2017,13 @@ def main():
             show_info_number_of_days(df_bookingtable_year,y)
     elif what_to_do == "dekenanalyse":
         for y in [2022,2023]:
-            st.subheader(f"Dekenanalyse {y}")
+            
             df_bookingtable_year =  df_bookingtable[df_bookingtable["year_int"] == y]
             deken_analyse(df_bookingtable_year, y)
 
     elif what_to_do == "babypackanalyse" :
         for y in [2022,2023]:
-            st.subheader(f"Babypackanalyse {y}")
+           
             df_bookingtable_year =  df_bookingtable[df_bookingtable["year_int"] == y]
             babypackanalyse(df_bookingtable_year, y)
 
