@@ -8,7 +8,7 @@ import pandas as pd
 import time
 from openpyxl import load_workbook
 import streamlit as st
-from keys import *  # secret file with the prices
+# from keys import *  # secret file with the prices
 import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
@@ -76,7 +76,11 @@ def retrieve_prijzen():
     # sheet_id prijzen = in keys.py
     # sheet_name_prijzen = "prijzen"
     # url_prijzen = f"https://docs.google.com/spreadsheets/d/{sheet_id_prijzen}/gviz/tq?tqx=out:csv&sheet={sheet_name_prijzen}"
-    url_prijzen = r"C:\Users\rcxsm\Downloads\prijzen.csv"
+    if platform.processor() != "":
+    
+        url_prijzen = r"C:\Users\rcxsm\Downloads\prijzen.csv"
+    else:
+        url_prijzen = "https://github.com/rcsmit/streamlit_scripts/tree/main/input/prijzen_dummy.csv"
     df_prijzen = pd.read_csv(url_prijzen, delimiter=",")
     # df_prijzen_stacked = df_prijzen.stack()
     df_prijzen_stacked = df_prijzen.melt(
