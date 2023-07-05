@@ -1501,7 +1501,10 @@ def compare_files(data_csv, data_maxxton):
     data_maxxton["Departure Date"] = pd.to_datetime(
         data_maxxton["Departure Date"], format="%d/%m/%Y"
     )
-    data_maxxton["Booking country"] = data_maxxton["Distribution Channel"].str[-2:]
+    try:
+        data_maxxton["Booking country"] = data_maxxton["Distribution Channel"].str[-2:]
+    except Exception:
+        print ("Distribution Channel in file")
     # Mapping of original values to replacement values
     value_map_acc = {
         "Safari tent Serengeti XL Glamping Soleil": "SERENGETI XL",
@@ -1545,6 +1548,7 @@ def compare_files(data_csv, data_maxxton):
     )
     data_csv = data_csv[data_csv["bookingsnumber"] != 0]
     # data_csv["language"] = data_csv["language"].str.upper()
+    
     data_csv["language"] = data_csv.loc[:,"language"].str.upper()
     df = pd.merge(
         data_maxxton,
@@ -1587,6 +1591,8 @@ def compare_files(data_csv, data_maxxton):
     else:
     # Print the mismatched rows
         mismatched_rows_x = mismatched_rows[["Reservation Number", "Last Name","guest_name_booking", 'similarity_score']]
+        mismatched_rows_x = mismatched_rows_x.sort_values("similarity_score", ascending=True)
+
         st.write(mismatched_rows_x)
 
         with st.expander("All colums"):
@@ -1809,7 +1815,7 @@ def show_average_stay_per_accotype_per_month(df_bookingtable):
                 pivot_table.loc[year, month] = round(avg_stay, 2)
         st.subheader(f"Average stay {acco_type}")
         st.write(pivot_table)
-        
+
 @st.cache_data()
 def get_data_local():
     
