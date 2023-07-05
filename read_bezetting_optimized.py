@@ -1580,7 +1580,7 @@ def compare_files(data_csv, data_maxxton):
     df['similarity_score'] = df.apply(compare_last_names, axis=1)
 
     # Set a threshold for similarity score (e.g., 0.8)
-    threshold = 0.5
+    threshold = 0.3
 
     # Filter the DataFrame to get rows where the similarity score is below the threshold
     mismatched_rows = df[df['similarity_score'] < threshold]
