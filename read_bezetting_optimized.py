@@ -611,7 +611,6 @@ def show_info_from_bookingtable(df, year):
     st.write(freq_table)
     st.write(f"Total number of bookings :{len(df)}")
     
-
     graph_distribution_nationalities(df, year)
 
 def select_to_do_and_sheet(wb_2023, year):
