@@ -134,12 +134,12 @@ def create_check_table_per_accotype(df, y):
         
         df_acco_test = df_acco[df_acco["verschil_bezet"] != 0]
         if len(df_acco_test) == 0:
-            st.write(f"{y} - {acco} OK")
+            st.write(f":white_check_mark: {y} - {acco} OK")
             with st.expander("DF"):
                 st.write (df_acco)
            
         else:
-            st.error(f"ERROR IN BOOKINGSSCHEMA {y} - {acco} ")
+            st.error(f":heavy_exclamation_mark: ERROR IN BOOKINGSSCHEMA {y} - {acco} ")
             with st.expander("Complete DF"):
                 st.write(df_acco)
             st.write(df_acco_test)
@@ -147,7 +147,7 @@ def create_check_table_per_accotype(df, y):
             st.error("/ERROR ")
             year_ok = False
     if year_ok:
-        st.write(f"{y} is okay")
+        st.write(f":white_check_mark: **{y} is okay**")
 
 def generate_businessinfo(df_mutations):
     """print and return the business intelligence
@@ -454,7 +454,7 @@ def extract_info(df):
     df["language"] = df["guest_name"].str.extract(
         r"\b(du|de|en|fr|dm|dk|gb|de|uk|po|it|ph|lx|lux|ch|sp|ierl|be)\b", expand=False
     )
-    df['language'] = df['language'].replace({'gb':'uk','du': 'de',  'dm': 'dk'})
+    df['language'] = df['language'].replace({'gb':'en','du': 'de',  'dm': 'dk'})
 
     # fill missing values with 'NL'
     df["language"] = df["language"].fillna("nl")
@@ -498,6 +498,100 @@ def extract_info(df):
     df["guest_name"] = df["guest_name"].str.replace(r'^van de_\s', 'van de', regex=True)
     return df
 
+
+def graph_distribution_nationalities(df, y):
+    """Show a graph with the distribution of nationalities in time
+
+    Args:
+        df (df): booking table
+        y : year, used in the graph titles
+    """    
+    df =df.copy()
+    # Convert the 'checkin_date' and 'checkout_date' columns to datetime format
+    df['checkin_date'] = pd.to_datetime(df['checkin_date'])
+    df['checkout_date'] = pd.to_datetime(df['checkout_date'])
+
+    # Generate a date range from the minimum checkin_date to the maximum checkout_date
+    date_range = pd.date_range(df['checkin_date'].min(), df['checkout_date'].max())
+
+    # Calculate the proportion of each language on each day
+    language_proportions = pd.DataFrame()
+
+    for date in date_range:
+        guests_on_date = df[(df['checkin_date'] <= date) & (df['checkout_date'] > date)]
+        guests_on_date = guests_on_date.copy()  
+        guests_on_date["date_language"] = date
+
+        # language_counts = guests_on_date['language'].value_counts(normalize=True)
+        language_proportions = pd.concat([language_proportions,guests_on_date], ignore_index=True)
+
+    
+    language_proportions["count"] =1
+    # Create the pivot table
+    df_pivot = pd.pivot_table(language_proportions, index='date_language', columns="language", values="count", aggfunc='sum')
+    
+    # normalize the pivot table to ensure each row sums to 100%
+    pivot_table_normalized = df_pivot.div(df_pivot.sum(axis=1), axis=0) * 100
+    # Round the values to one decimal place
+    pivot_table_normalized = pivot_table_normalized.round(1).fillna(0)
+    # Reorder the columns to have NL at the bottom, followed by DE, and then the rest of the languages
+    pivot_table_normalized = pivot_table_normalized[['nl', 'de', "be"] + [col for col in pivot_table_normalized.columns if col not in ['nl', 'de', "be"]]]
+   
+    # Create a line graph using Plotly
+    fig = go.Figure()
+
+    for column in pivot_table_normalized.columns:
+        fig.add_trace(go.Scatter(
+            x=pivot_table_normalized.index,
+            y=pivot_table_normalized[column],
+            name=column
+        ))
+
+    fig.update_layout(
+        title=f'Proportions of Languages over Time  in {y}',
+        xaxis_title='Date',
+        yaxis_title='Proportion (%)',
+    )
+    st.plotly_chart(fig)
+
+        
+    
+    # Create a stacked bar graph using Plotly
+    fig = go.Figure()
+
+    for column in pivot_table_normalized.columns:
+        fig.add_trace(go.Bar(
+            x=pivot_table_normalized.index,
+            y=pivot_table_normalized[column],
+            name=column,
+            offsetgroup=column,
+        ))
+
+    fig.update_layout(
+        title=f'Stacked Proportions of Languages over Time in {y}',
+        xaxis_title='Date',
+        yaxis_title='Proportion (%)',
+        barmode='stack',
+    )
+    st.plotly_chart(fig)
+
+    df_pivot_acco = pd.pivot_table(language_proportions, index='acco_type', columns="language", values="count", aggfunc='sum').fillna(0)
+    st.write("df_pivot_acco")
+    st.write(df_pivot_acco)
+
+
+    pivot_table_acco_normalized_row = df_pivot_acco.div(df_pivot_acco.sum(axis=1), axis=0) * 100
+ 
+    pivot_table_acco_normalized_row = pivot_table_acco_normalized_row.round(1)
+    st.write("pivot_table_acco_normalized_row")
+    st.write(pivot_table_acco_normalized_row)
+
+
+    pivot_table_acco_normalized_col = df_pivot_acco.div(df_pivot_acco.sum(axis=0), axis=1) * 100
+    pivot_table_acco_normalized_col = pivot_table_acco_normalized_col.round(1)
+    st.write("pivot_table_acco_normalized_col")
+    st.write(pivot_table_acco_normalized_col)
+
 def show_info_from_bookingtable(df, year):
     """Print the languages, linnen and babypacks
 
@@ -516,6 +610,9 @@ def show_info_from_bookingtable(df, year):
     freq_table = df["language"].value_counts()
     st.write(freq_table)
     st.write(f"Total number of bookings :{len(df)}")
+    
+
+    graph_distribution_nationalities(df, year)
 
 def select_to_do_and_sheet(wb_2023, year):
 
@@ -1168,7 +1265,7 @@ def checkin_outlist(df_bookingtable, date_to_check_, current_date_day_of_week):
         ["acco_number", "guest_name", "back_to_back_out"]
     ]
     st.subheader(
-        f"Checkouts {current_date_day_of_week} {date_to_check_} - aantal = {len(df_bookingtable_out)} "
+        f"Checkouts {current_date_day_of_week} {date_to_check_} | aantal = {len(df_bookingtable_out)} | b2b = {len(df_bookingtable_out[df_bookingtable_out['back_to_back_out'] == True])} "
     )
     if len(df_bookingtable_out) > 0:
         st.table(df_bookingtable_out)
@@ -1180,14 +1277,15 @@ def checkin_outlist(df_bookingtable, date_to_check_, current_date_day_of_week):
         ["acco_number", "guest_name", "checkout_date",  "back_to_back_in"]
     ]
     st.subheader(
-        f"Checkins {current_date_day_of_week} {date_to_check_} - aantal = {len(df_bookingtable_in)}"
+        f"Checkins {current_date_day_of_week} {date_to_check_} | aantal = {len(df_bookingtable_in)} | b2b = {len(df_bookingtable_in[df_bookingtable_in['back_to_back_in'] == True])}"
     )
     if len(df_bookingtable_in) > 0:
         st.table(df_bookingtable_in)
     st.markdown("<hr>", unsafe_allow_html=True)
     nr_in = len(df_bookingtable_in)
     nr_out = len(df_bookingtable_out)
-    return nr_in, nr_out
+    back_to_back =len(df_bookingtable_out[df_bookingtable_out["back_to_back_out"] == True])
+    return nr_in, nr_out, back_to_back
 
 def cleaning_numbers_period(df_bookingtable):
     """Make an table to use for the form of the cleaning company
@@ -1334,14 +1432,14 @@ def make_checkin_outlist(df_bookingtable):
     st.header(f"Versie: {current_datetime_str}")
     # Iterate over each date between start and end dates
     current_date = start_date
-    nr_in_totaal, nr_out_totaal = 0, 0
+    nr_in_totaal, nr_out_totaal,nr_b2b_totaal = 0, 0,0
     while current_date <= end_date:
         current_date_str = current_date.strftime("%Y-%m-%d")
         current_date_day_of_week = current_date.strftime("%a")
 
         #year_ = current_date.year
         #df_bookingtable = make_booking_table(year_)
-        nr_in, nr_out = checkin_outlist(
+        nr_in, nr_out, nr_b2b = checkin_outlist(
             df_bookingtable, current_date_str, current_date_day_of_week
         )
 
@@ -1349,10 +1447,10 @@ def make_checkin_outlist(df_bookingtable):
         current_date += dt.timedelta(days=1)
         nr_in_totaal += nr_in
         nr_out_totaal += nr_out
-
-    st.header(f"Versie: {current_datetime_str}")
-    st.write(f"Periode : {date_to_check_from} - {date_to_check_until}")
-    st.write(f"Aantal in = {nr_in_totaal} / Aantal uit = {nr_out_totaal}")
+        nr_b2b_totaal += nr_b2b
+    st.header(f"Version: {current_datetime_str}")
+    st.write(f"Period : {date_to_check_from} - {date_to_check_until}")
+    st.write(f"Number of check-in = {nr_in_totaal} / Number of check-out = {nr_out_totaal} / Number of back to back: {nr_b2b_totaal}")
 
 # Function to calculate Levenshtein distance between two strings
 def levenshtein_distance(s, t):
@@ -1472,7 +1570,7 @@ def compare_files(data_csv, data_maxxton):
             "Germany":"de",
             "Denmark":"dk",
             "France":"fr",
-            "Great Britain":"uk",
+            "Great Britain":"en",
             "Luxembourg":"lx",
             "Netherlands":"nl",
             "Philippines (the)":"ph"}
