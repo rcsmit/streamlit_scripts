@@ -1781,16 +1781,19 @@ def compare_files(data_csv, data_maxxton):
         st.write(f"Number: {len(anti_join2)}")
 
         # Assuming your DataFrame is called 'df'
-    column_order = [ 'acco_number', 'guest_name', 'checkin_date', 'checkout_date', 'Customer Due Amount', 
-                    'First Name', 'Middle Name', 'Last Name', 'Reservation Number', 'Currency',
-                    'Accommodation Type', 'Unit Name', 'Arrival Date', 'Departure Date', 'Distribution Channel',
-                    'Customer Language', 'Country', 'Booking country', 'acco_type','back_to_back_in', 'back_to_back_out',
-                    'number_of_days', 'language', 'guest_name_booking', 'dbl_linnen', 'sng_linnen', 'babypack_old',
-                    'kst', 'bb', 'babypack', 'booking_number', 'date', 'year', 'year_int', 'month', 'day', 'month_day',
-                    'day_month', 'date_str', 'date_', 'similarity_score']
+    
+        
+    # Assuming your DataFrame is called 'df'
+    desired_columns = ['acco_number', 'guest_name', 'checkin_date', 'checkout_date', 'Customer Due Amount']
 
-    # Reorder the columns
-    df = df.reindex(columns=column_order)
+    # Get the remaining columns (excluding the desired columns)
+    remaining_columns = [col for col in df.columns if col not in desired_columns]
+
+    # Rearrange the columns by concatenating the desired columns followed by the remaining columns
+    new_columns = desired_columns + remaining_columns
+
+    # Reorder the DataFrame based on the new column order
+    df = df[new_columns]
     df_with_xxx =  df[df['guest_name'].str.contains('xxx')]
     if len(df_with_xxx) == 0:
         st.subheader("Guest with open bill according to Excel")
