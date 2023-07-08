@@ -1328,23 +1328,130 @@ def cleaning_numbers_period(df_bookingtable):
    
     return 
 
+def choose_start_end_date():
+
+    import datetime
+    date_to_check_from = st.sidebar.date_input("Date to check from")
+    date_to_check_until = st.sidebar.date_input(
+        "Date to check until", datetime.date(2023, 12, 31)
+    )
+
+    start_date = dt.datetime.combine(date_to_check_from, dt.datetime.min.time())
+    end_date = dt.datetime.combine(date_to_check_until, dt.datetime.max.time())
+    if start_date > end_date:
+        st.error("Enddate cannot be before start date")
+        st.stop()
+    return start_date, end_date
+
+def most_people_of_a_language(booking_df, language):
+        
+    # Assuming your booking table is stored in a DataFrame called 'booking_df'
+    filtered_df = booking_df[booking_df['language'] == language]
+    grouped = filtered_df.groupby('checkin_date')
+    total_danish = grouped.size()
+    total_checkins = booking_df.groupby('checkin_date').size()
+
+    # Create a new DataFrame with the results
+    result_df = pd.DataFrame({
+        'Number of People': total_danish,
+        'Total Check-ins': total_checkins
+    })
+
+    # Calculate relative percentage
+    result_df['Relative Percentage'] = round(result_df['Number of People'] / result_df['Total Check-ins']*100,1)
+    result_df = result_df.sort_values('Relative Percentage', ascending=False).fillna(0).reset_index()
+    result_df['year'] = result_df['checkin_date'].str[:4]
+    print (result_df.dtypes)
+    print (result_df)
+    
+
+    # Display the results in Streamlit
+    with st.expander("Dataframe"):
+        st.write(result_df)
+
+    result_df['date'] = pd.to_datetime(result_df['checkin_date'])
+    result_df['month_day'] = result_df['date'].dt.strftime('%m-%d')  # Extract day and month in 'dd-mm' format
+    result_df['month_day'] = pd.to_datetime(result_df['month_day'], format='%m-%d')  # Convert 'mm-dd' to date format
+    #result_df['month_day'] = pd.to_datetime(result_df['month_day'], format='%m-%d').dt.strftime('%m-%d')  # Convert to 'mm-dd' format
+
+    # Pivot the DataFrame to display the percentages in a table format
+    for field in ['Number of People','Relative Percentage']:
+    # Pivot the DataFrame to display the percentages in a table format
+       
+        pivot_df = result_df.pivot_table(values=field, index='month_day', columns='year').fillna(0).reset_index()
+
+        # Display the pivot table in Streamlit
+        st.subheader(f"{field} of People from {language}")
+
+        
+        # Define colors for each year
+        colors = ['blue', 'red', 'green', 'orange']  # Add more colors if needed
+
+        #Create traces for each year
+        data = []
+        for i,year in enumerate(pivot_df.columns[1:]):
+            data.append(go.Scatter(x=pivot_df['month_day'], y=pivot_df[year], line=dict(color=colors[i % len(colors)]), name=str(year)))
+
+        # Create the layout for the line graph
+        layout = go.Layout(
+            title=f"{field} People from {language} Over Time, based on checkin date",
+            xaxis=dict(title="Check-in Date"),
+            yaxis=dict(title=f"{field}"))
+        
+
+        # Create the figure
+        fig = go.Figure(data=data, layout=layout)
+
+        # Display the line graph in Streamlit
+        st.plotly_chart(fig)
+
+
+
+    def color_year(val):
+        if val == "2019":
+            color = 'red'
+        elif val == "2021":
+            color = 'yellow'
+        elif val == "2022":
+            color ='green'
+        elif val == "2023":
+            color = 'blue'    
+        else:
+            color = 'black'
+       
+        return f'background-color: {color}'
+
+   
+
+    # #st.table(result_df).style.applymap(color_year, subset=['year'])
+    # #apply the function to the 'year' subset of the DataFrame
+    # result_df_styled = result_df.style.apply(lambda x: color_year(result_df['year']), subset=['year'])
+    # st.table(result_df_styled)
+
 def show_bookingtable_period(df):
-    """Show and save a bookingtable for a certain period"""
+    """Show and save a bookingtable for a certain period
+    
+    """
     
     df = df.copy()
-    #df_bookingtable = make_bookingtable_period()
-    st.write(df)
-    st.write(f"Aantal : {len(df)}")
-    # save_df(df_bookingtable, "bookingstable.csv")
+    df["checkin_date"] = pd.to_datetime(df["checkin_date"])
+    df["checkout_date"] = pd.to_datetime(df["checkout_date"])
+    df_to_show = df.copy()
 
+    start_date, end_date =choose_start_end_date()
+    df_to_show = df_to_show[(df_to_show["checkin_date"] >= start_date) & (df_to_show["checkout_date"] <= end_date)]
+    st.write(df_to_show)
+
+    st.write(f"Aantal : {len(df_to_show)}")
     
     # Convert the date columns to datetime type
     df["checkin_date"] = pd.to_datetime(df["checkin_date"])
     df["checkout_date"] = pd.to_datetime(df["checkout_date"])
 
+   
     
     # Create a new DataFrame to store the summary table
-    summary_df = pd.DataFrame(columns=["Date", "Number of Check-ins", "Number of Check-outs"])
+    summary_df = pd.DataFrame(columns=["Date", "Number of Check-ins", "Number of Check-outs", "Number of Back to backs"])
 
     # Extract unique dates from the bookings
     dates = pd.date_range(start=df["checkin_date"].min(), end=df["checkout_date"].max(), freq="D")
@@ -1353,31 +1460,28 @@ def show_bookingtable_period(df):
     for date in dates:
         checkin_count = len(df[df["checkin_date"] == date])
         checkout_count = len(df[df["checkout_date"] == date])
-        # summary_df = summary_df.append({"Date": date, "Number of Check-ins": checkin_count, "Number of Check-outs": checkout_count}, ignore_index=True)
-
-            
-        # Create a new DataFrame with the row data
-        new_row = pd.DataFrame({"Date": [date], "Number of Check-ins": [checkin_count], "Number of Check-outs": [checkout_count]})
+        back_to_back_in_count = len(df[(df["checkin_date"] == date) & (df["back_to_back_in"] == True)])
+                       
+        new_row = pd.DataFrame({"Date": [date], "Number of Check-ins": [checkin_count], "Number of Check-outs": [checkout_count], "Number of Back to backs":[back_to_back_in_count]})
 
         # Concatenate the new DataFrame with the existing summary_df
         summary_df = pd.concat([summary_df, new_row], ignore_index=True)
 
+    summary_df = summary_df[
+        (summary_df["Date"] <= end_date)
+        & (summary_df["Date"] >= start_date)
+    ]
     st.write(summary_df)
+
     for x_ in ["Number of Check-ins", "Number of Check-outs"]:
         fig = px.histogram(summary_df, x=x_, title=x_)
-    # plotly.offline.plot(fig)
-
         st.plotly_chart(fig, use_container_width=True)
         afkapgrens = 20
         df_selection = summary_df[summary_df[x_] >=afkapgrens]
         st.write(f"Aantal {x_} groter of gelijk dan {afkapgrens} = {len(df_selection)}")
 
-    # Print the summary table
-    
     for y_ in ["Number of Check-ins", "Number of Check-outs"]:
         fig = px.bar(summary_df, x="Date", y=y_, title=y_)
-    # plotly.offline.plot(fig)
-
         st.plotly_chart(fig, use_container_width=True)
 
     return
@@ -1987,6 +2091,8 @@ def main():
 
                 "dekenanalyse",
                 "babypackanalyse",
+
+                "most people from xx",
                 
                 "---- UTILITIES ---",
                 "Find color",
@@ -2031,7 +2137,7 @@ def main():
         pass
     else:
         st.header(what_to_do)
-    if what_to_do in ["Bookingtable", "Add-on list","Compare files"]:
+    if what_to_do in ["Add-on list","Compare files"]:
         df_mutation_period, df_bookingtable_period = select_period(df_mutation, df_bookingtable)
 
     if what_to_do == "Hello" or what_to_do.startswith("---"):
@@ -2042,7 +2148,7 @@ def main():
     elif what_to_do == "Checkin/out list":    
         make_checkin_outlist(df_bookingtable)
     elif what_to_do == "Bookingtable":
-        show_bookingtable_period(df_bookingtable_period)    
+        show_bookingtable_period(df_bookingtable)    
     elif what_to_do == "Add-on list":
         add_on_list(df_bookingtable_period)
 
@@ -2069,6 +2175,17 @@ def main():
         for y in years:
             df_bookingtable_year =  df_bookingtable[df_bookingtable["year_int"] == y]
             show_info_number_of_days(df_bookingtable_year,y)
+    elif what_to_do == "most people from xx":
+        st.subheader("All time")
+        for l in ["dk","de", "en"]:
+            most_people_of_a_language(df_bookingtable, l)
+      
+        # for y in years:
+        #     st.subheader(f"{y}")
+        #     df_bookingtable_year =  df_bookingtable[df_bookingtable["year_int"] == y]
+     
+        #     most_people_of_a_language(df_bookingtable_year, "dk")
+
     elif what_to_do == "dekenanalyse":
         for y in [2022,2023]:
             
