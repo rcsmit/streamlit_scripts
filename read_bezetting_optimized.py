@@ -1780,8 +1780,6 @@ def compare_files(data_csv, data_maxxton):
         st.write(anti_join2)
         st.write(f"Number: {len(anti_join2)}")
 
-
-
         # Assuming your DataFrame is called 'df'
     column_order = [ 'acco_number', 'guest_name', 'checkin_date', 'checkout_date', 'Customer Due Amount', 
                     'First Name', 'Middle Name', 'Last Name', 'Reservation Number', 'Currency',
