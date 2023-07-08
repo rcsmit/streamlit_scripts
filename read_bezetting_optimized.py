@@ -36,33 +36,36 @@ def find_fill_color():
     Args:
         cell (string): The cell you want to find the color from
     """
+    if platform.processor() != "":
+        sheet_name = st.sidebar.text_input("Sheetname", "KLADBLOK")
+        cell = st.sidebar.text_input("Cell", "A1")
+        excel_file_2023 = r"C:\Users\rcxsm\Downloads\bezetting2023a.xlsm"
+        wb_2023 = load_workbook(excel_file_2023, data_only=True)
 
-    sheet_name = st.sidebar.text_input("Sheetname", "juni")
-    cell = st.sidebar.text_input("Cell", "B4")
-    excel_file_2023 = r"C:\Users\rcxsm\Downloads\bezetting2023a.xlsm"
-    wb_2023 = load_workbook(excel_file_2023, data_only=True)
+        sh_2023 = wb_2023[sheet_name]
 
-    sh_2023 = wb_2023[sheet_name]
+        val = sh_2023[cell].fill.start_color.rgb
 
-    val = sh_2023[cell].fill.start_color.rgb
+        try:
+            valx = val[0]
+            valx = val
+        except Exception:
+            valx = sh_2023[cell].fill.start_color.theme
 
-    try:
-        valx = val[0]
-        valx = val
-    except Exception:
-        valx = sh_2023[cell].fill.start_color.theme
+        theme = sh_2023[cell].fill.start_color.theme
+        tint = sh_2023[cell].fill.start_color.tint
+        val = int(sh_2023[cell].fill.start_color.index, 16)
 
-    theme = sh_2023[cell].fill.start_color.theme
-    tint = sh_2023[cell].fill.start_color.tint
-    val = int(sh_2023[cell].fill.start_color.index, 16)
+        st.write(f"File = {excel_file_2023}")
+        st.write(f"Cel = {cell}")
+        st.write(f"{valx = } {theme=} {tint=}")
 
-    st.write(f"File = {excel_file_2023}")
-    st.write(f"Cel = {cell}")
-    st.write(f"{valx = } {theme=} {tint=}")
-
-    st.write(f"{val = }")
-    # hex_color = "%06x" % (val && 0xFFFFFF)
-    # st.write(hex_color)
+        st.write(f"{val = }")
+        # hex_color = "%06x" % (val && 0xFFFFFF)
+        # st.write(hex_color)
+    else:
+        st.error("Available only on local systems")
+        st.stop()
 
 @st.cache_data
 def retrieve_prijzen():
@@ -393,7 +396,7 @@ def make_booking_table(wb_2023):
                             pass
                         elif valx == 0 or valx == 6:  # zwart of grijs
                             pass
-                        elif valx == "FF00B0F0":  # lichtblauw / cyaan
+                        elif valx == "FF00B0F0" or valx=="FFFFC000":  # lichtblauw / cyaan - dark yellow for non paid resa
                             checkout_date = date
                             back_to_back_out = True
 
@@ -849,7 +852,7 @@ def make_mutation_df(wb_2023):
                                 vertrek_totaal += 1
                             elif valx == 0 or valx == 6:  # zwart of grijs
                                 out_of_order += 1
-                            elif valx == "FF00B0F0":  # lichtblauw / cyaan
+                            elif valx == "FF00B0F0"  or valx=="FFFFC000":  # lichtblauw / cyaan - dark yellow for non paid resa
                                 back_to_back += 1
                             elif valx == "FFFFFF00":  # geel / bezet
                                 geel += 1
@@ -1777,6 +1780,38 @@ def compare_files(data_csv, data_maxxton):
         st.write(anti_join2)
         st.write(f"Number: {len(anti_join2)}")
 
+
+
+        # Assuming your DataFrame is called 'df'
+    column_order = [ 'acco_number', 'guest_name', 'checkin_date', 'checkout_date', 'Customer Due Amount', 
+                    'First Name', 'Middle Name', 'Last Name', 'Reservation Number', 'Currency',
+                    'Accommodation Type', 'Unit Name', 'Arrival Date', 'Departure Date', 'Distribution Channel',
+                    'Customer Language', 'Country', 'Booking country', 'acco_type','back_to_back_in', 'back_to_back_out',
+                    'number_of_days', 'language', 'guest_name_booking', 'dbl_linnen', 'sng_linnen', 'babypack_old',
+                    'kst', 'bb', 'babypack', 'booking_number', 'date', 'year', 'year_int', 'month', 'day', 'month_day',
+                    'day_month', 'date_str', 'date_', 'similarity_score']
+
+    # Reorder the columns
+    df = df.reindex(columns=column_order)
+    df_with_xxx =  df[df['guest_name'].str.contains('xxx')]
+    if len(df_with_xxx) == 0:
+        st.subheader("Guest with open bill according to Excel")
+        st.write(":white_check_mark: All reservations are paid")
+    else:
+        st.subheader(":question: Reservations marked as not paid in Excel")
+        st.write(df_with_xxx.sort_values('Customer Due Amount'))
+        st.write(f"Number: {len(df_with_xxx)}")
+    print (df_with_xxx.dtypes)
+
+    df_with_cda = df[df['Customer Due Amount'] != 0]
+    if len(df_with_cda) == 0:
+        st.subheader("Guest with Customer Due Amount in Maxxton")
+        st.write(":white_check_mark: No guests with CDA")
+    else:
+        st.subheader(":question: Guests with Customer Due Amount in Maxxton")
+        st.write(df_with_cda.sort_values('Customer Due Amount'))
+        st.write(f"Number: {len(df_with_cda)}")
+        
 def add_on_list(data_csv):
     """
     Generate add-ons summaries and visualizations based on the given CSV data.
