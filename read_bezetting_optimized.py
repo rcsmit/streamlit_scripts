@@ -1130,18 +1130,21 @@ def deken_analyse(df_bookingtable, year):
     df_bookingtable = df_bookingtable[(df_bookingtable["acco_type"] == "SAHARA")]
     if len (df_bookingtable) > 0:
         # filter rows where col2 ends with 'xp' and the character before 'p' is a number
-        df_bookingtable_filtered = df_bookingtable[
-            df_bookingtable["guest_name"].str.match(".*[0-9]p$")
-        ]
-        df_bookingtable_filtered = df_bookingtable_filtered.copy()
-        # extract the number before 'xp' in each row and store it in a new column
-        df_bookingtable_filtered["number_of_guests"] = df_bookingtable_filtered[
-            "guest_name"
-        ].str.extract("(\d+)p", expand=False)
+        # df_bookingtable_filtered = df_bookingtable[
+        #     df_bookingtable["guest_name"].str.match(".*[0-9]p$")
+        # ]
 
-        df_bookingtable_filtered["number_of_guests"] = df_bookingtable_filtered[
-            "number_of_guests"
-        ].astype(int)
+        df_bookingtable_filtered = df_bookingtable[df_bookingtable["guest_name"].str.contains(r"\d+p")]
+
+        df_bookingtable_filtered = df_bookingtable_filtered.copy()
+        st.write (df_bookingtable_filtered)
+        # extract the number before 'xp' in each row and store it in a new column
+        # df_bookingtable_filtered["number_of_guests"] = df_bookingtable_filtered[
+        #     "guest_name"
+        # ].str.extract("(\d+)p", expand=False)
+        df_bookingtable_filtered["number_of_guests"] = df_bookingtable_filtered["guest_name"].str.extract("(\d+)(?=p)", expand=False).astype(int)
+        #df_bookingtable_filtered["number_of_guests"] = df_bookingtable_filtered["guest_name"].str.extract("(\d+)p", expand=False).astype(int)
+      
         with st.expander("df_bookingtable_filtered"):
             st.write(df_bookingtable_filtered)
         freq_tabel = df_bookingtable_filtered["number_of_guests"].value_counts()
@@ -1164,7 +1167,7 @@ def deken_analyse(df_bookingtable, year):
         )
 
         # create a date range to cover all possible dates
-        date_range = pd.date_range(start=f"{year}-06-15", end=f"{year}-09-13", freq="D")
+        date_range = pd.date_range(start=f"{year}-04-15", end=f"{year}-09-30", freq="D")
 
         # initialize a dictionary to store the totals for each date
         totals = {}
@@ -1196,7 +1199,7 @@ def deken_analyse(df_bookingtable, year):
         )
         # plotly.offline.plot(fig)
         st.write(
-            f"Freq table total  number_of_guests in Sahara start='{year}-06-15', end='{year}-09-13' "
+            f"Freq table total  number_of_guests in Sahara start='{year}-04-15', end='{year}-09-30' "
         )
         st.plotly_chart(fig, use_container_width=True)
         st.write(
@@ -1208,13 +1211,13 @@ def deken_analyse(df_bookingtable, year):
 
         # get list of unique dates
         # dates = df_bookingtable_filtered['checkin_date'].unique()
-        dates = pd.date_range(start=f"{year}-06-15", end=f"{year}-09-13", freq="D")
+        #dates = pd.date_range(start=f"{year}-06-15", end=f"{year}-09-13", freq="D")
         # create empty dataframe to store results
         result_df = pd.DataFrame()
 
         # loop over dates and compute total number of guests in each room
 
-        for date in dates:
+        for date in date_range:
             df_filtered = df_bookingtable_filtered[
                 (df_bookingtable_filtered["checkin_date"] <= date)
                 & (df_bookingtable_filtered["checkout_date"] > date)
@@ -1230,7 +1233,7 @@ def deken_analyse(df_bookingtable, year):
         #result_df["acco_number"] = result_df["acco_number"].astype(int)
         df_pivot = result_df.pivot_table(
             index="date", columns="acco_number", values="number_of_guests", aggfunc="sum"
-        )
+        ).fillna(0)
 
         st.write("occupation per tent per day")
         # display result
@@ -1243,6 +1246,25 @@ def deken_analyse(df_bookingtable, year):
         fig = px.line(df_pivot, x=df_pivot.index, y='Total', title='Total Number of Guests per Day')
 
         # Show the graph
+        st.plotly_chart(fig)
+
+        # Create a line graph using Plotly
+        fig = go.Figure()
+
+        for column in df_pivot.columns[:-1]:
+            fig.add_trace(go.Bar(
+                x=df_pivot.index,
+                y=df_pivot[column],
+                name=column,
+                offsetgroup = column
+            ))
+
+        fig.update_layout(
+            title=f'Blankets over Time  in {year}',
+            xaxis_title='Date',
+            yaxis_title='Blankets',
+            barmode='stack',
+        )
         st.plotly_chart(fig)
     else:
         st.error(f"Geen boekingen in Sahara in year {year}")
@@ -2037,6 +2059,24 @@ def get_data_local():
 
 #@st.cache_data()
 def upload_files():
+
+    """ Uploads the files
+
+            Streamlit manages your uploaded files for you. Files are stored in memory (i.e. RAM, not disk), 
+            and they get deleted immediately as soon as they’re not needed anymore.
+
+            This means we remove a file from memory when:
+
+            The user uploads another file, replacing the original one
+            The user clears the file uploader
+            The user closes the browser tab where they uploaded the file
+            https://discuss.streamlit.io/t/where-does-the-data-go-when-using-file-uploader-when-does-it-get-deleted/8269/1
+
+    Returns:
+        wb_2023: the workbook
+        df_maxxton : the df with the info from the Maxxton output
+
+    """    
     excel_file_2023 = st.sidebar.file_uploader("Choose the Henriette file", type='xlsm')
     maxxton_file = st.sidebar.file_uploader("Choose the Maxxton file", type='xlsx')
     if (excel_file_2023 is not None) and (maxxton_file is not None):
