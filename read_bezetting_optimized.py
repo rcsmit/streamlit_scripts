@@ -1807,15 +1807,13 @@ def compare_files(data_csv, data_maxxton):
         
     # Assuming your DataFrame is called 'df'
     desired_columns = ['acco_number', 'guest_name', 'checkin_date', 'checkout_date', 'Customer Due Amount']
-
     # Get the remaining columns (excluding the desired columns)
     remaining_columns = [col for col in df.columns if col not in desired_columns]
-
     # Rearrange the columns by concatenating the desired columns followed by the remaining columns
     new_columns = desired_columns + remaining_columns
-
     # Reorder the DataFrame based on the new column order
     df = df[new_columns]
+
     df_with_xxx =  df[df['guest_name'].str.contains('xxx')]
     if len(df_with_xxx) == 0:
         st.subheader("Guest with open bill according to Excel")
@@ -1824,16 +1822,24 @@ def compare_files(data_csv, data_maxxton):
         st.subheader(":question: Reservations marked as not paid in Excel")
         st.write(df_with_xxx.sort_values('Customer Due Amount'))
         st.write(f"Number: {len(df_with_xxx)}")
-    print (df_with_xxx.dtypes)
 
-    df_with_cda = df[df['Customer Due Amount'] != 0]
-    if len(df_with_cda) == 0:
+    df_with_pos_cda = df[df['Customer Due Amount'] > 0]
+    if len(df_with_pos_cda) == 0:
         st.subheader("Guest with Customer Due Amount in Maxxton")
-        st.write(":white_check_mark: No guests with CDA")
+        st.write(":white_check_mark: All guests in Maxxton have paid")
     else:
-        st.subheader(":question: Guests with Customer Due Amount in Maxxton")
-        st.write(df_with_cda.sort_values('Customer Due Amount'))
-        st.write(f"Number: {len(df_with_cda)}")
+        st.subheader(":question: Guests with Customer Due Amount in Maxxton - still have to pay")
+        st.write(df_with_pos_cda.sort_values('Customer Due Amount'))
+        st.write(f"Number: {len(df_with_pos_cda)}")
+
+    df_with_neg_cda = df[df['Customer Due Amount'] < 0]
+    if len(df_with_neg_cda) == 0:
+        st.subheader("Guest having negative Customer Due Amount in Maxxton")
+        st.write(":white_check_mark: No guests with negative CDA")
+    else:
+        st.subheader(":question: Guests having negative Customer Due Amount in Maxxton")
+        st.write(df_with_neg_cda.sort_values('Customer Due Amount'))
+        st.write(f"Number: {len(df_with_neg_cda)}")
         
 def add_on_list(data_csv):
     """
