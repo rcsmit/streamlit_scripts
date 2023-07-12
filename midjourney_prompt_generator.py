@@ -3,24 +3,7 @@ import random
 import platform
 import streamlit as st
 
-from scipy.stats import weibull_min
 
-def weibull(max):
-    """Give a value, selected with the weibull distribution
-
-    Args:
-        max (int): maximum value
-
-    Returns:
-        int: random value
-    """    
-    # Define the shape and scale parameters
-    shape = 2
-    scale = max/2
-
-    # Generate a random number from the Weibull distribution
-    random_number = int(weibull_min.rvs(shape, scale=scale))
-    return random_number
 
 def take_random_value(df, column):
     """Take a random value in a given column
@@ -64,9 +47,10 @@ def generate_prompt(what):
    
     distribution = "uneven"
     if distribution == "weibull":
-        prompt += f"--chaos {weibull(100)} "
-        prompt += f"--stylize {weibull(1000)} " # Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
-        prompt += f"--weird {weibull(3000)} "
+        # prompt += f"--chaos {weibull(100)} "
+        # prompt += f"--stylize {weibull(1000)} " # Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
+        # prompt += f"--weird {weibull(3000)} "
+        pass
     elif distribution == "even":
         prompt += f"--chaos {random.randint(1,100)} "
         prompt += f"--stylize {random.randint(1,1000)} " # Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
