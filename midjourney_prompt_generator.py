@@ -1,0 +1,152 @@
+import pandas as pd
+import random
+import platform
+import streamlit
+
+from scipy.stats import weibull_min
+
+def weibull(max):
+    # Define the shape and scale parameters
+    shape = 2
+    scale = max/2
+
+    # Generate a random number from the Weibull distribution
+    random_number = int(weibull_min.rvs(shape, scale=scale))
+    return random_number
+
+sheet_id = "11QQdAEaolonFRhwYryRnbO0AEyzKLBc8mlK-wZ76VHg"
+sheet_name = "keuzes"
+
+#url= f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
+url = r"C:\Users\rcxsm\Downloads\MIDJOURNEY prompt generator - keuzes.csv"
+if platform.processor() != "":
+    # local    
+    url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\MIDJOURNEY_prompt_generator_keuzes.csv"
+else:
+    url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\MIDJOURNEY_prompt_generator_keuzes.csv"
+df = pd.read_csv(url, delimiter=",", header=0)
+columns = df.columns
+table = pd.DataFrame(columns=['Column Name', 'Number of Non-Null Values'])
+
+street_objects = [
+    'Cars',
+    'Pedestrians',
+    'Bicycles',
+    'Traffic Lights',
+    'Street Signs',
+    'Bus Stops',
+    'Sidewalks',
+    'Street Vendors',
+    'Crosswalks',
+    'Benches',
+    'Streetlights',
+    'Trash Bins',
+    'Fire Hydrants',
+    'Parking Meters',
+    'Cafes',
+    'Stores',
+    'Parks',
+    'Skateboarders',
+    'Motorcycles',
+    'Delivery Trucks'
+]
+
+artists_to_show = [
+    "The Beatles",
+    "Elvis Presley",
+    "Michael Jackson",
+    "Madonna",
+    "Elton John",
+    "Led Zeppelin",
+    "Rihanna",
+    "Queen",
+    "AC/DC",
+    "Pink Floyd",
+    "Mariah Carey",
+    "Whitney Houston",
+    "Celine Dion",
+    "Taylor Swift",
+    "Eminem",
+    "Katy Perry",
+    "Bruno Mars",
+    "Justin Bieber",
+    "Adele",
+    "Ed Sheeran"
+]
+
+
+
+def take_random_value(column):
+        column_values = df[column].dropna().values
+
+        if len(column_values) > 0:
+            random_value = random.choice(column_values)
+            selected_values.append(str(random_value))
+            print(f"Column: {column} - Random Value: {random_value}")
+        else:
+            random_value = None
+        return random_value
+
+
+column_order = ['ARTISTS'] + [col for col in df.columns if col != 'ARTISTS']
+df = df.reindex(columns=column_order)
+selected_columns =  random.sample(list(df.columns)[4:], 5) # Exclude the first column and select a random sample of 8 column names
+print (df)
+selected_values = []
+
+  
+prompt = f'{take_random_value("FAMOUS PEOPLE")} as {take_random_value("ARCHETYPES")} in a {take_random_value("SCENES")} in the style of {take_random_value("MASTERPHOTOGRAPHERS")}'
+prompt2 = prompt
+for column in df.columns:
+    if column in selected_columns:
+        random_value = take_random_value(column)
+    
+        prompt += f"{random_value}::{random.randint(1, 100)} "
+
+        prompt2 += f"{random_value}, "
+# selected_values_string = ', '.join(selected_values)
+# random_artist = random.choice(artists)
+
+distribution = "uneven"
+if distribution == "weibull":
+    prompt += f"--chaos {weibull(100)} "
+    prompt += f"--stylize {weibull(1000)} " # Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
+    prompt += f"--weird {weibull(3000)} "
+elif distribution = "even":
+    prompt += f"--chaos {random.randint(1,100)} "
+    prompt += f"--stylize {random.randint(1,1000)} " # Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
+    prompt += f"--weird {random.randint(1,3000)} "
+else:
+     pass
+
+prompt +=    "--style raw"
+prompt2 +=    "--style raw"
+print (prompt)
+print (prompt2)
+
+st.code (prompt)
+st.code (prompt2)
+st.subheader("*To copy the text, roll over the mouse the box below and click the copy to clipboard icon at the right*")
+
+# print(f"{random_artist} {selected_values_string} --style raw")
+
+# https://bootcamp.uxdesign.cc/50-midjourney-prompts-for-to-perfect-your-art-363996b702b6
+# https://bootcamp.uxdesign.cc/50-midjourney-prompts-to-create-photorealistic-images-advanced-2e233463bccf
+
+
+# 50+%20Best%20Midjourney%20Prompts%20to%20Create%20Seamless%20Pattern%20that%20Sells%20_%20Bootcamp.pdf
+# https://medium.com/mlearning-ai/an-advanced-guide-to-writing-prompts-for-midjourney-text-to-image-aa12a1e33b6
+# https://weirdwonderfulai.art/resources/artist-styles-on-midjourney-v4/
+
+# https://onestopforwriters.com/scene_settings
+#https://discord.com/channels/662267976984297473/1017917091606712430/threads/1125455952448061511
+
+# https://docs.google.com/document/d/e/2PACX-1vRHOxyEb-ERGi-BdZM8Z_piEP54m4HwO0z8scjmEurEp2UZVA6rFxvyKd15elYVHUWfP1oSA4CQFwxr/pub?utm_source=docs.google.com&utm_medium=tutorial&utm_campaign=midjourney
+#https://docs.google.com/document/d/1ivAYy_JXJsGE-9Rh97iMyXkWlmF_MxO2NFshrIvuns4/edit#heading=h.m6597yajayd7
+
+# Architecture: https://docs.google.com/spreadsheets/d/1029yD1REXEq8V47XgfRm8GQby8JXnwGNlWOL17Lz6J4/edit#gid=0
+
+# https://marigoldguide.notion.site/marigoldguide/52ac9968a8da4003a825039022561a30?v=43706e26438d486bb5b8baaa2dc22ffd
+# https://docs.google.com/spreadsheets/d/1MsX0NYYqhv4ZhZ7-50cXH1gvYE2FKLixLBvAkI40ha0/edit#gid=0
+# https://github.com/willwulfken/MidJourney-Styles-and-Keywords-Reference
+# 

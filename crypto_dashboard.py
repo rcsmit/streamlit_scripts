@@ -337,7 +337,9 @@ def plot_trendline(df, choice,m,b, std, x_as_label,  x_logarithmic,  y_logarithm
     
     fig1 = go.Figure(data=data, layout=layout)
     if x_logarithmic:
+        # https://medium.com/quantodian-publications/bitcoins-natural-long-term-power-law-corridor-of-growth-649d0e9b3c94
         fig1.update_layout(xaxis_type='log' , xaxis=dict(tickformat = ',d' )  )
+
     else:
         fig1.update_layout(xaxis=dict(tickformat="%d-%m-%Y"))
 
