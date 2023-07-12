@@ -65,7 +65,7 @@ def generate_prompt(df,what, number):
 
     st.info (prompt)
     st.info (prompt2)
-
+    st.write("--chaos 0-100 | --stylize 0-1000| --weird 0-3000")
 def get_df():
     """Get the DF with the possibilities.
        Loading from Google Sheets gives the 2 first rows as column header.
