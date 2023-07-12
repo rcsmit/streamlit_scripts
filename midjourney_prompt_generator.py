@@ -90,7 +90,7 @@ def main():
     st.title("Midjourney Prompt generator")
     df = get_df()
     what = st.sidebar.selectbox("What to choose",["FAMOUS PEOPLE", "ANIMALS", "OBJECTS", "SHOW DF"])
-    number = st.sidebar.slider("Number of keywords", 0, len(df.columns)-8)
+    number = st.sidebar.slider("Number of keywords", 0, len(df.columns)-8, 5)
     if what != "SHOW DF":
         if st.button('Generate prompt'):
             generate_prompt(df, what, number)
