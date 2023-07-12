@@ -94,25 +94,33 @@ def about(df):
     st.write(df)
     st.subheader("Sources and links")
     '''
-    https://bootcamp.uxdesign.cc/50-midjourney-prompts-for-to-perfect-your-art-363996b702b6
-    https://bootcamp.uxdesign.cc/50-midjourney-prompts-to-create-photorealistic-images-advanced-2e233463bccf
+    * https://bootcamp.uxdesign.cc/50-midjourney-prompts-for-to-perfect-your-art-363996b702b6
+    * https://bootcamp.uxdesign.cc/50-midjourney-prompts-to-create-photorealistic-images-advanced-2e233463bccf
+    * https://bootcamp.uxdesign.cc/50-best-midjourney-prompts-to-create-seamless-pattern-that-sells-bdfcd8a067eb
+    * https://medium.com/mlearning-ai/an-advanced-guide-to-writing-prompts-for-midjourney-text-to-image-aa12a1e33b6
+    * https://weirdwonderfulai.art/resources/artist-styles-on-midjourney-v4/
+
+  
+
+    * Library of Style Words : https://discord.com/channels/662267976984297473/1017917091606712430/threads/1125455952448061511
+
+    * Troubleshooting Midjourney Text Prompts by @whatnostop#6700 (clarinet): https://docs.google.com/document/d/e/2PACX-1vRHOxyEb-ERGi-BdZM8Z_piEP54m4HwO0z8scjmEurEp2UZVA6rFxvyKd15elYVHUWfP1oSA4CQFwxr/pub?utm_source=docs.google.com&utm_medium=tutorial&utm_campaign=midjourney
+    
+    * A very unofficial Midjourney Manual by Shambibble : https://docs.google.com/document/d/1ivAYy_JXJsGE-9Rh97iMyXkWlmF_MxO2NFshrIvuns4/edit#heading=h.m6597yajayd7
+    
+   
+    * Midjourney Keywords & Styles : https://marigoldguide.notion.site/marigoldguide/52ac9968a8da4003a825039022561a30?v=43706e26438d486bb5b8baaa2dc22ffd
+
+    * V4 midjourney reference sheets :https://docs.google.com/spreadsheets/d/1MsX0NYYqhv4ZhZ7-50cXH1gvYE2FKLixLBvAkI40ha0/edit#gid=0
+
+    * MidJourney-Styles-and-Keywords-Reference :   https://github.com/willwulfken/MidJourney-Styles-and-Keywords-Reference
 
 
-    https://bootcamp.uxdesign.cc/50-best-midjourney-prompts-to-create-seamless-pattern-that-sells-bdfcd8a067eb
-    https://medium.com/mlearning-ai/an-advanced-guide-to-writing-prompts-for-midjourney-text-to-image-aa12a1e33b6
-    https://weirdwonderfulai.art/resources/artist-styles-on-midjourney-v4/
+    * Scene settings: https://onestopforwriters.com/scene_settings
+    * Architecture:  https://docs.google.com/spreadsheets/d/1029yD1REXEq8V47XgfRm8GQby8JXnwGNlWOL17Lz6J4/edit#gid=0
 
-    https://onestopforwriters.com/scene_settings
-    https://discord.com/channels/662267976984297473/1017917091606712430/threads/1125455952448061511
+    * My profile : https://www.midjourney.com/app/users/2fae5989-ecac-4f06-afaf-7ee2cb306c58/
 
-    https://docs.google.com/document/d/e/2PACX-1vRHOxyEb-ERGi-BdZM8Z_piEP54m4HwO0z8scjmEurEp2UZVA6rFxvyKd15elYVHUWfP1oSA4CQFwxr/pub?utm_source=docs.google.com&utm_medium=tutorial&utm_campaign=midjourney
-    https://docs.google.com/document/d/1ivAYy_JXJsGE-9Rh97iMyXkWlmF_MxO2NFshrIvuns4/edit#heading=h.m6597yajayd7
-
-    Architecture: https://docs.google.com/spreadsheets/d/1029yD1REXEq8V47XgfRm8GQby8JXnwGNlWOL17Lz6J4/edit#gid=0
-
-    https://marigoldguide.notion.site/marigoldguide/52ac9968a8da4003a825039022561a30?v=43706e26438d486bb5b8baaa2dc22ffd
-    https://docs.google.com/spreadsheets/d/1MsX0NYYqhv4ZhZ7-50cXH1gvYE2FKLixLBvAkI40ha0/edit#gid=0
-    https://github.com/willwulfken/MidJourney-Styles-and-Keywords-Reference
     '''
     
 def main():
