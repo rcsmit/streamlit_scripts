@@ -23,16 +23,16 @@ def take_random_value(df, column):
         random_value = None
     return random_value
 
-def generate_prompt(df,what, number):
+def generate_prompt(df,what,who, number, fixed_columns,chaos, stylize, weird):
 
     
 
-    selected_columns =  random.sample(list(df.columns)[8:], number) # Exclude the first column and select a random sample of 8 column names
-    print (list(df.columns)[7:])
+    selected_columns =  random.sample(list(df.columns)[fixed_columns:], number) # Exclude the first column and select a random sample of 8 column names
+    print (list(df.columns)[fixed_columns:])
     if what == "FAMOUS PEOPLE" or what=="ANIMALS":
-        prompt = f'{take_random_value(df, what)} as {take_random_value(df, "ARCHETYPES")} in a {take_random_value(df, "SCENES")} in the style of {take_random_value(df, "MASTERPHOTOGRAPHERS")}, '
+        prompt = f'{take_random_value(df, "CONCEPT")} {take_random_value(df, what)} as {take_random_value(df, "ARCHETYPES")} in a {take_random_value(df, "SCENES")} in the style of {take_random_value(df, who)} '
     else:
-        prompt = f'{take_random_value(df, what)} in a {take_random_value(df, "SCENES")} in the style of {take_random_value(df, "MASTERPHOTOGRAPHERS")}, '
+        prompt = f'{take_random_value(df, "CONCEPT")} {take_random_value(df, what)} in a {take_random_value(df, "SCENES")} in the style of {take_random_value(df, who)}'
     
     
     
@@ -43,7 +43,7 @@ def generate_prompt(df,what, number):
         
             prompt += f"{random_value}::{random.randint(1, 100)} "
 
-            prompt2 += f"{random_value}, "
+            prompt2 += f"| {random_value} "
    
     distribution = "uneven"
     if distribution == "weibull":
@@ -56,10 +56,16 @@ def generate_prompt(df,what, number):
         prompt += f"--stylize {random.randint(1,1000)} " # Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
         prompt += f"--weird {random.randint(1,3000)} "
     else:
-        pass
+        prompt += f"--chaos {chaos} "
+        prompt += f"--stylize {stylize} " # Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
+        prompt += f"--weird {weird} "
 
-    prompt +=    "--style raw --chaos 0 --stylize 0 --weird 0"
-    prompt2 +=    "--style raw --chaos 0 --stylize 0 --weird 0"
+        prompt2 += f"--chaos {chaos} "
+        prompt2 += f"--stylize {stylize} " # Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
+        prompt2 += f"--weird {weird} "
+
+    # prompt +=    "--style raw --chaos 0 --stylize 0 --weird 0"
+    # prompt2 +=    "--style raw --chaos 0 --stylize 0 --weird 0"
     print (prompt)
     print (prompt2)
 
@@ -126,13 +132,21 @@ def about(df):
 def main():
     st.title("Midjourney Prompt generator")
     df = get_df()
+    fixed_columns = 9  # number of columns not in the general generator
     what = st.sidebar.selectbox("What to choose",["FAMOUS PEOPLE", "ANIMALS", "OBJECTS", "ABOUT"])
-    number = st.sidebar.slider("Number of keywords", 0, len(df.columns)-8, 5)
-       
+    who = st.sidebar.selectbox("What kind of artist", ["FAMOUS PAINTERS", "MASTERPHOTOGRAPHERS","ARTISTS" ])
+    number = st.sidebar.slider("Number of keywords", 0, len(df.columns)-fixed_columns, 5)
+    chaos = st.sidebar.slider("chaos", 0,100, 0) # High --chaos values will produce more unusual and unexpected results and compositions. Lower --chaos values have more reliable, repeatable results.
+    stylize = st.sidebar.slider("Stylyze", 0, 1000, 100) #Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
+    weird = st.sidebar.slider("Weird", 0, 3000, 0)
+    
+    # --chaos controls how diverse the initial grid images are from each other.
+    # --stylize controls how strongly Midjourney's default aesthetic is applied.
+    # --weird controls how unusual an image is compared to previous Midjourney images.
     if what =="ABOUT":
         about(df)
     else:
         if st.button('Generate prompt'):
-            generate_prompt(df, what, number)
+            generate_prompt(df, what, who, number, fixed_columns, chaos, stylize, weird)
 if __name__ == "__main__":
     main()
