@@ -23,7 +23,7 @@ def take_random_value(df, column):
         random_value = None
     return random_value
 
-def generate_prompt(df,what,who, number, fixed_columns,chaos, stylize, weird):
+def generate_prompt(df,what,who, number, fixed_columns,chaos, stylize, weird,ar):
 
     
 
@@ -64,14 +64,14 @@ def generate_prompt(df,what,who, number, fixed_columns,chaos, stylize, weird):
         prompt2 += f"--stylize {stylize} " # Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
         prompt2 += f"--weird {weird} "
 
-    # prompt +=    "--style raw --chaos 0 --stylize 0 --weird 0"
-    # prompt2 +=    "--style raw --chaos 0 --stylize 0 --weird 0"
+    prompt += f"--ar {ar} --style raw "#--chaos 0 --stylize 0 --weird 0"
+    prompt2 += f"--ar {ar} --style raw "#--chaos 0 --stylize 0 --weird 0"
     print (prompt)
     print (prompt2)
 
     st.info (prompt)
     st.info (prompt2)
-    st.write("--chaos 0-100 | --stylize 0-1000| --weird 0-3000")
+    #st.write("--chaos 0-100 | --stylize 0-1000| --weird 0-3000")
 def get_df():
     """Get the DF with the possibilities.
        Loading from Google Sheets gives the 2 first rows as column header.
@@ -139,7 +139,7 @@ def main():
     chaos = st.sidebar.slider("chaos", 0,100, 0) # High --chaos values will produce more unusual and unexpected results and compositions. Lower --chaos values have more reliable, repeatable results.
     stylize = st.sidebar.slider("Stylyze", 0, 1000, 100) #Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
     weird = st.sidebar.slider("Weird", 0, 3000, 0)
-    
+    ar = st.sidebar.selectbox("Aspect ratio", ["1:1","9:16","4:5","3:4","2:3","10:16","16:9","5:4","4:3","3:2"],0)
     # --chaos controls how diverse the initial grid images are from each other.
     # --stylize controls how strongly Midjourney's default aesthetic is applied.
     # --weird controls how unusual an image is compared to previous Midjourney images.
@@ -147,6 +147,6 @@ def main():
         about(df)
     else:
         if st.button('Generate prompt'):
-            generate_prompt(df, what, who, number, fixed_columns, chaos, stylize, weird)
+            generate_prompt(df, what, who, number, fixed_columns, chaos, stylize, weird,ar)
 if __name__ == "__main__":
     main()
