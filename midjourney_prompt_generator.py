@@ -1,11 +1,19 @@
 import pandas as pd
 import random
 import platform
-import streamlit
+import streamlit as st
 
 from scipy.stats import weibull_min
 
 def weibull(max):
+    """Give a value, selected with the weibull distribution
+
+    Args:
+        max (int): maximum value
+
+    Returns:
+        int: random value
+    """    
     # Define the shape and scale parameters
     shape = 2
     scale = max/2
@@ -14,119 +22,93 @@ def weibull(max):
     random_number = int(weibull_min.rvs(shape, scale=scale))
     return random_number
 
-sheet_id = "11QQdAEaolonFRhwYryRnbO0AEyzKLBc8mlK-wZ76VHg"
-sheet_name = "keuzes"
+def take_random_value(df, column):
+    """Take a random value in a given column
 
-#url= f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
-url = r"C:\Users\rcxsm\Downloads\MIDJOURNEY prompt generator - keuzes.csv"
-if platform.processor() != "":
-    # local    
-    url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\MIDJOURNEY_prompt_generator_keuzes.csv"
-else:
-    url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\MIDJOURNEY_prompt_generator_keuzes.csv"
-df = pd.read_csv(url, delimiter=",", header=0)
-columns = df.columns
-table = pd.DataFrame(columns=['Column Name', 'Number of Non-Null Values'])
+    Args:
+        column (str): the column where you have to choose a value from
 
-street_objects = [
-    'Cars',
-    'Pedestrians',
-    'Bicycles',
-    'Traffic Lights',
-    'Street Signs',
-    'Bus Stops',
-    'Sidewalks',
-    'Street Vendors',
-    'Crosswalks',
-    'Benches',
-    'Streetlights',
-    'Trash Bins',
-    'Fire Hydrants',
-    'Parking Meters',
-    'Cafes',
-    'Stores',
-    'Parks',
-    'Skateboarders',
-    'Motorcycles',
-    'Delivery Trucks'
-]
-
-artists_to_show = [
-    "The Beatles",
-    "Elvis Presley",
-    "Michael Jackson",
-    "Madonna",
-    "Elton John",
-    "Led Zeppelin",
-    "Rihanna",
-    "Queen",
-    "AC/DC",
-    "Pink Floyd",
-    "Mariah Carey",
-    "Whitney Houston",
-    "Celine Dion",
-    "Taylor Swift",
-    "Eminem",
-    "Katy Perry",
-    "Bruno Mars",
-    "Justin Bieber",
-    "Adele",
-    "Ed Sheeran"
-]
-
-
-
-def take_random_value(column):
-        column_values = df[column].dropna().values
-
-        if len(column_values) > 0:
-            random_value = random.choice(column_values)
-            selected_values.append(str(random_value))
-            print(f"Column: {column} - Random Value: {random_value}")
-        else:
-            random_value = None
-        return random_value
-
-
-column_order = ['ARTISTS'] + [col for col in df.columns if col != 'ARTISTS']
-df = df.reindex(columns=column_order)
-selected_columns =  random.sample(list(df.columns)[4:], 5) # Exclude the first column and select a random sample of 8 column names
-print (df)
-selected_values = []
-
-  
-prompt = f'{take_random_value("FAMOUS PEOPLE")} as {take_random_value("ARCHETYPES")} in a {take_random_value("SCENES")} in the style of {take_random_value("MASTERPHOTOGRAPHERS")}'
-prompt2 = prompt
-for column in df.columns:
-    if column in selected_columns:
-        random_value = take_random_value(column)
+    Returns:
+        str: the chosen value
+    """    
+    column_values = df[column].dropna().values
     
-        prompt += f"{random_value}::{random.randint(1, 100)} "
+    if len(column_values) > 0:
+        random_value = random.choice(column_values)
+        print(f"Column: {column} - Random Value: {random_value}")
+    else:
+        random_value = None
+    return random_value
 
-        prompt2 += f"{random_value}, "
-# selected_values_string = ', '.join(selected_values)
-# random_artist = random.choice(artists)
+def generate_prompt(what):
 
-distribution = "uneven"
-if distribution == "weibull":
-    prompt += f"--chaos {weibull(100)} "
-    prompt += f"--stylize {weibull(1000)} " # Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
-    prompt += f"--weird {weibull(3000)} "
-elif distribution = "even":
-    prompt += f"--chaos {random.randint(1,100)} "
-    prompt += f"--stylize {random.randint(1,1000)} " # Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
-    prompt += f"--weird {random.randint(1,3000)} "
-else:
-     pass
+    df = get_df()
 
-prompt +=    "--style raw"
-prompt2 +=    "--style raw"
-print (prompt)
-print (prompt2)
+    selected_columns =  random.sample(list(df.columns)[7:], 5) # Exclude the first column and select a random sample of 8 column names
+    print (list(df.columns)[7:])
+    if what == "FAMOUS PEOPLE":
+        prompt = f'{take_random_value(df, what)} as {take_random_value(df, "ARCHETYPES")} in a {take_random_value(df, "SCENES")} in the style of {take_random_value(df, "MASTERPHOTOGRAPHERS")}, '
+    else:
+        prompt = f'{take_random_value(df, what)} in a {take_random_value(df, "SCENES")} in the style of {take_random_value(df, "MASTERPHOTOGRAPHERS")}, '
+    
+    
+    
+    prompt2 = prompt
+    for column in df.columns:
+        if column in selected_columns:
+            random_value = take_random_value(df, column)
+        
+            prompt += f"{random_value}::{random.randint(1, 100)} "
 
-st.code (prompt)
-st.code (prompt2)
-st.subheader("*To copy the text, roll over the mouse the box below and click the copy to clipboard icon at the right*")
+            prompt2 += f"{random_value}, "
+   
+    distribution = "uneven"
+    if distribution == "weibull":
+        prompt += f"--chaos {weibull(100)} "
+        prompt += f"--stylize {weibull(1000)} " # Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
+        prompt += f"--weird {weibull(3000)} "
+    elif distribution == "even":
+        prompt += f"--chaos {random.randint(1,100)} "
+        prompt += f"--stylize {random.randint(1,1000)} " # Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
+        prompt += f"--weird {random.randint(1,3000)} "
+    else:
+        pass
+
+    prompt +=    "--style raw"
+    prompt2 +=    "--style raw"
+    print (prompt)
+    print (prompt2)
+
+    st.info (prompt)
+    st.info (prompt2)
+
+def get_df():
+    """Get the DF with the possibilities.
+       Loading from Google Sheets gives the 2 first rows as column header.
+
+    Returns:
+        df: the dataframe with the choices
+    """    
+    sheet_id = "11QQdAEaolonFRhwYryRnbO0AEyzKLBc8mlK-wZ76VHg"
+    sheet_name = "keuzes"
+
+    #url= f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
+    url = r"C:\Users\rcxsm\Downloads\MIDJOURNEY prompt generator - keuzes.csv"
+    if platform.processor() != "":
+        # local    
+        url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\MIDJOURNEY_prompt_generator_keuzes.csv"
+    else:
+        url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/MIDJOURNEY_prompt_generator_keuzes.csv"
+    df = pd.read_csv(url, delimiter=",", header=0)
+    return df
+    
+def main():
+    st.title("Midjourney Prompt generator")
+    what = st.sidebar.selectbox("What to choose",["FAMOUS PEOPLE", "OBJECTS"])
+    if st.button('Generate prompt'):
+        generate_prompt(what)
+if __name__ == "__main__":
+    main()
 
 # print(f"{random_artist} {selected_values_string} --style raw")
 
