@@ -58,8 +58,8 @@ def generate_prompt(df,what, number):
     else:
         pass
 
-    prompt +=    "--style raw"
-    prompt2 +=    "--style raw"
+    prompt +=    "--style raw --chaos 0 --stylize 0 --weird 0"
+    prompt2 +=    "--style raw --chaos 0 --stylize 0 --weird 0"
     print (prompt)
     print (prompt2)
 
