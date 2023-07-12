@@ -27,9 +27,9 @@ def generate_prompt(df,what, number):
 
     
 
-    selected_columns =  random.sample(list(df.columns)[7:], number) # Exclude the first column and select a random sample of 8 column names
+    selected_columns =  random.sample(list(df.columns)[8:], number) # Exclude the first column and select a random sample of 8 column names
     print (list(df.columns)[7:])
-    if what == "FAMOUS PEOPLE":
+    if what == "FAMOUS PEOPLE" or what=="ANIMALS":
         prompt = f'{take_random_value(df, what)} as {take_random_value(df, "ARCHETYPES")} in a {take_random_value(df, "SCENES")} in the style of {take_random_value(df, "MASTERPHOTOGRAPHERS")}, '
     else:
         prompt = f'{take_random_value(df, what)} in a {take_random_value(df, "SCENES")} in the style of {take_random_value(df, "MASTERPHOTOGRAPHERS")}, '
@@ -89,8 +89,8 @@ def get_df():
 def main():
     st.title("Midjourney Prompt generator")
     df = get_df()
-    what = st.sidebar.selectbox("What to choose",["FAMOUS PEOPLE", "OBJECTS", "SHOW DF"])
-    number = st.sidebar.slider("Number of keywords", 0, len(df.columns)-7)
+    what = st.sidebar.selectbox("What to choose",["FAMOUS PEOPLE", "ANIMALS", "OBJECTS", "SHOW DF"])
+    number = st.sidebar.slider("Number of keywords", 0, len(df.columns)-8)
     if what != "SHOW DF":
         if st.button('Generate prompt'):
             generate_prompt(df, what, number)
