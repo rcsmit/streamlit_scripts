@@ -1,6 +1,6 @@
 import pandas as pd
 import random
-import platform
+
 import streamlit as st
 
 
@@ -23,55 +23,65 @@ def take_random_value(df, column):
         random_value = None
     return random_value
 
-def generate_prompt(df,what,who, number, fixed_columns,chaos, stylize, weird,ar):
+def generate_prompt(df,included_columns, what,who, number, fixed_columns,chaos, stylize, weird,ar):
+    """Generate the prompt :
+     ["CONCEPT"] [what] as ["ARCHETYPES"] in a [SCENES"] in the style of [who]
+     eg. An action shot of  Muhammad Ali as poet in a grotto in the style of Henri Rousseau 
+   
 
-    
-
-    selected_columns =  random.sample(list(df.columns)[fixed_columns:], number) # Exclude the first column and select a random sample of 8 column names
-    print (list(df.columns)[fixed_columns:])
-    if what == "FAMOUS PEOPLE" or what=="ANIMALS":
+    Args:
+        df (df): the dataframe
+        what (str): Choose from: ["FAMOUS PEOPLE", "ANIMALS", "OBJECTS", "ABOUT"]
+        who (str): Choose from ["FAMOUS PAINTERS", "MASTERPHOTOGRAPHERS","ARTISTS" ]
+        number (int): number of extra additions to the prompt
+        fixed_columns (int): Number of the columns not taken in account in the extra additions of the prompt
+        chaos (int): level of chaos [0-100]
+        stylize (int): level of stylize [0-1000]
+        weird (int): level of weirdness [0-3000]
+        ar (str): aspect ratio
+    """    
+    place1 = st.empty()
+    place2 = st.empty()
+    print ("Included_columns")
+    print (included_columns)
+    if number >0:
+        selected_columns =  random.sample(included_columns, number)
+    else:
+        selected_columns = None
+    #selected_columns =  random.sample(list(df.columns)[fixed_columns:], number) # Exclude the first column and select a random sample of 8 column names
+    #print (list(df.columns)[fixed_columns:])
+    if what == "FAMOUS PEOPLE":
         prompt = f'{take_random_value(df, "CONCEPT")} {take_random_value(df, what)} as {take_random_value(df, "ARCHETYPES")} in a {take_random_value(df, "SCENES")} in the style of {take_random_value(df, who)} '
+    elif what=="ANIMALS":
+        prompt = f'{take_random_value(df, "CONCEPT")} a {take_random_value(df, what)} as {take_random_value(df, "ARCHETYPES")} in a {take_random_value(df, "SCENES")} in the style of {take_random_value(df, who)} '
     else:
         prompt = f'{take_random_value(df, "CONCEPT")} {take_random_value(df, what)} in a {take_random_value(df, "SCENES")} in the style of {take_random_value(df, who)}'
-    
-    
-    
+      
     prompt2 = prompt
-    for column in df.columns:
-        if column in selected_columns:
-            random_value = take_random_value(df, column)
-        
-            prompt += f"{random_value}::{random.randint(1, 100)} "
-
-            prompt2 += f"| {random_value} "
+    if selected_columns != None:
+        for column in df.columns:
+            if column in selected_columns:
+                random_value = take_random_value(df, column)
+                prompt += f"{random_value}::{random.randint(1, 100)} "
+                prompt2 += f"| {random_value} "
    
-    distribution = "uneven"
-    if distribution == "weibull":
-        # prompt += f"--chaos {weibull(100)} "
-        # prompt += f"--stylize {weibull(1000)} " # Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
-        # prompt += f"--weird {weibull(3000)} "
-        pass
-    elif distribution == "even":
-        prompt += f"--chaos {random.randint(1,100)} "
-        prompt += f"--stylize {random.randint(1,1000)} " # Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
-        prompt += f"--weird {random.randint(1,3000)} "
-    else:
-        prompt += f"--chaos {chaos} "
-        prompt += f"--stylize {stylize} " # Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
-        prompt += f"--weird {weird} "
+    # distribution = "uneven"
+    # if distribution == "weibull":
+    #     # prompt += f"--chaos {weibull(100)} "
+    #     # prompt += f"--stylize {weibull(1000)} " # Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
+    #     # prompt += f"--weird {weibull(3000)} "
+    #     pass
+    # elif distribution == "even":
+    #     prompt += f"--chaos {random.randint(1,100)} "
+    #     prompt += f"--stylize {random.randint(1,1000)} " # Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
+    #     prompt += f"--weird {random.randint(1,3000)} "
+    # else:
+    prompt += f"--chaos {chaos} --stylize {stylize}  --weird {weird} --ar {ar} --style raw"
+    prompt2 += f"--chaos {chaos} --stylize {stylize}  --weird {weird} --ar {ar} --style raw"
 
-        prompt2 += f"--chaos {chaos} "
-        prompt2 += f"--stylize {stylize} " # Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
-        prompt2 += f"--weird {weird} "
+    place1.info (prompt)
+    place2.info (prompt2)
 
-    prompt += f"--ar {ar} --style raw "#--chaos 0 --stylize 0 --weird 0"
-    prompt2 += f"--ar {ar} --style raw "#--chaos 0 --stylize 0 --weird 0"
-    print (prompt)
-    print (prompt2)
-
-    st.info (prompt)
-    st.info (prompt2)
-    #st.write("--chaos 0-100 | --stylize 0-1000| --weird 0-3000")
 def get_df():
     """Get the DF with the possibilities.
        Loading from Google Sheets gives the 2 first rows as column header.
@@ -79,74 +89,73 @@ def get_df():
     Returns:
         df: the dataframe with the choices
     """    
-    sheet_id = "11QQdAEaolonFRhwYryRnbO0AEyzKLBc8mlK-wZ76VHg"
-    sheet_name = "keuzes"
+    sheet_url = "https://docs.google.com/spreadsheets/d/11QQdAEaolonFRhwYryRnbO0AEyzKLBc8mlK-wZ76VHg/edit#gid=973302151"
+    csv_export_url = sheet_url.replace('/edit#gid=', '/export?format=csv&gid=')
+    local_url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\MIDJOURNEY_prompt_generator_keuzes.csv"
 
-    #url= f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
-    url = r"C:\Users\rcxsm\Downloads\MIDJOURNEY prompt generator - keuzes.csv"
-    if platform.processor() != "":
-        # local    
-        url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\MIDJOURNEY_prompt_generator_keuzes.csv"
-    else:
-        url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/MIDJOURNEY_prompt_generator_keuzes.csv"
-    df = pd.read_csv(url, delimiter=",", header=0)
+    try:
+        df = pd.read_csv(csv_export_url, delimiter=",", header=0)
+    except:
+        df = pd.read_csv(local_url, delimiter=",", header=0)
     return df
     
-def about(df):
+def show_info(df):
+    """Show some info, the dataframe and links/sources
+
+    Args:
+        df (df): the dataframe
+    """
+
     st.title("About")
     st.write("This generator has been made by Rene Smit. It combines various keywords in various categories")
     st.subheader("The categories/keywords")
     df =df.fillna(" ")
     st.write(df)
     st.subheader("Sources and links")
-    '''
-    * https://bootcamp.uxdesign.cc/50-midjourney-prompts-for-to-perfect-your-art-363996b702b6
-    * https://bootcamp.uxdesign.cc/50-midjourney-prompts-to-create-photorealistic-images-advanced-2e233463bccf
-    * https://bootcamp.uxdesign.cc/50-best-midjourney-prompts-to-create-seamless-pattern-that-sells-bdfcd8a067eb
-    * https://medium.com/mlearning-ai/an-advanced-guide-to-writing-prompts-for-midjourney-text-to-image-aa12a1e33b6
-    * https://weirdwonderfulai.art/resources/artist-styles-on-midjourney-v4/
+    st.write("* [50 midjourney prompts for to perfect your art](https://bootcamp.uxdesign.cc/50-midjourney-prompts-for-to-perfect-your-art-363996b702b6)")
+    st.write("* [50-midjourney-prompts-to-create-photorealistic-images-advanced](https://bootcamp.uxdesign.cc/50-midjourney-prompts-to-create-photorealistic-images-advanced-2e233463bccf)")
+    st.write("* [50 best midjourney prompts to create seamless pattern that sells](https://bootcamp.uxdesign.cc/50-best-midjourney-prompts-to-create-seamless-pattern-that-sells-bdfcd8a067eb)")
+    st.write("* [an advanced guide to writing prompts for midjourney text to image=](https://medium.com/mlearning-ai/an-advanced-guide-to-writing-prompts-for-midjourney-text-to-image-aa12a1e33b6)")
+    st.write("* [resources/artist styles on midjourney v4/](https://weirdwonderfulai.art/resources/artist-styles-on-midjourney-v4/)")
+    st.write("* [10 amazing techniques for midjourney you probably didnt know yet](https://bootcamp.uxdesign.cc/10-amazing-techniques-for-midjourney-you-probably-didnt-know-yet-78f2ab7c00c0)")
 
-  
+    st.write("* [Library of Style Words](https://discord.com/channels/662267976984297473/1017917091606712430/threads/1125455952448061511)") 
+    st.write("* [Troubleshooting Midjourney Text Prompts by @whatnostop#6700 (clarinet)](https://docs.google.com/document/d/e/2PACX-1vRHOxyEb-ERGi-BdZM8Z_piEP54m4HwO0z8scjmEurEp2UZVA6rFxvyKd15elYVHUWfP1oSA4CQFwxr/pub?utm_source=docs.google.com&utm_medium=tutorial&utm_campaign=midjourney)") 
+    st.write("* [A very unofficial Midjourney Manual by Shambibble](https://docs.google.com/document/d/1ivAYy_JXJsGE-9Rh97iMyXkWlmF_MxO2NFshrIvuns4/edit#heading=h.m6597yajayd7)") 
+    st.write("* [Midjourney Keywords & Styles y marigoldguide](https://marigoldguide.notion.site/marigoldguide/52ac9968a8da4003a825039022561a30?v=43706e26438d486bb5b8baaa2dc22ffd)") 
+    st.write("* [V4 midjourney reference sheets](https://docs.google.com/spreadsheets/d/1MsX0NYYqhv4ZhZ7-50cXH1gvYE2FKLixLBvAkI40ha0/edit#gid=0)") 
+    st.write("* [MidJourney-Styles-and-Keywords-Reference by willwulfken](https://github.com/willwulfken/MidJourney-Styles-and-Keywords-Reference)") 
+    st.write("* [Scene settings](https://onestopforwriters.com/scene_settings)") 
+    st.write("* [Architecture](https://docs.google.com/spreadsheets/d/1029yD1REXEq8V47XgfRm8GQby8JXnwGNlWOL17Lz6J4/edit#gid=0)") 
+    st.write("* [**My profile**](https://www.midjourney.com/app/users/2fae5989-ecac-4f06-afaf-7ee2cb306c58/)")
 
-    * Library of Style Words : https://discord.com/channels/662267976984297473/1017917091606712430/threads/1125455952448061511
-
-    * Troubleshooting Midjourney Text Prompts by @whatnostop#6700 (clarinet): https://docs.google.com/document/d/e/2PACX-1vRHOxyEb-ERGi-BdZM8Z_piEP54m4HwO0z8scjmEurEp2UZVA6rFxvyKd15elYVHUWfP1oSA4CQFwxr/pub?utm_source=docs.google.com&utm_medium=tutorial&utm_campaign=midjourney
-    
-    * A very unofficial Midjourney Manual by Shambibble : https://docs.google.com/document/d/1ivAYy_JXJsGE-9Rh97iMyXkWlmF_MxO2NFshrIvuns4/edit#heading=h.m6597yajayd7
-    
-   
-    * Midjourney Keywords & Styles : https://marigoldguide.notion.site/marigoldguide/52ac9968a8da4003a825039022561a30?v=43706e26438d486bb5b8baaa2dc22ffd
-
-    * V4 midjourney reference sheets :https://docs.google.com/spreadsheets/d/1MsX0NYYqhv4ZhZ7-50cXH1gvYE2FKLixLBvAkI40ha0/edit#gid=0
-
-    * MidJourney-Styles-and-Keywords-Reference :   https://github.com/willwulfken/MidJourney-Styles-and-Keywords-Reference
-
-
-    * Scene settings: https://onestopforwriters.com/scene_settings
-    * Architecture:  https://docs.google.com/spreadsheets/d/1029yD1REXEq8V47XgfRm8GQby8JXnwGNlWOL17Lz6J4/edit#gid=0
-
-    * My profile : https://www.midjourney.com/app/users/2fae5989-ecac-4f06-afaf-7ee2cb306c58/
-
-    '''
-    
 def main():
     st.title("Midjourney Prompt generator")
     df = get_df()
     fixed_columns = 9  # number of columns not in the general generator
-    what = st.sidebar.selectbox("What to choose",["FAMOUS PEOPLE", "ANIMALS", "OBJECTS", "ABOUT"])
+    what = st.sidebar.selectbox("What to choose / INFO",["FAMOUS PEOPLE", "ANIMALS", "OBJECTS", "INFO"])
     who = st.sidebar.selectbox("What kind of artist", ["FAMOUS PAINTERS", "MASTERPHOTOGRAPHERS","ARTISTS" ])
     number = st.sidebar.slider("Number of keywords", 0, len(df.columns)-fixed_columns, 5)
     chaos = st.sidebar.slider("chaos", 0,100, 0) # High --chaos values will produce more unusual and unexpected results and compositions. Lower --chaos values have more reliable, repeatable results.
     stylize = st.sidebar.slider("Stylyze", 0, 1000, 100) #Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
     weird = st.sidebar.slider("Weird", 0, 3000, 0)
-    ar = st.sidebar.selectbox("Aspect ratio", ["1:1","9:16","4:5","3:4","2:3","10:16","16:9","5:4","4:3","3:2"],0)
+    ar = st.sidebar.selectbox("Aspect ratio (w:h)", ["1:1","9:16","4:5","3:4","2:3","10:16","16:9","5:4","4:3","3:2"],0)
+    included_columns = st.sidebar.multiselect("Columns to include", list(df.columns)[fixed_columns:], list(df.columns)[fixed_columns:])
+    number = 0
+    if len(included_columns) >= 5:
+        number = st.sidebar.slider("Number of keywords", 0, len(included_columns), 5)
+    elif len(included_columns) > 0:
+        number = st.sidebar.slider("Number of keywords", 0, len(included_columns), len(included_columns))
+
     # --chaos controls how diverse the initial grid images are from each other.
     # --stylize controls how strongly Midjourney's default aesthetic is applied.
     # --weird controls how unusual an image is compared to previous Midjourney images.
-    if what =="ABOUT":
-        about(df)
+
+    if what =="INFO":
+        show_info(df)
     else:
         if st.button('Generate prompt'):
-            generate_prompt(df, what, who, number, fixed_columns, chaos, stylize, weird,ar)
+            generate_prompt(df, included_columns, what, who, number, fixed_columns, chaos, stylize, weird,ar)
+
 if __name__ == "__main__":
     main()
