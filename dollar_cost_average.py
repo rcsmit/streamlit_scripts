@@ -103,7 +103,7 @@ def make_plots_one_starting_date(results_df, investment_interval, initial_invest
     fig.update_layout(yaxis_title='USD')
     fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
     st.plotly_chart(fig)
-
+    
     columns_to_plot = ["rendement (%)","Bitcoin Rate","Investment Amount (BTC)", "Total Investments (BTC)"]                
     # Create line graphs for each column
     for column in columns_to_plot:
