@@ -10,6 +10,8 @@ import datetime
 # https://en.wikipedia.org/wiki/Dollar_cost_averaging
 
 #  It retrieves the data from Yahoo Finance, calculates the investment values, and displays the results and line graphs using Streamlit and Plotly Express.
+# TODO: Yahoo Finnance BTC rate begins only in 2017.
+
 @st.cache_data()
 def get_data(choice,  interval, date_to_check_from):
     """Retrieves historical data for the specified choice (ticker symbol) from Yahoo Finance.
@@ -69,7 +71,6 @@ def calculate_investment_value(df, interval, periodical_investment_usd):
             current_value_usd = total_investments_btc * current_rate
 
             result = {
-               
                 'Date': current_date,
                 'Invested Amount (USD)': periodical_investment_usd,
                 'Bitcoin Rate': current_rate,
@@ -81,12 +82,14 @@ def calculate_investment_value(df, interval, periodical_investment_usd):
             results.append(result)
 
     results_df = pd.DataFrame(results)
-    results_df["rendement (%)"] = round(results_df["Total Portefeuille Value (USD)"] / results_df["Total Investments (USD)"]*100,1)
+   
+    # ["rendement (%)"] = round(results_df["Total Portefeuille Value (USD)"] / results_df["Total Investments (USD)"]*100,1)
+    results_df["rendement (%)"] = round((results_df["Total Portefeuille Value (USD)"]-results_df["Total Investments (USD)"]) / results_df["Total Investments (USD)"]*100,1)
   
     return results_df
 
 
-def make_plots(results_df, investment_interval, initial_investment):
+def make_plots_one_starting_date(results_df, investment_interval, initial_investment):
     """Creates line plots for the investment values using Plotly Express.
     
     Args:
@@ -99,9 +102,8 @@ def make_plots(results_df, investment_interval, initial_investment):
                 title=f'Total Investments and Portefeuille Value - investment: USD {initial_investment}, every {investment_interval} days')
     fig.update_layout(yaxis_title='USD')
     fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
-    
-
     st.plotly_chart(fig)
+
     columns_to_plot = ["rendement (%)","Bitcoin Rate","Investment Amount (BTC)", "Total Investments (BTC)"]                
     # Create line graphs for each column
     for column in columns_to_plot:
@@ -109,8 +111,7 @@ def make_plots(results_df, investment_interval, initial_investment):
         if column == "rendement (%)":
         # Add horizontal line at y = 100
             fig.add_shape(type="line", x0=results_df['Date'].min(), x1=results_df['Date'].max(),
-                        y0=100, y1=100, line=dict(color="red", dash="dash"))
-
+                        y0=0, y1=0, line=dict(color="red", dash="dash"))
         st.plotly_chart(fig)
 
 
@@ -203,29 +204,46 @@ def rendement_various_starting_dates(investment_interval, initial_investment):
     # deleting last row (always 0% rendement since you just bought it)
     rendement_df = rendement_df.iloc[:-1]
     
-    
     # Plotting with Plotly
-    for y_ in ['Rendement','rendement per year_DCA']: #'rendement per year_DCA', 'rendement per year_lumpsum' 
+    plot_rendement_DCA_and_rendement_per_year_DCA(rendement_df)
+    plot_rendement_per_year_DCA_vs_lumpsum(rendement_df)
+    plot_btc_rate(df)
+
+    with st.expander("Rendement DF"):
+        st.write(rendement_df)
+
+def plot_rendement_DCA_and_rendement_per_year_DCA(rendement_df):
+    """Plot total rendement and rendement per year while using DCA
+    Args:
+        results_df (_type_): _description_
+        rendement_df (_type_): _description_
+    """    
+    for y_ in ['rendement per year_DCA', 'Rendement']: #'rendement per year_DCA', 'rendement per year_lumpsum' 
         fig = px.line(rendement_df, x='Date', y=y_, markers=False)
-        fig.add_shape(type="line", x0=results_df['Date'].min(), x1=results_df['Date'].max(),
-                            y0=100, y1=100, line=dict(color="red", dash="dash"))
-        fig.update_layout(title=y_, xaxis_title='Date', yaxis_title=y_)
+     
+        fig.add_shape(type="line", x0=rendement_df['Date'].min(), x1=rendement_df['Date'].max(),
+                    y0=0, y1=0, line=dict(color="red", dash="dash"))
+        fig.update_layout(title=y_, xaxis_title='Date', yaxis_title=f"{y_} (%)")
         st.plotly_chart(fig)
 
-    fig = px.line(rendement_df, x='Date', y=['rendement per year_DCA', 'rendement per year_lumpsum'], markers=False)
-    fig.update_layout(title='DCA vs lumpsum', xaxis_title='Date')
-    fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
-    
-    st.plotly_chart(fig)
-
-
-
+def plot_btc_rate(df):
+    """Make a simple plot of BTC rate in time
+    """    
     fig = px.line(df, x='Date', y='close_BTC-USD', markers=False)
     fig.update_layout(title='BTC-USD', xaxis_title='Date', yaxis_title='BTC-USD')
     st.plotly_chart(fig)
 
-    with st.expander("Rendement DF"):
-        st.write(rendement_df)
+def plot_rendement_per_year_DCA_vs_lumpsum(rendement_df):
+    """plot rendement per year DCA vs  rendement per year lumpsum
+    """    
+    fig = px.line(rendement_df, x='Date', y=['rendement per year_DCA', 'rendement per year_lumpsum'], markers=False)
+  
+    fig.add_shape(type="line", x0=rendement_df['Date'].min(), x1=rendement_df['Date'].max(),
+                y0=0, y1=0, line=dict(color="red", dash="dash"))
+    fig.update_layout(title='DCA vs lumpsum', xaxis_title='Date', yaxis_title='Rendement (%)')
+    fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
+    
+    st.plotly_chart(fig)
 
 
     
@@ -238,11 +256,8 @@ def rendement_one_starting_date(investment_interval, initial_investment):
     
 
   
-    make_plots(results_df, investment_interval, initial_investment)
+    make_plots_one_starting_date(results_df, investment_interval, initial_investment)
     st.write (results_df)
-
-
-
 
 
 def main():
