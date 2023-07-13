@@ -46,8 +46,8 @@ def main():
                 ["17. Conscious communities", "conscious_communities"],
                 ["18. How Much Month I need to work", "balansprognose"],
                 ["19. Tarot Symbols", "tarot_symbols"],
-                ["20. Dollar Cost Average", "dollar_cost_average"]
-
+                ["20. Dollar Cost Average", "dollar_cost_average"],
+                ["21. Midjourney prompt generator", "midjourney_prompt_generator"]
                 
                 
                 ]
