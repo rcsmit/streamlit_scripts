@@ -135,7 +135,6 @@ def main():
     fixed_columns = 9  # number of columns not in the general generator
     what = st.sidebar.selectbox("What to choose / INFO",["FAMOUS PEOPLE", "ANIMALS", "OBJECTS", "INFO"])
     who = st.sidebar.selectbox("What kind of artist", ["FAMOUS PAINTERS", "MASTERPHOTOGRAPHERS","ARTISTS" ])
-    number = st.sidebar.slider("Number of keywords", 0, len(df.columns)-fixed_columns, 5)
     chaos = st.sidebar.slider("chaos", 0,100, 0) # High --chaos values will produce more unusual and unexpected results and compositions. Lower --chaos values have more reliable, repeatable results.
     stylize = st.sidebar.slider("Stylyze", 0, 1000, 100) #Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
     weird = st.sidebar.slider("Weird", 0, 3000, 0)
