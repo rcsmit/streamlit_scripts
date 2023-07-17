@@ -14,6 +14,7 @@ import plotly.graph_objects as go
 import numpy as np
 import sys
 import platform
+import calendar
 
 def clear_cache():
     """Clears the cache
@@ -1900,8 +1901,43 @@ def add_on_list(data_csv):
     
 
 def make_and_show_pivot_tables(df, df_bookingtable):
-    
 
+    def graph_number_of_checkins_per_day(df):
+        st.subheader("Number of checkins per day, all years")
+        df["check_ins"] = df["new_arrival"]+df["back_to_back"]
+
+        df_grouped_by_date_year = df.groupby(["year","date", "day_month"])[["check_ins"]].sum().sort_values(by="date").reset_index()    
+        df_grouped_by_date_year["day_month_dt"] = pd.to_datetime(df_grouped_by_date_year["day_month"], format="%d-%m")
+        pivot_table = df_grouped_by_date_year.pivot_table(index="day_month_dt", columns="year", values="check_ins")
+
+        figy = go.Figure()
+        # Define colors for each year
+        colors = ['red', 'green', 'orange']  # Add more colors if needed
+
+        #Create traces for each year
+        data = []
+        for i,year in enumerate(pivot_table.columns[1:]): #not 2019
+            data.append(go.Scatter(x=pivot_table.index, y=pivot_table[year], line=dict(color=colors[i % len(colors)]), name=str(year)))
+            
+        figy.update_layout(xaxis_tickformat="%d-%b")  # Display only the day and month on x-axis
+        layout = go.Layout(
+            title=f"Number of checkins per checkin date",
+            xaxis=dict(title="Check-in Date"),
+            yaxis=dict(title=f"Nuber of checkins"))
+        
+
+        # Create the figure
+        figy = go.Figure(data=data, layout=layout)
+        st.plotly_chart(figy, use_container_width=True)
+
+        figz = go.Figure()
+        #Create traces for each year
+        for i,year in enumerate(pivot_table.columns[1:]): #not 2019
+            figz.add_trace(go.Bar(x=pivot_table.index, y=pivot_table[year], name=str(year)))
+
+        figz.update_layout(xaxis_tickformat="%d-%b")  # Display only the day and month on x-axis
+        st.plotly_chart(figz, use_container_width=True)
+  
     def show_omzet_per_month_per_year(df):
         """
         Displays the omzet (revenue) per month (month) per year (year) as a pivot table.
@@ -1928,13 +1964,79 @@ def make_and_show_pivot_tables(df, df_bookingtable):
         """    
         st.subheader("occupation per month per year")
         # Assuming your dataframe is named 'df'
+        
         grouped_df = df.groupby(['year', 'month']).agg({'in_house': 'sum', 'aantal': 'sum'})
         grouped_df['occupation'] = round( grouped_df['in_house'] / grouped_df['aantal']*100,1)
         pivot_df = pd.pivot_table(grouped_df, values='occupation', index='month', columns='year').fillna(0)
 
         # Display the resulting pivot table
         st.write(pivot_df)
+    def show_checkins_per_month_per_year(df):
+        df["check_ins"] = df["new_arrival"]+df["back_to_back"]
+        
+        # Group the dataframe by month
+        grouped_df = df.groupby([ 'year', 'month']).agg({'check_ins': 'sum'}).reset_index()
 
+        # # Create the pivot table
+        # pivot_table = pd.pivot_table(grouped_df, values='check_ins', index='month', columns='year', aggfunc='sum').fillna(0)
+
+        #Create the pivot table
+        pivot_table = pd.pivot_table(grouped_df, values='check_ins', index='month', columns='year', aggfunc='sum', margins=True, margins_name='Total').fillna(0)
+
+        # Calculate the row averages
+        # pivot_table['Average'] = pivot_table.mean(axis=1) 
+
+
+        st.subheader("show_checkins_per_month")
+        st.write(pivot_table)
+
+    def show_avg_checkins_per_day_per_month_per_year(df):
+        df["check_ins"] = df["new_arrival"] + df["back_to_back"]
+        df["day_of_week"] = df["date"].dt.dayofweek
+
+        grouped_df = df.groupby(['date', 'month', 'year_int', 'day_of_week']).agg({'check_ins': 'sum'}).reset_index()
+        grouped_df["is_wednesday"] = np.where(grouped_df["year_int"] >= 2023, np.where(grouped_df["day_of_week"] == 2, 1, 0), 0)
+
+        grouped_df = grouped_df.groupby(['year_int', 'month']).agg({'check_ins': 'sum', 'is_wednesday': 'sum'}).reset_index()
+
+        grouped_df['days_in_month'] = grouped_df.apply(lambda row: calendar.monthrange(int(row['year_int']), row['month'])[1], axis=1)
+        grouped_df['avg_check_ins_per_day'] = grouped_df['check_ins'] / (grouped_df['days_in_month'] - grouped_df['is_wednesday'])
+
+        pivot_table = pd.pivot_table(grouped_df, values='avg_check_ins_per_day', index='month', columns='year_int', aggfunc='sum').fillna(0).round(1)
+        st.subheader("show avg check-ins per day per month per year")
+        st.write(pivot_table)
+
+    def show_avg_checkins_per_weekday_per_month_per_year(df):
+        df["check_ins"] = df["new_arrival"] + df["back_to_back"]
+        df["day_of_week"] = df["date"].dt.dayofweek
+        df["day_name"] = df["date"].dt.day_name()
+        grouped_df = df.groupby(['date', 'month', 'year_int', 'day_of_week', 'day_name']).agg({'check_ins': 'sum'}).reset_index()
+        grouped_df["one"] = 1
+        grouped_df = grouped_df.groupby(['year_int', 'month', 'day_of_week', 'day_name']).agg({'check_ins': 'sum', 'one': 'sum'}).reset_index()
+        grouped_df['avg_check_ins_per_weekday'] = grouped_df['check_ins'] / grouped_df['one'] 
+
+        pivot_table = pd.pivot_table(grouped_df, values='avg_check_ins_per_weekday', index=['month', 'day_of_week', 'day_name'], columns='year_int', aggfunc='mean').fillna(0).round(1)
+        st.subheader("Show average check-ins per weekday per month")
+        st.write(pivot_table)
+
+    def show_busy_days_per_month_per_year(df, busy_factor):
+        
+        df["check_ins"] = df["new_arrival"]+df["back_to_back"]
+      
+        # Group the dataframe by month
+        grouped_df = df.groupby('date').agg({'check_ins': 'sum'})
+        grouped_df = grouped_df[grouped_df["check_ins"] >= busy_factor].reset_index()
+        grouped_df['month'] = grouped_df['date'].dt.month
+        grouped_df['year'] = grouped_df['date'].dt.year
+        grouped_df['one']  = 1
+        pivot_table = pd.pivot_table(grouped_df, values='one', index='month', columns='year', aggfunc='sum').fillna(0)
+        months_range = range(3, 11)  # Assuming data spans all 12 months of the year
+        pivot_table = pivot_table.reindex(months_range, fill_value=0)
+        # Create the pivot table
+        st.subheader(f"Number of days with more than {busy_factor} checkins per day")
+        st.write(pivot_table)
+
+    
     def show_occupation_per_accotype_per_month(df):
         """_summary_
 
@@ -1947,20 +2049,20 @@ def make_and_show_pivot_tables(df, df_bookingtable):
             st.subheader(f"{y}")
             # Filter dataframe for the desired year
             filtered_df = df[df['year'] == str(y)]
-            st.write(filtered_df)
+            # st.write(filtered_df)
             # Group by month and acco_type, calculate occupation
             grouped_df = filtered_df.groupby(['month', 'acco_type']).agg({'in_house': 'sum', 'aantal': 'sum', "omzet": 'sum'})
             grouped_df['occupation'] =  round( grouped_df['in_house'] / grouped_df['aantal']*100,1)
 
             # Create pivot table
             pivot_df = pd.pivot_table(grouped_df, values='occupation', index='month', columns='acco_type')
-            st.subheader("occupation")
+            st.subheader(f"occupation  per accotype, per month in {y}")
             # Display the resulting pivot table
             st.write(pivot_df)
 
             # Create pivot table
             pivot_df_omzet = pd.pivot_table(grouped_df, values='omzet', index='month', columns='acco_type')
-            st.subheader("Omzet")
+            st.subheader(f"Turn over in {y}")
             # Display the resulting pivot table
             st.write(pivot_df_omzet)
 
@@ -1984,6 +2086,132 @@ def make_and_show_pivot_tables(df, df_bookingtable):
             df_year = df_filtered[df_filtered['year'] == year]
 
             # Step 4: Create pivot table
+            pivot_table = df_year.pivot_table(index='acco_type', columns='month', values='number_of_days', aggfunc='mean', fill_value=0)
+            # Step 5: Round the values in the pivot table
+            pivot_table = pivot_table.round(1)  # Round to 2 decimal places
+
+            # Step 4: Create pivot table
+            pivot_table_aantal = df_year.pivot_table(index='acco_type', columns='month', values='number_of_days', aggfunc='count', fill_value=0)
+
+            # Step 5: Do something with the pivot table for each year
+            
+            st.subheader(f"{year} - Gemidelde verblijfsduur")
+            st.write(pivot_table)
+            st.subheader(f"{year} - Aantal boekingen")
+            st.write(pivot_table_aantal)
+    def show_histogram_verblijfsduur(df_bookingtable, month, year, normalized, cumulative):
+        """_summary_
+
+        Args:
+            df_bookingtable (df): _description_
+            month (int): _description_
+            year (str): _description_
+            normalized (boolean): _description_
+            cumulative(boolean)
+        """        
+        df_filtered = df_bookingtable[['acco_type', 'checkin_date', 'month','year', 'number_of_days']].copy()
+        if month!=None:
+            df_month_year = df_filtered[(df_filtered["month"] == month) & (df_filtered["year"] == year) ]
+        else:
+            df_month_year = df_filtered[(df_filtered["year"] == year) ]
+        if normalized:
+            fig = go.Figure(data=[go.Histogram(x=df_month_year['number_of_days'], histnorm='probability', cumulative_enabled=cumulative)])
+        
+            # Set the title and labels for the graph
+            fig.update_layout(title=f'Histogram of Number of Days (Relative) in {month} / {year}',
+                                    xaxis_title='Number of Days',
+                                    yaxis_title='Probability')
+           
+        else: 
+            fig = go.Figure(data=[go.Histogram(x=df_month_year['number_of_days'], cumulative_enabled=cumulative)])
+            fig.update_layout(title=f'Histogram of Number of Days in {month} / {year}',
+                            xaxis_title='Number of Days',
+                            yaxis_title='Count')
+     
+        st.plotly_chart(fig)
+       
+    def show_number_per_month_per_jaar(df_bookingtable):
+        """_summary_
+
+        Args:
+            df_bookingtable (_type_): _description_
+        """
+
+      
+            # Step 1: Filter relevant columns
+        df_filtered = df_bookingtable[['acco_type', 'checkin_date', 'month','year', 'number_of_days']].copy()
+
+
+
+
+        df_filtered["one"] = 1
+        grouped_df = df_filtered.groupby(['month', 'year']).agg({'number_of_days': 'sum', 'one': 'sum'}).reset_index()
+        # Step 2: Convert 'checkin_date' to datetime
+        #grouped_df['checkin_date'] = pd.to_datetime(grouped_df['checkin_date'])
+
+        grouped_df["number_of_days_avg"] = round((grouped_df["number_of_days"] / grouped_df["one"]),1)
+        
+        # Step 4: Create pivot table
+        pivot_table = grouped_df.pivot_table(index='month', columns='year', values='one', fill_value=0)
+        # Step 5: Round the values in the pivot table
+        pivot_table = pivot_table.round(1)  # Round to 2 decimal places
+        
+        st.subheader(f"Number of stays")
+        st.write(pivot_table)
+    
+
+    def show_verblijfsduur_per_month_per_jaar(df_bookingtable):
+        """_summary_
+
+        Args:
+            df_bookingtable (_type_): _description_
+        """
+
+      
+            # Step 1: Filter relevant columns
+        df_filtered = df_bookingtable[['acco_type', 'checkin_date', 'month','year', 'number_of_days']].copy()
+
+
+
+
+        df_filtered["one"] = 1
+        grouped_df = df_filtered.groupby(['month', 'year']).agg({'number_of_days': 'sum', 'one': 'sum'}).reset_index()
+        # Step 2: Convert 'checkin_date' to datetime
+        #grouped_df['checkin_date'] = pd.to_datetime(grouped_df['checkin_date'])
+
+        grouped_df["number_of_days_avg"] = round((grouped_df["number_of_days"] / grouped_df["one"]),1)
+        
+        # Step 4: Create pivot table
+        pivot_table = grouped_df.pivot_table(index='month', columns='year', values='number_of_days_avg', fill_value=0)
+        # Step 5: Round the values in the pivot table
+        pivot_table = pivot_table.round(1)  # Round to 2 decimal places
+        
+        st.subheader(f"Average length of stay")
+        st.write(pivot_table)
+    
+
+
+    def show_verblijfsduur_aantal_boekingen_per_month(df_bookingtable):
+        """_summary_
+
+        Args:
+            df_bookingtable (_type_): _description_
+        """
+
+        # Step 1: Filter relevant columns
+        df_filtered = df_bookingtable[['acco_type', 'checkin_date', 'month','year', 'number_of_days']].copy()
+
+        # Step 2: Convert 'checkin_date' to datetime
+        df_filtered['checkin_date'] = pd.to_datetime(df_filtered['checkin_date'])
+
+        # Iterate over unique years
+        unique_years = df_filtered['year'].unique()
+        for year in unique_years:
+            # Step 3: Filter by year
+            df_year = df_filtered[df_filtered['year'] == year]
+
+            # Step 4: Create pivot table
+            # TODO : adjust like show_verblijfsduur_per_month_per_jaar(df_bookingtable)
             pivot_table = df_year.pivot_table(index='acco_type', columns='month', values='number_of_days', aggfunc='mean', fill_value=0)
             # Step 5: Round the values in the pivot table
             pivot_table = pivot_table.round(1)  # Round to 2 decimal places
@@ -2033,10 +2261,26 @@ def make_and_show_pivot_tables(df, df_bookingtable):
                     pivot_table.loc[year, month] = round(avg_stay, 2)
             st.subheader(f"Average stay {acco_type}")
             st.write(pivot_table)
-
+    
+    show_number_per_month_per_jaar(df_bookingtable)
     show_omzet_per_month_per_year(df)
     show_occupation_per_month_per_year(df)
+    show_verblijfsduur_per_month_per_jaar(df_bookingtable)
+    col1, col2,col3 = st.columns(3)
+    normalized, cumulative, month = True, True, 7
+    with col1:
+         show_histogram_verblijfsduur(df_bookingtable, month, "2021",normalized, cumulative)
+    with col2:
+         show_histogram_verblijfsduur(df_bookingtable, month, "2022",normalized, cumulative)
+    with col3:
+         show_histogram_verblijfsduur(df_bookingtable, month, "2023",normalized, cumulative)
     show_occupation_per_accotype_per_month(df)
+    show_checkins_per_month_per_year(df)
+    show_avg_checkins_per_day_per_month_per_year(df)
+    show_avg_checkins_per_weekday_per_month_per_year(df)
+    graph_number_of_checkins_per_day(df)
+    for busyfactor in [10,15,20,25,30]:
+        show_busy_days_per_month_per_year(df,busyfactor)
     show_verblijfsduur_aantal_boekingen_per_month(df_bookingtable)
     show_average_stay_per_accotype_per_month(df_bookingtable)
 
@@ -2131,6 +2375,11 @@ def make_cache_data(df_mutation, df_bookingtable, df_maxxton):
     """    
     return df_mutation, df_bookingtable, df_maxxton
 
+def filter_months(start_month, end_month, df_):
+    df_["month"] = df_["month"].astype(int)
+    df_ = df_[(df_["month"] >= start_month) & (df_["month"] <= end_month)]
+    return df_
+
 def main():       
     test = False  # To test or not to test (to see if the fillcolors in the sheet are right.)
     # https://github.com/onedrive/onedrive-sdk-python
@@ -2144,7 +2393,7 @@ def main():
         
         df_mutation, df_bookingtable, df_maxxton = get_data(wb_2023, df_maxxton)
         df_mutation, df_bookingtable, df_maxxton = make_cache_data(df_mutation, df_bookingtable, df_maxxton)
-    
+   
     ix = 1 if platform.processor() != "" else  0
     
     keuze = st.sidebar.selectbox("Compare Files / Complete menu", ["Compare Files", "Complete menu"], index=ix)
@@ -2213,7 +2462,12 @@ def main():
     #     )
     years = [2019, 2021, 2022, 2023]
     # years = st.sidebar.multiselect("Jaren", year_, [2021, 2022, 2023])
-
+    (start_month,end_month) = st.sidebar.slider("Months (from/until (incl.))", 1, 12, (3,10))
+   
+    df_mutation = filter_months(start_month, end_month, df_mutation)
+    
+    df_bookingtable = filter_months(start_month, end_month, df_bookingtable)
+   
     print (f"--- ({what_to_do}) ---")
     if what_to_do.startswith("---"):
         pass
@@ -2241,6 +2495,7 @@ def main():
     elif what_to_do == "Analyse":
         for y in years:
             st.subheader(y)
+          
             df_mutations_year = df_mutation[df_mutation["year"] == str(y)]
             generate_businessinfo(df_mutations_year)
     elif what_to_do == "pivot tables":
@@ -2291,7 +2546,8 @@ def main():
         clear_cache()
     else:
         st.error("ERROR in what_to_do")
-    
+
+
  
 if __name__ == "__main__":
     print(f"________{dt.datetime.now()}_________________________")

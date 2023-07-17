@@ -51,11 +51,11 @@ def generate_prompt(df,included_columns, what,who, number, fixed_columns,chaos, 
     #selected_columns =  random.sample(list(df.columns)[fixed_columns:], number) # Exclude the first column and select a random sample of 8 column names
     #print (list(df.columns)[fixed_columns:])
     if what == "FAMOUS PEOPLE":
-        prompt = f'{take_random_value(df, "CONCEPT")} {take_random_value(df, what)} as {take_random_value(df, "ARCHETYPES")} in a {take_random_value(df, "SCENES")} in the style of {take_random_value(df, who)} '
+        prompt = f'{take_random_value(df, "CONCEPT")} {take_random_value(df, what)} as {take_random_value(df, "ARCHETYPES")} in a {take_random_value(df, "SCENES")} by {take_random_value(df, who)} '
     elif what=="ANIMALS":
-        prompt = f'{take_random_value(df, "CONCEPT")} a {take_random_value(df, what)} as {take_random_value(df, "ARCHETYPES")} in a {take_random_value(df, "SCENES")} in the style of {take_random_value(df, who)} '
+        prompt = f'{take_random_value(df, "CONCEPT")} a {take_random_value(df, what)} as {take_random_value(df, "ARCHETYPES")} in a {take_random_value(df, "SCENES")} by {take_random_value(df, who)} '
     else:
-        prompt = f'{take_random_value(df, "CONCEPT")} {take_random_value(df, what)} in a {take_random_value(df, "SCENES")} in the style of {take_random_value(df, who)}'
+        prompt = f'{take_random_value(df, "CONCEPT")} {take_random_value(df, what)} in a {take_random_value(df, "SCENES")} by {take_random_value(df, who)}'
       
     prompt2 = prompt
     if selected_columns != None:
@@ -92,8 +92,8 @@ def get_df():
     sheet_url = "https://docs.google.com/spreadsheets/d/11QQdAEaolonFRhwYryRnbO0AEyzKLBc8mlK-wZ76VHg/edit#gid=973302151"
     csv_export_url = sheet_url.replace('/edit#gid=', '/export?format=csv&gid=')
     local_url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\MIDJOURNEY_prompt_generator_keuzes.csv"
-
     try:
+        # df = pd.read_csv(csv_export_url, delimiter=",", header=0)
         df = pd.read_csv(csv_export_url, delimiter=",", header=0)
     except:
         df = pd.read_csv(local_url, delimiter=",", header=0)
@@ -112,21 +112,32 @@ def show_info(df):
     df =df.fillna(" ")
     st.write(df)
     st.subheader("Sources and links")
-    st.write("* [50 midjourney prompts for to perfect your art](https://bootcamp.uxdesign.cc/50-midjourney-prompts-for-to-perfect-your-art-363996b702b6)")
-    st.write("* [50-midjourney-prompts-to-create-photorealistic-images-advanced](https://bootcamp.uxdesign.cc/50-midjourney-prompts-to-create-photorealistic-images-advanced-2e233463bccf)")
-    st.write("* [50 best midjourney prompts to create seamless pattern that sells](https://bootcamp.uxdesign.cc/50-best-midjourney-prompts-to-create-seamless-pattern-that-sells-bdfcd8a067eb)")
-    st.write("* [an advanced guide to writing prompts for midjourney text to image=](https://medium.com/mlearning-ai/an-advanced-guide-to-writing-prompts-for-midjourney-text-to-image-aa12a1e33b6)")
-    st.write("* [resources/artist styles on midjourney v4/](https://weirdwonderfulai.art/resources/artist-styles-on-midjourney-v4/)")
-    st.write("* [10 amazing techniques for midjourney you probably didnt know yet](https://bootcamp.uxdesign.cc/10-amazing-techniques-for-midjourney-you-probably-didnt-know-yet-78f2ab7c00c0)")
-
-    st.write("* [Library of Style Words](https://discord.com/channels/662267976984297473/1017917091606712430/threads/1125455952448061511)") 
-    st.write("* [Troubleshooting Midjourney Text Prompts by @whatnostop#6700 (clarinet)](https://docs.google.com/document/d/e/2PACX-1vRHOxyEb-ERGi-BdZM8Z_piEP54m4HwO0z8scjmEurEp2UZVA6rFxvyKd15elYVHUWfP1oSA4CQFwxr/pub?utm_source=docs.google.com&utm_medium=tutorial&utm_campaign=midjourney)") 
+    st.subheader("Manuals / reference sheets")
     st.write("* [A very unofficial Midjourney Manual by Shambibble](https://docs.google.com/document/d/1ivAYy_JXJsGE-9Rh97iMyXkWlmF_MxO2NFshrIvuns4/edit#heading=h.m6597yajayd7)") 
     st.write("* [Midjourney Keywords & Styles y marigoldguide](https://marigoldguide.notion.site/marigoldguide/52ac9968a8da4003a825039022561a30?v=43706e26438d486bb5b8baaa2dc22ffd)") 
     st.write("* [V4 midjourney reference sheets](https://docs.google.com/spreadsheets/d/1MsX0NYYqhv4ZhZ7-50cXH1gvYE2FKLixLBvAkI40ha0/edit#gid=0)") 
     st.write("* [MidJourney-Styles-and-Keywords-Reference by willwulfken](https://github.com/willwulfken/MidJourney-Styles-and-Keywords-Reference)") 
+    st.write("* [Resources/artist styles on midjourney v4/](https://weirdwonderfulai.art/resources/artist-styles-on-midjourney-v4/)")
+    st.write("* [Artists names know by MJ](https://docs.google.com/spreadsheets/d/1cm6239gw1XvvDMRtazV6txa9pnejpKkM5z24wRhhFz0/edit#gid=400749539)") 
+    st.write("* [Midjourney guide](https://www.midlibrary.io/midguide)")
+    st.write("* [2000+ styles](https://www.midlibrary.io/styles)")
+    st.subheader("Articles / prompts")
+    st.write("* [About archetypes and unluckwords](https://bootcamp.uxdesign.cc/how-to-invoke-midjourney-archetypes-and-make-a-cat-fly-be36b6effe2d)")
+    
+    st.write("* [50 midjourney prompts for to perfect your art](https://bootcamp.uxdesign.cc/50-midjourney-prompts-for-to-perfect-your-art-363996b702b6)")
+    st.write("* [50-midjourney-prompts-to-create-photorealistic-images-advanced](https://bootcamp.uxdesign.cc/50-midjourney-prompts-to-create-photorealistic-images-advanced-2e233463bccf)")
+    st.write("* [50 best midjourney prompts to create seamless pattern that sells](https://bootcamp.uxdesign.cc/50-best-midjourney-prompts-to-create-seamless-pattern-that-sells-bdfcd8a067eb)")
+    st.write("* [An advanced guide to writing prompts for midjourney text to image=](https://medium.com/mlearning-ai/an-advanced-guide-to-writing-prompts-for-midjourney-text-to-image-aa12a1e33b6)")
+    st.write("* [10 amazing techniques for midjourney you probably didnt know yet](https://bootcamp.uxdesign.cc/10-amazing-techniques-for-midjourney-you-probably-didnt-know-yet-78f2ab7c00c0)")
+    st.write("* [Troubleshooting Midjourney Text Prompts by @whatnostop#6700 (clarinet)](https://docs.google.com/document/d/e/2PACX-1vRHOxyEb-ERGi-BdZM8Z_piEP54m4HwO0z8scjmEurEp2UZVA6rFxvyKd15elYVHUWfP1oSA4CQFwxr/pub?utm_source=docs.google.com&utm_medium=tutorial&utm_campaign=midjourney)") 
+    st.subheader("Wordlists")
+    st.write("* [Library of Style Words](https://discord.com/channels/662267976984297473/1017917091606712430/threads/1125455952448061511)") 
+    
     st.write("* [Scene settings](https://onestopforwriters.com/scene_settings)") 
     st.write("* [Architecture](https://docs.google.com/spreadsheets/d/1029yD1REXEq8V47XgfRm8GQby8JXnwGNlWOL17Lz6J4/edit#gid=0)") 
+    st.write("* [201 archetypes](https://industrialscripts.com/archetypes-of-characters/)") 
+    st.write("* [@techhalla](https://twitter.com/techhalla)") 
+    st.write()
     st.write("* [**My profile**](https://www.midjourney.com/app/users/2fae5989-ecac-4f06-afaf-7ee2cb306c58/)")
 
 def main():
@@ -155,6 +166,25 @@ def main():
     else:
         if st.button('Generate prompt'):
             generate_prompt(df, included_columns, what, who, number, fixed_columns, chaos, stylize, weird,ar)
+def check_double_values():
+    """Simpel function to detect double values in the dataframe
+    """    
+    df = get_df()
+    print (df)
+    df = df.fillna("X")
+    columnlist = list(df.columns)
+    
+    for i,column in enumerate(columnlist):
+        print (f"{column} [{i+1}/{len(columnlist)}]")
+        masterlist = df[column].tolist()
+        for value_to_check in masterlist:
+            if value_to_check != 'X':
+                for other_column in df.columns:
+                    if other_column != column:
+                        if value_to_check in df[other_column].tolist():
+                            print(f"Value '{value_to_check}' in column '{column}' is also in column '{other_column}'.")
+                           
 
 if __name__ == "__main__":
     main()
+    #check_double_values()

@@ -103,7 +103,7 @@ def make_plots_one_starting_date(results_df, investment_interval, initial_invest
     fig.update_layout(yaxis_title='USD')
     fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
     st.plotly_chart(fig)
-    
+
     columns_to_plot = ["rendement (%)","Bitcoin Rate","Investment Amount (BTC)", "Total Investments (BTC)"]                
     # Create line graphs for each column
     for column in columns_to_plot:
@@ -175,7 +175,7 @@ def rendement_various_starting_dates(investment_interval, initial_investment):
 
         lumpsum_result = total_investments_USD / results_df['Bitcoin Rate'].iloc[0] * bitcoin_rate
 
-        rendement_data.append({'Date': date, 'Rendement': last_rendement, 'Bitcoin rate': bitcoin_rate,
+        rendement_data.append({'Date': date, 'Rendement_DCA': last_rendement, 'Bitcoin rate': bitcoin_rate,
                                'total_investments_USD':total_investments_USD,
                                'total_portefeuille_value_USD':total_portefeuille_value_USD,
                                'lumpsum_result':lumpsum_result })
@@ -207,6 +207,7 @@ def rendement_various_starting_dates(investment_interval, initial_investment):
     # Plotting with Plotly
     plot_rendement_DCA_and_rendement_per_year_DCA(rendement_df)
     plot_rendement_per_year_DCA_vs_lumpsum(rendement_df)
+    plot_invested_DCA_vs_lumpsum(rendement_df)
     plot_btc_rate(df)
 
     with st.expander("Rendement DF"):
@@ -215,10 +216,10 @@ def rendement_various_starting_dates(investment_interval, initial_investment):
 def plot_rendement_DCA_and_rendement_per_year_DCA(rendement_df):
     """Plot total rendement and rendement per year while using DCA
     Args:
-        results_df (_type_): _description_
+        
         rendement_df (_type_): _description_
     """    
-    for y_ in ['rendement per year_DCA', 'Rendement']: #'rendement per year_DCA', 'rendement per year_lumpsum' 
+    for y_ in ['rendement per year_DCA', 'Rendement_DCA']: #'rendement per year_DCA', 'rendement per year_lumpsum' 
         fig = px.line(rendement_df, x='Date', y=y_, markers=False)
      
         fig.add_shape(type="line", x0=rendement_df['Date'].min(), x1=rendement_df['Date'].max(),
@@ -245,7 +246,16 @@ def plot_rendement_per_year_DCA_vs_lumpsum(rendement_df):
     
     st.plotly_chart(fig)
 
-
+def plot_invested_DCA_vs_lumpsum(rendement_df):
+    """plot rendement per year DCA vs  rendement per year lumpsum
+    """    
+    fig = px.line(rendement_df, x='Date', y=['total_investments_USD', 'total_portefeuille_value_USD', 'lumpsum_result'], markers=False)
+  
+    
+    fig.update_layout(title='Total invested vs DCA vs lumpsum', xaxis_title='Date', yaxis_title='Amount (USD)')
+    fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
+    
+    st.plotly_chart(fig)
     
 def rendement_one_starting_date(investment_interval, initial_investment):
     date_to_check_from = st.sidebar.date_input("Date to check from", datetime.date(2020, 1, 1)).strftime("%Y-%m-%d")
@@ -281,4 +291,4 @@ if __name__ == "__main__":
     print(f"_________________________________")
     
     main()
-    
+    st.info("Article: https://rcsmit.medium.com/dollar-cost-averaging-or-all-at-once-e62c7d6a7442")
