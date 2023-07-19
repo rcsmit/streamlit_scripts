@@ -2201,19 +2201,19 @@ def make_and_show_pivot_tables(df, df_bookingtable,start_month,end_month):
  
     show_occupation_per_accotype_per_month(df)
 
-def show_checkin_info(df):
+def show_checkin_info(df_mutation):
     
-    def show_checkins_per_month_per_year(df):
-        df["check_ins"] = df["new_arrival"]+df["back_to_back"]
+    def show_checkins_per_month_per_year(df_mutation):
+        df_mutation["check_ins"] = df_mutation["new_arrival"]+df_mutation["back_to_back"]
         
         # Group the dataframe by month
-        grouped_df = df.groupby([ 'year', 'month']).agg({'check_ins': 'sum'}).reset_index()
+        df_grouped = df_mutation.groupby([ 'year', 'month']).agg({'check_ins': 'sum'}).reset_index()
 
         # # Create the pivot table
-        # pivot_table = pd.pivot_table(grouped_df, values='check_ins', index='month', columns='year', aggfunc='sum').fillna(0)
+        # pivot_table = pd.pivot_table(df_grouped, values='check_ins', index='month', columns='year', aggfunc='sum').fillna(0)
 
         #Create the pivot table
-        pivot_table = pd.pivot_table(grouped_df, values='check_ins', index='month', columns='year', aggfunc='sum', margins=True, margins_name='Total').fillna(0)
+        pivot_table = pd.pivot_table(df_grouped, values='check_ins', index='month', columns='year', aggfunc='sum', margins=True, margins_name='Total').fillna(0)
 
         # Calculate the row averages
         # pivot_table['Average'] = pivot_table.mean(axis=1) 
@@ -2222,43 +2222,43 @@ def show_checkin_info(df):
         st.subheader("show_checkins_per_month")
         st.write(pivot_table)
 
-    def show_avg_checkins_per_day_per_month_per_year(df):
-        df["check_ins"] = df["new_arrival"] + df["back_to_back"]
-        df["day_of_week"] = df["date"].dt.dayofweek
+    def show_avg_checkins_per_day_per_month_per_year(df_mutation):
+        df_mutation["check_ins"] = df_mutation["new_arrival"] + df_mutation["back_to_back"]
+        df_mutation["day_of_week"] = df_mutation["date"].dt.dayofweek
 
-        grouped_df = df.groupby(['date', 'month', 'year_int', 'day_of_week']).agg({'check_ins': 'sum'}).reset_index()
-        grouped_df["is_wednesday"] = np.where(grouped_df["year_int"] >= 2023, np.where(grouped_df["day_of_week"] == 2, 1, 0), 0)
+        df_grouped = df_mutation.groupby(['date', 'month', 'year_int', 'day_of_week']).agg({'check_ins': 'sum'}).reset_index()
+        df_grouped["is_wednesday"] = np.where(df_grouped["year_int"] >= 2023, np.where(df_grouped["day_of_week"] == 2, 1, 0), 0)
 
-        grouped_df = grouped_df.groupby(['year_int', 'month']).agg({'check_ins': 'sum', 'is_wednesday': 'sum'}).reset_index()
+        df_grouped = df_grouped.groupby(['year_int', 'month']).agg({'check_ins': 'sum', 'is_wednesday': 'sum'}).reset_index()
 
-        grouped_df['days_in_month'] = grouped_df.apply(lambda row: calendar.monthrange(int(row['year_int']), row['month'])[1], axis=1)
-        grouped_df['avg_check_ins_per_day'] = grouped_df['check_ins'] / (grouped_df['days_in_month'] - grouped_df['is_wednesday'])
+        df_grouped['days_in_month'] = df_grouped.apply(lambda row: calendar.monthrange(int(row['year_int']), row['month'])[1], axis=1)
+        df_grouped['avg_check_ins_per_day'] = df_grouped['check_ins'] / (df_grouped['days_in_month'] - df_grouped['is_wednesday'])
 
-        pivot_table = pd.pivot_table(grouped_df, values='avg_check_ins_per_day', index='month', columns='year_int', aggfunc='sum').fillna(0).round(1)
+        pivot_table = pd.pivot_table(df_grouped, values='avg_check_ins_per_day', index='month', columns='year_int', aggfunc='sum').fillna(0).round(1)
         st.subheader("show avg check-ins per day per month per year")
         st.write(pivot_table)
 
-    def show_avg_checkins_per_weekday_per_month_per_year(df):
-        df["check_ins"] = df["new_arrival"] + df["back_to_back"]
-        df["day_of_week"] = df["date"].dt.dayofweek
-        df["day_name"] = df["date"].dt.day_name()
-        grouped_df = df.groupby(['date', 'month', 'year_int', 'day_of_week', 'day_name']).agg({'check_ins': 'sum'}).reset_index()
-        grouped_df["one"] = 1
-        grouped_df = grouped_df.groupby(['year_int', 'month', 'day_of_week', 'day_name']).agg({'check_ins': 'sum', 'one': 'sum'}).reset_index()
-        grouped_df['avg_check_ins_per_weekday'] = grouped_df['check_ins'] / grouped_df['one'] 
+    def show_avg_checkins_per_weekday_per_month_per_year(df_mutation):
+        df_mutation["check_ins"] = df_mutation["new_arrival"] + df_mutation["back_to_back"]
+        df_mutation["day_of_week"] = df_mutation["date"].dt.dayofweek
+        df_mutation["day_name"] = df_mutation["date"].dt.day_name()
+        df_grouped = df_mutation.groupby(['date', 'month', 'year_int', 'day_of_week', 'day_name']).agg({'check_ins': 'sum'}).reset_index()
+        df_grouped["one"] = 1
+        df_grouped = df_grouped.groupby(['year_int', 'month', 'day_of_week', 'day_name']).agg({'check_ins': 'sum', 'one': 'sum'}).reset_index()
+        df_grouped['avg_check_ins_per_weekday'] = df_grouped['check_ins'] / df_grouped['one'] 
 
-        pivot_table = pd.pivot_table(grouped_df, values='avg_check_ins_per_weekday', index=['month', 'day_of_week', 'day_name'], columns='year_int', aggfunc='mean').fillna(0).round(1)
+        pivot_table = pd.pivot_table(df_grouped, values='avg_check_ins_per_weekday', index=['month', 'day_of_week', 'day_name'], columns='year_int', aggfunc='mean').fillna(0).round(1)
         st.subheader("Show average check-ins per weekday per month")
         st.write(pivot_table)
 
 
-    def graph_number_of_checkins_per_day(df):
+    def graph_number_of_checkins_per_day(df_mutation):
         st.subheader("Number of checkins per day, all years")
-        df["check_ins"] = df["new_arrival"]+df["back_to_back"]
+        df_mutation["check_ins"] = df_mutation["new_arrival"]+df_mutation["back_to_back"]
 
-        df_grouped_by_date_year = df.groupby(["year","date", "day_month"])[["check_ins"]].sum().sort_values(by="date").reset_index()    
-        df_grouped_by_date_year["day_month_dt"] = pd.to_datetime(df_grouped_by_date_year["day_month"], format="%d-%m")
-        pivot_table = df_grouped_by_date_year.pivot_table(index="day_month_dt", columns="year", values="check_ins")
+        df_mutation_grouped_by_date_year = df_mutation.groupby(["year","date", "day_month"])[["check_ins"]].sum().sort_values(by="date").reset_index()    
+        df_mutation_grouped_by_date_year["day_month_dt"] = pd.to_datetime(df_mutation_grouped_by_date_year["day_month"], format="%d-%m")
+        pivot_table = df_mutation_grouped_by_date_year.pivot_table(index="day_month_dt", columns="year", values="check_ins")
 
         figy = go.Figure()
         # Define colors for each year
@@ -2289,29 +2289,29 @@ def show_checkin_info(df):
         figz.update_layout(xaxis_tickformat="%d-%b")  # Display only the day and month on x-axis
         st.plotly_chart(figz, use_container_width=True)
 
-    def show_busy_days_per_month_per_year(df, busy_factor):
+    def show_busy_days_per_month_per_year(df_mutation, busy_factor):
         
-        df["check_ins"] = df["new_arrival"]+df["back_to_back"]
+        df_mutation["check_ins"] = df_mutation["new_arrival"]+df_mutation["back_to_back"]
       
         # Group the dataframe by month
-        grouped_df = df.groupby('date').agg({'check_ins': 'sum'})
-        grouped_df = grouped_df[grouped_df["check_ins"] >= busy_factor].reset_index()
-        grouped_df['month'] = grouped_df['date'].dt.month
-        grouped_df['year'] = grouped_df['date'].dt.year
-        grouped_df['one']  = 1
-        pivot_table = pd.pivot_table(grouped_df, values='one', index='month', columns='year', aggfunc='sum').fillna(0)
+        df_grouped = df_mutation.groupby('date').agg({'check_ins': 'sum'})
+        df_grouped = df_grouped[df_grouped["check_ins"] >= busy_factor].reset_index()
+        df_grouped['month'] = df_grouped['date'].dt.month
+        df_grouped['year'] = df_grouped['date'].dt.year
+        df_grouped['one']  = 1
+        pivot_table = pd.pivot_table(df_grouped, values='one', index='month', columns='year', aggfunc='sum').fillna(0)
         months_range = range(3, 11)  # Assuming data spans all 12 months of the year
         pivot_table = pivot_table.reindex(months_range, fill_value=0)
         # Create the pivot table
         st.subheader(f"Number of days with more than {busy_factor} checkins per day")
         st.write(pivot_table)
 
-    show_checkins_per_month_per_year(df)
-    show_avg_checkins_per_day_per_month_per_year(df)
-    show_avg_checkins_per_weekday_per_month_per_year(df)
-    graph_number_of_checkins_per_day(df)
+    show_checkins_per_month_per_year(df_mutation)
+    show_avg_checkins_per_day_per_month_per_year(df_mutation)
+    show_avg_checkins_per_weekday_per_month_per_year(df_mutation)
+    graph_number_of_checkins_per_day(df_mutation)
     for busyfactor in [10,15,20,25,30]:
-        show_busy_days_per_month_per_year(df,busyfactor)
+        show_busy_days_per_month_per_year(df_mutation,busyfactor)
 
 
 @st.cache_data()
