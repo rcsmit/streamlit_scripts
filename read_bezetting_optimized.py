@@ -2219,6 +2219,7 @@ def make_and_show_pivot_tables(df, df_bookingtable,start_month,end_month):
         st.subheader("Show average check-ins per weekday per month")
         st.write(pivot_table)
 
+
     def show_busy_days_per_month_per_year(df, busy_factor):
         
         df["check_ins"] = df["new_arrival"]+df["back_to_back"]
