@@ -79,8 +79,22 @@ def generate_prompt(df,included_columns, what,who, number, fixed_columns,chaos, 
     prompt += f"--chaos {chaos} --stylize {stylize}  --weird {weird} --ar {ar} --style raw"
     prompt2 += f"--chaos {chaos} --stylize {stylize}  --weird {weird} --ar {ar} --style raw"
 
-    place1.info (prompt)
-    place2.info (prompt2)
+    place1.success (prompt)
+    place2.success (prompt2)
+    st.subheader("Permutations")
+    st.write("--chaos {0,25,50,75,100} --stylize {0,250,500,750,1000 --weird {0,750,1500,2250,3000}")
+    st.write("--v {5, 5.1, 5.2}")
+    st.subheader("Past prompts")
+      
+    history_list = st.session_state.history
+    if len(history_list) == 0:
+        st.write("No past prompts")
+    else:
+        for h in history_list:
+            st.info(h)
+    history_list.append(prompt2)
+    st.session_state.history = history_list
+    
 
 def get_df():
     """Get the DF with the possibilities.
@@ -130,9 +144,10 @@ def show_info(df):
     st.write("* [An advanced guide to writing prompts for midjourney text to image=](https://medium.com/mlearning-ai/an-advanced-guide-to-writing-prompts-for-midjourney-text-to-image-aa12a1e33b6)")
     st.write("* [10 amazing techniques for midjourney you probably didnt know yet](https://bootcamp.uxdesign.cc/10-amazing-techniques-for-midjourney-you-probably-didnt-know-yet-78f2ab7c00c0)")
     st.write("* [Troubleshooting Midjourney Text Prompts by @whatnostop#6700 (clarinet)](https://docs.google.com/document/d/e/2PACX-1vRHOxyEb-ERGi-BdZM8Z_piEP54m4HwO0z8scjmEurEp2UZVA6rFxvyKd15elYVHUWfP1oSA4CQFwxr/pub?utm_source=docs.google.com&utm_medium=tutorial&utm_campaign=midjourney)") 
+    st.write("* [Articles by Stacey Schneider @medium.com](https://medium.com/@sparkystacey)") 
     st.subheader("Wordlists")
     st.write("* [Library of Style Words](https://discord.com/channels/662267976984297473/1017917091606712430/threads/1125455952448061511)") 
-    
+    st.write("* [400+ Words](https://generativeai.pub/400-midjourney-prompts-for-illustrations-7a721e64129c)") 
     st.write("* [Scene settings](https://onestopforwriters.com/scene_settings)") 
     st.write("* [Architecture](https://docs.google.com/spreadsheets/d/1029yD1REXEq8V47XgfRm8GQby8JXnwGNlWOL17Lz6J4/edit#gid=0)") 
     st.write("* [201 archetypes](https://industrialscripts.com/archetypes-of-characters/)") 
@@ -141,6 +156,8 @@ def show_info(df):
     st.write("* [**My profile**](https://www.midjourney.com/app/users/2fae5989-ecac-4f06-afaf-7ee2cb306c58/)")
 
 def main():
+    if 'history' not in st.session_state:
+        st.session_state['history'] = []
     st.title("Midjourney Prompt generator")
     df = get_df()
     fixed_columns = 9  # number of columns not in the general generator
@@ -151,12 +168,15 @@ def main():
     weird = st.sidebar.slider("Weird", 0, 3000, 0)
     ar = st.sidebar.selectbox("Aspect ratio (w:h)", ["1:1","9:16","4:5","3:4","2:3","10:16","16:9","5:4","4:3","3:2"],0)
     included_columns = st.sidebar.multiselect("Columns to include", list(df.columns)[fixed_columns:], list(df.columns)[fixed_columns:])
+    
     number = 0
     if len(included_columns) >= 5:
         number = st.sidebar.slider("Number of keywords", 0, len(included_columns), 5)
     elif len(included_columns) > 0:
         number = st.sidebar.slider("Number of keywords", 0, len(included_columns), len(included_columns))
-
+    if st.sidebar.button('Clear history'):
+        del st.session_state["history"]
+    
     # --chaos controls how diverse the initial grid images are from each other.
     # --stylize controls how strongly Midjourney's default aesthetic is applied.
     # --weird controls how unusual an image is compared to previous Midjourney images.
