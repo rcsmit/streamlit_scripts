@@ -145,6 +145,10 @@ def show_info(df):
     st.write("* [10 amazing techniques for midjourney you probably didnt know yet](https://bootcamp.uxdesign.cc/10-amazing-techniques-for-midjourney-you-probably-didnt-know-yet-78f2ab7c00c0)")
     st.write("* [Troubleshooting Midjourney Text Prompts by @whatnostop#6700 (clarinet)](https://docs.google.com/document/d/e/2PACX-1vRHOxyEb-ERGi-BdZM8Z_piEP54m4HwO0z8scjmEurEp2UZVA6rFxvyKd15elYVHUWfP1oSA4CQFwxr/pub?utm_source=docs.google.com&utm_medium=tutorial&utm_campaign=midjourney)") 
     st.write("* [Articles by Stacey Schneider @medium.com](https://medium.com/@sparkystacey)") 
+    
+    # https://aituts.com/midjourney-interior-design/
+    # https://prompts.aituts.com/
+    #https://aituts.com/midjourney-camera-prompts/
     st.subheader("Wordlists")
     st.write("* [Library of Style Words](https://discord.com/channels/662267976984297473/1017917091606712430/threads/1125455952448061511)") 
     st.write("* [400+ Words](https://generativeai.pub/400-midjourney-prompts-for-illustrations-7a721e64129c)") 
