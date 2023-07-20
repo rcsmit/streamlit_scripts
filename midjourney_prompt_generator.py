@@ -79,7 +79,7 @@ def generate_prompt(df,included_columns, what,who, number, fixed_columns,chaos, 
     prompt2 += f"--chaos {chaos} --stylize {stylize}  --weird {weird} --ar {ar} --style raw"
 
     place1.success (prompt)
-    place2.success (prompt2)
+    place2.code (prompt2)
     st.subheader("Permutations")
     st.write("--chaos {0,25,50,75,100} --stylize {0,250,500,750,1000 --weird {0,750,1500,2250,3000}")
     st.write("--v {5, 5.1, 5.2}")
@@ -144,16 +144,17 @@ def show_info(df):
     st.write("* [10 amazing techniques for midjourney you probably didnt know yet](https://bootcamp.uxdesign.cc/10-amazing-techniques-for-midjourney-you-probably-didnt-know-yet-78f2ab7c00c0)")
     st.write("* [Troubleshooting Midjourney Text Prompts by @whatnostop#6700 (clarinet)](https://docs.google.com/document/d/e/2PACX-1vRHOxyEb-ERGi-BdZM8Z_piEP54m4HwO0z8scjmEurEp2UZVA6rFxvyKd15elYVHUWfP1oSA4CQFwxr/pub?utm_source=docs.google.com&utm_medium=tutorial&utm_campaign=midjourney)") 
     st.write("* [Articles by Stacey Schneider @medium.com](https://medium.com/@sparkystacey)") 
-    
-    # https://aituts.com/midjourney-interior-design/
-    # https://prompts.aituts.com/
-    #https://aituts.com/midjourney-camera-prompts/
+    st.write("* [Prompts by aituts.com](https://prompts.aituts.com/)") 
+    st.write("* [Free e-book with 250+ prompts](https://aituts.ck.page/prompts-book)") 
+
     st.subheader("Wordlists")
     st.write("* [Library of Style Words](https://discord.com/channels/662267976984297473/1017917091606712430/threads/1125455952448061511)") 
     st.write("* [400+ Words](https://generativeai.pub/400-midjourney-prompts-for-illustrations-7a721e64129c)") 
     st.write("* [Scene settings](https://onestopforwriters.com/scene_settings)") 
     st.write("* [Architecture](https://docs.google.com/spreadsheets/d/1029yD1REXEq8V47XgfRm8GQby8JXnwGNlWOL17Lz6J4/edit#gid=0)") 
     st.write("* [201 archetypes](https://industrialscripts.com/archetypes-of-characters/)") 
+
+    st.subheader("Interesting people.accounts")
     st.write("* [@techhalla](https://twitter.com/techhalla)") 
     st.write()
     st.write("* [**My profile**](https://www.midjourney.com/app/users/2fae5989-ecac-4f06-afaf-7ee2cb306c58/)")
