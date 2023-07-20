@@ -42,8 +42,7 @@ def generate_prompt(df,included_columns, what,who, number, fixed_columns,chaos, 
     """    
     place1 = st.empty()
     place2 = st.empty()
-    print ("Included_columns")
-    print (included_columns)
+    
     if number >0:
         selected_columns =  random.sample(included_columns, number)
     else:
