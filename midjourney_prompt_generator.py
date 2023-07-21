@@ -183,6 +183,7 @@ def main():
     non_fixed_columns_end = 35
     architecture_columns_start  =36
     architecture_columns_end = 48
+    
     what = st.sidebar.selectbox("What to choose / INFO",["FAMOUS PEOPLE", "ANIMALS", "OBJECTS","INTERIOR ARCHITECTURE", "INFO"])
     if what != "INTERIOR ARCHITECTURE" and what != "INFO":
         who = st.sidebar.selectbox("What kind of artist", ["FAMOUS PAINTERS", "MASTERPHOTOGRAPHERS","ARTISTS" ])
