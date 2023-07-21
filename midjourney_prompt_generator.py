@@ -178,6 +178,7 @@ def main():
         st.session_state['history'] = []
     st.title("Midjourney Prompt generator")
     df = get_df()
+    
     non_fixed_columns_start = 9  # number of columns not in the general generator
     non_fixed_columns_end = 35
     architecture_columns_start  =36
