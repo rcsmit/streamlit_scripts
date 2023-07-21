@@ -14,7 +14,7 @@ def take_random_value(df, column):
     Returns:
         str: the chosen value
     """    
-    column_values = df[column].dropna().values
+    column_values = df[column].dropna().unique()
     
     if len(column_values) > 0:
         random_value = random.choice(column_values)
@@ -23,7 +23,7 @@ def take_random_value(df, column):
         random_value = None
     return random_value
 
-def generate_prompt(df,included_columns, what,who, number, fixed_columns,chaos, stylize, weird,ar):
+def generate_prompt(df,included_columns, what,who, number,chaos, stylize, weird,ar, seperator):
     """Generate the prompt :
      ["CONCEPT"] [what] as ["ARCHETYPES"] in a [SCENES"] in the style of [who]
      eg. An action shot of  Muhammad Ali as poet in a grotto in the style of Henri Rousseau 
@@ -38,7 +38,8 @@ def generate_prompt(df,included_columns, what,who, number, fixed_columns,chaos, 
         chaos (int): level of chaos [0-100]
         stylize (int): level of stylize [0-1000]
         weird (int): level of weirdness [0-3000]
-        ar (str): aspect ratio
+        ar (str): aspect ratio'
+        seperator (str) : seperator ["|", ",", " "]
     """    
     place1 = st.empty()
     place2 = st.empty()
@@ -53,16 +54,27 @@ def generate_prompt(df,included_columns, what,who, number, fixed_columns,chaos, 
         prompt = f'{take_random_value(df, "CONCEPT")} {take_random_value(df, what)} as {take_random_value(df, "ARCHETYPES")} in a {take_random_value(df, "SCENES")} by {take_random_value(df, who)} '
     elif what=="ANIMALS":
         prompt = f'{take_random_value(df, "CONCEPT")} a {take_random_value(df, what)} as {take_random_value(df, "ARCHETYPES")} in a {take_random_value(df, "SCENES")} by {take_random_value(df, who)} '
+    elif what == "INTERIOUR ARCHITECTURE":
+         prompt =f'An {take_random_value(df, "COMPOSITION_INT_ARCH")}'
     else:
         prompt = f'{take_random_value(df, "CONCEPT")} {take_random_value(df, what)} in a {take_random_value(df, "SCENES")} by {take_random_value(df, who)}'
       
     prompt2 = prompt
+    if seperator =="|":
+        seperator = " | "
+    elif seperator ==",":
+        seperator ==", "
+    elif seperator =="<space>":
+        seperator ==" "
+    else:
+        st.error("ERROR IN SEPERATOR")
+        st.stop()
     if selected_columns != None:
         for column in df.columns:
             if column in selected_columns:
                 random_value = take_random_value(df, column)
-                prompt += f"{random_value}::{random.randint(1, 100)} "
-                prompt2 += f"| {random_value} "
+                prompt += f"{seperator}{random_value}::{random.randint(1, 100)}"
+                prompt2 += f"{seperator}{random_value}"
    
     # distribution = "uneven"
     # if distribution == "weibull":
@@ -75,10 +87,11 @@ def generate_prompt(df,included_columns, what,who, number, fixed_columns,chaos, 
     #     prompt += f"--stylize {random.randint(1,1000)} " # Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
     #     prompt += f"--weird {random.randint(1,3000)} "
     # else:
+   
     prompt += f"--chaos {chaos} --stylize {stylize}  --weird {weird} --ar {ar} --style raw"
     prompt2 += f"--chaos {chaos} --stylize {stylize}  --weird {weird} --ar {ar} --style raw"
 
-    place1.success (prompt)
+    place1.success (prompt2) 
     place2.code (prompt2)
     st.subheader("Permutations")
     st.code("--chaos {0,25,50,75,100} --stylize {0,250,500,750,1000 --weird {0,750,1500,2250,3000} --v {5, 5.1, 5.2}")
@@ -157,28 +170,46 @@ def show_info(df):
     st.write("* [@techhalla](https://twitter.com/techhalla)") 
     st.write()
     st.write("* [**My profile**](https://www.midjourney.com/app/users/2fae5989-ecac-4f06-afaf-7ee2cb306c58/)")
+    st.subheader("Credits")
+    st.write("Interiour archictecture prompts inspired by https://twitter.com/nickfloats/status/1635116676978208769 as seen in https://www.youtube.com/watch?v=p6vc5N8DH7A")
 
 def main():
     if 'history' not in st.session_state:
         st.session_state['history'] = []
     st.title("Midjourney Prompt generator")
     df = get_df()
-    fixed_columns = 9  # number of columns not in the general generator
-    what = st.sidebar.selectbox("What to choose / INFO",["FAMOUS PEOPLE", "ANIMALS", "OBJECTS", "INFO"])
-    who = st.sidebar.selectbox("What kind of artist", ["FAMOUS PAINTERS", "MASTERPHOTOGRAPHERS","ARTISTS" ])
-    chaos = st.sidebar.slider("chaos", 0,100, 0) # High --chaos values will produce more unusual and unexpected results and compositions. Lower --chaos values have more reliable, repeatable results.
-    stylize = st.sidebar.slider("Stylyze", 0, 1000, 100) #Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
-    weird = st.sidebar.slider("Weird", 0, 3000, 0)
-    ar = st.sidebar.selectbox("Aspect ratio (w:h)", ["1:1","9:16","4:5","3:4","2:3","10:16","16:9","5:4","4:3","3:2"],0)
-    included_columns = st.sidebar.multiselect("Columns to include", list(df.columns)[fixed_columns:], list(df.columns)[fixed_columns:])
-    
-    number = 0
-    if len(included_columns) >= 5:
-        number = st.sidebar.slider("Number of keywords", 0, len(included_columns), 5)
-    elif len(included_columns) > 0:
-        number = st.sidebar.slider("Number of keywords", 0, len(included_columns), len(included_columns))
-    if st.sidebar.button('Clear history'):
-        del st.session_state["history"]
+    non_fixed_columns_start = 9  # number of columns not in the general generator
+    non_fixed_columns_end = 35
+    architecture_columns_start  =36
+    architecture_columns_end = 48
+    what = st.sidebar.selectbox("What to choose / INFO",["FAMOUS PEOPLE", "ANIMALS", "OBJECTS","INTERIOUR ARCHITECTURE", "INFO"])
+    if what != "INTERIOUR ARCHITECTURE" and what != "INFO":
+        who = st.sidebar.selectbox("What kind of artist", ["FAMOUS PAINTERS", "MASTERPHOTOGRAPHERS","ARTISTS" ])
+    else:
+        who = None
+    if what != "INFO":
+        chaos = st.sidebar.slider("chaos", 0,100, 0) # High --chaos values will produce more unusual and unexpected results and compositions. Lower --chaos values have more reliable, repeatable results.
+        stylize = st.sidebar.slider("Stylyze", 0, 1000, 100) #Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
+        weird = st.sidebar.slider("Weird", 0, 3000, 0)
+        if what == "INTERIOUR ARCHITECTURE":
+            ar_def = 6
+        else:
+            ar_def = 0
+        ar = st.sidebar.selectbox("Aspect ratio (w:h)", ["1:1","9:16","4:5","3:4","2:3","10:16","16:9","5:4","4:3","3:2"],ar_def)
+        if what == "INTERIOUR ARCHITECTURE":
+            list_columns = list(df.columns)[architecture_columns_start:architecture_columns_end]
+        else:
+            list_columns = list(df.columns)[non_fixed_columns_start:non_fixed_columns_end]
+        included_columns = st.sidebar.multiselect("Columns to include", list_columns,list_columns)
+        number = 0
+        if len(included_columns) >= 5:
+            number = st.sidebar.slider("Number of keywords", 0, len(included_columns), 5)
+        elif len(included_columns) > 0:
+            number = st.sidebar.slider("Number of keywords", 0, len(included_columns), len(included_columns))
+        seperator = st.sidebar.selectbox("Seperator", ["|",",","<space>"],0)
+        if st.sidebar.button('Clear history'):
+            del st.session_state["history"]
+        
     
     # --chaos controls how diverse the initial grid images are from each other.
     # --stylize controls how strongly Midjourney's default aesthetic is applied.
@@ -188,7 +219,7 @@ def main():
         show_info(df)
     else:
         if st.button('Generate prompt'):
-            generate_prompt(df, included_columns, what, who, number, fixed_columns, chaos, stylize, weird,ar)
+            generate_prompt(df, included_columns, what, who, number,  chaos, stylize, weird,ar, seperator)
 def check_double_values():
     """Simpel function to detect double values in the dataframe
     """    
