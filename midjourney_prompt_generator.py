@@ -54,7 +54,7 @@ def generate_prompt(df,included_columns, what,who, number,chaos, stylize, weird,
         prompt = f'{take_random_value(df, "CONCEPT")} {take_random_value(df, what)} as {take_random_value(df, "ARCHETYPES")} in a {take_random_value(df, "SCENES")} by {take_random_value(df, who)} '
     elif what=="ANIMALS":
         prompt = f'{take_random_value(df, "CONCEPT")} a {take_random_value(df, what)} as {take_random_value(df, "ARCHETYPES")} in a {take_random_value(df, "SCENES")} by {take_random_value(df, who)} '
-    elif what == "INTERIOUR ARCHITECTURE":
+    elif what == "INTERIOR ARCHITECTURE":
          prompt =f'An {take_random_value(df, "COMPOSITION_INT_ARCH")}'
     else:
         prompt = f'{take_random_value(df, "CONCEPT")} {take_random_value(df, what)} in a {take_random_value(df, "SCENES")} by {take_random_value(df, who)}'
@@ -171,20 +171,20 @@ def show_info(df):
     st.write()
     st.write("* [**My profile**](https://www.midjourney.com/app/users/2fae5989-ecac-4f06-afaf-7ee2cb306c58/)")
     st.subheader("Credits")
-    st.write("Interiour archictecture prompts inspired by https://twitter.com/nickfloats/status/1635116676978208769 as seen in https://www.youtube.com/watch?v=p6vc5N8DH7A")
+    st.write("INTERIOR archictecture prompts inspired by https://twitter.com/nickfloats/status/1635116676978208769 as seen in https://www.youtube.com/watch?v=p6vc5N8DH7A")
 
 def main():
     if 'history' not in st.session_state:
         st.session_state['history'] = []
     st.title("Midjourney Prompt generator")
     df = get_df()
-    
+
     non_fixed_columns_start = 9  # number of columns not in the general generator
     non_fixed_columns_end = 35
     architecture_columns_start  =36
     architecture_columns_end = 48
-    what = st.sidebar.selectbox("What to choose / INFO",["FAMOUS PEOPLE", "ANIMALS", "OBJECTS","INTERIOUR ARCHITECTURE", "INFO"])
-    if what != "INTERIOUR ARCHITECTURE" and what != "INFO":
+    what = st.sidebar.selectbox("What to choose / INFO",["FAMOUS PEOPLE", "ANIMALS", "OBJECTS","INTERIOR ARCHITECTURE", "INFO"])
+    if what != "INTERIOR ARCHITECTURE" and what != "INFO":
         who = st.sidebar.selectbox("What kind of artist", ["FAMOUS PAINTERS", "MASTERPHOTOGRAPHERS","ARTISTS" ])
     else:
         who = None
@@ -192,12 +192,12 @@ def main():
         chaos = st.sidebar.slider("chaos", 0,100, 0) # High --chaos values will produce more unusual and unexpected results and compositions. Lower --chaos values have more reliable, repeatable results.
         stylize = st.sidebar.slider("Stylyze", 0, 1000, 100) #Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
         weird = st.sidebar.slider("Weird", 0, 3000, 0)
-        if what == "INTERIOUR ARCHITECTURE":
+        if what == "INTERIOR ARCHITECTURE":
             ar_def = 6
         else:
             ar_def = 0
         ar = st.sidebar.selectbox("Aspect ratio (w:h)", ["1:1","9:16","4:5","3:4","2:3","10:16","16:9","5:4","4:3","3:2"],ar_def)
-        if what == "INTERIOUR ARCHITECTURE":
+        if what == "INTERIOR ARCHITECTURE":
             list_columns = list(df.columns)[architecture_columns_start:architecture_columns_end]
         else:
             list_columns = list(df.columns)[non_fixed_columns_start:non_fixed_columns_end]
