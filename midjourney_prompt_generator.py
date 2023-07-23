@@ -43,7 +43,7 @@ def generate_prompt(df,included_columns, what,who, number,chaos, stylize, weird,
     """    
     place1 = st.empty()
     place2 = st.empty()
-    
+    place3 = st.empty()
     if number >0:
         selected_columns =  random.sample(included_columns, number)
     else:
@@ -60,6 +60,7 @@ def generate_prompt(df,included_columns, what,who, number,chaos, stylize, weird,
         prompt = f'{take_random_value(df, "CONCEPT")} {take_random_value(df, what)} in a {take_random_value(df, "SCENES")} by {take_random_value(df, who)}'
       
     prompt2 = prompt
+    prompt3 = prompt
     if seperator =="|":
         seperator = " | "
     elif seperator ==",":
@@ -75,6 +76,7 @@ def generate_prompt(df,included_columns, what,who, number,chaos, stylize, weird,
                 random_value = take_random_value(df, column)
                 prompt += f"{seperator}{random_value}::{random.randint(1, 100)}"
                 prompt2 += f"{seperator}{random_value}"
+                prompt3 += f"{seperator}{column}: {random_value}"
    
     # distribution = "uneven"
     # if distribution == "weibull":
@@ -87,12 +89,15 @@ def generate_prompt(df,included_columns, what,who, number,chaos, stylize, weird,
     #     prompt += f"--stylize {random.randint(1,1000)} " # Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
     #     prompt += f"--weird {random.randint(1,3000)} "
     # else:
-   
-    prompt += f"--chaos {chaos} --stylize {stylize}  --weird {weird} --ar {ar} --style raw"
-    prompt2 += f"--chaos {chaos} --stylize {stylize}  --weird {weird} --ar {ar} --style raw"
+    ending = f"--chaos {chaos} --stylize {stylize}  --weird {weird} --ar {ar} --style raw"
+    prompt += ending
+    prompt2 += ending
+    prompt3 += ending
 
     place1.success (prompt2) 
     place2.code (prompt2)
+    place3.code (prompt3)
+    
     st.subheader("Permutations")
     st.code("--chaos {0,25,50,75,100} --stylize {0,250,500,750,1000 --weird {0,750,1500,2250,3000} --v {5, 5.1, 5.2}")
     st.subheader("Past prompts")
@@ -183,7 +188,7 @@ def main():
     non_fixed_columns_end = 35
     architecture_columns_start  =36
     architecture_columns_end = 48
-    
+
     what = st.sidebar.selectbox("What to choose / INFO",["FAMOUS PEOPLE", "ANIMALS", "OBJECTS","INTERIOR ARCHITECTURE", "INFO"])
     if what != "INTERIOR ARCHITECTURE" and what != "INFO":
         who = st.sidebar.selectbox("What kind of artist", ["FAMOUS PAINTERS", "MASTERPHOTOGRAPHERS","ARTISTS" ])
