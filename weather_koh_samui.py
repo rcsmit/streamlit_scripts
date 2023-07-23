@@ -67,7 +67,7 @@ def show_graph():
     """    
     st.title("Weather info from Koh Samui")
     url = r"C:\Users\rcxsm\Documents\python_scripts\weather_ko_samui.csv"
-    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/weather_ko_samui.csv.csv"
+    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/weather_ko_samui.csv"
     # 
     # Step 1: Read the CSV file into a DataFrame
     df = pd.read_csv(url)
