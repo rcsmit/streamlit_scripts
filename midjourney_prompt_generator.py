@@ -99,7 +99,7 @@ def generate_prompt(df,included_columns, what,who, number,chaos, stylize, weird,
     place3.code (prompt3)
     
     st.subheader("Permutations")
-    st.code("--chaos {0,25,50,75,100} --stylize {0,250,500,750,1000 --weird {0,750,1500,2250,3000} --v {5, 5.1, 5.2}")
+    st.code("--chaos {0,25,50,75,100} --stylize {0,250,500,750,1000} --weird {0,750,1500,2250,3000} --v {4, 5, 5.1, 5.2}")
     st.subheader("Past prompts")
     
     history_list = st.session_state.history
