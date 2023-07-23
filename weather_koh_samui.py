@@ -62,7 +62,7 @@ def read_ogimet():
     observations.to_csv("irbid_weather_ko_samui_2023.csv", index=False)
     print(observations)
 
-def show_graph():
+def main():
     """Show the data from Ogimet in a graph, and average values per month per year
     """    
     st.title("Weather info from Koh Samui")
@@ -127,4 +127,9 @@ def show_graph():
 
     Source https://ogimet.com/cgi-bin/gsodres?lang=en&ind=485500-99999&ord=DIR&ano=2000&mes=01&day=1&ndays=500
     '''
-show_graph()
+
+
+if __name__ == "__main__":
+    print(f"________{dt.datetime.now()}_________________________")
+    main()
+    
