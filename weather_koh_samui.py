@@ -124,5 +124,7 @@ def show_graph():
     Vis = Mean visibility computed from 8 observations (km)
     Prec = Prec. computed from 1 report of 24-hour precipitation amount (mm)
     Diary = (images, not in use)
+
+    Source https://ogimet.com/cgi-bin/gsodres?lang=en&ind=485500-99999&ord=DIR&ano=2000&mes=01&day=1&ndays=500
     '''
 show_graph()
