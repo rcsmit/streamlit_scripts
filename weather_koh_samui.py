@@ -130,6 +130,6 @@ def main():
 
 
 if __name__ == "__main__":
-    print(f"________{dt.datetime.now()}_________________________")
+    
     main()
     
