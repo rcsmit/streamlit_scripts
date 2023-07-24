@@ -189,7 +189,6 @@ def main():
         df_above_30 < df[df[to_show] <= treshold_value]
         au_txt = "<="
     
-
     st.subheader(f"Numbers of days per month that {to_show} was {au_txt} {treshold_value} - {where}")
     # Create a pivot table to count the occurrences of temperatures above 30 degrees per month and year
     table = pd.pivot_table(df_above_30, values=to_show, index='Month', columns='Year', aggfunc='count', fill_value=0)
