@@ -24,7 +24,7 @@ import plotly
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
-
+import platform
 # when using without Streamlit, to avoid 127.0.0.1 refused to connect :
 # plotly.offline.init_notebook_mode(connected=True)
     
@@ -87,41 +87,76 @@ def main():
     where = st.sidebar.selectbox("Location to show", ["Koh Samui", "Chiang Mai", "Rome Fiumicino"]
                          )
     st.title(f"Weather info from {where}")
-    url = r"C:\Users\rcxsm\Documents\python_scripts\weather_ko_samui.csv"
-    if where == "Koh Samui":
-        url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/weather_ko_samui.csv"
-    elif where == "Chiang Mai":
-        url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/weather_chiang_mai.csv"
-    elif where == "Rome Fiumicino":
-        url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/weather_rome_fiumicino.csv"
+    
+    
+    if platform.processor() != "":
+            
+        if where == "Koh Samui":
+            url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\weather_ko_samui.csv"
+        elif where == "Chiang Mai":
+            url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\weather_chiang_mai.csv"
+           
+        elif where == "Rome Fiumicino":
+            url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\weather_rome_fiumicino.csv"
+        else:
+            st.error("Error in WHERE")
+            st.stop()
     else:
-        st.error("Error in WHERE")
-        st.stop()
-    df = pd.read_csv(url)
+            
+        if where == "Koh Samui":
+            url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/weather_ko_samui.csv"
+        elif where == "Chiang Mai":
+            url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/weather_chiang_mai.csv"
+        elif where == "Rome Fiumicino":
+            url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/weather_rome_fiumicino.csv"
+        else:
+            st.error("Error in WHERE")
+            st.stop()
+    to_show = st.sidebar.selectbox("What to show x", ["T_Max","T_Min","T_Mean","Hr_Med","Wind_Max","Wind_Mean","SLP","STN","Vis","Prec","Diary"],0)
+    window_size =  st.sidebar.slider("Window for SMA",1,365,7) 
+    y_axis_zero = st.sidebar.selectbox("Y axis start at zero", [True,False],1)
+    multiply_minus_one = st.sidebar.selectbox("Multiply by -1", [True,False],1)
+    
+    df_ = pd.read_csv(url)
+    if multiply_minus_one:
+        # Make a copy of the DataFrame without the "Date" column
+        df_copy = df_.drop(columns=['Date']).copy()
+
+        # Multiply all values by -1
+        df_copy = df_copy * -1
+
+        # Combine the "Date" column back with the modified values
+        df = pd.concat([df_['Date'], df_copy], axis=1)
+    else:
+        df = df_
+
 
     df['Date'] = pd.to_datetime(df['Date'])
     df['Month'] = df['Date'].dt.month
     df['Year'] = df['Date'].dt.year
     df = df.sort_values(by='Date')
   
-    to_show = st.sidebar.selectbox("What to show", ["T_Max","T_Min","T_Mean","Hr_Med","Wind_Max","Wind_Mean","SLP","STN","Vis","Prec","Diary"],0)
-    window_size = st.sidebar.slider("Window for SMA",1,365,7) 
-  
+   
     df[f'{to_show}_SMA'] = df[to_show].rolling(window=window_size).mean()
 
     fig = px.line(df, x='Date', y=[to_show, f'{to_show}_SMA'],
                 title=f'{to_show} over Time with SMA',
                 labels={'value':to_show},
                 line_shape='linear')
+    # Set the range of the y-axis to start from 0
+    if y_axis_zero:
+        fig.update_layout(yaxis_range=[0, max(df[to_show])])
 
     # fig.show()
     # plotly.offline.plot(fig)
     st.plotly_chart(fig)
     
     # CROSS TABLE WITH MONTLY AVERAGES
+    st.subheader (f"Monthly averages of {to_show} - {where}")
     crosstable = pd.pivot_table(df, values=to_show, index='Month', columns='Year', aggfunc='mean').round(1)
     st.write (crosstable)
 
+    st.subheader (f"Monthly averages of {to_show} - {where}")
     # Create the heatmap using Plotly Express
     fig = px.imshow(crosstable)
     #fig.show()
@@ -134,11 +169,39 @@ def main():
     for column in transposed_df.columns:
         fig_x.add_trace(go.Scatter(x=transposed_df.index, y=transposed_df[column], mode='lines', name=column))
 
-    fig_x.update_layout(title=f'{to_show}',
+    fig_x.update_layout(title=f'Monthly averages of {to_show} through time - {where}',
                     xaxis_title='Years',
                     yaxis_title=f'Montly average of {to_show}')
+    if y_axis_zero:
+        fig_x.update_layout(yaxis_range=[0, max(transposed_df.max())])
+
 
     st.plotly_chart(fig_x)
+
+    treshold_value = st.sidebar.number_input("Treshold value (incl.)")
+    above_under = st.sidebar.selectbox("Above or below", ["above", "below"],0)
+
+    if above_under =="above":
+    # Filter the DataFrame to include only the rows where Temperature is above 30 degrees
+        df_above_30 = df[df[to_show] >= treshold_value]
+        au_txt = ">="
+    else:
+        df_above_30 < df[df[to_show] <= treshold_value]
+        au_txt = "<="
+    
+
+    st.subheader(f"Numbers of days per month that {to_show} was {au_txt} {treshold_value} - {where}")
+    # Create a pivot table to count the occurrences of temperatures above 30 degrees per month and year
+    table = pd.pivot_table(df_above_30, values=to_show, index='Month', columns='Year', aggfunc='count', fill_value=0)
+    all_months = range(1, 13)
+    all_years = df['Year'].unique()
+    table = table.reindex(index=all_months, columns=all_years, fill_value=0)
+    st.write(table)
+
+    st.subheader(f"Numbers of days per month that {to_show} was {au_txt} {treshold_value} - {where}")
+    fig = px.imshow(table)
+    #fig.show()
+    st.plotly_chart(fig)
 
     ''''
     Data until mid july 2023, not automaticall updated
@@ -160,6 +223,6 @@ def main():
 
 
 if __name__ == "__main__":
-    read_ogimet()
-    #main()
+    #read_ogimet()
+    main()
     
