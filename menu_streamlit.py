@@ -48,7 +48,7 @@ def main():
                 ["19. Tarot Symbols", "tarot_symbols"],
                 ["20. Dollar Cost Average", "dollar_cost_average"],
                 ["21. Midjourney prompt generator", "midjourney_prompt_generator"],
-                ["22. Historical weather Koh Samui", "weather_koh_samui"]
+                ["22. Historical weather", "weather_koh_samui"]
                 
                 
                 ]

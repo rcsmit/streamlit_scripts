@@ -86,7 +86,7 @@ def main():
     """    
     where = st.sidebar.selectbox("Location to show", ["Koh Samui", "Chiang Mai", "Rome Fiumicino"]
                          )
-    st.title("Weather info from Koh Samui")
+    st.title(f"Weather info from {where}")
     url = r"C:\Users\rcxsm\Documents\python_scripts\weather_ko_samui.csv"
     if where == "Koh Samui":
         url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/weather_ko_samui.csv"
