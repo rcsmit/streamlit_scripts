@@ -22,7 +22,7 @@ import requests
 from bs4 import BeautifulSoup
 import plotly
 import plotly.express as px
-
+import plotly.graph_objects as go
 import streamlit as st
 
 # when using without Streamlit, to avoid 127.0.0.1 refused to connect :
@@ -32,10 +32,14 @@ def read_ogimet():
     """Read the data from Ogimet and save it to a CSV file. Reading the data while running the script every time
        is not encouraged, see above.
     """
-    station_code = "485500-99999"   # this WMO code is for a station in Koh Samui, Thailand
-                                    # find station codes here https://www.ogimet.com/indicativos.phtml.en
+
+    # find station codes here https://www.ogimet.com/indicativos.phtml.en
+    # station_code,location_str = "485500-99999", "Koh_Samui"  
+                                   
+    # station_code,location_str = "16242","Rome Fiumicino"
+    station_code,location_str = "48327","Chiang_mai"
     
-    start_date = datetime(2023, 5, 28)
+    start_date = datetime(2000, 1, 1)
     end_date = datetime.today()  # You could use the desired end date
     number_of_days = (end_date - start_date).days 
     batches = int(number_of_days / 50)+1 # number of batches
@@ -52,8 +56,10 @@ def read_ogimet():
         day = request_date.day
 
         #url = f"https://www.ogimet.com/cgi-bin/gsynres?lang=en&ind={station_code}&ndays=50&ano={year}&mes={month}&day={day}&hora=06&ord=REV&Send=Send"
-        # https://www.ogimet.com/cgi-bin/gsynres?lang=en&ord=REV&ndays=30&ano=2023&mes=07&day=24&hora=06&ind=48550 seems to work
-        url = f"https://ogimet.com/cgi-bin/gsodres?lang=en&ind={station_code}&ord=DIR&ano={year}&mes={month}&day={day}&ndays=50"
+        # https://www.ogimet.com/cgi-bin/gsynres?lang=en&ord=REV&ndays=30&ano=2023&mes=07&day=24&hora=06&ind=48550 seems to work # Daily summary at 12:00 UTC
+        # url = f"https://www.ogimet.com/cgi-bin/gsynres?lang=en&ord=REV&ndays=50&ano={year}&mes={month}&day={day}&hora=12&ind={station_code}" soup.find_all("table")[2]
+
+        url = f"https://ogimet.com/cgi-bin/gsodres?lang=en&ind={station_code}&ord=DIR&ano={year}&mes={month}&day={day}&ndays=50" # Global Summary Of the Day (GSOD), is some days behind # soup.find_all("table")[3]
         print (f"Retreiving {url} {counter} / {batches}")
         response = requests.get(url)
         soup = BeautifulSoup(response.content, "html5lib")
@@ -71,57 +77,68 @@ def read_ogimet():
 
     # observations = observations[observations["Date"] <= end_date] # gives an error. I just delete the last rows in the CSV file
 
-    observations.to_csv("irbid_weather_ko_samui_2023.csv", index=False)
+    observations.to_csv(f"irbid_weather_{location_str}_2023.csv", index=False)
     # You have to replace ---- with [nothing]. (Don't use [None], since it will turn the column into a text/object column) 
     print(observations)
 
 def main():
     """Show the data from Ogimet in a graph, and average values per month per year
     """    
+    where = st.sidebar.selectbox("Location to show", ["Koh Samui", "Chiang Mai", "Rome Fiumicino"]
+                         )
     st.title("Weather info from Koh Samui")
     url = r"C:\Users\rcxsm\Documents\python_scripts\weather_ko_samui.csv"
-    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/weather_ko_samui.csv"
-    # 
-    # Step 1: Read the CSV file into a DataFrame
+    if where == "Koh Samui":
+        url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/weather_ko_samui.csv"
+    elif where == "Chiang Mai":
+        url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/weather_chiang_mai.csv"
+    elif where == "Rome Fiumicino":
+        url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/weather_rome_fiumicino.csv"
+    else:
+        st.error("Error in WHERE")
+        st.stop()
     df = pd.read_csv(url)
 
-    # Step 2: Convert the 'Date' column to datetime type (if it's not already in datetime format)
     df['Date'] = pd.to_datetime(df['Date'])
     df['Month'] = df['Date'].dt.month
     df['Year'] = df['Date'].dt.year
-
     df = df.sort_values(by='Date')
   
-    # Step 4: Calculate the Simple Moving Average (SMA) of 'T_max' using pandas rolling mean
     to_show = st.sidebar.selectbox("What to show", ["T_Max","T_Min","T_Mean","Hr_Med","Wind_Max","Wind_Mean","SLP","STN","Vis","Prec","Diary"],0)
     window_size = st.sidebar.slider("Window for SMA",1,365,7) 
-     # Change this to adjust the number of days for the SMA window
+  
     df[f'{to_show}_SMA'] = df[to_show].rolling(window=window_size).mean()
 
-    # Step 5: Create the Plotly plot
     fig = px.line(df, x='Date', y=[to_show, f'{to_show}_SMA'],
                 title=f'{to_show} over Time with SMA',
                 labels={'value':to_show},
                 line_shape='linear')
 
-    # Step 4: Show the plot
     # fig.show()
-    #plotly.offline.plot(fig)
+    # plotly.offline.plot(fig)
     st.plotly_chart(fig)
-    # Step 4: Use pivot_table to create the crosstable with the average of rainfall per month
+    
+    # CROSS TABLE WITH MONTLY AVERAGES
     crosstable = pd.pivot_table(df, values=to_show, index='Month', columns='Year', aggfunc='mean').round(1)
-
-    # Step 5: Display the crosstable
     st.write (crosstable)
 
-        
-   
-    # Step 5: Create the heatmap using Plotly Express
+    # Create the heatmap using Plotly Express
     fig = px.imshow(crosstable)
-
-    # Step 6: Show the plot
     #fig.show()
     st.plotly_chart(fig)
+    
+    # SHOW MONTLY AVERAGES THROUGH THE YEARS
+    transposed_df = crosstable.T
+    fig_x = go.Figure()
+
+    for column in transposed_df.columns:
+        fig_x.add_trace(go.Scatter(x=transposed_df.index, y=transposed_df[column], mode='lines', name=column))
+
+    fig_x.update_layout(title=f'{to_show}',
+                    xaxis_title='Years',
+                    yaxis_title=f'Montly average of {to_show}')
+
+    st.plotly_chart(fig_x)
 
     ''''
     Data until mid july 2023, not automaticall updated
@@ -143,6 +160,6 @@ def main():
 
 
 if __name__ == "__main__":
-    # read_ogimet()
-    main()
+    read_ogimet()
+    #main()
     
