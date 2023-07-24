@@ -158,15 +158,21 @@ def main():
     st.plotly_chart(fig_x)
 
     treshold_value = st.sidebar.number_input("Treshold value (incl.)")
-    above_under = st.sidebar.selectbox("Above or below", ["above", "below"],0)
+    above_under = st.sidebar.selectbox("Above or below", ["above", "equal", "below"],0)
 
     if above_under =="above":
     # Filter the DataFrame to include only the rows where Temperature is above 30 degrees
         df_above_30 = df[df[to_show] >= treshold_value]
         au_txt = ">="
-    else:
-        df_above_30 < df[df[to_show] <= treshold_value]
+    elif above_under =="equal":
+        df_above_30 = df[df[to_show] == treshold_value]
+        au_txt = "="
+    elif above_under =="above":
+        df_above_30 = df[df[to_show] <= treshold_value]
         au_txt = "<="
+    else:
+        st.error("ERROR")
+        st.stop()
     
     st.subheader(f"Numbers of days per month that {to_show} was {au_txt} {treshold_value} - {where}")
     # Create a pivot table to count the occurrences of temperatures above 30 degrees per month and year
