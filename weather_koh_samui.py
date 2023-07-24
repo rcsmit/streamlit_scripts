@@ -89,35 +89,14 @@ def main():
     st.title(f"Weather info from {where}")
     
     
-    if platform.processor() != "":
-            
-        if where == "Koh Samui":
-            url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\weather_ko_samui.csv"
-        elif where == "Chiang Mai":
-            url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\weather_chiang_mai.csv"
-           
-        elif where == "Rome Fiumicino":
-            url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\weather_rome_fiumicino.csv"
-        else:
-            st.error("Error in WHERE")
-            st.stop()
-    else:
-            
-        if where == "Koh Samui":
-            url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/weather_ko_samui.csv"
-        elif where == "Chiang Mai":
-            url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/weather_chiang_mai.csv"
-        elif where == "Rome Fiumicino":
-            url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/weather_rome_fiumicino.csv"
-        else:
-            st.error("Error in WHERE")
-            st.stop()
+    df_ = get_data(where)
+
     to_show = st.sidebar.selectbox("What to show x", ["T_Max","T_Min","T_Mean","Hr_Med","Wind_Max","Wind_Mean","SLP","STN","Vis","Prec","Diary"],0)
     window_size =  st.sidebar.slider("Window for SMA",1,365,7) 
     y_axis_zero = st.sidebar.selectbox("Y axis start at zero", [True,False],1)
     multiply_minus_one = st.sidebar.selectbox("Multiply by -1", [True,False],1)
     
-    df_ = pd.read_csv(url)
+    
     if multiply_minus_one:
         # Make a copy of the DataFrame without the "Date" column
         df_copy = df_.drop(columns=['Date']).copy()
@@ -219,6 +198,31 @@ def main():
 
     Source https://ogimet.com/cgi-bin/gsodres?lang=en&ind=485500-99999&ord=DIR&ano=2000&mes=01&day=1&ndays=500
     '''
+@st.cache_data(ttl=24*60*60)
+def get_data(where):
+    if platform.processor() != "":
+        if where == "Koh Samui":
+            url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\weather_ko_samui.csv"
+        elif where == "Chiang Mai":
+            url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\weather_chiang_mai.csv"
+           
+        elif where == "Rome Fiumicino":
+            url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\weather_rome_fiumicino.csv"
+        else:
+            st.error("Error in WHERE")
+            st.stop()
+    else:
+        if where == "Koh Samui":
+            url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/weather_ko_samui.csv"
+        elif where == "Chiang Mai":
+            url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/weather_chiang_mai.csv"
+        elif where == "Rome Fiumicino":
+            url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/weather_rome_fiumicino.csv"
+        else:
+            st.error("Error in WHERE")
+            st.stop()
+    df_ = pd.read_csv(url)
+    return df_
 
 
 if __name__ == "__main__":
