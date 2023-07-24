@@ -25,6 +25,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 import platform
+import os
+
 # when using without Streamlit, to avoid 127.0.0.1 refused to connect :
 # plotly.offline.init_notebook_mode(connected=True)
     
@@ -206,27 +208,27 @@ def main():
     '''
 @st.cache_data(ttl=24*60*60)
 def get_data(where):
-    if platform.processor() != "":
-        if where == "Koh Samui":
-            url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\weather_ko_samui.csv"
-        elif where == "Chiang Mai":
-            url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\weather_chiang_mai.csv"
-           
-        elif where == "Rome Fiumicino":
-            url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\weather_rome_fiumicino.csv"
-        else:
-            st.error("Error in WHERE")
-            st.stop()
-    else:
-        if where == "Koh Samui":
-            url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/weather_ko_samui.csv"
-        elif where == "Chiang Mai":
-            url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/weather_chiang_mai.csv"
-        elif where == "Rome Fiumicino":
-            url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/weather_rome_fiumicino.csv"
-        else:
-            st.error("Error in WHERE")
-            st.stop()
+    load_local = True if platform.processor() else False
+
+
+    # Define the base directory where the CSV files are stored
+    base_dir = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input"
+    github_base_url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input"
+
+    # Map locations to their respective CSV files
+    locations = {
+        "Koh Samui": "weather_ko_samui.csv",
+        "Chiang Mai": "weather_chiang_mai.csv",
+        "Rome Fiumicino": "weather_rome_fiumicino.csv"
+    }
+
+    # Check if the 'where' value is valid
+    if where not in locations:
+        st.error("Error in WHERE")
+        st.stop()
+
+    # Build the URL based on the location
+    url = os.path.join(base_dir, locations[where]) if load_local else f"{github_base_url}/{locations[where]}"
     df_ = pd.read_csv(url)
     return df_
 
