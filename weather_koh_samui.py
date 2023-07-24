@@ -25,7 +25,7 @@ import plotly.express as px
 
 import streamlit as st
 
-# to avoid 127.0.0.1 refused to connect :
+# when using without Streamlit, to avoid 127.0.0.1 refused to connect :
 # plotly.offline.init_notebook_mode(connected=True)
     
 def read_ogimet():
@@ -52,6 +52,7 @@ def read_ogimet():
         day = request_date.day
 
         #url = f"https://www.ogimet.com/cgi-bin/gsynres?lang=en&ind={station_code}&ndays=50&ano={year}&mes={month}&day={day}&hora=06&ord=REV&Send=Send"
+        # https://www.ogimet.com/cgi-bin/gsynres?lang=en&ord=REV&ndays=30&ano=2023&mes=07&day=24&hora=06&ind=48550 seems to work
         url = f"https://ogimet.com/cgi-bin/gsodres?lang=en&ind={station_code}&ord=DIR&ano={year}&mes={month}&day={day}&ndays=50"
         print (f"Retreiving {url} {counter} / {batches}")
         response = requests.get(url)
@@ -60,7 +61,6 @@ def read_ogimet():
         print(temp_table)
         if temp_table.empty:
             continue
-
 
         temp_table = temp_table.iloc[2:]  # Remove the first two rows, which usually contains units
 
@@ -72,6 +72,7 @@ def read_ogimet():
     # observations = observations[observations["Date"] <= end_date] # gives an error. I just delete the last rows in the CSV file
 
     observations.to_csv("irbid_weather_ko_samui_2023.csv", index=False)
+    # You have to replace ---- with [nothing]. (Don't use [None], since it will turn the column into a text/object column) 
     print(observations)
 
 def main():
