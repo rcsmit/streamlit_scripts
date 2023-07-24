@@ -8,6 +8,14 @@
 # To install the needed packages : 
 # pip install pandas requests beautifulsoup4 html5lib
 
+# "Ogimet is a simple website and doesn't have great processing capabilities,
+# such scrapping algorithim could take up to 15 mins to run if requesting 20+ years of data.
+# Hence, in order not to overwhelm Ogimet's servers, I encourage you to use it only as a
+# last resort for large amounts of data.""
+#
+# THIS IS THE REASON THAT THE SCRAPING FUNCTION IS NOT INTEGRATED IN THE SHOW-FUNCTION
+
+
 import pandas as pd
 from datetime import datetime, timedelta
 import requests
@@ -21,16 +29,20 @@ import streamlit as st
 # plotly.offline.init_notebook_mode(connected=True)
     
 def read_ogimet():
-    """Read the data from Ogimet
+    """Read the data from Ogimet and save it to a CSV file. Reading the data while running the script every time
+       is not encouraged, see above.
     """
-    station_code = "485500-99999"  # this WMO code is for a station in Koh Samui, Thailand
-    observations = pd.DataFrame()  # a DataFrame to host scraped observations
+    station_code = "485500-99999"   # this WMO code is for a station in Koh Samui, Thailand
+                                    # find station codes here https://www.ogimet.com/indicativos.phtml.en
+    
     start_date = datetime(2023, 5, 28)
     end_date = datetime.today()  # You could use the desired end date
     number_of_days = (end_date - start_date).days 
-    units = int(number_of_days / 50)+1
+    batches = int(number_of_days / 50)+1 # number of batches
     counter = 1
     request_date = start_date
+
+    observations = pd.DataFrame() 
 
     while request_date < end_date:
         request_date += timedelta(days=50)
@@ -41,7 +53,7 @@ def read_ogimet():
 
         #url = f"https://www.ogimet.com/cgi-bin/gsynres?lang=en&ind={station_code}&ndays=50&ano={year}&mes={month}&day={day}&hora=06&ord=REV&Send=Send"
         url = f"https://ogimet.com/cgi-bin/gsodres?lang=en&ind={station_code}&ord=DIR&ano={year}&mes={month}&day={day}&ndays=50"
-        print (f"Retreiving {url} {counter} / {units}")
+        print (f"Retreiving {url} {counter} / {batches}")
         response = requests.get(url)
         soup = BeautifulSoup(response.content, "html5lib")
         temp_table = pd.read_html(str(soup.find_all("table")[3]), encoding="utf-8")[0]
@@ -50,7 +62,7 @@ def read_ogimet():
             continue
 
 
-        temp_table = temp_table.iloc[2:]  # Remove the first row, which usually contains units
+        temp_table = temp_table.iloc[2:]  # Remove the first two rows, which usually contains units
 
         date_vec = pd.date_range(end=request_date - timedelta(days=1), periods=len(temp_table), freq="1D")
         temp_table["Date"] = date_vec
@@ -130,6 +142,6 @@ def main():
 
 
 if __name__ == "__main__":
-    
+    # read_ogimet()
     main()
     
