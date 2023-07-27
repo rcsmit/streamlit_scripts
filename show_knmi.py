@@ -98,7 +98,8 @@ def getdata(stn, fromx, until):
     url_knmi = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start={fromx}&end={until}"
     
     url = url_local if platform.processor() else url_knmi
-    st.write (url)
+    header = 0  if platform.processor() else None
+    
     with st.spinner(f"GETTING ALL DATA ... {url}"):
 
         # url =  "https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns=251&vars=TEMP&start=18210301&end=20210310"
@@ -109,7 +110,7 @@ def getdata(stn, fromx, until):
             df = pd.read_csv(
                 url,
                 delimiter=",",
-                header=0,
+                header=header,
                 comment="#",
                 low_memory=False,
             )
@@ -117,7 +118,7 @@ def getdata(stn, fromx, until):
         except:
             st.write("FOUT BIJ HET INLADEN.")
             st.stop()
-        st.write(df)
+        
         # TG        : Etmaalgemiddelde temperatuur (in 0.1 graden Celsius) / Daily mean temperature in (0.1 degrees Celsius)
         # TN        : Minimum temperatuur (in 0.1 graden Celsius) / Minimum temperature (in 0.1 degrees Celsius)
         # TNH       : Uurvak waarin TN is gemeten / Hourly division in which TN was measured
