@@ -170,8 +170,8 @@ def getdata(stn, fromx, until):
 
         for c in column_replacements:
             df = df.rename(columns={c[0]: c[1]})
-        st.write(df) 
-        df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"], format="%Y-%m-%d")
+        
+        df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"], format="%Y%m%d")
         df["YYYY"] = df["YYYYMMDD"].dt.year
         df["MM"] = df["YYYYMMDD"].dt.month
         df["DD"] = df["YYYYMMDD"].dt.day
