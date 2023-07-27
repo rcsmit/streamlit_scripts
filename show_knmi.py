@@ -18,6 +18,7 @@ import matplotlib.dates as mdates
 import plotly.express as px
 import math
 import plotly.graph_objects as go
+import platform
 
 # INSPRIATION : https://weatherspark.com/m/52666/10/Average-Weather-in-October-in-Utrecht-Netherlands
 # https://radumas.info/blog/tutorial/2017/04/17/percentile-test.html
@@ -89,18 +90,22 @@ def log10(t):
     except:
         x = None
     return x
+
+    
 @st.cache_data (ttl=60 * 60 * 24)
 def getdata(stn, fromx, until):
     with st.spinner(f"GETTING ALL DATA ..."):
         # url =  "https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns=251&vars=TEMP&start=18210301&end=20210310"
         # https://www.knmi.nl/kennis-en-datacentrum/achtergrond/data-ophalen-vanuit-een-script
         # url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=ALL&start={fromx}&end={until}"
-        url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start={fromx}&end={until}"
+        url_local=r"C:\Users\rcxsm\Downloads\df_knmi_de_bilt_01011901_27072023.csv"
+        url_knmi = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start={fromx}&end={until}"
+        url = url_local if platform.processor() else url_knmi
         try:
             df = pd.read_csv(
                 url,
                 delimiter=",",
-                header=None,
+                header=0,
                 comment="#",
                 low_memory=False,
             )
@@ -122,7 +127,7 @@ def getdata(stn, fromx, until):
         # RH        : Etmaalsom van de neerslag (in 0.1 mm) (-1 voor <0.05 mm) / Daily precipitation amount (in 0.1 mm) (-1 for <0.05 mm)
         # UN        : Minimale relatieve vochtigheid (in procenten)
         # UX        : Maximale relatieve vochtigheid (in procenten)
-        column_replacements = [
+        column_replacements_knmi = [
             [0, "STN"],
             [1, "YYYYMMDD"],
             [2, "temp_avg"],
@@ -137,11 +142,31 @@ def getdata(stn, fromx, until):
             [11, "RH_min"],
             [12, "RH_max"]
         ]
+        column_replacements_local = [
+            [0, "ID"],
+            [1, "STN"],
+            [2, "YYYYMMDD"],
+            [3, "temp_avg"],
+            [4, "temp_min"],
+            [5, "temp_max"],
+            [6, "T10N"],
+            [7, "zonneschijnduur"],
+            [8, "perc_max_zonneschijnduur"],
+            [9, "glob_straling"],
+            [10, "neerslag_duur"],
+            [11, "neerslag_etmaalsom"],
+            [12, "RH_min"],
+            [13, "RH_max"]
+        ]
+
+
+        column_replacements = column_replacements_local if platform.processor() else column_replacements_knmi
+
 
         for c in column_replacements:
             df = df.rename(columns={c[0]: c[1]})
-
-        df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"], format="%Y%m%d")
+        
+        df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"])#, format="%Y-%m-%d")
         df["YYYY"] = df["YYYYMMDD"].dt.year
         df["MM"] = df["YYYYMMDD"].dt.month
         df["DD"] = df["YYYYMMDD"].dt.day
@@ -191,17 +216,23 @@ def getdata(stn, fromx, until):
             "neerslag_duur",
             "neerslag_etmaalsom",
         ]
-        for d in to_divide_by_10:
-            try:
-                df[d] = df[d] / 10
-            except:
-                df[d] = None
+        
+        divide_by_10 = False if platform.processor() else True
+
+        if divide_by_10:
+            for d in to_divide_by_10:
+                try:
+                    df[d] = df[d] / 10
+                except:
+                    df[d] = None
 
     df["spec_humidity_knmi_derived"] = df.apply(lambda x: rh2q(x['RH_min'],x['temp_max'], 1020),axis=1)
     df["abs_humidity_knmi_derived"] =df.apply(lambda x: rh2ah(x['RH_min'],x['temp_max']),axis=1)
     df["globale_straling_log10"] =df.apply(lambda x: log10(x['glob_straling']),axis=1) #  np.log10(df["glob_straling"])
-   
-    #download_button(df)
+    
+    df = df[(df["YYYYMMDD"] >= fromx) & (df["YYYYMMDD"] <= until)]
+    
+  
     return df, url
 
 def download_button(df):    
@@ -241,7 +272,8 @@ def show_aantal_kerend(df_, gekozen_weerstation, what_to_show_):
     df_.set_index("YYYYMMDD")
     (month_min,month_max) = st.sidebar.slider("Maanden (van/tot en met)", 1, 12, (1,12))
 
-    (value_min,value_max) = st.sidebar.slider("Waarde (van/tot en met)", -99, 99, (0,99))
+    value_min = st.sidebar.number_input("Waarde vanaf", -99, 99, 0)
+    value_max = st.sidebar.number_input("Waarde tot en met", -99, 99, 99)
 
 
     #jaren = df["YYYY"].tolist()
@@ -355,7 +387,7 @@ def show_per_maand(df, gekozen_weerstation, what_to_show_, groeperen, graph_type
             
     for what_to_show in what_to_show_:
         if groeperen == "maandgem":
-            df_grouped = df.groupby(["year", "MM"]).mean().reset_index()
+            df_grouped = df.groupby(["year", "MM"]).mean(numeric_only = True).reset_index()
      
             df_grouped ["year"] = df_grouped ["year"].astype(str)
      
@@ -364,7 +396,7 @@ def show_per_maand(df, gekozen_weerstation, what_to_show_, groeperen, graph_type
             ).reset_index()
         elif groeperen == "per_dag":
             df["MD"] = df["month_day"]
-            df_grouped = df.groupby(["year", "mmdd"]).mean().reset_index()
+            df_grouped = df.groupby(["year", "mmdd"]).mean(numeric_only = True).reset_index()
             df_grouped ["year"] = df_grouped ["year"].astype(str)
             df_pivoted = df_grouped.pivot(                index="mmdd", columns="year", values=what_to_show            ).reset_index()
         
@@ -605,9 +637,9 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, cen
         groupby_how = st.sidebar.selectbox("Groupby", ["year", "year_month"], index=1)
         groupby_what = st.sidebar.selectbox("Groupby",["sum", "mean"], index=1)
         if groupby_what == "sum":
-            df = df.groupby([df[groupby_how]], sort = True).sum().reset_index()
+            df = df.groupby([df[groupby_how]], sort = True).sum(numeric_only = True).reset_index()
         elif groupby_what == "mean":
-            df = df.groupby([df[groupby_how]], sort = True).mean().reset_index()
+            df = df.groupby([df[groupby_how]], sort = True).mean(numeric_only = True).reset_index()
         datefield = groupby_how
     else:
         datefield = "YYYYMMDD"
@@ -651,7 +683,7 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, cen
             if mode == "jaargemiddelde":
 
                 #graph_type = "plotly"
-                df = df.groupby(["YYYY"], sort=True).mean().reset_index()
+                df = df.groupby(["YYYY"], sort=True).mean(numeric_only = True).reset_index()
 
                 title = f"Jaargemiddelde {what_to_show_as_txt}  van {from_[:4]} - {until_[:4]} in {gekozen_weerstation}"
                 st.sidebar.write(
@@ -1116,7 +1148,8 @@ def  polar_plot(df2,   what_to_show, how):
     
 
 def show_warmingstripes(df_, title):
-    df = df_.groupby(df_["year"], sort=True).mean().reset_index()
+    print (df_)
+    df = df_.groupby(df_["year"], sort=True).mean(numeric_only = True).reset_index()
     #df_grouped = df.groupby([df[valuefield]], sort=True).sum().reset_index()
     # Based on code of Sebastian Beyer
     # https://github.com/sebastianbeyer/warmingstripes/blob/master/warmingstripes.py
@@ -1170,7 +1203,7 @@ def show_warmingstripes(df_, title):
 def show_warmingstripes_matplotlib(df_, title):
     # https://matplotlib.org/matplotblog/posts/warming-stripes/
     st.subheader("Code from Matplotlib site")
-    df = df_.groupby(df_["year"], sort=True).mean().reset_index()
+    df = df_.groupby(df_["year"], sort=True).mean(numeric_only = True).reset_index()
     avg_temperature = df["temp_avg"].mean()
     df["anomaly"] = df["temp_avg"]-avg_temperature
 
