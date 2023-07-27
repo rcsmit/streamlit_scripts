@@ -94,13 +94,17 @@ def log10(t):
     
 @st.cache_data (ttl=60 * 60 * 24)
 def getdata(stn, fromx, until):
-    with st.spinner(f"GETTING ALL DATA ..."):
+    url_local=r"C:\Users\rcxsm\Downloads\df_knmi_de_bilt_01011901_27072023.csv"
+    url_knmi = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start={fromx}&end={until}"
+    
+    url = url_local if platform.processor() else url_knmi
+    
+    with st.spinner(f"GETTING ALL DATA ... {url}"):
+
         # url =  "https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns=251&vars=TEMP&start=18210301&end=20210310"
         # https://www.knmi.nl/kennis-en-datacentrum/achtergrond/data-ophalen-vanuit-een-script
         # url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=ALL&start={fromx}&end={until}"
-        url_local=r"C:\Users\rcxsm\Downloads\df_knmi_de_bilt_01011901_27072023.csv"
-        url_knmi = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start={fromx}&end={until}"
-        url = url_local if platform.processor() else url_knmi
+        
         try:
             df = pd.read_csv(
                 url,
