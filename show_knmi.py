@@ -235,8 +235,8 @@ def getdata(stn, fromx, until):
     df["spec_humidity_knmi_derived"] = df.apply(lambda x: rh2q(x['RH_min'],x['temp_max'], 1020),axis=1)
     df["abs_humidity_knmi_derived"] =df.apply(lambda x: rh2ah(x['RH_min'],x['temp_max']),axis=1)
     df["globale_straling_log10"] =df.apply(lambda x: log10(x['glob_straling']),axis=1) #  np.log10(df["glob_straling"])
-    
-    df = df[(df["YYYYMMDD"] >= fromx) & (df["YYYYMMDD"] <= until)]
+    if platform.processor():
+        df = df[(df["YYYYMMDD"] >= fromx) & (df["YYYYMMDD"] <= until)]
     
   
     return df, url
