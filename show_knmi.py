@@ -168,10 +168,9 @@ def getdata(stn, fromx, until):
 
         column_replacements = column_replacements_local if platform.processor() else column_replacements_knmi
 
-
         for c in column_replacements:
             df = df.rename(columns={c[0]: c[1]})
-        
+        st.write(df) 
         df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"], format="%Y-%m-%d")
         df["YYYY"] = df["YYYYMMDD"].dt.year
         df["MM"] = df["YYYYMMDD"].dt.month
