@@ -259,25 +259,39 @@ def show_aantal_kerend(df_, gekozen_weerstation, what_to_show_):
                 df.loc[i,"count_"] = 0
         df = df[df["count_"] == 1]
         
-        df_grouped_aantal_keren = df.groupby(by=["year"]).sum().reset_index() # werkt maar geeft geen 0 waardes weer 
+        # aantal keren
+        df_grouped_aantal_keren = df.groupby(by=["year"]).sum(numeric_only=True).reset_index() # werkt maar geeft geen 0 waardes weer 
         title = (f"Aantal keren dat { what_to_show} in {gekozen_weerstation} tussen {value_min} en {value_max} ligt\n")
+        
+        plot_df_grouped( months, month_min, month_max, df_grouped_aantal_keren, "count_", title)
 
-        plot_df_grouped(gekozen_weerstation, months, month_min, month_max, value_min, value_max, what_to_show, df, df_grouped_aantal_keren, "count_", title)
-
-
-        df_grouped_som = df.groupby(by=["year"]).sum().reset_index() # werkt maar geeft geen 0 waardes weer 
+        
+        # per maand
+        table_per_month = pd.pivot_table(df, values="count_", index='MM', columns='year', aggfunc='sum', fill_value=0)
+        all_months = range(month_min, month_max+1)
+        all_years = df['year'].unique()
+        table_per_month = table_per_month.reindex(index=all_months, columns=all_years, fill_value=0)
+      
+        fig_ = px.imshow(table_per_month, title=title)
+        #fig.show()
+        st.plotly_chart(fig_)
+        
+        # Som
+        df_grouped_som = df.groupby(by=["year"]).sum(numeric_only=True).reset_index() # werkt maar geeft geen 0 waardes weer 
         title = (f"Som van {what_to_show} in {gekozen_weerstation} tussen {value_min} en {value_max}")
-        plot_df_grouped(gekozen_weerstation, months, month_min, month_max, value_min, value_max, what_to_show, df, df_grouped_som, what_to_show, title)
+        plot_df_grouped( months, month_min, month_max, df_grouped_som, what_to_show, title)
 
-        df_grouped_mean = df.groupby(by=["year"]).mean().reset_index() # werkt maar geeft geen 0 waardes weer 
+        # Gemiddelde
+        df_grouped_mean = df.groupby(by=["year"]).mean(numeric_only=True).reset_index() # werkt maar geeft geen 0 waardes weer 
         title = (f"Gemiddelde van {what_to_show} in {gekozen_weerstation} tussen {value_min} en {value_max}")
-        plot_df_grouped(gekozen_weerstation, months, month_min, month_max, value_min, value_max, what_to_show, df, df_grouped_mean, what_to_show, title)
+        plot_df_grouped( months, month_min, month_max,  df_grouped_mean, what_to_show, title)
 
 
-def plot_df_grouped(gekozen_weerstation, months, month_min, month_max, value_min, value_max, what_to_show, df, df_grouped, veldnaam, title):
+def plot_df_grouped(months, month_min, month_max,  df_grouped_, veldnaam, title):
     # fig, ax = plt.subplots()
     # plt.set_loglevel('WARNING') #Avoid : Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
-    
+    df_grouped = df_grouped_[["year", veldnaam]]
+
     if month_min ==1 & month_max ==12:
         st.write("compleet jaar") # FIXIT : werkt niet
 
@@ -288,6 +302,27 @@ def plot_df_grouped(gekozen_weerstation, months, month_min, month_max, value_min
     st.plotly_chart(fig)
  
 
+    # HEATMAP
+    # Create a 2D array from the dataframe for the heatmap
+    heatmap_data = pd.pivot_table(df_grouped, values=veldnaam, index='year', columns=None)
+
+    # Create the heatmap using plotly
+    fig = go.Figure(data=go.Heatmap(
+        z=heatmap_data.values,  # Use the values from the 2D array
+        x=heatmap_data.columns,  # X-axis (in this case, the count)
+        y=heatmap_data.index,    # Y-axis (in this case, the year)
+        colorscale='Viridis'     # Choose a colorscale (you can change it to another if you prefer)
+    ))
+
+    # Customize the heatmap layout
+    fig.update_layout(
+        title=title,
+        xaxis_title='_',
+        yaxis_title='Year'
+    )
+
+    # Show the heatmap
+    st.plotly_chart(fig)
 
     # plt.title(title)
     # plt.bar(df_grouped["year"], df_grouped[veldnaam])
@@ -300,10 +335,11 @@ def plot_df_grouped(gekozen_weerstation, months, month_min, month_max, value_min
     # plt.xticks(rotation=270)
         
     # st.pyplot(fig)
-    st.write(df_grouped)
+    
     # df_ = df[(df["count_"] >0)].copy(deep=True)
     # st.write(df_)
 
+    
 def show_per_maand(df, gekozen_weerstation, what_to_show_, groeperen, graph_type):
     what_to_show_ = what_to_show_ if type(what_to_show_) == list else [what_to_show_]
     df.set_index("YYYYMMDD")
