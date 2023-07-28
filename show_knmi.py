@@ -170,8 +170,10 @@ def getdata(stn, fromx, until):
 
         for c in column_replacements:
             df = df.rename(columns={c[0]: c[1]})
-        
-        df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"], format="%Y%m%d")
+        if platform.processor(): 
+            df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"], format="%Y-%m-%d")
+        else:
+            df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"])
         df["YYYY"] = df["YYYYMMDD"].dt.year
         df["MM"] = df["YYYYMMDD"].dt.month
         df["DD"] = df["YYYYMMDD"].dt.day
@@ -254,6 +256,9 @@ def download_button(df):
 def convert_df(df):
      # IMPORTANT: Cache the conversion to prevent computation on every rerun
      return df.to_csv().encode('utf-8')
+
+
+
 
 def show_aantal_kerend(df_, gekozen_weerstation, what_to_show_):
     # TODO : stacked bargraphs met meerdere condities
@@ -532,7 +537,7 @@ def interface():
         df, het weerstation, begindatum en einddatum (laatste drie als string)
     """
     mode = st.sidebar.selectbox(
-        "Modus (kies HELP voor hulp)", ["doorlopend per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "per dag in div jaren", "per maand in div jaren", "percentiles", "polar_plot", "show weerstations", "help"], index=0
+        "Modus (kies HELP voor hulp)", ["doorlopend per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", "per maand in div jaren", "percentiles", "polar_plot", "show weerstations", "help"], index=0
     )
    
     weer_stations = get_weerstations()
@@ -575,11 +580,28 @@ def interface():
     #    graph_type = "pyplot"
 
     wdw = st.sidebar.slider("Window smoothing curves", 1, 45, 7)
+    
     centersmooth =  st.sidebar.selectbox(
         "Smooth in center", [True, False], index=0
         )
     st.sidebar.write("Smoothing niet altijd aanwezig")
-    return stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, centersmooth, graph_type
+    show_ci =  st.sidebar.selectbox(
+        "Show CI", [True, False], index=0
+        )
+    if show_ci:
+        wdw_ci = st.sidebar.slider("Window confidence intervals", 1, 100, 20)
+    else:
+        wdw_ci = 1
+
+    show_parts =  st.sidebar.selectbox(
+        "Show parts", [True, False], index=0
+        )
+    if show_parts:
+        no_of_parts = st.sidebar.slider("Number of parts", 1, 10, 5)
+    else:
+        no_of_parts = 1
+
+    return stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, centersmooth, graph_type,show_ci, wdw_ci,show_parts, no_of_parts
     
 def check_from_until(from_, until_):
     """Checks whethe start- and enddate are valid.
@@ -631,7 +653,7 @@ def list_to_text(what_to_show_):
 
     return w
 
-def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, centersmooth, graph_type):
+def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, wdw_ci,show_parts, no_of_parts):
     what_to_show_as_txt = list_to_text(what_to_show)
     FROM, UNTIL = check_from_until(from_, until_)
 
@@ -664,9 +686,9 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, cen
         show_per_maand(df, gekozen_weerstation, what_to_show, "maandgem", graph_type)
         datefield = None
         title = f"{what_to_show_as_txt} van {from_} - {until_} in {gekozen_weerstation}"
-        
+    
     elif mode == "aantal keren":
-            show_aantal_kerend(df, gekozen_weerstation, what_to_show)
+        show_aantal_kerend(df, gekozen_weerstation, what_to_show)
     elif mode == "percentiles":
         plot_percentiles(df,  gekozen_weerstation, what_to_show, wdw, centersmooth)
     elif mode == "polar_plot":
@@ -689,11 +711,19 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, cen
 
                 #graph_type = "plotly"
                 df = df.groupby(["YYYY"], sort=True).mean(numeric_only = True).reset_index()
-
+                st.write(df)
                 title = f"Jaargemiddelde {what_to_show_as_txt}  van {from_[:4]} - {until_[:4]} in {gekozen_weerstation}"
                 st.sidebar.write(
                     "Zorg ervoor dat de einddatum op 31 december valt voor het beste resultaat "
                 )
+
+            elif mode == "maandgemiddelde":
+                
+                month = st.sidebar.number_input("Maand",1,12,7)
+                df = df[(df["MM"] == month)].reset_index().copy(deep=True)
+                df = df.groupby(by=["year"]).mean(numeric_only=True).reset_index() # werkt maar geeft geen 0 waardes weer 
+                title = f"Maandgemiddelde (maand = {month}) - {what_to_show} in {gekozen_weerstation}"
+               
             elif mode == "specifieke dag":
                 #graph_type = "plotly"
                 day = st.sidebar.number_input("Dag", 1, 31, 1, None, format="%i")
@@ -719,7 +749,7 @@ def action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, cen
                 st.sidebar.write(
                     "Zorg ervoor dat de datum in de gekozen tijdrange valt voor het beste resultaat "
                 )
-        show_plot(df, datefield, title, wdw, what_to_show, graph_type, centersmooth)
+        show_plot(df, datefield, title, wdw, what_to_show, graph_type, centersmooth, show_ci, wdw_ci, show_parts, no_of_parts)
         #try:
         show_warmingstripes(df, title)
         # except:
@@ -909,7 +939,7 @@ def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw, centersmooth):
         fig.update_layout(xaxis=dict(tickformat="%d-%m"))
         st.plotly_chart(fig, use_container_width=True)
         # fig.show()
-def show_plot(df, datefield, title, wdw, what_to_show_, graph_type, centersmooth):
+def show_plot(df, datefield, title, wdw, what_to_show_, graph_type, centersmooth, show_ci, wdw_ci, show_parts, no_of_parts):
     what_to_show_ = what_to_show_ if type(what_to_show_) == list else [what_to_show_]
     color_list = [
         "#02A6A8",
@@ -970,7 +1000,16 @@ def show_plot(df, datefield, title, wdw, what_to_show_, graph_type, centersmooth
             lower95 = round(df[what_to_show_x].quantile(0.025),1)
             upper95 = round(df[what_to_show_x].quantile(0.975),1)
 
+            # Calculate the moving confidence interval for the mean using the last 25 values
+            moving_ci_lower_95 = df[what_to_show_x].rolling(window=wdw_ci).mean() - df[what_to_show_x].rolling(window=wdw_ci).std() * 2
+            moving_ci_upper_95 = df[what_to_show_x].rolling(window=wdw_ci).mean() + df[what_to_show_x].rolling(window=wdw_ci).std() * 2
 
+            moving_ci_lower_68 = df[what_to_show_x].rolling(window=wdw_ci).mean() - df[what_to_show_x].rolling(window=wdw_ci).std() * 1
+            moving_ci_upper_68 = df[what_to_show_x].rolling(window=wdw_ci).mean() + df[what_to_show_x].rolling(window=wdw_ci).std() * 1
+
+            
+
+          
             # Quantiles and (mean + 2*std) are two different measures of dispersion, which can be used to understand the distribution of a dataset.
  
             # Quantiles divide a dataset into equal-sized groups, based on the values of the dataset. For example, the median is the 50th percentile, which divides the dataset into two equal-sized groups. Similarly, the 25th percentile divides the dataset into two groups, with 25% of the values below the 25th percentile and 75% of the values above the 25th percentile.
@@ -985,9 +1024,11 @@ def show_plot(df, datefield, title, wdw, what_to_show_, graph_type, centersmooth
 
             # print confidence interval
           
-
-
-            st.info(f"{what_to_show_x} | mean = {avg} | std= {std} | quantiles (68%) [{lower68}, {upper68}] | quantiles (95%) [{lower95}, {upper95}]")
+            n_parts = no_of_parts
+            rows_per_part = len(df) // n_parts
+            # Step 2: Calculate the average temperature for each part
+            average_values = [df.iloc[i * rows_per_part:(i + 1) * rows_per_part][what_to_show_x].mean() for i in range(n_parts)]
+            
             df["sma"] = df[what_to_show_x].rolling(window=wdw, center=centersmooth).mean()
 
             sma = go.Scatter(
@@ -1007,11 +1048,68 @@ def show_plot(df, datefield, title, wdw, what_to_show_, graph_type, centersmooth
                 showlegend=False,
                 marker=dict(
                 #color='LightSkyBlue',
-                size=1))
+                size=5))
+            # Create traces for the moving confidence interval as filled areas
+            ci_area_trace_95 = go.Scatter(
+                name=f"{what_to_show_x} 95% CI",
+                x=df[datefield],
+                y=pd.concat([moving_ci_lower_95, moving_ci_upper_95[::-1]]),  # Concatenate lower and upper CI for the fill
+                fill='tozerox',  # Fill the area to the x-axis
+                fillcolor='rgba(211, 211, 211, 0.3)',  # Set the fill color to grey (adjust the opacity as needed)
+                line=dict(width=0),  # Set line width to 0 to hide the line of the area trace
+            )
+             # Create traces for the moving confidence interval
+            ci_lower_trace_95 = go.Scatter(
+                name=f"{what_to_show_x} 95% CI Lower",
+                x=df[datefield],
+                y=moving_ci_lower_95,
+                mode='lines',
+                line=dict(width=1, dash='dash'),
+            )
+            ci_upper_trace_95 = go.Scatter(
+                name=f"{what_to_show_x} 95% CI Upper",
+                x=df[datefield],
+                y=moving_ci_upper_95,
+                mode='lines',
+                line=dict(width=1, dash='dash'),
+            )
+            ci_area_trace_68 = go.Scatter(
+                name=f"{what_to_show_x} 68% CI",
+                x=df[datefield].to_list(),
+                y=moving_ci_lower_68+ moving_ci_upper_68[::-1],  # Concatenate lower and upper CI for the fill
+                fill='tozerox',  # Fill the area to the x-axis
+                fillcolor='rgba(211, 211, 211, 0.5)',  # Set the fill color to grey (adjust the opacity as needed)
+                line=dict(width=0),  # Set line width to 0 to hide the line of the area trace
+            )
+            ci_lower_trace_68 = go.Scatter(
+                name=f"{what_to_show_x} 68% CI Lower",
+                x=df[datefield],
+                y=moving_ci_lower_68,
+                mode='lines',
+                line=dict(width=1, dash='dash'),
+            )
+            ci_upper_trace_68 = go.Scatter(
+                name=f"{what_to_show_x} 68% CI Upper",
+                x=df[datefield],
+                y=moving_ci_upper_68,
+                mode='lines',
+                line=dict(width=1, dash='dash'),
+            )
 
+           
             #data = [sma,points]
             data.append(sma)
             data.append(points)
+            if show_ci:
+                # Append the moving confidence interval traces to the data list
+                data.append(ci_lower_trace_95)
+                data.append(ci_upper_trace_95)
+                data.append(ci_lower_trace_68)
+                data.append(ci_upper_trace_68)
+                #data.append(ci_area_trace_95)
+                #data.append(ci_area_trace_68)
+
+
             layout = go.Layout(
                 yaxis=dict(title=what_to_show_x),
                 title=title,)
@@ -1020,8 +1118,24 @@ def show_plot(df, datefield, title, wdw, what_to_show_, graph_type, centersmooth
             # fig.update_layout(xaxis=dict(tickformat="%d-%m-%Y"))
             # st.plotly_chart(fig, use_container_width=True)
         fig = go.Figure(data=data, layout=layout)
+        # Add horizontal lines for average values
+        if show_parts:
+            for i, avg_val in enumerate(average_values):
+                if i != (len(average_values) -1):
+                    fig.add_trace(go.Scatter(x=[df[datefield].iloc[i * rows_per_part], df[datefield].iloc[min((i + 1) * rows_per_part - 1, len(df) - 1)]],
+                                            y=[avg_val, avg_val],
+                                            mode='lines', line=dict(color='red'),showlegend=False, name=f'Avg Part {i + 1}'))
+                else:    
+                    fig.add_trace(go.Scatter(x=[df[datefield].iloc[i * rows_per_part], df[datefield].iloc[len(df) - 1]],
+                                            y=[avg_val, avg_val],
+                                            mode='lines', line=dict(color='red'),showlegend=False, name=f'Avg Part {i + 1}'))
+                
+               
+   
         fig.update_layout(xaxis=dict(tickformat="%d-%m-%Y"))
         st.plotly_chart(fig, use_container_width=True)
+        st.info(f"{what_to_show_x} | mean = {avg} | std= {std} | quantiles (68%) [{lower68}, {upper68}] | quantiles (95%) [{lower95}, {upper95}]")
+            
     #df =df[[datefield,what_to_show_[0]]]
     #st.write(df)
 
@@ -1154,7 +1268,7 @@ def  polar_plot(df2,   what_to_show, how):
 
 def show_warmingstripes(df_, title):
     print (df_)
-    df = df_.groupby(df_["year"], sort=True).mean(numeric_only = True).reset_index()
+    df = df_.groupby(df_["YYYY"], sort=True).mean(numeric_only = True).reset_index()
     #df_grouped = df.groupby([df[valuefield]], sort=True).sum().reset_index()
     # Based on code of Sebastian Beyer
     # https://github.com/sebastianbeyer/warmingstripes/blob/master/warmingstripes.py
@@ -1208,7 +1322,7 @@ def show_warmingstripes(df_, title):
 def show_warmingstripes_matplotlib(df_, title):
     # https://matplotlib.org/matplotblog/posts/warming-stripes/
     st.subheader("Code from Matplotlib site")
-    df = df_.groupby(df_["year"], sort=True).mean(numeric_only = True).reset_index()
+    df = df_.groupby(df_["YYYY"], sort=True).mean(numeric_only = True).reset_index()
     avg_temperature = df["temp_avg"].mean()
     df["anomaly"] = df["temp_avg"]-avg_temperature
 
@@ -1220,8 +1334,8 @@ def show_warmingstripes_matplotlib(df_, title):
     import pandas as pd
     # Then we define our time limits, our reference period for the neutral color and the range around it for maximum saturation.
 
-    FIRST = int( df["year"].min())
-    LAST = int(df["year"].max())  # inclusive
+    FIRST = int( df["YYYY"].min())
+    LAST = int(df["YYYY"].max())  # inclusive
 
 
     # Reference period for the center of the color scale
@@ -1397,8 +1511,8 @@ def help():
 
 
 def main():
-    stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, centersmooth, graph_type = interface()
-    action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, centersmooth, graph_type)
+    stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, wdw_ci,show_parts, no_of_parts = interface()
+    action(stn, from_, until_, mode, wdw, what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, wdw_ci,show_parts, no_of_parts)
 
 
 if __name__ == "__main__":
