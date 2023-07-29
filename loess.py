@@ -353,7 +353,7 @@ def main():
     show_info()
     df = getdata()
     year_list = df["YYYY"].to_list()
-    df = df.tail(-1)
+   
 
     show_options = [
         "temp_min",
