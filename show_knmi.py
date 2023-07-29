@@ -945,13 +945,14 @@ def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw, centersmooth):
         st.plotly_chart(fig, use_container_width=True)
         # fig.show()
 
-from scipy.linalg import qr, pinv
-from scipy.linalg import solve_triangular
+
 
 
 def calculate_loess(X, y, alpha, deg, all_x = True, num_points = 100):
+    # from scipy.linalg import qr, pinv   
+    # from scipy.linalg import solve_triangular
     '''
-
+    NOT IN USE
     https://simplyor.netlify.app/loess-from-scratch-in-python-animation.en-us/
 
     Parameters
@@ -1055,8 +1056,8 @@ def climatrend(t, y, p=None, t1=None, t2=None, ybounds=None, drawplot=False, dra
         If True, add 30-year moving averages to the plot (default: False).
 
     Returns:
-    pandas DataFrame
-        A DataFrame with the following columns:
+    pandas DataFrame or dictionary
+        A DataFrame or dictionary with the following columns/values:
             't': years,
             'trend': trendline in y for years in t,
             'p': confidence level,
