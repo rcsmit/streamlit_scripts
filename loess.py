@@ -321,7 +321,6 @@ def show_returned_values(t, trend, trendlb, trendub, avt, avy, p, t1, t2, pvalue
         else:
             st.info(f"The data does not indicate (or a little) a long time change between {t1} and {t2}.")
 
-
     with st.expander("Arrays"):
         st.write(f"t: {t} - lengte:{len(t)}")
         st.write(f"trend: {trend} - lengte:{len(trend)}")
