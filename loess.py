@@ -314,11 +314,12 @@ def show_returned_values(t, trend, trendlb, trendub, avt, avy, p, t1, t2, pvalue
     st.write(f"p: {p}")
     st.write(f"t1: {t1}")
     st.write(f"t2: {t2}")
-    st.write(f"pvalue: {round(pvalue,4)}")
-    if pvalue <0.05:
-        st.info(f"The data indicates a long time change between {t1} and {t2}.")
-    else:
-        st.info(f"The data does not indicate (or a little) a long time change between {t1} and {t2}.")
+    if pvalue != None:
+        st.write(f"pvalue: {round(pvalue,4)}")
+        if pvalue <0.05:
+            st.info(f"The data indicates a long time change between {t1} and {t2}.")
+        else:
+            st.info(f"The data does not indicate (or a little) a long time change between {t1} and {t2}.")
 
 
     with st.expander("Arrays"):
