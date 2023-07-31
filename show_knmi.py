@@ -99,7 +99,7 @@ def getdata(stn, fromx, until):
     
     #url = url_local if platform.processor() else url_knmi
     #header = 0  if platform.processor() else None
-    header = 0
+    header = None
     with st.spinner(f"GETTING ALL DATA ... {url}"):
 
         # url =  "https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns=251&vars=TEMP&start=18210301&end=20210310"
