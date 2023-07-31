@@ -707,7 +707,8 @@ def main_translated_script(df, N, X_array, Y_array, what_to_show, drawplot, draw
         drawplot=drawplot,
         draw30=draw30,
     )
-    st.subheader("Results KNMI script translated in python [statsmodels.api.nonparametric.lowess]")
+    st.subheader("Results KNMI script translated in python - uses [statsmodels.api.nonparametric.lowess]")
+    st.write("https://gitlab.com/cees.de.valk/trend_knmi/-/blob/master/R/climatrend.R?ref_type=heads")
     show_plot_plotly(
         df,
         what_to_show,
@@ -739,6 +740,7 @@ def interface():
     ]
     #year_list = df["YYYY"].to_list()
     what_to_show = st.sidebar.selectbox("Wat weer te geven", show_options, 1)
+    N = st.sidebar.number_input("Number of iterations (bootstrapping)",100,100000, 100)
     drawplot = st.sidebar.selectbox("Show Matplotlib plot", [True, False], 1)
     draw30 = st.sidebar.selectbox("Show 30 year SMA", [True, False], 1)
     test_trend= st.sidebar.selectbox("Two-sided test for absence of trend", [True, False], 1)
@@ -750,7 +752,8 @@ def interface():
             st.stop()
     else:
         t1,t2 = None, None
-    return what_to_show,drawplot,draw30,t1,t2
+    
+    return what_to_show,drawplot,draw30,t1,t2, N
 
 
 def show_plot_plotly_simply(what_to_show, t,values,loess, trendub,trendlb):
@@ -865,6 +868,7 @@ def main_alex(N,what_to_show, X_array, Y_array):
   
     y_hat  = lowess_alexandre_gramfort(X_array, Y_array, f=alpha, iter=3)
     st.subheader("Results script found on internet from Alexandre Gramfort")
+    st.write("https://gist.github.com/agramfort/850437")
     show_plot_plotly_alex(what_to_show, X_array,Y_array,  y_hat)
    # Create a dictionary with column names as keys and lists as values
     data = {'YYYY': X_array, 'alex_loess': y_hat}
@@ -886,6 +890,8 @@ def main_james(N,what_to_show, X_array, Y_array ):
     y_hat, trendlb, trendub, sd  = lowess_james_brennan(X_array, Y_array, f=alpha)
 
     st.subheader("Results script found on internet from James Brennan")
+    st.write("https://james-brennan.github.io/posts/lowess_conf/")
+    st.write("There seems to be a problem with the confidence intervals :)")
     show_plot_plotly_simply(what_to_show, X_array,Y_array,  y_hat,trendub,trendlb)
    # Create a dictionary with column names as keys and lists as values
     data = {'YYYY': X_array, 'james_loess': y_hat, 'james_low': trendlb, 'james_high':trendub}
@@ -906,6 +912,8 @@ def main_simply(N, what_to_show, X_array, Y_array):
     y_hat, x_space, trendub,trendlb, sd  = calculate_loess_simply_with_CI(X_array, Y_array, alpha, deg,  N)
 
     st.subheader("Results script found on internet from simply OR")
+    st.write("https://simplyor.netlify.app/loess-from-scratch-in-python-animation.en-us/")
+    st.write("The trendline is exactly like the output of the R-script of KNMI, but the confidence intervals are much bigger esp. between 1970-2000")
     show_plot_plotly_simply(what_to_show, X_array,Y_array,  y_hat,trendub,trendlb)
    # Create a dictionary with column names as keys and lists as values
     data = {'YYYY': X_array, 'simply_loess': y_hat, 'simply_low': trendlb, 'simply_high':trendub}
@@ -917,6 +925,8 @@ def main_simply(N, what_to_show, X_array, Y_array):
 def main_output_R_script():
     df3 = getdata("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/trend_de_bilt_jaargem_1901_2022.csv" )
     st.subheader("Results KNMI script in R")
+    st.write("These are the values in the output of the script in R, and seen as 'standard")
+
     show_plot_plotly_output_R_script("temp_avg", df3["YYYY"],df3["temp_avg"],df3["trend"],df3["trendupperbound"],df3["trendlowerbound"])
 
     return df3
@@ -938,8 +948,9 @@ def main_skmisc(X_array, Y_array, t1,t2):
 
     # https://has2k1.github.io/scikit-misc/stable/generated/skmisc.loess.loess.html
     # https://stackoverflow.com/questions/31104565/confidence-interval-for-lowess-in-python
-    
-
+    st.subheader("Lowess with SciKit-Misc")
+    st.write("https://has2k1.github.io/scikit-misc/stable/generated/skmisc.loess.loess.html")
+    st.write("The only one who gives standard error and CI's; without bootstrapping")
   
     l = loess(X_array, Y_array)
     l.fit()
@@ -1013,10 +1024,25 @@ def main_skmisc(X_array, Y_array, t1,t2):
     df = pd.DataFrame(data)
     return df
 
+def show_footer():
+    st.info('''A good introduction about LOWESS/LOESS can be found here :
+                https://aitechtrend.com/smoothing-out-the-noise-analyzing-data-with-lowess-regression-in-python/
 
+                The difference between the two acronyms or names is mostly superficial, 
+                but there is an actual difference in R–there are two different functions, lowess() and loess(). 
+                Lowess was implemented first, while the latter (loess) is more flexible and powerful. 
+                The loess() function creates an object that contains the results,
+                and the predict() function retrieves the fitted values.[1]
+
+                [1] https://www.ime.unicamp.br/~dias/loess.pdf
+
+                Source: https://github.com/rcsmit/streamlit_scripts/blob/main/loess.py  
+            ''')
 def main():
-    what_to_show, drawplot, draw30, t1, t2  = interface()
-    n_values = [100]
+    show_info()
+
+    what_to_show, drawplot, draw30, t1, t2, N  = interface()
+    n_values = [N]
 
     # Initialize an empty list to store the results for each N
     all_results = []
@@ -1034,11 +1060,13 @@ def main():
         print(" ")  # to compensate the  sys.stdout.flush()
 
         print(f"{N} Iterations  took {str(s2x)} seconds ....)")
+    show_footer()
 
     # Display the results in a table using Streamlit
-    df_results = pd.DataFrame(all_results)
-    st.table(df_results)
-    df_results.to_csv(f"comparison_of_N.csv", index=False)
+    # df_results = pd.DataFrame(all_results)
+    # st.subheader("All the results")
+    # st.table(df_results)
+    # df_results.to_csv(f"comparison_of_N.csv", index=False)
 
 def main_calculations(N, what_to_show, drawplot, draw30, t1, t2):
      #url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\de_bilt_jaargem_1901_2022.csv"
@@ -1066,7 +1094,7 @@ def main_calculations(N, what_to_show, drawplot, draw30, t1, t2):
     df_m = pd.merge(df1, df2, on='YYYY').merge(df6, on='YYYY').merge(df3, on='YYYY').merge(df4, on='YYYY').merge(df5, on='YYYY')
     df_m = pd.merge(df1, df2, on='YYYY').merge(df6, on='YYYY')
    
-
+    st.subheader("All the results")
     result = df_m
     st.write(result)
     #result = output_df_m(N, df_m)
