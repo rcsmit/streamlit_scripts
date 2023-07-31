@@ -18,4 +18,4 @@ openpyxl
 openai
 folium
 streamlit_folium
-skmisc
+scikit-misc
