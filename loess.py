@@ -866,7 +866,6 @@ def main_alex(N,what_to_show, X_array, Y_array):
     """Calculation with script from the internet
 
     """   
-   
     deg=1
     alpha = 42/len(X_array)
   
