@@ -165,7 +165,7 @@ def getdata(stn, fromx, until):
             [13, "RH_max"]
         ]
 
-        st.write(df)
+        #st.write(df)
         #column_replacements = column_replacements_local if platform.processor() else column_replacements_knmi
         column_replacements = column_replacements_knmi
         for c in column_replacements:
@@ -173,7 +173,7 @@ def getdata(stn, fromx, until):
         # if platform.processor(): 
         #     df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"], format="%Y-%m-%d")
         # else:
-        df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"])
+        df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"].astype(str))
         df["YYYY"] = df["YYYYMMDD"].dt.year
         df["MM"] = df["YYYYMMDD"].dt.month
         df["DD"] = df["YYYYMMDD"].dt.day
