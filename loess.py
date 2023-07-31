@@ -255,6 +255,10 @@ def lowess_alexandre_gramfort(x, y, f=2. / 3., iter=3):
     function will run faster with a smaller number of iterations
     https://gist.github.com/agramfort/850437
 
+    # Authors: Alexandre Gramfort <alexandre.gramfort@telecom-paristech.fr>
+    #
+    # License: BSD (3-clause)
+
     '''
 
 
@@ -869,6 +873,7 @@ def main_alex(N,what_to_show, X_array, Y_array):
     y_hat  = lowess_alexandre_gramfort(X_array, Y_array, f=alpha, iter=3)
     st.subheader("Results script found on internet from Alexandre Gramfort")
     st.write("https://gist.github.com/agramfort/850437")
+    st.write("The trendline is quit a bit off, I dint make a bootstrapping for it.")
     show_plot_plotly_alex(what_to_show, X_array,Y_array,  y_hat)
    # Create a dictionary with column names as keys and lists as values
     data = {'YYYY': X_array, 'alex_loess': y_hat}
@@ -891,7 +896,7 @@ def main_james(N,what_to_show, X_array, Y_array ):
 
     st.subheader("Results script found on internet from James Brennan")
     st.write("https://james-brennan.github.io/posts/lowess_conf/")
-    st.write("There seems to be a problem with the confidence intervals :)")
+    st.write("The trendline is very close, but there seems to be a problem with the confidence intervals :)")
     show_plot_plotly_simply(what_to_show, X_array,Y_array,  y_hat,trendub,trendlb)
    # Create a dictionary with column names as keys and lists as values
     data = {'YYYY': X_array, 'james_loess': y_hat, 'james_low': trendlb, 'james_high':trendub}
@@ -1025,19 +1030,12 @@ def main_skmisc(X_array, Y_array, t1,t2):
     return df
 
 def show_footer():
-    st.info('''A good introduction about LOWESS/LOESS can be found here :
-                https://aitechtrend.com/smoothing-out-the-noise-analyzing-data-with-lowess-regression-in-python/
+    st.write("A good introduction about LOWESS/LOESS can be found here :https://aitechtrend.com/smoothing-out-the-noise-analyzing-data-with-lowess-regression-in-python/")
 
-                The difference between the two acronyms or names is mostly superficial, 
-                but there is an actual difference in R–there are two different functions, lowess() and loess(). 
-                Lowess was implemented first, while the latter (loess) is more flexible and powerful. 
-                The loess() function creates an object that contains the results,
-                and the predict() function retrieves the fitted values.[1]
-
-                [1] https://www.ime.unicamp.br/~dias/loess.pdf
-
-                Source: https://github.com/rcsmit/streamlit_scripts/blob/main/loess.py  
-            ''')
+    st.write("The difference between the two acronyms or names is mostly superficial, but there is an actual difference in R–there are two different functions, lowess() and loess(). Lowess was implemented first, while the latter (loess) is more flexible and powerful. The loess() function creates an object that contains the results, and the predict() function retrieves the fitted values.[1]")
+    st.write("[1] https://www.ime.unicamp.br/~dias/loess.pdf")
+    st.info("Source: https://github.com/rcsmit/streamlit_scripts/blob/main/loess.py")
+        
 def main():
     show_info()
 
@@ -1092,11 +1090,15 @@ def main_calculations(N, what_to_show, drawplot, draw30, t1, t2):
     df4= main_james(N,what_to_show,X_array, Y_array)
     df5 = main_alex(N,what_to_show,X_array, Y_array)
     df_m = pd.merge(df1, df2, on='YYYY').merge(df6, on='YYYY').merge(df3, on='YYYY').merge(df4, on='YYYY').merge(df5, on='YYYY')
-    df_m = pd.merge(df1, df2, on='YYYY').merge(df6, on='YYYY')
+    #df_m = pd.merge(df1, df2, on='YYYY').merge(df6, on='YYYY')
    
     st.subheader("All the results")
-    result = df_m
+    st.write("temp_avg = the real average temperatures. Trend = values from R script, KNMI = translated to python, (statsmodel), skmisc = scikit-misc, and the others are simply, james & alex")
+    new_column_order = ["YYYY", "temp_avg", "trend", "knmi_loess","skmisc_loess","simply_loess",  "james_loess","alex_loess","trendlowerbound",  "knmi_low","skmisc_low","simply_low", "james_low", "trendupperbound",  "knmi_high",   "skmisc_high",  "simply_high", "james_high",  "30-yr average"]
+    result = df_m[new_column_order]
     st.write(result)
+    st.write(result.round(2))
+    print (result.dtypes)
     #result = output_df_m(N, df_m)
 
     # Return the result as a list of dictionaries
