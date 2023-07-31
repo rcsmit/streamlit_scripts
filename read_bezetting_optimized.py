@@ -2414,8 +2414,8 @@ def main():
     test = False  # To test or not to test (to see if the fillcolors in the sheet are right.)
     # https://github.com/onedrive/onedrive-sdk-python
     # https://github.com/vgrem/Office365-REST-Python-Client#Working-with-OneDrive-API
-
-    if platform.processor() != "":
+    upload = True
+    if platform.processor() != "" and upload == False:
         df_mutation, df_bookingtable, df_maxxton = get_data_local()
     else:
 

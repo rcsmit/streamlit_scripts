@@ -94,12 +94,12 @@ def log10(t):
     
 @st.cache_data (ttl=60 * 60 * 24)
 def getdata(stn, fromx, until):
-    url_local=r"C:\Users\rcxsm\Downloads\df_knmi_de_bilt_01011901_27072023.csv"
-    url_knmi = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start={fromx}&end={until}"
+    #url_local=r"C:\Users\rcxsm\Downloads\df_knmi_de_bilt_01011901_27072023.csv"
+    url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start={fromx}&end={until}"
     
-    url = url_local if platform.processor() else url_knmi
-    header = 0  if platform.processor() else None
-    
+    #url = url_local if platform.processor() else url_knmi
+    #header = 0  if platform.processor() else None
+    header = None
     with st.spinner(f"GETTING ALL DATA ... {url}"):
 
         # url =  "https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns=251&vars=TEMP&start=18210301&end=20210310"
@@ -166,14 +166,14 @@ def getdata(stn, fromx, until):
         ]
 
 
-        column_replacements = column_replacements_local if platform.processor() else column_replacements_knmi
-
+        #column_replacements = column_replacements_local if platform.processor() else column_replacements_knmi
+        column_replacements = column_replacements_knmi
         for c in column_replacements:
             df = df.rename(columns={c[0]: c[1]})
-        if platform.processor(): 
-            df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"], format="%Y-%m-%d")
-        else:
-            df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"])
+        # if platform.processor(): 
+        #     df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"], format="%Y-%m-%d")
+        # else:
+        df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"])
         df["YYYY"] = df["YYYYMMDD"].dt.year
         df["MM"] = df["YYYYMMDD"].dt.month
         df["DD"] = df["YYYYMMDD"].dt.day
