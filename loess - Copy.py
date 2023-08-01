@@ -93,6 +93,7 @@ def calculate_loess_simply_with_CI(X, y, alpha, deg, N):
 
 
 def calculate_loess_simply(X, y, alpha, deg, all_x = True, num_points = 100):
+    
     '''
     Calculate LOESS like explained at the site Simply OR 
     https://simplyor.netlify.app/loess-from-scratch-in-python-animation.en-us/
@@ -118,6 +119,7 @@ def calculate_loess_simply(X, y, alpha, deg, all_x = True, num_points = 100):
         Y estimations at each focal point.
     x_space : numpy array 1D
         X range used to calculate each estimation of y.
+
     '''
     
     assert (deg == 1) or (deg == 2), "Deg has to be 1 or 2"
@@ -166,8 +168,87 @@ def calculate_loess_simply(X, y, alpha, deg, all_x = True, num_points = 100):
         x_space[i] = val
 
     trend = y_hat
+    
+
+    # # # Calculate the residuals (difference between yg and trend) and then get the standard deviation for each point
+    # residuals = y - trend
+    # trendsd = np.std(residuals, axis=0)
+
+    # z = 1.96  # 1.96 corresponds to a 95% confidence interval (z-score)
+    # trendub = trend + z * trendsd
+    # trendlb = trend - z * trendsd
+
+    # # Apply bounds
+    # ybounds = [-np.inf, np.inf]
+    # trend = np.clip(trend, ybounds[0], ybounds[1])
+    # trendub = np.clip(trendub, ybounds[0], ybounds[1])
+    # trendlb = np.clip(trendlb, ybounds[0], ybounds[1])
+
+   
+   
+
         
     return y_hat
+
+
+
+def lowess_with_confidence_bounds(
+    x, y, eval_x, N, conf_interval=0.95, lowess_kw=None
+):
+    """
+    Perform Lowess regression and determine a confidence interval by bootstrap resampling
+    https://www.statsmodels.org/devel/examples/notebooks/generated/lowess.html
+    Use the same methode as the KNMI-R script, (translated by ChatGPT)
+
+    statsmodels.api.nonparametric.lowess is used
+
+    Relevant code in R
+     # linear LOESS trendline computation
+        span <- width/ng
+        mdl <- loess(y ~ t, data= data.frame(t= tg, y=yg), span= span,
+                    degree= 1, control= control)
+        # mdl <- loess(y ~ t, data= data.frame(t= t, y=y), span= span, degree= 1)
+        pre <- predict(mdl, newdata= data.frame(t= t), se= TRUE)
+        trend <- pre$fit          # trendline
+        trendsd <- pre$se.fit     # standard deviation of trendline
+        
+    """
+    # Lowess smoothing
+    smoothed = sm.nonparametric.lowess(exog=x, endog=y, xvals=eval_x, it=1, **lowess_kw)
+
+
+    # Perform bootstrap resamplings of the data
+    # and  evaluate the smoothing at a fixed set of points
+    smoothed_values = np.empty((N, len(eval_x)))
+    for i in range(N):
+        if i % (N/10) == 0:
+            print (f"Running {i}/{N}")
+        sample = np.random.choice(len(x), len(x), replace=True)
+        sampled_x = x[sample]
+        sampled_y = y[sample]
+
+        smoothed_values[i] = sm.nonparametric.lowess(
+            exog=sampled_x, endog=sampled_y, xvals=eval_x, it=1, **lowess_kw
+        )
+
+    # Get the confidence interval
+    sorted_values = np.sort(smoothed_values, axis=0)
+    
+    bound = int(N * (1 - conf_interval) / 2)
+    bottom = sorted_values[bound - 1]
+    top = sorted_values[-bound]
+    
+    sd = (bottom-top)/(1.96 *2)
+    
+    # #sd = sem(smoothed_values, axis=1)
+    # sd = np.nanstd(smoothed_values, axis=1, ddof=0)
+    # bottom = smoothed -1.96*sd
+    # top =  smoothed +1.96*sd
+
+    mean = np.nanmean(smoothed_values, axis=1)
+    sd = sem(smoothed_values, axis=1)
+    stderr = np.nanstd(smoothed_values, axis=1, ddof=0)
+    return smoothed, bottom, top,sd, 
 
 def lowess_alexandre_gramfort(x, y, f=2. / 3., iter=3):
     '''....the number of robustifying iterations is given by iter. The
@@ -179,6 +260,8 @@ def lowess_alexandre_gramfort(x, y, f=2. / 3., iter=3):
     # License: BSD (3-clause)
 
     '''
+
+
     n = len(x)
     r = int(ceil(f * n))
     h = [np.sort(np.abs(x - x[i]))[r] for i in range(n)]
@@ -248,66 +331,6 @@ def lowess_james_brennan(x, y, f=1./3.):
         bottom[place] =  y_sm[place] -1.96*  y_stderr[place]
         top[place] =  y_sm[place] +  1.96* y_stderr[place]
     return y_sm, bottom, top, y_stderr 
-
-
-def lowess_with_confidence_bounds(
-    x, y, eval_x, N, conf_interval=0.95, lowess_kw=None
-):
-    """
-    Perform Lowess regression and determine a confidence interval by bootstrap resampling
-    https://www.statsmodels.org/devel/examples/notebooks/generated/lowess.html
-    Use the same methode as the KNMI-R script, (translated by ChatGPT)
-
-    statsmodels.api.nonparametric.lowess is used
-
-    Relevant code in R
-     # linear LOESS trendline computation
-        span <- width/ng
-        mdl <- loess(y ~ t, data= data.frame(t= tg, y=yg), span= span,
-                    degree= 1, control= control)
-        # mdl <- loess(y ~ t, data= data.frame(t= t, y=y), span= span, degree= 1)
-        pre <- predict(mdl, newdata= data.frame(t= t), se= TRUE)
-        trend <- pre$fit          # trendline
-        trendsd <- pre$se.fit     # standard deviation of trendline
-        
-    """
-    # Lowess smoothing
-    smoothed = sm.nonparametric.lowess(exog=x, endog=y, xvals=eval_x, it=1, **lowess_kw)
-
-
-    # Perform bootstrap resamplings of the data
-    # and  evaluate the smoothing at a fixed set of points
-    smoothed_values = np.empty((N, len(eval_x)))
-    for i in range(N):
-        if i % (N/10) == 0:
-            print (f"Running {i}/{N}")
-        sample = np.random.choice(len(x), len(x), replace=True)
-        sampled_x = x[sample]
-        sampled_y = y[sample]
-
-        smoothed_values[i] = sm.nonparametric.lowess(
-            exog=sampled_x, endog=sampled_y, xvals=eval_x, it=1, **lowess_kw
-        )
-
-    # Get the confidence interval
-    sorted_values = np.sort(smoothed_values, axis=0)
-    
-    bound = int(N * (1 - conf_interval) / 2)
-    bottom = sorted_values[bound - 1]
-    top = sorted_values[-bound]
-    
-    sd = (bottom-top)/(1.96 *2)
-    
-    # #sd = sem(smoothed_values, axis=1)
-    # sd = np.nanstd(smoothed_values, axis=1, ddof=0)
-    # bottom = smoothed -1.96*sd
-    # top =  smoothed +1.96*sd
-
-    mean = np.nanmean(smoothed_values, axis=1)
-    sd = sem(smoothed_values, axis=1)
-    stderr = np.nanstd(smoothed_values, axis=1, ddof=0)
-    return smoothed, bottom, top,sd, 
-
 
 
 def climatrend(
@@ -509,30 +532,19 @@ def drawplot_matplotlib(t, y, draw30, avt, avy, trend, trendub, trendlb):
     st.pyplot(fig)
 
 
-def show_plot_plotly(df, what_to_show, t, trend, trendlb, trendub, avt=None, avy=None,  draw30=False, draw_ci=True):
-    """_summary_
+def show_plot_plotly(
+    df, what_to_show, t, trend, trendlb, trendub, avt, avy, p, t1, t2, pvalue, draw30
+):
 
-    Args:
-        df (_type_): _description_
-        what_to_show (_type_): _description_
-        t (_type_): _description_
-        trend (_type_): _description_
-        trendlb (_type_): _description_
-        trendub (_type_): _description_
-        avt (_type_, optional): _description_. Defaults to None.
-        avy (_type_, optional): _description_. Defaults to None.
-        draw30 (bool, optional): _description_. Defaults to False.
-        draw_trend (bool, optional): _description_. Defaults to True.
-    """
-    
-    if draw30:
-        av = go.Scatter(
-            name=f"{what_to_show} avg 30 jaar",
-            x=avt,
-            y=avy,
-            # mode='lines',
-            line=dict(width=1, color="rgba(0, 0, 0, 1)"),
-        )
+    """Shows the plot """
+
+    av = go.Scatter(
+        name=f"{what_to_show} avg 30 jaar",
+        x=avt,
+        y=avy,
+        # mode='lines',
+        line=dict(width=1, color="rgba(0, 0, 0, 1)"),
+    )
 
     loess = go.Scatter(
         name=f"{what_to_show} Loess",
@@ -541,21 +553,20 @@ def show_plot_plotly(df, what_to_show, t, trend, trendlb, trendub, avt=None, avy
         mode="lines",
         line=dict(width=1, color="rgba(255, 0, 255, 1)"),
     )
-    if draw_trend:
-        loess_low = go.Scatter(
-            name=f"{what_to_show} Loess low",
-            x=t,
-            y=trendlb,
-            mode="lines",
-            line=dict(width=0.7, color="rgba(255, 0, 255, 0.5)"),
-        )
-        loess_high = go.Scatter(
-            name=f"{what_to_show} Loess high",
-            x=t,
-            y=trendub,
-            mode="lines",
-            line=dict(width=0.7, color="rgba(255, 0, 255, 0.5)"),
-        )
+    loess_low = go.Scatter(
+        name=f"{what_to_show} Loess low",
+        x=t,
+        y=trendlb,
+        mode="lines",
+        line=dict(width=0.7, color="rgba(255, 0, 255, 0.5)"),
+    )
+    loess_high = go.Scatter(
+        name=f"{what_to_show} Loess high",
+        x=t,
+        y=trendub,
+        mode="lines",
+        line=dict(width=0.7, color="rgba(255, 0, 255, 0.5)"),
+    )
 
     values = go.Scatter(
         name=what_to_show,
@@ -565,9 +576,7 @@ def show_plot_plotly(df, what_to_show, t, trend, trendlb, trendub, avt=None, avy
         line=dict(width=1, color="rgba(0, 0, 255, 0.6)"),
     )
 
-    data = [values, loess]
-    if draw_trend:
-        data.append(loess_low, loess_high)
+    data = [values, loess, loess_low, loess_high]
     if draw30:
         data.append(av)
 
@@ -579,6 +588,57 @@ def show_plot_plotly(df, what_to_show, t, trend, trendlb, trendub, avt=None, avy
 
     fig.update_layout(xaxis=dict(tickformat="%d-%m-%Y"))
     st.plotly_chart(fig, use_container_width=True)
+
+
+
+def show_plot_plotly_output_R_script( what_to_show,   t,values,loess, trendub,trendlb):
+
+    """Shows the plot"""
+
+   
+
+    loess = go.Scatter(
+        name=f"{what_to_show} Loess",
+        x=t,
+        y=loess,
+        mode="lines",
+        line=dict(width=1, color="rgba(255, 0, 255, 1)"),
+    )
+   
+
+    values = go.Scatter(
+        name=what_to_show,
+        x=t,
+        y=values,
+        mode="lines",
+        line=dict(width=1, color="rgba(0, 0, 255, 0.6)"),
+    )
+    loess_low = go.Scatter(
+        name=f"{what_to_show} Loess low",
+        x=t,
+        y=trendlb,
+        mode="lines",
+        line=dict(width=0.7, color="rgba(255, 0, 255, 0.5)"),
+    )
+    loess_high = go.Scatter(
+        name=f"{what_to_show} Loess high",
+        x=t,
+        y=trendub,
+        mode="lines",
+        line=dict(width=0.7, color="rgba(255, 0, 255, 0.5)"),
+    )
+
+    data = [values, loess,loess_low,loess_high]
+    
+    layout = go.Layout(
+        yaxis=dict(title=what_to_show), title=f"Jaargemiddeldes van {what_to_show}"
+    )
+
+    fig = go.Figure(data=data, layout=layout)
+
+    fig.update_layout(xaxis=dict(tickformat="%d-%m-%Y"))
+    st.plotly_chart(fig, use_container_width=True)
+
 
 def show_returned_values(t, trend, trendlb, trendub, avt, avy, p, t1, t2, pvalue):
     """Show the returned values from the function climatrend()
@@ -630,6 +690,7 @@ def getdata(url):
     except:
         st.error("FOUT BIJ HET INLADEN.")
         st.stop()
+
     return df
 
 
@@ -661,11 +722,15 @@ def main_translated_script(df, N, X_array, Y_array, what_to_show, drawplot, draw
         trendub,
         avt,
         avy,
+        p,
+        t1_,
+        t2_,
+        pvalue,
         draw30,
     )
     show_returned_values(t, trend, trendlb, trendub, avt, avy, p, t1_, t2_, pvalue)
     # Create a dictionary with column names as keys and lists as values
-    data = {'YYYY': t, 'statsmodel_loess': trend, 'statsmodel_low': trendlb, 'statsmodel_high':trendub}
+    data = {'YYYY': t, 'knmi_loess': trend, 'knmi_low': trendlb, 'knmi_high':trendub}
 
     # Create a DataFrame from the dictionary
     df1 = pd.DataFrame(data)
@@ -691,11 +756,112 @@ def interface():
             st.stop()
     else:
         t1,t2 = None, None
-    compare_1 = st.sidebar.selectbox("Compare 1",["trend",  "statsmodel","skmisc","simply", "james"],0)
-    compare_2 = st.sidebar.selectbox("Compare 2",["trend",  "statsmodel","skmisc","simply", "james"],1)
+    compare_1 = st.sidebar.selectbox("Compare 1",["trend",  "knmi","skmisc","simply", "james"],0)
+    compare_2 = st.sidebar.selectbox("Compare 2",["trend",  "knmi","skmisc","simply", "james"],1)
     
     return what_to_show,drawplot,draw30,t1,t2, N, compare_1, compare_2
 
+
+def show_plot_plotly_simply(what_to_show, t,values,loess, trendub,trendlb):
+    """_summary_
+
+    Args:
+        what_to_show (_type_): _description_
+        t (_type_): years
+        values (_type_): values
+        loess (_type_): treendline
+        trendub (_type_): _description_
+        trendlb (_type_): _description_
+    """
+ 
+   
+
+    loess = go.Scatter(
+        name=f"{what_to_show} Loess",
+        x=t,
+        y=loess,
+        mode="lines",
+        line=dict(width=1, color="rgba(255, 0, 255, 1)"),
+    )
+   
+
+    values = go.Scatter(
+        name=what_to_show,
+        x=t,
+        y=values,
+        mode="lines",
+        line=dict(width=1, color="rgba(0, 0, 255, 0.6)"),
+    )
+
+    loess_low = go.Scatter(
+        name=f"{what_to_show} Loess low",
+        x=t,
+        y=trendlb,
+        mode="lines",
+        line=dict(width=0.7, color="rgba(255, 0, 255, 0.5)"),
+    )
+    loess_high = go.Scatter(
+        name=f"{what_to_show} Loess high",
+        x=t,
+        y=trendub,
+        mode="lines",
+        line=dict(width=0.7, color="rgba(255, 0, 255, 0.5)"),
+    )
+
+    data = [values, loess,loess_low,loess_high]
+    
+    layout = go.Layout(
+        yaxis=dict(title=what_to_show), title=f"Jaargemiddeldes van {what_to_show}"
+    )
+
+    fig = go.Figure(data=data, layout=layout)
+
+    fig.update_layout(xaxis=dict(tickformat="%d-%m-%Y"))
+    st.plotly_chart(fig, use_container_width=True)
+
+
+def show_plot_plotly_alex(what_to_show, t,values,loess):
+    """Show plot with only values and trendline
+
+    Args:
+        what_to_show (_type_): _description_
+        t (_type_): years
+        values (_type_): values
+        loess (_type_): treendline
+       
+    """
+ 
+   
+
+    loess = go.Scatter(
+        name=f"{what_to_show} Loess",
+        x=t,
+        y=loess,
+        mode="lines",
+        line=dict(width=1, color="rgba(255, 0, 255, 1)"),
+    )
+   
+
+    values = go.Scatter(
+        name=what_to_show,
+        x=t,
+        y=values,
+        mode="lines",
+        line=dict(width=1, color="rgba(0, 0, 255, 0.6)"),
+    )
+
+   
+
+    data = [values, loess]
+    
+    layout = go.Layout(
+        yaxis=dict(title=what_to_show), title=f"Jaargemiddeldes van {what_to_show}"
+    )
+
+    fig = go.Figure(data=data, layout=layout)
+
+    fig.update_layout(xaxis=dict(tickformat="%d-%m-%Y"))
+    st.plotly_chart(fig, use_container_width=True)
 
 def main_alex(N,what_to_show, X_array, Y_array):
     
@@ -709,8 +875,7 @@ def main_alex(N,what_to_show, X_array, Y_array):
     st.subheader("Results script found on internet from Alexandre Gramfort")
     st.write("https://gist.github.com/agramfort/850437")
     st.write("The trendline is quit a bit off, I dint make a bootstrapping for it.")
-    show_plot_plotly( what_to_show,  X_array,Y_array,  y_hat,trendlb, trendub, avt=None, avy=None,  draw30=False, draw_ci=False)
-    
+    show_plot_plotly_alex(what_to_show, X_array,Y_array,  y_hat)
    # Create a dictionary with column names as keys and lists as values
     data = {'YYYY': X_array, 'alex_loess': y_hat}
 
@@ -733,8 +898,7 @@ def main_james(N,what_to_show, X_array, Y_array ):
     st.subheader("Results script found on internet from James Brennan")
     st.write("https://james-brennan.github.io/posts/lowess_conf/")
     st.write("The trendline is very close, but there seems to be a problem with the confidence intervals :)")
-    show_plot_plotly( what_to_show,  X_array,Y_array,  y_hat,trendlb, trendub, avt=None, avy=None,  draw30=False, draw_ci=True)
-    
+    show_plot_plotly_simply(what_to_show, X_array,Y_array,  y_hat,trendub,trendlb)
    # Create a dictionary with column names as keys and lists as values
     data = {'YYYY': X_array, 'james_loess': y_hat, 'james_low': trendlb, 'james_high':trendub}
 
@@ -756,9 +920,7 @@ def main_simply(N, what_to_show, X_array, Y_array):
     st.subheader("Results script found on internet from simply OR")
     st.write("https://simplyor.netlify.app/loess-from-scratch-in-python-animation.en-us/")
     st.write("The trendline is exactly like the output of the R-script of KNMI, but the confidence intervals are much bigger esp. between 1970-2000")
-    
-    show_plot_plotly( what_to_show,  X_array,Y_array,  y_hat,trendlb, trendub, avt=None, avy=None,  draw30=False, draw_ci=True)
-    
+    show_plot_plotly_simply(what_to_show, X_array,Y_array,  y_hat,trendub,trendlb)
    # Create a dictionary with column names as keys and lists as values
     data = {'YYYY': X_array, 'simply_loess': y_hat, 'simply_low': trendlb, 'simply_high':trendub}
 
@@ -771,7 +933,7 @@ def main_output_R_script():
     st.subheader("Results KNMI script in R")
     st.write("These are the values in the output of the script in R, and seen as 'standard")
 
-    show_plot_plotly("temp_avg", df3["YYYY"],df3["temp_avg"],df3["knmi_R_script_loess"],df3["knmi_R_script_low"],df3["knmi_R_script_high"], avt=None, avy=None,  draw30=False, draw_ci=False)
+    show_plot_plotly_output_R_script("temp_avg", df3["YYYY"],df3["temp_avg"],df3["trend_loess"],df3["trend_high"],df3["trend_low"])
 
     return df3
 
@@ -932,8 +1094,8 @@ def main_calculations(N, what_to_show, drawplot, draw30, t1, t2, compare_1, comp
     #df_m = pd.merge(df1, df2, on='YYYY').merge(df6, on='YYYY')
    
     st.subheader("All the results")
-    st.write("temp_avg = the real average temperatures. Trend = values from R script, statsmodel = translated to python, (statsmodel), skmisc = scikit-misc, and the others are simply, james & alex")
-    new_column_order = ["YYYY", "temp_avg", "knmi_R_script_loess", "statsmodel_loess","skmisc_loess","simply_loess",  "james_loess","alex_loess","knmi_R_script_low",  "statsmodel_low","skmisc_low","simply_low", "james_low", "knmi_R_script_high",  "statsmodel_high",   "skmisc_high",  "simply_high", "james_high",  "30-yr average"]
+    st.write("temp_avg = the real average temperatures. Trend = values from R script, KNMI = translated to python, (statsmodel), skmisc = scikit-misc, and the others are simply, james & alex")
+    new_column_order = ["YYYY", "temp_avg", "trend_loess", "knmi_loess","skmisc_loess","simply_loess",  "james_loess","alex_loess","trend_low",  "knmi_low","skmisc_low","simply_low", "james_low", "trend_high",  "knmi_high",   "skmisc_high",  "simply_high", "james_high",  "30-yr average"]
     result = df_m[new_column_order]
     st.write(result)
     st.write(result.round(2))
