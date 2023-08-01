@@ -296,7 +296,7 @@ def lowess_with_confidence_bounds(
     bottom = sorted_values[bound - 1]
     top = sorted_values[-bound]
     
-    sd = (bottom-top)/(1.96 *2)
+    sd_values = (bottom-top)/(1.96 *2)
     
     # #sd = sem(smoothed_values, axis=1)
     # sd = np.nanstd(smoothed_values, axis=1, ddof=0)
@@ -509,7 +509,7 @@ def drawplot_matplotlib(t, y, draw30, avt, avy, trend, trendub, trendlb):
     st.pyplot(fig)
 
 
-def show_plot_plotly(df, what_to_show, t, trend, trendlb, trendub, avt=None, avy=None,  draw30=False, draw_ci=True):
+def show_plot_plotly(title, what_to_show, t, values_, trend, trendlb, trendub, avt=None, avy=None,  draw30=False, draw_ci=True):
     """_summary_
 
     Args:
@@ -522,9 +522,8 @@ def show_plot_plotly(df, what_to_show, t, trend, trendlb, trendub, avt=None, avy
         avt (_type_, optional): _description_. Defaults to None.
         avy (_type_, optional): _description_. Defaults to None.
         draw30 (bool, optional): _description_. Defaults to False.
-        draw_trend (bool, optional): _description_. Defaults to True.
+        draw_ci (bool, optional): _description_. Defaults to True.
     """
-    
     if draw30:
         av = go.Scatter(
             name=f"{what_to_show} avg 30 jaar",
@@ -533,7 +532,6 @@ def show_plot_plotly(df, what_to_show, t, trend, trendlb, trendub, avt=None, avy
             # mode='lines',
             line=dict(width=1, color="rgba(0, 0, 0, 1)"),
         )
-
     loess = go.Scatter(
         name=f"{what_to_show} Loess",
         x=t,
@@ -541,7 +539,7 @@ def show_plot_plotly(df, what_to_show, t, trend, trendlb, trendub, avt=None, avy
         mode="lines",
         line=dict(width=1, color="rgba(255, 0, 255, 1)"),
     )
-    if draw_trend:
+    if draw_ci:
         loess_low = go.Scatter(
             name=f"{what_to_show} Loess low",
             x=t,
@@ -556,24 +554,49 @@ def show_plot_plotly(df, what_to_show, t, trend, trendlb, trendub, avt=None, avy
             mode="lines",
             line=dict(width=0.7, color="rgba(255, 0, 255, 0.5)"),
         )
+        # Create a filled area plot for confidence interval
+        confidence_trace = go.Scatter(x=np.concatenate([t, t[::-1]]),
+                                y=np.concatenate([trendub, trendlb[::-1]]),
+                                fill='tozeroy',
+                                fillcolor='rgba(0, 128, 0, 0.2)',
+                                line=dict(color='dimgrey', width=.5),
+                                showlegend=True,
+                                name="CI of the trendline")
 
     values = go.Scatter(
         name=what_to_show,
-        x=df["YYYY"],
-        y=df[what_to_show],
+        x=t,
+        y=values_,
         mode="lines",
         line=dict(width=1, color="rgba(0, 0, 255, 0.6)"),
     )
 
     data = [values, loess]
-    if draw_trend:
-        data.append(loess_low, loess_high)
+    if draw_ci:
+        # data.append(loess_low)
+        # data.append(loess_high )
+        data.append(confidence_trace)
     if draw30:
         data.append(av)
-
+    values_np = np.array(values_)
+    A_1d = np.ravel(values_)
+    B_1d = np.ravel(trendub)
+    C_1d = np.ravel(trendlb)
+    #Y_values =  values_ + trendub.to_list() + trendlb.to_list() # trendlb #
+    try:
+        Y_values = A_1d.tolist() + B_1d.tolist() + C_1d.tolist()
+        y_lower_bound = min(Y_values)    
+        y_upper_bound = max(Y_values)
+    except:
+        y_lower_bound = values_.min()    
+        y_upper_bound = values_.max()
+    #Y_values = np.concatenate([values_np, trendub , trendlb]) 
+    
+    
     layout = go.Layout(
-        yaxis=dict(title=what_to_show), title=f"Jaargemiddeldes van {what_to_show}"
+        yaxis=dict(title=what_to_show, range=[y_lower_bound, y_upper_bound ]), title=f"Year averages of {what_to_show} - {title}"
     )
+ 
 
     fig = go.Figure(data=data, layout=layout)
 
@@ -652,17 +675,10 @@ def main_translated_script(df, N, X_array, Y_array, what_to_show, drawplot, draw
     )
     st.subheader("Results KNMI script translated in python - uses [statsmodels.api.nonparametric.lowess]")
     st.write("https://gitlab.com/cees.de.valk/trend_knmi/-/blob/master/R/climatrend.R?ref_type=heads")
-    show_plot_plotly(
-        df,
-        what_to_show,
-        t,
-        trend,
-        trendlb,
-        trendub,
-        avt,
-        avy,
-        draw30,
-    )
+    title = "KNMI script translated in python / statsmodels"
+    show_plot_plotly(title, what_to_show, t, Y_array, trend, trendlb, trendub, None, None,  draw30, draw_ci=True)
+
+    
     show_returned_values(t, trend, trendlb, trendub, avt, avy, p, t1_, t2_, pvalue)
     # Create a dictionary with column names as keys and lists as values
     data = {'YYYY': t, 'statsmodel_loess': trend, 'statsmodel_low': trendlb, 'statsmodel_high':trendub}
@@ -691,8 +707,8 @@ def interface():
             st.stop()
     else:
         t1,t2 = None, None
-    compare_1 = st.sidebar.selectbox("Compare 1",["trend",  "statsmodel","skmisc","simply", "james"],0)
-    compare_2 = st.sidebar.selectbox("Compare 2",["trend",  "statsmodel","skmisc","simply", "james"],1)
+    compare_1 = st.sidebar.selectbox("Compare 1",["knmi_R_script",  "statsmodel","skmisc","simply", "james"],0)
+    compare_2 = st.sidebar.selectbox("Compare 2",["knmi_R_script",  "statsmodel","skmisc","simply", "james"],1)
     
     return what_to_show,drawplot,draw30,t1,t2, N, compare_1, compare_2
 
@@ -709,7 +725,9 @@ def main_alex(N,what_to_show, X_array, Y_array):
     st.subheader("Results script found on internet from Alexandre Gramfort")
     st.write("https://gist.github.com/agramfort/850437")
     st.write("The trendline is quit a bit off, I dint make a bootstrapping for it.")
-    show_plot_plotly( what_to_show,  X_array,Y_array,  y_hat,trendlb, trendub, avt=None, avy=None,  draw30=False, draw_ci=False)
+    trendlb, trendub = None, None
+    title = "Alexandre Gramfort"
+    show_plot_plotly(title, what_to_show,  X_array,Y_array,  y_hat,trendlb, trendub, avt=None, avy=None,  draw30=False, draw_ci=False)
     
    # Create a dictionary with column names as keys and lists as values
     data = {'YYYY': X_array, 'alex_loess': y_hat}
@@ -733,7 +751,8 @@ def main_james(N,what_to_show, X_array, Y_array ):
     st.subheader("Results script found on internet from James Brennan")
     st.write("https://james-brennan.github.io/posts/lowess_conf/")
     st.write("The trendline is very close, but there seems to be a problem with the confidence intervals :)")
-    show_plot_plotly( what_to_show,  X_array,Y_array,  y_hat,trendlb, trendub, avt=None, avy=None,  draw30=False, draw_ci=True)
+    title ="James Brennan"
+    show_plot_plotly(title, what_to_show,  X_array,Y_array,  y_hat,trendlb, trendub, avt=None, avy=None,  draw30=False, draw_ci=True)
     
    # Create a dictionary with column names as keys and lists as values
     data = {'YYYY': X_array, 'james_loess': y_hat, 'james_low': trendlb, 'james_high':trendub}
@@ -756,8 +775,8 @@ def main_simply(N, what_to_show, X_array, Y_array):
     st.subheader("Results script found on internet from simply OR")
     st.write("https://simplyor.netlify.app/loess-from-scratch-in-python-animation.en-us/")
     st.write("The trendline is exactly like the output of the R-script of KNMI, but the confidence intervals are much bigger esp. between 1970-2000")
-    
-    show_plot_plotly( what_to_show,  X_array,Y_array,  y_hat,trendlb, trendub, avt=None, avy=None,  draw30=False, draw_ci=True)
+    title = "Simply OR"
+    show_plot_plotly(title, what_to_show,  X_array,Y_array,  y_hat,trendlb, trendub, avt=None, avy=None,  draw30=False, draw_ci=True)
     
    # Create a dictionary with column names as keys and lists as values
     data = {'YYYY': X_array, 'simply_loess': y_hat, 'simply_low': trendlb, 'simply_high':trendub}
@@ -766,13 +785,26 @@ def main_simply(N, what_to_show, X_array, Y_array):
     df2 = pd.DataFrame(data)
     return df2
 
-def main_output_R_script():
+def main_output_R_script(draw30):
     df3 = getdata("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/trend_de_bilt_jaargem_1901_2022.csv" )
+    calculate_sd_values = False
+    if calculate_sd_values:
+        # Calculate the window size for the standard deviation
+        window_size = 15
+        # Calculate the standard deviation for each point using a rolling window
+        df3['Std_Dev'] = df3['temp_avg'].rolling(window=2*window_size+1, center=True, min_periods=1).std()
+        # Calculate the confidence interval for the values
+        df3["knmi_R_script_high"] = df3["knmi_R_script_loess"] + 1.96 * df3['Std_Dev']
+        df3["knmi_R_script_low"] = df3["knmi_R_script_loess"] - 1.96 * df3['Std_Dev']
+
+
+  
     st.subheader("Results KNMI script in R")
     st.write("These are the values in the output of the script in R, and seen as 'standard")
-
-    show_plot_plotly("temp_avg", df3["YYYY"],df3["temp_avg"],df3["knmi_R_script_loess"],df3["knmi_R_script_low"],df3["knmi_R_script_high"], avt=None, avy=None,  draw30=False, draw_ci=False)
-
+    title = "Output R script KNMI (golden standard)"
+    show_plot_plotly(title, "temp_avg", df3["YYYY"],df3["temp_avg"],df3["knmi_R_script_loess"],
+                                df3["knmi_R_script_low"],df3["knmi_R_script_high"],  df3["YYYY"],
+                                  df3["30_yr_average"],  draw30, True)
     return df3
 
 def main_skmisc(X_array, Y_array, t1,t2):
@@ -807,34 +839,36 @@ def main_skmisc(X_array, Y_array, t1,t2):
     ll = conf.lower
     ul = conf.upper
     
-    # Create a scatter plot for the data points
-    scatter_trace = go.Scatter(x=X_array, y=Y_array, mode='lines', line=dict(width=0.7, color="rgba(255, 0, 255, 0.5)"), name='Data Points')
+    show_plot_plotly("Scikit-misc", "temp_avg", X_array, Y_array, lowess, ll, ul, None, None, False, True)
 
-    # Create a line plot for lowess
-    lowess_trace = go.Scatter(x=X_array, y=lowess, mode='lines',  name='Lowess')
+    # # Create a scatter plot for the data points
+    # scatter_trace = go.Scatter(x=X_array, y=Y_array, mode='lines', line=dict(width=0.7, color="rgba(255, 0, 255, 0.5)"), name='Data Points')
 
-    # Create a filled area plot for confidence interval
-    confidence_trace = go.Scatter(x=np.concatenate([X_array, X_array[::-1]]),
-                                y=np.concatenate([ul, ll[::-1]]),
-                                #fill='tozeroy',
-                                fillcolor='rgba(0, 128, 0, 0.2)',
-                                line=dict(color='dimgrey', width=.5),
-                                showlegend=False)
+    # # Create a line plot for lowess
+    # lowess_trace = go.Scatter(x=X_array, y=lowess, mode='lines',  name='Lowess')
 
-    # Combine the traces into a single figure
-    fig = go.Figure([scatter_trace, lowess_trace, confidence_trace])
+    # # Create a filled area plot for confidence interval
+    # confidence_trace = go.Scatter(x=np.concatenate([X_array, X_array[::-1]]),
+    #                             y=np.concatenate([ul, ll[::-1]]),
+    #                             #fill='tozeroy',
+    #                             fillcolor='rgba(0, 128, 0, 0.2)',
+    #                             line=dict(color='dimgrey', width=.5),
+    #                             showlegend=False)
 
-    # Update layout settings
-    fig.update_layout(
-        title='Lowess with Confidence Interval',
-        xaxis_title='X Values',
-        yaxis_title='Y Values',
-        showlegend=True,
-        hovermode='x'
-    )
+    # # Combine the traces into a single figure
+    # fig = go.Figure([scatter_trace, lowess_trace, confidence_trace])
 
-    # Show the Plotly figure
-    st.plotly_chart(fig)
+    # # Update layout settings
+    # fig.update_layout(
+    #     title='Lowess with Confidence Interval',
+    #     xaxis_title='X Values',
+    #     yaxis_title='Y Values',
+    #     showlegend=True,
+    #     hovermode='x'
+    # )
+
+    # # Show the Plotly figure
+    # st.plotly_chart(fig)
     t = np.asarray(X_array, dtype=np.float64)
     y = np.asarray(Y_array, dtype=np.float64)
     dt = np.diff(t)[0]
@@ -918,7 +952,7 @@ def main_calculations(N, what_to_show, drawplot, draw30, t1, t2, compare_1, comp
 
     X_array = df["YYYY"].values
     Y_array = df[what_to_show].values
-    df1 = main_output_R_script()
+    df1 = main_output_R_script(draw30)
     
     df2 = main_translated_script(df, N,X_array, Y_array, what_to_show, drawplot, draw30, t1, t2)
         
@@ -957,33 +991,33 @@ def compare_values_in_df_m(N, df_m, compare_1, compare_2):
     st.subheader(f"The values of the {compare_1} script compared to the {compare_2} script")
     
     for a in ["loess", "high", "low"]:
-        st.write("Average values")
-        st.write(f'Relatieve {df_m[f"diff_{a}_rel_{compare_1}_{compare_2}"].mean()}')
-        st.write(f'Absolute {df_m[f"diff_{a}_abs_{compare_1}_{compare_2}"].mean()}')
+        st.write(f"**{a}**")
+        st.write(f'Average values - Relatieve {df_m[f"diff_{a}_rel_{compare_1}_{compare_2}"].mean()}')
+        st.write(f'Average values - Absolute {df_m[f"diff_{a}_abs_{compare_1}_{compare_2}"].mean()}')
 
         st.write(f'Max absolute value {a} - {df_m[f"diff_{a}_rel_{compare_1}_{compare_2}"].abs().max()}')
         st.write(f'Max absolute value {a} - {df_m[f"diff_{a}_abs_{compare_1}_{compare_2}"].abs().max()}')
         
 
-        # Select all columns except 'YYYY' for plotting
-        columns_to_plot = df_m.columns[(df_m.columns != 'YYYY') & (df_m.columns != '30_yr_average')]
-        print (columns_to_plot)
-        # Create the Plotly Express graph
-        fig = px.line(df_m, x='YYYY', y=columns_to_plot, title='Line Plot of Columns except YYYY',
-                    labels={'value': 'Values', 'variable': 'Column'})
+    # Select all columns except 'YYYY' for plotting
+    columns_to_plot = df_m.columns[(df_m.columns != 'YYYY') & (df_m.columns != '30_yr_average')]
+    print (columns_to_plot)
+    # Create the Plotly Express graph
+    fig = px.line(df_m, x='YYYY', y=columns_to_plot, title='Line Plot of Columns except YYYY',
+                labels={'value': 'Values', 'variable': 'Column'})
 
-        st.plotly_chart(fig)
+    st.plotly_chart(fig)
 
-        # Line plot
-        a= df_m[f"diff_high_abs_{compare_1}_{compare_2}"]
-        b = df_m[f"diff_low_abs_{compare_1}_{compare_2}"]
-        c = df_m[f"diff_loess_abs_{compare_1}_{compare_2}"]
-       
-        to_show = [a,b,c]
-        print (to_show)
-        fig_line = px.line(df_m, x='YYYY', y=to_show, title=f'Absolute value of the difference of the {compare_1} script and the {compare_2} script of the CI-intervalborders')
+    # Line plot
+    a= df_m[f"diff_high_abs_{compare_1}_{compare_2}"]
+    b = df_m[f"diff_low_abs_{compare_1}_{compare_2}"]
+    c = df_m[f"diff_loess_abs_{compare_1}_{compare_2}"]
     
-        st.plotly_chart(fig_line)
+    to_show = [a,b,c]
+    print (to_show)
+    fig_line = px.line(df_m, x='YYYY', y=to_show, title=f'Absolute value of the difference of the {compare_1} script and the {compare_2} script of the CI-intervalborders')
+
+    st.plotly_chart(fig_line)
 
     # result = {
     #     'N': N,
