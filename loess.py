@@ -933,7 +933,7 @@ def main_calculations(N, what_to_show, drawplot, draw30, t1, t2, compare_1, comp
    
     st.subheader("All the results")
     st.write("temp_avg = the real average temperatures. Trend = values from R script, statsmodel = translated to python, (statsmodel), skmisc = scikit-misc, and the others are simply, james & alex")
-    new_column_order = ["YYYY", "temp_avg", "knmi_R_script_loess", "statsmodel_loess","skmisc_loess","simply_loess",  "james_loess","alex_loess","knmi_R_script_low",  "statsmodel_low","skmisc_low","simply_low", "james_low", "knmi_R_script_high",  "statsmodel_high",   "skmisc_high",  "simply_high", "james_high",  "30-yr average"]
+    new_column_order = ["YYYY", "temp_avg", "knmi_R_script_loess", "statsmodel_loess","skmisc_loess","simply_loess",  "james_loess","alex_loess","knmi_R_script_low",  "statsmodel_low","skmisc_low","simply_low", "james_low", "knmi_R_script_high",  "statsmodel_high",   "skmisc_high",  "simply_high", "james_high",  "30_yr_average"]
     result = df_m[new_column_order]
     st.write(result)
     st.write(result.round(2))
@@ -966,7 +966,7 @@ def compare_values_in_df_m(N, df_m, compare_1, compare_2):
         
 
         # Select all columns except 'YYYY' for plotting
-        columns_to_plot = df_m.columns[(df_m.columns != 'YYYY') & (df_m.columns != '30-yr average')]
+        columns_to_plot = df_m.columns[(df_m.columns != 'YYYY') & (df_m.columns != '30_yr_average')]
         print (columns_to_plot)
         # Create the Plotly Express graph
         fig = px.line(df_m, x='YYYY', y=columns_to_plot, title='Line Plot of Columns except YYYY',
