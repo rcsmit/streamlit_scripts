@@ -984,7 +984,7 @@ def compare_values_in_df_m(N, df_m, compare_1, compare_2):
   
 
     for a in ["loess", "high", "low"]:
-        df_m[f"diff_{a}_rel_{compare_1}_{compare_2}"] = (df_m[f"{compare_1}_{a}"]-df_m[f"{compare_2}_{a}) / df_m[f"{compare_2}_{a}"]*100
+        df_m[f"diff_{a}_rel_{compare_1}_{compare_2}"] = (df_m[f"{compare_1}_{a}"]-df_m[f"{compare_2}_{a}"]) / df_m[f"{compare_2}_{a}"]*100
         df_m[f"diff_{a}_abs_{compare_1}_{compare_2}"] = df_m[f"{compare_1}_{a}"] - df_m[f"{compare_2}_{a}"]
    
 
@@ -1027,7 +1027,7 @@ def compare_values_in_df_m(N, df_m, compare_1, compare_2):
     
     to_show = [a,b,c]
     print (to_show)
-    fig_line = px.line(df_m, x='YYYY', y=to_show, title=f'Relative value of the difference of the {compare_1} script and the {compare_2} script of the CI-intervalborders')
+    fig_line = px.line(df_m, x='YYYY', y=to_show, title=f'Relative  difference (%) of the {compare_1} script and the {compare_2} script of the CI-intervalborders')
 
     st.plotly_chart(fig_line)
 
