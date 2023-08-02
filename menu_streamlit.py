@@ -49,7 +49,8 @@ def main():
                 ["20. Dollar Cost Average", "dollar_cost_average"],
                 ["21. Midjourney prompt generator", "midjourney_prompt_generator"],
                 ["22. Historical weather", "weather_koh_samui"],
-                ["23. KNMI trendline LOESS", "loess"]
+                ["23. KNMI trendline LOESS", "loess"],
+                 ["23. KNMI trendline LOESS - scikit-misc", "loess_scikitmisc"]
                 
                 
                 ]

@@ -68,7 +68,7 @@ def calculate_loess_simply_with_CI(X, y, alpha, deg, N):
    
     for i in range(N):
         if i % (N/10) == 0:
-            print (f"Running {i}/{N}")
+            print (f"Simply - Running {i}/{N}")
         sample_size = int(len(X) *1)
         sample_ = np.random.choice(len(X), sample_size, replace=True)
         sample = np.sort(sample_)
@@ -169,7 +169,7 @@ def calculate_loess_simply(X, y, alpha, deg, all_x = True, num_points = 100):
         
     return y_hat
 
-def lowess_alexandre_gramfort(x, y, f=2. / 3., iter=3):
+def lowess_alexandre_gramfort(x, y, f, iter):
     '''....the number of robustifying iterations is given by iter. The
     function will run faster with a smaller number of iterations
     https://gist.github.com/agramfort/850437
@@ -202,10 +202,10 @@ def lowess_alexandre_gramfort(x, y, f=2. / 3., iter=3):
     
     return yest
 
-def lowess_james_brennan(x, y, f=1./3.):
+def lowess_james_brennan(x, y, f):
     # https://james-brennan.github.io/posts/lowess_conf/
     """
-    Basic LOWESS smoother with uncertainty. 
+    Basic LOWESS smoother with uncertainty.  Gives CI-intervals without bootstrapping
     Note:
         - Not robust (so no iteration) and
              only normally distributed errors. 
@@ -251,7 +251,7 @@ def lowess_james_brennan(x, y, f=1./3.):
 
 
 def lowess_with_confidence_bounds(
-    x, y, eval_x, N, conf_interval=0.95, lowess_kw=None
+    x, y, eval_x, N, it, conf_interval=0.95, lowess_kw=None
 ):
     """
     Perform Lowess regression and determine a confidence interval by bootstrap resampling
@@ -261,7 +261,11 @@ def lowess_with_confidence_bounds(
     statsmodels.api.nonparametric.lowess is used
 
     Relevant code in R
-     # linear LOESS trendline computation
+        # fixed parameters
+        width <- 42
+        control <- loess.control(surface = "direct", statistics= "exact",
+                           iterations= 1)
+        # linear LOESS trendline computation
         span <- width/ng
         mdl <- loess(y ~ t, data= data.frame(t= tg, y=yg), span= span,
                     degree= 1, control= control)
@@ -272,7 +276,7 @@ def lowess_with_confidence_bounds(
         
     """
     # Lowess smoothing
-    smoothed = sm.nonparametric.lowess(exog=x, endog=y, xvals=eval_x, it=1, **lowess_kw)
+    smoothed = sm.nonparametric.lowess(exog=x, endog=y, xvals=eval_x, it=it, **lowess_kw)
 
 
     # Perform bootstrap resamplings of the data
@@ -280,13 +284,13 @@ def lowess_with_confidence_bounds(
     smoothed_values = np.empty((N, len(eval_x)))
     for i in range(N):
         if i % (N/10) == 0:
-            print (f"Running {i}/{N}")
+            print (f"Statsmodels - Running {i}/{N}")
         sample = np.random.choice(len(x), len(x), replace=True)
         sampled_x = x[sample]
         sampled_y = y[sample]
 
         smoothed_values[i] = sm.nonparametric.lowess(
-            exog=sampled_x, endog=sampled_y, xvals=eval_x, it=1, **lowess_kw
+            exog=sampled_x, endog=sampled_y, xvals=eval_x, it=it, **lowess_kw
         )
 
     # Get the confidence interval
@@ -311,7 +315,7 @@ def lowess_with_confidence_bounds(
 
 
 def climatrend(
-    t, y,N, p=None, t1=None, t2=None, ybounds=None, drawplot=False, draw30=False
+    t, y,n, it, p=None, t1=None, t2=None, ybounds=None, drawplot=False, draw30=False
 ):
 
     """
@@ -322,6 +326,8 @@ def climatrend(
         Years, increasing by 1.
     y : numpy array of shape (n,)
         Annual values; missing values as blanks are allowed near the beginning and end.
+    n : Number of recalculations
+    it : number of reiterations
     p : float, optional
         Confidence level for error bounds (default: 0.95).
     t1 : float, optional
@@ -442,7 +448,7 @@ def climatrend(
     span = width / ng
     eval_x = np.linspace(t.min(), t.max(), len(t))
     trend, trendlb, trendub, trendsd = lowess_with_confidence_bounds(
-        tg, y, eval_x,N, lowess_kw={"frac": span}
+        tg, y, eval_x,n, it, lowess_kw={"frac": span}
     )
 
     #trend, trendlb, trendub, trendsd = lowess_james_brennan( tg, y, f=span)
@@ -656,7 +662,7 @@ def getdata(url):
     return df
 
 
-def main_translated_script(df, N, X_array, Y_array, what_to_show, drawplot, draw30, t1, t2 ):
+def main_translated_script(df, N, it, X_array, Y_array, what_to_show, drawplot, draw30, t1, t2 ):
     """Calculation with script from KNMI
 
     """    
@@ -665,6 +671,7 @@ def main_translated_script(df, N, X_array, Y_array, what_to_show, drawplot, draw
         X_array,
         Y_array,
         N,
+        it,
         p=None,
         t1=t1,
         t2=t2,
@@ -695,7 +702,8 @@ def interface():
     ]
     #year_list = df["YYYY"].to_list()
     what_to_show = st.sidebar.selectbox("Wat weer te geven", show_options, 1)
-    N = st.sidebar.number_input("Number of iterations (bootstrapping)",100,100000, 100)
+    n = st.sidebar.number_input("Number of recalculatons (bootstrapping)",100,100000, 100)
+    it = st.sidebar.number_input("Number of iterations",1,4, 1)
     drawplot = st.sidebar.selectbox("Show Matplotlib plot", [True, False], 1)
     draw30 = st.sidebar.selectbox("Show 30 year SMA", [True, False], 1)
     test_trend= st.sidebar.selectbox("Two-sided test for absence of trend", [True, False], 1)
@@ -710,18 +718,17 @@ def interface():
     compare_1 = st.sidebar.selectbox("Compare 1",["knmi_R_script",  "statsmodel","skmisc","simply", "james"],0)
     compare_2 = st.sidebar.selectbox("Compare 2",["knmi_R_script",  "statsmodel","skmisc","simply", "james"],1)
     
-    return what_to_show,drawplot,draw30,t1,t2, N, compare_1, compare_2
+    return what_to_show,drawplot,draw30,t1,t2, n, it, compare_1, compare_2
 
 
-def main_alex(N,what_to_show, X_array, Y_array):
+def main_alex(n,it, what_to_show, X_array, Y_array):
     
     """Calculation with script from the internet
 
     """   
-    deg=1
+    
     alpha = 42/len(X_array)
-  
-    y_hat  = lowess_alexandre_gramfort(X_array, Y_array, f=alpha, iter=3)
+    y_hat  = lowess_alexandre_gramfort(X_array, Y_array, alpha, it)
     st.subheader("Results script found on internet from Alexandre Gramfort")
     st.write("https://gist.github.com/agramfort/850437")
     st.write("The trendline is quit a bit off, I dint make a bootstrapping for it.")
@@ -737,9 +744,9 @@ def main_alex(N,what_to_show, X_array, Y_array):
     return df2
 
 
-def main_james(N,what_to_show, X_array, Y_array ):
+def main_james(n,what_to_show, X_array, Y_array ):
     
-    """Calculation with script from the internet
+    """Calculation with script from the internet. Gives CI interval without bootstrapping
 
     """   
    
@@ -807,7 +814,7 @@ def main_output_R_script(draw30):
                                   df3["30_yr_average"],  draw30, True)
     return df3
 
-def main_skmisc(X_array, Y_array, t1,t2):
+def main_skmisc(X_array, Y_array, t1,t2, it):
     """Make a plot and calculate p-value with scikit-misc
 
     Args:
@@ -817,18 +824,47 @@ def main_skmisc(X_array, Y_array, t1,t2):
             First year for which trendline value is compared in the test.
         t2 : float, optional
              year (see t1) for which trendline value is compared in the test. Must be >30 higher than t1
-
+        it : number of iterations
     Returns:
         _type_: _description_
+
+    Relevant code in R
+        # fixed parameters
+        width <- 42
+        control <- loess.control(surface = "direct", statistics= "exact",
+                           iterations= 1)
+        # linear LOESS trendline computation
+        span <- width/ng
+        mdl <- loess(y ~ t, data= data.frame(t= tg, y=yg), span= span,
+                    degree= 1, control= control)
+        # mdl <- loess(y ~ t, data= data.frame(t= t, y=y), span= span, degree= 1)
+        pre <- predict(mdl, newdata= data.frame(t= t), se= TRUE)
+        trend <- pre$fit          # trendline
+        trendsd <- pre$se.fit     # standard deviation of trendline
     """
 
     # https://has2k1.github.io/scikit-misc/stable/generated/skmisc.loess.loess.html
     # https://stackoverflow.com/questions/31104565/confidence-interval-for-lowess-in-python
+
     st.subheader("Lowess with SciKit-Misc")
     st.write("https://has2k1.github.io/scikit-misc/stable/generated/skmisc.loess.loess.html")
     st.write("The only one who gives standard error and CI's; without bootstrapping")
-  
+
+    span = 42/len(Y_array)
     l = loess(X_array, Y_array)
+    
+    
+    # MODEL and CONTROL. Essential for replicating the results from the R script.
+    #
+    # https://has2k1.github.io/scikit-misc/stable/generated/skmisc.loess.loess_model.html#skmisc.loess.loess_model
+    # https://has2k1.github.io/scikit-misc/stable/generated/skmisc.loess.loess_control.html#skmisc.loess.loess_control
+   
+    l.model.span = span
+    l.model.degree = 1
+    l.control.iterations = it # must be 1 for replicating the R-script
+    l.control.surface = "direct"
+    l.control.statistics = "exact"
+
     l.fit()
     pred = l.predict(X_array, stderror=True)
     conf = pred.confidence()
@@ -841,34 +877,7 @@ def main_skmisc(X_array, Y_array, t1,t2):
     
     show_plot_plotly("Scikit-misc", "temp_avg", X_array, Y_array, lowess, ll, ul, None, None, False, True)
 
-    # # Create a scatter plot for the data points
-    # scatter_trace = go.Scatter(x=X_array, y=Y_array, mode='lines', line=dict(width=0.7, color="rgba(255, 0, 255, 0.5)"), name='Data Points')
-
-    # # Create a line plot for lowess
-    # lowess_trace = go.Scatter(x=X_array, y=lowess, mode='lines',  name='Lowess')
-
-    # # Create a filled area plot for confidence interval
-    # confidence_trace = go.Scatter(x=np.concatenate([X_array, X_array[::-1]]),
-    #                             y=np.concatenate([ul, ll[::-1]]),
-    #                             #fill='tozeroy',
-    #                             fillcolor='rgba(0, 128, 0, 0.2)',
-    #                             line=dict(color='dimgrey', width=.5),
-    #                             showlegend=False)
-
-    # # Combine the traces into a single figure
-    # fig = go.Figure([scatter_trace, lowess_trace, confidence_trace])
-
-    # # Update layout settings
-    # fig.update_layout(
-    #     title='Lowess with Confidence Interval',
-    #     xaxis_title='X Values',
-    #     yaxis_title='Y Values',
-    #     showlegend=True,
-    #     hovermode='x'
-    # )
-
-    # # Show the Plotly figure
-    # st.plotly_chart(fig)
+   
     t = np.asarray(X_array, dtype=np.float64)
     y = np.asarray(Y_array, dtype=np.float64)
     dt = np.diff(t)[0]
@@ -912,7 +921,7 @@ def show_footer():
 def main():
     show_info()
 
-    what_to_show, drawplot, draw30, t1, t2, N, compare_1, compare_2  = interface()
+    what_to_show, drawplot, draw30, t1, t2, N, it, compare_1, compare_2  = interface()
     n_values = [N]
 
     # Initialize an empty list to store the results for each N
@@ -924,13 +933,13 @@ def main():
         # st.header(f" ----- {N} -----")
         # print (f" ----- {N} -----")
         # results = 
-        main_calculations(N, what_to_show, drawplot, draw30, t1, t2, compare_1, compare_2)
+        main_calculations(N, it, what_to_show, drawplot, draw30, t1, t2, compare_1, compare_2)
         # all_results.extend(results)
         s2 = int(time.time())
         s2x = s2 - s1
         print(" ")  # to compensate the  sys.stdout.flush()
 
-        print(f"{N} Iterations  took {str(s2x)} seconds ....)")
+        print(f"{N} recalculations  took {str(s2x)} seconds ....)")
     show_footer()
 
     # Display the results in a table using Streamlit
@@ -939,7 +948,7 @@ def main():
     # st.table(df_results)
     # df_results.to_csv(f"comparison_of_N.csv", index=False)
 
-def main_calculations(N, what_to_show, drawplot, draw30, t1, t2, compare_1, compare_2):
+def main_calculations(n, it, what_to_show, drawplot, draw30, t1, t2, compare_1, compare_2):
      #url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\de_bilt_jaargem_1901_2022.csv"
     url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/de_bilt_jaargem_1901_2022.csv" 
     df = getdata(url)
@@ -954,14 +963,14 @@ def main_calculations(N, what_to_show, drawplot, draw30, t1, t2, compare_1, comp
     Y_array = df[what_to_show].values
     df1 = main_output_R_script(draw30)
     
-    df2 = main_translated_script(df, N,X_array, Y_array, what_to_show, drawplot, draw30, t1, t2)
+    df2 = main_translated_script(df, n,it,X_array, Y_array, what_to_show, drawplot, draw30, t1, t2)
         
-    df3 = main_simply(N,what_to_show, X_array, Y_array)
+    df3 = main_simply(n,what_to_show, X_array, Y_array)
     
-    df6 = main_skmisc(X_array, Y_array,t1,t2)
+    df6 = main_skmisc(X_array, Y_array,t1,t2, it)
 
-    df4= main_james(N,what_to_show,X_array, Y_array)
-    df5 = main_alex(N,what_to_show,X_array, Y_array)
+    df4= main_james(n,what_to_show,X_array, Y_array)
+    df5 = main_alex(n, it,what_to_show,X_array, Y_array)
     df_m = pd.merge(df1, df2, on='YYYY').merge(df6, on='YYYY').merge(df3, on='YYYY').merge(df4, on='YYYY').merge(df5, on='YYYY')
     #df_m = pd.merge(df1, df2, on='YYYY').merge(df6, on='YYYY')
    
@@ -971,14 +980,14 @@ def main_calculations(N, what_to_show, drawplot, draw30, t1, t2, compare_1, comp
     result = df_m[new_column_order]
     st.write(result)
     st.write(result.round(2))
-    print (result.dtypes)
-    compare_values_in_df_m(N, df_m, compare_1, compare_2)
+    
+    compare_values_in_df_m( df_m, compare_1, compare_2)
     #result = output_df_m(N, df_m)
 
     # Return the result as a list of dictionaries
     return # result
 
-def compare_values_in_df_m(N, df_m, compare_1, compare_2):
+def compare_values_in_df_m(df_m, compare_1, compare_2):
     
     
   
@@ -1014,9 +1023,17 @@ def compare_values_in_df_m(N, df_m, compare_1, compare_2):
     c = df_m[f"diff_loess_abs_{compare_1}_{compare_2}"]
     
     to_show = [a,b,c]
-    print (to_show)
-    fig_line = px.line(df_m, x='YYYY', y=to_show, title=f'Absolute value of the difference of the {compare_1} script and the {compare_2} script of the CI-intervalborders')
 
+    fig_line = px.line(df_m, x='YYYY', y=to_show, title=f'Absolute value of the difference of the {compare_1} script and the {compare_2} script of the CI-intervalborders')
+    
+    fig_line.add_shape(
+        type='line',
+        x0=df_m['YYYY'].iloc[0],
+        x1=df_m['YYYY'].iloc[-1],
+        y0=0,
+        y1=0,
+        line=dict(color='red', dash='dash')
+    )
     st.plotly_chart(fig_line)
 
 
@@ -1026,9 +1043,17 @@ def compare_values_in_df_m(N, df_m, compare_1, compare_2):
     c = df_m[f"diff_loess_rel_{compare_1}_{compare_2}"]
     
     to_show = [a,b,c]
-    print (to_show)
+   
     fig_line = px.line(df_m, x='YYYY', y=to_show, title=f'Relative  difference (%) of the {compare_1} script and the {compare_2} script of the CI-intervalborders')
-
+    
+    fig_line.add_shape(
+        type='line',
+        x0=df_m['YYYY'].iloc[0],
+        x1=df_m['YYYY'].iloc[-1],
+        y0=0,
+        y1=0,
+        line=dict(color='red', dash='dash')
+    )
     st.plotly_chart(fig_line)
 
     # result = {
