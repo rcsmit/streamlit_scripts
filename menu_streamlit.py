@@ -50,7 +50,8 @@ def main():
                 ["21. Midjourney prompt generator", "midjourney_prompt_generator"],
                 ["22. Historical weather", "weather_koh_samui"],
                 ["23. KNMI trendline LOESS", "loess"],
-                 ["23. KNMI trendline LOESS - scikit-misc", "loess_scikitmisc"]
+                ["24. KNMI trendline LOESS - scikit-misc", "loess_scikitmisc"],
+                ["24. Yield management", "yield_management"]
                 
                 
                 ]
