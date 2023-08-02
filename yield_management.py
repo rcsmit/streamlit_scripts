@@ -35,11 +35,11 @@ def main():
             h = st.number_input("h",0,1000, 10)
         
     x_values = list(range(1001))
-    df = pd.DataFrame({'prijs': x_values})
-    df['bezetting'] = df['prijs'].apply(lambda input_x: line_function(input_x,  a,b,c,d,e,f,g,h))
-    df['omzet'] = df['prijs'] * df['bezetting']
-    fig_y = px.line(df, x='prijs', y='bezetting', title='bezetting', labels={'x': 'prijs', 'y': 'bezetting'})
-    fig_y_times_x = px.line(df, x='prijs', y='omzet', title='omzet', labels={'x': 'prijs', 'y': 'omzet'})
+    df = pd.DataFrame({'price': x_values})
+    df['occupation'] = df['price'].apply(lambda input_x: line_function(input_x,  a,b,c,d,e,f,g,h))
+    df['turn_over'] = df['price'] * df['occupation']
+    fig_y = px.line(df, x='price', y='occupation', title='occupation', labels={'x': 'price', 'y': 'occupation'})
+    fig_y_times_x = px.line(df, x='price', y='turn_over', title='turn_over', labels={'x': 'price', 'y': 'turn_over'})
     col3,col4 = st.columns(2)
     with col3:
         st.plotly_chart (fig_y, use_container_width=True)
