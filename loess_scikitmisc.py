@@ -292,26 +292,28 @@ def main_skmisc(t, y, t1,t2, draw30, p=None, ybounds=None, it=1):
     return df
 
 def show_footer():
-          
+    st.subheader("Extra information")
     st.info( """
         
-        References:
-        * https://www.knmi.nl/kennis-en-datacentrum/achtergrond/standaardmethode-voor-berekening-van-een-trend
-        * KNMI Technical report TR-389 (see http://bibliotheek.knmi.nl/knmipubTR/TR389.pdf)
+        **References**\n
+        * https://www.knmi.nl/kennis-en-datacentrum/achtergrond/standaardmethode-voor-berekening-van-een-trend\n
+        * KNMI Technical report TR-389 (see http://bibliotheek.knmi.nl/knmipubTR/TR389.pdf)\n
 
-        Original Source code:
-        https://gitlab.com/cees.de.valk/trend_knmi/-/blob/master/R/climatrend.R?ref_type=heads
-        Version: 09-Mar-2021
-        Author R script: Cees de Valk (cees.de.valk@knmi.nl)
+        **Original Source code**\n
+        * https://gitlab.com/cees.de.valk/trend_knmi/-/blob/master/R/climatrend.R?ref_type=heads\n
+        * Version: 09-Mar-2021\n
+        * Author R script: Cees de Valk (cees.de.valk at knmi.nl)\n
 
-        **Python version ***
-        translated from R to Python by ChatGPT and adapted by Rene Smit.
-        Source: https://github.com/rcsmit/streamlit_scripts/blob/main/loess_scikitmisc.py
-        Various algoritms and packages have been tested (*). Only the scikit-misc gives the same results
-        as the R-script, with a small deviation  (**)
+        **Python version**\n
+        translated from R to Python by ChatGPT and adapted by Rene Smit.\n
+        Source: https://github.com/rcsmit/streamlit_scripts/blob/main/loess_scikitmisc.py\n
+        Various algoritms and packages have been tested (*). ChatGPT used *statsmodels* in the translation.
+        However, only the scikit-misc gives the same results as the R-script, 
+        with a small deviation in the confidence interval.
+        (deviations are between 0.002 and 0.004 degrees)  (**)\n
 
-        (*) See https://rcsmit-streamlit-scripts-menu-streamlit-fiaxhp.streamlit.app/?choice=22
-    
+        (*) https://rcsmit-streamlit-scripts-menu-streamlit-fiaxhp.streamlit.app/?choice=22\n
+        (**) https://github.com/rcsmit/streamlit_scripts/blob/main/input/knmi_r_script__vs__scikit-misc.png
         """  )
 
 def interface():
