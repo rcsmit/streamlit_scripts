@@ -1,25 +1,9 @@
 import streamlit as st
-
 import numpy as np
 import pandas as pd
-import statsmodels.api as sm
-
-# import scipy.stats as stats
 from scipy.stats import norm
-
-from scipy.stats import t
-from scipy.stats import sem
-
-
 import plotly.graph_objects as go
-import plotly.express as px
-from scipy.linalg import qr, pinv   
-from scipy.linalg import solve_triangular
-
-import time
-from math import ceil
 import numpy as np
-from scipy import linalg
 from skmisc.loess import loess
 
 def show_info():
@@ -308,8 +292,8 @@ def show_footer():
         translated from R to Python by ChatGPT and adapted by Rene Smit.\n
         Source: https://github.com/rcsmit/streamlit_scripts/blob/main/loess_scikitmisc.py\n
         Various algoritms and packages have been tested (*). ChatGPT used *statsmodels* in the translation.
-        However, only the scikit-misc gives the same results as the R-script, 
-        with a small deviation in the confidence interval.
+        However, only the scikit-misc gives the same results as the R-script (*after* changing some default parameters in model and control), 
+        with a very small deviation in the confidence interval.
         (deviations are between 0.002 and 0.004 degrees)  (**)\n
 
         (*) https://rcsmit-streamlit-scripts-menu-streamlit-fiaxhp.streamlit.app/?choice=22\n
