@@ -1305,37 +1305,37 @@ def show_plot(df, datefield, title, wdw, wdw2, what_to_show_, graph_type, center
             average_values = [df.iloc[i * rows_per_part:(i + 1) * rows_per_part][what_to_show_x].mean() for i in range(n_parts)]
             X_array = df[datefield].values
             Y_array = df[what_to_show_x].values
+            if len(X_array)>30:
+                #y_hat2, x_space2 = calculate_loess(X_array, Y_array, 0.05, 1, all_x = True, num_points = 200)
+                x_space2, y_hat2, trendlb, trendub  = climatrend(X_array, Y_array)
 
-            #y_hat2, x_space2 = calculate_loess(X_array, Y_array, 0.05, 1, all_x = True, num_points = 200)
-            x_space2, y_hat2, trendlb, trendub  = climatrend(X_array, Y_array)
-
-            loess = go.Scatter(
-                name=f"{what_to_show_x} Loess",
-                x=x_space2,
-                y= y_hat2,
-                mode='lines',
-                line=dict(width=1,
-                color='rgba(255, 0, 255, 1)'
-                ),
-                )
-            loess_low = go.Scatter(
-                name=f"{what_to_show_x} Loess low",
-                x=x_space2,
-                y= trendlb,
-                mode='lines',
-                line=dict(width=.7,
-                color='rgba(255, 0, 255, 0.5)'
-                ),
-                )
-            loess_high = go.Scatter(
-                name=f"{what_to_show_x} Loess high",
-                x=x_space2,
-                y= trendub,
-                mode='lines',
-                line=dict(width=0.7,
-                color='rgba(255, 0, 255, 0.5)'
-                ),
-                )
+                loess = go.Scatter(
+                    name=f"{what_to_show_x} Loess",
+                    x=x_space2,
+                    y= y_hat2,
+                    mode='lines',
+                    line=dict(width=1,
+                    color='rgba(255, 0, 255, 1)'
+                    ),
+                    )
+                loess_low = go.Scatter(
+                    name=f"{what_to_show_x} Loess low",
+                    x=x_space2,
+                    y= trendlb,
+                    mode='lines',
+                    line=dict(width=.7,
+                    color='rgba(255, 0, 255, 0.5)'
+                    ),
+                    )
+                loess_high = go.Scatter(
+                    name=f"{what_to_show_x} Loess high",
+                    x=x_space2,
+                    y= trendub,
+                    mode='lines',
+                    line=dict(width=0.7,
+                    color='rgba(255, 0, 255, 0.5)'
+                    ),
+                    )
             df["sma"] = df[what_to_show_x].rolling(window=wdw, center=centersmooth).mean()
             if wdw2 != 999:
                 df["sma2"] = df[what_to_show_x].rolling(window=wdw2, center=centersmooth).mean()
@@ -1422,9 +1422,11 @@ def show_plot(df, datefield, title, wdw, wdw2, what_to_show_, graph_type, center
            
             #data = [sma,points]
             data.append(sma)
-            data.append(loess)
-            data.append(loess_low)
-            data.append(loess_high)
+
+            if len(X_array)>30:
+                data.append(loess)
+                data.append(loess_low)
+                data.append(loess_high)
             if wdw2 != 999:
                 data.append(sma2)
             if wdw != 1:
