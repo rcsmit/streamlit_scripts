@@ -1422,7 +1422,6 @@ def show_plot(df, datefield, title, wdw, wdw2, what_to_show_, graph_type, center
            
             #data = [sma,points]
             data.append(sma)
-
             if len(X_array)>30:
                 data.append(loess)
                 data.append(loess_low)
