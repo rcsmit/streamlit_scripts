@@ -1147,7 +1147,6 @@ def babypackanalyse(df, y):
 
     if y == 2023:
         date_to_check_ = st.sidebar.date_input("Date to check")
-    
         desired_date = dt.datetime.combine(date_to_check_, dt.datetime.min.time())
         guests_with_babybed = df[(df['checkin_date'] <= desired_date) & (df['checkout_date'] > desired_date) & (df['bb'] >= 1)]
         guests_with_highchair = df[(df['checkin_date'] <= desired_date) & (df['checkout_date'] > desired_date) & (df['kst'] >= 1)]
