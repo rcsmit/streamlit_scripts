@@ -1141,7 +1141,7 @@ def babypackanalyse(df, y):
     st.write(f"Aantal days dat x {what} in gebruik zijn")
     st.write(freq_tabel)
     st.write(
-        f"Maximum aantal totaal aantal {what} {df_babypacks['total_{what}'].max()}"
+        f"Maximum aantal totaal aantal {what} {df_babypacks[f'total_{what}'].max()}"
     )
 
     if y == 2023:
