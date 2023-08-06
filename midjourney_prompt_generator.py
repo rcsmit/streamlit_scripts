@@ -55,7 +55,7 @@ def generate_prompt(df,included_columns, what,who, number,chaos, stylize, weird,
     elif what=="ANIMALS":
         prompt = f'{take_random_value(df, "CONCEPT")} a {take_random_value(df, what)} as {take_random_value(df, "ARCHETYPES")} in a {take_random_value(df, "SCENES")} by {take_random_value(df, who)} '
     elif what == "INTERIOR ARCHITECTURE":
-         prompt =f'An {take_random_value(df, "COMPOSITION_INT_ARCH")}'
+         prompt =f'{take_random_value(df, "COMPOSITION_INT_ARCH")}'
     else:
         prompt = f'{take_random_value(df, "CONCEPT")} {take_random_value(df, what)} in a {take_random_value(df, "SCENES")} by {take_random_value(df, who)}'
       
@@ -89,6 +89,8 @@ def generate_prompt(df,included_columns, what,who, number,chaos, stylize, weird,
     #     prompt += f"--stylize {random.randint(1,1000)} " # Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
     #     prompt += f"--weird {random.randint(1,3000)} "
     # else:
+    if what == "INTERIOR ARCHITECTURE":
+        prompt += " with exclusive finishes and minimalist detailing throughout, intrinsic details " 
     ending = f"--chaos {chaos} --stylize {stylize}  --weird {weird} --ar {ar} --style raw"
     prompt += ending
     prompt2 += ending
@@ -108,6 +110,8 @@ def generate_prompt(df,included_columns, what,who, number,chaos, stylize, weird,
     else:
         for h in history_list:
             st.info(h)
+        if st.sidebar.button('Clear history'):
+            del st.session_state["history"]
     history_list.append(prompt2)
     st.session_state.history = history_list
     
