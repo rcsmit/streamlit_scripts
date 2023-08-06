@@ -1150,9 +1150,9 @@ def babypackanalyse(df, y):
         desired_date = dt.datetime.combine(date_to_check_, dt.datetime.min.time())
         guests_with_babybed = df[(df['checkin_date'] <= desired_date) & (df['checkout_date'] > desired_date) & (df['bb'] >= 1)]
         guests_with_highchair = df[(df['checkin_date'] <= desired_date) & (df['checkout_date'] > desired_date) & (df['kst'] >= 1)]
-        st.subheader(f"Guests with babybed at {date_to_check} ({len(guests_with_babybed)})")
+        st.subheader(f"Guests with babybed at {date_to_check_} ({len(guests_with_babybed)})")
         st.write(guests_with_babybed)
-        st.subheader(f"Guests with highchair at {date_to_check} ({len(guests_with_highchair)})")
+        st.subheader(f"Guests with highchair at {date_to_check_} ({len(guests_with_highchair)})")
         st.write(guests_with_highchair)
 
 def deken_analyse(df_bookingtable, year):
