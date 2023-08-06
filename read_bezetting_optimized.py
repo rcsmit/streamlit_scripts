@@ -1100,7 +1100,7 @@ def babypackanalyse(df, y):
     )
 
     what = st.sidebar.selectbox("What to show",["bb", "kst", "babypack", "babypack_old"], 0)
-    st.subheader(f"Analyse - {what}- {y}")
+    st.subheader(f"Analyse -- {y}")
     # NOG AANPASSEN
     df_ = df[df[what] == 1]
     st.write(f"Bookings with {what}")
