@@ -1090,7 +1090,7 @@ def generate_info_all_years(df_mutation, years, selection_list_accos):
     return  df_info_per_year
 
 def babypackanalyse(df, y):
-    st.subheader(f"Babypack analyse - {y}")
+   
     df =df.copy()
     df["babypack_old"] = df["guest_name"].str.contains("baby").astype(int)
     df["kst"] = df["guest_name"].str.contains("kst").astype(int)
@@ -1099,7 +1099,8 @@ def babypackanalyse(df, y):
         (df["babypack_old"] >= 1) | (df["kst"] >= 1) | (df["bb"] >= 1), 1, 0
     )
 
-    what = "bb"
+    what = st.sidebar.selectbox("What to show",["bb", "kst", "babypack", "babypack_old"], 0)
+    st.subheader(f"Analyse - {what}- {y}")
     # NOG AANPASSEN
     df_ = df[df[what] == 1]
     st.write(f"Bookings with {what}")
