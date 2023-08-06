@@ -505,8 +505,6 @@ def extract_info(df):
 
 def add_extra_linnen(booking_table):
 
-    import pandas as pd
-
     # Assuming you have two dataframes: bookingtable and extra_linnen
     # with a common column 'reservation nr' and a column 'single linnen'
 
@@ -1101,9 +1099,10 @@ def babypackanalyse(df, y):
         (df["babypack_old"] >= 1) | (df["kst"] >= 1) | (df["bb"] >= 1), 1, 0
     )
 
+    what = "bb"
     # NOG AANPASSEN
-    df_ = df[df["babypack"] == 1]
-    st.write("Bookings with babypack")
+    df_ = df[df[what] == 1]
+    st.write(f"Bookings with {what}")
     st.write(df_)
     # convert date columns to datetime format
     df["checkin_date"] = pd.to_datetime(df["checkin_date"])
@@ -1118,14 +1117,14 @@ def babypackanalyse(df, y):
     # iterate over the date range and calculate the total guests with babypacks for each date
     for date in date_range:
         mask = (df["checkin_date"] <= date) & (df["checkout_date"] > date) & df[
-            "babypack"
+            what
         ] == 1
         total = df.loc[mask, "guest_name"].count()
         totals[date] = total
 
     # create a dataframe from the dictionary and convert the index to a date column
     df_babypacks = pd.DataFrame.from_dict(
-        totals, orient="index", columns=["total_babypacks"]
+        totals, orient="index", columns=[f"total_{what}"]
     )
     df_babypacks.reset_index(inplace=True)
     df_babypacks.rename(columns={"index": "date"}, inplace=True)
@@ -1134,15 +1133,15 @@ def babypackanalyse(df, y):
     fig = px.line(
         df_babypacks,
         x="date",
-        y="total_babypacks",
-        title=f"Number of Babypacks over Time in {y}",
+        y=f"total_{what{",
+        title=f"Number of {what} over Time in {y}",
     )
     st.plotly_chart(fig, use_container_width=True)
-    freq_tabel = df_babypacks["total_babypacks"].value_counts()
-    st.write("Aantal days dat x babypacks in gebruik zijn")
+    freq_tabel = df_babypacks[f"total_{what}"].value_counts()
+    st.write(f"Aantal days dat x {what} in gebruik zijn")
     st.write(freq_tabel)
     st.write(
-        f"Maximum aantal totaal aantal babypacks {df_babypacks['total_babypacks'].max()}"
+        f"Maximum aantal totaal aantal {what} {df_babypacks['total_{what}'].max()}"
     )
 
     if y == 2023:
