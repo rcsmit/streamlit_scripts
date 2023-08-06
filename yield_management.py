@@ -3,6 +3,7 @@ import plotly.express as px
 import streamlit as st
 import math
 
+
 def line_function(input_x, a,b,c,d,e,f,g,h):
     if input_x <a:
         return 100
@@ -48,3 +49,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    

@@ -170,7 +170,9 @@ def show_info(df):
     st.write("* [Scene settings](https://onestopforwriters.com/scene_settings)") 
     st.write("* [Architecture](https://docs.google.com/spreadsheets/d/1029yD1REXEq8V47XgfRm8GQby8JXnwGNlWOL17Lz6J4/edit#gid=0)") 
     st.write("* [201 archetypes](https://industrialscripts.com/archetypes-of-characters/)") 
-
+    st.subheader("Prompt generators")
+    st.write("* [Visual promptbuilder](https://tools.saxifrage.xyz/prompt)")
+    st.write("* [prompts.aituts.com](https://prompts.aituts.com/)")
     st.subheader("Interesting people.accounts")
     st.write("* [@techhalla](https://twitter.com/techhalla)") 
     st.write()

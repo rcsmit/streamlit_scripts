@@ -433,6 +433,7 @@ def make_booking_table(wb_2023):
         ],
     )
     df = extract_info(df)
+    df = add_extra_linnen(df)
     df = make_date_columns(df)
     # placeholder_what.empty()
     # placeholder_progress.empty()
@@ -501,6 +502,43 @@ def extract_info(df):
     df["guest_name"] = df["guest_name"].str.replace(r'^de_\s', 'de', regex=True)
     df["guest_name"] = df["guest_name"].str.replace(r'^van de_\s', 'van de', regex=True)
     return df
+
+def add_extra_linnen(booking_table):
+
+    import pandas as pd
+
+    # Assuming you have two dataframes: bookingtable and extra_linnen
+    # with a common column 'reservation nr' and a column 'single linnen'
+
+    # Example dataframes
+  
+    data_extra_linnen = {'reservation nr': [2, 3, 4],
+                        'single linnen': [2, 3, 1]}
+
+    bookingtable = pd.DataFrame(data_bookingtable)
+    extra_linnen = pd.DataFrame(data_extra_linnen)
+
+    # Merge dataframes on 'reservation nr' and update 'single linnen' column
+   # Merge dataframes on 'reservation nr' and update the columns
+    merged_df = bookingtable.merge(extra_linnen, on='booking_number', how='left')
+    columns_to_update = ['dbl_linnen', 'sng_linnen', 'kst', 'bb']
+
+    for col in columns_to_update:
+        merged_df[col + '_x'] += merged_df[col + '_y']
+        merged_df.drop(columns=[col + '_y'], inplace=True)
+        merged_df.rename(columns={col + '_x': col}, inplace=True)
+
+    # Print the updated dataframe
+    print(merged_df)
+
+
+
+
+
+
+    # Print the updated dataframe
+    print(merged_df)
+    return booking_table
 
 
 def graph_distribution_nationalities(df, y):
@@ -1108,14 +1146,14 @@ def babypackanalyse(df, y):
     )
 
     if y == 2023:
-        date_to_check_ = st.sidebar.date_input("Date to check from")
+        date_to_check_ = st.sidebar.date_input("Date to check")
     
         desired_date = dt.datetime.combine(date_to_check_, dt.datetime.min.time())
-        guests_with_babybed = df[(df['checkin_date'] <= desired_date) & (df['checkout_date'] >= desired_date) & (df['bb'] >= 1)]
-        guests_with_highchair = df[(df['checkin_date'] <= desired_date) & (df['checkout_date'] >= desired_date) & (df['kst'] >= 1)]
-        st.subheader("Guests with babybed")
+        guests_with_babybed = df[(df['checkin_date'] <= desired_date) & (df['checkout_date'] > desired_date) & (df['bb'] >= 1)]
+        guests_with_highchair = df[(df['checkin_date'] <= desired_date) & (df['checkout_date'] > desired_date) & (df['kst'] >= 1)]
+        st.subheader("Guests with babybed at {date_to_check} ({len(guests_with_babybed)})")
         st.write(guests_with_babybed)
-        st.subheader("Guests with highchair")
+        st.subheader("Guests with highchair at {date_to_check} ({len(guests_with_highchair)})")
         st.write(guests_with_highchair)
 
 def deken_analyse(df_bookingtable, year):
@@ -2411,7 +2449,7 @@ def filter_months(start_month, end_month, df_):
     return df_
 
 def main():       
-    test = False  # To test or not to test (to see if the fillcolors in the sheet are right.)
+    test = True  # To test or not to test (to see if the fillcolors in the sheet are right.)
     # https://github.com/onedrive/onedrive-sdk-python
     # https://github.com/vgrem/Office365-REST-Python-Client#Working-with-OneDrive-API
     upload = True
