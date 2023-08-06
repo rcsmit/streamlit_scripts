@@ -224,8 +224,8 @@ def getdata(stn, fromx, until):
             "neerslag_etmaalsom",
         ]
         
-        divide_by_10 = False if platform.processor() else True
-
+        #divide_by_10 = False if platform.processor() else True
+        divide_by_10 = True
         if divide_by_10:
             for d in to_divide_by_10:
                 try:
@@ -581,6 +581,10 @@ def interface():
 
     wdw = st.sidebar.slider("Window smoothing curves", 1, 45, 7)
     wdw2 = st.sidebar.number_input("Window smoothing curves 2 (999 for none)", 1, 999, 999)
+    if wdw2 != 999:
+        sma2_how = st.sidebar.selectbox("SMA2 How", ["mean", "median"], 0)
+    else:
+        sma2_how = None
     centersmooth =  st.sidebar.selectbox(
         "Smooth in center", [True, False], index=0
         )
@@ -601,7 +605,7 @@ def interface():
     else:
         no_of_parts = 1
 
-    return stn, from_, until_, mode, wdw, wdw2, what_to_show, gekozen_weerstation, centersmooth, graph_type,show_ci, wdw_ci,show_parts, no_of_parts
+    return stn, from_, until_, mode, wdw, wdw2,sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type,show_ci, wdw_ci,show_parts, no_of_parts
     
 def check_from_until(from_, until_):
     """Checks whethe start- and enddate are valid.
@@ -653,7 +657,7 @@ def list_to_text(what_to_show_):
 
     return w
 
-def action(stn, from_, until_, mode, wdw, wdw2, what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, wdw_ci,show_parts, no_of_parts):
+def action(stn, from_, until_, mode, wdw, wdw2, sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, wdw_ci,show_parts, no_of_parts):
     what_to_show_as_txt = list_to_text(what_to_show)
     FROM, UNTIL = check_from_until(from_, until_)
 
@@ -754,7 +758,7 @@ def action(stn, from_, until_, mode, wdw, wdw2, what_to_show, gekozen_weerstatio
                 st.sidebar.write(
                     "Zorg ervoor dat de datum in de gekozen tijdrange valt voor het beste resultaat "
                 )
-        show_plot(df, datefield, title, wdw, wdw2, what_to_show, graph_type, centersmooth, show_ci, wdw_ci, show_parts, no_of_parts)
+        show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show, graph_type, centersmooth, show_ci, wdw_ci, show_parts, no_of_parts)
         #try:
         show_warmingstripes(df, title)
         # except:
@@ -1214,7 +1218,7 @@ def climatrend(t, y, p=None, t1=None, t2=None, ybounds=None, drawplot=False, dra
     #         'ybounds': ybounds}
     return t, trend, trendlb, trendub
 
-def show_plot(df, datefield, title, wdw, wdw2, what_to_show_, graph_type, centersmooth, show_ci, wdw_ci, show_parts, no_of_parts):
+def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_type, centersmooth, show_ci, wdw_ci, show_parts, no_of_parts):
     what_to_show_ = what_to_show_ if type(what_to_show_) == list else [what_to_show_]
     color_list = [
         "#02A6A8",
@@ -1337,8 +1341,11 @@ def show_plot(df, datefield, title, wdw, wdw2, what_to_show_, graph_type, center
                     ),
                     )
             df["sma"] = df[what_to_show_x].rolling(window=wdw, center=centersmooth).mean()
-            if wdw2 != 999:
-                df["sma2"] = df[what_to_show_x].rolling(window=wdw2, center=centersmooth).mean()
+            if (wdw2 != 999):
+                if (sma2_how == "mean"):
+                    df["sma2"] = df[what_to_show_x].rolling(window=wdw2, center=centersmooth).mean()
+                elif (sma2_how == "median"):
+                    df["sma2"] = df[what_to_show_x].rolling(window=wdw2, center=centersmooth).median()
 
                 sma2 = go.Scatter(
                     name=f"{what_to_show_x} SMA ({wdw2})",
@@ -1841,8 +1848,8 @@ def help():
 
 
 def main():
-    stn, from_, until_, mode, wdw, wdw2, what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, wdw_ci,show_parts, no_of_parts = interface()
-    action(stn, from_, until_, mode, wdw, wdw2, what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, wdw_ci,show_parts, no_of_parts)
+    stn, from_, until_, mode, wdw, wdw2, sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, wdw_ci,show_parts, no_of_parts = interface()
+    action(stn, from_, until_, mode, wdw, wdw2,sma2_how,  what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, wdw_ci,show_parts, no_of_parts)
 
 
 if __name__ == "__main__":
