@@ -433,7 +433,7 @@ def make_booking_table(wb_2023):
         ],
     )
     df = extract_info(df)
-    df = add_extra_linnen(df)
+    #df = add_extra_linnen(df)
     df = make_date_columns(df)
     # placeholder_what.empty()
     # placeholder_progress.empty()
