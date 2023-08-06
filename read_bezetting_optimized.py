@@ -1089,7 +1089,7 @@ def generate_info_all_years(df_mutation, years, selection_list_accos):
 
     return  df_info_per_year
 
-def babypackanalyse(df, y):
+def babypackanalyse(df, y, what):
    
     df =df.copy()
     df["babypack_old"] = df["guest_name"].str.contains("baby").astype(int)
@@ -1099,7 +1099,7 @@ def babypackanalyse(df, y):
         (df["babypack_old"] >= 1) | (df["kst"] >= 1) | (df["bb"] >= 1), 1, 0
     )
 
-    what = st.sidebar.selectbox("What to show",["bb", "kst", "babypack", "babypack_old"], 0)
+    
     st.subheader(f"Analyse -- {y}")
     # NOG AANPASSEN
     df_ = df[df[what] == 1]
@@ -2605,10 +2605,11 @@ def main():
             deken_analyse(df_bookingtable_year, y)
 
     elif what_to_do == "babypackanalyse" :
+        what = st.sidebar.selectbox("What to show",["bb", "kst", "babypack", "babypack_old"], 0)
         for y in [2022,2023]:
            
             df_bookingtable_year =  df_bookingtable[df_bookingtable["year_int"] == y]
-            babypackanalyse(df_bookingtable_year, y)
+            babypackanalyse(df_bookingtable_year, y, what)
 
     # UTILITIES
     elif what_to_do == "Find color":
