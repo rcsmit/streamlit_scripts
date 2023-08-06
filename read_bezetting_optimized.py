@@ -1133,7 +1133,7 @@ def babypackanalyse(df, y):
     fig = px.line(
         df_babypacks,
         x="date",
-        y=f"total_{what{",
+        y=f"total_{what}",
         title=f"Number of {what} over Time in {y}",
     )
     st.plotly_chart(fig, use_container_width=True)
