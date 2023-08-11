@@ -185,8 +185,6 @@ def getdata(stn, fromx, until):
             [13, "RH_max"]
         ]
 
-
-        #st.write(df)
         #column_replacements = column_replacements_local if platform.processor() else column_replacements_knmi
         column_replacements = column_replacements_knmi
         for c in column_replacements:
