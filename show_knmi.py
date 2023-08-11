@@ -153,6 +153,9 @@ def getdata(stn, fromx, until):
             [38, "RH_min"],
             [36, "RH_max"]
         ]
+        # 0   1           2     3     4    5       6     7      8    9    100    11   12
+        # STN,YYYYMMDD,   TG,   TN,   TX, T10N,   SQ,   SP,    Q,   DR,   RH,   UN,   UX
+          STN,YYYYMMDD,   TG,   TN,   TX, T10N,   SQ,   SP,    Q,   DR,   RH,   UN,   UX
         column_replacements_knmi = [
             [0, "STN"],
             [1, "YYYYMMDD"],
@@ -194,6 +197,7 @@ def getdata(stn, fromx, until):
         # else:
         print (df.dtypes)
         print (df)
+        
         df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"].astype(str))
         df["YYYY"] = df["YYYYMMDD"].dt.year
         df["MM"] = df["YYYYMMDD"].dt.month
@@ -246,7 +250,7 @@ def getdata(stn, fromx, until):
         ]
         
         #divide_by_10 = False if platform.processor() else True
-        divide_by_10 = True
+        divide_by_10 = False
         if divide_by_10:
             for d in to_divide_by_10:
                 try:
