@@ -280,7 +280,7 @@ def convert_df(df):
 
 
 
-def does_rain_predict_rain(df, RAINY = 0.5):
+def does_rain_predict_rain(df):
     """reproducing 
     
     https://medium.com/towards-data-science/does-rain-predict-rain-us-weather-data-and-the-correlation-of-rain-today-and-tomorrow-3a62eda6f7f7
@@ -294,7 +294,9 @@ def does_rain_predict_rain(df, RAINY = 0.5):
         
         RAINY (float, optional): How much percipation is need to consider  a day  as rainy. 
                                  Defaults to 0.5.
-    """    
+    """   
+    RAINY = st.sidebar.number_input("treshold(mm percipation)",0.0,100.0,0.5) 
+    NR_DAYS = st.sidebar.number_input("Number of days to consider",0,100,10) 
     st.write ("reproducing https://medium.com/towards-data-science/does-rain-predict-rain-us-weather-data-and-the-correlation-of-rain-today-and-tomorrow-3a62eda6f7f7")
     stationDF = df.rename({"STN":"STATION", "YYYYMMDD":"DATE", "neerslag_etmaalsom":'DlySumToday'}, axis='columns') 
     stationDF = stationDF[["STATION","DATE","DlySumToday"]]  # keep just what we need
@@ -304,12 +306,12 @@ def does_rain_predict_rain(df, RAINY = 0.5):
     stationCopyDF = stationCopyDF.rename({"STN":"STATION","neerslag_etmaalsom":"DlySumOther", "YYYYMMDD":"DATEother"}, axis='columns')  
  
     # Add in some other dates, for which we will pull in rainfall.
-    for n in range(1,10):
+    for n in range(1,NR_DAYS+1):
         stationDF[f"DATE_minus{n}"] = stationDF["DATE"] - pd.offsets.Day(n)
     stationDF["DATE_plus1"] = stationDF["DATE"] + pd.offsets.Day(1)
    
     # Join other rainfall onto base record. Adjust column names to make clear what we did.
-    for n in range(1,10):
+    for n in range(1,NR_DAYS+1):
         stationDF = stationDF.merge(stationCopyDF, how='inner', left_on=["STATION",f"DATE_minus{n}"], right_on = ["STATION","DATEother"])
         ago_n = f"DlySum{n}DaysAgo"
 
@@ -322,7 +324,7 @@ def does_rain_predict_rain(df, RAINY = 0.5):
     stationDF["DaysOfRain"] = 0
 
     stationDF.loc[(stationDF["DlySumToday"] >= RAINY), "DaysOfRain"] = 1
-    for i in range(1, 10):
+    for i in range(1, NR_DAYS+1):
         conditions = [
             stationDF[f'DlySum{i - j}DaysAgo'] >= RAINY for j in range(i)
         ]
@@ -718,51 +720,53 @@ def interface():
     from_ = st.sidebar.text_input("startdatum (yyyy-mm-dd) from 1-1-1900", start_)
     until_ = st.sidebar.text_input("enddatum (yyyy-mm-dd)", today)
 
-    
+    if mode != "does rain predict rain":
 
-    show_options = [
-        "temp_min",
-        "temp_avg",
-        "temp_max",
-        "T10N",
-        "zonneschijnduur",
-        "perc_max_zonneschijnduur",
-        "glob_straling",
-        "neerslag_duur",
-        "neerslag_etmaalsom","RH_min","RH_max","spec_humidity_knmi_derived","abs_humidity_knmi_derived","globale_straling_log10",
-    ]
+        show_options = [
+            "temp_min",
+            "temp_avg",
+            "temp_max",
+            "T10N",
+            "zonneschijnduur",
+            "perc_max_zonneschijnduur",
+            "glob_straling",
+            "neerslag_duur",
+            "neerslag_etmaalsom","RH_min","RH_max","spec_humidity_knmi_derived","abs_humidity_knmi_derived","globale_straling_log10",
+        ]
 
-    what_to_show = st.sidebar.multiselect("Wat weer te geven", show_options, "temp_max")
-    #if len(what_to_show)==1:
-    graph_type = st.sidebar.selectbox("Graph type (plotly=interactive)", ["pyplot", "plotly"], index=1)
-    #else:
-    #    graph_type = "pyplot"
+        what_to_show = st.sidebar.multiselect("Wat weer te geven", show_options, "temp_max")
+        #if len(what_to_show)==1:
+        graph_type = st.sidebar.selectbox("Graph type (plotly=interactive)", ["pyplot", "plotly"], index=1)
+        #else:
+        #    graph_type = "pyplot"
 
-    wdw = st.sidebar.slider("Window smoothing curves", 1, 45, 7)
-    wdw2 = st.sidebar.number_input("Window smoothing curves 2 (999 for none)", 1, 999, 999)
-    if wdw2 != 999:
-        sma2_how = st.sidebar.selectbox("SMA2 How", ["mean", "median"], 0)
+        wdw = st.sidebar.slider("Window smoothing curves", 1, 45, 7)
+        wdw2 = st.sidebar.number_input("Window smoothing curves 2 (999 for none)", 1, 999, 999)
+        if wdw2 != 999:
+            sma2_how = st.sidebar.selectbox("SMA2 How", ["mean", "median"], 0)
+        else:
+            sma2_how = None
+        centersmooth =  st.sidebar.selectbox(
+            "Smooth in center", [True, False], index=0
+            )
+        st.sidebar.write("Smoothing niet altijd aanwezig")
+        show_ci =  st.sidebar.selectbox(
+            "Show CI", [True, False], index=1
+            )
+        if show_ci:
+            wdw_ci = st.sidebar.slider("Window confidence intervals", 1, 100, 20)
+        else:
+            wdw_ci = 1
+
+        show_parts =  st.sidebar.selectbox(
+            "Show parts", [True, False], index=0
+            )
+        if show_parts:
+            no_of_parts = st.sidebar.slider("Number of parts", 1, 10, 5)
+        else:
+            no_of_parts = 
     else:
-        sma2_how = None
-    centersmooth =  st.sidebar.selectbox(
-        "Smooth in center", [True, False], index=0
-        )
-    st.sidebar.write("Smoothing niet altijd aanwezig")
-    show_ci =  st.sidebar.selectbox(
-        "Show CI", [True, False], index=1
-        )
-    if show_ci:
-        wdw_ci = st.sidebar.slider("Window confidence intervals", 1, 100, 20)
-    else:
-        wdw_ci = 1
-
-    show_parts =  st.sidebar.selectbox(
-        "Show parts", [True, False], index=0
-        )
-    if show_parts:
-        no_of_parts = st.sidebar.slider("Number of parts", 1, 10, 5)
-    else:
-        no_of_parts = 1
+        wdw, wdw2,sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type,show_ci, wdw_ci,show_parts, no_of_parts = None,None,None,None,None,None,None,None,None,None,None
 
     return stn, from_, until_, mode, wdw, wdw2,sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type,show_ci, wdw_ci,show_parts, no_of_parts
     
