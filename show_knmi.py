@@ -333,7 +333,6 @@ def does_rain_predict_rain(df):
             combined_condition &= cond
         stationDF.loc[combined_condition, 'DaysOfRain'] = i+1
 
-
     stationDF = stationDF[["STATION","DATE","DlySumToday", 'DaysOfRain']]      
     stationDF = stationDF.sort_values(by='DATE')
     stationDF['DlySumToday_tomorrow'] = stationDF['DlySumToday'].shift(-1)
