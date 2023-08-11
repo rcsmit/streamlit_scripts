@@ -764,7 +764,7 @@ def interface():
         if show_parts:
             no_of_parts = st.sidebar.slider("Number of parts", 1, 10, 5)
         else:
-            no_of_parts = 
+            no_of_parts = None
     else:
         wdw, wdw2,sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type,show_ci, wdw_ci,show_parts, no_of_parts = None,None,None,None,None,None,None,None,None,None,None
 
