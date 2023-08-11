@@ -302,6 +302,7 @@ def does_rain_predict_rain(df):
     NR_DAYS = st.sidebar.number_input("Number of days to consider",0,100,10) 
     df = df.replace(r'^\s*$', None, regex=True)
     df = df.fillna(0) # there is no data before 1906 and april 1945 is missing.
+    df['neerslag_etmaalsom'] = df['neerslag_etmaalsom'].astype(int)
     st.write (df)
     st.write ("reproducing https://medium.com/towards-data-science/does-rain-predict-rain-us-weather-data-and-the-correlation-of-rain-today-and-tomorrow-3a62eda6f7f7")
     stationDF = df.rename({"STN":"STATION", "YYYYMMDD":"DATE", "neerslag_etmaalsom":'DlySumToday'}, axis='columns') 
