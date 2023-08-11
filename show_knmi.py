@@ -250,13 +250,13 @@ def getdata(stn, fromx, until):
         ]
         
         #divide_by_10 = False if platform.processor() else True
-        divide_by_10 = False
+        divide_by_10 = True
         if divide_by_10:
             for d in to_divide_by_10:
                 try:
                     df[d] = df[d] / 10
                 except:
-                    df[d] = None
+                    df[d] = df[d]
 
     df["spec_humidity_knmi_derived"] = df.apply(lambda x: rh2q(x['RH_min'],x['temp_max'], 1020),axis=1)
     df["abs_humidity_knmi_derived"] =df.apply(lambda x: rh2ah(x['RH_min'],x['temp_max']),axis=1)
