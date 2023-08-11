@@ -765,10 +765,11 @@ def interface():
             no_of_parts = st.sidebar.slider("Number of parts", 1, 10, 5)
         else:
             no_of_parts = None
+        groupby_ = st.sidebar.selectbox("Groupby", [True, False], index=1)
     else:
-        wdw, wdw2,sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type,show_ci, wdw_ci,show_parts, no_of_parts = None,None,None,None,None,None,None,None,None,None,None
+        wdw, wdw2,sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type,show_ci, wdw_ci,show_parts, no_of_parts, groupby_ = None,None,None,"neerslag_etmaalsom",None,None,None,None,None,None,None, None
 
-    return stn, from_, until_, mode, wdw, wdw2,sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type,show_ci, wdw_ci,show_parts, no_of_parts
+    return stn, from_, until_, mode, groupby_, wdw, wdw2,sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type,show_ci, wdw_ci,show_parts, no_of_parts
     
 def check_from_until(from_, until_):
     """Checks whethe start- and enddate are valid.
@@ -820,13 +821,13 @@ def list_to_text(what_to_show_):
 
     return w
 
-def action(stn, from_, until_, mode, wdw, wdw2, sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, wdw_ci,show_parts, no_of_parts):
+def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, wdw_ci,show_parts, no_of_parts):
     what_to_show_as_txt = list_to_text(what_to_show)
     FROM, UNTIL = check_from_until(from_, until_)
 
     df_getdata, url = getdata(stn, FROM.strftime("%Y%m%d"), UNTIL.strftime("%Y%m%d"))
     df = df_getdata.copy(deep=False)
-    groupby_ = st.sidebar.selectbox("Groupby", [True, False], index=1)
+    
     if groupby_:
         groupby_how = st.sidebar.selectbox("Groupby", ["year", "year_month"], index=1)
         groupby_what = st.sidebar.selectbox("Groupby",["sum", "mean"], index=1)
@@ -2014,8 +2015,8 @@ def help():
 
 
 def main():
-    stn, from_, until_, mode, wdw, wdw2, sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, wdw_ci,show_parts, no_of_parts = interface()
-    action(stn, from_, until_, mode, wdw, wdw2,sma2_how,  what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, wdw_ci,show_parts, no_of_parts)
+    stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, wdw_ci,show_parts, no_of_parts = interface()
+    action(stn, from_, until_, mode, groupby_,  wdw, wdw2,sma2_how,  what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, wdw_ci,show_parts, no_of_parts)
 
 
 if __name__ == "__main__":
