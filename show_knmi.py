@@ -94,7 +94,8 @@ def log10(t):
     
 @st.cache_data (ttl=60 * 60 * 24)
 def getdata(stn, fromx, until):
-    #url_local=r"C:\Users\rcxsm\Downloads\df_knmi_de_bilt_01011901_27072023.csv"
+    #url=r"C:\Users\rcxsm\Downloads\df_knmi_de_bilt_01011901_27072023.csv"
+    #url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\knmi_nw_beerta_no_header.csv"
     url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start={fromx}&end={until}"
     
     #url = url_local if platform.processor() else url_knmi
@@ -133,6 +134,25 @@ def getdata(stn, fromx, until):
         # RH        : Etmaalsom van de neerslag (in 0.1 mm) (-1 voor <0.05 mm) / Daily precipitation amount (in 0.1 mm) (-1 for <0.05 mm)
         # UN        : Minimale relatieve vochtigheid (in procenten)
         # UX        : Maximale relatieve vochtigheid (in procenten)
+        #  0  1          2    3    4  5   6     7   8   9    10  11  12 3   4  5  16     7    8  9 20  
+        # STN,YYYYMMDD,DDVEC,FHVEC,FG,FHX,FHXH,FHN,FHNH,FXX,FXXH,TG,TN,TNH,TX,TXH,T10N,T10NH,SQ,SP,Q,
+        # 21 22  3   4    5   6 7  8  9   30   1    2   3   4  5  6
+        # DR,RH,RHX,RHXH,PG,PX,PXH,PN,PNH,VVN,VVNH,VVX,VVXH,NG,UG,UX,UXH,UN,UNH,EV24
+        column_replacements_knmi_nw_beerta = [
+            [0, "STN"],
+            [1, "YYYYMMDD"],
+            [11, "temp_avg"],
+            [12, "temp_min"],
+            [14, "temp_max"],
+            [16, "T10N"],
+            [18, "zonneschijnduur"],
+            [19, "perc_max_zonneschijnduur"],
+            [20, "glob_straling"],
+            [21, "neerslag_duur"],
+            [22, "neerslag_etmaalsom"],
+            [38, "RH_min"],
+            [36, "RH_max"]
+        ]
         column_replacements_knmi = [
             [0, "STN"],
             [1, "YYYYMMDD"],
@@ -173,6 +193,8 @@ def getdata(stn, fromx, until):
         # if platform.processor(): 
         #     df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"], format="%Y-%m-%d")
         # else:
+        print (df.dtypes)
+        print (df)
         df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"].astype(str))
         df["YYYY"] = df["YYYYMMDD"].dt.year
         df["MM"] = df["YYYYMMDD"].dt.month
@@ -256,6 +278,144 @@ def download_button(df):
 def convert_df(df):
      # IMPORTANT: Cache the conversion to prevent computation on every rerun
      return df.to_csv().encode('utf-8')
+
+
+
+def does_rain_predict_rain(df, RAINY = 0.5):
+    """reproducing 
+    
+    https://medium.com/towards-data-science/does-rain-predict-rain-us-weather-data-and-the-correlation-of-rain-today-and-tomorrow-3a62eda6f7f7
+
+    Args:
+        df (_type_): Dataframe with information. 
+        STN = codenumber of the staiton
+        neerslag_etmaalsom = total amount of percipation per 24h
+        YYYYMMDD = the date, already made as pd.datetime elsewhere 
+                            df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"], format="%Y%m%d")
+        
+        RAINY (float, optional): How much percipation is need to consider  a day  as rainy. 
+                                 Defaults to 0.5.
+    """    
+    st.write ("reproducing https://medium.com/towards-data-science/does-rain-predict-rain-us-weather-data-and-the-correlation-of-rain-today-and-tomorrow-3a62eda6f7f7")
+    stationDF = df.rename({"STN":"STATION", "YYYYMMDD":"DATE", "neerslag_etmaalsom":'DlySumToday'}, axis='columns') 
+    stationDF = stationDF[["STATION","DATE","DlySumToday"]]  # keep just what we need
+    
+
+    stationCopyDF = df[["STN","YYYYMMDD","neerslag_etmaalsom"]] # keep just what we need
+    stationCopyDF = stationCopyDF.rename({"STN":"STATION","neerslag_etmaalsom":"DlySumOther", "YYYYMMDD":"DATEother"}, axis='columns')  
+ 
+    # Add in some other dates, for which we will pull in rainfall.
+    for n in range(1,10):
+        stationDF[f"DATE_minus{n}"] = stationDF["DATE"] - pd.offsets.Day(n)
+    stationDF["DATE_plus1"] = stationDF["DATE"] + pd.offsets.Day(1)
+   
+    # Join other rainfall onto base record. Adjust column names to make clear what we did.
+    for n in range(1,10):
+        stationDF = stationDF.merge(stationCopyDF, how='inner', left_on=["STATION",f"DATE_minus{n}"], right_on = ["STATION","DATEother"])
+        ago_n = f"DlySum{n}DaysAgo"
+
+        stationDF = stationDF.rename({"DlySumOther":ago_n}, axis='columns')  
+        stationDF = stationDF.drop(columns=["DATEother"])
+
+    stationDF = stationDF.merge(stationCopyDF, how='inner', left_on=["STATION","DATE_plus1"], right_on = ["STATION","DATEother"])
+    stationDF = stationDF.rename({"DlySumOther":"DlySumTomorrow"}, axis='columns')  
+    stationDF = stationDF.drop(columns=["DATEother"])
+    stationDF["DaysOfRain"] = 0
+
+    stationDF.loc[(stationDF["DlySumToday"] >= RAINY), "DaysOfRain"] = 1
+    for i in range(1, 10):
+        conditions = [
+            stationDF[f'DlySum{i - j}DaysAgo'] >= RAINY for j in range(i)
+        ]
+        combined_condition = stationDF['DlySumToday'] >= RAINY
+        for cond in conditions:
+            combined_condition &= cond
+        stationDF.loc[combined_condition, 'DaysOfRain'] = i+1
+
+
+    stationDF = stationDF[["STATION","DATE","DlySumToday", 'DaysOfRain']]      
+    stationDF = stationDF.sort_values(by='DATE')
+    stationDF['DlySumToday_tomorrow'] = stationDF['DlySumToday'].shift(-1)
+    stationDF['does_it_rain_tomorrow'] = stationDF['DlySumToday_tomorrow'] > RAINY
+    stationDF.drop('DlySumToday_tomorrow', axis=1, inplace=True)
+
+    st.header("Total period")
+    rain_probabilities = stationDF.groupby('DaysOfRain')['does_it_rain_tomorrow'].mean().reset_index()
+    st.write(rain_probabilities)
+
+    num_rainy_days = (stationDF['DlySumToday'] > RAINY).sum()
+    total_days = len(stationDF)
+    fraction_rainy_days = num_rainy_days / total_days
+    st.write(f"Fraction of days with DlySumToday > {RAINY}: {fraction_rainy_days}")
+
+    st.header("Per decade")
+    #Calculate the number and fraction of days where 'DlySumToday' > 0.1 for each decade
+    stationDF['decade'] = stationDF['DATE'].dt.year // 10 * 10
+    rainy_days_per_decade = stationDF[stationDF['DlySumToday'] > RAINY].groupby('decade')['DlySumToday'].count()
+    total_days_per_decade = stationDF.groupby('decade')['DlySumToday'].count()
+    fraction_rainy_days_per_decade = rainy_days_per_decade / total_days_per_decade
+    st.subheader("Fraction of rainy days per decade:")
+    st.write(fraction_rainy_days_per_decade)
+
+    # RAIN PROBABILITIES PER [CONSECUTIVE DAYS OF RAIN] PER DECADE
+    stationDF['decade'] = stationDF['DATE'].dt.year // 10 * 10
+    rain_probabilities_by_decade = []
+
+    for decade, decade_df in stationDF.groupby('decade'):
+        rain_probabilities = decade_df.groupby('DaysOfRain')['does_it_rain_tomorrow'].mean().reset_index()
+        rain_probabilities['decade'] = decade
+        rain_probabilities_by_decade.append(rain_probabilities)
+
+    rain_probabilities_combined = pd.concat(rain_probabilities_by_decade, ignore_index=True)
+    result_table = rain_probabilities_combined.pivot(index='decade', columns='DaysOfRain', values='does_it_rain_tomorrow')
+    st.subheader("RAIN PROBABILITIES PER [CONSECUTIVE DAYS OF RAIN] PER DECADE")
+    st.write(result_table)
+
+    # MAKE A PLOT (rain_probabilities islike result_table, but every value on a row)
+    rain_probabilities = stationDF.groupby(['decade', 'DaysOfRain'])['does_it_rain_tomorrow'].mean().reset_index()
+    fig = px.line(rain_probabilities, x='decade', y='does_it_rain_tomorrow', color='DaysOfRain', title='Rain Probabilities by Decade and Days of Rain')
+    fig.update_xaxes(tickmode='linear', dtick=10)
+    st.plotly_chart(fig)
+    
+    # Create a custom colorscale from light to dark
+    colorscale = [
+        [0, 'rgb(0, 256, 256)'],
+        [1, 'rgb(0,128, 128)']
+        
+    ]
+
+    result_table = result_table.iloc[::-1] # reverse the order, 1900 on top, 2020 bottom
+    # Create a heatmap using plotly.graph_objs
+    heatmap = go.Figure(data=go.Heatmap(
+        z=result_table.values,
+        x=result_table.columns,
+        y=result_table.index,
+        colorscale=colorscale   # You can choose a different color scale if desired, was 'Viridis'
+    ))
+
+    
+    heatmap.update_layout(
+        xaxis_title="Days of Rain",
+        yaxis_title="Decade",
+        title="Rain Probabilities Heatmap by Decade and Days of Rain"
+    )
+
+    # Display the heatmap
+    st.plotly_chart(heatmap)
+
+    # AVERAGE RAINGFALL PER DECADE
+    st.subheader("AVERAGE RAINFALL PER DECADE")
+    average_rainfall_per_decade = stationDF.groupby('decade')['DlySumToday'].mean().reset_index()
+    fig = px.bar(average_rainfall_per_decade, x='decade', y='DlySumToday', 
+             title='Average Rainfall per Decade', labels={'DlySumToday': 'Average Rainfall'})
+    fig.update_xaxes(tickmode='linear', dtick=10)
+    st.plotly_chart(fig)
+
+
+
+
+
+
 
 
 
@@ -537,7 +697,7 @@ def interface():
         df, het weerstation, begindatum en einddatum (laatste drie als string)
     """
     mode = st.sidebar.selectbox(
-        "Modus (kies HELP voor hulp)", ["doorlopend per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", "per maand in div jaren", "percentiles", "polar_plot", "show weerstations", "help"], index=0
+        "Modus (kies HELP voor hulp)", ["doorlopend per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", "per maand in div jaren", "percentiles", "polar_plot", "does rain predict rain", "show weerstations", "help"], index=0
     )
    
     weer_stations = get_weerstations()
@@ -679,6 +839,8 @@ def action(stn, from_, until_, mode, wdw, wdw2, sma2_how, what_to_show, gekozen_
     
     if mode == "help":
         help()
+    elif mode == "does rain predict rain":
+        does_rain_predict_rain(df)
     elif mode == "show weerstations":
         show_weerstations()
 
