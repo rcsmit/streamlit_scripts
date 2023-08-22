@@ -101,4 +101,5 @@ def main():
     make_scatterplot(df, x, y, show_log_x,show_log_y,trendline_per_continent)
     st.info("Meat consumption etc. : https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8881926/ (appendix 1)\n            Gapminder data set, values from 2018 : https://www.kaggle.com/datasets/albertovidalrod/gapminder-dataset?resource=download")
 
-main()
+if __name__ == "__main__":
+    main()
