@@ -97,7 +97,7 @@ def getdata(stn, fromx, until):
     #url=r"C:\Users\rcxsm\Downloads\df_knmi_de_bilt_01011901_27072023.csv"
     #url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\knmi_nw_beerta_no_header.csv"
     url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start={fromx}&end={until}"
-    
+    # url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\de_bilt_1901_2023_no_header.csv"
     #url = url_local if platform.processor() else url_knmi
     #header = 0  if platform.processor() else None
     header = None
@@ -303,7 +303,7 @@ def does_rain_predict_rain(df):
     df = df.replace(r'^\s*$', None, regex=True)
     df = df.fillna(0) # there is no data before 1906 and april 1945 is missing.
     df['neerslag_etmaalsom'] = df['neerslag_etmaalsom'].astype(int)
-    st.write (df)
+    
     st.write ("reproducing https://medium.com/towards-data-science/does-rain-predict-rain-us-weather-data-and-the-correlation-of-rain-today-and-tomorrow-3a62eda6f7f7")
     stationDF = df.rename({"STN":"STATION", "YYYYMMDD":"DATE", "neerslag_etmaalsom":'DlySumToday'}, axis='columns') 
     stationDF = stationDF[["STATION","DATE","DlySumToday"]]  # keep just what we need
@@ -343,12 +343,33 @@ def does_rain_predict_rain(df):
     stationDF = stationDF[["STATION","DATE","DlySumToday", 'DaysOfRain']]      
     stationDF = stationDF.sort_values(by='DATE')
     stationDF['DlySumToday_tomorrow'] = stationDF['DlySumToday'].shift(-1)
+    stationDF['DaysOfRain_next'] = stationDF['DaysOfRain'].shift(-1)
     stationDF['does_it_rain_tomorrow'] = stationDF['DlySumToday_tomorrow'] > RAINY
+    # Create the new column based on the condition
+    stationDF['rain_period'] = stationDF['DaysOfRain'].where(stationDF['DaysOfRain_next'] == 0, other=0)
+
     stationDF.drop('DlySumToday_tomorrow', axis=1, inplace=True)
+    stationDF.drop('DaysOfRain_next', axis=1, inplace=True)
 
     st.header("Total period")
     rain_probabilities = stationDF.groupby('DaysOfRain')['does_it_rain_tomorrow'].mean().reset_index()
     st.write(rain_probabilities)
+    fig = px.bar(rain_probabilities, x='DaysOfRain', y='does_it_rain_tomorrow', 
+             title='Wil it rain the next day given .. days of rain')
+    st.plotly_chart(fig)
+
+        
+    # Calculate the frequencies of the 'NewColumn' values
+    frequency_data = stationDF['rain_period'].value_counts().reset_index()
+    frequency_data.columns = ['rain_period', 'frequency']
+    frequency_data_filtered = frequency_data[frequency_data['rain_period'] != 0]
+
+
+    # Create a bar graph using Plotly Express
+    fig = px.bar(frequency_data_filtered, x='rain_period', y='frequency', 
+                title='Frequency of Rain Periods', labels={'rain_period': 'Rain Period', 'frequency': 'Frequency'})
+
+    st.plotly_chart(fig)
 
     num_rainy_days = (stationDF['DlySumToday'] > RAINY).sum()
     total_days = len(stationDF)
@@ -361,8 +382,12 @@ def does_rain_predict_rain(df):
     rainy_days_per_decade = stationDF[stationDF['DlySumToday'] > RAINY].groupby('decade')['DlySumToday'].count()
     total_days_per_decade = stationDF.groupby('decade')['DlySumToday'].count()
     fraction_rainy_days_per_decade = rainy_days_per_decade / total_days_per_decade
+    fraction_rainy_days_per_decade = fraction_rainy_days_per_decade.rename({"DlySumToday":"fraction_rainy_days"}).reset_index()
     st.subheader("Fraction of rainy days per decade:")
     st.write(fraction_rainy_days_per_decade)
+    fig = px.bar(fraction_rainy_days_per_decade, x='decade', y='DlySumToday', 
+             title='Fraction rainy days', labels={'DlySumToday': 'Fraction rainy days'})
+    st.plotly_chart(fig)
 
     # RAIN PROBABILITIES PER [CONSECUTIVE DAYS OF RAIN] PER DECADE
     stationDF['decade'] = stationDF['DATE'].dt.year // 10 * 10
@@ -411,10 +436,10 @@ def does_rain_predict_rain(df):
     st.plotly_chart(heatmap)
 
     # AVERAGE RAINGFALL PER DECADE
-    st.subheader("AVERAGE RAINFALL PER DECADE")
+    st.subheader("AVERAGE RAINFALL per day (mm) / PER DECADE")
     average_rainfall_per_decade = stationDF.groupby('decade')['DlySumToday'].mean().reset_index()
     fig = px.bar(average_rainfall_per_decade, x='decade', y='DlySumToday', 
-             title='Average Rainfall per Decade', labels={'DlySumToday': 'Average Rainfall'})
+             title='Average Rainfall per Decade', labels={'DlySumToday': 'Average Rainfall per day (mm)'})
     fig.update_xaxes(tickmode='linear', dtick=10)
     st.plotly_chart(fig)
 

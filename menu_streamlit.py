@@ -51,7 +51,8 @@ def main():
                 ["22. Historical weather", "weather_koh_samui"],
                 ["23. KNMI trendline LOESS", "loess"],
                 ["24. KNMI trendline LOESS - scikit-misc", "loess_scikitmisc"],
-                ["24. Yield management", "yield_management"]
+                ["25. Yield management", "yield_management"],
+                ["26. Meat consumption", "meat_consumption"]
                 
                 
                 ]
