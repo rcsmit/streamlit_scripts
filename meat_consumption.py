@@ -28,7 +28,7 @@ def get_data():
     
     #url_gm = r"C:\Users\rcxsm\AppData\Local\Temp\Temp73593f11-a6e0-472f-84a0-1505a4bd8c70_archive.zip\gapminder_data_graphs.csv"
     url_gm = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gapminder_data_graphs.csv"
-    df_gm_2018 = pd.read_csv(url_gm, delimiter=',')
+    df_gm = pd.read_csv(url_gm, delimiter=',')
     df_gm_2018 = df_gm[df_gm["year"] == 2018]
     
     merged_df = pd.merge(df, df_gm_2018, how='outer', on='country')
@@ -83,7 +83,7 @@ def main():
     df = get_data()
    
     x = st.sidebar.selectbox('Select a column X', df.columns[1:], 0)
-    y = st.sidebar.selectbox('Select a column Y', df.columns[1:], 0)
+    y = st.sidebar.selectbox('Select a column Y', df.columns[1:], 1)
     
     df["continent"].fillna("UNKNOWN", inplace=True)
     df = df.fillna(0)
