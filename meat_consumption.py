@@ -9,7 +9,7 @@ from scipy.stats import linregress
 
 # REPRODUCING https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8881926/
 
-def get_data():
+def get_data(join_how):
     url_meat = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption.csv"
     url_gm = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gapminder_data_graphs.csv"
     url_health =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/health_efficiency_index.csv"
@@ -37,15 +37,16 @@ def get_data():
     df_gm = pd.read_csv(url_gm, delimiter=',')
     df_gm_2018 = df_gm[df_gm["year"] == 2018]
     
-    merged_df = pd.merge(df, df_gm_2018, how='outer', on='country')
+    merged_df = pd.merge(df, df_gm_2018, how=join_how, on='country')
 
 
     # https://web.archive.org/web/20200313135813/https://www.who.int/healthinfo/paper30.pdf
 
     df_health = pd.read_csv(url_health, delimiter=',')
+    st.write(df_health)
     df_health = df_health[["health_eff_index_rank" ,"country","health_eff_index"]]
 
-    final_merged_df = merged_df.merge(df_health, on="country", how="outer")
+    final_merged_df = merged_df.merge(df_health, on="country", how=join_how)
    
 
     # # Find countries in df but not in df_gm
@@ -105,20 +106,16 @@ def correlation_matrix(df):
     #sn.heatmap(corrMatrix, annot=True, annot_kws={"fontsize": 7})
     st.write(corrMatrix)
 def main():
-    df = get_data()
-   
-   
-    
+    join_how = "inner"
+    df = get_data(join_how)
     df["continent"].fillna("UNKNOWN", inplace=True)
-    #df = df.fillna(0)
-   
-    # Get unique continents from the DataFrame
+    df, x,y, show_log_x, show_log_y, trendline_per_continent = interface()
     
-    df, x,y, show_log_x, show_log_y, trendline_per_continent = interface(df)
+    
     make_scatterplot(df, x, y, show_log_x,show_log_y,trendline_per_continent)
     correlation_matrix(df)
-    st.info("Meat consumption etc. : https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8881926/ (appendix 1)\n            Gapminder data set, values from 2018 : https://www.kaggle.com/datasets/albertovidalrod/gapminder-dataset?resource=download\n
-            Health Efficiency Index : https://web.archive.org/web/20200313135813/https://www.who.int/healthinfo/paper30.pdf")
+    st.info('''Meat consumption etc. : https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8881926/ (appendix 1)\n            Gapminder data set, values from 2018 : https://www.kaggle.com/datasets/albertovidalrod/gapminder-dataset?resource=download\n
+            Health Efficiency Index : https://web.archive.org/web/20200313135813/https://www.who.int/healthinfo/paper30.pdf''')
 
 def interface(df):
     x = st.sidebar.selectbox('Select a column X', df.columns[1:], 0)
@@ -129,10 +126,11 @@ def interface(df):
         selected_continents = st.sidebar.multiselect('Select continents', list(continents),list(continents))
         df = df[df['continent'].isin(selected_continents)]
     # Create a checkbox to determine whether to display log values
+    #join_how = st.sidebar.selectbox("How to join", ["inner", "outer"],0)
     show_log_x = st.sidebar.checkbox('Show logarithmic values X')
     show_log_y= st.sidebar.checkbox('Show logarithmic values Y')
     trendline_per_continent= st.sidebar.checkbox('Trendline per continent')
-    return df,x,y,show_log_x,show_log_y,trendline_per_continent
+    return df,x,y,show_log_x,show_log_y,trendline_per_continent #,join_how
 
 if __name__ == "__main__":
     main()
