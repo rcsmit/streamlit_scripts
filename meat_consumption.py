@@ -25,15 +25,16 @@ def get_data(join_how):
     url_meat = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption.csv"
     url_gm = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gapminder_data_graphs.csv"
     url_health =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/health_efficiency_index.csv"
-    url_education = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/mean-years-of-schooling-long-run.csv"
+    url_education_mean = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/mean-years-of-schooling-long-run.csv"
+    url_education_expected = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/expected-years-of-schooling.csv"
     
     # url_meat = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption.csv"
     # url_gm = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gapminder_data_graphs.csv"
     # url_health = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\health_efficiency_index.csv"
-    # url_education = r"C:\Users\rcxsm\Downloads\mean-years-of-schooling-long-run.csv"
+    # url_education_mean = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\mean-years-of-schooling-long-run.csv"
+    # url_education_expected = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\expected-years-of-schooling.csv"
     
-    
-    df =  pd.read_csv(url_meat, delimiter=',')
+    df_meat =  pd.read_csv(url_meat, delimiter=',')
 
     # gapminder dataset 
     # https://www.kaggle.com/datasets/albertovidalrod/gapminder-dataset?resource=download
@@ -51,20 +52,24 @@ def get_data(join_how):
     df_gm = pd.read_csv(url_gm, delimiter=',')
     df_gm_2018 = df_gm[df_gm["year"] == 2018]
     
-    merged_df = pd.merge(df, df_gm_2018, how=join_how, on='country')
-
+    
 
     # https://web.archive.org/web/20200313135813/https://www.who.int/healthinfo/paper30.pdf
 
     df_health = pd.read_csv(url_health, delimiter=',')
     df_health = df_health[["health_eff_index_rank" ,"country","health_eff_index"]]
-
-    final_merged_df_ = merged_df.merge(df_health, on="country", how=join_how)
    
-    df_education =  pd.read_csv(url_education, delimiter=',')
-    df_education = df_education[df_education["year"] == 2020]
-    final_merged_df = final_merged_df_.merge(df_education, on="country", how=join_how)
-   
+    df_education_mean =  pd.read_csv(url_education_mean, delimiter=',')
+    df_education_mean = df_education_mean[df_education_mean["year"] == 2020]
+    df_education_expected =  pd.read_csv(url_education_expected, delimiter=',')
+  
+    df_education_expected = df_education_expected[df_education_expected["year"] == 2020]
+    
+    merged_df_1 = pd.merge(df_meat, df_gm_2018, how=join_how, on='country')
+    merged_df_2 = merged_df_1.merge(df_health, on="country", how=join_how)
+    merged_df_3 = merged_df_2.merge(df_education_mean, on="country", how=join_how)
+    df = merged_df_3.merge(df_education_expected, on="country", how=join_how)
+    df["education_index"] = ((df["schooling_expected"] / 18) + (df["schooling_mean"] /15) )/2
 
     # # Find countries in df but not in df_gm
     # countries_in_df_not_in_df_gm = df[~df['country'].isin(df_health['country'])]
@@ -132,7 +137,7 @@ def correlation_matrix(df):
     columns_meat =   ["meat_cons","life_exp_birth","life_exp_5","mort_under_5","cal_day","gdpppp _2011","urban_pop","bmi_over_30","cho_crops","prim_educ_over_25"]
     columns_health = ["health_eff_index_rank" ,"health_eff_index"]
     columns_gm = ["life_exp","hdi_index","co2_consump","gdp","services"]
-    columns_educ = ["avg_years_ed"]
+    columns_educ = ["schooling_mean", "schooling_expected","education_index"]
     columns = columns_meat + columns_health + columns_gm +columns_educ
 
     df = df[columns]
