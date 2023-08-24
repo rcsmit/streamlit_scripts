@@ -91,7 +91,7 @@ idx,idx_l,idx_h,country,eff_index, eff_index_l,eff_index_h
 90,84,106,Bosnia and Herzegovina,0.664,0.632,0.694
 91,85,104,Lebanon,0.664,0.638,0.688
 92,85,107,Indonesia,0.660,0.632,0.689
-93,83,110,Iran,Islamic Republic of,0.659,0.620,0.693
+93,83,110,Iran,0.659,0.620,0.693
 94,87,108,Bahamas,0.657,0.625,0.687
 95,87,107,Panama,0.656,0.627,0.686
 96,90,106,Fiji,0.653,0.630,0.674
@@ -154,7 +154,7 @@ idx,idx_l,idx_h,country,eff_index, eff_index_l,eff_index_h
 153,143,161,Turkmenistan,0.443,0.390,0.490
 154,147,163,Tajikistan,0.428,0.381,0.470
 155,143,167,Zimbabwe,0.427,0.352,0.497
-156,145,166,United Republic of Tanzania,0.422,0.368,0.479
+156,145,166,Tanzania,0.422,0.368,0.479
 157,149,168,Djibouti,0.414,0.355,0.459
 158,152,170,Eritrea,0.399,0.339,0.446
 159,149,170,Madagascar,0.397,0.329,0.463

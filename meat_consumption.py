@@ -33,20 +33,25 @@ def get_data():
     
     merged_df = pd.merge(df, df_gm_2018, how='outer', on='country')
 
+    url_health =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/health_efficiency_index.csv"
+    df_health = pd.read_csv(url_health, delimiter=',')
+    
+    final_merged_df = merged_df.merge(df_health, on="country", how="inner")
+   
 
-    # # Find countries in df but not in df_gm
-    # countries_in_df_not_in_df_gm = df[~df['country'].isin(df_gm_2018['country'])]
+    # Find countries in df but not in df_gm
+    countries_in_df_not_in_df_gm = df[~df['country'].isin(df_health['country'])]
 
-    # # Find countries in df_gm but not in df
-    # countries_in_df_gm_not_in_df = df_gm_2018[~df_gm_2018['country'].isin(df['country'])]
+    # Find countries in df_gm but not in df
+    countries_in_df_gm_not_in_df = df_health[~df_health['country'].isin(df['country'])]
 
-    # # Display the differences
-    # st.write("Countries in df but not in df_gm:")
-    # st.write(countries_in_df_not_in_df_gm)
+    # Display the differences
+    st.write("Countries in df but not in df_health:")
+    st.write(countries_in_df_not_in_df_gm)
 
-    # st.write("Countries in df_gm but not in df:")
-    # st.write(countries_in_df_gm_not_in_df)
-    return merged_df
+    st.write("Countries in df_health but not in df:")
+    st.write(countries_in_df_gm_not_in_df)
+    return final_merged_df
 
 def make_scatterplot(df_, x, y, show_log_x,show_log_y,trendline_per_continent):
     df = df_.dropna(subset=[x,y])
