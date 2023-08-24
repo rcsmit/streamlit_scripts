@@ -47,13 +47,9 @@ def get_data(join_how):
     # Gross Domestic Product per capita (gdp). Describes the GDP per capita in dollars for a given country in a given year
     # % Service workers (services). Describes the the % of service workers for a given country in a given year
     
-
-   
     df_gm = pd.read_csv(url_gm, delimiter=',')
     df_gm_2018 = df_gm[df_gm["year"] == 2018]
     
-    
-
     # https://web.archive.org/web/20200313135813/https://www.who.int/healthinfo/paper30.pdf
 
     df_health = pd.read_csv(url_health, delimiter=',')
@@ -83,9 +79,9 @@ def get_data(join_how):
 
     # st.write("Countries in df_health but not in df:")
     st.subheader("DATA")
-    st.write(final_merged_df)
-    st.write(f"Lengte {len(final_merged_df)}")
-    return final_merged_df
+    st.write(df)
+    st.write(f"Lengte {len(df)}")
+    return df
 
 def make_scatterplot(df_, x, y, show_log_x,show_log_y,trendline_per_continent):
     """Makes a scatterplot
@@ -145,6 +141,8 @@ def correlation_matrix(df):
     st.subheader("Correlation matrix")
     st.write(corrMatrix)
     fig = px.imshow(corrMatrix.abs()) 
+    st.subheader("Correlation heatmap (absolute values)")
+    
     st.plotly_chart(fig)
 
 
@@ -156,8 +154,8 @@ def multiple_lineair_regression(df_):
     """    
     st.subheader("Multiple Lineair Regression")
     y_value = st.selectbox("Y value", ['life_exp',"life_exp_birth","life_exp_5","mort_under_5"],0)
-    x_values_options =  ["meat_cons","cal_day","gdpppp _2011","urban_pop","bmi_over_30","cho_crops","prim_educ_over_25","health_eff_index_rank" ,"health_eff_index","hdi_index","co2_consump","gdp","services", 'avg_years_ed']
-    x_values_default = ['meat_cons','health_eff_index','avg_years_ed',"urban_pop","bmi_over_30","cho_crops","prim_educ_over_25"]
+    x_values_options =  ["meat_cons","cal_day","gdpppp _2011","urban_pop","bmi_over_30","cho_crops","prim_educ_over_25","health_eff_index_rank" ,"health_eff_index","hdi_index","co2_consump","gdp","services", 'education_index', 'schooling_mean', 'schooling_expected']
+    x_values_default = ['meat_cons','health_eff_index',"urban_pop","bmi_over_30","cho_crops","prim_educ_over_25", 'education_index']
     x_values = st.multiselect("X values", x_values_options, x_values_default)
     
     df = df_.dropna(subset=x_values)
@@ -211,8 +209,9 @@ def show_footer():
     st.info("Health Efficiency Index : https://web.archive.org/web/20200313135813/https://www.who.int/healthinfo/paper30.pdf")
     st.write("Factors : 25% for health (DALE), 25% for health inequality, 12.5% for the level of responsiveness, 12.5% for the distribution of responsiveness, and 25% for fairness in financing.")
     st.info("Education: https://ourworldindata.org/human-development-index")
-    st.write("Entity,Code,Year,Combined - average years of education for 15-64 years male and female youth and adults")
-
+    st.write("Mean years of schooling estimates the average number of years of total schooling adults aged 25 years and older have received. This data extends back to the year 1870 and is based on the combination of data from Lee and Lee (2016); Barro-Lee (2018); and the UN Development Programme. Fifteen is the projected maximum of this indicator for 2025.")
+    st.write("Expected years of schooling measures the number of years of schooling that a child of school entrance age can expect to receive if the current age-specific enrollment rates persist throughout the child’s life by country. Eighteen is equivalent to achieving a master's degree in most countries.")
+    st.write("education_index = ((schooling_expected / 18) + (schooling_mean / 15) )/2 " )
 def interface(df):
     """Makes the interface
 
