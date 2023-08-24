@@ -1,0 +1,4516 @@
+country,code,year,avg_years_ed
+Afghanistan,AFG,2015,4.81
+Afghanistan,AFG,2020,5.69
+Afghanistan,AFG,2025,6.26
+Afghanistan,AFG,2030,6.84
+Afghanistan,AFG,2035,7.38
+Afghanistan,AFG,2040,7.92
+Afghanistan,AFG,1870,0.01
+Afghanistan,AFG,1875,0.01
+Afghanistan,AFG,1880,0.01
+Afghanistan,AFG,1885,0.01
+Afghanistan,AFG,1890,0.01
+Afghanistan,AFG,1895,0.01
+Afghanistan,AFG,1900,0.01
+Afghanistan,AFG,1905,0.01
+Afghanistan,AFG,1910,0.01
+Afghanistan,AFG,1915,0.02
+Afghanistan,AFG,1920,0.03
+Afghanistan,AFG,1925,0.04
+Afghanistan,AFG,1930,0.04
+Afghanistan,AFG,1935,0.05
+Afghanistan,AFG,1940,0.2
+Afghanistan,AFG,1945,0.22
+Afghanistan,AFG,1950,0.28
+Afghanistan,AFG,1955,0.32
+Afghanistan,AFG,1960,0.39
+Afghanistan,AFG,1965,0.44
+Afghanistan,AFG,1970,0.72
+Afghanistan,AFG,1975,0.97
+Afghanistan,AFG,1980,1.29
+Afghanistan,AFG,1985,1.73
+Afghanistan,AFG,1990,2.06
+Afghanistan,AFG,1995,2.4
+Afghanistan,AFG,2000,3.03
+Afghanistan,AFG,2005,3.32
+Afghanistan,AFG,2010,3.93
+Africa,,2015,6.275
+Africa,,2020,6.7349997
+Africa,,2025,7.135
+Africa,,2030,7.685
+Africa,,2035,8.18
+Africa,,2040,8.735
+Africa,,1870,0.01
+Africa,,1875,0.01
+Africa,,1880,0.01
+Africa,,1885,0.01
+Africa,,1890,0.01
+Africa,,1895,0.01
+Africa,,1900,0.02
+Africa,,1905,0.03
+Africa,,1910,0.08
+Africa,,1915,0.18
+Africa,,1920,0.25
+Africa,,1925,0.32
+Africa,,1930,0.36
+Africa,,1935,0.42
+Africa,,1940,0.51
+Africa,,1945,0.56
+Africa,,1950,0.7
+Africa,,1955,0.82
+Africa,,1960,0.96
+Africa,,1965,1.15
+Africa,,1970,1.63
+Africa,,1975,2
+Africa,,1980,2.8
+Africa,,1985,3.65
+Africa,,1990,4.3
+Africa,,1995,4.62
+Africa,,2000,4.62
+Africa,,2005,5.11
+Africa,,2010,5.87
+Albania,ALB,2015,9.99
+Albania,ALB,2020,10.32
+Albania,ALB,2025,10.58
+Albania,ALB,2030,10.83
+Albania,ALB,2035,11.1
+Albania,ALB,2040,11.39
+Albania,ALB,1870,0.02
+Albania,ALB,1875,0.03
+Albania,ALB,1880,0.03
+Albania,ALB,1885,0.04
+Albania,ALB,1890,0.05
+Albania,ALB,1895,0.06
+Albania,ALB,1900,0.08
+Albania,ALB,1905,0.1
+Albania,ALB,1910,0.15
+Albania,ALB,1915,0.24
+Albania,ALB,1920,0.36
+Albania,ALB,1925,0.51
+Albania,ALB,1930,0.67
+Albania,ALB,1935,0.84
+Albania,ALB,1940,1.08
+Albania,ALB,1945,1.8
+Albania,ALB,1950,2.75
+Albania,ALB,1955,2.93
+Albania,ALB,1960,3.23
+Albania,ALB,1965,3.63
+Albania,ALB,1970,4.63
+Albania,ALB,1975,5.77
+Albania,ALB,1980,6.95
+Albania,ALB,1985,7.93
+Albania,ALB,1990,8.61
+Albania,ALB,1995,8.54
+Albania,ALB,2000,9.93
+Albania,ALB,2005,10.24
+Albania,ALB,2010,10.44
+Algeria,DZA,2015,7.55
+Algeria,DZA,2020,8.18
+Algeria,DZA,2025,8.77
+Algeria,DZA,2030,9.37
+Algeria,DZA,2035,10.03
+Algeria,DZA,2040,10.59
+Algeria,DZA,1870,0.1
+Algeria,DZA,1875,0.13
+Algeria,DZA,1880,0.16
+Algeria,DZA,1885,0.2
+Algeria,DZA,1890,0.23
+Algeria,DZA,1895,0.27
+Algeria,DZA,1900,0.39
+Algeria,DZA,1905,0.51
+Algeria,DZA,1910,0.6
+Algeria,DZA,1915,0.58
+Algeria,DZA,1920,0.65
+Algeria,DZA,1925,0.71
+Algeria,DZA,1930,0.74
+Algeria,DZA,1935,0.78
+Algeria,DZA,1940,0.8
+Algeria,DZA,1945,0.82
+Algeria,DZA,1950,0.83
+Algeria,DZA,1955,0.82
+Algeria,DZA,1960,0.9
+Algeria,DZA,1965,1.15
+Algeria,DZA,1970,1.69
+Algeria,DZA,1975,2.26
+Algeria,DZA,1980,3
+Algeria,DZA,1985,4.28
+Algeria,DZA,1990,5.05
+Algeria,DZA,1995,5.76
+Algeria,DZA,2000,6.06
+Algeria,DZA,2005,6.43
+Algeria,DZA,2010,7
+Argentina,ARG,2015,9.59
+Argentina,ARG,2020,9.86
+Argentina,ARG,2025,10.13
+Argentina,ARG,2030,10.39
+Argentina,ARG,2035,10.64
+Argentina,ARG,2040,10.87
+Argentina,ARG,1870,0.39
+Argentina,ARG,1875,0.49
+Argentina,ARG,1880,0.59
+Argentina,ARG,1885,0.65
+Argentina,ARG,1890,0.7
+Argentina,ARG,1895,0.83
+Argentina,ARG,1900,0.97
+Argentina,ARG,1905,1.45
+Argentina,ARG,1910,1.81
+Argentina,ARG,1915,2.35
+Argentina,ARG,1920,2.94
+Argentina,ARG,1925,3.29
+Argentina,ARG,1930,3.72
+Argentina,ARG,1935,4.04
+Argentina,ARG,1940,4.33
+Argentina,ARG,1945,4.65
+Argentina,ARG,1950,4.91
+Argentina,ARG,1955,5.24
+Argentina,ARG,1960,5.69
+Argentina,ARG,1965,6.03
+Argentina,ARG,1970,6.48
+Argentina,ARG,1975,7.03
+Argentina,ARG,1980,7.51
+Argentina,ARG,1985,8.09
+Argentina,ARG,1990,8.67
+Argentina,ARG,1995,8.91
+Argentina,ARG,2000,9.08
+Argentina,ARG,2005,9.57
+Argentina,ARG,2010,9.71
+Armenia,ARM,2015,10.45
+Armenia,ARM,2020,10.54
+Armenia,ARM,2025,10.62
+Armenia,ARM,2030,10.75
+Armenia,ARM,2035,10.89
+Armenia,ARM,2040,11.04
+Asia,,2015,8.895
+Asia,,2020,9.299999
+Asia,,2025,9.705
+Asia,,2030,10.115
+Asia,,2035,10.445
+Asia,,2040,10.915
+Asia,,1870,0.01
+Asia,,1875,0.01
+Asia,,1880,0.01
+Asia,,1885,0.01
+Asia,,1890,0.02
+Asia,,1895,0.03
+Asia,,1900,0.04
+Asia,,1905,0.12
+Asia,,1910,0.205
+Asia,,1915,0.275
+Asia,,1920,0.47
+Asia,,1925,0.56
+Asia,,1930,0.695
+Asia,,1935,0.775
+Asia,,1940,0.965
+Asia,,1945,1.08
+Asia,,1950,1.155
+Asia,,1955,1.365
+Asia,,1960,1.755
+Asia,,1965,2.24
+Asia,,1970,2.6599998
+Asia,,1975,3.165
+Asia,,1980,3.8449998
+Asia,,1985,4.555
+Asia,,1990,5.215
+Asia,,1995,5.835
+Asia,,2000,6.175
+Asia,,2005,6.77
+Asia,,2010,7.7300005
+Australia,AUS,2015,12.92
+Australia,AUS,2020,12.93
+Australia,AUS,2025,12.89
+Australia,AUS,2030,12.85
+Australia,AUS,2035,12.81
+Australia,AUS,2040,12.77
+Australia,AUS,1870,1.72
+Australia,AUS,1875,1.86
+Australia,AUS,1880,2.06
+Australia,AUS,1885,2.39
+Australia,AUS,1890,2.74
+Australia,AUS,1895,2.97
+Australia,AUS,1900,3.09
+Australia,AUS,1905,3.36
+Australia,AUS,1910,3.87
+Australia,AUS,1915,4.29
+Australia,AUS,1920,4.71
+Australia,AUS,1925,5.46
+Australia,AUS,1930,6.01
+Australia,AUS,1935,6.56
+Australia,AUS,1940,7.02
+Australia,AUS,1945,7.48
+Australia,AUS,1950,8.21
+Australia,AUS,1955,8.49
+Australia,AUS,1960,8.78
+Australia,AUS,1965,9.19
+Australia,AUS,1970,10.11
+Australia,AUS,1975,10.8
+Australia,AUS,1980,11.4
+Australia,AUS,1985,11.43
+Australia,AUS,1990,11.44
+Australia,AUS,1995,11.51
+Australia,AUS,2000,11.37
+Australia,AUS,2005,11.71
+Australia,AUS,2010,11.69
+Austria,AUT,2015,10.27
+Austria,AUT,2020,10.39
+Austria,AUT,2025,10.37
+Austria,AUT,2030,10.46
+Austria,AUT,2035,10.55
+Austria,AUT,2040,10.57
+Austria,AUT,1870,2.27
+Austria,AUT,1875,2.4
+Austria,AUT,1880,2.56
+Austria,AUT,1885,2.74
+Austria,AUT,1890,3.04
+Austria,AUT,1895,3.36
+Austria,AUT,1900,3.7
+Austria,AUT,1905,4.03
+Austria,AUT,1910,4.38
+Austria,AUT,1915,4.71
+Austria,AUT,1920,5.03
+Austria,AUT,1925,5.47
+Austria,AUT,1930,5.86
+Austria,AUT,1935,6.25
+Austria,AUT,1940,6.16
+Austria,AUT,1945,5.96
+Austria,AUT,1950,5.89
+Austria,AUT,1955,5.64
+Austria,AUT,1960,5.67
+Austria,AUT,1965,6.54
+Austria,AUT,1970,7.26
+Austria,AUT,1975,7.44
+Austria,AUT,1980,7.6
+Austria,AUT,1985,7.84
+Austria,AUT,1990,8.26
+Austria,AUT,1995,8.93
+Austria,AUT,2000,9.43
+Austria,AUT,2005,9.89
+Austria,AUT,2010,10.13
+Bahrain,BHR,2015,7.82
+Bahrain,BHR,2020,8.21
+Bahrain,BHR,2025,8.58
+Bahrain,BHR,2030,8.93
+Bahrain,BHR,2035,9.29
+Bahrain,BHR,2040,9.6
+Bangladesh,BGD,2015,6.76
+Bangladesh,BGD,2020,7.23
+Bangladesh,BGD,2025,7.72
+Bangladesh,BGD,2030,8.24
+Bangladesh,BGD,2035,8.77
+Bangladesh,BGD,2040,9.29
+Bangladesh,BGD,1870,0.01
+Bangladesh,BGD,1875,0.02
+Bangladesh,BGD,1880,0.02
+Bangladesh,BGD,1885,0.03
+Bangladesh,BGD,1890,0.03
+Bangladesh,BGD,1895,0.04
+Bangladesh,BGD,1900,0.06
+Bangladesh,BGD,1905,0.2
+Bangladesh,BGD,1910,0.33
+Bangladesh,BGD,1915,0.44
+Bangladesh,BGD,1920,0.42
+Bangladesh,BGD,1925,0.5
+Bangladesh,BGD,1930,0.58
+Bangladesh,BGD,1935,0.65
+Bangladesh,BGD,1940,0.75
+Bangladesh,BGD,1945,0.85
+Bangladesh,BGD,1950,0.93
+Bangladesh,BGD,1955,0.95
+Bangladesh,BGD,1960,1.03
+Bangladesh,BGD,1965,1.27
+Bangladesh,BGD,1970,1.41
+Bangladesh,BGD,1975,1.63
+Bangladesh,BGD,1980,2.31
+Bangladesh,BGD,1985,2.87
+Bangladesh,BGD,1990,3.15
+Bangladesh,BGD,1995,3.72
+Bangladesh,BGD,2000,4.77
+Bangladesh,BGD,2005,5.51
+Bangladesh,BGD,2010,6.22
+Barbados,BRB,2015,9.46
+Barbados,BRB,2020,9.67
+Barbados,BRB,2025,9.89
+Barbados,BRB,2030,10.13
+Barbados,BRB,2035,10.38
+Barbados,BRB,2040,10.62
+Barbados,BRB,1870,0.94
+Barbados,BRB,1875,1.06
+Barbados,BRB,1880,1.21
+Barbados,BRB,1885,1.28
+Barbados,BRB,1890,1.37
+Barbados,BRB,1895,1.41
+Barbados,BRB,1900,1.52
+Barbados,BRB,1905,1.97
+Barbados,BRB,1910,1.95
+Barbados,BRB,1915,2.29
+Barbados,BRB,1920,2.7
+Barbados,BRB,1925,2.96
+Barbados,BRB,1930,3.19
+Barbados,BRB,1935,3.53
+Barbados,BRB,1940,3.91
+Barbados,BRB,1945,4.33
+Barbados,BRB,1950,4.68
+Barbados,BRB,1955,4.85
+Barbados,BRB,1960,5.08
+Barbados,BRB,1965,6.79
+Barbados,BRB,1970,8.59
+Barbados,BRB,1975,7.95
+Barbados,BRB,1980,7.72
+Barbados,BRB,1985,8.42
+Barbados,BRB,1990,8.79
+Barbados,BRB,1995,9.07
+Barbados,BRB,2000,9.23
+Barbados,BRB,2005,9.41
+Barbados,BRB,2010,9.57
+Belgium,BEL,2015,11.36
+Belgium,BEL,2020,11.57
+Belgium,BEL,2025,11.68
+Belgium,BEL,2030,11.84
+Belgium,BEL,2035,11.9
+Belgium,BEL,2040,11.98
+Belgium,BEL,1870,2.43
+Belgium,BEL,1875,2.39
+Belgium,BEL,1880,2.56
+Belgium,BEL,1885,2.65
+Belgium,BEL,1890,2.64
+Belgium,BEL,1895,2.65
+Belgium,BEL,1900,2.66
+Belgium,BEL,1905,2.77
+Belgium,BEL,1910,3.09
+Belgium,BEL,1915,3.26
+Belgium,BEL,1920,3.48
+Belgium,BEL,1925,3.75
+Belgium,BEL,1930,4.27
+Belgium,BEL,1935,4.65
+Belgium,BEL,1940,5.17
+Belgium,BEL,1945,5.93
+Belgium,BEL,1950,6.85
+Belgium,BEL,1955,7.17
+Belgium,BEL,1960,7.4
+Belgium,BEL,1965,7.56
+Belgium,BEL,1970,7.98
+Belgium,BEL,1975,8.39
+Belgium,BEL,1980,8.93
+Belgium,BEL,1985,9.41
+Belgium,BEL,1990,10
+Belgium,BEL,1995,10.64
+Belgium,BEL,2000,10.95
+Belgium,BEL,2005,11.11
+Belgium,BEL,2010,11.29
+Belize,BLZ,2015,10.56
+Belize,BLZ,2020,10.71
+Belize,BLZ,2025,10.86
+Belize,BLZ,2030,11.03
+Belize,BLZ,2035,11.2
+Belize,BLZ,2040,11.4
+Belize,BLZ,1870,0.4
+Belize,BLZ,1875,0.5
+Belize,BLZ,1880,0.61
+Belize,BLZ,1885,0.76
+Belize,BLZ,1890,0.94
+Belize,BLZ,1895,1.14
+Belize,BLZ,1900,1.36
+Belize,BLZ,1905,1.98
+Belize,BLZ,1910,2.56
+Belize,BLZ,1915,3.06
+Belize,BLZ,1920,3.78
+Belize,BLZ,1925,4.15
+Belize,BLZ,1930,4.53
+Belize,BLZ,1935,4.91
+Belize,BLZ,1940,5.3
+Belize,BLZ,1945,5.65
+Belize,BLZ,1950,7.28
+Belize,BLZ,1955,7.46
+Belize,BLZ,1960,7.8
+Belize,BLZ,1965,7.91
+Belize,BLZ,1970,7.86
+Belize,BLZ,1975,8.11
+Belize,BLZ,1980,7.88
+Belize,BLZ,1985,8.1
+Belize,BLZ,1990,8.97
+Belize,BLZ,1995,9.62
+Belize,BLZ,2000,10.19
+Belize,BLZ,2005,10.77
+Belize,BLZ,2010,11.28
+Benin,BEN,2015,5.42
+Benin,BEN,2020,6.27
+Benin,BEN,2025,7.13
+Benin,BEN,2030,7.97
+Benin,BEN,2035,8.78
+Benin,BEN,2040,9.54
+Benin,BEN,1870,0.01
+Benin,BEN,1875,0.01
+Benin,BEN,1880,0.01
+Benin,BEN,1885,0.01
+Benin,BEN,1890,0.01
+Benin,BEN,1895,0.01
+Benin,BEN,1900,0.02
+Benin,BEN,1905,0.02
+Benin,BEN,1910,0.02
+Benin,BEN,1915,0.03
+Benin,BEN,1920,0.04
+Benin,BEN,1925,0.12
+Benin,BEN,1930,0.2
+Benin,BEN,1935,0.27
+Benin,BEN,1940,0.41
+Benin,BEN,1945,0.48
+Benin,BEN,1950,0.52
+Benin,BEN,1955,0.61
+Benin,BEN,1960,0.7
+Benin,BEN,1965,0.79
+Benin,BEN,1970,0.87
+Benin,BEN,1975,0.96
+Benin,BEN,1980,1.26
+Benin,BEN,1985,1.77
+Benin,BEN,1990,2.24
+Benin,BEN,1995,2.73
+Benin,BEN,2000,3.31
+Benin,BEN,2005,3.85
+Benin,BEN,2010,4.57
+Bolivia,BOL,2015,8.62
+Bolivia,BOL,2020,9.06
+Bolivia,BOL,2025,9.48
+Bolivia,BOL,2030,9.9
+Bolivia,BOL,2035,10.3
+Bolivia,BOL,2040,10.71
+Bolivia,BOL,1870,0.06
+Bolivia,BOL,1875,0.08
+Bolivia,BOL,1880,0.1
+Bolivia,BOL,1885,0.12
+Bolivia,BOL,1890,0.15
+Bolivia,BOL,1895,0.19
+Bolivia,BOL,1900,0.24
+Bolivia,BOL,1905,0.29
+Bolivia,BOL,1910,0.37
+Bolivia,BOL,1915,0.47
+Bolivia,BOL,1920,0.68
+Bolivia,BOL,1925,0.86
+Bolivia,BOL,1930,1.01
+Bolivia,BOL,1935,1.71
+Bolivia,BOL,1940,1.91
+Bolivia,BOL,1945,2.11
+Bolivia,BOL,1950,2.44
+Bolivia,BOL,1955,2.8
+Bolivia,BOL,1960,3.15
+Bolivia,BOL,1965,3.7
+Bolivia,BOL,1970,4.14
+Bolivia,BOL,1975,4.8
+Bolivia,BOL,1980,5.76
+Bolivia,BOL,1985,6.7
+Bolivia,BOL,1990,7.63
+Bolivia,BOL,1995,8.09
+Bolivia,BOL,2000,8.73
+Bolivia,BOL,2005,8.77
+Bolivia,BOL,2010,8.57
+Botswana,BWA,2015,10.27
+Botswana,BWA,2020,10.58
+Botswana,BWA,2025,10.81
+Botswana,BWA,2030,11.03
+Botswana,BWA,2035,11.21
+Botswana,BWA,2040,11.39
+Brazil,BRA,2015,7.66
+Brazil,BRA,2020,8
+Brazil,BRA,2025,8.32
+Brazil,BRA,2030,8.66
+Brazil,BRA,2035,8.97
+Brazil,BRA,2040,9.31
+Brazil,BRA,1870,0.14
+Brazil,BRA,1875,0.18
+Brazil,BRA,1880,0.22
+Brazil,BRA,1885,0.26
+Brazil,BRA,1890,0.3
+Brazil,BRA,1895,0.33
+Brazil,BRA,1900,0.56
+Brazil,BRA,1905,0.7
+Brazil,BRA,1910,0.81
+Brazil,BRA,1915,0.94
+Brazil,BRA,1920,1.07
+Brazil,BRA,1925,1.18
+Brazil,BRA,1930,1.35
+Brazil,BRA,1935,1.51
+Brazil,BRA,1940,1.66
+Brazil,BRA,1945,1.8
+Brazil,BRA,1950,2.11
+Brazil,BRA,1955,2.3
+Brazil,BRA,1960,2.53
+Brazil,BRA,1965,2.82
+Brazil,BRA,1970,3.28
+Brazil,BRA,1975,2.87
+Brazil,BRA,1980,3.05
+Brazil,BRA,1985,4.12
+Brazil,BRA,1990,4.94
+Brazil,BRA,1995,5.79
+Brazil,BRA,2000,6.76
+Brazil,BRA,2005,7.67
+Brazil,BRA,2010,8.17
+Brunei,BRN,2015,9.08
+Brunei,BRN,2020,9.28
+Brunei,BRN,2025,9.66
+Brunei,BRN,2030,10.06
+Brunei,BRN,2035,10.54
+Brunei,BRN,2040,11.11
+Bulgaria,BGR,2015,10.71
+Bulgaria,BGR,2020,10.75
+Bulgaria,BGR,2025,10.79
+Bulgaria,BGR,2030,10.86
+Bulgaria,BGR,2035,10.97
+Bulgaria,BGR,2040,11.1
+Bulgaria,BGR,1870,0.94
+Bulgaria,BGR,1875,0.97
+Bulgaria,BGR,1880,1.01
+Bulgaria,BGR,1885,1.06
+Bulgaria,BGR,1890,1.13
+Bulgaria,BGR,1895,1.32
+Bulgaria,BGR,1900,1.55
+Bulgaria,BGR,1905,1.69
+Bulgaria,BGR,1910,2.05
+Bulgaria,BGR,1915,3.02
+Bulgaria,BGR,1920,3.35
+Bulgaria,BGR,1925,3.51
+Bulgaria,BGR,1930,3.52
+Bulgaria,BGR,1935,3.54
+Bulgaria,BGR,1940,3.78
+Bulgaria,BGR,1945,3.89
+Bulgaria,BGR,1950,3.97
+Bulgaria,BGR,1955,4.82
+Bulgaria,BGR,1960,5.24
+Bulgaria,BGR,1965,4.71
+Bulgaria,BGR,1970,6.54
+Bulgaria,BGR,1975,7.41
+Bulgaria,BGR,1980,8.15
+Bulgaria,BGR,1985,8.76
+Bulgaria,BGR,1990,8.68
+Bulgaria,BGR,1995,9.31
+Bulgaria,BGR,2000,9.65
+Bulgaria,BGR,2005,10.61
+Bulgaria,BGR,2010,11.07
+Burundi,BDI,2015,4.3
+Burundi,BDI,2020,5.05
+Burundi,BDI,2025,5.83
+Burundi,BDI,2030,6.57
+Burundi,BDI,2035,7.17
+Burundi,BDI,2040,7.78
+Cambodia,KHM,2015,5.32
+Cambodia,KHM,2020,5.81
+Cambodia,KHM,2025,6.36
+Cambodia,KHM,2030,7
+Cambodia,KHM,2035,7.63
+Cambodia,KHM,2040,8.28
+Cambodia,KHM,1870,0.01
+Cambodia,KHM,1875,0.01
+Cambodia,KHM,1880,0.01
+Cambodia,KHM,1885,0.01
+Cambodia,KHM,1890,0.01
+Cambodia,KHM,1895,0.01
+Cambodia,KHM,1900,0.01
+Cambodia,KHM,1905,0.01
+Cambodia,KHM,1910,0.01
+Cambodia,KHM,1915,0.01
+Cambodia,KHM,1920,0.02
+Cambodia,KHM,1925,0.02
+Cambodia,KHM,1930,0.03
+Cambodia,KHM,1935,0.04
+Cambodia,KHM,1940,0.07
+Cambodia,KHM,1945,0.29
+Cambodia,KHM,1950,0.44
+Cambodia,KHM,1955,0.67
+Cambodia,KHM,1960,1.23
+Cambodia,KHM,1965,1.53
+Cambodia,KHM,1970,1.91
+Cambodia,KHM,1975,2.31
+Cambodia,KHM,1980,2.66
+Cambodia,KHM,1985,2.89
+Cambodia,KHM,1990,3.2
+Cambodia,KHM,1995,3.41
+Cambodia,KHM,2000,3.64
+Cambodia,KHM,2005,4.26
+Cambodia,KHM,2010,4.94
+Cameroon,CMR,2015,7.05
+Cameroon,CMR,2020,7.37
+Cameroon,CMR,2025,7.86
+Cameroon,CMR,2030,8.42
+Cameroon,CMR,2035,9.02
+Cameroon,CMR,2040,9.64
+Cameroon,CMR,1870,0.01
+Cameroon,CMR,1875,0.01
+Cameroon,CMR,1880,0.01
+Cameroon,CMR,1885,0.02
+Cameroon,CMR,1890,0.02
+Cameroon,CMR,1895,0.03
+Cameroon,CMR,1900,0.05
+Cameroon,CMR,1905,0.06
+Cameroon,CMR,1910,0.07
+Cameroon,CMR,1915,0.08
+Cameroon,CMR,1920,0.11
+Cameroon,CMR,1925,0.16
+Cameroon,CMR,1930,0.2
+Cameroon,CMR,1935,0.29
+Cameroon,CMR,1940,0.37
+Cameroon,CMR,1945,0.46
+Cameroon,CMR,1950,0.72
+Cameroon,CMR,1955,0.92
+Cameroon,CMR,1960,1.12
+Cameroon,CMR,1965,1.51
+Cameroon,CMR,1970,1.92
+Cameroon,CMR,1975,2.58
+Cameroon,CMR,1980,3.25
+Cameroon,CMR,1985,3.94
+Cameroon,CMR,1990,4.65
+Cameroon,CMR,1995,5.3
+Cameroon,CMR,2000,5.76
+Cameroon,CMR,2005,6.06
+Cameroon,CMR,2010,6.41
+Canada,CAN,2015,12.83
+Canada,CAN,2020,12.93
+Canada,CAN,2025,12.98
+Canada,CAN,2030,13.05
+Canada,CAN,2035,13.08
+Canada,CAN,2040,13.13
+Canada,CAN,1870,2.68
+Canada,CAN,1875,2.81
+Canada,CAN,1880,2.94
+Canada,CAN,1885,3.05
+Canada,CAN,1890,3.18
+Canada,CAN,1895,3.35
+Canada,CAN,1900,3.99
+Canada,CAN,1905,4.34
+Canada,CAN,1910,4.83
+Canada,CAN,1915,5.18
+Canada,CAN,1920,5.54
+Canada,CAN,1925,5.92
+Canada,CAN,1930,6.35
+Canada,CAN,1935,6.85
+Canada,CAN,1940,7.14
+Canada,CAN,1945,7.46
+Canada,CAN,1950,7.76
+Canada,CAN,1955,8.11
+Canada,CAN,1960,8.55
+Canada,CAN,1965,8.85
+Canada,CAN,1970,9.47
+Canada,CAN,1975,10.02
+Canada,CAN,1980,10.49
+Canada,CAN,1985,10.29
+Canada,CAN,1990,10.71
+Canada,CAN,1995,11.11
+Canada,CAN,2000,11.39
+Canada,CAN,2005,12.49
+Canada,CAN,2010,12.74
+Central African Republic,CAF,2015,4.21
+Central African Republic,CAF,2020,4.64
+Central African Republic,CAF,2025,5.04
+Central African Republic,CAF,2030,5.47
+Central African Republic,CAF,2035,5.75
+Central African Republic,CAF,2040,6.1
+Chile,CHL,2015,10.49
+Chile,CHL,2020,10.74
+Chile,CHL,2025,10.95
+Chile,CHL,2030,11.21
+Chile,CHL,2035,11.41
+Chile,CHL,2040,11.61
+Chile,CHL,1870,0.43
+Chile,CHL,1875,0.51
+Chile,CHL,1880,0.58
+Chile,CHL,1885,0.64
+Chile,CHL,1890,0.69
+Chile,CHL,1895,0.75
+Chile,CHL,1900,1.58
+Chile,CHL,1905,1.85
+Chile,CHL,1910,2.39
+Chile,CHL,1915,2.92
+Chile,CHL,1920,3.43
+Chile,CHL,1925,3.86
+Chile,CHL,1930,4.08
+Chile,CHL,1935,4.31
+Chile,CHL,1940,4.59
+Chile,CHL,1945,4.76
+Chile,CHL,1950,4.91
+Chile,CHL,1955,5.04
+Chile,CHL,1960,5.23
+Chile,CHL,1965,5.71
+Chile,CHL,1970,6.18
+Chile,CHL,1975,6.7
+Chile,CHL,1980,7.13
+Chile,CHL,1985,7.85
+Chile,CHL,1990,8.58
+Chile,CHL,1995,8.92
+Chile,CHL,2000,9.41
+Chile,CHL,2005,9.96
+Chile,CHL,2010,10.35
+China,CHN,2015,8.51
+China,CHN,2020,8.99
+China,CHN,2025,9.38
+China,CHN,2030,9.88
+China,CHN,2035,10.38
+China,CHN,2040,10.92
+China,CHN,1870,0.01
+China,CHN,1875,0.01
+China,CHN,1880,0.01
+China,CHN,1885,0.01
+China,CHN,1890,0.01
+China,CHN,1895,0.01
+China,CHN,1900,0.02
+China,CHN,1905,0.02
+China,CHN,1910,0.04
+China,CHN,1915,0.06
+China,CHN,1920,0.08
+China,CHN,1925,0.16
+China,CHN,1930,0.26
+China,CHN,1935,0.36
+China,CHN,1940,1.39
+China,CHN,1945,1.53
+China,CHN,1950,1.79
+China,CHN,1955,2.18
+China,CHN,1960,2.8
+China,CHN,1965,3.4
+China,CHN,1970,4.16
+China,CHN,1975,4.83
+China,CHN,1980,5.74
+China,CHN,1985,6.16
+China,CHN,1990,6.45
+China,CHN,1995,7.17
+China,CHN,2000,7.79
+China,CHN,2005,8.02
+China,CHN,2010,8.25
+Colombia,COL,2015,9.78
+Colombia,COL,2020,10.2
+Colombia,COL,2025,10.56
+Colombia,COL,2030,10.96
+Colombia,COL,2035,11.32
+Colombia,COL,2040,11.68
+Colombia,COL,1870,0.32
+Colombia,COL,1875,0.37
+Colombia,COL,1880,0.42
+Colombia,COL,1885,0.48
+Colombia,COL,1890,0.51
+Colombia,COL,1895,0.52
+Colombia,COL,1900,0.85
+Colombia,COL,1905,1
+Colombia,COL,1910,1.44
+Colombia,COL,1915,1.62
+Colombia,COL,1920,1.79
+Colombia,COL,1925,2.01
+Colombia,COL,1930,2.17
+Colombia,COL,1935,2.32
+Colombia,COL,1940,2.4
+Colombia,COL,1945,2.53
+Colombia,COL,1950,2.38
+Colombia,COL,1955,2.73
+Colombia,COL,1960,3.1
+Colombia,COL,1965,3.47
+Colombia,COL,1970,3.98
+Colombia,COL,1975,4.43
+Colombia,COL,1980,4.99
+Colombia,COL,1985,5.63
+Colombia,COL,1990,6.16
+Colombia,COL,1995,6.68
+Colombia,COL,2000,7.12
+Colombia,COL,2005,7.56
+Colombia,COL,2010,9.35
+Congo,COG,2015,6.47
+Congo,COG,2020,6.74
+Congo,COG,2025,7.09
+Congo,COG,2030,7.03
+Congo,COG,2035,7.27
+Congo,COG,2040,7.56
+Costa Rica,CRI,2015,8.77
+Costa Rica,CRI,2020,9.12
+Costa Rica,CRI,2025,9.43
+Costa Rica,CRI,2030,9.76
+Costa Rica,CRI,2035,10.1
+Costa Rica,CRI,2040,10.46
+Costa Rica,CRI,1870,0.32
+Costa Rica,CRI,1875,0.4
+Costa Rica,CRI,1880,0.48
+Costa Rica,CRI,1885,0.59
+Costa Rica,CRI,1890,0.72
+Costa Rica,CRI,1895,0.87
+Costa Rica,CRI,1900,1.56
+Costa Rica,CRI,1905,1.89
+Costa Rica,CRI,1910,2.21
+Costa Rica,CRI,1915,2.45
+Costa Rica,CRI,1920,2.71
+Costa Rica,CRI,1925,2.99
+Costa Rica,CRI,1930,3.13
+Costa Rica,CRI,1935,3.28
+Costa Rica,CRI,1940,3.43
+Costa Rica,CRI,1945,3.62
+Costa Rica,CRI,1950,3.6
+Costa Rica,CRI,1955,3.82
+Costa Rica,CRI,1960,3.96
+Costa Rica,CRI,1965,4.22
+Costa Rica,CRI,1970,4.03
+Costa Rica,CRI,1975,5.3
+Costa Rica,CRI,1980,6.26
+Costa Rica,CRI,1985,6.88
+Costa Rica,CRI,1990,7.28
+Costa Rica,CRI,1995,7.61
+Costa Rica,CRI,2000,7.96
+Costa Rica,CRI,2005,8.52
+Costa Rica,CRI,2010,8.43
+Cote d'Ivoire,CIV,2015,5.4
+Cote d'Ivoire,CIV,2020,6.05
+Cote d'Ivoire,CIV,2025,6.73
+Cote d'Ivoire,CIV,2030,7.43
+Cote d'Ivoire,CIV,2035,8.14
+Cote d'Ivoire,CIV,2040,8.79
+Cote d'Ivoire,CIV,1870,0.01
+Cote d'Ivoire,CIV,1875,0.01
+Cote d'Ivoire,CIV,1880,0.01
+Cote d'Ivoire,CIV,1885,0.01
+Cote d'Ivoire,CIV,1890,0.01
+Cote d'Ivoire,CIV,1895,0.02
+Cote d'Ivoire,CIV,1900,0.02
+Cote d'Ivoire,CIV,1905,0.02
+Cote d'Ivoire,CIV,1910,0.08
+Cote d'Ivoire,CIV,1915,0.14
+Cote d'Ivoire,CIV,1920,0.19
+Cote d'Ivoire,CIV,1925,0.25
+Cote d'Ivoire,CIV,1930,0.31
+Cote d'Ivoire,CIV,1935,0.32
+Cote d'Ivoire,CIV,1940,0.35
+Cote d'Ivoire,CIV,1945,0.39
+Cote d'Ivoire,CIV,1950,0.86
+Cote d'Ivoire,CIV,1955,0.91
+Cote d'Ivoire,CIV,1960,0.99
+Cote d'Ivoire,CIV,1965,1.09
+Cote d'Ivoire,CIV,1970,1.33
+Cote d'Ivoire,CIV,1975,1.76
+Cote d'Ivoire,CIV,1980,2.13
+Cote d'Ivoire,CIV,1985,2.46
+Cote d'Ivoire,CIV,1990,2.79
+Cote d'Ivoire,CIV,1995,3.46
+Cote d'Ivoire,CIV,2000,4.06
+Cote d'Ivoire,CIV,2005,4.52
+Cote d'Ivoire,CIV,2010,4.93
+Croatia,HRV,2015,11.8
+Croatia,HRV,2020,12.03
+Croatia,HRV,2025,12.18
+Croatia,HRV,2030,12.38
+Croatia,HRV,2035,12.54
+Croatia,HRV,2040,12.7
+Cuba,CUB,2015,11.12
+Cuba,CUB,2020,11.61
+Cuba,CUB,2025,11.99
+Cuba,CUB,2030,12.44
+Cuba,CUB,2035,12.92
+Cuba,CUB,2040,13.46
+Cuba,CUB,1870,0.12
+Cuba,CUB,1875,0.15
+Cuba,CUB,1880,0.2
+Cuba,CUB,1885,0.25
+Cuba,CUB,1890,0.33
+Cuba,CUB,1895,0.44
+Cuba,CUB,1900,0.82
+Cuba,CUB,1905,1.32
+Cuba,CUB,1910,1.58
+Cuba,CUB,1915,2.03
+Cuba,CUB,1920,2.28
+Cuba,CUB,1925,2.61
+Cuba,CUB,1930,2.96
+Cuba,CUB,1935,3.16
+Cuba,CUB,1940,3.31
+Cuba,CUB,1945,3.42
+Cuba,CUB,1950,3.58
+Cuba,CUB,1955,3.66
+Cuba,CUB,1960,4.08
+Cuba,CUB,1965,4.55
+Cuba,CUB,1970,5.41
+Cuba,CUB,1975,6.48
+Cuba,CUB,1980,7.82
+Cuba,CUB,1985,8.64
+Cuba,CUB,1990,9.21
+Cuba,CUB,1995,9.58
+Cuba,CUB,2000,9.88
+Cuba,CUB,2005,10.36
+Cuba,CUB,2010,11.06
+Cyprus,CYP,2015,12.1
+Cyprus,CYP,2020,12.42
+Cyprus,CYP,2025,12.61
+Cyprus,CYP,2030,12.83
+Cyprus,CYP,2035,13
+Cyprus,CYP,2040,13.2
+Cyprus,CYP,1870,0.29
+Cyprus,CYP,1875,0.35
+Cyprus,CYP,1880,0.42
+Cyprus,CYP,1885,0.51
+Cyprus,CYP,1890,0.61
+Cyprus,CYP,1895,0.78
+Cyprus,CYP,1900,0.97
+Cyprus,CYP,1905,1.11
+Cyprus,CYP,1910,1.3
+Cyprus,CYP,1915,1.65
+Cyprus,CYP,1920,1.97
+Cyprus,CYP,1925,2.25
+Cyprus,CYP,1930,2.52
+Cyprus,CYP,1935,2.72
+Cyprus,CYP,1940,2.84
+Cyprus,CYP,1945,3.08
+Cyprus,CYP,1950,3.8
+Cyprus,CYP,1955,4.49
+Cyprus,CYP,1960,5.38
+Cyprus,CYP,1965,5.9
+Cyprus,CYP,1970,6.36
+Cyprus,CYP,1975,7.02
+Cyprus,CYP,1980,7.89
+Cyprus,CYP,1985,8.94
+Cyprus,CYP,1990,9.85
+Cyprus,CYP,1995,10.28
+Cyprus,CYP,2000,10.82
+Cyprus,CYP,2005,10.19
+Cyprus,CYP,2010,11.76
+Czechia,CZE,2015,12.93
+Czechia,CZE,2020,12.93
+Czechia,CZE,2025,12.88
+Czechia,CZE,2030,12.9
+Czechia,CZE,2035,12.93
+Czechia,CZE,2040,12.97
+Czechia,CZE,1870,3.19
+Czechia,CZE,1875,3.25
+Czechia,CZE,1880,3.36
+Czechia,CZE,1885,3.47
+Czechia,CZE,1890,3.59
+Czechia,CZE,1895,3.7
+Czechia,CZE,1900,3.82
+Czechia,CZE,1905,4.13
+Czechia,CZE,1910,4.38
+Czechia,CZE,1915,4.61
+Czechia,CZE,1920,4.79
+Czechia,CZE,1925,5.13
+Czechia,CZE,1930,5.4
+Czechia,CZE,1935,5.7
+Czechia,CZE,1940,6.01
+Czechia,CZE,1945,6.3
+Czechia,CZE,1950,8.22
+Czechia,CZE,1955,8.37
+Czechia,CZE,1960,8.49
+Czechia,CZE,1965,9.16
+Czechia,CZE,1970,9.88
+Czechia,CZE,1975,10.34
+Czechia,CZE,1980,10.69
+Czechia,CZE,1985,10.91
+Czechia,CZE,1990,11.35
+Czechia,CZE,1995,12.3
+Czechia,CZE,2000,12.78
+Czechia,CZE,2005,12.81
+Czechia,CZE,2010,12.8
+Democratic Republic of Congo,COD,2015,4.3
+Democratic Republic of Congo,COD,2020,4.85
+Democratic Republic of Congo,COD,2025,5.43
+Democratic Republic of Congo,COD,2030,6
+Democratic Republic of Congo,COD,2035,6.57
+Democratic Republic of Congo,COD,2040,7.16
+Democratic Republic of Congo,COD,1870,0.01
+Democratic Republic of Congo,COD,1875,0.01
+Democratic Republic of Congo,COD,1880,0.01
+Democratic Republic of Congo,COD,1885,0.01
+Democratic Republic of Congo,COD,1890,0.01
+Democratic Republic of Congo,COD,1895,0.01
+Democratic Republic of Congo,COD,1900,0.02
+Democratic Republic of Congo,COD,1905,0.03
+Democratic Republic of Congo,COD,1910,0.03
+Democratic Republic of Congo,COD,1915,0.24
+Democratic Republic of Congo,COD,1920,0.25
+Democratic Republic of Congo,COD,1925,0.26
+Democratic Republic of Congo,COD,1930,0.3
+Democratic Republic of Congo,COD,1935,0.34
+Democratic Republic of Congo,COD,1940,0.41
+Democratic Republic of Congo,COD,1945,0.49
+Democratic Republic of Congo,COD,1950,0.62
+Democratic Republic of Congo,COD,1955,0.72
+Democratic Republic of Congo,COD,1960,0.88
+Democratic Republic of Congo,COD,1965,1.06
+Democratic Republic of Congo,COD,1970,1.3
+Democratic Republic of Congo,COD,1975,1.63
+Democratic Republic of Congo,COD,1980,2.15
+Democratic Republic of Congo,COD,1985,2.86
+Democratic Republic of Congo,COD,1990,3.31
+Democratic Republic of Congo,COD,1995,3.52
+Democratic Republic of Congo,COD,2000,3.51
+Democratic Republic of Congo,COD,2005,3.63
+Democratic Republic of Congo,COD,2010,3.79
+Denmark,DNK,2015,11.67
+Denmark,DNK,2020,11.69
+Denmark,DNK,2025,11.69
+Denmark,DNK,2030,11.69
+Denmark,DNK,2035,11.66
+Denmark,DNK,2040,11.63
+Denmark,DNK,1870,2.45
+Denmark,DNK,1875,2.5
+Denmark,DNK,1880,2.56
+Denmark,DNK,1885,2.63
+Denmark,DNK,1890,2.71
+Denmark,DNK,1895,2.78
+Denmark,DNK,1900,2.84
+Denmark,DNK,1905,2.91
+Denmark,DNK,1910,3.17
+Denmark,DNK,1915,3.39
+Denmark,DNK,1920,3.64
+Denmark,DNK,1925,3.93
+Denmark,DNK,1930,4.26
+Denmark,DNK,1935,4.59
+Denmark,DNK,1940,4.89
+Denmark,DNK,1945,5.34
+Denmark,DNK,1950,5.63
+Denmark,DNK,1955,4.78
+Denmark,DNK,1960,5.3
+Denmark,DNK,1965,6.06
+Denmark,DNK,1970,7.19
+Denmark,DNK,1975,8.01
+Denmark,DNK,1980,8.85
+Denmark,DNK,1985,9.59
+Denmark,DNK,1990,10.48
+Denmark,DNK,1995,11.04
+Denmark,DNK,2000,11.5
+Denmark,DNK,2005,11.81
+Denmark,DNK,2010,11.97
+Dominican Republic,DOM,2015,8.48
+Dominican Republic,DOM,2020,9.04
+Dominican Republic,DOM,2025,9.58
+Dominican Republic,DOM,2030,10.16
+Dominican Republic,DOM,2035,10.68
+Dominican Republic,DOM,2040,11.12
+Dominican Republic,DOM,1870,0.07
+Dominican Republic,DOM,1875,0.1
+Dominican Republic,DOM,1880,0.14
+Dominican Republic,DOM,1885,0.19
+Dominican Republic,DOM,1890,0.23
+Dominican Republic,DOM,1895,0.26
+Dominican Republic,DOM,1900,0.29
+Dominican Republic,DOM,1905,0.7
+Dominican Republic,DOM,1910,1.06
+Dominican Republic,DOM,1915,1.3
+Dominican Republic,DOM,1920,1.53
+Dominican Republic,DOM,1925,1.85
+Dominican Republic,DOM,1930,2.21
+Dominican Republic,DOM,1935,2.3
+Dominican Republic,DOM,1940,2.3
+Dominican Republic,DOM,1945,2.39
+Dominican Republic,DOM,1950,2.53
+Dominican Republic,DOM,1955,2.58
+Dominican Republic,DOM,1960,2.78
+Dominican Republic,DOM,1965,3.15
+Dominican Republic,DOM,1970,3.74
+Dominican Republic,DOM,1975,4.3
+Dominican Republic,DOM,1980,4.98
+Dominican Republic,DOM,1985,5.58
+Dominican Republic,DOM,1990,6.13
+Dominican Republic,DOM,1995,6.58
+Dominican Republic,DOM,2000,7.03
+Dominican Republic,DOM,2005,7.54
+Dominican Republic,DOM,2010,8.12
+Ecuador,ECU,2015,8.54
+Ecuador,ECU,2020,9.07
+Ecuador,ECU,2025,9.49
+Ecuador,ECU,2030,9.91
+Ecuador,ECU,2035,10.31
+Ecuador,ECU,2040,10.71
+Ecuador,ECU,1870,0.19
+Ecuador,ECU,1875,0.24
+Ecuador,ECU,1880,0.3
+Ecuador,ECU,1885,0.37
+Ecuador,ECU,1890,0.45
+Ecuador,ECU,1895,0.56
+Ecuador,ECU,1900,0.9
+Ecuador,ECU,1905,1.04
+Ecuador,ECU,1910,1.25
+Ecuador,ECU,1915,1.42
+Ecuador,ECU,1920,1.58
+Ecuador,ECU,1925,1.68
+Ecuador,ECU,1930,1.86
+Ecuador,ECU,1935,2.08
+Ecuador,ECU,1940,2.23
+Ecuador,ECU,1945,2.43
+Ecuador,ECU,1950,2.62
+Ecuador,ECU,1955,2.93
+Ecuador,ECU,1960,3.29
+Ecuador,ECU,1965,4
+Ecuador,ECU,1970,4.55
+Ecuador,ECU,1975,5.07
+Ecuador,ECU,1980,6.35
+Ecuador,ECU,1985,6.76
+Ecuador,ECU,1990,7.23
+Ecuador,ECU,1995,7.32
+Ecuador,ECU,2000,7.41
+Ecuador,ECU,2005,7.7
+Ecuador,ECU,2010,8.02
+Egypt,EGY,2015,7.53
+Egypt,EGY,2020,8.01
+Egypt,EGY,2025,8.57
+Egypt,EGY,2030,9.33
+Egypt,EGY,2035,9.94
+Egypt,EGY,2040,10.45
+Egypt,EGY,1870,0.02
+Egypt,EGY,1875,0.02
+Egypt,EGY,1880,0.03
+Egypt,EGY,1885,0.04
+Egypt,EGY,1890,0.05
+Egypt,EGY,1895,0.07
+Egypt,EGY,1900,0.09
+Egypt,EGY,1905,0.12
+Egypt,EGY,1910,0.16
+Egypt,EGY,1915,0.22
+Egypt,EGY,1920,0.31
+Egypt,EGY,1925,0.41
+Egypt,EGY,1930,0.46
+Egypt,EGY,1935,0.3
+Egypt,EGY,1940,0.36
+Egypt,EGY,1945,0.42
+Egypt,EGY,1950,0.54
+Egypt,EGY,1955,0.7
+Egypt,EGY,1960,0.85
+Egypt,EGY,1965,1.11
+Egypt,EGY,1970,1.41
+Egypt,EGY,1975,1.82
+Egypt,EGY,1980,2.8
+Egypt,EGY,1985,3.92
+Egypt,EGY,1990,4.6
+Egypt,EGY,1995,5.36
+Egypt,EGY,2000,6.3
+Egypt,EGY,2005,6.93
+Egypt,EGY,2010,7.44
+El Salvador,SLV,2015,7.67
+El Salvador,SLV,2020,8.1
+El Salvador,SLV,2025,8.49
+El Salvador,SLV,2030,8.94
+El Salvador,SLV,2035,9.41
+El Salvador,SLV,2040,9.88
+El Salvador,SLV,1870,0.22
+El Salvador,SLV,1875,0.27
+El Salvador,SLV,1880,0.34
+El Salvador,SLV,1885,0.42
+El Salvador,SLV,1890,0.51
+El Salvador,SLV,1895,0.6
+El Salvador,SLV,1900,0.82
+El Salvador,SLV,1905,0.92
+El Salvador,SLV,1910,1.15
+El Salvador,SLV,1915,1.21
+El Salvador,SLV,1920,1.28
+El Salvador,SLV,1925,1.35
+El Salvador,SLV,1930,1.41
+El Salvador,SLV,1935,1.41
+El Salvador,SLV,1940,1.41
+El Salvador,SLV,1945,1.54
+El Salvador,SLV,1950,1.55
+El Salvador,SLV,1955,1.7
+El Salvador,SLV,1960,1.98
+El Salvador,SLV,1965,2.41
+El Salvador,SLV,1970,2.9
+El Salvador,SLV,1975,3.37
+El Salvador,SLV,1980,3.74
+El Salvador,SLV,1985,4.57
+El Salvador,SLV,1990,5.08
+El Salvador,SLV,1995,5.8
+El Salvador,SLV,2000,7.04
+El Salvador,SLV,2005,8.08
+El Salvador,SLV,2010,8.06
+Estonia,EST,2015,12.33
+Estonia,EST,2020,12.29
+Estonia,EST,2025,12.21
+Estonia,EST,2030,12.21
+Estonia,EST,2035,12.22
+Estonia,EST,2040,12.26
+Eswatini,SWZ,2015,5.77
+Eswatini,SWZ,2020,6.46
+Eswatini,SWZ,2025,7.09
+Eswatini,SWZ,2030,7.68
+Eswatini,SWZ,2035,8.21
+Eswatini,SWZ,2040,8.69
+Eswatini,SWZ,1870,0.01
+Eswatini,SWZ,1875,0.01
+Eswatini,SWZ,1880,0.01
+Eswatini,SWZ,1885,0.01
+Eswatini,SWZ,1890,0.01
+Eswatini,SWZ,1895,0.01
+Eswatini,SWZ,1900,0.01
+Eswatini,SWZ,1905,0.01
+Eswatini,SWZ,1910,0.05
+Eswatini,SWZ,1915,0.11
+Eswatini,SWZ,1920,0.15
+Eswatini,SWZ,1925,0.36
+Eswatini,SWZ,1930,0.49
+Eswatini,SWZ,1935,0.62
+Eswatini,SWZ,1940,0.78
+Eswatini,SWZ,1945,0.96
+Eswatini,SWZ,1950,1.27
+Eswatini,SWZ,1955,1.55
+Eswatini,SWZ,1960,1.81
+Eswatini,SWZ,1965,2.16
+Eswatini,SWZ,1970,3
+Eswatini,SWZ,1975,3.96
+Eswatini,SWZ,1980,4.6
+Eswatini,SWZ,1985,5.26
+Eswatini,SWZ,1990,5.28
+Eswatini,SWZ,1995,5.2
+Eswatini,SWZ,2000,4.62
+Eswatini,SWZ,2005,4.64
+Eswatini,SWZ,2010,5.33
+Europe,,2015,11.705
+Europe,,2020,11.91
+Europe,,2025,12.005
+Europe,,2030,12.125
+Europe,,2035,12.184999
+Europe,,2040,12.235001
+Europe,,1870,0.89
+Europe,,1875,0.95500004
+Europe,,1880,1.11
+Europe,,1885,1.3050001
+Europe,,1890,1.5799999
+Europe,,1895,1.735
+Europe,,1900,1.91
+Europe,,1905,2.2150002
+Europe,,1910,2.58
+Europe,,1915,2.99
+Europe,,1920,3.315
+Europe,,1925,3.4450002
+Europe,,1930,3.78
+Europe,,1935,4.09
+Europe,,1940,4.4700003
+Europe,,1945,4.805
+Europe,,1950,5.0550003
+Europe,,1955,5.3149996
+Europe,,1960,5.5299997
+Europe,,1965,6.365
+Europe,,1970,7.145
+Europe,,1975,7.575
+Europe,,1980,8.255
+Europe,,1985,8.76
+Europe,,1990,9.309999
+Europe,,1995,9.995001
+Europe,,2000,10.325001
+Europe,,2005,10.875
+Europe,,2010,11.52
+European Union (27),,2015,11.74
+European Union (27),,2020,11.93
+European Union (27),,2025,12.05
+European Union (27),,2030,12.15
+European Union (27),,2035,12.22
+European Union (27),,2040,12.26
+European Union (27),,1870,0.94
+European Union (27),,1875,0.97
+European Union (27),,1880,1.2
+European Union (27),,1885,1.55
+European Union (27),,1890,1.8
+European Union (27),,1895,1.97
+European Union (27),,1900,2.11
+European Union (27),,1905,2.44
+European Union (27),,1910,2.72
+European Union (27),,1915,3.02
+European Union (27),,1920,3.35
+European Union (27),,1925,3.51
+European Union (27),,1930,3.78
+European Union (27),,1935,3.94
+European Union (27),,1940,4.11
+European Union (27),,1945,4.36
+European Union (27),,1950,4.51
+European Union (27),,1955,4.89
+European Union (27),,1960,5.39
+European Union (27),,1965,6.19
+European Union (27),,1970,7.1
+European Union (27),,1975,7.44
+European Union (27),,1980,8.15
+European Union (27),,1985,8.76
+European Union (27),,1990,9.34
+European Union (27),,1995,10.06
+European Union (27),,2000,10.59
+European Union (27),,2005,10.89
+European Union (27),,2010,11.34
+Fiji,FJI,2015,11.09
+Fiji,FJI,2020,11.52
+Fiji,FJI,2025,11.98
+Fiji,FJI,2030,12.3
+Fiji,FJI,2035,12.67
+Fiji,FJI,2040,12.98
+Fiji,FJI,1870,0.01
+Fiji,FJI,1875,0.01
+Fiji,FJI,1880,0.01
+Fiji,FJI,1885,0.01
+Fiji,FJI,1890,0.02
+Fiji,FJI,1895,0.03
+Fiji,FJI,1900,0.05
+Fiji,FJI,1905,0.08
+Fiji,FJI,1910,0.25
+Fiji,FJI,1915,0.46
+Fiji,FJI,1920,0.88
+Fiji,FJI,1925,1.61
+Fiji,FJI,1930,2
+Fiji,FJI,1935,2.41
+Fiji,FJI,1940,2.76
+Fiji,FJI,1945,3.08
+Fiji,FJI,1950,3.77
+Fiji,FJI,1955,4.24
+Fiji,FJI,1960,4.57
+Fiji,FJI,1965,5.24
+Fiji,FJI,1970,5.67
+Fiji,FJI,1975,6.4
+Fiji,FJI,1980,7.16
+Fiji,FJI,1985,7.85
+Fiji,FJI,1990,9.24
+Fiji,FJI,1995,10.28
+Fiji,FJI,2000,9.97
+Fiji,FJI,2005,9.76
+Fiji,FJI,2010,10.35
+Finland,FIN,2015,10.94
+Finland,FIN,2020,11.05
+Finland,FIN,2025,10.99
+Finland,FIN,2030,10.96
+Finland,FIN,2035,10.9
+Finland,FIN,2040,10.88
+Finland,FIN,1870,0.13
+Finland,FIN,1875,0.16
+Finland,FIN,1880,0.19
+Finland,FIN,1885,0.23
+Finland,FIN,1890,0.3
+Finland,FIN,1895,0.39
+Finland,FIN,1900,1.16
+Finland,FIN,1905,1.55
+Finland,FIN,1910,1.63
+Finland,FIN,1915,1.98
+Finland,FIN,1920,2.35
+Finland,FIN,1925,2.74
+Finland,FIN,1930,3.09
+Finland,FIN,1935,3.4
+Finland,FIN,1940,3.52
+Finland,FIN,1945,3.68
+Finland,FIN,1950,3.91
+Finland,FIN,1955,4.06
+Finland,FIN,1960,4.25
+Finland,FIN,1965,4.97
+Finland,FIN,1970,5.99
+Finland,FIN,1975,7.11
+Finland,FIN,1980,8.04
+Finland,FIN,1985,8.01
+Finland,FIN,1990,8.56
+Finland,FIN,1995,9.31
+Finland,FIN,2000,9.9
+Finland,FIN,2005,10.42
+Finland,FIN,2010,10.71
+France,FRA,2015,11.6
+France,FRA,2020,11.89
+France,FRA,2025,12.08
+France,FRA,2030,12.29
+France,FRA,2035,12.42
+France,FRA,2040,12.57
+France,FRA,1870,0.7
+France,FRA,1875,0.81
+France,FRA,1880,1.2
+France,FRA,1885,1.55
+France,FRA,1890,1.8
+France,FRA,1895,2.09
+France,FRA,1900,2.35
+France,FRA,1905,2.65
+France,FRA,1910,2.95
+France,FRA,1915,3.21
+France,FRA,1920,3.45
+France,FRA,1925,3.66
+France,FRA,1930,3.79
+France,FRA,1935,3.94
+France,FRA,1940,4.11
+France,FRA,1945,4.27
+France,FRA,1950,4.42
+France,FRA,1955,4.56
+France,FRA,1960,4.32
+France,FRA,1965,4.78
+France,FRA,1970,5.46
+France,FRA,1975,6.05
+France,FRA,1980,6.37
+France,FRA,1985,7.37
+France,FRA,1990,8.32
+France,FRA,1995,9.36
+France,FRA,2000,10.22
+France,FRA,2005,10.86
+France,FRA,2010,11.34
+Gabon,GAB,2015,9.53
+Gabon,GAB,2020,10.18
+Gabon,GAB,2025,10.85
+Gabon,GAB,2030,11.37
+Gabon,GAB,2035,11.86
+Gabon,GAB,2040,12.24
+Gambia,GMB,2015,4.42
+Gambia,GMB,2020,4.92
+Gambia,GMB,2025,5.41
+Gambia,GMB,2030,5.89
+Gambia,GMB,2035,6.32
+Gambia,GMB,2040,7.04
+Gambia,GMB,1870,0.05
+Gambia,GMB,1875,0.06
+Gambia,GMB,1880,0.08
+Gambia,GMB,1885,0.1
+Gambia,GMB,1890,0.12
+Gambia,GMB,1895,0.16
+Gambia,GMB,1900,0.19
+Gambia,GMB,1905,0.24
+Gambia,GMB,1910,0.26
+Gambia,GMB,1915,0.25
+Gambia,GMB,1920,0.25
+Gambia,GMB,1925,0.25
+Gambia,GMB,1930,0.26
+Gambia,GMB,1935,0.36
+Gambia,GMB,1940,0.37
+Gambia,GMB,1945,0.38
+Gambia,GMB,1950,0.41
+Gambia,GMB,1955,0.44
+Gambia,GMB,1960,0.48
+Gambia,GMB,1965,0.54
+Gambia,GMB,1970,0.58
+Gambia,GMB,1975,0.75
+Gambia,GMB,1980,1
+Gambia,GMB,1985,1.32
+Gambia,GMB,1990,1.85
+Gambia,GMB,1995,2.33
+Gambia,GMB,2000,2.77
+Gambia,GMB,2005,3.39
+Gambia,GMB,2010,3.92
+Germany,DEU,2015,12.86
+Germany,DEU,2020,13.1
+Germany,DEU,2025,13.38
+Germany,DEU,2030,13.66
+Germany,DEU,2035,13.97
+Germany,DEU,2040,14.28
+Germany,DEU,1870,2.22
+Germany,DEU,1875,2.44
+Germany,DEU,1880,2.67
+Germany,DEU,1885,2.89
+Germany,DEU,1890,3.1
+Germany,DEU,1895,3.31
+Germany,DEU,1900,3.48
+Germany,DEU,1905,3.62
+Germany,DEU,1910,3.74
+Germany,DEU,1915,4.42
+Germany,DEU,1920,5.07
+Germany,DEU,1925,5.55
+Germany,DEU,1930,5.57
+Germany,DEU,1935,5.94
+Germany,DEU,1940,6.24
+Germany,DEU,1945,6.56
+Germany,DEU,1950,7.21
+Germany,DEU,1955,7.47
+Germany,DEU,1960,7.54
+Germany,DEU,1965,7.5
+Germany,DEU,1970,7.1
+Germany,DEU,1975,7.17
+Germany,DEU,1980,7.36
+Germany,DEU,1985,7.73
+Germany,DEU,1990,8.96
+Germany,DEU,1995,9.93
+Germany,DEU,2000,10.59
+Germany,DEU,2005,11.98
+Germany,DEU,2010,12.58
+Ghana,GHA,2015,7.72
+Ghana,GHA,2020,8.39
+Ghana,GHA,2025,9.02
+Ghana,GHA,2030,9.7
+Ghana,GHA,2035,10.31
+Ghana,GHA,2040,10.86
+Ghana,GHA,1870,0.01
+Ghana,GHA,1875,0.02
+Ghana,GHA,1880,0.02
+Ghana,GHA,1885,0.02
+Ghana,GHA,1890,0.03
+Ghana,GHA,1895,0.04
+Ghana,GHA,1900,0.05
+Ghana,GHA,1905,0.1
+Ghana,GHA,1910,0.15
+Ghana,GHA,1915,0.19
+Ghana,GHA,1920,0.27
+Ghana,GHA,1925,0.32
+Ghana,GHA,1930,0.36
+Ghana,GHA,1935,0.45
+Ghana,GHA,1940,0.51
+Ghana,GHA,1945,0.56
+Ghana,GHA,1950,0.7
+Ghana,GHA,1955,0.83
+Ghana,GHA,1960,1.1
+Ghana,GHA,1965,2.03
+Ghana,GHA,1970,3.35
+Ghana,GHA,1975,4.23
+Ghana,GHA,1980,4.93
+Ghana,GHA,1985,5.63
+Ghana,GHA,1990,6.05
+Ghana,GHA,1995,6.27
+Ghana,GHA,2000,6.67
+Ghana,GHA,2005,7.28
+Ghana,GHA,2010,7.66
+Greece,GRC,2015,11.6
+Greece,GRC,2020,11.86
+Greece,GRC,2025,11.96
+Greece,GRC,2030,12.11
+Greece,GRC,2035,12.15
+Greece,GRC,2040,12.2
+Greece,GRC,1870,0.78
+Greece,GRC,1875,0.89
+Greece,GRC,1880,1.02
+Greece,GRC,1885,1.14
+Greece,GRC,1890,1.26
+Greece,GRC,1895,1.37
+Greece,GRC,1900,1.64
+Greece,GRC,1905,1.8
+Greece,GRC,1910,2.03
+Greece,GRC,1915,2.29
+Greece,GRC,1920,2.42
+Greece,GRC,1925,2.61
+Greece,GRC,1930,2.98
+Greece,GRC,1935,3.56
+Greece,GRC,1940,3.94
+Greece,GRC,1945,4.36
+Greece,GRC,1950,4.39
+Greece,GRC,1955,5.79
+Greece,GRC,1960,7.78
+Greece,GRC,1965,6.68
+Greece,GRC,1970,6.84
+Greece,GRC,1975,7.15
+Greece,GRC,1980,7.58
+Greece,GRC,1985,8.37
+Greece,GRC,1990,9.34
+Greece,GRC,1995,9.54
+Greece,GRC,2000,9.9
+Greece,GRC,2005,10.95
+Greece,GRC,2010,11.36
+Guatemala,GTM,2015,5.72
+Guatemala,GTM,2020,6.26
+Guatemala,GTM,2025,6.76
+Guatemala,GTM,2030,7.24
+Guatemala,GTM,2035,7.7
+Guatemala,GTM,2040,8.17
+Guatemala,GTM,1870,0.22
+Guatemala,GTM,1875,0.26
+Guatemala,GTM,1880,0.32
+Guatemala,GTM,1885,0.38
+Guatemala,GTM,1890,0.46
+Guatemala,GTM,1895,0.59
+Guatemala,GTM,1900,0.84
+Guatemala,GTM,1905,0.91
+Guatemala,GTM,1910,1.07
+Guatemala,GTM,1915,1.2
+Guatemala,GTM,1920,1.31
+Guatemala,GTM,1925,1.28
+Guatemala,GTM,1930,1.29
+Guatemala,GTM,1935,1.42
+Guatemala,GTM,1940,1.43
+Guatemala,GTM,1945,1.41
+Guatemala,GTM,1950,1.32
+Guatemala,GTM,1955,1.35
+Guatemala,GTM,1960,1.41
+Guatemala,GTM,1965,1.51
+Guatemala,GTM,1970,1.78
+Guatemala,GTM,1975,2.11
+Guatemala,GTM,1980,2.94
+Guatemala,GTM,1985,3.27
+Guatemala,GTM,1990,3.66
+Guatemala,GTM,1995,3.96
+Guatemala,GTM,2000,4.35
+Guatemala,GTM,2005,4.33
+Guatemala,GTM,2010,5.21
+Guyana,GUY,2015,8.32
+Guyana,GUY,2020,8.52
+Guyana,GUY,2025,8.79
+Guyana,GUY,2030,9.09
+Guyana,GUY,2035,9.4
+Guyana,GUY,2040,9.7
+Guyana,GUY,1870,0.25
+Guyana,GUY,1875,0.38
+Guyana,GUY,1880,0.63
+Guyana,GUY,1885,0.87
+Guyana,GUY,1890,1.11
+Guyana,GUY,1895,1.3
+Guyana,GUY,1900,1.56
+Guyana,GUY,1905,1.79
+Guyana,GUY,1910,1.98
+Guyana,GUY,1915,2.3
+Guyana,GUY,1920,2.58
+Guyana,GUY,1925,2.75
+Guyana,GUY,1930,2.97
+Guyana,GUY,1935,3.2
+Guyana,GUY,1940,3.44
+Guyana,GUY,1945,3.59
+Guyana,GUY,1950,4.36
+Guyana,GUY,1955,4.6
+Guyana,GUY,1960,4.91
+Guyana,GUY,1965,5.35
+Guyana,GUY,1970,5.76
+Guyana,GUY,1975,6.16
+Guyana,GUY,1980,6.65
+Guyana,GUY,1985,7.04
+Guyana,GUY,1990,7.27
+Guyana,GUY,1995,7.92
+Guyana,GUY,2000,8.43
+Guyana,GUY,2005,8.79
+Guyana,GUY,2010,9
+Haiti,HTI,2015,5.5
+Haiti,HTI,2020,5.95
+Haiti,HTI,2025,6.44
+Haiti,HTI,2030,7.17
+Haiti,HTI,2035,7.68
+Haiti,HTI,2040,8.19
+Haiti,HTI,1870,0.01
+Haiti,HTI,1875,0.01
+Haiti,HTI,1880,0.01
+Haiti,HTI,1885,0.01
+Haiti,HTI,1890,0.01
+Haiti,HTI,1895,0.01
+Haiti,HTI,1900,0.14
+Haiti,HTI,1905,0.2
+Haiti,HTI,1910,0.22
+Haiti,HTI,1915,0.27
+Haiti,HTI,1920,0.31
+Haiti,HTI,1925,0.34
+Haiti,HTI,1930,0.4
+Haiti,HTI,1935,0.55
+Haiti,HTI,1940,0.72
+Haiti,HTI,1945,0.77
+Haiti,HTI,1950,0.6
+Haiti,HTI,1955,0.68
+Haiti,HTI,1960,0.83
+Haiti,HTI,1965,0.99
+Haiti,HTI,1970,1.22
+Haiti,HTI,1975,1.56
+Haiti,HTI,1980,2.07
+Haiti,HTI,1985,3.05
+Haiti,HTI,1990,3.56
+Haiti,HTI,1995,4.06
+Haiti,HTI,2000,4.44
+Haiti,HTI,2005,4.9
+Haiti,HTI,2010,5.17
+High-income countries,,2015,11.764999
+High-income countries,,2020,11.945
+High-income countries,,2025,12.04
+High-income countries,,2030,12.125
+High-income countries,,2035,12.16
+High-income countries,,2040,12.26
+High-income countries,,1870,0.855
+High-income countries,,1875,0.925
+High-income countries,,1880,1.11
+High-income countries,,1885,1.245
+High-income countries,,1890,1.365
+High-income countries,,1895,1.525
+High-income countries,,1900,1.78
+High-income countries,,1905,2.065
+High-income countries,,1910,2.455
+High-income countries,,1915,2.935
+High-income countries,,1920,3.35
+High-income countries,,1925,3.585
+High-income countries,,1930,3.8600001
+High-income countries,,1935,4.3050003
+High-income countries,,1940,4.67
+High-income countries,,1945,5.0299997
+High-income countries,,1950,5.34
+High-income countries,,1955,5.505
+High-income countries,,1960,5.7
+High-income countries,,1965,6.6099997
+High-income countries,,1970,7.215
+High-income countries,,1975,7.83
+High-income countries,,1980,8.365
+High-income countries,,1985,8.795
+High-income countries,,1990,9.41
+High-income countries,,1995,10.135
+High-income countries,,2000,10.405001
+High-income countries,,2005,11.03
+High-income countries,,2010,11.57
+Honduras,HND,2015,7.04
+Honduras,HND,2020,7.51
+Honduras,HND,2025,7.96
+Honduras,HND,2030,8.41
+Honduras,HND,2035,8.85
+Honduras,HND,2040,9.3
+Honduras,HND,1870,0.25
+Honduras,HND,1875,0.3
+Honduras,HND,1880,0.37
+Honduras,HND,1885,0.46
+Honduras,HND,1890,0.55
+Honduras,HND,1895,0.66
+Honduras,HND,1900,0.76
+Honduras,HND,1905,0.94
+Honduras,HND,1910,1.1
+Honduras,HND,1915,1.22
+Honduras,HND,1920,1.52
+Honduras,HND,1925,1.57
+Honduras,HND,1930,1.55
+Honduras,HND,1935,1.51
+Honduras,HND,1940,1.52
+Honduras,HND,1945,1.57
+Honduras,HND,1950,1.65
+Honduras,HND,1955,1.75
+Honduras,HND,1960,1.93
+Honduras,HND,1965,2.13
+Honduras,HND,1970,2.38
+Honduras,HND,1975,2.73
+Honduras,HND,1980,3.74
+Honduras,HND,1985,4.65
+Honduras,HND,1990,5.07
+Honduras,HND,1995,5.47
+Honduras,HND,2000,5.87
+Honduras,HND,2005,6.24
+Honduras,HND,2010,6.6
+Hong Kong,HKG,2015,12.32
+Hong Kong,HKG,2020,12.83
+Hong Kong,HKG,2025,13.19
+Hong Kong,HKG,2030,13.59
+Hong Kong,HKG,2035,13.84
+Hong Kong,HKG,2040,14.12
+Hong Kong,HKG,1870,0.01
+Hong Kong,HKG,1875,0.02
+Hong Kong,HKG,1880,0.04
+Hong Kong,HKG,1885,0.07
+Hong Kong,HKG,1890,0.12
+Hong Kong,HKG,1895,0.2
+Hong Kong,HKG,1900,0.32
+Hong Kong,HKG,1905,0.4
+Hong Kong,HKG,1910,0.67
+Hong Kong,HKG,1915,0.92
+Hong Kong,HKG,1920,1.15
+Hong Kong,HKG,1925,2.11
+Hong Kong,HKG,1930,2.54
+Hong Kong,HKG,1935,3
+Hong Kong,HKG,1940,3.67
+Hong Kong,HKG,1945,4.14
+Hong Kong,HKG,1950,4.46
+Hong Kong,HKG,1955,4.76
+Hong Kong,HKG,1960,5.05
+Hong Kong,HKG,1965,5.93
+Hong Kong,HKG,1970,6.58
+Hong Kong,HKG,1975,7.26
+Hong Kong,HKG,1980,8.42
+Hong Kong,HKG,1985,9.24
+Hong Kong,HKG,1990,10.08
+Hong Kong,HKG,1995,10.21
+Hong Kong,HKG,2000,10.37
+Hong Kong,HKG,2005,12.17
+Hong Kong,HKG,2010,12.2
+Hungary,HUN,2015,11.83
+Hungary,HUN,2020,11.96
+Hungary,HUN,2025,12.05
+Hungary,HUN,2030,12.15
+Hungary,HUN,2035,12.24
+Hungary,HUN,2040,12.34
+Hungary,HUN,1870,1.82
+Hungary,HUN,1875,2.01
+Hungary,HUN,1880,2.26
+Hungary,HUN,1885,2.55
+Hungary,HUN,1890,2.83
+Hungary,HUN,1895,3.17
+Hungary,HUN,1900,3.5
+Hungary,HUN,1905,4.02
+Hungary,HUN,1910,4.02
+Hungary,HUN,1915,4.3
+Hungary,HUN,1920,4.5
+Hungary,HUN,1925,4.73
+Hungary,HUN,1930,5.01
+Hungary,HUN,1935,5.39
+Hungary,HUN,1940,5.96
+Hungary,HUN,1945,6.57
+Hungary,HUN,1950,7.2
+Hungary,HUN,1955,7.36
+Hungary,HUN,1960,7.53
+Hungary,HUN,1965,7.75
+Hungary,HUN,1970,8.27
+Hungary,HUN,1975,8.85
+Hungary,HUN,1980,9.39
+Hungary,HUN,1985,9.31
+Hungary,HUN,1990,9.48
+Hungary,HUN,1995,10.75
+Hungary,HUN,2000,11.57
+Hungary,HUN,2005,11.89
+Hungary,HUN,2010,11.98
+Iceland,ISL,2015,12.95
+Iceland,ISL,2020,13.53
+Iceland,ISL,2025,14.07
+Iceland,ISL,2030,14.61
+Iceland,ISL,2035,15.07
+Iceland,ISL,2040,15.48
+Iceland,ISL,1870,0.85
+Iceland,ISL,1875,0.91
+Iceland,ISL,1880,1.01
+Iceland,ISL,1885,1.11
+Iceland,ISL,1890,1.22
+Iceland,ISL,1895,1.34
+Iceland,ISL,1900,1.47
+Iceland,ISL,1905,1.99
+Iceland,ISL,1910,2.44
+Iceland,ISL,1915,2.85
+Iceland,ISL,1920,2.98
+Iceland,ISL,1925,3.38
+Iceland,ISL,1930,3.78
+Iceland,ISL,1935,4.24
+Iceland,ISL,1940,4.73
+Iceland,ISL,1945,5.17
+Iceland,ISL,1950,5.8
+Iceland,ISL,1955,5.99
+Iceland,ISL,1960,6.29
+Iceland,ISL,1965,6.73
+Iceland,ISL,1970,7.24
+Iceland,ISL,1975,7.71
+Iceland,ISL,1980,8.2
+Iceland,ISL,1985,8.71
+Iceland,ISL,1990,9.23
+Iceland,ISL,1995,9.7
+Iceland,ISL,2000,10.17
+Iceland,ISL,2005,10.83
+Iceland,ISL,2010,11.52
+India,IND,2015,7.31
+India,IND,2020,7.8
+India,IND,2025,8.38
+India,IND,2030,8.95
+India,IND,2035,9.52
+India,IND,2040,10.03
+India,IND,1870,0.03
+India,IND,1875,0.03
+India,IND,1880,0.04
+India,IND,1885,0.06
+India,IND,1890,0.1
+India,IND,1895,0.13
+India,IND,1900,0.16
+India,IND,1905,0.24
+India,IND,1910,0.32
+India,IND,1915,0.41
+India,IND,1920,0.52
+India,IND,1925,0.61
+India,IND,1930,0.72
+India,IND,1935,0.81
+India,IND,1940,0.88
+India,IND,1945,0.96
+India,IND,1950,1.02
+India,IND,1955,1.08
+India,IND,1960,1.16
+India,IND,1965,1.33
+India,IND,1970,1.65
+India,IND,1975,2.09
+India,IND,1980,2.46
+India,IND,1985,3.03
+India,IND,1990,3.56
+India,IND,1995,4.3
+India,IND,2000,5.3
+India,IND,2005,5.94
+India,IND,2010,6.59
+Indonesia,IDN,2015,8.5
+Indonesia,IDN,2020,9.06
+Indonesia,IDN,2025,9.65
+Indonesia,IDN,2030,10.31
+Indonesia,IDN,2035,10.85
+Indonesia,IDN,2040,11.39
+Indonesia,IDN,1870,0.01
+Indonesia,IDN,1875,0.01
+Indonesia,IDN,1880,0.01
+Indonesia,IDN,1885,0.01
+Indonesia,IDN,1890,0.02
+Indonesia,IDN,1895,0.03
+Indonesia,IDN,1900,0.04
+Indonesia,IDN,1905,0.09
+Indonesia,IDN,1910,0.13
+Indonesia,IDN,1915,0.17
+Indonesia,IDN,1920,0.43
+Indonesia,IDN,1925,0.52
+Indonesia,IDN,1930,0.6
+Indonesia,IDN,1935,0.71
+Indonesia,IDN,1940,0.82
+Indonesia,IDN,1945,0.96
+Indonesia,IDN,1950,1.14
+Indonesia,IDN,1955,1.31
+Indonesia,IDN,1960,1.67
+Indonesia,IDN,1965,2.28
+Indonesia,IDN,1970,2.98
+Indonesia,IDN,1975,3.37
+Indonesia,IDN,1980,3.85
+Indonesia,IDN,1985,4.05
+Indonesia,IDN,1990,4.44
+Indonesia,IDN,1995,4.89
+Indonesia,IDN,2000,5.41
+Indonesia,IDN,2005,6.68
+Indonesia,IDN,2010,8.02
+Iran,IRN,2015,9.37
+Iran,IRN,2020,9.8
+Iran,IRN,2025,10.27
+Iran,IRN,2030,10.81
+Iran,IRN,2035,11.34
+Iran,IRN,2040,11.88
+Iran,IRN,1870,0.01
+Iran,IRN,1875,0.01
+Iran,IRN,1880,0.01
+Iran,IRN,1885,0.01
+Iran,IRN,1890,0.01
+Iran,IRN,1895,0.01
+Iran,IRN,1900,0.02
+Iran,IRN,1905,0.03
+Iran,IRN,1910,0.04
+Iran,IRN,1915,0.2
+Iran,IRN,1920,0.22
+Iran,IRN,1925,0.25
+Iran,IRN,1930,0.27
+Iran,IRN,1935,0.3
+Iran,IRN,1940,0.4
+Iran,IRN,1945,0.49
+Iran,IRN,1950,0.6
+Iran,IRN,1955,0.72
+Iran,IRN,1960,0.99
+Iran,IRN,1965,1.5
+Iran,IRN,1970,2.17
+Iran,IRN,1975,2.87
+Iran,IRN,1980,3.84
+Iran,IRN,1985,4.66
+Iran,IRN,1990,5.49
+Iran,IRN,1995,6.69
+Iran,IRN,2000,7.66
+Iran,IRN,2005,8.49
+Iran,IRN,2010,9.15
+Iraq,IRQ,2015,7.76
+Iraq,IRQ,2020,8.27
+Iraq,IRQ,2025,8.78
+Iraq,IRQ,2030,9.29
+Iraq,IRQ,2035,9.82
+Iraq,IRQ,2040,10.37
+Iraq,IRQ,1870,0.01
+Iraq,IRQ,1875,0.01
+Iraq,IRQ,1880,0.01
+Iraq,IRQ,1885,0.01
+Iraq,IRQ,1890,0.01
+Iraq,IRQ,1895,0.01
+Iraq,IRQ,1900,0.02
+Iraq,IRQ,1905,0.02
+Iraq,IRQ,1910,0.02
+Iraq,IRQ,1915,0.02
+Iraq,IRQ,1920,0.02
+Iraq,IRQ,1925,0.03
+Iraq,IRQ,1930,0.04
+Iraq,IRQ,1935,0.05
+Iraq,IRQ,1940,0.1
+Iraq,IRQ,1945,0.16
+Iraq,IRQ,1950,0.25
+Iraq,IRQ,1955,0.35
+Iraq,IRQ,1960,0.53
+Iraq,IRQ,1965,0.9
+Iraq,IRQ,1970,1.53
+Iraq,IRQ,1975,2.11
+Iraq,IRQ,1980,2.92
+Iraq,IRQ,1985,3.98
+Iraq,IRQ,1990,4.9
+Iraq,IRQ,1995,5.44
+Iraq,IRQ,2000,6.23
+Iraq,IRQ,2005,6.6
+Iraq,IRQ,2010,7.43
+Ireland,IRL,2015,13.57
+Ireland,IRL,2020,13.74
+Ireland,IRL,2025,13.81
+Ireland,IRL,2030,13.92
+Ireland,IRL,2035,13.97
+Ireland,IRL,2040,14.03
+Ireland,IRL,1870,0.74
+Ireland,IRL,1875,0.86
+Ireland,IRL,1880,0.99
+Ireland,IRL,1885,1.12
+Ireland,IRL,1890,1.3
+Ireland,IRL,1895,1.5
+Ireland,IRL,1900,1.7
+Ireland,IRL,1905,1.94
+Ireland,IRL,1910,2.21
+Ireland,IRL,1915,2.52
+Ireland,IRL,1920,2.85
+Ireland,IRL,1925,3.35
+Ireland,IRL,1930,3.78
+Ireland,IRL,1935,4.4
+Ireland,IRL,1940,5.11
+Ireland,IRL,1945,5.74
+Ireland,IRL,1950,6.42
+Ireland,IRL,1955,6.72
+Ireland,IRL,1960,6.98
+Ireland,IRL,1965,7.4
+Ireland,IRL,1970,8.05
+Ireland,IRL,1975,8.79
+Ireland,IRL,1980,9.69
+Ireland,IRL,1985,10.37
+Ireland,IRL,1990,10.64
+Ireland,IRL,1995,10.8
+Ireland,IRL,2000,11.03
+Ireland,IRL,2005,11.8
+Ireland,IRL,2010,12.45
+Israel,ISR,2015,12.04
+Israel,ISR,2020,12.04
+Israel,ISR,2025,12.03
+Israel,ISR,2030,12.06
+Israel,ISR,2035,12.08
+Israel,ISR,2040,12.1
+Italy,ITA,2015,11.11
+Italy,ITA,2020,11.51
+Italy,ITA,2025,11.83
+Italy,ITA,2030,12.18
+Italy,ITA,2035,12.49
+Italy,ITA,2040,12.83
+Italy,ITA,1870,0.86
+Italy,ITA,1875,0.94
+Italy,ITA,1880,1.07
+Italy,ITA,1885,1.21
+Italy,ITA,1890,1.36
+Italy,ITA,1895,1.5
+Italy,ITA,1900,1.71
+Italy,ITA,1905,1.89
+Italy,ITA,1910,1.98
+Italy,ITA,1915,2.24
+Italy,ITA,1920,2.55
+Italy,ITA,1925,2.85
+Italy,ITA,1930,3.08
+Italy,ITA,1935,3.36
+Italy,ITA,1940,3.72
+Italy,ITA,1945,4.15
+Italy,ITA,1950,4.4
+Italy,ITA,1955,4.71
+Italy,ITA,1960,5.07
+Italy,ITA,1965,5.43
+Italy,ITA,1970,5.87
+Italy,ITA,1975,6.45
+Italy,ITA,1980,7.09
+Italy,ITA,1985,7.63
+Italy,ITA,1990,8.32
+Italy,ITA,1995,9.04
+Italy,ITA,2000,9.73
+Italy,ITA,2005,10.2
+Italy,ITA,2010,10.71
+Jamaica,JAM,2015,9.81
+Jamaica,JAM,2020,10.1
+Jamaica,JAM,2025,10.34
+Jamaica,JAM,2030,10.6
+Jamaica,JAM,2035,10.87
+Jamaica,JAM,2040,11.15
+Jamaica,JAM,1870,0.67
+Jamaica,JAM,1875,0.76
+Jamaica,JAM,1880,0.9
+Jamaica,JAM,1885,1.13
+Jamaica,JAM,1890,1.42
+Jamaica,JAM,1895,1.71
+Jamaica,JAM,1900,1.97
+Jamaica,JAM,1905,2.27
+Jamaica,JAM,1910,2.47
+Jamaica,JAM,1915,2.61
+Jamaica,JAM,1920,2.76
+Jamaica,JAM,1925,2.87
+Jamaica,JAM,1930,2.98
+Jamaica,JAM,1935,3.18
+Jamaica,JAM,1940,3.36
+Jamaica,JAM,1945,3.5
+Jamaica,JAM,1950,3.64
+Jamaica,JAM,1955,3.74
+Jamaica,JAM,1960,3.93
+Jamaica,JAM,1965,4.48
+Jamaica,JAM,1970,4.96
+Jamaica,JAM,1975,5.54
+Jamaica,JAM,1980,6.27
+Jamaica,JAM,1985,6.86
+Jamaica,JAM,1990,7.48
+Jamaica,JAM,1995,8.55
+Jamaica,JAM,2000,9.59
+Jamaica,JAM,2005,10.09
+Jamaica,JAM,2010,10.33
+Japan,JPN,2015,12.6
+Japan,JPN,2020,12.83
+Japan,JPN,2025,12.92
+Japan,JPN,2030,13.01
+Japan,JPN,2035,13.18
+Japan,JPN,2040,13.38
+Japan,JPN,1870,0.53
+Japan,JPN,1875,0.63
+Japan,JPN,1880,0.75
+Japan,JPN,1885,0.93
+Japan,JPN,1890,1.26
+Japan,JPN,1895,1.55
+Japan,JPN,1900,1.85
+Japan,JPN,1905,2.13
+Japan,JPN,1910,2.47
+Japan,JPN,1915,2.95
+Japan,JPN,1920,3.92
+Japan,JPN,1925,4.46
+Japan,JPN,1930,4.96
+Japan,JPN,1935,5.34
+Japan,JPN,1940,5.66
+Japan,JPN,1945,6.19
+Japan,JPN,1950,6.86
+Japan,JPN,1955,7.4
+Japan,JPN,1960,7.77
+Japan,JPN,1965,7.8
+Japan,JPN,1970,8.25
+Japan,JPN,1975,8.85
+Japan,JPN,1980,9.6
+Japan,JPN,1985,10.12
+Japan,JPN,1990,10.71
+Japan,JPN,1995,11.26
+Japan,JPN,2000,11.77
+Japan,JPN,2005,12.12
+Japan,JPN,2010,12.44
+Jordan,JOR,2015,10.5
+Jordan,JOR,2020,10.81
+Jordan,JOR,2025,11.09
+Jordan,JOR,2030,11.42
+Jordan,JOR,2035,11.72
+Jordan,JOR,2040,12.01
+Jordan,JOR,1870,0.01
+Jordan,JOR,1875,0.01
+Jordan,JOR,1880,0.02
+Jordan,JOR,1885,0.02
+Jordan,JOR,1890,0.02
+Jordan,JOR,1895,0.03
+Jordan,JOR,1900,0.04
+Jordan,JOR,1905,0.11
+Jordan,JOR,1910,0.19
+Jordan,JOR,1915,0.24
+Jordan,JOR,1920,0.81
+Jordan,JOR,1925,0.86
+Jordan,JOR,1930,0.92
+Jordan,JOR,1935,0.95
+Jordan,JOR,1940,1.09
+Jordan,JOR,1945,1.22
+Jordan,JOR,1950,1.41
+Jordan,JOR,1955,1.84
+Jordan,JOR,1960,2.54
+Jordan,JOR,1965,3.15
+Jordan,JOR,1970,3.64
+Jordan,JOR,1975,4.2
+Jordan,JOR,1980,4.87
+Jordan,JOR,1985,6.04
+Jordan,JOR,1990,7.02
+Jordan,JOR,1995,7.89
+Jordan,JOR,2000,8.72
+Jordan,JOR,2005,9.42
+Jordan,JOR,2010,9.92
+Kazakhstan,KAZ,2015,11.69
+Kazakhstan,KAZ,2020,11.79
+Kazakhstan,KAZ,2025,11.87
+Kazakhstan,KAZ,2030,12
+Kazakhstan,KAZ,2035,12.14
+Kazakhstan,KAZ,2040,12.28
+Kenya,KEN,2015,6.28
+Kenya,KEN,2020,6.73
+Kenya,KEN,2025,7.14
+Kenya,KEN,2030,7.61
+Kenya,KEN,2035,8.05
+Kenya,KEN,2040,8.5
+Kenya,KEN,1870,0.01
+Kenya,KEN,1875,0.01
+Kenya,KEN,1880,0.01
+Kenya,KEN,1885,0.02
+Kenya,KEN,1890,0.02
+Kenya,KEN,1895,0.02
+Kenya,KEN,1900,0.03
+Kenya,KEN,1905,0.14
+Kenya,KEN,1910,0.25
+Kenya,KEN,1915,0.33
+Kenya,KEN,1920,0.67
+Kenya,KEN,1925,0.73
+Kenya,KEN,1930,0.8
+Kenya,KEN,1935,0.88
+Kenya,KEN,1940,0.95
+Kenya,KEN,1945,1.08
+Kenya,KEN,1950,1.2
+Kenya,KEN,1955,1.35
+Kenya,KEN,1960,1.56
+Kenya,KEN,1965,1.77
+Kenya,KEN,1970,2.28
+Kenya,KEN,1975,2.82
+Kenya,KEN,1980,3.61
+Kenya,KEN,1985,4.33
+Kenya,KEN,1990,5.05
+Kenya,KEN,1995,5.5
+Kenya,KEN,2000,5.91
+Kenya,KEN,2005,6.48
+Kenya,KEN,2010,6.47
+Kuwait,KWT,2015,6.49
+Kuwait,KWT,2020,6.62
+Kuwait,KWT,2025,6.74
+Kuwait,KWT,2030,6.89
+Kuwait,KWT,2035,7.09
+Kuwait,KWT,2040,7.3
+Kuwait,KWT,1870,0.01
+Kuwait,KWT,1875,0.01
+Kuwait,KWT,1880,0.01
+Kuwait,KWT,1885,0.01
+Kuwait,KWT,1890,0.01
+Kuwait,KWT,1895,0.01
+Kuwait,KWT,1900,0.01
+Kuwait,KWT,1905,0.01
+Kuwait,KWT,1910,0.07
+Kuwait,KWT,1915,0.12
+Kuwait,KWT,1920,0.18
+Kuwait,KWT,1925,0.24
+Kuwait,KWT,1930,0.71
+Kuwait,KWT,1935,0.9
+Kuwait,KWT,1940,1.05
+Kuwait,KWT,1945,1.34
+Kuwait,KWT,1950,1.6
+Kuwait,KWT,1955,1.96
+Kuwait,KWT,1960,2.51
+Kuwait,KWT,1965,2.96
+Kuwait,KWT,1970,3.35
+Kuwait,KWT,1975,3.58
+Kuwait,KWT,1980,4.67
+Kuwait,KWT,1985,5.55
+Kuwait,KWT,1990,5.92
+Kuwait,KWT,1995,6.15
+Kuwait,KWT,2000,6.12
+Kuwait,KWT,2005,6.14
+Kuwait,KWT,2010,6.39
+Kyrgyzstan,KGZ,2015,11.05
+Kyrgyzstan,KGZ,2020,11.18
+Kyrgyzstan,KGZ,2025,11.27
+Kyrgyzstan,KGZ,2030,11.4
+Kyrgyzstan,KGZ,2035,11.61
+Kyrgyzstan,KGZ,2040,11.84
+Laos,LAO,2015,5.47
+Laos,LAO,2020,6.05
+Laos,LAO,2025,6.69
+Laos,LAO,2030,7.43
+Laos,LAO,2035,8.17
+Laos,LAO,2040,8.92
+Latvia,LVA,2015,11.79
+Latvia,LVA,2020,11.96
+Latvia,LVA,2025,12.13
+Latvia,LVA,2030,12.36
+Latvia,LVA,2035,12.62
+Latvia,LVA,2040,12.91
+Lesotho,LSO,2015,6.44
+Lesotho,LSO,2020,6.88
+Lesotho,LSO,2025,7.3
+Lesotho,LSO,2030,7.75
+Lesotho,LSO,2035,8.2
+Lesotho,LSO,2040,8.67
+Lesotho,LSO,1870,0.03
+Lesotho,LSO,1875,0.05
+Lesotho,LSO,1880,0.07
+Lesotho,LSO,1885,0.1
+Lesotho,LSO,1890,0.15
+Lesotho,LSO,1895,0.22
+Lesotho,LSO,1900,0.3
+Lesotho,LSO,1905,0.38
+Lesotho,LSO,1910,0.53
+Lesotho,LSO,1915,0.64
+Lesotho,LSO,1920,0.76
+Lesotho,LSO,1925,1.16
+Lesotho,LSO,1930,1.42
+Lesotho,LSO,1935,1.6
+Lesotho,LSO,1940,1.87
+Lesotho,LSO,1945,2.2
+Lesotho,LSO,1950,2.6
+Lesotho,LSO,1955,2.87
+Lesotho,LSO,1960,3.12
+Lesotho,LSO,1965,3.44
+Lesotho,LSO,1970,3.72
+Lesotho,LSO,1975,4.11
+Lesotho,LSO,1980,4.49
+Lesotho,LSO,1985,4.81
+Lesotho,LSO,1990,5.25
+Lesotho,LSO,1995,5.8
+Lesotho,LSO,2000,6.37
+Lesotho,LSO,2005,7.21
+Lesotho,LSO,2010,6.08
+Liberia,LBR,2015,5.06
+Liberia,LBR,2020,5.8
+Liberia,LBR,2025,6.58
+Liberia,LBR,2030,7.34
+Liberia,LBR,2035,8.07
+Liberia,LBR,2040,8.78
+Liberia,LBR,1870,0.05
+Liberia,LBR,1875,0.06
+Liberia,LBR,1880,0.07
+Liberia,LBR,1885,0.09
+Liberia,LBR,1890,0.11
+Liberia,LBR,1895,0.13
+Liberia,LBR,1900,0.17
+Liberia,LBR,1905,0.26
+Liberia,LBR,1910,0.36
+Liberia,LBR,1915,0.44
+Liberia,LBR,1920,0.57
+Liberia,LBR,1925,0.58
+Liberia,LBR,1930,0.55
+Liberia,LBR,1935,0.52
+Liberia,LBR,1940,0.55
+Liberia,LBR,1945,0.57
+Liberia,LBR,1950,0.58
+Liberia,LBR,1955,0.62
+Liberia,LBR,1960,0.72
+Liberia,LBR,1965,0.94
+Liberia,LBR,1970,1.16
+Liberia,LBR,1975,1.67
+Liberia,LBR,1980,2.23
+Liberia,LBR,1985,2.73
+Liberia,LBR,1990,3.08
+Liberia,LBR,1995,3.17
+Liberia,LBR,2000,3.6
+Liberia,LBR,2005,3.96
+Liberia,LBR,2010,4.35
+Libya,LBY,2015,9.05
+Libya,LBY,2020,9.57
+Libya,LBY,2025,10.12
+Libya,LBY,2030,10.93
+Libya,LBY,2035,11.63
+Libya,LBY,2040,12.27
+Libya,LBY,1870,0.01
+Libya,LBY,1875,0.01
+Libya,LBY,1880,0.01
+Libya,LBY,1885,0.01
+Libya,LBY,1890,0.01
+Libya,LBY,1895,0.01
+Libya,LBY,1900,0.01
+Libya,LBY,1905,0.01
+Libya,LBY,1910,0.05
+Libya,LBY,1915,0.08
+Libya,LBY,1920,0.1
+Libya,LBY,1925,0.19
+Libya,LBY,1930,0.26
+Libya,LBY,1935,0.31
+Libya,LBY,1940,0.36
+Libya,LBY,1945,0.41
+Libya,LBY,1950,0.47
+Libya,LBY,1955,0.59
+Libya,LBY,1960,0.72
+Libya,LBY,1965,1.09
+Libya,LBY,1970,1.66
+Libya,LBY,1975,2.35
+Libya,LBY,1980,3.45
+Libya,LBY,1985,4.55
+Libya,LBY,1990,5.42
+Libya,LBY,1995,6.13
+Libya,LBY,2000,7.04
+Libya,LBY,2005,7.79
+Libya,LBY,2010,8.43
+Lithuania,LTU,2015,12.44
+Lithuania,LTU,2020,12.5
+Lithuania,LTU,2025,12.43
+Lithuania,LTU,2030,12.35
+Lithuania,LTU,2035,12.3
+Lithuania,LTU,2040,12.28
+Low-income countries,,2015,4.52
+Low-income countries,,2020,5.145
+Low-income countries,,2025,5.87
+Low-income countries,,2030,6.55
+Low-income countries,,2035,7.1549997
+Low-income countries,,2040,7.7700005
+Low-income countries,,1870,0.01
+Low-income countries,,1875,0.01
+Low-income countries,,1880,0.01
+Low-income countries,,1885,0.01
+Low-income countries,,1890,0.01
+Low-income countries,,1895,0.01
+Low-income countries,,1900,0.01
+Low-income countries,,1905,0.02
+Low-income countries,,1910,0.07
+Low-income countries,,1915,0.18
+Low-income countries,,1920,0.21
+Low-income countries,,1925,0.22
+Low-income countries,,1930,0.25
+Low-income countries,,1935,0.27
+Low-income countries,,1940,0.37
+Low-income countries,,1945,0.38
+Low-income countries,,1950,0.41
+Low-income countries,,1955,0.46
+Low-income countries,,1960,0.53
+Low-income countries,,1965,0.68
+Low-income countries,,1970,0.92
+Low-income countries,,1975,1.14
+Low-income countries,,1980,1.44
+Low-income countries,,1985,1.93
+Low-income countries,,1990,2.4
+Low-income countries,,1995,2.78
+Low-income countries,,2000,3.09
+Low-income countries,,2005,3.39
+Low-income countries,,2010,3.93
+Lower-middle-income countries,,2015,7.045
+Lower-middle-income countries,,2020,7.44
+Lower-middle-income countries,,2025,7.91
+Lower-middle-income countries,,2030,8.415
+Lower-middle-income countries,,2035,9.035
+Lower-middle-income countries,,2040,9.59
+Lower-middle-income countries,,1870,0.01
+Lower-middle-income countries,,1875,0.01
+Lower-middle-income countries,,1880,0.01
+Lower-middle-income countries,,1885,0.02
+Lower-middle-income countries,,1890,0.02
+Lower-middle-income countries,,1895,0.03
+Lower-middle-income countries,,1900,0.05
+Lower-middle-income countries,,1905,0.125
+Lower-middle-income countries,,1910,0.19
+Lower-middle-income countries,,1915,0.245
+Lower-middle-income countries,,1920,0.365
+Lower-middle-income countries,,1925,0.51
+Lower-middle-income countries,,1930,0.59000003
+Lower-middle-income countries,,1935,0.725
+Lower-middle-income countries,,1940,0.805
+Lower-middle-income countries,,1945,0.92499995
+Lower-middle-income countries,,1950,1.01
+Lower-middle-income countries,,1955,1.05
+Lower-middle-income countries,,1960,1.2049999
+Lower-middle-income countries,,1965,1.52
+Lower-middle-income countries,,1970,2.045
+Lower-middle-income countries,,1975,2.605
+Lower-middle-income countries,,1980,3.3600001
+Lower-middle-income countries,,1985,3.9950001
+Lower-middle-income countries,,1990,4.645
+Lower-middle-income countries,,1995,5.25
+Lower-middle-income countries,,2000,5.73
+Lower-middle-income countries,,2005,6.26
+Lower-middle-income countries,,2010,6.5299997
+Luxembourg,LUX,2015,11.41
+Luxembourg,LUX,2020,11.53
+Luxembourg,LUX,2025,11.67
+Luxembourg,LUX,2030,11.81
+Luxembourg,LUX,2035,11.91
+Luxembourg,LUX,2040,12.06
+Luxembourg,LUX,1870,0.04
+Luxembourg,LUX,1875,0.05
+Luxembourg,LUX,1880,0.06
+Luxembourg,LUX,1885,0.08
+Luxembourg,LUX,1890,0.1
+Luxembourg,LUX,1895,0.12
+Luxembourg,LUX,1900,0.15
+Luxembourg,LUX,1905,0.18
+Luxembourg,LUX,1910,0.22
+Luxembourg,LUX,1915,0.27
+Luxembourg,LUX,1920,0.36
+Luxembourg,LUX,1925,0.44
+Luxembourg,LUX,1930,0.56
+Luxembourg,LUX,1935,1.4
+Luxembourg,LUX,1940,2.18
+Luxembourg,LUX,1945,2.83
+Luxembourg,LUX,1950,3.85
+Luxembourg,LUX,1955,4.65
+Luxembourg,LUX,1960,5.22
+Luxembourg,LUX,1965,6.19
+Luxembourg,LUX,1970,7.27
+Luxembourg,LUX,1975,8.21
+Luxembourg,LUX,1980,8.55
+Luxembourg,LUX,1985,8.83
+Luxembourg,LUX,1990,9.24
+Luxembourg,LUX,1995,9.57
+Luxembourg,LUX,2000,9.92
+Luxembourg,LUX,2005,10.59
+Luxembourg,LUX,2010,11.33
+Macao,MAC,2015,10.56
+Macao,MAC,2020,10.97
+Macao,MAC,2025,11.35
+Macao,MAC,2030,11.69
+Macao,MAC,2035,12.01
+Macao,MAC,2040,12.26
+Malawi,MWI,2015,4.86
+Malawi,MWI,2020,5.41
+Malawi,MWI,2025,6
+Malawi,MWI,2030,6.62
+Malawi,MWI,2035,7.2
+Malawi,MWI,2040,7.78
+Malawi,MWI,1870,0.01
+Malawi,MWI,1875,0.01
+Malawi,MWI,1880,0.01
+Malawi,MWI,1885,0.01
+Malawi,MWI,1890,0.01
+Malawi,MWI,1895,0.01
+Malawi,MWI,1900,0.01
+Malawi,MWI,1905,0.02
+Malawi,MWI,1910,0.13
+Malawi,MWI,1915,0.23
+Malawi,MWI,1920,0.31
+Malawi,MWI,1925,0.42
+Malawi,MWI,1930,0.51
+Malawi,MWI,1935,0.62
+Malawi,MWI,1940,0.72
+Malawi,MWI,1945,0.84
+Malawi,MWI,1950,0.98
+Malawi,MWI,1955,1.06
+Malawi,MWI,1960,1.12
+Malawi,MWI,1965,1.3
+Malawi,MWI,1970,1.63
+Malawi,MWI,1975,1.96
+Malawi,MWI,1980,2.5
+Malawi,MWI,1985,2.96
+Malawi,MWI,1990,3.14
+Malawi,MWI,1995,3.3
+Malawi,MWI,2000,3.73
+Malawi,MWI,2005,4.67
+Malawi,MWI,2010,5.01
+Malaysia,MYS,2015,11.49
+Malaysia,MYS,2020,11.96
+Malaysia,MYS,2025,12.39
+Malaysia,MYS,2030,12.82
+Malaysia,MYS,2035,13.17
+Malaysia,MYS,2040,13.51
+Malaysia,MYS,1870,0.02
+Malaysia,MYS,1875,0.02
+Malaysia,MYS,1880,0.03
+Malaysia,MYS,1885,0.04
+Malaysia,MYS,1890,0.05
+Malaysia,MYS,1895,0.06
+Malaysia,MYS,1900,0.09
+Malaysia,MYS,1905,0.22
+Malaysia,MYS,1910,0.36
+Malaysia,MYS,1915,0.5
+Malaysia,MYS,1920,0.69
+Malaysia,MYS,1925,1.01
+Malaysia,MYS,1930,1.3
+Malaysia,MYS,1935,1.53
+Malaysia,MYS,1940,1.75
+Malaysia,MYS,1945,1.96
+Malaysia,MYS,1950,2.21
+Malaysia,MYS,1955,2.5
+Malaysia,MYS,1960,2.99
+Malaysia,MYS,1965,3.54
+Malaysia,MYS,1970,4.41
+Malaysia,MYS,1975,5.06
+Malaysia,MYS,1980,6.06
+Malaysia,MYS,1985,7.03
+Malaysia,MYS,1990,8.01
+Malaysia,MYS,1995,8.66
+Malaysia,MYS,2000,9.49
+Malaysia,MYS,2005,10.16
+Malaysia,MYS,2010,10.89
+Maldives,MDV,2015,7.57
+Maldives,MDV,2020,8.06
+Maldives,MDV,2025,8.57
+Maldives,MDV,2030,9.08
+Maldives,MDV,2035,9.51
+Maldives,MDV,2040,9.88
+Mali,MLI,2015,2.78
+Mali,MLI,2020,3.55
+Mali,MLI,2025,4.36
+Mali,MLI,2030,5.19
+Mali,MLI,2035,6.03
+Mali,MLI,2040,6.86
+Mali,MLI,1870,0.01
+Mali,MLI,1875,0.01
+Mali,MLI,1880,0.01
+Mali,MLI,1885,0.01
+Mali,MLI,1890,0.01
+Mali,MLI,1895,0.01
+Mali,MLI,1900,0.01
+Mali,MLI,1905,0.01
+Mali,MLI,1910,0.01
+Mali,MLI,1915,0.01
+Mali,MLI,1920,0.02
+Mali,MLI,1925,0.03
+Mali,MLI,1930,0.04
+Mali,MLI,1935,0.1
+Mali,MLI,1940,0.11
+Mali,MLI,1945,0.13
+Mali,MLI,1950,0.16
+Mali,MLI,1955,0.18
+Mali,MLI,1960,0.2
+Mali,MLI,1965,0.26
+Mali,MLI,1970,0.31
+Mali,MLI,1975,0.46
+Mali,MLI,1980,0.65
+Mali,MLI,1985,0.83
+Mali,MLI,1990,0.95
+Mali,MLI,1995,1.07
+Mali,MLI,2000,1.3
+Mali,MLI,2005,1.81
+Mali,MLI,2010,2.14
+Malta,MLT,2015,11.53
+Malta,MLT,2020,12.09
+Malta,MLT,2025,12.55
+Malta,MLT,2030,12.86
+Malta,MLT,2035,13.05
+Malta,MLT,2040,13.29
+Malta,MLT,1870,0.31
+Malta,MLT,1875,0.37
+Malta,MLT,1880,0.44
+Malta,MLT,1885,0.52
+Malta,MLT,1890,0.62
+Malta,MLT,1895,0.73
+Malta,MLT,1900,1.15
+Malta,MLT,1905,1.4
+Malta,MLT,1910,1.5
+Malta,MLT,1915,1.76
+Malta,MLT,1920,1.98
+Malta,MLT,1925,2.17
+Malta,MLT,1930,2.29
+Malta,MLT,1935,2.55
+Malta,MLT,1940,2.81
+Malta,MLT,1945,3.09
+Malta,MLT,1950,3.32
+Malta,MLT,1955,3.89
+Malta,MLT,1960,4.49
+Malta,MLT,1965,5.1
+Malta,MLT,1970,6.06
+Malta,MLT,1975,6.84
+Malta,MLT,1980,7.51
+Malta,MLT,1985,8.38
+Malta,MLT,1990,9.19
+Malta,MLT,1995,10.06
+Malta,MLT,2000,10.43
+Malta,MLT,2005,10.6
+Malta,MLT,2010,11.06
+Mauritania,MRT,2015,5.1
+Mauritania,MRT,2020,5.55
+Mauritania,MRT,2025,6.01
+Mauritania,MRT,2030,6.5
+Mauritania,MRT,2035,7
+Mauritania,MRT,2040,7.51
+Mauritius,MUS,2015,9.9
+Mauritius,MUS,2020,10.4
+Mauritius,MUS,2025,10.88
+Mauritius,MUS,2030,11.38
+Mauritius,MUS,2035,11.87
+Mauritius,MUS,2040,12.35
+Mauritius,MUS,1870,0.19
+Mauritius,MUS,1875,0.23
+Mauritius,MUS,1880,0.3
+Mauritius,MUS,1885,0.38
+Mauritius,MUS,1890,0.48
+Mauritius,MUS,1895,0.6
+Mauritius,MUS,1900,1.07
+Mauritius,MUS,1905,1.28
+Mauritius,MUS,1910,1.48
+Mauritius,MUS,1915,1.63
+Mauritius,MUS,1920,1.78
+Mauritius,MUS,1925,1.93
+Mauritius,MUS,1930,2.09
+Mauritius,MUS,1935,2.27
+Mauritius,MUS,1940,2.32
+Mauritius,MUS,1945,2.39
+Mauritius,MUS,1950,2.51
+Mauritius,MUS,1955,2.93
+Mauritius,MUS,1960,3.6
+Mauritius,MUS,1965,4.3
+Mauritius,MUS,1970,4.98
+Mauritius,MUS,1975,5.18
+Mauritius,MUS,1980,5.52
+Mauritius,MUS,1985,6.09
+Mauritius,MUS,1990,6.85
+Mauritius,MUS,1995,7.07
+Mauritius,MUS,2000,7.07
+Mauritius,MUS,2005,8.16
+Mauritius,MUS,2010,9.44
+Mexico,MEX,2015,9.65
+Mexico,MEX,2020,10.18
+Mexico,MEX,2025,10.64
+Mexico,MEX,2030,11.13
+Mexico,MEX,2035,11.55
+Mexico,MEX,2040,11.97
+Mexico,MEX,1870,0.38
+Mexico,MEX,1875,0.45
+Mexico,MEX,1880,0.54
+Mexico,MEX,1885,0.63
+Mexico,MEX,1890,0.71
+Mexico,MEX,1895,0.78
+Mexico,MEX,1900,0.85
+Mexico,MEX,1905,1.08
+Mexico,MEX,1910,1.33
+Mexico,MEX,1915,1.47
+Mexico,MEX,1920,1.47
+Mexico,MEX,1925,1.6
+Mexico,MEX,1930,1.7
+Mexico,MEX,1935,1.98
+Mexico,MEX,1940,2.25
+Mexico,MEX,1945,2.24
+Mexico,MEX,1950,2.2
+Mexico,MEX,1955,2.36
+Mexico,MEX,1960,2.55
+Mexico,MEX,1965,3.02
+Mexico,MEX,1970,3.48
+Mexico,MEX,1975,4.19
+Mexico,MEX,1980,5.01
+Mexico,MEX,1985,5.9
+Mexico,MEX,1990,6.68
+Mexico,MEX,1995,7.37
+Mexico,MEX,2000,7.96
+Mexico,MEX,2005,8.9
+Mexico,MEX,2010,9.18
+Moldova,MDA,2015,10.8
+Moldova,MDA,2020,10.84
+Moldova,MDA,2025,10.82
+Moldova,MDA,2030,10.91
+Moldova,MDA,2035,11.02
+Moldova,MDA,2040,11.16
+Mongolia,MNG,2015,9.77
+Mongolia,MNG,2020,10
+Mongolia,MNG,2025,10.18
+Mongolia,MNG,2030,10.42
+Mongolia,MNG,2035,10.69
+Mongolia,MNG,2040,10.95
+Morocco,MAR,2015,6.15
+Morocco,MAR,2020,6.83
+Morocco,MAR,2025,7.53
+Morocco,MAR,2030,8.29
+Morocco,MAR,2035,9.05
+Morocco,MAR,2040,9.75
+Morocco,MAR,1870,0.01
+Morocco,MAR,1875,0.01
+Morocco,MAR,1880,0.01
+Morocco,MAR,1885,0.01
+Morocco,MAR,1890,0.01
+Morocco,MAR,1895,0.01
+Morocco,MAR,1900,0.01
+Morocco,MAR,1905,0.01
+Morocco,MAR,1910,0.01
+Morocco,MAR,1915,0.04
+Morocco,MAR,1920,0.07
+Morocco,MAR,1925,0.1
+Morocco,MAR,1930,0.16
+Morocco,MAR,1935,0.19
+Morocco,MAR,1940,0.22
+Morocco,MAR,1945,0.26
+Morocco,MAR,1950,0.3
+Morocco,MAR,1955,0.39
+Morocco,MAR,1960,0.51
+Morocco,MAR,1965,0.75
+Morocco,MAR,1970,1.05
+Morocco,MAR,1975,1.43
+Morocco,MAR,1980,1.88
+Morocco,MAR,1985,2.45
+Morocco,MAR,1990,3.05
+Morocco,MAR,1995,3.64
+Morocco,MAR,2000,4.09
+Morocco,MAR,2005,4.63
+Morocco,MAR,2010,5.27
+Mozambique,MOZ,2015,3.31
+Mozambique,MOZ,2020,4.22
+Mozambique,MOZ,2025,5.01
+Mozambique,MOZ,2030,5.69
+Mozambique,MOZ,2035,6.29
+Mozambique,MOZ,2040,6.94
+Mozambique,MOZ,1870,0.01
+Mozambique,MOZ,1875,0.01
+Mozambique,MOZ,1880,0.01
+Mozambique,MOZ,1885,0.01
+Mozambique,MOZ,1890,0.01
+Mozambique,MOZ,1895,0.01
+Mozambique,MOZ,1900,0.01
+Mozambique,MOZ,1905,0.02
+Mozambique,MOZ,1910,0.02
+Mozambique,MOZ,1915,0.03
+Mozambique,MOZ,1920,0.03
+Mozambique,MOZ,1925,0.07
+Mozambique,MOZ,1930,0.12
+Mozambique,MOZ,1935,0.15
+Mozambique,MOZ,1940,0.39
+Mozambique,MOZ,1945,0.44
+Mozambique,MOZ,1950,0.52
+Mozambique,MOZ,1955,0.7
+Mozambique,MOZ,1960,0.88
+Mozambique,MOZ,1965,1.06
+Mozambique,MOZ,1970,1.06
+Mozambique,MOZ,1975,1
+Mozambique,MOZ,1980,1.19
+Mozambique,MOZ,1985,1.25
+Mozambique,MOZ,1990,1.06
+Mozambique,MOZ,1995,0.98
+Mozambique,MOZ,2000,1.13
+Mozambique,MOZ,2005,1.34
+Mozambique,MOZ,2010,2.03
+Myanmar,MMR,2015,5.9
+Myanmar,MMR,2020,6.48
+Myanmar,MMR,2025,7.04
+Myanmar,MMR,2030,7.62
+Myanmar,MMR,2035,8.25
+Myanmar,MMR,2040,8.87
+Myanmar,MMR,1870,0.05
+Myanmar,MMR,1875,0.07
+Myanmar,MMR,1880,0.1
+Myanmar,MMR,1885,0.16
+Myanmar,MMR,1890,0.23
+Myanmar,MMR,1895,0.29
+Myanmar,MMR,1900,0.36
+Myanmar,MMR,1905,0.45
+Myanmar,MMR,1910,0.53
+Myanmar,MMR,1915,0.83
+Myanmar,MMR,1920,0.92
+Myanmar,MMR,1925,0.98
+Myanmar,MMR,1930,1.09
+Myanmar,MMR,1935,1.16
+Myanmar,MMR,1940,1.23
+Myanmar,MMR,1945,1.2
+Myanmar,MMR,1950,1.17
+Myanmar,MMR,1955,1.25
+Myanmar,MMR,1960,1.27
+Myanmar,MMR,1965,1.44
+Myanmar,MMR,1970,1.52
+Myanmar,MMR,1975,1.69
+Myanmar,MMR,1980,2.34
+Myanmar,MMR,1985,2.87
+Myanmar,MMR,1990,2.99
+Myanmar,MMR,1995,3.4
+Myanmar,MMR,2000,3.89
+Myanmar,MMR,2005,4.45
+Myanmar,MMR,2010,5.11
+Namibia,NAM,2015,6.64
+Namibia,NAM,2020,6.88
+Namibia,NAM,2025,7.09
+Namibia,NAM,2030,7.31
+Namibia,NAM,2035,7.53
+Namibia,NAM,2040,7.74
+Nepal,NPL,2015,5.44
+Nepal,NPL,2020,6.19
+Nepal,NPL,2025,6.83
+Nepal,NPL,2030,7.37
+Nepal,NPL,2035,7.91
+Nepal,NPL,2040,8.43
+Nepal,NPL,1870,0.01
+Nepal,NPL,1875,0.01
+Nepal,NPL,1880,0.01
+Nepal,NPL,1885,0.01
+Nepal,NPL,1890,0.01
+Nepal,NPL,1895,0.01
+Nepal,NPL,1900,0.01
+Nepal,NPL,1905,0.01
+Nepal,NPL,1910,0.01
+Nepal,NPL,1915,0.01
+Nepal,NPL,1920,0.07
+Nepal,NPL,1925,0.08
+Nepal,NPL,1930,0.08
+Nepal,NPL,1935,0.09
+Nepal,NPL,1940,0.09
+Nepal,NPL,1945,0.11
+Nepal,NPL,1950,0.11
+Nepal,NPL,1955,0.12
+Nepal,NPL,1960,0.14
+Nepal,NPL,1965,0.28
+Nepal,NPL,1970,0.52
+Nepal,NPL,1975,0.75
+Nepal,NPL,1980,1.04
+Nepal,NPL,1985,1.86
+Nepal,NPL,1990,2.58
+Nepal,NPL,1995,2.76
+Nepal,NPL,2000,3.13
+Nepal,NPL,2005,3.74
+Nepal,NPL,2010,4.44
+Netherlands,NLD,2015,11.74
+Netherlands,NLD,2020,11.82
+Netherlands,NLD,2025,11.88
+Netherlands,NLD,2030,11.94
+Netherlands,NLD,2035,11.95
+Netherlands,NLD,2040,11.98
+Netherlands,NLD,1870,2.94
+Netherlands,NLD,1875,3.01
+Netherlands,NLD,1880,3.11
+Netherlands,NLD,1885,3.2
+Netherlands,NLD,1890,3.28
+Netherlands,NLD,1895,3.37
+Netherlands,NLD,1900,3.46
+Netherlands,NLD,1905,3.63
+Netherlands,NLD,1910,3.8
+Netherlands,NLD,1915,3.99
+Netherlands,NLD,1920,4.16
+Netherlands,NLD,1925,4.35
+Netherlands,NLD,1930,4.5
+Netherlands,NLD,1935,4.73
+Netherlands,NLD,1940,4.95
+Netherlands,NLD,1945,5.14
+Netherlands,NLD,1950,6.14
+Netherlands,NLD,1955,6.2
+Netherlands,NLD,1960,6.25
+Netherlands,NLD,1965,7.49
+Netherlands,NLD,1970,8.48
+Netherlands,NLD,1975,9.28
+Netherlands,NLD,1980,9.87
+Netherlands,NLD,1985,10.22
+Netherlands,NLD,1990,10.59
+Netherlands,NLD,1995,10.88
+Netherlands,NLD,2000,11.14
+Netherlands,NLD,2005,11.15
+Netherlands,NLD,2010,11.71
+New Zealand,NZL,2015,10.91
+New Zealand,NZL,2020,10.81
+New Zealand,NZL,2025,10.63
+New Zealand,NZL,2030,10.44
+New Zealand,NZL,2035,10.22
+New Zealand,NZL,2040,10.07
+New Zealand,NZL,1870,3.58
+New Zealand,NZL,1875,3.47
+New Zealand,NZL,1880,3.62
+New Zealand,NZL,1885,3.86
+New Zealand,NZL,1890,4.12
+New Zealand,NZL,1895,4.35
+New Zealand,NZL,1900,4.5
+New Zealand,NZL,1905,4.68
+New Zealand,NZL,1910,5.04
+New Zealand,NZL,1915,5.48
+New Zealand,NZL,1920,5.87
+New Zealand,NZL,1925,6.31
+New Zealand,NZL,1930,6.84
+New Zealand,NZL,1935,7.57
+New Zealand,NZL,1940,7.95
+New Zealand,NZL,1945,8.31
+New Zealand,NZL,1950,9.34
+New Zealand,NZL,1955,9.67
+New Zealand,NZL,1960,10.12
+New Zealand,NZL,1965,10.18
+New Zealand,NZL,1970,11.17
+New Zealand,NZL,1975,12.03
+New Zealand,NZL,1980,11.81
+New Zealand,NZL,1985,11.81
+New Zealand,NZL,1990,11.69
+New Zealand,NZL,1995,11.81
+New Zealand,NZL,2000,11.98
+New Zealand,NZL,2005,12
+New Zealand,NZL,2010,11.12
+Nicaragua,NIC,2015,7.25
+Nicaragua,NIC,2020,7.76
+Nicaragua,NIC,2025,8.27
+Nicaragua,NIC,2030,8.78
+Nicaragua,NIC,2035,9.3
+Nicaragua,NIC,2040,9.84
+Nicaragua,NIC,1870,0.16
+Nicaragua,NIC,1875,0.2
+Nicaragua,NIC,1880,0.25
+Nicaragua,NIC,1885,0.31
+Nicaragua,NIC,1890,0.38
+Nicaragua,NIC,1895,0.46
+Nicaragua,NIC,1900,0.86
+Nicaragua,NIC,1905,1.01
+Nicaragua,NIC,1910,1.09
+Nicaragua,NIC,1915,1.17
+Nicaragua,NIC,1920,1.28
+Nicaragua,NIC,1925,1.41
+Nicaragua,NIC,1930,1.48
+Nicaragua,NIC,1935,1.5
+Nicaragua,NIC,1940,1.52
+Nicaragua,NIC,1945,1.54
+Nicaragua,NIC,1950,1.54
+Nicaragua,NIC,1955,1.83
+Nicaragua,NIC,1960,2.19
+Nicaragua,NIC,1965,2.61
+Nicaragua,NIC,1970,3.07
+Nicaragua,NIC,1975,3.38
+Nicaragua,NIC,1980,3.84
+Nicaragua,NIC,1985,4.21
+Nicaragua,NIC,1990,4.64
+Nicaragua,NIC,1995,5.19
+Nicaragua,NIC,2000,5.7
+Nicaragua,NIC,2005,6.28
+Nicaragua,NIC,2010,6.82
+Niger,NER,2015,2.44
+Niger,NER,2020,3.04
+Niger,NER,2025,3.75
+Niger,NER,2030,4.53
+Niger,NER,2035,5.35
+Niger,NER,2040,6.21
+Niger,NER,1870,0.01
+Niger,NER,1875,0.01
+Niger,NER,1880,0.01
+Niger,NER,1885,0.01
+Niger,NER,1890,0.01
+Niger,NER,1895,0.01
+Niger,NER,1900,0.01
+Niger,NER,1905,0.01
+Niger,NER,1910,0.01
+Niger,NER,1915,0.01
+Niger,NER,1920,0.07
+Niger,NER,1925,0.12
+Niger,NER,1930,0.16
+Niger,NER,1935,0.24
+Niger,NER,1940,0.27
+Niger,NER,1945,0.3
+Niger,NER,1950,0.33
+Niger,NER,1955,0.35
+Niger,NER,1960,0.38
+Niger,NER,1965,0.4
+Niger,NER,1970,0.45
+Niger,NER,1975,0.53
+Niger,NER,1980,0.67
+Niger,NER,1985,0.85
+Niger,NER,1990,1.08
+Niger,NER,1995,1.28
+Niger,NER,2000,1.43
+Niger,NER,2005,1.62
+Niger,NER,2010,1.95
+North America,,2015,9.555
+North America,,2020,9.885
+North America,,2025,10.115
+North America,,2030,10.38
+North America,,2035,10.775
+North America,,2040,11.135
+North America,,1870,0.285
+North America,,1875,0.35000002
+North America,,1880,0.425
+North America,,1885,0.525
+North America,,1890,0.63
+North America,,1895,0.72
+North America,,1900,0.855
+North America,,1905,1.2
+North America,,1910,1.5350001
+North America,,1915,1.885
+North America,,1920,2.115
+North America,,1925,2.385
+North America,,1930,2.72
+North America,,1935,3.035
+North America,,1940,3.24
+North America,,1945,3.4250002
+North America,,1950,3.59
+North America,,1955,3.7
+North America,,1960,3.9450002
+North America,,1965,4.35
+North America,,1970,4.495
+North America,,1975,5.42
+North America,,1980,6.2650003
+North America,,1985,6.87
+North America,,1990,7.38
+North America,,1995,8.08
+North America,,2000,8.594999
+North America,,2005,9.155
+North America,,2010,9.375
+Norway,NOR,2015,12.11
+Norway,NOR,2020,12.08
+Norway,NOR,2025,12.08
+Norway,NOR,2030,12.08
+Norway,NOR,2035,12.09
+Norway,NOR,2040,12.13
+Norway,NOR,1870,4.2
+Norway,NOR,1875,4.44
+Norway,NOR,1880,4.66
+Norway,NOR,1885,4.89
+Norway,NOR,1890,5.1
+Norway,NOR,1895,5.4
+Norway,NOR,1900,5.7
+Norway,NOR,1905,6.06
+Norway,NOR,1910,6.36
+Norway,NOR,1915,6.62
+Norway,NOR,1920,6.54
+Norway,NOR,1925,6.75
+Norway,NOR,1930,6.91
+Norway,NOR,1935,7.04
+Norway,NOR,1940,7.19
+Norway,NOR,1945,7.34
+Norway,NOR,1950,7.43
+Norway,NOR,1955,7.45
+Norway,NOR,1960,7.53
+Norway,NOR,1965,7.96
+Norway,NOR,1970,8.47
+Norway,NOR,1975,8.77
+Norway,NOR,1980,9.32
+Norway,NOR,1985,10.16
+Norway,NOR,1990,10.79
+Norway,NOR,1995,11.31
+Norway,NOR,2000,11.56
+Norway,NOR,2005,11.91
+Norway,NOR,2010,11.65
+Oceania,,2015,11.09
+Oceania,,2020,11.42
+Oceania,,2025,11.65
+Oceania,,2030,11.9
+Oceania,,2035,12.12
+Oceania,,2040,12.34
+Oceania,,1870,1.72
+Oceania,,1875,1.86
+Oceania,,1880,2.06
+Oceania,,1885,2.39
+Oceania,,1890,2.74
+Oceania,,1895,2.97
+Oceania,,1900,3.09
+Oceania,,1905,3.36
+Oceania,,1910,3.87
+Oceania,,1915,4.29
+Oceania,,1920,4.71
+Oceania,,1925,5.46
+Oceania,,1930,6.01
+Oceania,,1935,6.56
+Oceania,,1940,7.02
+Oceania,,1945,7.48
+Oceania,,1950,8.21
+Oceania,,1955,8.49
+Oceania,,1960,8.78
+Oceania,,1965,9.19
+Oceania,,1970,10.11
+Oceania,,1975,10.8
+Oceania,,1980,11.4
+Oceania,,1985,11.43
+Oceania,,1990,11.44
+Oceania,,1995,11.51
+Oceania,,2000,11.37
+Oceania,,2005,11.71
+Oceania,,2010,11.12
+Pakistan,PAK,2015,5.89
+Pakistan,PAK,2020,6.41
+Pakistan,PAK,2025,6.88
+Pakistan,PAK,2030,7.33
+Pakistan,PAK,2035,7.74
+Pakistan,PAK,2040,8.14
+Pakistan,PAK,1870,0.01
+Pakistan,PAK,1875,0.01
+Pakistan,PAK,1880,0.01
+Pakistan,PAK,1885,0.01
+Pakistan,PAK,1890,0.01
+Pakistan,PAK,1895,0.01
+Pakistan,PAK,1900,0.02
+Pakistan,PAK,1905,0.13
+Pakistan,PAK,1910,0.25
+Pakistan,PAK,1915,0.34
+Pakistan,PAK,1920,0.54
+Pakistan,PAK,1925,0.61
+Pakistan,PAK,1930,0.68
+Pakistan,PAK,1935,0.74
+Pakistan,PAK,1940,0.81
+Pakistan,PAK,1945,0.89
+Pakistan,PAK,1950,1
+Pakistan,PAK,1955,1.02
+Pakistan,PAK,1960,1.18
+Pakistan,PAK,1965,1.42
+Pakistan,PAK,1970,1.63
+Pakistan,PAK,1975,1.95
+Pakistan,PAK,1980,2.24
+Pakistan,PAK,1985,2.62
+Pakistan,PAK,1990,3.05
+Pakistan,PAK,1995,3.52
+Pakistan,PAK,2000,4.04
+Pakistan,PAK,2005,5.05
+Pakistan,PAK,2010,5.22
+Panama,PAN,2015,10.06
+Panama,PAN,2020,10.44
+Panama,PAN,2025,10.81
+Panama,PAN,2030,11.23
+Panama,PAN,2035,11.64
+Panama,PAN,2040,12.05
+Panama,PAN,1870,0.08
+Panama,PAN,1875,0.11
+Panama,PAN,1880,0.13
+Panama,PAN,1885,0.17
+Panama,PAN,1890,0.21
+Panama,PAN,1895,0.26
+Panama,PAN,1900,0.85
+Panama,PAN,1905,1.06
+Panama,PAN,1910,1.49
+Panama,PAN,1915,1.74
+Panama,PAN,1920,1.95
+Panama,PAN,1925,2.16
+Panama,PAN,1930,2.48
+Panama,PAN,1935,2.91
+Panama,PAN,1940,3.17
+Panama,PAN,1945,3.43
+Panama,PAN,1950,3.87
+Panama,PAN,1955,4.26
+Panama,PAN,1960,4.75
+Panama,PAN,1965,5.01
+Panama,PAN,1970,5.39
+Panama,PAN,1975,6.1
+Panama,PAN,1980,6.89
+Panama,PAN,1985,7.59
+Panama,PAN,1990,8.08
+Panama,PAN,1995,8.71
+Panama,PAN,2000,9.24
+Panama,PAN,2005,9.51
+Panama,PAN,2010,9.72
+Papua New Guinea,PNG,2015,4.61
+Papua New Guinea,PNG,2020,4.84
+Papua New Guinea,PNG,2025,5.09
+Papua New Guinea,PNG,2030,5.37
+Papua New Guinea,PNG,2035,5.68
+Papua New Guinea,PNG,2040,6.05
+Paraguay,PRY,2015,8.4
+Paraguay,PRY,2020,8.83
+Paraguay,PRY,2025,9.27
+Paraguay,PRY,2030,9.74
+Paraguay,PRY,2035,10.18
+Paraguay,PRY,2040,10.63
+Paraguay,PRY,1870,0.07
+Paraguay,PRY,1875,0.09
+Paraguay,PRY,1880,0.11
+Paraguay,PRY,1885,0.14
+Paraguay,PRY,1890,0.18
+Paraguay,PRY,1895,0.25
+Paraguay,PRY,1900,0.77
+Paraguay,PRY,1905,0.95
+Paraguay,PRY,1910,1.38
+Paraguay,PRY,1915,1.58
+Paraguay,PRY,1920,1.82
+Paraguay,PRY,1925,2.17
+Paraguay,PRY,1930,2.34
+Paraguay,PRY,1935,2.55
+Paraguay,PRY,1940,2.71
+Paraguay,PRY,1945,2.94
+Paraguay,PRY,1950,2.81
+Paraguay,PRY,1955,3.08
+Paraguay,PRY,1960,3.47
+Paraguay,PRY,1965,3.79
+Paraguay,PRY,1970,4.32
+Paraguay,PRY,1975,4.85
+Paraguay,PRY,1980,5.37
+Paraguay,PRY,1985,5.96
+Paraguay,PRY,1990,6.43
+Paraguay,PRY,1995,6.4
+Paraguay,PRY,2000,6.55
+Paraguay,PRY,2005,8.03
+Paraguay,PRY,2010,7.99
+Peru,PER,2015,9.61
+Peru,PER,2020,9.96
+Peru,PER,2025,10.25
+Peru,PER,2030,10.55
+Peru,PER,2035,10.84
+Peru,PER,2040,11.15
+Peru,PER,1870,0.03
+Peru,PER,1875,0.04
+Peru,PER,1880,0.05
+Peru,PER,1885,0.07
+Peru,PER,1890,0.1
+Peru,PER,1895,0.15
+Peru,PER,1900,0.22
+Peru,PER,1905,0.47
+Peru,PER,1910,0.71
+Peru,PER,1915,0.9
+Peru,PER,1920,1.44
+Peru,PER,1925,1.68
+Peru,PER,1930,1.89
+Peru,PER,1935,2.15
+Peru,PER,1940,2.4
+Peru,PER,1945,2.72
+Peru,PER,1950,2.91
+Peru,PER,1955,3.1
+Peru,PER,1960,3.32
+Peru,PER,1965,3.79
+Peru,PER,1970,4.47
+Peru,PER,1975,5.43
+Peru,PER,1980,6.2
+Peru,PER,1985,6.75
+Peru,PER,1990,7.39
+Peru,PER,1995,8.09
+Peru,PER,2000,9.05
+Peru,PER,2005,9.88
+Peru,PER,2010,9.28
+Philippines,PHL,2015,9.14
+Philippines,PHL,2020,9.44
+Philippines,PHL,2025,9.75
+Philippines,PHL,2030,10.05
+Philippines,PHL,2035,10.32
+Philippines,PHL,2040,10.57
+Philippines,PHL,1870,0.03
+Philippines,PHL,1875,0.04
+Philippines,PHL,1880,0.05
+Philippines,PHL,1885,0.07
+Philippines,PHL,1890,0.09
+Philippines,PHL,1895,0.12
+Philippines,PHL,1900,0.19
+Philippines,PHL,1905,0.23
+Philippines,PHL,1910,0.47
+Philippines,PHL,1915,0.7
+Philippines,PHL,1920,0.92
+Philippines,PHL,1925,1.16
+Philippines,PHL,1930,1.39
+Philippines,PHL,1935,1.69
+Philippines,PHL,1940,1.8
+Philippines,PHL,1945,1.99
+Philippines,PHL,1950,2.35
+Philippines,PHL,1955,3.36
+Philippines,PHL,1960,3.49
+Philippines,PHL,1965,4.01
+Philippines,PHL,1970,4.83
+Philippines,PHL,1975,5.56
+Philippines,PHL,1980,6.26
+Philippines,PHL,1985,6.64
+Philippines,PHL,1990,7.15
+Philippines,PHL,1995,7.59
+Philippines,PHL,2000,7.96
+Philippines,PHL,2005,8.27
+Philippines,PHL,2010,8.65
+Poland,POL,2015,11.84
+Poland,POL,2020,12.01
+Poland,POL,2025,12.09
+Poland,POL,2030,12.18
+Poland,POL,2035,12.25
+Poland,POL,2040,12.34
+Poland,POL,1870,1.38
+Poland,POL,1875,1.49
+Poland,POL,1880,1.6
+Poland,POL,1885,1.72
+Poland,POL,1890,1.84
+Poland,POL,1895,1.97
+Poland,POL,1900,2.11
+Poland,POL,1905,2.44
+Poland,POL,1910,2.72
+Poland,POL,1915,2.96
+Poland,POL,1920,3.42
+Poland,POL,1925,3.62
+Poland,POL,1930,3.94
+Poland,POL,1935,4.38
+Poland,POL,1940,4.87
+Poland,POL,1945,5.26
+Poland,POL,1950,5.52
+Poland,POL,1955,5.81
+Poland,POL,1960,6.19
+Poland,POL,1965,6.92
+Poland,POL,1970,7.63
+Poland,POL,1975,8.19
+Poland,POL,1980,8.31
+Poland,POL,1985,8.69
+Poland,POL,1990,9.75
+Poland,POL,1995,10.32
+Poland,POL,2000,10.74
+Poland,POL,2005,11.36
+Poland,POL,2010,11.62
+Portugal,PRT,2015,9.14
+Portugal,PRT,2020,9.56
+Portugal,PRT,2025,9.94
+Portugal,PRT,2030,10.36
+Portugal,PRT,2035,10.69
+Portugal,PRT,2040,11.06
+Portugal,PRT,1870,0.27
+Portugal,PRT,1875,0.34
+Portugal,PRT,1880,0.42
+Portugal,PRT,1885,0.51
+Portugal,PRT,1890,0.6
+Portugal,PRT,1895,0.71
+Portugal,PRT,1900,0.8
+Portugal,PRT,1905,0.87
+Portugal,PRT,1910,0.94
+Portugal,PRT,1915,1.01
+Portugal,PRT,1920,1.17
+Portugal,PRT,1925,1.26
+Portugal,PRT,1930,1.34
+Portugal,PRT,1935,1.46
+Portugal,PRT,1940,1.65
+Portugal,PRT,1945,1.84
+Portugal,PRT,1950,2.01
+Portugal,PRT,1955,2.2
+Portugal,PRT,1960,2.46
+Portugal,PRT,1965,2.64
+Portugal,PRT,1970,3.17
+Portugal,PRT,1975,4.27
+Portugal,PRT,1980,5.45
+Portugal,PRT,1985,6.08
+Portugal,PRT,1990,6.73
+Portugal,PRT,1995,7.49
+Portugal,PRT,2000,8.41
+Portugal,PRT,2005,8.12
+Portugal,PRT,2010,8.71
+Qatar,QAT,2015,8.46
+Qatar,QAT,2020,8.52
+Qatar,QAT,2025,8.59
+Qatar,QAT,2030,8.69
+Qatar,QAT,2035,8.83
+Qatar,QAT,2040,9
+Reunion,REU,2015,8.5
+Reunion,REU,2020,8.71
+Reunion,REU,2025,8.91
+Reunion,REU,2030,9.12
+Reunion,REU,2035,9.32
+Reunion,REU,2040,9.49
+Reunion,REU,1870,0.21
+Reunion,REU,1875,0.27
+Reunion,REU,1880,0.33
+Reunion,REU,1885,0.4
+Reunion,REU,1890,0.5
+Reunion,REU,1895,0.61
+Reunion,REU,1900,0.95
+Reunion,REU,1905,1.29
+Reunion,REU,1910,1.58
+Reunion,REU,1915,1.71
+Reunion,REU,1920,1.91
+Reunion,REU,1925,2.13
+Reunion,REU,1930,2.33
+Reunion,REU,1935,2.42
+Reunion,REU,1940,2.48
+Reunion,REU,1945,2.63
+Reunion,REU,1950,2.89
+Reunion,REU,1955,2.77
+Reunion,REU,1960,2.75
+Reunion,REU,1965,2.93
+Reunion,REU,1970,3.64
+Reunion,REU,1975,4.5
+Reunion,REU,1980,5.26
+Reunion,REU,1985,5.9
+Reunion,REU,1990,6.46
+Reunion,REU,1995,6.97
+Reunion,REU,2000,7.42
+Reunion,REU,2005,7.85
+Reunion,REU,2010,8.29
+Romania,ROU,2015,11.07
+Romania,ROU,2020,11.28
+Romania,ROU,2025,11.4
+Romania,ROU,2030,11.54
+Romania,ROU,2035,11.68
+Romania,ROU,2040,11.85
+Romania,ROU,1870,0.1
+Romania,ROU,1875,0.12
+Romania,ROU,1880,0.13
+Romania,ROU,1885,0.15
+Romania,ROU,1890,0.18
+Romania,ROU,1895,0.21
+Romania,ROU,1900,0.27
+Romania,ROU,1905,0.37
+Romania,ROU,1910,0.64
+Romania,ROU,1915,0.84
+Romania,ROU,1920,1.23
+Romania,ROU,1925,2.19
+Romania,ROU,1930,2.49
+Romania,ROU,1935,2.92
+Romania,ROU,1940,3.38
+Romania,ROU,1945,3.71
+Romania,ROU,1950,4.51
+Romania,ROU,1955,4.89
+Romania,ROU,1960,5.39
+Romania,ROU,1965,5.82
+Romania,ROU,1970,7.05
+Romania,ROU,1975,8.09
+Romania,ROU,1980,8.78
+Romania,ROU,1985,9.33
+Romania,ROU,1990,9.84
+Romania,ROU,1995,10.37
+Romania,ROU,2000,10.7
+Romania,ROU,2005,10.89
+Romania,ROU,2010,11.24
+Russia,RUS,2015,11.56
+Russia,RUS,2020,11.6
+Russia,RUS,2025,11.64
+Russia,RUS,2030,11.68
+Russia,RUS,2035,11.74
+Russia,RUS,2040,11.8
+Russia,RUS,1870,0.15
+Russia,RUS,1875,0.18
+Russia,RUS,1880,0.21
+Russia,RUS,1885,0.24
+Russia,RUS,1890,0.27
+Russia,RUS,1895,0.33
+Russia,RUS,1900,0.42
+Russia,RUS,1905,0.62
+Russia,RUS,1910,0.71
+Russia,RUS,1915,0.89
+Russia,RUS,1920,1.24
+Russia,RUS,1925,1.52
+Russia,RUS,1930,1.86
+Russia,RUS,1935,2.42
+Russia,RUS,1940,3.03
+Russia,RUS,1945,3.65
+Russia,RUS,1950,4.08
+Russia,RUS,1955,4.58
+Russia,RUS,1960,4.88
+Russia,RUS,1965,5.62
+Russia,RUS,1970,6.39
+Russia,RUS,1975,7.29
+Russia,RUS,1980,8.36
+Russia,RUS,1985,9.37
+Russia,RUS,1990,10.21
+Russia,RUS,1995,10.73
+Russia,RUS,2000,11.54
+Russia,RUS,2005,11.76
+Russia,RUS,2010,12.02
+Rwanda,RWA,2015,4.62
+Rwanda,RWA,2020,5.24
+Rwanda,RWA,2025,5.91
+Rwanda,RWA,2030,6.53
+Rwanda,RWA,2035,7.14
+Rwanda,RWA,2040,7.76
+Saudi Arabia,SAU,2015,9.34
+Saudi Arabia,SAU,2020,9.86
+Saudi Arabia,SAU,2025,10.36
+Saudi Arabia,SAU,2030,10.77
+Saudi Arabia,SAU,2035,11.22
+Saudi Arabia,SAU,2040,11.63
+Senegal,SEN,2015,3.73
+Senegal,SEN,2020,4.4
+Senegal,SEN,2025,5.09
+Senegal,SEN,2030,5.82
+Senegal,SEN,2035,6.56
+Senegal,SEN,2040,7.32
+Senegal,SEN,1870,0.01
+Senegal,SEN,1875,0.01
+Senegal,SEN,1880,0.01
+Senegal,SEN,1885,0.01
+Senegal,SEN,1890,0.01
+Senegal,SEN,1895,0.01
+Senegal,SEN,1900,0.02
+Senegal,SEN,1905,0.02
+Senegal,SEN,1910,0.02
+Senegal,SEN,1915,0.03
+Senegal,SEN,1920,0.29
+Senegal,SEN,1925,0.53
+Senegal,SEN,1930,0.7
+Senegal,SEN,1935,1.14
+Senegal,SEN,1940,1.29
+Senegal,SEN,1945,1.44
+Senegal,SEN,1950,1.87
+Senegal,SEN,1955,1.95
+Senegal,SEN,1960,2.07
+Senegal,SEN,1965,2.11
+Senegal,SEN,1970,2.3
+Senegal,SEN,1975,2.49
+Senegal,SEN,1980,2.52
+Senegal,SEN,1985,2.45
+Senegal,SEN,1990,2.37
+Senegal,SEN,1995,2.26
+Senegal,SEN,2000,1.98
+Senegal,SEN,2005,1.67
+Senegal,SEN,2010,3.11
+Serbia,SRB,2015,11.49
+Serbia,SRB,2020,11.72
+Serbia,SRB,2025,11.88
+Serbia,SRB,2030,12.05
+Serbia,SRB,2035,12.2
+Serbia,SRB,2040,12.36
+Serbia,SRB,1870,0.09
+Serbia,SRB,1875,0.1
+Serbia,SRB,1880,0.14
+Serbia,SRB,1885,0.2
+Serbia,SRB,1890,0.29
+Serbia,SRB,1895,0.41
+Serbia,SRB,1900,0.75
+Serbia,SRB,1905,1.06
+Serbia,SRB,1910,1.38
+Serbia,SRB,1915,2
+Serbia,SRB,1920,2.34
+Serbia,SRB,1925,2.79
+Serbia,SRB,1930,3.22
+Serbia,SRB,1935,3.71
+Serbia,SRB,1940,4.21
+Serbia,SRB,1945,4.47
+Serbia,SRB,1950,4.59
+Serbia,SRB,1955,4.99
+Serbia,SRB,1960,5.14
+Serbia,SRB,1965,5.45
+Serbia,SRB,1970,6.09
+Serbia,SRB,1975,6.81
+Serbia,SRB,1980,7.42
+Serbia,SRB,1985,7.92
+Serbia,SRB,1990,8.15
+Serbia,SRB,1995,8.88
+Serbia,SRB,2000,9.52
+Serbia,SRB,2005,10.6
+Serbia,SRB,2010,11.52
+Sierra Leone,SLE,2015,4.23
+Sierra Leone,SLE,2020,4.99
+Sierra Leone,SLE,2025,5.69
+Sierra Leone,SLE,2030,6.37
+Sierra Leone,SLE,2035,7.03
+Sierra Leone,SLE,2040,7.7
+Sierra Leone,SLE,1870,0.02
+Sierra Leone,SLE,1875,0.03
+Sierra Leone,SLE,1880,0.03
+Sierra Leone,SLE,1885,0.04
+Sierra Leone,SLE,1890,0.05
+Sierra Leone,SLE,1895,0.06
+Sierra Leone,SLE,1900,0.08
+Sierra Leone,SLE,1905,0.1
+Sierra Leone,SLE,1910,0.15
+Sierra Leone,SLE,1915,0.18
+Sierra Leone,SLE,1920,0.21
+Sierra Leone,SLE,1925,0.22
+Sierra Leone,SLE,1930,0.24
+Sierra Leone,SLE,1935,0.26
+Sierra Leone,SLE,1940,0.31
+Sierra Leone,SLE,1945,0.36
+Sierra Leone,SLE,1950,0.41
+Sierra Leone,SLE,1955,0.46
+Sierra Leone,SLE,1960,0.51
+Sierra Leone,SLE,1965,0.68
+Sierra Leone,SLE,1970,0.87
+Sierra Leone,SLE,1975,1.14
+Sierra Leone,SLE,1980,1.44
+Sierra Leone,SLE,1985,1.81
+Sierra Leone,SLE,1990,2.17
+Sierra Leone,SLE,1995,2.55
+Sierra Leone,SLE,2000,2.9
+Sierra Leone,SLE,2005,3.36
+Sierra Leone,SLE,2010,4.28
+Singapore,SGP,2015,12.54
+Singapore,SGP,2020,13.06
+Singapore,SGP,2025,13.51
+Singapore,SGP,2030,13.85
+Singapore,SGP,2035,14.07
+Singapore,SGP,2040,14.19
+Slovakia,SVK,2015,13.03
+Slovakia,SVK,2020,13.14
+Slovakia,SVK,2025,13.21
+Slovakia,SVK,2030,13.31
+Slovakia,SVK,2035,13.43
+Slovakia,SVK,2040,13.56
+Slovenia,SVN,2015,11.95
+Slovenia,SVN,2020,12.06
+Slovenia,SVN,2025,12.08
+Slovenia,SVN,2030,12.14
+Slovenia,SVN,2035,12.17
+Slovenia,SVN,2040,12.21
+South Africa,ZAF,2015,10.15
+South Africa,ZAF,2020,10.47
+South Africa,ZAF,2025,10.73
+South Africa,ZAF,2030,11.05
+South Africa,ZAF,2035,11.27
+South Africa,ZAF,2040,11.49
+South Africa,ZAF,1870,0.68
+South Africa,ZAF,1875,0.8
+South Africa,ZAF,1880,0.96
+South Africa,ZAF,1885,1.15
+South Africa,ZAF,1890,1.3
+South Africa,ZAF,1895,1.3
+South Africa,ZAF,1900,1.22
+South Africa,ZAF,1905,1.24
+South Africa,ZAF,1910,1.28
+South Africa,ZAF,1915,1.61
+South Africa,ZAF,1920,2.38
+South Africa,ZAF,1925,2.75
+South Africa,ZAF,1930,3.09
+South Africa,ZAF,1935,3.42
+South Africa,ZAF,1940,3.7
+South Africa,ZAF,1945,3.98
+South Africa,ZAF,1950,4.2
+South Africa,ZAF,1955,4.4
+South Africa,ZAF,1960,4.47
+South Africa,ZAF,1965,4.55
+South Africa,ZAF,1970,4.7
+South Africa,ZAF,1975,4.9
+South Africa,ZAF,1980,5.18
+South Africa,ZAF,1985,5.21
+South Africa,ZAF,1990,6.89
+South Africa,ZAF,1995,8.37
+South Africa,ZAF,2000,7.92
+South Africa,ZAF,2005,8.86
+South Africa,ZAF,2010,9.89
+South America,,2015,8.65
+South America,,2020,9.07
+South America,,2025,9.49
+South America,,2030,9.91
+South America,,2035,10.3
+South America,,2040,10.71
+South America,,1870,0.19
+South America,,1875,0.24
+South America,,1880,0.3
+South America,,1885,0.37
+South America,,1890,0.45
+South America,,1895,0.52
+South America,,1900,0.85
+South America,,1905,1
+South America,,1910,1.38
+South America,,1915,1.58
+South America,,1920,1.79
+South America,,1925,2.01
+South America,,1930,2.17
+South America,,1935,2.32
+South America,,1940,2.4
+South America,,1945,2.72
+South America,,1950,2.81
+South America,,1955,3.08
+South America,,1960,3.32
+South America,,1965,3.79
+South America,,1970,4.47
+South America,,1975,5.07
+South America,,1980,6.2
+South America,,1985,6.75
+South America,,1990,7.27
+South America,,1995,7.92
+South America,,2000,8.36
+South America,,2005,8.5
+South America,,2010,8.78
+South Korea,KOR,2015,13.33
+South Korea,KOR,2020,13.68
+South Korea,KOR,2025,14
+South Korea,KOR,2030,14.21
+South Korea,KOR,2035,14.35
+South Korea,KOR,2040,14.43
+South Korea,KOR,1870,0.01
+South Korea,KOR,1875,0.01
+South Korea,KOR,1880,0.01
+South Korea,KOR,1885,0.01
+South Korea,KOR,1890,0.01
+South Korea,KOR,1895,0.01
+South Korea,KOR,1900,0.3
+South Korea,KOR,1905,0.6
+South Korea,KOR,1910,0.82
+South Korea,KOR,1915,1.46
+South Korea,KOR,1920,1.96
+South Korea,KOR,1925,2.37
+South Korea,KOR,1930,2.8
+South Korea,KOR,1935,3.24
+South Korea,KOR,1940,3.63
+South Korea,KOR,1945,3.96
+South Korea,KOR,1950,4.64
+South Korea,KOR,1955,5.22
+South Korea,KOR,1960,4.46
+South Korea,KOR,1965,5.68
+South Korea,KOR,1970,6.59
+South Korea,KOR,1975,7.54
+South Korea,KOR,1980,8.61
+South Korea,KOR,1985,9.52
+South Korea,KOR,1990,10.46
+South Korea,KOR,1995,11.17
+South Korea,KOR,2000,11.8
+South Korea,KOR,2005,12.27
+South Korea,KOR,2010,12.96
+Spain,ESP,2015,11.24
+Spain,ESP,2020,11.51
+Spain,ESP,2025,11.67
+Spain,ESP,2030,11.87
+Spain,ESP,2035,11.98
+Spain,ESP,2040,12.1
+Spain,ESP,1870,1.63
+Spain,ESP,1875,1.86
+Spain,ESP,1880,2.19
+Spain,ESP,1885,2.54
+Spain,ESP,1890,2.84
+Spain,ESP,1895,3.09
+Spain,ESP,1900,3.27
+Spain,ESP,1905,3.4
+Spain,ESP,1910,3.49
+Spain,ESP,1915,3.38
+Spain,ESP,1920,3.28
+Spain,ESP,1925,3.2
+Spain,ESP,1930,3.31
+Spain,ESP,1935,3.31
+Spain,ESP,1940,3.42
+Spain,ESP,1945,3.66
+Spain,ESP,1950,3.83
+Spain,ESP,1955,4.04
+Spain,ESP,1960,4.42
+Spain,ESP,1965,4.7
+Spain,ESP,1970,5.33
+Spain,ESP,1975,6.19
+Spain,ESP,1980,7.24
+Spain,ESP,1985,7.24
+Spain,ESP,1990,7.51
+Spain,ESP,1995,8.72
+Spain,ESP,2000,9.65
+Spain,ESP,2005,10.64
+Spain,ESP,2010,10.75
+Sri Lanka,LKA,2015,10.09
+Sri Lanka,LKA,2020,10.33
+Sri Lanka,LKA,2025,10.62
+Sri Lanka,LKA,2030,10.97
+Sri Lanka,LKA,2035,11.3
+Sri Lanka,LKA,2040,11.69
+Sri Lanka,LKA,1870,0.16
+Sri Lanka,LKA,1875,0.18
+Sri Lanka,LKA,1880,0.19
+Sri Lanka,LKA,1885,0.23
+Sri Lanka,LKA,1890,0.3
+Sri Lanka,LKA,1895,0.38
+Sri Lanka,LKA,1900,0.48
+Sri Lanka,LKA,1905,0.58
+Sri Lanka,LKA,1910,0.87
+Sri Lanka,LKA,1915,1.17
+Sri Lanka,LKA,1920,1.42
+Sri Lanka,LKA,1925,2.08
+Sri Lanka,LKA,1930,2.42
+Sri Lanka,LKA,1935,2.76
+Sri Lanka,LKA,1940,3.05
+Sri Lanka,LKA,1945,3.3
+Sri Lanka,LKA,1950,3.55
+Sri Lanka,LKA,1955,3.84
+Sri Lanka,LKA,1960,4.12
+Sri Lanka,LKA,1965,4.49
+Sri Lanka,LKA,1970,6.63
+Sri Lanka,LKA,1975,6.97
+Sri Lanka,LKA,1980,7.22
+Sri Lanka,LKA,1985,7.89
+Sri Lanka,LKA,1990,8.9
+Sri Lanka,LKA,1995,9.83
+Sri Lanka,LKA,2000,10.77
+Sri Lanka,LKA,2005,10.83
+Sri Lanka,LKA,2010,10.67
+Sudan,SDN,2015,3.85
+Sudan,SDN,2020,4.38
+Sudan,SDN,2025,5.02
+Sudan,SDN,2030,5.79
+Sudan,SDN,2035,6.59
+Sudan,SDN,2040,7.41
+Sudan,SDN,1870,0.01
+Sudan,SDN,1875,0.01
+Sudan,SDN,1880,0.01
+Sudan,SDN,1885,0.01
+Sudan,SDN,1890,0.01
+Sudan,SDN,1895,0.01
+Sudan,SDN,1900,0.02
+Sudan,SDN,1905,0.02
+Sudan,SDN,1910,0.03
+Sudan,SDN,1915,0.15
+Sudan,SDN,1920,0.16
+Sudan,SDN,1925,0.18
+Sudan,SDN,1930,0.22
+Sudan,SDN,1935,0.24
+Sudan,SDN,1940,0.27
+Sudan,SDN,1945,0.29
+Sudan,SDN,1950,0.35
+Sudan,SDN,1955,0.43
+Sudan,SDN,1960,0.51
+Sudan,SDN,1965,0.63
+Sudan,SDN,1970,0.78
+Sudan,SDN,1975,1.03
+Sudan,SDN,1980,1.42
+Sudan,SDN,1985,1.93
+Sudan,SDN,1990,2.4
+Sudan,SDN,1995,2.78
+Sudan,SDN,2000,3.09
+Sudan,SDN,2005,3.31
+Sudan,SDN,2010,3.49
+Sweden,SWE,2015,11.89
+Sweden,SWE,2020,11.93
+Sweden,SWE,2025,11.91
+Sweden,SWE,2030,11.93
+Sweden,SWE,2035,11.91
+Sweden,SWE,2040,11.93
+Sweden,SWE,1870,3.6
+Sweden,SWE,1875,3.71
+Sweden,SWE,1880,3.85
+Sweden,SWE,1885,3.98
+Sweden,SWE,1890,4.09
+Sweden,SWE,1895,4.21
+Sweden,SWE,1900,4.32
+Sweden,SWE,1905,4.42
+Sweden,SWE,1910,4.5
+Sweden,SWE,1915,4.59
+Sweden,SWE,1920,4.84
+Sweden,SWE,1925,5.06
+Sweden,SWE,1930,5.64
+Sweden,SWE,1935,5.89
+Sweden,SWE,1940,6.16
+Sweden,SWE,1945,6.53
+Sweden,SWE,1950,6.95
+Sweden,SWE,1955,7.28
+Sweden,SWE,1960,7.69
+Sweden,SWE,1965,8.12
+Sweden,SWE,1970,8.65
+Sweden,SWE,1975,9.62
+Sweden,SWE,1980,10.3
+Sweden,SWE,1985,10.65
+Sweden,SWE,1990,11.03
+Sweden,SWE,1995,11.41
+Sweden,SWE,2000,11.72
+Sweden,SWE,2005,11.86
+Sweden,SWE,2010,11.95
+Switzerland,CHE,2015,12.95
+Switzerland,CHE,2020,12.97
+Switzerland,CHE,2025,12.96
+Switzerland,CHE,2030,12.95
+Switzerland,CHE,2035,12.93
+Switzerland,CHE,2040,12.95
+Switzerland,CHE,1870,4.09
+Switzerland,CHE,1875,4.28
+Switzerland,CHE,1880,4.47
+Switzerland,CHE,1885,4.68
+Switzerland,CHE,1890,4.91
+Switzerland,CHE,1895,5.13
+Switzerland,CHE,1900,5.31
+Switzerland,CHE,1905,5.67
+Switzerland,CHE,1910,6.05
+Switzerland,CHE,1915,6.37
+Switzerland,CHE,1920,7.11
+Switzerland,CHE,1925,7.45
+Switzerland,CHE,1930,7.72
+Switzerland,CHE,1935,7.96
+Switzerland,CHE,1940,8.21
+Switzerland,CHE,1945,8.52
+Switzerland,CHE,1950,8.97
+Switzerland,CHE,1955,9.09
+Switzerland,CHE,1960,9.16
+Switzerland,CHE,1965,9.5
+Switzerland,CHE,1970,9.9
+Switzerland,CHE,1975,10.55
+Switzerland,CHE,1980,11.32
+Switzerland,CHE,1985,10.67
+Switzerland,CHE,1990,10.54
+Switzerland,CHE,1995,10.41
+Switzerland,CHE,2000,10.14
+Switzerland,CHE,2005,10.82
+Switzerland,CHE,2010,12.92
+Syria,SYR,2015,7.44
+Syria,SYR,2020,7.92
+Syria,SYR,2025,8.32
+Syria,SYR,2030,8.71
+Syria,SYR,2035,9.08
+Syria,SYR,2040,9.46
+Syria,SYR,1870,0.01
+Syria,SYR,1875,0.01
+Syria,SYR,1880,0.02
+Syria,SYR,1885,0.02
+Syria,SYR,1890,0.02
+Syria,SYR,1895,0.03
+Syria,SYR,1900,0.04
+Syria,SYR,1905,0.11
+Syria,SYR,1910,0.16
+Syria,SYR,1915,0.21
+Syria,SYR,1920,0.37
+Syria,SYR,1925,0.43
+Syria,SYR,1930,0.5
+Syria,SYR,1935,0.6
+Syria,SYR,1940,0.69
+Syria,SYR,1945,0.8
+Syria,SYR,1950,0.92
+Syria,SYR,1955,1.05
+Syria,SYR,1960,1.31
+Syria,SYR,1965,1.63
+Syria,SYR,1970,2.2
+Syria,SYR,1975,2.89
+Syria,SYR,1980,3.55
+Syria,SYR,1985,4.26
+Syria,SYR,1990,4.68
+Syria,SYR,1995,4.77
+Syria,SYR,2000,4.79
+Syria,SYR,2005,6.12
+Syria,SYR,2010,7.07
+Taiwan,TWN,2015,12.37
+Taiwan,TWN,2020,12.76
+Taiwan,TWN,2025,13.05
+Taiwan,TWN,2030,13.28
+Taiwan,TWN,2035,13.46
+Taiwan,TWN,2040,13.59
+Taiwan,TWN,1870,0
+Taiwan,TWN,1875,0
+Taiwan,TWN,1880,0
+Taiwan,TWN,1885,0
+Taiwan,TWN,1890,0.01
+Taiwan,TWN,1895,0.01
+Taiwan,TWN,1900,0.02
+Taiwan,TWN,1905,0.03
+Taiwan,TWN,1910,0.07
+Taiwan,TWN,1915,0.1
+Taiwan,TWN,1920,0.53
+Taiwan,TWN,1925,0.88
+Taiwan,TWN,1930,1.34
+Taiwan,TWN,1935,1.76
+Taiwan,TWN,1940,2.12
+Taiwan,TWN,1945,2.5
+Taiwan,TWN,1950,3.16
+Taiwan,TWN,1955,3.47
+Taiwan,TWN,1960,3.76
+Taiwan,TWN,1965,4.18
+Taiwan,TWN,1970,5.1
+Taiwan,TWN,1975,6.07
+Taiwan,TWN,1980,7.1
+Taiwan,TWN,1985,7.89
+Taiwan,TWN,1990,8.68
+Taiwan,TWN,1995,9.55
+Taiwan,TWN,2000,10.38
+Taiwan,TWN,2005,11.35
+Taiwan,TWN,2010,11.96
+Tajikistan,TJK,2015,10.16
+Tajikistan,TJK,2020,10.12
+Tajikistan,TJK,2025,10.14
+Tajikistan,TJK,2030,10.22
+Tajikistan,TJK,2035,10.38
+Tajikistan,TJK,2040,10.56
+Tanzania,TZA,2015,6.41
+Tanzania,TZA,2020,6.87
+Tanzania,TZA,2025,7.3
+Tanzania,TZA,2030,7.75
+Tanzania,TZA,2035,8.16
+Tanzania,TZA,2040,8.57
+Thailand,THA,2015,8.71
+Thailand,THA,2020,9.32
+Thailand,THA,2025,9.94
+Thailand,THA,2030,10.58
+Thailand,THA,2035,11.24
+Thailand,THA,2040,11.75
+Thailand,THA,1870,0.01
+Thailand,THA,1875,0.01
+Thailand,THA,1880,0.01
+Thailand,THA,1885,0.01
+Thailand,THA,1890,0.02
+Thailand,THA,1895,0.03
+Thailand,THA,1900,0.04
+Thailand,THA,1905,0.2
+Thailand,THA,1910,0.34
+Thailand,THA,1915,0.46
+Thailand,THA,1920,0.51
+Thailand,THA,1925,0.6
+Thailand,THA,1930,0.73
+Thailand,THA,1935,0.99
+Thailand,THA,1940,1.25
+Thailand,THA,1945,1.67
+Thailand,THA,1950,2.16
+Thailand,THA,1955,2.44
+Thailand,THA,1960,2.68
+Thailand,THA,1965,2.39
+Thailand,THA,1970,2.74
+Thailand,THA,1975,3.24
+Thailand,THA,1980,3.9
+Thailand,THA,1985,4.45
+Thailand,THA,1990,5.21
+Thailand,THA,1995,5.79
+Thailand,THA,2000,6.09
+Thailand,THA,2005,7.46
+Thailand,THA,2010,8.47
+Togo,TGO,2015,6.85
+Togo,TGO,2020,7.68
+Togo,TGO,2025,8.49
+Togo,TGO,2030,9.24
+Togo,TGO,2035,9.91
+Togo,TGO,2040,10.51
+Togo,TGO,1870,0.01
+Togo,TGO,1875,0.01
+Togo,TGO,1880,0.01
+Togo,TGO,1885,0.02
+Togo,TGO,1890,0.02
+Togo,TGO,1895,0.03
+Togo,TGO,1900,0.04
+Togo,TGO,1905,0.05
+Togo,TGO,1910,0.07
+Togo,TGO,1915,0.1
+Togo,TGO,1920,0.11
+Togo,TGO,1925,0.12
+Togo,TGO,1930,0.25
+Togo,TGO,1935,0.27
+Togo,TGO,1940,0.29
+Togo,TGO,1945,0.32
+Togo,TGO,1950,0.36
+Togo,TGO,1955,0.43
+Togo,TGO,1960,0.53
+Togo,TGO,1965,0.65
+Togo,TGO,1970,0.92
+Togo,TGO,1975,1.93
+Togo,TGO,1980,2.95
+Togo,TGO,1985,3.65
+Togo,TGO,1990,4.3
+Togo,TGO,1995,4.62
+Togo,TGO,2000,5.05
+Togo,TGO,2005,5.44
+Togo,TGO,2010,6.09
+Tonga,TON,2015,11.22
+Tonga,TON,2020,11.42
+Tonga,TON,2025,11.65
+Tonga,TON,2030,11.9
+Tonga,TON,2035,12.12
+Tonga,TON,2040,12.34
+Trinidad and Tobago,TTO,2015,11
+Trinidad and Tobago,TTO,2020,11.28
+Trinidad and Tobago,TTO,2025,11.56
+Trinidad and Tobago,TTO,2030,11.9
+Trinidad and Tobago,TTO,2035,12.13
+Trinidad and Tobago,TTO,2040,12.39
+Trinidad and Tobago,TTO,1870,0.5
+Trinidad and Tobago,TTO,1875,0.59
+Trinidad and Tobago,TTO,1880,0.69
+Trinidad and Tobago,TTO,1885,0.86
+Trinidad and Tobago,TTO,1890,1.05
+Trinidad and Tobago,TTO,1895,1.29
+Trinidad and Tobago,TTO,1900,1.66
+Trinidad and Tobago,TTO,1905,2
+Trinidad and Tobago,TTO,1910,2.41
+Trinidad and Tobago,TTO,1915,2.92
+Trinidad and Tobago,TTO,1920,3.28
+Trinidad and Tobago,TTO,1925,3.55
+Trinidad and Tobago,TTO,1930,3.93
+Trinidad and Tobago,TTO,1935,4.3
+Trinidad and Tobago,TTO,1940,4.61
+Trinidad and Tobago,TTO,1945,4.92
+Trinidad and Tobago,TTO,1950,5.16
+Trinidad and Tobago,TTO,1955,5.37
+Trinidad and Tobago,TTO,1960,5.73
+Trinidad and Tobago,TTO,1965,6.05
+Trinidad and Tobago,TTO,1970,6.51
+Trinidad and Tobago,TTO,1975,7.03
+Trinidad and Tobago,TTO,1980,7.57
+Trinidad and Tobago,TTO,1985,8.13
+Trinidad and Tobago,TTO,1990,8.71
+Trinidad and Tobago,TTO,1995,9.22
+Trinidad and Tobago,TTO,2000,9.72
+Trinidad and Tobago,TTO,2005,10.27
+Trinidad and Tobago,TTO,2010,10.96
+Tunisia,TUN,2015,8.63
+Tunisia,TUN,2020,9.29
+Tunisia,TUN,2025,9.93
+Tunisia,TUN,2030,10.66
+Tunisia,TUN,2035,11.34
+Tunisia,TUN,2040,12.05
+Tunisia,TUN,1870,0.01
+Tunisia,TUN,1875,0.01
+Tunisia,TUN,1880,0.01
+Tunisia,TUN,1885,0.01
+Tunisia,TUN,1890,0.01
+Tunisia,TUN,1895,0.01
+Tunisia,TUN,1900,0.02
+Tunisia,TUN,1905,0.02
+Tunisia,TUN,1910,0.08
+Tunisia,TUN,1915,0.13
+Tunisia,TUN,1920,0.18
+Tunisia,TUN,1925,0.2
+Tunisia,TUN,1930,0.25
+Tunisia,TUN,1935,0.42
+Tunisia,TUN,1940,0.51
+Tunisia,TUN,1945,0.59
+Tunisia,TUN,1950,0.68
+Tunisia,TUN,1955,0.82
+Tunisia,TUN,1960,0.96
+Tunisia,TUN,1965,1.37
+Tunisia,TUN,1970,1.9
+Tunisia,TUN,1975,2.63
+Tunisia,TUN,1980,3.47
+Tunisia,TUN,1985,3.93
+Tunisia,TUN,1990,4.68
+Tunisia,TUN,1995,5.48
+Tunisia,TUN,2000,6.32
+Tunisia,TUN,2005,7.21
+Tunisia,TUN,2010,8
+Turkey,TUR,2015,8.13
+Turkey,TUR,2020,8.49
+Turkey,TUR,2025,8.83
+Turkey,TUR,2030,9.19
+Turkey,TUR,2035,9.53
+Turkey,TUR,2040,9.89
+Turkey,TUR,1870,0.01
+Turkey,TUR,1875,0.01
+Turkey,TUR,1880,0.02
+Turkey,TUR,1885,0.02
+Turkey,TUR,1890,0.03
+Turkey,TUR,1895,0.04
+Turkey,TUR,1900,0.17
+Turkey,TUR,1905,0.24
+Turkey,TUR,1910,0.22
+Turkey,TUR,1915,0.31
+Turkey,TUR,1920,0.39
+Turkey,TUR,1925,0.48
+Turkey,TUR,1930,0.57
+Turkey,TUR,1935,0.69
+Turkey,TUR,1940,0.78
+Turkey,TUR,1945,0.94
+Turkey,TUR,1950,1.14
+Turkey,TUR,1955,1.42
+Turkey,TUR,1960,1.84
+Turkey,TUR,1965,2.2
+Turkey,TUR,1970,2.58
+Turkey,TUR,1975,3.09
+Turkey,TUR,1980,3.77
+Turkey,TUR,1985,4.82
+Turkey,TUR,1990,5.22
+Turkey,TUR,1995,5.88
+Turkey,TUR,2000,6.37
+Turkey,TUR,2005,6.86
+Turkey,TUR,2010,7.44
+Uganda,UGA,2015,6.27
+Uganda,UGA,2020,6.69
+Uganda,UGA,2025,7.16
+Uganda,UGA,2030,7.69
+Uganda,UGA,2035,8.26
+Uganda,UGA,2040,8.87
+Uganda,UGA,1870,0.01
+Uganda,UGA,1875,0.01
+Uganda,UGA,1880,0.01
+Uganda,UGA,1885,0.01
+Uganda,UGA,1890,0.01
+Uganda,UGA,1895,0.01
+Uganda,UGA,1900,0.01
+Uganda,UGA,1905,0.08
+Uganda,UGA,1910,0.16
+Uganda,UGA,1915,0.2
+Uganda,UGA,1920,0.43
+Uganda,UGA,1925,0.46
+Uganda,UGA,1930,0.5
+Uganda,UGA,1935,0.54
+Uganda,UGA,1940,0.58
+Uganda,UGA,1945,0.74
+Uganda,UGA,1950,0.92
+Uganda,UGA,1955,1.06
+Uganda,UGA,1960,1.18
+Uganda,UGA,1965,1.29
+Uganda,UGA,1970,1.58
+Uganda,UGA,1975,2
+Uganda,UGA,1980,2.4
+Uganda,UGA,1985,3.02
+Uganda,UGA,1990,3.71
+Uganda,UGA,1995,4.17
+Uganda,UGA,2000,4.56
+Uganda,UGA,2005,5.11
+Uganda,UGA,2010,5.87
+Ukraine,UKR,2015,10.81
+Ukraine,UKR,2020,10.82
+Ukraine,UKR,2025,10.77
+Ukraine,UKR,2030,10.77
+Ukraine,UKR,2035,10.81
+Ukraine,UKR,2040,10.88
+United Arab Emirates,ARE,2015,9.35
+United Arab Emirates,ARE,2020,9.57
+United Arab Emirates,ARE,2025,9.85
+United Arab Emirates,ARE,2030,10.17
+United Arab Emirates,ARE,2035,10.51
+United Arab Emirates,ARE,2040,10.91
+United Kingdom,GBR,2015,12.67
+United Kingdom,GBR,2020,12.9
+United Kingdom,GBR,2025,13.06
+United Kingdom,GBR,2030,13.22
+United Kingdom,GBR,2035,13.35
+United Kingdom,GBR,2040,13.48
+United Kingdom,GBR,1870,0.92
+United Kingdom,GBR,1875,0.98
+United Kingdom,GBR,1880,1.15
+United Kingdom,GBR,1885,1.4
+United Kingdom,GBR,1890,1.81
+United Kingdom,GBR,1895,2.16
+United Kingdom,GBR,1900,2.55
+United Kingdom,GBR,1905,3.11
+United Kingdom,GBR,1910,3.64
+United Kingdom,GBR,1915,4.08
+United Kingdom,GBR,1920,4.49
+United Kingdom,GBR,1925,4.93
+United Kingdom,GBR,1930,5.42
+United Kingdom,GBR,1935,5.94
+United Kingdom,GBR,1940,6.24
+United Kingdom,GBR,1945,6.46
+United Kingdom,GBR,1950,6.49
+United Kingdom,GBR,1955,6.73
+United Kingdom,GBR,1960,7.01
+United Kingdom,GBR,1965,7.65
+United Kingdom,GBR,1970,8.06
+United Kingdom,GBR,1975,8.39
+United Kingdom,GBR,1980,8.52
+United Kingdom,GBR,1985,8.76
+United Kingdom,GBR,1990,9.28
+United Kingdom,GBR,1995,9.67
+United Kingdom,GBR,2000,9.97
+United Kingdom,GBR,2005,11.57
+United Kingdom,GBR,2010,12.46
+United States,USA,2015,13.29
+United States,USA,2020,13.32
+United States,USA,2025,13.36
+United States,USA,2030,13.39
+United States,USA,2035,13.41
+United States,USA,2040,13.43
+United States,USA,1870,4.26
+United States,USA,1875,4.57
+United States,USA,1880,4.89
+United States,USA,1885,5.17
+United States,USA,1890,5.55
+United States,USA,1895,5.93
+United States,USA,1900,6.38
+United States,USA,1905,6.72
+United States,USA,1910,6.76
+United States,USA,1915,6.97
+United States,USA,1920,7.2
+United States,USA,1925,7.56
+United States,USA,1930,7.9
+United States,USA,1935,8.34
+United States,USA,1940,8.68
+United States,USA,1945,8.93
+United States,USA,1950,8.74
+United States,USA,1955,9.14
+United States,USA,1960,9.63
+United States,USA,1965,10.42
+United States,USA,1970,11.1
+United States,USA,1975,11.73
+United States,USA,1980,12.28
+United States,USA,1985,12.35
+United States,USA,1990,12.55
+United States,USA,1995,12.83
+United States,USA,2000,13.1
+United States,USA,2005,13.01
+United States,USA,2010,13.24
+Upper-middle-income countries,,2015,9.715
+Upper-middle-income countries,,2020,10.18
+Upper-middle-income countries,,2025,10.57
+Upper-middle-income countries,,2030,10.844999
+Upper-middle-income countries,,2035,11.06
+Upper-middle-income countries,,2040,11.275
+Upper-middle-income countries,,1870,0.13
+Upper-middle-income countries,,1875,0.165
+Upper-middle-income countries,,1880,0.205
+Upper-middle-income countries,,1885,0.245
+Upper-middle-income countries,,1890,0.29500002
+Upper-middle-income countries,,1895,0.37
+Upper-middle-income countries,,1900,0.76
+Upper-middle-income countries,,1905,0.93
+Upper-middle-income countries,,1910,1.1600001
+Upper-middle-income countries,,1915,1.3599999
+Upper-middle-income countries,,1920,1.5
+Upper-middle-income countries,,1925,1.68
+Upper-middle-income countries,,1930,1.9449999
+Upper-middle-income countries,,1935,2.2849998
+Upper-middle-income countries,,1940,2.3600001
+Upper-middle-income countries,,1945,2.48
+Upper-middle-income countries,,1950,2.685
+Upper-middle-income countries,,1955,2.93
+Upper-middle-income countries,,1960,3.3049998
+Upper-middle-income countries,,1965,3.79
+Upper-middle-income countries,,1970,4.4399996
+Upper-middle-income countries,,1975,5.065
+Upper-middle-income countries,,1980,5.8999996
+Upper-middle-income countries,,1985,6.455
+Upper-middle-income countries,,1990,7.125
+Upper-middle-income countries,,1995,7.75
+Upper-middle-income countries,,2000,7.96
+Upper-middle-income countries,,2005,8.825
+Upper-middle-income countries,,2010,9.315001
+Uruguay,URY,2015,8.65
+Uruguay,URY,2020,8.76
+Uruguay,URY,2025,8.87
+Uruguay,URY,2030,9.01
+Uruguay,URY,2035,9.14
+Uruguay,URY,2040,9.3
+Uruguay,URY,1870,0.34
+Uruguay,URY,1875,0.41
+Uruguay,URY,1880,0.51
+Uruguay,URY,1885,0.62
+Uruguay,URY,1890,0.75
+Uruguay,URY,1895,0.85
+Uruguay,URY,1900,0.94
+Uruguay,URY,1905,1.03
+Uruguay,URY,1910,1.44
+Uruguay,URY,1915,1.85
+Uruguay,URY,1920,2.16
+Uruguay,URY,1925,2.84
+Uruguay,URY,1930,3.11
+Uruguay,URY,1935,3.38
+Uruguay,URY,1940,3.72
+Uruguay,URY,1945,4.06
+Uruguay,URY,1950,4.47
+Uruguay,URY,1955,4.77
+Uruguay,URY,1960,5.06
+Uruguay,URY,1965,5.43
+Uruguay,URY,1970,5.94
+Uruguay,URY,1975,6.45
+Uruguay,URY,1980,6.94
+Uruguay,URY,1985,7.4
+Uruguay,URY,1990,7.71
+Uruguay,URY,1995,8.08
+Uruguay,URY,2000,8.36
+Uruguay,URY,2005,8.5
+Uruguay,URY,2010,8.61
+Venezuela,VEN,2015,9.02
+Venezuela,VEN,2020,9.33
+Venezuela,VEN,2025,9.61
+Venezuela,VEN,2030,9.91
+Venezuela,VEN,2035,10.17
+Venezuela,VEN,2040,10.43
+Venezuela,VEN,1870,0.02
+Venezuela,VEN,1875,0.02
+Venezuela,VEN,1880,0.02
+Venezuela,VEN,1885,0.03
+Venezuela,VEN,1890,0.04
+Venezuela,VEN,1895,0.05
+Venezuela,VEN,1900,0.44
+Venezuela,VEN,1905,0.57
+Venezuela,VEN,1910,0.63
+Venezuela,VEN,1915,0.74
+Venezuela,VEN,1920,0.84
+Venezuela,VEN,1925,0.93
+Venezuela,VEN,1930,0.98
+Venezuela,VEN,1935,1.15
+Venezuela,VEN,1940,1.32
+Venezuela,VEN,1945,1.59
+Venezuela,VEN,1950,1.65
+Venezuela,VEN,1955,2.01
+Venezuela,VEN,1960,2.44
+Venezuela,VEN,1965,2.75
+Venezuela,VEN,1970,3.49
+Venezuela,VEN,1975,4.51
+Venezuela,VEN,1980,5.47
+Venezuela,VEN,1985,5.33
+Venezuela,VEN,1990,5.26
+Venezuela,VEN,1995,6.11
+Venezuela,VEN,2000,7.01
+Venezuela,VEN,2005,7.8
+Venezuela,VEN,2010,8.78
+Vietnam,VNM,2015,7.99
+Vietnam,VNM,2020,8.35
+Vietnam,VNM,2025,8.75
+Vietnam,VNM,2030,9.12
+Vietnam,VNM,2035,9.53
+Vietnam,VNM,2040,9.95
+World,OWID_WRL,2015,9.225
+World,OWID_WRL,2020,9.5925
+World,OWID_WRL,2025,9.91
+World,OWID_WRL,2030,10.2475
+World,OWID_WRL,2035,10.610001
+World,OWID_WRL,2040,11.025
+World,OWID_WRL,1870,0.2375
+World,OWID_WRL,1875,0.29500002
+World,OWID_WRL,1880,0.3625
+World,OWID_WRL,1885,0.4475
+World,OWID_WRL,1890,0.53999996
+World,OWID_WRL,1895,0.62
+World,OWID_WRL,1900,0.8525
+World,OWID_WRL,1905,1.1
+World,OWID_WRL,1910,1.4575
+World,OWID_WRL,1915,1.7325001
+World,OWID_WRL,1920,1.9525
+World,OWID_WRL,1925,2.1975
+World,OWID_WRL,1930,2.4450002
+World,OWID_WRL,1935,2.6775
+World,OWID_WRL,1940,2.8200002
+World,OWID_WRL,1945,3.0725
+World,OWID_WRL,1950,3.1999998
+World,OWID_WRL,1955,3.3899999
+World,OWID_WRL,1960,3.6325
+World,OWID_WRL,1965,4.0699997
+World,OWID_WRL,1970,4.4825
+World,OWID_WRL,1975,5.245
+World,OWID_WRL,1980,6.2325
+World,OWID_WRL,1985,6.81
+World,OWID_WRL,1990,7.325
+World,OWID_WRL,1995,8
+World,OWID_WRL,2000,8.4775
+World,OWID_WRL,2005,8.827499
+World,OWID_WRL,2010,9.077499
+Yemen,YEM,2015,4.64
+Yemen,YEM,2020,5.56
+Yemen,YEM,2025,6.44
+Yemen,YEM,2030,7.32
+Yemen,YEM,2035,8.16
+Yemen,YEM,2040,8.97
+Yemen,YEM,1870,0.01
+Yemen,YEM,1875,0.01
+Yemen,YEM,1880,0.01
+Yemen,YEM,1885,0.01
+Yemen,YEM,1890,0.01
+Yemen,YEM,1895,0.01
+Yemen,YEM,1900,0.01
+Yemen,YEM,1905,0.01
+Yemen,YEM,1910,0.01
+Yemen,YEM,1915,0.01
+Yemen,YEM,1920,0.01
+Yemen,YEM,1925,0.01
+Yemen,YEM,1930,0.02
+Yemen,YEM,1935,0.02
+Yemen,YEM,1940,0.02
+Yemen,YEM,1945,0.02
+Yemen,YEM,1950,0.03
+Yemen,YEM,1955,0.03
+Yemen,YEM,1960,0.04
+Yemen,YEM,1965,0.06
+Yemen,YEM,1970,0.07
+Yemen,YEM,1975,0.08
+Yemen,YEM,1980,0.25
+Yemen,YEM,1985,0.64
+Yemen,YEM,1990,1.25
+Yemen,YEM,1995,1.77
+Yemen,YEM,2000,2.45
+Yemen,YEM,2005,3.12
+Yemen,YEM,2010,3.84
+Zambia,ZMB,2015,7.9
+Zambia,ZMB,2020,8.37
+Zambia,ZMB,2025,8.74
+Zambia,ZMB,2030,9.05
+Zambia,ZMB,2035,9.32
+Zambia,ZMB,2040,9.63
+Zambia,ZMB,1870,0.01
+Zambia,ZMB,1875,0.01
+Zambia,ZMB,1880,0.01
+Zambia,ZMB,1885,0.01
+Zambia,ZMB,1890,0.01
+Zambia,ZMB,1895,0.01
+Zambia,ZMB,1900,0.01
+Zambia,ZMB,1905,0.01
+Zambia,ZMB,1910,0.16
+Zambia,ZMB,1915,0.29
+Zambia,ZMB,1920,0.39
+Zambia,ZMB,1925,0.48
+Zambia,ZMB,1930,0.97
+Zambia,ZMB,1935,1.14
+Zambia,ZMB,1940,1.32
+Zambia,ZMB,1945,1.56
+Zambia,ZMB,1950,1.84
+Zambia,ZMB,1955,2.03
+Zambia,ZMB,1960,2.36
+Zambia,ZMB,1965,2.68
+Zambia,ZMB,1970,3.12
+Zambia,ZMB,1975,3.81
+Zambia,ZMB,1980,4.36
+Zambia,ZMB,1985,4.77
+Zambia,ZMB,1990,5.02
+Zambia,ZMB,1995,6.03
+Zambia,ZMB,2000,6.35
+Zambia,ZMB,2005,6.59
+Zambia,ZMB,2010,7.4
+Zimbabwe,ZWE,2015,8.03
+Zimbabwe,ZWE,2020,8.32
+Zimbabwe,ZWE,2025,8.55
+Zimbabwe,ZWE,2030,8.82
+Zimbabwe,ZWE,2035,9.08
+Zimbabwe,ZWE,2040,9.36
+Zimbabwe,ZWE,1870,0.01
+Zimbabwe,ZWE,1875,0.01
+Zimbabwe,ZWE,1880,0.01
+Zimbabwe,ZWE,1885,0.01
+Zimbabwe,ZWE,1890,0.01
+Zimbabwe,ZWE,1895,0.01
+Zimbabwe,ZWE,1900,0.01
+Zimbabwe,ZWE,1905,0.02
+Zimbabwe,ZWE,1910,0.06
+Zimbabwe,ZWE,1915,0.12
+Zimbabwe,ZWE,1920,0.2
+Zimbabwe,ZWE,1925,0.33
+Zimbabwe,ZWE,1930,0.53
+Zimbabwe,ZWE,1935,0.9
+Zimbabwe,ZWE,1940,1.16
+Zimbabwe,ZWE,1945,1.28
+Zimbabwe,ZWE,1950,1.66
+Zimbabwe,ZWE,1955,1.99
+Zimbabwe,ZWE,1960,2.38
+Zimbabwe,ZWE,1965,2.68
+Zimbabwe,ZWE,1970,3.22
+Zimbabwe,ZWE,1975,3.54
+Zimbabwe,ZWE,1980,4.03
+Zimbabwe,ZWE,1985,4.84
+Zimbabwe,ZWE,1990,5.97
+Zimbabwe,ZWE,1995,6.85
+Zimbabwe,ZWE,2000,7.26
+Zimbabwe,ZWE,2005,7.65
+Zimbabwe,ZWE,2010,7.86
