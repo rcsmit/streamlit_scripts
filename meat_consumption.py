@@ -98,8 +98,6 @@ def make_scatterplot(df_, x, y, show_log_x,show_log_y,trendline_per_continent):
     df = df_.dropna(subset=[x,y])
     # Create a DataFrame (df) using your data
     # Calculate linear regression
-
-    
     # Calculate log values if selected
     if show_log_x:
         df['log_' + x] = np.log(df[x])
