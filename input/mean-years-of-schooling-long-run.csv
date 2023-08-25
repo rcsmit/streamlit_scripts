@@ -1,4 +1,4 @@
-country,code,year,schooling_mean
+country,iso_3,year,schooling_mean
 Afghanistan,AFG,2015,4.81
 Afghanistan,AFG,2020,5.69
 Afghanistan,AFG,2025,6.26

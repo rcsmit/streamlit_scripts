@@ -13,6 +13,48 @@ from scipy.stats import linregress
 import statsmodels.api as sm
 
 
+def prepare_data():
+
+    """Function to compare the country names in the various files. URL_COUNTRY is leading.
+    """
+
+    url_meat = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption.csv"
+    url_gm = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gapminder_data_graphs.csv"
+    url_health = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\health_efficiency_index.csv"
+    url_education_mean = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\mean-years-of-schooling-long-run.csv"
+    url_education_expected = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\expected-years-of-schooling.csv"
+    url_country = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\country_codes.csv"
+    url_country_wikipedia = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\country_wikipedia.csv"
+    df =     pd.read_csv(url_education_expected, delimiter=',')
+    df_country =  pd.read_csv(url_country, delimiter=',')
+    
+    df_country = df_country.fillna(0)
+    
+
+    for v in ["population","area"]:
+        df_country[v] = df_country[v].str.replace('.', '').astype(int)
+
+    df_country["gdpppp"] =df_country["gdp"] * df_country["gdp_unit"] /  df_country["population"]
+    st.write(df_country)
+
+    check_field = "country"
+    # Find countries in df but not in df_country
+    countries_in_df_not_in_df_country = df[~df[check_field].isin(df_country[check_field])]
+
+    # Find countries in df_country but not in df
+    countries_in_df_country_not_in_df = df_country[~df_country[check_field].isin(df[check_field])]
+    col1,col2= st.columns(2)
+    # Display the differences
+    with col1:
+        st.write("Countries in df_country but not in df_target")
+        st.write(countries_in_df_country_not_in_df)
+        st.write(len(countries_in_df_country_not_in_df))
+    with col2:
+        st.write("Countries in df_target but not in df_country - CHANGE")
+        
+        st.write(countries_in_df_not_in_df_country)
+        st.write(len(countries_in_df_not_in_df_country))
+
 def get_data(join_how):
     """Gets the data and merges the dataframes
 
@@ -22,19 +64,31 @@ def get_data(join_how):
     Returns:
         df: the complete dataframe
     """    
+    #url_country_wikipedia = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\country_wikipedia.csv"
+    url_country = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/country_codes.csv"
     url_meat = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption.csv"
     url_gm = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gapminder_data_graphs.csv"
     url_health =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/health_efficiency_index.csv"
     url_education_mean = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/mean-years-of-schooling-long-run.csv"
     url_education_expected = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/expected-years-of-schooling.csv"
     
-    # url_meat = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption.csv"
-    # url_gm = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gapminder_data_graphs.csv"
-    # url_health = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\health_efficiency_index.csv"
-    # url_education_mean = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\mean-years-of-schooling-long-run.csv"
-    # url_education_expected = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\expected-years-of-schooling.csv"
+    url_country = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\country_codes.csv"
+    url_meat = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption.csv"
+    url_gm = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gapminder_data_graphs.csv"
+    url_health = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\health_efficiency_index.csv"
+    url_education_mean = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\mean-years-of-schooling-long-run.csv"
+    url_education_expected = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\expected-years-of-schooling.csv"
     
+    df_country =  pd.read_csv(url_country, delimiter=',')
+    df_country = df_country.fillna(0)
+    for v in ["population","area"]:
+        df_country[v] = df_country[v].str.replace('.', '').astype(int)
+    df_country["gdpppp"] =df_country["gdp"] * df_country["gdp_unit"] /  df_country["population"]
+    
+
     df_meat =  pd.read_csv(url_meat, delimiter=',')
+
+    
 
     # gapminder dataset 
     # https://www.kaggle.com/datasets/albertovidalrod/gapminder-dataset?resource=download
@@ -60,11 +114,15 @@ def get_data(join_how):
     df_education_expected =  pd.read_csv(url_education_expected, delimiter=',')
   
     df_education_expected = df_education_expected[df_education_expected["year"] == 2020]
-    
-    merged_df_1 = pd.merge(df_meat, df_gm_2018, how=join_how, on='country')
-    merged_df_2 = merged_df_1.merge(df_health, on="country", how=join_how)
-    merged_df_3 = merged_df_2.merge(df_education_mean, on="country", how=join_how)
-    df = merged_df_3.merge(df_education_expected, on="country", how=join_how)
+ 
+    df_education_expected = df_education_expected.dropna(subset=['iso_3'])
+    df_education_mean = df_education_mean.dropna(subset=['iso_3'])
+   
+    merged_df_0 = pd.merge(df_meat, df_country, how="outer", on='country')
+    merged_df_1 = merged_df_0.merge(df_gm_2018, how=join_how, on='country')
+    merged_df_2 = merged_df_1.merge(df_health,  how=join_how, on="country")
+    merged_df_3 = merged_df_2.merge(df_education_mean, on="iso_3", how=join_how)
+    df = merged_df_3.merge(df_education_expected, on="iso_3", how=join_how)
     df["education_index"] = ((df["schooling_expected"] / 18) + (df["schooling_mean"] /15) )/2
 
     # # Find countries in df but not in df_gm
@@ -130,7 +188,7 @@ def correlation_matrix(df):
     """
     columns_meat =   ["meat_cons","life_exp_birth","life_exp_5","mort_under_5","cal_day","gdpppp _2011","urban_pop","bmi_over_30","cho_crops","prim_educ_over_25"]
     columns_health = ["health_eff_index_rank" ,"health_eff_index"]
-    columns_gm = ["life_exp","hdi_index","co2_consump","gdp","services"]
+    columns_gm = ["life_exp","hdi_index","co2_consump","gdp_y","services"]
     columns_educ = ["schooling_mean", "schooling_expected","education_index"]
     columns = columns_meat + columns_health + columns_gm +columns_educ
 
@@ -152,7 +210,7 @@ def multiple_lineair_regression(df_):
     """    
     st.subheader("Multiple Lineair Regression")
     y_value = st.selectbox("Y value", ['life_exp',"life_exp_birth","life_exp_5","mort_under_5"],0)
-    x_values_options =  ["meat_cons","cal_day","gdpppp _2011","urban_pop","bmi_over_30","cho_crops","prim_educ_over_25","health_eff_index_rank" ,"health_eff_index","hdi_index","co2_consump","gdp","services", 'education_index', 'schooling_mean', 'schooling_expected']
+    x_values_options =  ["meat_cons","cal_day","gdpppp _2011","urban_pop","bmi_over_30","cho_crops","prim_educ_over_25","health_eff_index_rank" ,"health_eff_index","hdi_index","co2_consump","gdp_y","services", 'education_index', 'schooling_mean', 'schooling_expected']
     x_values_default = ['meat_cons','health_eff_index',"urban_pop","bmi_over_30","cho_crops","prim_educ_over_25", 'education_index']
     x_values = st.multiselect("X values", x_values_options, x_values_default)
     
@@ -173,19 +231,7 @@ def multiple_lineair_regression(df_):
     st.write("**OUTPUT**")
     print_model = model.summary()
     st.write(print_model)
-    
-def main():
-    """Main function
-    """    
-    join_how = "outer"
-    df = get_data(join_how)
-    df["continent"].fillna("UNKNOWN", inplace=True)
-    df, x,y, show_log_x, show_log_y, trendline_per_continent = interface(df)
-    
-    make_scatterplot(df, x, y, show_log_x,show_log_y,trendline_per_continent)
-    correlation_matrix(df)
-    multiple_lineair_regression(df)
-    show_footer()
+ 
 
 def show_footer():
     """Shows the footer
@@ -210,6 +256,7 @@ def show_footer():
     st.write("* Mean years of schooling estimates the average number of years of total schooling adults aged 25 years and older have received. This data extends back to the year 1870 and is based on the combination of data from Lee and Lee (2016); Barro-Lee (2018); and the UN Development Programme. Fifteen is the projected maximum of this indicator for 2025.")
     st.write("* Expected years of schooling measures the number of years of schooling that a child of school entrance age can expect to receive if the current age-specific enrollment rates persist throughout the child’s life by country. Eighteen is equivalent to achieving a master's degree in most countries.")
     st.write("* education_index = ((schooling_expected / 18) + (schooling_mean / 15) )/2 " )
+    st.info("Country codes and info: https://countrycode.org/")
     st.subheader("Discussion")
     st.write("* Data is from different years")
     st.write("* Data is not weighted (The Netherlands is counting as much as India or China)")
@@ -238,5 +285,20 @@ def interface(df):
     trendline_per_continent= st.sidebar.checkbox('Trendline per continent')
     return df,x,y,show_log_x,show_log_y,trendline_per_continent #,join_how
 
+   
+def main():
+    """Main function
+    """    
+    join_how = "outer"
+    df = get_data(join_how)
+    df["continent"].fillna("UNKNOWN", inplace=True)
+    df, x,y, show_log_x, show_log_y, trendline_per_continent = interface(df)
+    
+    make_scatterplot(df, x, y, show_log_x,show_log_y,trendline_per_continent)
+    correlation_matrix(df)
+    multiple_lineair_regression(df)
+    show_footer()
+
 if __name__ == "__main__":
     main()
+    #prepare_data()

@@ -1,4 +1,4 @@
-country,code,year,schooling_expected
+country,iso_3,year,schooling_expected
 Afghanistan,AFG,1990,2.50405
 Afghanistan,AFG,1991,2.80655
 Afghanistan,AFG,1992,3.10905

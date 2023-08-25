@@ -52,7 +52,7 @@ health_eff_index_rank,health_eff_index_rank_l,health_eff_index_rank_h,country,he
 51,38,67,Dominican Republic,0.789,0.735,0.845
 52,41,67,Tunisia,0.785,0.741,0.832
 53,47,62,Jamaica,0.782,0.754,0.809
-54,50,64,"Venezuela (Bolivarian Republic of)",0.775,0.745,0.803
+54,50,64,Venezuela,0.775,0.745,0.803
 55,41,75,Albania,0.774,0.709,0.834
 56,51,63,Seychelles,0.773,0.747,0.797
 57,47,77,Paraguay,0.761,0.714,0.806
@@ -60,19 +60,19 @@ health_eff_index_rank,health_eff_index_rank_l,health_eff_index_rank_h,country,he
 59,50,78,Senegal,0.756,0.711,0.800
 60,53,73,Philippines,0.755,0.720,0.789
 61,52,74,Mexico,0.755,0.719,0.789
-62,54,73,Slovak Republic,0.754,0.721,0.781
+62,54,73,Slovakia,0.754,0.721,0.781
 63,49,81,Egypt,0.752,0.707,0.798
 64,50,80,Kazakhstan,0.752,0.699,0.802
 65,55,80,Uruguay,0.745,0.702,0.782
 66,59,74,Hungary,0.743,0.713,0.768
 67,53,81,Trinidad and Tobago,0.742,0.695,0.784
-68,59,75,St. Lucia,0.740,0.717,0.765
+68,59,75,Saint Lucia,0.740,0.717,0.765
 69,58,81,Belize,0.736,0.697,0.772
 70,60,81,Turkey,0.734,0.698,0.764
 71,58,83,Nicaragua,0.733,0.696,0.770
 72,64,84,Belarus,0.723,0.691,0.750
 73,65,82,Lithuania,0.722,0.690,0.750
-74,63,83,St. Vincent and the Grenadines,0.722,0.686,0.754
+74,63,83,Saint Vincent and the Grenadines,0.722,0.686,0.754
 75,66,81,Argentina,0.722,0.695,0.747
 76,68,84,Sri Lanka,0.716,0.692,0.740
 77,68,85,Estonia,0.714,0.684,0.741
@@ -87,7 +87,7 @@ health_eff_index_rank,health_eff_index_rank_l,health_eff_index_rank_h,country,he
 86,76,93,Antigua and Barbuda,0.688,0.657,0.718
 87,79,96,Libya,0.683,0.655,0.707
 88,69,111,Bangladesh,0.675,0.618,0.732
-89,83,107,Macedonia,0.664,0.630,0.695
+89,83,107,North Macedonia,0.664,0.630,0.695
 90,84,106,Bosnia and Herzegovina,0.664,0.632,0.694
 91,85,104,Lebanon,0.664,0.638,0.688
 92,85,107,Indonesia,0.660,0.632,0.689
@@ -98,7 +98,7 @@ health_eff_index_rank,health_eff_index_rank_l,health_eff_index_rank_h,country,he
 97,78,123,Benin,0.647,0.573,0.710
 98,94,107,Nauru,0.647,0.630,0.664
 99,92,110,Romania,0.645,0.624,0.666
-100,90,113,St. Kitts and Nevis,0.643,0.611,0.678
+100,90,113,Saint Kitts and Nevis,0.643,0.611,0.678
 101,92,114,Moldova,0.639,0.600,0.672
 102,94,113,Bulgaria,0.639,0.617,0.660
 103,91,117,Iraq,0.637,0.597,0.669
@@ -106,7 +106,7 @@ health_eff_index_rank,health_eff_index_rank_l,health_eff_index_rank_h,country,he
 105,94,118,Latvia,0.630,0.589,0.665
 106,94,120,Yugoslavia,0.629,0.586,0.664
 107,95,121,Cook Islands,0.628,0.583,0.664
-108,94,120,Syrian Arab Republic,0.628,0.589,0.661
+108,94,120,Syria,0.628,0.589,0.661
 109,93,122,Azerbaijan,0.626,0.582,0.665
 110,91,123,Suriname,0.623,0.571,0.671
 111,88,125,Ecuador,0.619,0.565,0.684
@@ -135,7 +135,7 @@ health_eff_index_rank,health_eff_index_rank_l,health_eff_index_rank_h,country,he
 134,119,151,Sudan,0.524,0.447,0.594
 135,118,150,Ghana,0.522,0.452,0.596
 136,130,145,Tuvalu,0.518,0.481,0.551
-137,124,149,Cote d'Ivoire,0.517,0.463,0.572
+137,124,149,Ivory Coast,0.517,0.463,0.572
 138,120,152,Haiti,0.517,0.439,0.595
 139,129,149,Gabon,0.511,0.456,0.553
 140,130,148,Kenya,0.505,0.461,0.549
@@ -149,7 +149,7 @@ health_eff_index_rank,health_eff_index_rank_l,health_eff_index_rank_h,country,he
 148,137,159,Papua New Guinea,0.467,0.400,0.522
 149,136,158,Uganda,0.464,0.404,0.526
 150,138,159,Nepal,0.457,0.400,0.516
-151,143,157,Kyrgyz Republic,0.455,0.410,0.490
+151,143,157,Kyrgyzstan,0.455,0.410,0.490
 152,142,158,Togo,0.449,0.398,0.501
 153,143,161,Turkmenistan,0.443,0.390,0.490
 154,147,163,Tajikistan,0.428,0.381,0.470
@@ -163,8 +163,8 @@ health_eff_index_rank,health_eff_index_rank_l,health_eff_index_rank_h,country,he
 162,154,172,Mauritania,0.384,0.328,0.431
 163,156,176,Mali,0.361,0.284,0.429
 164,150,181,Cameroon,0.357,0.246,0.458
-165,157,178,Lao,0.356,0.298,0.410
-166,160,176,"Congo, Rep.",0.354,0.302,0.401
+165,157,178,Laos,0.356,0.298,0.410
+166,160,176,Congo,0.354,0.302,0.401
 167,157,180,North Korea,0.353,0.278,0.414
 168,158,180,Namibia,0.340,0.268,0.413
 169,164,179,Botswana,0.338,0.288,0.373
@@ -186,7 +186,7 @@ health_eff_index_rank,health_eff_index_rank_l,health_eff_index_rank_h,country,he
 185,171,188,Malawi,0.251,0.174,0.332
 186,180,189,Liberia,0.200,0.117,0.282
 187,183,189,Nigeria,0.176,0.094,0.251
-188,185,189,"Congo, Dem. Rep.",0.171,0.100,0.232
+188,185,189,Democratic Republic of the Congo,0.171,0.100,0.232
 189,179,190,Central African Republic,0.156,0.000,0.306
 190,175,191,Myanmar,0.138,0.000,0.311
 191,190,191,Sierra Leone,0.000,0.000,0.079
