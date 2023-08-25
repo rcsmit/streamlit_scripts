@@ -201,7 +201,6 @@ def correlation_matrix(df):
     
     st.plotly_chart(fig)
 
-
 def multiple_lineair_regression(df_):
     """Calculates multiple lineair regression. User can choose the Y value and the X values
 
