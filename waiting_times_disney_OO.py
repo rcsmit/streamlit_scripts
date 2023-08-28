@@ -38,13 +38,17 @@ def make_plot(values,x_label,y_label, run, number_of_runs):
     total_value = 0
 
     for i, value in enumerate(values, start=1):
-        total_value += value
-        average = total_value / i
-        averages.append(average)
-        confidence_level = 0.95
-        standard_error = np.std(values[:i], ddof=1) / np.sqrt(i)
-        margin_of_error = stats.t.ppf((1 + confidence_level) / 2, df=i-1) * standard_error
-        confidence_intervals.append(margin_of_error)
+        if i==1:
+            # avoid error:"Degrees of freedom <= 0 for slice"
+            confidence_intervals.append(0.0)
+        else:
+            total_value += value
+            average = total_value / i
+            averages.append(average)
+            confidence_level = 0.95
+            standard_error = np.std(values[:i], ddof=1) / np.sqrt(i)
+            margin_of_error = stats.t.ppf((1 + confidence_level) / 2, df=i-1) * standard_error
+            confidence_intervals.append(margin_of_error)
 
     
     # Create traces for each line
