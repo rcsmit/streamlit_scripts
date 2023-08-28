@@ -78,7 +78,7 @@ def main():
     menuchoicelist = [options[n][0] for n, l in enumerate(options)]
 
     with st.sidebar.expander('MENU: Choose a script | scroll down for options/parameters',  expanded=True):
-        menu_choice = st.radio("",menuchoicelist, index=choice)
+        menu_choice = st.radio("_",menuchoicelist, index=choice)
 
     st.sidebar.markdown("- - - - - - - - - - - - - - - - - - ", unsafe_allow_html=True)
     st.experimental_set_query_params(choice=menuchoicelist.index(menu_choice)) # setting the choice in the URL

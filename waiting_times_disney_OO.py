@@ -150,7 +150,7 @@ class meet_and_greet_model:
 def show_info():
     st.info("Reproducing https://medium.com/towards-data-science/simulating-a-theme-park-understanding-queue-times-with-r-100b12d97cd3")
     st.info("Based on https://github.com/hsma-programme/3c_simpy_part_2/tree/main/3C_SimPy_for_Discrete_Event_Simulation_Part_2 \nLicense : Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License")
-
+    st.info("Source: https://github.com/rcsmit/streamlit_scripts/blob/main/waiting_times_disney_OO.py")
 def main():
     st.header("Wait times for characters in a Disney Park")
     show_info()
