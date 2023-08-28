@@ -73,14 +73,14 @@ def make_plot(values,x_label,y_label, run, number_of_runs):
 # class - we just refer to the class blueprint itself to access the numbers
 # inside.  Therefore, we don't need to specify a constructor.
 class g:
-   
-    number_of_runs = st.sidebar.number_input("Number of runs (#)", 1, 10,3) 
+    pass
+    # number_of_runs = st.sidebar.number_input("Number of runs (#)", 1, 10,3) 
     
-    mean_inter_arrival_time = st.sidebar.number_input("Mean inter arrival time (min)", 0, 60,8) # 8
-    st.sidebar.write(f"[{round(60/mean_inter_arrival_time,1)} guests per hour]")
-    mean_time_spent = st.sidebar.number_input("Mean time spent (min)", 0, 60,5) # 5
-    number_of_characters = st.sidebar.number_input("Number of characters (#)", 1, 10,2) 
-    runtime =  st.sidebar.number_input("Runtime (hours)", 1, 100,15) *60 # 900
+    # mean_inter_arrival_time = st.sidebar.number_input("Mean inter arrival time (min)", 0, 60,8) # 8
+    # st.sidebar.write(f"[{round(60/mean_inter_arrival_time,1)} guests per hour]")
+    # mean_time_spent = st.sidebar.number_input("Mean time spent (min)", 0, 60,5) # 5
+    # number_of_characters = st.sidebar.number_input("Number of characters (#)", 1, 10,2) 
+    # runtime =  st.sidebar.number_input("Runtime (hours)", 1, 100,15) *60 # 900
     
 # Class representing our guests coming in for the meet and greet.
 # Here, we only have a constructor method, that sets up the guest's ID
@@ -94,7 +94,7 @@ class meet_and_greet_model:
     def __init__(self, run_number):
         self.env = simpy.Environment()
         self.guest_counter = 0  
-        self.character = simpy.Resource(self.env, capacity=g.number_of_characters)
+        self.character = simpy.Resource(self.env, capacity=number_of_characters)
 
         self.run_number = run_number
         
@@ -115,7 +115,7 @@ class meet_and_greet_model:
             self.guest_counter += 1
             wp = guest(self.guest_counter)
             self.env.process(self.see_character(wp))
-            sampled_interarrival = random.expovariate(1.0 / g.mean_inter_arrival_time)
+            sampled_interarrival = random.expovariate(1.0 / mean_inter_arrival_time)
             
             # Freeze this function until that time has elapsed
             yield self.env.timeout(sampled_interarrival)
@@ -130,7 +130,7 @@ class meet_and_greet_model:
             time_left_queue_for_character = self.env.now
             time_in_queue_for_character = (time_left_queue_for_character -
                                     time_entered_queue_for_character)
-            meet_and_greet_duration = random.normalvariate( g.mean_time_spent, 1)
+            meet_and_greet_duration = random.normalvariate( mean_time_spent, 1)
 
             self.time_queue.append(time_in_queue_for_character)
             self.start_visits.append(time_left_queue_for_character)
@@ -150,17 +150,27 @@ class meet_and_greet_model:
     # start running the environment for the duration specified in the g class.
     def run(self):
         self.env.process(self.guest_generator())
-        self.env.run(until=g.runtime)
+        self.env.run(until=runtime)
 def show_info():
     st.info("Reproducing https://medium.com/towards-data-science/simulating-a-theme-park-understanding-queue-times-with-r-100b12d97cd3")
     st.info("Based on https://github.com/hsma-programme/3c_simpy_part_2/tree/main/3C_SimPy_for_Discrete_Event_Simulation_Part_2 \nLicense : Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License")
     st.info("Source: https://github.com/rcsmit/streamlit_scripts/blob/main/waiting_times_disney_OO.py")
 def main():
     st.header("Wait times for characters in a Disney Park")
+    global number_of_runs, mean_inter_arrival_time,mean_time_spent, number_of_characters,runtime
+    number_of_runs = st.sidebar.number_input("Number of runs (#)", 1, 10,3) 
+    
+    mean_inter_arrival_time = st.sidebar.number_input("Mean inter arrival time (min)", 0, 60,8) # 8
+    st.sidebar.write(f"[{round(60/mean_inter_arrival_time,1)} guests per hour]")
+    mean_time_spent = st.sidebar.number_input("Mean time spent (min)", 0, 60,5) # 5
+    number_of_characters = st.sidebar.number_input("Number of characters (#)", 1, 10,2) 
+    runtime =  st.sidebar.number_input("Runtime (hours)", 1, 100,15) *60 # 900
+    
+
     show_info()
     end_results_df = pd.DataFrame()
-    for run in range(g.number_of_runs):
-        st.write(f"**Run {run+1} of {g.number_of_runs}**")
+    for run in range(number_of_runs):
+        st.write(f"**Run {run+1} of {number_of_runs}**")
         m = meet_and_greet_model(run)
         m.run()
         st.write()
@@ -168,7 +178,7 @@ def main():
         m_time_queue = calculate_mean(m.time_queue)
         sd_time_queue = np.std(m.time_queue)
         m_cons_time = calculate_mean(m.consumption_time)
-        char_occ = round(sum(m.consumption_time)/(g.runtime*g.number_of_characters)*100,1)
+        char_occ = round(sum(m.consumption_time)/(runtime*number_of_characters)*100,1)
         m.results_df['interval_guests'] =m.results_df['Start_Q_character'].diff()
         m_interval_g = m.results_df['interval_guests'].mean()
 
@@ -185,8 +195,8 @@ def main():
         st.write(f"Characters occupied {round(char_occ,1)}% of the time")  
         st.write(f"mean interval guests: {round(m_interval_g,2)} min")
         
-        make_plot(m.time_queue,"Simulation time", "Waiting time", run+1, g.number_of_runs)
-        make_plot(m.consumption_time,"Simulation time", "consumption time", run+1, g.number_of_runs)
+        make_plot(m.time_queue,"Simulation time", "Waiting time", run+1, number_of_runs)
+        make_plot(m.consumption_time,"Simulation time", "consumption time", run+1, number_of_runs)
     st.subheader("End Results of all runs")
     st.write(end_results_df)
 
