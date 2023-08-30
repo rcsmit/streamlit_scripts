@@ -140,6 +140,16 @@ def get_data(join_how):
     st.write(df)
     st.write(f"Lengte {len(df)}")
     return df
+def m(x, w):
+    """Weighted Mean"""
+    return np.sum(x * w) / np.sum(w)
+
+def cov(x, y, w):
+    """Weighted Covariance"""
+    return np.sum(w * (x - m(x, w)) * (y - m(y, w))) / np.sum(w)
+def wcorr(x, y, w):
+    """Weighted Correlation https://stackoverflow.com/questions/38641691/weighted-correlation-coefficient-with-pandas"""
+    return cov(x, y, w) / np.sqrt(cov(x, x, w) * cov(y, y, w))
 
 def make_scatterplot(df_, x, y, show_log_x,show_log_y,trendline_per_continent):
     """Makes a scatterplot
@@ -169,17 +179,20 @@ def make_scatterplot(df_, x, y, show_log_x,show_log_y,trendline_per_continent):
     r_squared = r_value ** 2
     # Calculate correlation coefficient
     correlation_coefficient = np.corrcoef(df[x], df[y])[0, 1]
-    title_ = f"{x} vs {y} [{len(df)} countries]"
-    r_sq_corr = f'R-squared = {r_squared:.2f} / Correlation coeff = {correlation_coefficient:.2f}'
+    
+    weighted_correlation_coefficient = wcorr(df[x], df[y], df["population"])
+
+    title_ = f"{x} vs {y} [n = {len(df)}]"
+    r_sq_corr = f'R2 = {r_squared:.2f} / Corr coeff = {correlation_coefficient:.2f} |  W R2 = {weighted_correlation_coefficient*weighted_correlation_coefficient:.2f} / W Corr coeff = {weighted_correlation_coefficient:.2f}'
     if trendline_per_continent:
         fig = px.scatter(df, x=x, y=y,  hover_data=['country'],trendline='ols',  color='continent', title=f'')
     else:
-        fig = px.scatter(df, x=x, y=y,  hover_data=['country'],  color='continent', title=f'{title_} || {r_sq_corr}')
+        fig = px.scatter(df, x=x, y=y,  hover_data=['country','population'],  size='population',color='continent', title=f'{title_} || {r_sq_corr}')
         fig.add_trace(px.line(x=df[x], y=slope * df[x] + intercept, line_shape='linear').data[0])
 
     # Show the plot
     st.plotly_chart(fig)
-    
+    # health eff index vs life exp. Weighted geeft andere waarde dan normaal, tenzij je Azie verwijderd. India en China zijn wellicht grote outliers
 def correlation_matrix(df):
     """Generates and shows a correlation matrix and a heatmap
 
@@ -215,22 +228,27 @@ def multiple_lineair_regression(df_):
     
     df = df_.dropna(subset=x_values)
     df = df.dropna(subset=y_value)
-    df =df[["country"]+[y_value]+ x_values]
+    df =df[["country","population"]+[y_value]+ x_values]
     st.write("**DATA**")
     st.write(df)
     st.write(f"Length : {len(df)}")
     x = df[x_values]
     y = df[y_value]
+  
+    w = df["population"]
     
     # with statsmodels
     x = sm.add_constant(x) # adding a constant
     
     model = sm.OLS(y, x).fit()
     #predictions = model.predict(x) 
-    st.write("**OUTPUT**")
+    st.write("**OUTPUT ORDINARY LEAST SQUARES**")
     print_model = model.summary()
     st.write(print_model)
- 
+    st.write("**OUTPUT WEIGHTED LEAST SQUARES (weightfactor = population)**")
+    wls_model = sm.WLS(y,x, weights=w).fit()
+    print_wls_model = wls_model.summary()
+    st.write(print_wls_model)
 
 def show_footer():
     """Shows the footer
