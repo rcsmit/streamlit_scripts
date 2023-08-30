@@ -163,7 +163,7 @@ def make_scatterplot(df_, x, y, show_log_x,show_log_y,trendline_per_continent):
         trendline_per_continent (bool): Do we want a trendline per continent
     """    
     st.subheader("Scatterplot")
-    df = df_.dropna(subset=[x,y])
+    df = df_.dropna(subset=[x,y,"population"])
     # Create a DataFrame (df) using your data
     # Calculate linear regression
     # Calculate log values if selected
