@@ -43,7 +43,7 @@ def main():
         max_value_ink = int(st.sidebar.number_input("Maximum waarde bruto inkomen",0,10_000_000,110_000,1000))
         stappen = int(st.sidebar.number_input("Stappen",0,10_000,1_000,1000))
     elif methode =="uren_per_week":
-        uur_salaris = st.sidebar.number_input("uursalaris", 0.1,100.00,12.00)
+        uur_salaris = st.sidebar.number_input("uursalaris (incl. reserveringen etc.)", 0.1,100.00,12.00)
 
         max_value_ink = int(uur_salaris * 4.33 *41 * 12)
 
