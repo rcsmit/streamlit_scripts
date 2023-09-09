@@ -20,8 +20,8 @@ def salaris_per_maand(max_value_ink):
         st.write(f"{inkomen} - {round(inkomen/12/1.08,2)}")
 
 def create_df(tabeldata,uren_per_week, methode):
-    df = pd.DataFrame(tabeldata, columns = ["uren_per_week","inkomen",  "inkomensten_belasting", "heffingskorting", "arbeidskorting","te_betalen_belasting", "nettoloon", "huurtoeslag","zorgtoeslag", "kindgebonden_budget",  "bbb_inkomen"])
-    df["belastingdruk_%"] = round(  df["te_betalen_belasting"]/df["inkomen"]*100,2)
+    df = pd.DataFrame(tabeldata, columns = ["uren_per_week","bruto_inkomen",  "inkomensten_belasting", "heffingskorting", "arbeidskorting","te_betalen_belasting", "nettoloon", "huurtoeslag","zorgtoeslag", "kindgebonden_budget",  "bbb_inkomen"])
+    df["belastingdruk_%"] = round(  df["te_betalen_belasting"]/df["bruto_inkomen"]*100,2)
     df["besteedbaar_inkomen"] =  df["nettoloon"]+ df["zorgtoeslag"]+ df["huurtoeslag"]+df["kindgebonden_budget"]
     if methode == "inkomen":
         df["besteedbaar_per_uur"] = round(df["besteedbaar_inkomen"] /(4.33*uren_per_week * 12),2)
@@ -85,14 +85,14 @@ def main():
     # https://stackoverflow.com/questions/62853539/plotly-how-to-plot-on-secondary-y-axis-with-plotly-express
     
     #if methode == "inkomen":
-    to_show_ = ["nettoloon",["besteedbaar_inkomen", "bbb_inkomen"], "besteedbaar_per_uur", "te_betalen_belasting", "belastingdruk_%", "zorgtoeslag", "huurtoeslag","kindgebonden_budget","toeslagen", ["huurtoeslag","zorgtoeslag","kindgebonden_budget","toeslagen"], "toeslagen_diff", "besteedbaar_inkomen_diff", "te_betalen_belasting_diff"]
+    to_show_ = ["nettoloon",["besteedbaar_inkomen", "bbb_inkomen", "bruto_inkomen"], "besteedbaar_per_uur", "te_betalen_belasting", "belastingdruk_%", "zorgtoeslag", "huurtoeslag","kindgebonden_budget","toeslagen", ["huurtoeslag","zorgtoeslag","kindgebonden_budget","toeslagen"], "toeslagen_diff", "besteedbaar_inkomen_diff", "te_betalen_belasting_diff"]
     #else:
     #    to_show_ = ["nettoloon",["besteedbaar_inkomen", "bbb_inkomen"], "te_betalen_belasting", "belastingdruk_%", "zorgtoeslag", "huurtoeslag","kindgebonden_budget","toeslagen", ["huurtoeslag","zorgtoeslag","kindgebonden_budget","toeslagen"], "toeslagen_diff", "besteedbaar_inkomen_diff", "te_betalen_belasting_diff"]
     
     
     for to_show in to_show_:   
         if methode == "inkomen": 
-            fig = px.line(df,x="inkomen",y=to_show)
+            fig = px.line(df,x="bruto_inkomen",y=to_show)
             fig.layout.xaxis.title="Bruto inkomen per jaar"
         else:
             fig = px.line(df,x="uren_per_week",y=to_show)
