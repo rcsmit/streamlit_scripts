@@ -48,7 +48,6 @@ def main():
         max_value_ink = int(uur_salaris * 4.33 *41 * 12)
 
         stappen = int( uur_salaris * 4.33  * 12)
-
     rekenhuur = int(st.sidebar.number_input("Rekenhuur",0,10000,700))
     huishouden = st.sidebar.selectbox("Type huishouden", ["EP",  "EPAOW"], index=0) # "MP","MPAOW"
     if huishouden =="EP" or huishouden =="EPAOW":
