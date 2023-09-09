@@ -300,7 +300,7 @@ def twee_vs_drie():
     # fig3 = px.line(df, x="bruto_maand", y=["verschil_maand"], title = "Netto 2023 en Verschil per maand vs salaris per maand")
     # plotly.offline.plot(fig3)
 
-def calculate_nettoloon(maand_inkomen,aantal_maanden,rekenhuur,huishouden,number_household, toeslagpartner,aantal_kinderen, aantal_kinderen_12_15, aantal_kinderen_16_17, bbb_grens):
+def calculate_nettoloon(maand_inkomen,aantal_maanden,rekenhuur,huishouden,number_household, toeslagpartner,aantal_kinderen, aantal_kinderen_12_15, aantal_kinderen_16_17, uren_per_week, bbb_grens):
     """_summary_
 
     Args:
@@ -337,7 +337,7 @@ def calculate_nettoloon(maand_inkomen,aantal_maanden,rekenhuur,huishouden,number
         bbb_inkomen = inkomen
     else:
         bbb_inkomen = netto_loon
-    regel = [inkomen,  inkomensten_belasting, heffingskorting, arbeidskorting,te_betalen_belasting, netto_loon, huurtoeslag, zorgtoeslag, kindgebonden_budget,bbb_inkomen]
+    regel = [uren_per_week,inkomen,  inkomensten_belasting, heffingskorting, arbeidskorting,te_betalen_belasting, netto_loon, huurtoeslag, zorgtoeslag, kindgebonden_budget, bbb_inkomen]
     return regel
 
 # #print(calculate_nettoloon_simpel_2022 (1000+(2150*7*1.18)))
