@@ -120,7 +120,7 @@ def main():
         #plotly.offline.plot(subfig)
         st.subheader(to_show)
         st.plotly_chart(fig) 
-    salaris_per_maand(max_value_ink)
+    # salaris_per_maand(max_value_ink)
     st.write("belastingdruk_% = inkomstenbelasting / bruto inkomen")
     st.write("Netto inkomen = bruto inkomen - inkomstenbelasting")
     st.write("Besteedbaar inkomen = netto inkomen + huurtoeslag + zorgtoeslag")
