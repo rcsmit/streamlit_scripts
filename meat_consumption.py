@@ -193,7 +193,7 @@ def make_scatterplot(df_, x, y, show_log_x,show_log_y,trendline_per_continent):
     # Show the plot
     st.plotly_chart(fig)
     # health eff index vs life exp. Weighted geeft andere waarde dan normaal, tenzij je Azie verwijderd. India en China zijn wellicht grote outliers
-def correlation_matrix(df):
+def correlation_matrix(df,show_log_x, show_log_y):
     """Generates and shows a correlation matrix and a heatmap
 
     Args:
@@ -206,29 +206,69 @@ def correlation_matrix(df):
     columns = columns_meat + columns_health + columns_gm +columns_educ
 
     df = df[columns]
-    corrMatrix = df.corr()
-    st.subheader("Correlation matrix")
-    st.write(corrMatrix)
-    fig = px.imshow(corrMatrix.abs()) 
-    st.subheader("Correlation heatmap (absolute values)")
+    if show_log_x and show_log_y:
+        for c in columns: 
+            df[c] = np.log(df[c])
+            x = "(Log transformed variables)"
+    else:
+        x = ""
+    
+    # Calculate Pearson's correlation matrix
+    pearson_corr = df.corr(method='pearson')
+
+    # Calculate Spearman's rank-order correlation matrix
+    spearman_corr = df.corr(method='spearman')
+
+    st.write(f"Correlation matrix {x}")
+    st.write("Pearson's above the diagonal and Spearman's rank below")
+    combined_corr_matrix = pd.DataFrame(index=df.columns, columns=df.columns)
+
+    # Fill the upper triangle with Pearson's and lower triangle with Spearman's
+    for i in range(len(df.columns)):
+        for j in range(i, len(df.columns)):
+            if i == j:
+                combined_corr_matrix.iloc[i, j] = 1.0  # Diagonal elements are 1
+            else:
+                combined_corr_matrix.iloc[i, j] = pearson_corr.iloc[i, j]
+                combined_corr_matrix.iloc[j, i] = spearman_corr.iloc[j, i]
+
+    st.write(combined_corr_matrix)
+    #In this code, we manually create an empty DataFrame combined_corr_matrix with column and index labels. Then, we loop through the upper triangle of the matrix and fill in the values based on Pearson's and Spearman's correlation matrices. This approach ensures that both column names and values are retained correctly in the final combined correlation matrix.
+
+
+
+
+
+
+
+    fig = px.imshow(combined_corr_matrix.abs()) 
+    st.subheader(f"Correlation heatmap (absolute values) {x}")
     
     st.plotly_chart(fig)
 
-def multiple_lineair_regression(df_):
+def multiple_lineair_regression(df_, show_log_x, show_log_y):
     """Calculates multiple lineair regression. User can choose the Y value and the X values
 
     Args:
         df_ (df): df with info
     """    
     st.subheader("Multiple Lineair Regression")
-    y_value = st.selectbox("Y value", ['life_exp',"life_exp_birth","life_exp_5","mort_under_5"],0)
+    y_value = st.selectbox("Y value", ['life_exp',"life_exp_birth","life_exp_5","mort_under_5"],1)
     x_values_options =  ["meat_cons","cal_day","gdpppp _2011","urban_pop","bmi_over_30","cho_crops","prim_educ_over_25","health_eff_index_rank" ,"health_eff_index","hdi_index","co2_consump","gdp_y","services", 'education_index', 'schooling_mean', 'schooling_expected']
-    x_values_default = ['meat_cons','health_eff_index',"urban_pop","bmi_over_30","cho_crops","prim_educ_over_25", 'education_index']
+    x_values_default = ['meat_cons',"cal_day","gdpppp _2011","urban_pop","bmi_over_30","cho_crops", 'health_eff_index','education_index']
     x_values = st.multiselect("X values", x_values_options, x_values_default)
     
+   
     df = df_.dropna(subset=x_values)
     df = df.dropna(subset=y_value)
     df =df[["country","population"]+[y_value]+ x_values]
+    if show_log_x:
+        for c in x_values:
+            df[c] = np.log(df[c])
+       
+    if show_log_y:
+        df[y_value] = np.log(df[y_value])
+      
     st.write("**DATA**")
     st.write(df)
     st.write(f"Length : {len(df)}")
@@ -245,6 +285,7 @@ def multiple_lineair_regression(df_):
     st.write("**OUTPUT ORDINARY LEAST SQUARES**")
     print_model = model.summary()
     st.write(print_model)
+    df = df.dropna(subset="population")
     st.write("**OUTPUT WEIGHTED LEAST SQUARES (weightfactor = population)**")
     wls_model = sm.WLS(y,x, weights=w).fit()
     print_wls_model = wls_model.summary()
@@ -306,14 +347,17 @@ def interface(df):
 def main():
     """Main function
     """    
+    st.header("Meat consumption vs life expectancy")
+    st.info("REPRODUCING https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8881926/")
     join_how = "outer"
     df = get_data(join_how)
     df["continent"].fillna("UNKNOWN", inplace=True)
+    df = df.dropna(subset="iso_2")
     df, x,y, show_log_x, show_log_y, trendline_per_continent = interface(df)
     
     make_scatterplot(df, x, y, show_log_x,show_log_y,trendline_per_continent)
-    correlation_matrix(df)
-    multiple_lineair_regression(df)
+    correlation_matrix(df,show_log_x, show_log_y)
+    multiple_lineair_regression(df, show_log_x, show_log_y)
     show_footer()
 
 if __name__ == "__main__":

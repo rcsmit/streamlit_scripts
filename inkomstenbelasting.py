@@ -20,7 +20,7 @@ def salaris_per_maand(max_value_ink):
         st.write(f"{inkomen} - {round(inkomen/12/1.08,2)}")
 
 def create_df(tabeldata):
-    df = pd.DataFrame(tabeldata, columns = ["inkomen",  "inkomensten_belasting", "heffingskorting", "arbeidskorting","te_betalen_belasting", "nettoloon", "huurtoeslag","zorgtoeslag", "kindgebonden_budget"])
+    df = pd.DataFrame(tabeldata, columns = ["inkomen",  "inkomensten_belasting", "heffingskorting", "arbeidskorting","te_betalen_belasting", "nettoloon", "huurtoeslag","zorgtoeslag", "kindgebonden_budget", "bbb_inkomen"])
     df["belastingdruk_%"] = round(  df["te_betalen_belasting"]/df["inkomen"]*100,2)
     df["besteedbaar_inkomen"] =  df["nettoloon"]+ df["zorgtoeslag"]+ df["huurtoeslag"]+df["kindgebonden_budget"]
     df["toeslagen"] =  df["zorgtoeslag"]+ df["huurtoeslag"] +df["kindgebonden_budget"]
@@ -47,11 +47,12 @@ def main():
     aantal_kinderen =  int(st.sidebar.number_input("Aantal kinderen",0,10,0))
     aantal_kinderen_12_15 =  int(st.sidebar.number_input("Aantal kinderen 12-15",0,10,0))
     aantal_kinderen_16_17 = int(st.sidebar.number_input("Aantal kinderen 16-17",0,10,0))
+    bbb_grens = 30000
     if (aantal_kinderen < aantal_kinderen_12_15+aantal_kinderen_16_17):
         st.error("Aantal kinderen klopt niet")
         st.stop()
     for inkomen in range(0,max_value_ink,stappen):
-        regel = calculate_nettoloon(inkomen/12,12,rekenhuur,huishouden,number_household, toeslagpartner,aantal_kinderen, aantal_kinderen_12_15, aantal_kinderen_16_17)
+        regel = calculate_nettoloon(inkomen/12,12,rekenhuur,huishouden,number_household, toeslagpartner,aantal_kinderen, aantal_kinderen_12_15, aantal_kinderen_16_17, bbb_grens)
         tabeldata.append(regel)
        
     df = create_df(tabeldata)
@@ -59,7 +60,7 @@ def main():
     # https://stackoverflow.com/questions/62853539/plotly-how-to-plot-on-secondary-y-axis-with-plotly-express
     
 
-    to_show_ = ["nettoloon","besteedbaar_inkomen", "te_betalen_belasting", "belastingdruk_%", "zorgtoeslag", "huurtoeslag","kindgebonden_budget","toeslagen", ["huurtoeslag","zorgtoeslag","kindgebonden_budget","toeslagen"], "toeslagen_diff", "besteedbaar_inkomen_diff", "te_betalen_belasting_diff"]
+    to_show_ = ["nettoloon",["besteedbaar_inkomen", "bbb_inkomen"], "te_betalen_belasting", "belastingdruk_%", "zorgtoeslag", "huurtoeslag","kindgebonden_budget","toeslagen", ["huurtoeslag","zorgtoeslag","kindgebonden_budget","toeslagen"], "toeslagen_diff", "besteedbaar_inkomen_diff", "te_betalen_belasting_diff"]
     for to_show in to_show_:    
         fig = px.line(df,x="inkomen",y=to_show)
         #fig.layout.yaxis.title=to_show
