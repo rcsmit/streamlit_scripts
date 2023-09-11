@@ -36,19 +36,19 @@ def create_df(tabeldata,uren_per_week, methode):
 def main():
     st.header("Inkomstenbelasting 2022 zonder toeslagpartner")
    
-    
+    st.warning("ONDER VOORBEHOUD VAN FOUTEN. Sterk indicatief. Laat eea narekenen alvorens belangrijke beslissingen te nemen. Aantal werkuren per week heeft ook invloed op pensioensopbouw en sociale verzekeringen.")
     tabeldata=[]   
     methode = st.sidebar.selectbox("Methode (jaarinkomen / uren per week)", ["inkomen", "uren_per_week"],0)
     if methode == "inkomen":
         max_value_ink = int(st.sidebar.number_input("Maximum waarde bruto inkomen",0,10_000_000,110_000,1000))
         stappen = int(st.sidebar.number_input("Stappen",0,10_000,1_000,1000))
     elif methode =="uren_per_week":
-        uur_salaris = st.sidebar.number_input("uursalaris (incl. reserveringen etc.)", 0.1,100.00,12.00)
+        uur_salaris = st.sidebar.number_input("uursalaris (incl. reserveringen etc. minimum: 11,51 / modaal:18,80)", 0.1,100.00,12.00)
 
         max_value_ink = int(uur_salaris * 4.33 *41 * 12)
 
         stappen = int( uur_salaris * 4.33  * 12)
-    rekenhuur = int(st.sidebar.number_input("Rekenhuur",0,10000,700))
+    rekenhuur = int(st.sidebar.number_input("Rekenhuur (>764 geen huurtoeslag)",0,10000,700))
     huishouden = st.sidebar.selectbox("Type huishouden", ["EP",  "EPAOW"], index=0) # "MP","MPAOW"
     if huishouden =="EP" or huishouden =="EPAOW":
         number_household = 1
@@ -85,19 +85,65 @@ def main():
     # https://stackoverflow.com/questions/62853539/plotly-how-to-plot-on-secondary-y-axis-with-plotly-express
     
     #if methode == "inkomen":
-    to_show_ = ["nettoloon",["besteedbaar_inkomen", "bbb_inkomen", "bruto_inkomen"], "besteedbaar_per_uur", "te_betalen_belasting", "belastingdruk_%", "zorgtoeslag", "huurtoeslag","kindgebonden_budget","toeslagen", ["huurtoeslag","zorgtoeslag","kindgebonden_budget","toeslagen"], "toeslagen_diff", "besteedbaar_inkomen_diff", "te_betalen_belasting_diff"]
+    to_show_ = [["nettoloon","besteedbaar_inkomen", "bbb_inkomen", "bruto_inkomen"], "besteedbaar_per_uur", "te_betalen_belasting", "belastingdruk_%", "zorgtoeslag", "huurtoeslag","kindgebonden_budget","toeslagen", ["huurtoeslag","zorgtoeslag","kindgebonden_budget","toeslagen"], "toeslagen_diff", "besteedbaar_inkomen_diff", "te_betalen_belasting_diff"]
     #else:
     #    to_show_ = ["nettoloon",["besteedbaar_inkomen", "bbb_inkomen"], "te_betalen_belasting", "belastingdruk_%", "zorgtoeslag", "huurtoeslag","kindgebonden_budget","toeslagen", ["huurtoeslag","zorgtoeslag","kindgebonden_budget","toeslagen"], "toeslagen_diff", "besteedbaar_inkomen_diff", "te_betalen_belasting_diff"]
     
     
     for to_show in to_show_:   
         if methode == "inkomen": 
-            fig = px.line(df,x="bruto_inkomen",y=to_show)
-            fig.layout.xaxis.title="Bruto inkomen per jaar"
+            x_ = "bruto_inkomen"
+            x_title = "Bruto inkomen per jaar"
         else:
-            fig = px.line(df,x="uren_per_week",y=to_show)
-            fig.layout.xaxis.title="Uren per week"
-        #fig.layout.yaxis.title=to_show
+            x_ = "uren_per_week"
+            x_title = "Uren per week"
+            
+    
+        fig = px.line(df,x=x_,y=to_show)
+        fig.layout.xaxis.title= x_title
+        if to_show == ["nettoloon","besteedbaar_inkomen", "bbb_inkomen", "bruto_inkomen"]:
+            for t in to_show:
+                df[f"{t}_m"] = df[t]/ 12
+            to_show_m = ["nettoloon_m", "besteedbaar_inkomen_m", "bbb_inkomen_m", "bruto_inkomen_m"]
+            if methode == "uren_per_week":
+                st.subheader("Gevolgen meer/minder werken")
+                col1,col2 = st.columns(2)
+                with col1:
+                    uren_1 = st.number_input("Uren per week oude situatie", 1,40,32)
+                with col2:
+                    uren_2 = st.number_input("Uren per week nieuwe situatie", 1,40,36)
+
+                filtered_data_1 = df[df['uren_per_week'] == uren_1]
+                filtered_data_2 = df[df['uren_per_week'] == uren_2]
+                
+                # Combine the two dataframes into one
+                combined_data = pd.concat([filtered_data_1, filtered_data_2])
+
+                # Reset the index if needed
+                combined_data.reset_index(drop=True, inplace=True)
+
+                st.write(combined_data)
+                
+                bruto_inkomen_m_diff = round(filtered_data_2['bruto_inkomen_m'].iloc[0] - filtered_data_1['bruto_inkomen_m'].iloc[0],2)
+                bruto_inkomen_u_diff = round((filtered_data_1['bruto_inkomen_m'].iloc[0]/(4.33*uren_1)) - (filtered_data_2['bruto_inkomen_m'].iloc[0]/(4.33*uren_2)),2)
+                               
+
+                nettoloon_m_diff = round(filtered_data_2['nettoloon_m'].iloc[0] - filtered_data_1['nettoloon_m'].iloc[0],2)
+                besteedbaar_inkomen_m_diff = round(filtered_data_2['besteedbaar_inkomen_m'].iloc[0] - filtered_data_1['besteedbaar_inkomen_m'].iloc[0],2)
+                
+                
+                nettoloon_u_diff =           round((filtered_data_2['nettoloon_m'].iloc[0]/(4.33*uren_2)) -            (filtered_data_1['nettoloon_m'].iloc[0]/(4.33*uren_1)),2)
+                besteedbaar_inkomen_u_diff = round((filtered_data_2['besteedbaar_inkomen_m'].iloc[0]/(4.33*uren_2)) - (filtered_data_1['besteedbaar_inkomen_m'].iloc[0]/(4.33*uren_1)),2)
+                
+                st.write(f"Verschil Bruto inkomen: per jaar : {round(12* bruto_inkomen_m_diff)} | per maand : {bruto_inkomen_m_diff} ")
+                            
+                st.write(f"Verschil netto loon: per jaar : {round(12* nettoloon_m_diff)} | per maand : {nettoloon_m_diff} | per uur {nettoloon_u_diff} ")
+                st.write(f"**Verschil besteedbaar inkomen : per jaar : {round(12* besteedbaar_inkomen_m_diff)} | per maand : {besteedbaar_inkomen_m_diff} | per uur : {besteedbaar_inkomen_u_diff}**")
+            fig2 = px.line(df,x=x_,y=to_show_m)
+            fig2.layout.xaxis.title=x_title
+            st.subheader("Per maand")
+            st.plotly_chart(fig2) 
+         #fig.layout.yaxis.title=to_show
         # if type(to_show) == list :
         #     fig = px.Figure()
         #     for ts in to_show:
@@ -124,7 +170,7 @@ def main():
     st.write("belastingdruk_% = inkomstenbelasting / bruto inkomen")
     st.write("Netto inkomen = bruto inkomen - inkomstenbelasting")
     st.write("Besteedbaar inkomen = netto inkomen + huurtoeslag + zorgtoeslag")
-    st.write("ONDER VOORBEHOUD VAN FOUTEN")
+    
     st.write("Zie ook https://www.rijksoverheid.nl/documenten/kamerstukken/2021/09/21/tabellen-marginale-druk-pakket-belastingplan-2022")
 
 
