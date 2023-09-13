@@ -173,13 +173,7 @@ def main():
             to_show =  accotype_chosen + languages_chosen + prijzen
         file_name = "_".join([str(item) for item in to_show]) 
 
-        df = df[(df['Nederlands'].str.contains(item_search,case=False, na=False)) 
-                | (df['English'].str.contains(item_search,case=False, na=False)) 
-                | (df['Deutsch'].str.contains(item_search,case=False, na=False)) 
-                | (df['Italiano'].str.contains(item_search,case=False, na=False)) 
-                | (df['Franҁais'].str.contains(item_search,case=False, na=False)) 
-                | (df['Dansk'].str.contains(item_search,case=False, na=False)) 
-                | (df['Polski'].str.contains(item_search,case=False, na=False))  ]
+        df = search_df(item_search, df)
             
         df = df[to_show]
         df = df.reset_index(drop=True)
@@ -209,14 +203,8 @@ def main():
 
             file_name = "_".join([str(item) for item in to_show])
             
-            df_ = df_[(df_['Nederlands'].str.contains(item_search,case=False, na=False)) 
-                    | (df_['English'].str.contains(item_search,case=False, na=False)) 
-                    | (df_['Deutsch'].str.contains(item_search,case=False, na=False)) 
-                    | (df_['Italiano'].str.contains(item_search,case=False, na=False)) 
-                    | (df_['Franҁais'].str.contains(item_search,case=False, na=False)) 
-                    | (df_['Dansk'].str.contains(item_search,case=False, na=False)) 
-                    | (df_['Polski'].str.contains(item_search,case=False, na=False))  ]
-                
+            df = search_df(item_search, df)
+            
             df__ = df_[to_show]
             df__ = df__.reset_index(drop=True)
 
@@ -229,6 +217,17 @@ def main():
     # sidebar
     download_button(df, file_name)
     show_link()
+
+def search_df(item_search, df):
+    df = df[(df['Nederlands'].str.contains(item_search,case=False, na=False)) 
+                | (df['English'].str.contains(item_search,case=False, na=False)) 
+                | (df['Deutsch'].str.contains(item_search,case=False, na=False)) 
+                | (df['Italiano'].str.contains(item_search,case=False, na=False)) 
+                | (df['Franҁais'].str.contains(item_search,case=False, na=False)) 
+                | (df['Dansk'].str.contains(item_search,case=False, na=False)) 
+                | (df['Polski'].str.contains(item_search,case=False, na=False))  ]
+            
+    return df
     
 if __name__ == "__main__":
     main()
