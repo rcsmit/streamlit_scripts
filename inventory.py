@@ -78,6 +78,7 @@ def main():
     accotype_chosen =  st.sidebar.multiselect("Accotype",accotype_possible, "Waikiki")
     languages_chosen = st.sidebar.multiselect("Languages", languages_possible ,["Nederlands", "English"])
     horiz_order_list =  st.sidebar.selectbox("Order columns", ["First items, then numbers", "First numbers, then items"],0)
+    vert_order_list =  st.sidebar.selectbox("Order rows", ["ID", "ID_oude_layout","id_nieuwe_layout"],0)
     
     item_search = st.sidebar.text_input("Search for item") 
     
@@ -92,6 +93,12 @@ def main():
     output = st.sidebar.selectbox("Output", ["Together", "Seperate", "etiketjes"], index=0)   
 
     df = read(sheet_name)
+    if vert_order_list == "ID":
+        df = df.sort_values(by=['ID'])
+    elif vert_order_list == "ID_oude_layout":
+        df = df.sort_values(by=[ 'ID_oude_layout','ID'])
+    elif vert_order_list == "id_nieuwe_layout":
+        df = df.sort_values(by=[ 'id_nieuwe_layout','ID'])
     for a in accotype_possible:
         if a != "PRIJS":
             som = df[a].sum()
