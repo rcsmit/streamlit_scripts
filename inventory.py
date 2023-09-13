@@ -158,7 +158,7 @@ def main():
                 df[a] = df[a].astype(str)
             else:
                 df[a] = df[a].astype(int)
-                
+          
                 if "PRIJS" in accotype_chosen:
                     df[f"{a}_tot_prijs"] = round(df[a] * df["PRIJS_flt"],2)
                     prijzen.append(f"{a}_tot_prijs")
