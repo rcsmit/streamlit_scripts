@@ -4,6 +4,7 @@ import streamlit as st
 def read(sheet_name):
     sheet_id = "1toDWxbZwLg4qyLnsjnmKnA_V5q_4yAqnkAsH0W4FiTY"  
     url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
+ 
     df = pd.read_csv(url, delimiter=',')
     return df
 
@@ -14,7 +15,7 @@ def save_df(df, name):
     df.to_csv(name_, index=False, compression=compression_opts)
     print("--- Saving " + name_ + " ---")
 
-@st.cache
+@st.cache_data
 def convert_df(df):
      # IMPORTANT: Cache the conversion to prevent computation on every rerun
      return df.to_csv().encode('utf-8')
@@ -56,8 +57,11 @@ def show_disclaimer(languages_possible, languages_chosen):
     disclaimer_it = "L'elenco è indicativo e non giuridicamente vincolante"
     disclaimer_dk = "Listen er vejledende og ikke juridisk bindende"
     disclaimer_pl = "Lista ma charakter orientacyjny i nie jest prawnie wiążąca"
-    disclaimers = [disclaimer_nl, disclaimer_en, disclaimer_fr, disclaimer_de, disclaimer_it, disclaimer_dk, disclaimer_pl
-    ]
+    disclaimer_hu = "[HUNGARIAN DISCLAIMER]"
+    disclaimer_es = "[SPANISH DISCLAIMER]"
+    
+
+    disclaimers = [disclaimer_nl, disclaimer_en, disclaimer_fr, disclaimer_de, disclaimer_it, disclaimer_dk, disclaimer_pl, disclaimer_hu,disclaimer_es]
     for l in languages_possible:
         if l in languages_chosen:
             index = languages_possible.index(l)
@@ -66,13 +70,14 @@ def show_disclaimer(languages_possible, languages_chosen):
 def main():
     print ("--------------------------------------------------")
     #sheet_name = "Schatberg2022"
-    sheet_name = st.sidebar.selectbox("Location", ["Schatberg2022", "Default2022"], index=0) # TODO: read the names 
+    sheet_name = "INVENTARIS_MANUAL_ALLE_ACCOS" #st.sidebar.selectbox("Location", ["Schatberg2022", "Default2022"], index=0) # TODO: read the names 
                                                                                              # of the sheets automatically
-    accotype_possible = ["Waikiki","Bali","Sahara","Kalahari 1","Kalahari 2","Serengeti XL","Serengetti L", "€"]
-    languages_possible = ["Nederlands", "English","Deutsch","Italiano","Franҁais", "Dansk", "Polski"]
+    accotype_possible = ["Waikiki","Bali","Sahara","Kalahari 1","Kalahari 2","Serengeti XL","Serengetti L", "PRIJS", "NAV + SAH (up to 2022)","NAV + SAH (FROM 2022)","KAL (up to 2022)","KAL (from 2022)","SER (up to 2022)","SER (from 2022)","MH(up to 2016)","MH(2017 up to 2021)","MH (from 2022)"]
+    languages_possible = ["Nederlands", "English","Deutsch","Italiano","Franҁais", "Dansk", "Polski", "Magyar", "Espagnol"]
     
     accotype_chosen =  st.sidebar.multiselect("Accotype",accotype_possible, "Waikiki")
     languages_chosen = st.sidebar.multiselect("Languages", languages_possible ,["Nederlands", "English"])
+    horiz_order_list =  st.sidebar.selectbox("Order columns", ["First items, then numbers", "First numbers, then items"],0)
     
     item_search = st.sidebar.text_input("Search for item") 
     
@@ -88,12 +93,12 @@ def main():
 
     df = read(sheet_name)
     for a in accotype_possible:
-        if a != "€":
+        if a != "PRIJS":
             som = df[a].sum()
-            print (f"{a} - {som}")
+            print (f"{a} - {som} items")
     print ("------------")
     if output == "etiketjes":
-        sheet_name = "voorraad2022juni"
+        sheet_name = "INVENTARIS_MANUAL_ALLE_ACCOS"
         sheet_id = "1toDWxbZwLg4qyLnsjnmKnA_V5q_4yAqnkAsH0W4FiTY"
         url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
         df = pd.read_csv(url, delimiter=',').sort_values(by=['locatie'])
@@ -138,15 +143,27 @@ def main():
         st.header(f"Inventory for {accotype_str} at Camping De Schatberg")
     
         df = df.dropna(subset=accotype_chosen, how='all')
-        
+        prijzen = []
+        df["PRIJS_flt"] = df["PRIJS"].str.replace(',', '.').astype(float)
         for a in accotype_chosen:
             df[a] = df[a].fillna(0)
-            if a == "€":
+            if a == "PRIJS":   
                 df[a] = df[a].astype(str)
             else:
                 df[a] = df[a].astype(int)
-        
-        to_show =  languages_chosen + accotype_chosen
+                
+                if "PRIJS" in accotype_chosen:
+                    df[f"{a}_tot_prijs"] = round(df[a] * df["PRIJS_flt"],2)
+                    prijzen.append(f"{a}_tot_prijs")
+        if "PRIJS" in accotype_chosen:
+            for a in accotype_chosen:
+                if a != "PRIJS":
+                    st.write(f"TOTALE WAARDE {a} : {round(df[f'{a}_tot_prijs'].sum(),2)}")
+
+        if horiz_order_list == "First items, then numbers":
+            to_show =  languages_chosen + accotype_chosen + prijzen
+        else: 
+            to_show =  accotype_chosen + languages_chosen + prijzen
         file_name = "_".join([str(item) for item in to_show]) 
 
         df = df[(df['Nederlands'].str.contains(item_search,case=False, na=False)) 
@@ -164,20 +181,25 @@ def main():
 
         show_disclaimer(languages_possible, languages_chosen)
         for a in accotype_chosen:
-            if a != "€":
+            if a != "PRIJS":
                 som = df[a].sum()
-                print (f"{a} - {som}")
+                print (f"{a} - {som} items")
     elif output ==  "Seperate":
         for acco_ in accotype_chosen:
             st.header(f"Inventory for {acco_} at Camping De Schatberg")
             df_ = df.dropna(subset=acco_, how='all').copy(deep=True)
             df_[acco_] = df_[acco_].fillna(0)
-            if acco_ == "€":
+            if acco_ == "PRIJS":
                 df_[acco_] = df_[acco_].astype(str)
             else:
                 df_[acco_] = df_[acco_].astype(int)
         
-            to_show =  languages_chosen + [acco_]
+         
+            if horiz_order_list == "First items, then numbers":
+                to_show =  languages_chosen + [acco_] 
+            else: 
+                to_show =  [acco_] + languages_chosen 
+
             file_name = "_".join([str(item) for item in to_show])
             
             df_ = df_[(df_['Nederlands'].str.contains(item_search,case=False, na=False)) 
@@ -193,7 +215,7 @@ def main():
 
             show_df(df__)
             show_disclaimer(languages_possible, languages_chosen)
-            print (f"{acco_} - {df__[acco_].sum()}")
+            print (f"{acco_} - {df__[acco_].sum()} items")
 
     else:
         st.error("Error in output")
