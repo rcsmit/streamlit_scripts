@@ -67,7 +67,7 @@ def show_disclaimer(languages_possible, languages_chosen):
             index = languages_possible.index(l)
             st.write(f" * {disclaimers[index]}")
 
-def main():
+def main_1():
     print ("--------------------------------------------------")
     #sheet_name = "Schatberg2022"
     sheet_name = "INVENTARIS_MANUAL_ALLE_ACCOS" #st.sidebar.selectbox("Location", ["Schatberg2022", "Default2022"], index=0) # TODO: read the names 
@@ -228,6 +228,14 @@ def search_df(item_search, df):
                 | (df['Polski'].str.contains(item_search,case=False, na=False))  ]
             
     return df
+def main():
+    tab1, tab2 = st.tabs(["Inventory list", "Groot bestek"])
+    with tab1:
+        main_1()
+    with tab2:
+        st.header("Groot bestek")
+        st.image("https://i.imgur.com/5rLTm4E.png")
+    
     
 if __name__ == "__main__":
     main()
