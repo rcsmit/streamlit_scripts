@@ -1769,7 +1769,14 @@ def  polar_plot(df2,   what_to_show, how):
 
                 #ax.set_yticklabels(['-10°C','-5°C','0°C','5°C','10°C','15°C','20°C','25°C','30°C','35°C', '40°C','45°C'])
                 # Define the y-axis ticks and their corresponding labels
-                yticks = range(int(min_value_rounded_down), int(max_value_rounded_up) + 5, 5)
+                # Calculate the range between min and max values
+                value_range = max_value_rounded_up - min_value_rounded_down
+                n_ticks = value_range / 5
+                if n_ticks > 8:
+                    steps = 10
+                else:
+                    steps = 5
+                yticks = range(int(min_value_rounded_down), int(max_value_rounded_up) + 5, steps)
                 yticklabels = [f'{temp}°C' for temp in yticks]
                 ax.set_yticks(yticks)
                 ax.set_yticklabels(yticklabels)
