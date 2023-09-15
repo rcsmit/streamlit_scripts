@@ -1780,6 +1780,7 @@ def  polar_plot(df2,   what_to_show, how):
                 yticklabels = [f'{temp}°C' for temp in yticks]
                 ax.set_yticks(yticks)
                 ax.set_yticklabels(yticklabels)
+                ax.tick_params(axis='y', labelsize=8) 
 
                 # Changing radial ticks angle
 
