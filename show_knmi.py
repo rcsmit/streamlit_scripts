@@ -8,18 +8,27 @@ import datetime as dt
 import scipy.stats as stats
 from datetime import datetime
 import matplotlib.pyplot as plt
+import matplotlib
 from matplotlib.backends.backend_agg import RendererAgg
-
+from matplotlib.animation import FuncAnimation
+from matplotlib.lines import Line2D
+# import matplotlib.animation as animation
+# from IPython.display import HTML     
 _lock = RendererAgg.lock
 from matplotlib.colors import ListedColormap
 import numpy as np
 import matplotlib.dates as mdates
+import sys # for the progressbar
+import shutil # for the progressbar
 
+import statsmodels.api as sm
+import matplotlib.pyplot as plt
 import plotly.express as px
 import math
 import plotly.graph_objects as go
 import platform
-
+import streamlit.components.v1 as components
+import time
 # INSPRIATION : https://weatherspark.com/m/52666/10/Average-Weather-in-October-in-Utrecht-Netherlands
 # https://radumas.info/blog/tutorial/2017/04/17/percentile-test.html
 def select_period_oud(df, field, show_from, show_until):
@@ -97,7 +106,7 @@ def getdata(stn, fromx, until):
     #url=r"C:\Users\rcxsm\Downloads\df_knmi_de_bilt_01011901_27072023.csv"
     #url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\knmi_nw_beerta_no_header.csv"
     url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start={fromx}&end={until}"
-    # url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\de_bilt_1901_2023_no_header.csv"
+    #url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\de_bilt_1901_2023_no_header.csv"
     #url = url_local if platform.processor() else url_knmi
     #header = 0  if platform.processor() else None
     header = None
@@ -281,8 +290,6 @@ def convert_df(df):
      # IMPORTANT: Cache the conversion to prevent computation on every rerun
      return df.to_csv().encode('utf-8')
 
-
-
 def does_rain_predict_rain(df):
     """reproducing 
     
@@ -364,7 +371,6 @@ def does_rain_predict_rain(df):
     frequency_data.columns = ['rain_period', 'frequency']
     frequency_data_filtered = frequency_data[frequency_data['rain_period'] != 0]
 
-
     # Create a bar graph using Plotly Express
     fig = px.bar(frequency_data_filtered, x='rain_period', y='frequency', 
                 title='Frequency of Rain Periods', labels={'rain_period': 'Rain Period', 'frequency': 'Frequency'})
@@ -443,15 +449,6 @@ def does_rain_predict_rain(df):
     fig.update_xaxes(tickmode='linear', dtick=10)
     st.plotly_chart(fig)
 
-
-
-
-
-
-
-
-
-
 def show_aantal_kerend(df_, gekozen_weerstation, what_to_show_):
     # TODO : stacked bargraphs met meerdere condities
     # https://twitter.com/Datagraver/status/1535200978814869504/photo/1
@@ -476,7 +473,6 @@ def show_aantal_kerend(df_, gekozen_weerstation, what_to_show_):
 
     value_min = st.sidebar.number_input("Waarde vanaf", -99, 99, 0)
     value_max = st.sidebar.number_input("Waarde tot en met", -99, 99, 99)
-
 
     #jaren = df["YYYY"].tolist()
     for what_to_show in what_to_show_:
@@ -519,7 +515,6 @@ def show_aantal_kerend(df_, gekozen_weerstation, what_to_show_):
         df_grouped_mean = df.groupby(by=["year"]).mean(numeric_only=True).reset_index() # werkt maar geeft geen 0 waardes weer 
         title = (f"Gemiddelde van {what_to_show} in {gekozen_weerstation} tussen {value_min} en {value_max}")
         plot_df_grouped( months, month_min, month_max,  df_grouped_mean, what_to_show, title)
-
 
 def plot_df_grouped(months, month_min, month_max,  df_grouped_, veldnaam, title):
     # fig, ax = plt.subplots()
@@ -665,7 +660,6 @@ def show_per_maand(df, gekozen_weerstation, what_to_show_, groeperen, graph_type
             # st.subheader(f"Data of {what_to_show}")
             # st.write(df_pivoted)
 
-
 def get_weerstations():
     weer_stations = [
         [209, "IJmond"],
@@ -721,7 +715,6 @@ def get_weerstations():
     ]
     return weer_stations
 
-
 def interface():
     """Kies het weerstation, de begindatum en de einddatum
 
@@ -729,7 +722,7 @@ def interface():
         df, het weerstation, begindatum en einddatum (laatste drie als string)
     """
     mode = st.sidebar.selectbox(
-        "Modus (kies HELP voor hulp)", ["doorlopend per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", "per maand in div jaren", "percentiles", "polar_plot", "does rain predict rain", "show weerstations", "help"], index=0
+        "Modus (kies HELP voor hulp)", ["doorlopend per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", "per maand in div jaren", "percentiles", "polar plot/radar chart", "does rain predict rain", "show weerstations", "help"], index=0
     )
    
     weer_stations = get_weerstations()
@@ -893,7 +886,7 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
         show_aantal_kerend(df, gekozen_weerstation, what_to_show)
     elif mode == "percentiles":
         plot_percentiles(df,  gekozen_weerstation, what_to_show, wdw, centersmooth)
-    elif mode == "polar_plot":
+    elif mode == "polar plot/radar chart":
         how = st.sidebar.selectbox(
             "Scatter / line", ["scatter", "line"], index=0
             )
@@ -1012,7 +1005,6 @@ def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw, centersmooth):
                     q90 = np.percentile(data, 90)
                     avg = data.mean()
 
-
                     df_quantile = df_quantile.append(
                         {
                             "date_": date_,
@@ -1061,7 +1053,6 @@ def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw, centersmooth):
                             y1=df_quantile['q10'],
                             y2=df_quantile['q90'],
                             alpha=0.15, facecolor=colors[idx])
-
 
             ax.set_xticks(df_quantile["date"].index)
             # if datefield == "YYYY":
@@ -1125,7 +1116,6 @@ def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw, centersmooth):
             fillcolor='rgba(68, 68, 68, 0.1)',
             fill='tonexty')
 
-
         q90 = go.Scatter(
             name='q90',
             x=df_quantile["date"],
@@ -1146,9 +1136,6 @@ def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw, centersmooth):
         fig.update_layout(xaxis=dict(tickformat="%d-%m"))
         st.plotly_chart(fig, use_container_width=True)
         # fig.show()
-
-
-
 
 def calculate_loess(X, y, alpha, deg, all_x = True, num_points = 100):
     # from scipy.linalg import qr, pinv   
@@ -1228,10 +1215,7 @@ def calculate_loess(X, y, alpha, deg, all_x = True, num_points = 100):
         
     return y_hat, x_space
 
-import numpy as np
-import pandas as pd
-import statsmodels.api as sm
-import matplotlib.pyplot as plt
+
 
 def climatrend(t, y, p=None, t1=None, t2=None, ybounds=None, drawplot=False, draw30=False):
 
@@ -1473,7 +1457,6 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
             lower68 = round(df[what_to_show_x].quantile(0.16),1)
             upper68 = round(df[what_to_show_x].quantile(0.84),1)
 
-
             lower95 = round(df[what_to_show_x].quantile(0.025),1)
             upper95 = round(df[what_to_show_x].quantile(0.975),1)
 
@@ -1644,7 +1627,6 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
                 #data.append(ci_area_trace_95)
                 #data.append(ci_area_trace_68)
 
-
             layout = go.Layout(
                 yaxis=dict(title=what_to_show_x),
                 title=title,)
@@ -1707,12 +1689,19 @@ def  polar_plot(df2,   what_to_show, how):
         df2["YYYYMMDD_"] = pd.to_datetime(df2["YYYYMMDD"], format="%Y%m%d")
         # Convert the timestamp to the number of seconds since the start of the year.
         df2['secs'] = (df2.YYYYMMDD_ - pd.to_datetime(df2.YYYYMMDD.dt.year, format='%Y')).dt.total_seconds()
-     
+        df2['dayofyear'] =  df2["YYYYMMDD_"].dt.dayofyear
+        df2['angle_rad']=((360/365)*df2['dayofyear'])*np.pi/180 # = hoek in radialen
         # Approximate the angle as the number of seconds for the timestamp divide by
         # the number of seconds in an average year.
-        df2['angle'] = df2['secs'] / (365.25 * 86400) *360  #   * 2 * np.pi
+        df2['angle_degrees'] = df2['secs'] / (365.25 * 86400) *360  #   * 2 * np.pi
+        big_angle= 360/12  # How we split our polar space
 
-        def plot_polar():
+        
+        
+        
+
+        def plot_polar_plotly(how):
+            st.subheader(f"Plotly - {how}")
             months = [
                 "januari",
                 "februari",
@@ -1729,9 +1718,11 @@ def  polar_plot(df2,   what_to_show, how):
             ]
             
             if how == "line":
-                fig = px.line_polar(df2, r=w, color='YYYY', theta='angle',color_discrete_sequence=px.colors.sequential.Plasma_r, line_close=False, hover_data=['YYYYMMDD'])
+                fig = px.line_polar(df2, r=w, color='YYYY', theta='angle_degrees',color_discrete_sequence=px.colors.sequential.Plasma_r, line_close=False, hover_data=['YYYYMMDD'])
+                fig.update_traces(line=dict(width=0.75))
+            
             elif how == "scatter":
-                fig = px.scatter_polar(df2, r=w, color='YYYY', theta='angle', hover_data=['YYYYMMDD'])
+                fig = px.scatter_polar(df2, r=w, color='YYYY', theta='angle_degrees', hover_data=['YYYYMMDD'])
 
             else:
                 st.error("Error in HOW")
@@ -1748,57 +1739,156 @@ def  polar_plot(df2,   what_to_show, how):
             )
             st.plotly_chart(fig)
 
-            # MATPLOTLIB
-            # For the colourmap, the minimum is the largest multiple of 5 not greater than
-            # the smallest value of T; the maximum is the smallest multiple of 5 not less
-            # than the largest value of T, e.g. (-3.2, 40.2) -> (-5, 45).
-            Tmin = 5 * np.floor(df2[w].min() / 5)
-            Tmax = 5 * np.ceil(df2[w].max() / 5)
-            # Normalization of the colourmap.
-            # norm = Normalize(vmin=Tmin, vmax=Tmax)
-            # c = norm(df2[w])
+     
+      
+        def plot_matplotlib_line():
+            def dress_axes(ax):
+                #https://matplotlib.org/matplotblog/posts/animated-polar-plot/
+                #inner,outer = -10,50
+                # Find maximum and minimum values in column 'w'
+                max_value = df2[w].max()
+                min_value = df2[w].min()
 
-    
-            # fig = plt.figure()
-            # ax = fig.add_subplot(projection='polar')
-            # # We prefer 1 January (0 deg) on the left, but the default is to the
-            # # right, so offset by 180 deg.
-            # ax.set_theta_offset(np.pi)
-            # cmap = cm.turbo
-            # ax.scatter(df2['angle'], df2[w], c=cmap(c), s=2)
+                # Round the maximum value up to the nearest multiple of 5
+                max_value_rounded_up = np.ceil(max_value / 5) * 5
 
-            # # Tick labels.
-            # ax.set_xticks(np.arange(0, 2 * np.pi, np.pi / 6))
-            # ax.set_xticklabels(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            #                     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
-            # ax.set_yticks([])
+                # Round the minimum value down to the nearest multiple of 5
+                min_value_rounded_down = np.floor(min_value / 5) * 5
+                #print (f"{inner} {outer}")
+                ax.set_facecolor('w')
+                ax.set_theta_zero_location("N")
+                ax.set_theta_direction(-1)
+                # Here is how we position the months labels
 
-            # # Add and title the colourbar.
-            # # cbar = fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap),
-            # #                     ax=ax, orientation='vertical', pad=0.1)
-            # # cbar.ax.set_title(r'Temp')
+                middles=np.arange(big_angle/2 ,360, big_angle)*np.pi/180
+                ax.set_xticks(middles)
+                ax.set_xticklabels(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
+                #ax.set_yticks([-10,-5,0,5,10,15,20,25,30,35,40,45])
+                # Set the y-axis ticks dynamically based on min and max values
+                #ax.set_yticks(range(int(min_value_rounded_down), int(max_value_rounded_up) + 5, 5))
 
-            # st.pyplot(fig)
+                #ax.set_yticklabels(['-10°C','-5°C','0°C','5°C','10°C','15°C','20°C','25°C','30°C','35°C', '40°C','45°C'])
+                # Define the y-axis ticks and their corresponding labels
+                yticks = range(int(min_value_rounded_down), int(max_value_rounded_up) + 5, 5)
+                yticklabels = [f'{temp}°C' for temp in yticks]
+                ax.set_yticks(yticks)
+                ax.set_yticklabels(yticklabels)
 
-        def plot_3d():
+                # Changing radial ticks angle
+
+                ax.set_rlabel_position(359)
+                ax.tick_params(axis='both',color='w')
+                plt.grid(None,axis='x')
+                plt.grid(axis='y',color='w', linestyle=':', linewidth=1)    
+                # Here is the bar plot that we use as background
+
+                bars = ax.bar(middles, max_value_rounded_up, width=big_angle*np.pi/180, bottom=min_value_rounded_down, color='lightgray', edgecolor='w',zorder=0)
+                
+            #plt.ylim([inner,outer])
+            # Custom legend
+
+            # Create a figure and polar axes
             fig = plt.figure()
-            ax = fig.add_subplot(projection='3d')
-            cmap = cm.turbo
-            X = df2[w] * np.cos(df2['angle'] + np.pi)
-            Y = df2[w] * np.sin(df2['angle'] + np.pi)
-            z = df2.YYYYMMDD.dt.year
-            ax.scatter(X, Y, z, c=cmap(c), s=2)
+            ax = fig.add_subplot(projection='polar')
+ 
+            def make_graph(day):
+                def display_progress_bar(
+                    number: int, total: int, ch: str = "█", scale: float = 0.55) -> None:
+                    """Display a simple, pretty progress bar.
 
-            ax.set_xticks([])
-            ax.set_yticks([])
-            cbar = fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap),
-                                ax=ax, orientation='horizontal', pad=-0.02, shrink=0.6)
-            #cbar.ax.set_title(r'$T\;/^\circ\mathrm{C}$')
+                    Example:
+                    ~~~~~~~~
+                    PSY - GANGNAM STYLE(강남스타일) MV.mp4
+                    ↳ |███████████████████████████████████████| 100.0%
+
+                    :param number:
+                        step number
+                    :param int total:
+                        total
+                    :param str ch:
+                        Character to use for presenting progress segment.
+                    :param float scale:
+                        Scale multiplier to reduce progress bar size.
+
+                    """
+                    columns = shutil.get_terminal_size().columns
+                    max_width = int(columns * scale)
+
+                    filled = int(round(max_width * number / float(total)))
+                    remaining = max_width - filled
+                    progress_bar = ch * filled + "_" * remaining
+                    percent = round(100.0 * number / float(total), 1)
+                    text = f" ↳ |{progress_bar}| {percent}%  ({round(number)}/{round(total,1)})\r"
+                    sys.stdout.write(text)
+                    sys.stdout.flush()
+                
+                display_progress_bar(day,len(df2))
+                ax.cla()
+                dress_axes(ax)
+                last_year = df2["YYYY"].max()
+                df_last_year = df2[df2["YYYY"] == last_year]
+                number_of_rows_last_year = len (df_last_year)
+                treshold = number_of_rows_last_year
+                if len(df2) > treshold:
+                    i0 = len(df2)-treshold
+                else:
+                    i0 = int(len(df2)/3)
+
+                if day<i0:
+                    filtered_data_1 =df2[0:day+1]
+                    filtered_data_2 = df2[0:0]
+                else:
+                    filtered_data_1 =df2[0:i0+1]
+                    filtered_data_2 =df2[i0:day+1]
+                
+
+                theta_1 = filtered_data_1["angle_rad"].to_numpy()  
+                r_1 = filtered_data_1[w].to_numpy()
+                ax.plot(theta_1, r_1, color='yellow', linewidth=0.5)
+                if len(filtered_data_2) == 0:
+                    pass
+                else:
+                    theta_2 = filtered_data_2["angle_rad"].to_numpy()  
+                    r_2 = filtered_data_2[w].to_numpy()
+                    ax.plot(theta_2, r_2, color='orange',alpha=1.0,linewidth=1)
+
+                
+                ax.set_title(f"Day: {day}")
+
+            # Create the animation
+            days = range(0, len(df2) + 1)
+            st.subheader("Matplotlib last day")
+            make_graph(len(df2)+1)
             st.pyplot(fig)
+            show_animation = True
 
-        plot_polar()
-        #plot_3d()
-
+            if show_animation:
+                print ("Generating animation")
+                st.subheader(" Animation")
+                s1 = int(time.time())
+                animation = FuncAnimation(fig, make_graph, frames=days, repeat=False)
+                
+                #HtmlFile = line_ani.to_html5_video()
+                with open("myvideo.html","w") as f:
+                    print(animation.to_html5_video(), file=f)
+                
+                HtmlFile = open("myvideo.html", "r")
+                #HtmlFile="myvideo.html"
+                source_code = HtmlFile.read() 
+                components.html(source_code, height = 900,width=900)
+                s2 = int(time.time())
+                print("")
+                print (f"Needed time : {s2-s1} sec")
+                # Display the animation
+                #st.pyplot(fig)
+       
+        
+        plot_polar_plotly("line")
+        plot_polar_plotly("scatter")
+        plot_matplotlib_line()
+        
+        
+        
     
 
 def show_warmingstripes(df_, title):
@@ -1871,7 +1961,6 @@ def show_warmingstripes_matplotlib(df_, title):
 
     FIRST = int( df["YYYY"].min())
     LAST = int(df["YYYY"].max())  # inclusive
-
 
     # Reference period for the center of the color scale
 
@@ -1988,12 +2077,9 @@ def show_weerstations():
         ],tooltip = tooltip
     ))
 
-
     st.write(df_map)
 
     st.sidebar.write("Link to map with KNMI stations on Google Maps https://www.google.com/maps/d/u/0/edit?mid=1ePEzqJ4_aNyyTwF5FyUM6XiqhLZPSBjN&ll=52.17534745851063%2C5.197922250000001&z=7")
-
-
 
 def help():
     st.header("Help")
@@ -2019,13 +2105,9 @@ def help():
     st.write("Kan ik 2021 met 2021 per dag vergelijken?")
     st.image("img_knmi/per_dag_div_jaren_2020_2021.png")
 
-
     st.subheader("Per maand in diverse jaren")
     st.write("Kan ik 2021 met 2021 per maaand vergelijken?")
     st.image("img_knmi/per_maand_div_jaren_2020_2021.png")
-
-
-
 
     st.subheader("Percentiles")
     st.write("Wat zijn de uitschieters in het jaar? - kies hiervoor een lange periode")
@@ -2044,11 +2126,9 @@ def help():
         unsafe_allow_html=True,
     )
 
-
 def main():
     stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, wdw_ci,show_parts, no_of_parts = interface()
     action(stn, from_, until_, mode, groupby_,  wdw, wdw2,sma2_how,  what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, wdw_ci,show_parts, no_of_parts)
-
 
 if __name__ == "__main__":
     main()
