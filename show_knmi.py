@@ -1860,7 +1860,11 @@ def  polar_plot(df2,   what_to_show, how):
             st.subheader("Matplotlib last day")
             make_graph(len(df2)+1)
             st.pyplot(fig)
-            show_animation = True
+            if platform.processor():
+                show_animation = True
+            else:
+                show_animation = False
+                st.info("Animation only available locally")
 
             if show_animation:
                 print ("Generating animation")
