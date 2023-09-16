@@ -144,7 +144,6 @@ def show_info(df):
     Args:
         df (df): the dataframe
     """
-
     st.title("About")
     st.write("This generator has been made by Rene Smit. It combines various keywords in various categories")
     st.subheader("The categories/keywords")
