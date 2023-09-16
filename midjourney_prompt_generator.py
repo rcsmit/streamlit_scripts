@@ -80,17 +80,6 @@ def generate_prompt(df,included_columns, what,who, number,chaos, stylize, weird,
                 prompt2 += f"{seperator}{random_value}"
                 prompt3 += f"{seperator}{column}: {random_value}"
    
-    # distribution = "uneven"
-    # if distribution == "weibull":
-    #     # prompt += f"--chaos {weibull(100)} "
-    #     # prompt += f"--stylize {weibull(1000)} " # Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
-    #     # prompt += f"--weird {weibull(3000)} "
-    #     pass
-    # elif distribution == "even":
-    #     prompt += f"--chaos {random.randint(1,100)} "
-    #     prompt += f"--stylize {random.randint(1,1000)} " # Low stylization values produce images that closely match the prompt but are less artistic. High stylization values create images that are very artistic but less connected to the prompt.
-    #     prompt += f"--weird {random.randint(1,3000)} "
-    # else:
     if what == "INTERIOR ARCHITECTURE":
         prompt += " with exclusive finishes and minimalist detailing throughout, intrinsic details " 
     if what == "MAELA":
@@ -109,7 +98,7 @@ def generate_prompt(df,included_columns, what,who, number,chaos, stylize, weird,
     st.code("--chaos {0,25,50,75,100} --stylize {0,250,500,750,1000} --weird {0,750,1500,2250,3000} --v {4, 5, 5.1, 5.2}")
     
     if what == "MAELA":
-        st.info("* [Prompts from MAELA Berlotti](https://maelaberlotti.notion.site/maelaberlotti/Midjourney-Promt-Randomizer-dc3257fee786403bbc864b063bdce2a4)")
+        st.info("* [Promptsuggestions made by MAELA Berlotti](https://maelaberlotti.notion.site/maelaberlotti/Midjourney-Promt-Randomizer-dc3257fee786403bbc864b063bdce2a4)")
     
     
     st.subheader("Past prompts")
