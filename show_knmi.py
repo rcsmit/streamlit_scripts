@@ -1,34 +1,33 @@
 from imghdr import what
 import pandas as pd
 import numpy as np
-
 import streamlit as st
 #from streamlit import caching
 import datetime as dt
 import scipy.stats as stats
+import math
+
 from datetime import datetime
 import matplotlib.pyplot as plt
-import matplotlib
+# import matplotlib
 from matplotlib.backends.backend_agg import RendererAgg
 from matplotlib.animation import FuncAnimation
-from matplotlib.lines import Line2D
-# import matplotlib.animation as animation
-# from IPython.display import HTML     
-_lock = RendererAgg.lock
 from matplotlib.colors import ListedColormap
-import numpy as np
-import matplotlib.dates as mdates
+
+_lock = RendererAgg.lock
 import sys # for the progressbar
 import shutil # for the progressbar
 
 import statsmodels.api as sm
-import matplotlib.pyplot as plt
 import plotly.express as px
-import math
 import plotly.graph_objects as go
+
 import platform
 import streamlit.components.v1 as components
 import time
+import imageio
+import os
+import webbrowser
 # INSPRIATION : https://weatherspark.com/m/52666/10/Average-Weather-in-October-in-Utrecht-Netherlands
 # https://radumas.info/blog/tutorial/2017/04/17/percentile-test.html
 def select_period_oud(df, field, show_from, show_until):
@@ -1862,6 +1861,12 @@ def  polar_plot(df2,   what_to_show, how):
 
                 
                 ax.set_title(f"Day: {day}")
+               
+                filename= (f"polarplot_{day}")
+
+
+                #plt.savefig(filename, dpi=100,)
+                return filename
 
             # Create the animation
             days = range(0, len(df2) + 1)
@@ -1869,9 +1874,11 @@ def  polar_plot(df2,   what_to_show, how):
             make_graph(len(df2)+1)
             st.pyplot(fig)
             if platform.processor():
-                show_animation = True
+                show_animation = False # True
+                prepare_for_animation = False
             else:
                 show_animation = False
+                prepare_for_animation = False
                 st.info("Animation only available locally")
 
             if show_animation:
@@ -1893,6 +1900,22 @@ def  polar_plot(df2,   what_to_show, how):
                 print (f"Needed time : {s2-s1} sec")
                 # Display the animation
                 #st.pyplot(fig)
+            if prepare_for_animation == True:
+                filenames = []
+                for i in range(0, len(df2)):
+                    filename = make_graph(i)
+                    filenames.append(filename)
+
+                # build gif
+                with imageio.get_writer('mygif.gif', mode='I') as writer:
+                    for filename_ in filenames:
+                        image = imageio.imread(f"{filename_}.png")
+                        writer.append_data(image)
+                webbrowser.open('mygif.gif')
+
+                # Remove files
+                for filename__ in set(filenames):
+                    os.remove(f"{filename__}.png")
        
         
         plot_polar_plotly("line")

@@ -56,6 +56,8 @@ def generate_prompt(df,included_columns, what,who, number,chaos, stylize, weird,
         prompt = f'{take_random_value(df, "CONCEPT")} a {take_random_value(df, what)} as {take_random_value(df, "ARCHETYPES")} in a {take_random_value(df, "SCENES")} by {take_random_value(df, who)} '
     elif what == "INTERIOR ARCHITECTURE":
          prompt =f'{take_random_value(df, "COMPOSITION_INT_ARCH")}'
+    elif what == "MAELA":
+         prompt =f' '
     else:
         prompt = f'{take_random_value(df, "CONCEPT")} {take_random_value(df, what)} in a {take_random_value(df, "SCENES")} by {take_random_value(df, who)}'
       
@@ -91,6 +93,9 @@ def generate_prompt(df,included_columns, what,who, number,chaos, stylize, weird,
     # else:
     if what == "INTERIOR ARCHITECTURE":
         prompt += " with exclusive finishes and minimalist detailing throughout, intrinsic details " 
+    if what == "MAELA":
+        prompt += " high quality photo 16k "
+        ar =  "2:3"
     ending = f"--chaos {chaos} --stylize {stylize}  --weird {weird} --ar {ar} --style raw"
     prompt += ending
     prompt2 += ending
@@ -197,9 +202,12 @@ def main():
     non_fixed_columns_end = 35
     architecture_columns_start  =36
     architecture_columns_end = 48
+    maela_columns_start = 48
+    maela_columns_end = 55
+    
 
-    what = st.sidebar.selectbox("What to choose / INFO",["FAMOUS PEOPLE", "ANIMALS", "OBJECTS","INTERIOR ARCHITECTURE", "INFO"])
-    if what != "INTERIOR ARCHITECTURE" and what != "INFO":
+    what = st.sidebar.selectbox("What to choose / INFO",["FAMOUS PEOPLE", "ANIMALS", "OBJECTS","INTERIOR ARCHITECTURE", "MAELA", "INFO"])
+    if what != "INTERIOR ARCHITECTURE" and what != "MAELA" and what != "INFO":
         who = st.sidebar.selectbox("What kind of artist", ["FAMOUS PAINTERS", "MASTERPHOTOGRAPHERS","ARTISTS" ])
     else:
         who = None
@@ -214,6 +222,8 @@ def main():
         ar = st.sidebar.selectbox("Aspect ratio (w:h)", ["1:1","9:16","4:5","3:4","2:3","10:16","16:9","5:4","4:3","3:2"],ar_def)
         if what == "INTERIOR ARCHITECTURE":
             list_columns = list(df.columns)[architecture_columns_start:architecture_columns_end]
+        elif what == "MAELA":
+            list_columns = list(df.columns)[maela_columns_start:maela_columns_end]
         else:
             list_columns = list(df.columns)[non_fixed_columns_start:non_fixed_columns_end]
         included_columns = st.sidebar.multiselect("Columns to include", list_columns,list_columns)
@@ -223,8 +233,6 @@ def main():
         elif len(included_columns) > 0:
             number = st.sidebar.slider("Number of keywords", 0, len(included_columns), len(included_columns))
         seperator = st.sidebar.selectbox("Seperator", ["|",",","<space>"],0)
-        if st.sidebar.button('Clear history'):
-            del st.session_state["history"]
         
     
     # --chaos controls how diverse the initial grid images are from each other.
