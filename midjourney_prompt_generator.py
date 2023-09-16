@@ -151,6 +151,7 @@ def show_info(df):
     df =df.fillna(" ")
     st.write(df)
     st.subheader("Sources and links")
+    st.write("* [Prompts from MAELA Berlotti](https://maelaberlotti.notion.site/maelaberlotti/Midjourney-Promt-Randomizer-dc3257fee786403bbc864b063bdce2a4)")
     st.subheader("Manuals / reference sheets")
     st.write("* [A very unofficial Midjourney Manual by Shambibble](https://docs.google.com/document/d/1ivAYy_JXJsGE-9Rh97iMyXkWlmF_MxO2NFshrIvuns4/edit#heading=h.m6597yajayd7)") 
     st.write("* [Midjourney Keywords & Styles y marigoldguide](https://marigoldguide.notion.site/marigoldguide/52ac9968a8da4003a825039022561a30?v=43706e26438d486bb5b8baaa2dc22ffd)") 
