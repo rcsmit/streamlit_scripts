@@ -107,6 +107,11 @@ def generate_prompt(df,included_columns, what,who, number,chaos, stylize, weird,
     
     st.subheader("Permutations")
     st.code("--chaos {0,25,50,75,100} --stylize {0,250,500,750,1000} --weird {0,750,1500,2250,3000} --v {4, 5, 5.1, 5.2}")
+    
+    if what == "MAELA":
+        st.info("* [Prompts from MAELA Berlotti](https://maelaberlotti.notion.site/maelaberlotti/Midjourney-Promt-Randomizer-dc3257fee786403bbc864b063bdce2a4)")
+    
+    
     st.subheader("Past prompts")
     
     history_list = st.session_state.history
