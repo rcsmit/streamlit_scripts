@@ -24,8 +24,8 @@ def main():
     monthly_contribution_original = st.sidebar.number_input("Monthly Contribution (current pricelevel):", value=200)
     st.sidebar.subheader("--- The person ---")
     current_age = st.sidebar.number_input("Current Age:", value=46)
-    retirement_age = st.sidebar.number_input("Retirement Age:", value=69)
-    expected_life_expectancy =  st.sidebar.number_input("Expected Life Expectancy:", value=81.4)
+    retirement_age = st.sidebar.number_input("Retirement Age:", value=69) #https://www.svb.nl/nl/aow/aow-leeftijd/uw-aow-leeftijd
+    expected_life_expectancy =  st.sidebar.number_input("Expected Life Expectancy:", value=81.4) # https://www.berekenhet.nl/pensioen/resterende-levensverwachting.html#calctop
     
     st.sidebar.write(f"Years to go to pension: {retirement_age - current_age}")
     st.sidebar.write(f"Number of years to sustain {round(expected_life_expectancy - retirement_age,1)}")
