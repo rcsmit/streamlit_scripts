@@ -53,7 +53,8 @@ def main():
                 ["24. KNMI trendline LOESS - scikit-misc", "loess_scikitmisc"],
                 ["25. Yield management", "yield_management"],
                 ["26. Meat consumption", "meat_consumption"],
-                ["27. Waiting times", "waiting_times_disney_OO"]
+                ["27. Waiting times", "waiting_times_disney_OO"],
+                ["28. Extra pension", "extra_pension"]
                                 
                 ]
 
