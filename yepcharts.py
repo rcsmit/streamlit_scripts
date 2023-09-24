@@ -29,7 +29,7 @@ def interface():
     countries_abbr = ["nl","gb","fr","de","it","es","pt","us","be","se","au","at","ca","dk","fi","gr",
                       "ie","il","jp","lu","mx","nz","no","ch"]
     countries_long = ["Netherlands","Great Britain","France","Germany","Italy","Spain","Portugal","United States of America","Belgium","Sweden",
-                    "Australia","Austria","Canada","Danmark","Finland","Greece","Ireland","Isarel","Japan","Luxembourg","Mexico,New Zealand","Norway","Switserland"]
+                    "Australia","Austria","Canada","Danmark","Finland","Greece","Ireland","Isarel","Japan","Luxembourg","Mexico","New Zealand","Norway","Switserland"]
     country_chosen_long = st.sidebar.selectbox("Country", countries_long, index=0)
     country_chosen_abbr =  countries_abbr[countries_long.index(country_chosen_long)]
     return country_chosen_long, country_chosen_abbr
