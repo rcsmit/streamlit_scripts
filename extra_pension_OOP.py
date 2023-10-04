@@ -1,13 +1,12 @@
-import numpy as np
-import plotly.graph_objects as go
-import matplotlib.pyplot as plt
-import streamlit as st
-import pandas as pd
 import statistics
 import random
 import time
-import sys # for the progressbar
-import shutil # for the progressbar
+import numpy as np
+import plotly.graph_objects as go
+import streamlit as st
+import pandas as pd
+import datetime
+
 class PensionCalculator:
     def __init__(self):
         # Initialize default values
@@ -17,12 +16,13 @@ class PensionCalculator:
         
         self.current_age = 46
         self.retirement_age = 69
+        self.max_age= 120
         # self.expected_life_expectancy = 81.4
         # self.expected_life_expectancy_sd = 10
         self.annual_return_rate =2.0
-        self.annual_return_rate_sd = 0
+        self.annual_return_rate_sd = 0.0
         self.inflation = 2.62
-        self.inflation_sd = 0
+        self.inflation_sd = 0.0
 
         self.additional_monthly_need_how = "with inflation"
         self.monthly_pension_without_reduction_original = 1458
@@ -42,60 +42,70 @@ class PensionCalculator:
             {"year": self.windfall_2_year, "amount": self.windfall_2_amount},
             {"year": self.windfall_3_year, "amount": self.windfall_3_amount}
         ]
+        
+
+        # Get the current date and time
+        current_datetime = datetime.datetime.now()
+
+        # Extract the current year from the datetime object
+        self.current_year = current_datetime.year
+
+    def interface(self):
+             #  # Get user input for parameters and update the calculator instance
+        self.initial_one_time_contribution = st.sidebar.number_input("Initial One-Time Contribution:", value=self.initial_one_time_contribution)
+        self.monthly_contribution_original = st.sidebar.number_input("Monthly Contribution (current pricelevel):", value=self.monthly_contribution_original)
+        self.monthly_contribution_original_how = st.sidebar.selectbox("Monthly contribution How", ["with inflation", "without inflation"],0 )
+
+        st.sidebar.subheader("--- The person ---")
+        self.sexe = st.sidebar.selectbox("sexe", ["male", "female"],0)
+        self.current_age = st.sidebar.number_input("Current Age:", value=self.current_age)
+        self.retirement_age = st.sidebar.number_input("Retirement Age:", value=self.retirement_age)
+        self.max_age = st.sidebar.number_input("Maximum Age:", value=self.max_age)
+        #self.expected_life_expectancy = st.sidebar.number_input("Expected Life Expectancy:", value=self.expected_life_expectancy)
+        #self.expected_life_expectancy_sd = st.sidebar.number_input("Expected Life Expectancy SD:", value=self.expected_life_expectancy_sd)
+        self.birthyear = self.current_year - self.current_age
+        st.sidebar.write(f"Years to go to pension: {self.retirement_age - self.current_age}")
+        #st.sidebar.write(f"Number of years to sustain {round(self.expected_life_expectancy - self.retirement_age,1)}")
+        #st.sidebar.write(f"Ratio : {round((self.expected_life_expectancy - self.retirement_age) / (self.retirement_age - self.current_age),1)}")
+        
+        st.sidebar.subheader("--- Rates ---") 
+        self.annual_return_rate = st.sidebar.number_input("Annual Interest Rate (%):", value=self.annual_return_rate)
+        self.inflation = st.sidebar.number_input("Average Annual Inflation Rate (%):", value=self.inflation)
+        self.annual_return_rate_sd = st.sidebar.number_input("Annual Interest Rate SD(%):", value=self.annual_return_rate_sd)
+        self.inflation_sd = st.sidebar.number_input("Average Annual Inflation Rate SD(%):", value=self.inflation_sd)
+        st.sidebar.subheader("--- Pension data ---")
+        self.monthly_pension_without_reduction_original = st.sidebar.number_input("Monthly Pension without Reduction (current price level):", value=self.monthly_pension_without_reduction_original)
+        self.years_shortfall = st.sidebar.number_input("Years of Shortfall:", value=self.years_shortfall)
+        st.sidebar.write(f"Shortfall per month (current price level): {round(self.years_shortfall * 0.02 * self.monthly_pension_without_reduction_original)}")
+        self.additional_monthly_need = st.sidebar.number_input("Additional Monthly Need (current price level):", value=self.additional_monthly_need)
+        self.additional_monthly_need_how = st.sidebar.selectbox("Additional monthly needed How", ["with inflation", "without inflation"],0 )
+
+        st.sidebar.subheader("--- Windfalls ---") # "meevallers"
+        self.windfall_1_year = st.sidebar.number_input("Windfall 1 (Year):", value=self.windfall_1_year)
+        self.windfall_1_amount = st.sidebar.number_input("Windfall 1 (Amount):", value=self.windfall_1_amount)   
+        self.windfall_2_year = st.sidebar.number_input("Windfall 2 (Year):", value=self.windfall_2_year)
+        self.windfall_2_amount = st.sidebar.number_input("Windfall 2 (Amount):", value=self.windfall_2_amount)
+        self.windfall_3_year = st.sidebar.number_input("Windfall 3 (Year):", value=self.windfall_3_year)
+        self.windfall_3_amount = st.sidebar.number_input("Windfall 3 (Amount):", value=self.windfall_3_amount)
+
+        st.sidebar.subheader("--- Simulations ---")
+        self.num_simulations = st.sidebar.number_input("Number of simulations",1,10_000_000,100)
+        self.new_method =  True # st.sidebar.selectbox("Use AG table", [True, False],0)
+        self.print_individual =  st.sidebar.selectbox("Print individual runs", [True, False],1)
 
     def calculate_pension(self, num_simulations=1000):
+        """Calculate the pension and balances
 
-        def display_progress_bar(
-                    number: int, total: int, ch: str = "█", scale: float = 0.55) -> None:
-                    """Display a simple, pretty progress bar.
-
-                    Example:
-                    ~~~~~~~~
-                    PSY - GANGNAM STYLE(강남스타일) MV.mp4
-                    ↳ |███████████████████████████████████████| 100.0%
-
-                    :param number:
-                        step number
-                    :param int total:
-                        total
-                    :param str ch:
-                        Character to use for presenting progress segment.
-                    :param float scale:
-                        Scale multiplier to reduce progress bar size.
-
-                    """
-                    columns = shutil.get_terminal_size().columns
-                    max_width = int(columns * scale)
-
-                    filled = int(round(max_width * number / float(total)))
-                    remaining = max_width - filled
-                    progress_bar = ch * filled + "_" * remaining
-                    percent = round(100.0 * number / float(total), 1)
-                    text = f" ↳ |{progress_bar}| {percent}%  ({round(number)}/{round(total,1)})\r"
-                    sys.stdout.write(text)
-                    sys.stdout.flush()
-        # Create empty lists to store results for all simulations
-        results = []
-        saldo_at_death_values = []
-
-    
-        # Initialize a list to keep track of deceased individuals
-        deceased_ages = []
-        data = pd.read_csv("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/overlijdenskansen.csv")
-        json_file_path = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/overlijdenskansen.json"
-        start_year = 2023
+        Args:
+            num_simulations (int, optional): num simulations. Defaults to 1000.
+        """
+        deceased_ages, saldo_at_death_values, results, start_year = [],[],[], self.current_year
+        # Projections Life Table AG2022
+        # https://www.actuarieelgenootschap.nl/kennisbank/ag-l-projections-life-table-ag2022.htm
         if self.sexe== "male":
             df_prob_die = pd.read_csv("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/AG2022DefinitiefGevalideerd_male.csv")
         else:
             df_prob_die = pd.read_csv("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/AG2022DefinitiefGevalideerd_female.csv")
-        import json
-
-        
-
-        # # Open the JSON file for reading
-        # with open(json_file_path, 'r') as json_file:
-        #     # Load the JSON data into a Python dictionary
-        #     data_dict = json.load(json_file)
        
         special_years = [self.windfall_1_year, self.windfall_2_year,self. windfall_3_year]
         special_amounts = [self.windfall_1_amount, self.windfall_2_amount, self.windfall_3_amount]
@@ -128,6 +138,7 @@ class PensionCalculator:
            
             inflation = np.maximum(np.random.normal(self.inflation, self.inflation_sd), 0)
 
+            # until the retirement
             for i in range(0, years_until_retirement + 1):
                 current_year = i + start_year
                 # Generate random values for annual_return_rate and inflation
@@ -139,6 +150,7 @@ class PensionCalculator:
                 balance +=  annual_contribution_original
 
                 if i in special_years:
+                    # adding the windfalls ("meevallers")
                     special_index = special_years.index(i)
                     special_addition = special_amounts[special_index]
                     balance += special_addition
@@ -154,31 +166,23 @@ class PensionCalculator:
              
                 if person_alive:
                     age = self.current_age +i 
-                    if self.new_method:
-                        probability_to_die = df_prob_die[str(current_year)].to_numpy()[df_prob_die['age'].to_numpy() == age].item()
-                        
-                        #probability_to_die = df_prob_die.loc[df_prob_die['age'] == age, str(current_year)].values[0]
-                        if random.random() <= probability_to_die:
-                                    deceased_ages.append(age)
-                                    saldo_at_death_values.append(balance)
-                                    person_alive = False
-                    else:
-                        for entry in data_dict:
-                            if entry["age"] == age:
-                            
-                                probability_to_die = entry["m_prob_die"]
-                                
-                                if random.random() <= probability_to_die:
-                                    deceased_ages.append(age)
-                                    saldo_at_death_values.append(balance)
-                                    person_alive = False
-                                break
+                   
+                    # use of the AG2022 table. 
+                    probability_to_die = df_prob_die[str(current_year)].to_numpy()[df_prob_die['age'].to_numpy() == age].item()
+                    
+                    #probability_to_die = df_prob_die.loc[df_prob_die['age'] == age, str(current_year)].values[0]
+                    if random.random() <= probability_to_die:
+                                deceased_ages.append(age)
+                                saldo_at_death_values.append(balance)
+                                person_alive = False
+                    
             if self.additional_monthly_need_how == "with inflation":
                 annual_shortfall_corrected = annual_shortfall_original * ((100 + inflation) / 100) ** years_until_retirement
             else:
                 annual_shortfall_corrected = annual_shortfall_original * ((100 + 0) / 100) ** years_until_retirement
             
-            for j in range(years_until_retirement + 1, 100 - self.current_age + 1):
+            # after the retirement
+            for j in range(years_until_retirement + 1, self.max_age - self.current_age + 1):
                 if balance >0 :
                     interest = balance * (annual_return_rate / 100)
                     balance += interest
@@ -197,26 +201,20 @@ class PensionCalculator:
 
                 if person_alive:
                     age = self.current_age +j
-                    if self.new_method:
-                        
-                        probability_to_die = df_prob_die[str(current_year)].to_numpy()[df_prob_die['age'].to_numpy() == age].item()
-                        #probability_to_die = df_prob_die.loc[df_prob_die['age'] == age, str(current_year)].values[0]
-                        if random.random() <= probability_to_die:
-                                    deceased_ages.append(age)
-                                    saldo_at_death_values.append(balance)
-                                    person_alive = False
-
+                    
+                    # use of the AG2022 table
+                    if age>100:
+                        # values not given in the table. Rounded to 0.6
+                        probability_to_die = 0.6
                     else:
-                        for entry in data_dict:
-                            if entry["age"] == age:
-                            
-                                probability_to_die = entry["m_prob_die"]
-                                
-                                if random.random() <= probability_to_die:
-                                    deceased_ages.append(age)
-                                    saldo_at_death_values.append(balance)
-                                    person_alive = False
-                                break
+                        probability_to_die = df_prob_die[str(current_year)].to_numpy()[df_prob_die['age'].to_numpy() == age].item()
+                    #probability_to_die = df_prob_die.loc[df_prob_die['age'] == age, str(current_year)].values[0]
+                    if random.random() <= probability_to_die:
+                                deceased_ages.append(age)
+                                saldo_at_death_values.append(balance)
+                                person_alive = False
+
+                
             results.append({
                 'annual_contribution_values': annual_contribution_values,
                 'balance_values': balance_values,
@@ -229,16 +227,15 @@ class PensionCalculator:
         self.results = results
         self.deceased_ages = deceased_ages
         self.median_age_at_death = round(statistics.median(deceased_ages),1)
-        # Step 1: Order the list of ages
+  
         sorted_ages = np.sort(deceased_ages)
-    
-        # Step 2: Calculate the 2.5th and 97.5th percentiles
+
         self.percentile_2_5 = np.percentile(sorted_ages, 2.5)
         self.percentile_95 = np.percentile(sorted_ages, 95)
         self.percentile_25 = np.percentile(sorted_ages, 25)
         self.percentile_75 = np.percentile(sorted_ages, 75)
-        
         self.percentile_97_5 = np.percentile(sorted_ages, 97.5)
+
         st.write(f"Average saldo at the death of  {num_simulations} persons ({self.sexe}) : {round(sum(saldo_at_death_values)/len(saldo_at_death_values))} - SD {round(np.std(saldo_at_death_values),1)}")
         if sum(saldo_at_death_values) > 0:
             st.write(f"Profit for pension funds : {round(sum(saldo_at_death_values))}")
@@ -250,39 +247,95 @@ class PensionCalculator:
         #self.show_ages_at_death(num_simulations, self.deceased_ages)
 
     def show_ages_at_death(self, num_simulations,):
-        trace = go.Histogram(
-            x=self.deceased_ages,
-            xbins=dict(
-                start=min(self.deceased_ages),
-                end=max(self.deceased_ages),
-                size=1  # Adjust the bin size as needed
-            ),
-            opacity=0.7  # Set the opacity of bars
-        )
+        """Show a graph of the age of death of people in the simulations
 
-        # Create the layout for the histogram
-        layout = go.Layout(
-            title='Histogram Deceased ages',
-            xaxis=dict(title='Value'),
-            yaxis=dict(title='Frequency'),
-        )
+        Args:
+            num_simulations (int): sumber of simulations 
+        """        
 
-        # Create the figure and plot it
-        fig3 = go.Figure(data=[trace], layout=layout)
-        fig3.add_vline(x=statistics.median(self.deceased_ages), line_dash="dash", line_color="grey", annotation_text="mediaan", annotation_position="top right")
-        fig3.add_vline(x=self.percentile_2_5, line_dash="dash", line_color="grey", annotation_text="2.5%", annotation_position="top right")
-        fig3.add_vline(x=self.percentile_25, line_dash="dash", line_color="grey", annotation_text="25%", annotation_position="top right")
-        fig3.add_vline(x=self.percentile_75, line_dash="dash", line_color="grey", annotation_text="75%", annotation_position="top right")
+        df_deceased = pd.DataFrame({'ages': self.deceased_ages})
+        all_ages = pd.DataFrame({'ages':  range(self.current_age, self.max_age+ 1)})
+
+        # Count the frequency of each age in the 'deceased_ages' list
+        age_counts = df_deceased['ages'].value_counts().reset_index()
+        age_counts.columns = ['ages', 'frequency']
+        end_table = all_ages.merge(age_counts, on='ages', how='left').fillna(0)
+
+        # trace = go.Histogram(
+        #     x=self.deceased_ages,
+        #     xbins=dict(
+        #         start=min(self.deceased_ages),
+        #         end=max(self.deceased_ages),
+        #         size=1  # Adjust the bin size as needed
+        #     ),
+        #     opacity=0.7  # Set the opacity of bars
+        # )
+
+        # # Create the layout for the histogram
+        # layout = go.Layout(
+        #     title='Histogram Deceased ages',
+        #     xaxis=dict(title='Value'),
+        #     yaxis=dict(title='Frequency'),
+        # )
+
+        # # Create the figure and plot it
+        # fig3 = go.Figure(data=[trace], layout=layout)
+        #fig3= go.Bar(x=end_table["ages"], y=end_table["frequency"])
+        # fig3.add_vline(x=statistics.median(self.deceased_ages), line_dash="dash", line_color="grey", annotation_text="mediaan", annotation_position="top right")
+        # fig3.add_vline(x=self.percentile_2_5, line_dash="dash", line_color="grey", annotation_text="2.5%", annotation_position="top right")
+        # fig3.add_vline(x=self.percentile_25, line_dash="dash", line_color="grey", annotation_text="25%", annotation_position="top right")
+        # fig3.add_vline(x=self.percentile_75, line_dash="dash", line_color="grey", annotation_text="75%", annotation_position="top right")
         
-        fig3.add_vline(x=self.percentile_97_5, line_dash="dash", line_color="grey", annotation_text="97.5%", annotation_position="top right")
+        # fig3.add_vline(x=self.percentile_97_5, line_dash="dash", line_color="grey", annotation_text="97.5%", annotation_position="top right")
         
+        vlines = [statistics.median(self.deceased_ages), self.percentile_2_5, self.percentile_25, self.percentile_75, self.percentile_97_5]
+        vtxt = ["median", "2,5%", "25%", "75%", "97,5%"]
+        # Create a bar graph
+        fig3 = go.Figure(data=[go.Bar(x=end_table["ages"], y=end_table["frequency"])])
+        for i,txt in zip(vlines, vtxt) :
+            # Add vertical lines at x=40
+            fig3.add_shape(
+                go.layout.Shape(
+                    type="line",
+                    x0=i,
+                    x1=i,
+                    y0=0,
+                    name=txt,
+                    y1=max(end_table["frequency"]),  # Adjust the y1 value as needed
+                    line=dict(color="grey", width=1)
+                )
+            )
+            fig3.add_annotation(
+                go.layout.Annotation(
+                    text=txt,
+                    x=i,
+                    y=max(end_table["frequency"]),  # Adjust the y position as needed
+                    showarrow=True,
+                    arrowhead=2,
+        
+                    arrowwidth=2,
+                   
+                )
+            )
+
+        # Update the layout to adjust the appearance of the graph
+        fig3.update_layout(
+            title="Age Frequency Bar Graph with Vertical Line at 40",
+            xaxis_title="Ages",
+            yaxis_title="Frequency",
+        )
         st.plotly_chart(fig3)
    
         st.write(f"Average age at death of {num_simulations} individuals ({self.sexe}): {round(sum(self.deceased_ages)/len(self.deceased_ages),1)} - SD {round(np.std(self.deceased_ages),1)}")
         st.write(f"Median age at death: {round(statistics.median(self.deceased_ages),1)}")
         st.write (f"2.5% Percentile: {self.percentile_2_5:.2f} / 95% Percentile: {self.percentile_95:.2f} / 97.5% Percentile: {self.percentile_97_5:.2f}")
-        
+        st.write(f"Sum of persons {end_table['frequency'].sum()}")
     def plot_values_with_confidence_intervals(self, what):
+        """Plot a graph with the  values with the CI's
+
+        Args:
+            what (str): which column to plot
+        """        
         st.subheader(what)
         # Extract balance values from results
         values = np.array([result[what] for result in self.results])
@@ -291,8 +344,8 @@ class PensionCalculator:
         values = values.T  # Each column represents a run, and each row represents a year
 
         # Create the time axis (years)
-        max_years = 100 - self.current_age +1 # Limit to a maximum of 100 - current_age years
-        years = list(range(max_years))
+        # max_years = self.max_age - self.current_age +1 # Limit to a maximum of 100 - current_age years
+        # years = list(range(max_years))
 
         # Calculate mean balance and standard deviation for each year
         mean = np.mean(values, axis=1)
@@ -301,7 +354,7 @@ class PensionCalculator:
         # Create the time axis (years)
         # years = list(range(len(mean_balance)))
         years = [self.current_age + i for i in range(len(mean))]
-        max_years = 100 - self.current_age
+        max_years = self.max_age - self.current_age+1
         # Create a Plotly figure
         fig = go.Figure()
 
@@ -363,15 +416,17 @@ class PensionCalculator:
 
             st.plotly_chart(fig2)
     def show_total_balance(self):
+        """Show the total balance in time (eg. the profit or loss of the life insurance company)
+        """        
         # Create a DataFrame from deceased_ages
         df_deceased = pd.DataFrame({'ages': self.deceased_ages})
-        all_ages = pd.DataFrame({'ages':  range(self.current_age, 100+ 1)})
+        all_ages = pd.DataFrame({'ages':  range(self.current_age, self.max_age + 1)})
 
         # Count the frequency of each age in the 'deceased_ages' list
         age_counts = df_deceased['ages'].value_counts().reset_index()
         age_counts.columns = ['ages', 'frequency']
         end_table = all_ages.merge(age_counts, on='ages', how='left').fillna(0)
-
+        end_table["year"] = self.birthyear + end_table["ages"]
         values = np.array([result['balance_values'] for result in self.results])
             
         # Transpose the balance_values array
@@ -379,69 +434,27 @@ class PensionCalculator:
         
         # Create the time axis (years)
         max_years = 100 - self.current_age +1 # Limit to a maximum of 100 - current_age years
-        years = list(range(max_years))
 
         # Calculate mean balance and standard deviation for each year
         mean = np.mean(values, axis=1)
         end_table['mean'] = mean
         end_table['per_year'] = end_table['mean'] * end_table['frequency']
         end_table['per_year_cumm'] = end_table['per_year'].cumsum()
-        
+        st.subheader("Profit/loss for the insurance company through the time (excl. costs)")
         fig5 = go.Figure()
-
-            # Add the mean balance line
-        fig5.add_trace(go.Scatter(x=end_table['ages'], y=end_table['per_year_cumm'], mode='lines', name='Cumm Summ Balance', line=dict(color='blue')))
+        fig5.add_trace(go.Scatter(x=end_table['year'], y=end_table['per_year_cumm'], mode='lines', name='Cumm Summ Balance', line=dict(color='blue')))
         fig5.add_hline(y=0,  line_color="black")
-            
         st.plotly_chart(fig5)   
 
 def main():
+
     calculator = PensionCalculator()
 
-    #  # Get user input for parameters and update the calculator instance
-    calculator.initial_one_time_contribution = st.sidebar.number_input("Initial One-Time Contribution:", value=calculator.initial_one_time_contribution)
-    calculator.monthly_contribution_original = st.sidebar.number_input("Monthly Contribution (current pricelevel):", value=calculator.monthly_contribution_original)
-    calculator.monthly_contribution_original_how = st.sidebar.selectbox("Monthly contribution How", ["with inflation", "without inflation"],0 )
+    calculator.interface()
 
-    st.sidebar.subheader("--- The person ---")
-    calculator.sexe = st.sidebar.selectbox("sexe", ["male", "female"],0)
-    calculator.current_age = st.sidebar.number_input("Current Age:", value=calculator.current_age)
-    calculator.retirement_age = st.sidebar.number_input("Retirement Age:", value=calculator.retirement_age)
-    #calculator.expected_life_expectancy = st.sidebar.number_input("Expected Life Expectancy:", value=calculator.expected_life_expectancy)
-    #calculator.expected_life_expectancy_sd = st.sidebar.number_input("Expected Life Expectancy SD:", value=calculator.expected_life_expectancy_sd)
-    
-    st.sidebar.write(f"Years to go to pension: {calculator.retirement_age - calculator.current_age}")
-    #st.sidebar.write(f"Number of years to sustain {round(calculator.expected_life_expectancy - calculator.retirement_age,1)}")
-    #st.sidebar.write(f"Ratio : {round((calculator.expected_life_expectancy - calculator.retirement_age) / (calculator.retirement_age - calculator.current_age),1)}")
-    
-    st.sidebar.subheader("--- Rates ---") 
-    calculator.annual_return_rate = st.sidebar.number_input("Annual Interest Rate (%):", value=calculator.annual_return_rate)
-    calculator.inflation = st.sidebar.number_input("Average Annual Inflation Rate (%):", value=calculator.inflation)
-    calculator.annual_return_rate_sd = st.sidebar.number_input("Annual Interest Rate SD(%):", value=calculator.annual_return_rate_sd)
-    calculator.inflation_sd = st.sidebar.number_input("Average Annual Inflation Rate SD(%):", value=calculator.inflation_sd)
-    st.sidebar.subheader("--- Pension data ---")
-    calculator.monthly_pension_without_reduction_original = st.sidebar.number_input("Monthly Pension without Reduction (current price level):", value=calculator.monthly_pension_without_reduction_original)
-    calculator.years_shortfall = st.sidebar.number_input("Years of Shortfall:", value=calculator.years_shortfall)
-    st.sidebar.write(f"Shortfall per month (current price level): {round(calculator.years_shortfall * 0.02 * calculator.monthly_pension_without_reduction_original)}")
-    calculator.additional_monthly_need = st.sidebar.number_input("Additional Monthly Need (current price level):", value=calculator.additional_monthly_need)
-    calculator.additional_monthly_need_how = st.sidebar.selectbox("Additional monthly needed How", ["with inflation", "without inflation"],0 )
-
-    st.sidebar.subheader("--- Windfalls ---")
-    calculator.windfall_1_year = st.sidebar.number_input("Windfall 1 (Year):", value=calculator.windfall_1_year)
-    calculator.windfall_1_amount = st.sidebar.number_input("Windfall 1 (Amount):", value=calculator.windfall_1_amount)   
-    calculator.windfall_2_year = st.sidebar.number_input("Windfall 2 (Year):", value=calculator.windfall_2_year)
-    calculator.windfall_2_amount = st.sidebar.number_input("Windfall 2 (Amount):", value=calculator.windfall_2_amount)
-    calculator.windfall_3_year = st.sidebar.number_input("Windfall 3 (Year):", value=calculator.windfall_3_year)
-    calculator.windfall_3_amount = st.sidebar.number_input("Windfall 3 (Amount):", value=calculator.windfall_3_amount)
-
-    st.sidebar.subheader("--- Simulations ---")
-    num_simulations = st.sidebar.number_input("Number of simulations",1,10_000_000,100)
-    calculator.new_method =  True # st.sidebar.selectbox("Use AG table", [True, False],0)
-    calculator.print_individual =  st.sidebar.selectbox("Print individual runs", [True, False],1)
-
-    calculator.calculate_pension(num_simulations=num_simulations)
+    calculator.calculate_pension(num_simulations=calculator.num_simulations)
     calculator.plot_values_with_confidence_intervals("balance_values")
-    calculator.show_ages_at_death(num_simulations)
+    calculator.show_ages_at_death(calculator.num_simulations)
     calculator.show_total_balance()
 
 if __name__ == "__main__":
