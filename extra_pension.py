@@ -32,10 +32,11 @@ def main():
     st.sidebar.write(f"Ratio : {round((expected_life_expectancy - retirement_age) / (retirement_age - current_age),1)}")
     
     st.sidebar.subheader("--- Rates ---")
-    annual_return_rate = st.sidebar.number_input("Annual Interest Rate (%):", value=2.0)
-    inflation =  st.sidebar.number_input("Average Annual inflation Rate (%):", value=1.9) # 1.9 volgens https://descryptor.org/opinie/2019/07/25/Donald-Duck-Index
-     
-    st.sidebar.subheader("--- Pension data ---")                                                                                       # 5.38 volgens https://indeflatie.nl/inflatie-in-nederland-afgelopen-25-jaar
+    annual_return_rate = st.sidebar.number_input("Annual Interest Rate (%):", value=1.26)   # gemiddelde sinds 2007
+    inflation =  st.sidebar.number_input("Average Annual inflation Rate (%):", value=2.62)  # 1.9 volgens https://descryptor.org/opinie/2019/07/25/Donald-Duck-Index
+                                                                                            # 5.38 volgens https://indeflatie.nl/inflatie-in-nederland-afgelopen-25-jaar
+                                                                                            #2.62% als je de gemiddelde stijging van minimum loon bekijkt
+    st.sidebar.subheader("--- Pension data ---")
     monthly_pension_without_reduction_original = st.sidebar.number_input("Monthly Pension without Reduction (current pricelevel):", value=1458)
     years_shortfall = st.sidebar.number_input("Years of Shortfall:", value=7)
     st.sidebar.write(f"Shortfall per month (current price level): {round(years_shortfall * 0.02 * monthly_pension_without_reduction_original)}")
@@ -97,11 +98,11 @@ def main():
     data["monthly_contribution"] = round(data["annual_contribution"] / 12,2)
     
     fig = px.line(data, x='age', y=[ 'balance'], title='Balance Over Time')
-    fig.update_traces(mode='lines+markers')
+    fig.update_traces(mode='lines')
     fig.add_hline(y=0,  line_color="orange")
     
     fig.add_vline(x=retirement_age, line_dash="dash", line_color="green", annotation_text="Retirement Age", annotation_position="bottom left")
-    fig.add_vline(x=expected_life_expectancy, line_dash="dash", line_color="black", annotation_text="Expected Life Expectancy", annotation_position="bottom left")
+    fig.add_vline(x=expected_life_expectancy, line_dash="dash", line_color="black", annotation_text="Expected Life Expectancy", annotation_position="top right")
     st.plotly_chart(fig)
 
     # Find the year when the balance passes 0

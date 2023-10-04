@@ -81,13 +81,13 @@ class PensionCalculator:
     
         # Initialize a list to keep track of deceased individuals
         deceased_ages = []
-        data = pd.read_csv(r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\overlijdenskansen.csv")
-        json_file_path = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\overlijdenskansen.json"
+        data = pd.read_csv("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/overlijdenskansen.csv")
+        json_file_path = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/overlijdenskansen.json"
         start_year = 2023
         if self.sexe== "male":
-            df_prob_die = pd.read_csv(r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\AG2022DefinitiefGevalideerd_male.csv")
+            df_prob_die = pd.read_csv("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/AG2022DefinitiefGevalideerd_male.csv")
         else:
-            df_prob_die = pd.read_csv(r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\AG2022DefinitiefGevalideerd_female.csv")
+            df_prob_die = pd.read_csv("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/AG2022DefinitiefGevalideerd_female.csv")
         import json
 
         

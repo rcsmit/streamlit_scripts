@@ -54,7 +54,7 @@ def main():
                 ["25. Yield management", "yield_management"],
                 ["26. Meat consumption", "meat_consumption"],
                 ["27. Waiting times", "waiting_times_disney_OO"],
-                ["28. Extra pension", "extra_pension"]
+                ["28. Extra pension", "extra_pension_OOP"]
              
                 ]
 
