@@ -55,7 +55,7 @@ def main():
                 ["26. Meat consumption", "meat_consumption"],
                 ["27. Waiting times", "waiting_times_disney_OO"],
                 ["28. Extra pension", "extra_pension_OOP"]
-             
+    
                 ]
 
     
