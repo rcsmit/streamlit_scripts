@@ -437,6 +437,5 @@ def main():
     fig5.add_hline(y=0,  line_color="black")
         
     st.plotly_chart(fig5)   
-  
 if __name__ == "__main__":
     main()
