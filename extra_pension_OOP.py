@@ -235,6 +235,8 @@ class PensionCalculator:
         # Step 2: Calculate the 2.5th and 97.5th percentiles
         self.percentile_2_5 = np.percentile(sorted_ages, 2.5)
         self.percentile_95 = np.percentile(sorted_ages, 95)
+        self.percentile_25 = np.percentile(sorted_ages, 25)
+        self.percentile_75 = np.percentile(sorted_ages, 75)
         
         self.percentile_97_5 = np.percentile(sorted_ages, 97.5)
         st.write(f"Average saldo at the death of  {num_simulations} persons ({self.sexe}) : {round(sum(saldo_at_death_values)/len(saldo_at_death_values))} - SD {round(np.std(saldo_at_death_values),1)}")
@@ -269,6 +271,9 @@ class PensionCalculator:
         fig3 = go.Figure(data=[trace], layout=layout)
         fig3.add_vline(x=statistics.median(self.deceased_ages), line_dash="dash", line_color="grey", annotation_text="mediaan", annotation_position="top right")
         fig3.add_vline(x=self.percentile_2_5, line_dash="dash", line_color="grey", annotation_text="2.5%", annotation_position="top right")
+        fig3.add_vline(x=self.percentile_25, line_dash="dash", line_color="grey", annotation_text="25%", annotation_position="top right")
+        fig3.add_vline(x=self.percentile_75, line_dash="dash", line_color="grey", annotation_text="75%", annotation_position="top right")
+        
         fig3.add_vline(x=self.percentile_97_5, line_dash="dash", line_color="grey", annotation_text="97.5%", annotation_position="top right")
         
         st.plotly_chart(fig3)
