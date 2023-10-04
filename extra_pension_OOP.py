@@ -358,7 +358,7 @@ class PensionCalculator:
 
             st.plotly_chart(fig2)
 
-if __name__ == "__main__":
+def main():
     calculator = PensionCalculator()
 
     #  # Get user input for parameters and update the calculator instance
@@ -439,3 +439,7 @@ if __name__ == "__main__":
     st.plotly_chart(fig5)   
     #calculator.plot_values_with_confidence_intervals("interest_values")
     #calculator.plot_values_with_confidence_intervals("annual_shortfall_values")
+
+
+if __name__ == "__main__":
+    main()
