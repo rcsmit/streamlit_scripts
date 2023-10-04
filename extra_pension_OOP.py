@@ -92,10 +92,10 @@ class PensionCalculator:
 
         
 
-        # Open the JSON file for reading
-        with open(json_file_path, 'r') as json_file:
-            # Load the JSON data into a Python dictionary
-            data_dict = json.load(json_file)
+        # # Open the JSON file for reading
+        # with open(json_file_path, 'r') as json_file:
+        #     # Load the JSON data into a Python dictionary
+        #     data_dict = json.load(json_file)
        
         special_years = [self.windfall_1_year, self.windfall_2_year,self. windfall_3_year]
         special_amounts = [self.windfall_1_amount, self.windfall_2_amount, self.windfall_3_amount]
@@ -357,6 +357,38 @@ class PensionCalculator:
             fig2 = go.Figure(data=traces, layout=layout)
 
             st.plotly_chart(fig2)
+    def show_total_balance(self):
+        # Create a DataFrame from deceased_ages
+        df_deceased = pd.DataFrame({'ages': self.deceased_ages})
+        all_ages = pd.DataFrame({'ages':  range(self.current_age, 100+ 1)})
+
+        # Count the frequency of each age in the 'deceased_ages' list
+        age_counts = df_deceased['ages'].value_counts().reset_index()
+        age_counts.columns = ['ages', 'frequency']
+        end_table = all_ages.merge(age_counts, on='ages', how='left').fillna(0)
+
+        values = np.array([result['balance_values'] for result in self.results])
+            
+        # Transpose the balance_values array
+        values = values.T  # Each column represents a run, and each row represents a year
+        
+        # Create the time axis (years)
+        max_years = 100 - self.current_age +1 # Limit to a maximum of 100 - current_age years
+        years = list(range(max_years))
+
+        # Calculate mean balance and standard deviation for each year
+        mean = np.mean(values, axis=1)
+        end_table['mean'] = mean
+        end_table['per_year'] = end_table['mean'] * end_table['frequency']
+        end_table['per_year_cumm'] = end_table['per_year'].cumsum()
+        
+        fig5 = go.Figure()
+
+            # Add the mean balance line
+        fig5.add_trace(go.Scatter(x=end_table['ages'], y=end_table['per_year_cumm'], mode='lines', name='Cumm Summ Balance', line=dict(color='blue')))
+        fig5.add_hline(y=0,  line_color="black")
+            
+        st.plotly_chart(fig5)   
 
 def main():
     calculator = PensionCalculator()
@@ -399,43 +431,13 @@ def main():
 
     st.sidebar.subheader("--- Simulations ---")
     num_simulations = st.sidebar.number_input("Number of simulations",1,10_000_000,100)
-    calculator.new_method =  st.sidebar.selectbox("Use AG table", [True, False],0)
+    calculator.new_method =  True # st.sidebar.selectbox("Use AG table", [True, False],0)
     calculator.print_individual =  st.sidebar.selectbox("Print individual runs", [True, False],1)
 
     calculator.calculate_pension(num_simulations=num_simulations)
     calculator.plot_values_with_confidence_intervals("balance_values")
     calculator.show_ages_at_death(num_simulations)
+    calculator.show_total_balance()
 
-    # Create a DataFrame from deceased_ages
-    df_deceased = pd.DataFrame({'ages': calculator.deceased_ages})
-    all_ages = pd.DataFrame({'ages':  range(calculator.current_age, 100+ 1)})
-
-    # Count the frequency of each age in the 'deceased_ages' list
-    age_counts = df_deceased['ages'].value_counts().reset_index()
-    age_counts.columns = ['ages', 'frequency']
-    end_table = all_ages.merge(age_counts, on='ages', how='left').fillna(0)
-
-    values = np.array([result['balance_values'] for result in calculator.results])
-        
-    # Transpose the balance_values array
-    values = values.T  # Each column represents a run, and each row represents a year
-    
-    # Create the time axis (years)
-    max_years = 100 - calculator.current_age +1 # Limit to a maximum of 100 - current_age years
-    years = list(range(max_years))
-
-    # Calculate mean balance and standard deviation for each year
-    mean = np.mean(values, axis=1)
-    end_table['mean'] = mean
-    end_table['per_year'] = end_table['mean'] * end_table['frequency']
-    end_table['per_year_cumm'] = end_table['per_year'].cumsum()
-    
-    fig5 = go.Figure()
-
-        # Add the mean balance line
-    fig5.add_trace(go.Scatter(x=end_table['ages'], y=end_table['per_year_cumm'], mode='lines', name='Cumm Summ Balance', line=dict(color='blue')))
-    fig5.add_hline(y=0,  line_color="black")
-        
-    st.plotly_chart(fig5)   
 if __name__ == "__main__":
     main()
