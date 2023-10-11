@@ -197,7 +197,8 @@ def main():
     st.header("Calculate repayment plan studyloan")
     ANNUAL_INTEREST_RATE = st.sidebar.number_input("Yearly interest rate (%)",0.0,99.9,2.95) # 2.56  # Annual interest rate in percentage
     INITIAL_DEBT = st.sidebar.number_input("Initial debt", 0,None,50000) # 25000  # Initial debt
-    REPAYMENT_TIME_IN_YEARS = st.sidebar.selectbox("Repayment in years",[15,35],1)
+    #REPAYMENT_TIME_IN_YEARS = st.sidebar.selectbox("Repayment in years",[15,35],1)
+    REPAYMENT_TIME_IN_YEARS = st.sidebar.number_input("Repayment in years",0,100,35)
     custom_repayment_amount = st.sidebar.selectbox("Custom repayment amount",[True,False], 1)
     monthly_repayment = find_amount_repayment(ANNUAL_INTEREST_RATE,INITIAL_DEBT,REPAYMENT_TIME_IN_YEARS)
     calculate_totals(monthly_repayment,ANNUAL_INTEREST_RATE,INITIAL_DEBT,REPAYMENT_TIME_IN_YEARS, custom_repayment_amount)
