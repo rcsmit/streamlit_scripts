@@ -24,7 +24,21 @@ import plotly.express as px
 # Constants
 
 
-def calculate_rest_debt(REPAYMENT,ANNUAL_INTEREST_RATE,INITIAL_DEBT,REPAYMENT_TIME_IN_YEARS):
+def calculate_totals(LEGAL_REPAYMENT,ANNUAL_INTEREST_RATE,INITIAL_DEBT,REPAYMENT_TIME_IN_YEARS, custom_repayment_amount):
+    """calculate the total amount of repayment and interest
+
+    Args:
+        LEGAL_REPAYMENT (float): monthly amount of repayment as calculated
+        ANNUAL_INTEREST_RATE (float): interest
+        INITIAL_DEBT (int): initial debt in euros
+        REPAYMENT_TIME_IN_YEARS (int): repayment time in years
+        custom_repayment_amount (bool) : custom repayment amount
+
+    """
+    if custom_repayment_amount:
+        REPAYMENT = st.sidebar.number_input("How much do you want to repay", 0.0,INITIAL_DEBT/1.0,LEGAL_REPAYMENT)
+    else:
+        REPAYMENT = LEGAL_REPAYMENT
     #REPAYMENT = 188.875 # 94.44 # Monthly payment amount
     # Calculate monthly interest rate
     monthly_interest_rate = (1 + (ANNUAL_INTEREST_RATE / 100)) ** (1 / 12) - 1
@@ -36,7 +50,8 @@ def calculate_rest_debt(REPAYMENT,ANNUAL_INTEREST_RATE,INITIAL_DEBT,REPAYMENT_TI
     y_repayments = [0]
     y_interests = [0]
     total_debts = [INITIAL_DEBT]
-
+    cumm_repayments =[0]
+    cumm_interests =[0]
     total_interests = 0
     total_repayments = 0
     yearly_interests = 0
@@ -44,7 +59,7 @@ def calculate_rest_debt(REPAYMENT,ANNUAL_INTEREST_RATE,INITIAL_DEBT,REPAYMENT_TI
     # Initial year and debt values
     year = start_year +1
     current_debt = INITIAL_DEBT
-
+    loan_completed = False
     # Loop through months
     for month in range(1, (REPAYMENT_TIME_IN_YEARS +2) * 12 + 1):
         
@@ -57,36 +72,60 @@ def calculate_rest_debt(REPAYMENT,ANNUAL_INTEREST_RATE,INITIAL_DEBT,REPAYMENT_TI
             interest = 0
 
         if month > 24:
-            current_debt -= REPAYMENT
-            yearly_repayments +=  REPAYMENT
-            total_repayments+=  REPAYMENT
+            if current_debt - REPAYMENT > 0:
+                current_debt -= REPAYMENT
+                yearly_repayments +=  REPAYMENT
+                total_repayments+=  REPAYMENT
+            else:
+                if current_debt == 0:
+                  
+                    loan_completed = True
+                elif current_debt > 0:
+                    
+                    yearly_repayments +=  current_debt
+                    total_repayments+=  current_debt
+                    current_debt = 0
+                # else:
+                #     current_debt = 0
+                    
+                   
 
         if month % 12 == 0:
             if month > 24:
                 y_repayments.append(yearly_repayments)
+                cumm_repayments.append(total_repayments)
             else:
                 y_repayments.append(0)
+                cumm_repayments.append(0)
             y_interests.append(yearly_interests)
             total_debts.append(current_debt)
+            cumm_interests.append(total_interests)
             years.append(year)
             debts.append(current_debt)
             year += 1
             yearly_interests = 0
             yearly_repayments = 0
+            if loan_completed:
+                break
             
 
-    st.write(f"Start schuld - €  {round(INITIAL_DEBT,2)}")
-    st.write(f"Rentebedrag ({ANNUAL_INTEREST_RATE} %) - € {round(total_interests,2)}")
-    st.write(f"Einddatum - 01-01-{year-1}") 
-    st.write(f"Totale schuld - € {round(total_repayments,2)}")
-    st.write(f"Wettelijk maandbedrag - € {round(REPAYMENT,2)}")
+    st.write(f"Start schuld : €  {round(INITIAL_DEBT,2)}")
+    st.write(f"Wettelijk maandbedrag : € {round(LEGAL_REPAYMENT,2)}")
+    st.write(f"Einddatum : 01-01-{year-1}") 
+    st.write(f"Rentebedrag ({ANNUAL_INTEREST_RATE} %) : € {round(total_interests,2)}")
+    
+    st.write(f"Totale aflossing : € {round(total_repayments,2)}")
+    
+    st.write(f"Eindschuld : € {round(current_debt,2)}")
     # Create a DataFrame
     data = {
         "Year": years,
         "Debt": debts,
-        "Repayment": y_repayments,
-        "Interest": y_interests,
-        "Total Debt": total_debts
+        "Yearly Repayment": y_repayments,
+        "Yearly Interest": y_interests,
+        "Total Debt": total_debts,
+        "Cumm Repayment": cumm_repayments,
+        "Cumm Interest": cumm_interests,
     }
 
 
@@ -97,7 +136,7 @@ def calculate_rest_debt(REPAYMENT,ANNUAL_INTEREST_RATE,INITIAL_DEBT,REPAYMENT_TI
     
         
     # Create a line chart using Plotly
-    fig = px.line(df, x='Year', y=['Debt', 'Repayment', 'Interest', 'Total Debt'],
+    fig = px.line(df, x='Year', y=['Debt', 'Yearly Repayment', 'Yearly Interest', 'Total Debt','Cumm Interest', 'Cumm Repayment'],
                 labels={'value': 'Amount'},
                 title='Loan Repayment and Interest Over Time',
                 markers=True)
@@ -155,13 +194,13 @@ def find_amount_repayment(ANNUAL_INTEREST_RATE,INITIAL_DEBT,REPAYMENT_TIME_IN_YE
 
 
 def main():
-
+    st.header("Calculate repayment plan studyloan")
     ANNUAL_INTEREST_RATE = st.sidebar.number_input("Yearly interest rate (%)",0.0,99.9,2.95) # 2.56  # Annual interest rate in percentage
     INITIAL_DEBT = st.sidebar.number_input("Initial debt", 0,None,50000) # 25000  # Initial debt
     REPAYMENT_TIME_IN_YEARS = st.sidebar.selectbox("Repayment in years",[15,35],1)
-
+    custom_repayment_amount = st.sidebar.selectbox("Custom repayment amount",[True,False], 1)
     monthly_repayment = find_amount_repayment(ANNUAL_INTEREST_RATE,INITIAL_DEBT,REPAYMENT_TIME_IN_YEARS)
-    calculate_rest_debt(monthly_repayment,ANNUAL_INTEREST_RATE,INITIAL_DEBT,REPAYMENT_TIME_IN_YEARS)
+    calculate_totals(monthly_repayment,ANNUAL_INTEREST_RATE,INITIAL_DEBT,REPAYMENT_TIME_IN_YEARS, custom_repayment_amount)
 
 
 if __name__ == "__main__":
