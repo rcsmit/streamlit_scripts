@@ -1,4 +1,6 @@
 import re
+import math
+    
 import datetime as dt
 from datetime import datetime #, timedelta
 # import datetime
@@ -40,7 +42,7 @@ def find_fill_color():
     if platform.processor() != "":
         sheet_name = st.sidebar.text_input("Sheetname", "KLADBLOK")
         cell = st.sidebar.text_input("Cell", "A1")
-        excel_file_2023 = r"C:\Users\rcxsm\Downloads\bezetting2023a.xlsm"
+        excel_file_2023 = r"C:\Users\rcxsm\Downloads\bezetting2023_eind.xlsb"
         wb_2023 = load_workbook(excel_file_2023, data_only=True)
 
         sh_2023 = wb_2023[sheet_name]
@@ -2237,6 +2239,203 @@ def make_and_show_pivot_tables(df, df_bookingtable,start_month,end_month):
 
  
     show_occupation_per_accotype_per_month(df)
+def cleaningstaff_needed(df):
+    """_summary_
+
+    Args:
+        df (df): df = df_mutation
+    """                
+    
+
+    def custom_round_up_whole(x):
+        return math.ceil(x)
+    def custom_round_half(x):
+        """round to .0 and .5
+        """        
+        return round(x * 2) / 2
+    def custom_round_to_half_up(x):
+        """round _up_ to .0 and .5
+        """     
+        return math.ceil(x * 2) / 2
+    def custom_round_quarter(x):
+        """round to .0, .25,.5 and .75
+        """        
+        if x % 1 == 0:
+            return x  # No rounding needed
+        elif 0 < x % 1 < 0.25:
+            return math.floor(x) + 0.0
+        elif 0.25 <= x % 1 < 0.5:
+            return math.floor(x) + 0.25
+        elif 0.5 <= x % 1 < 0.75:
+            return math.floor(x) + 0.5
+        else:
+            return math.floor(x) + 0.75
+
+    def generate_bins(x):
+        """
+        Generate a list based on the specified pattern. ... 0,1, [n*x+1], float('inf') ...
+
+        Args:
+            x (int): The step size between consecutive elements.
+
+        Returns:
+            list: The generated list.
+        """
+        result = [0,1]  # Initialize the list with 0 as the first element
+        current_value = 1
+
+        while True:
+            next_value = current_value + x
+            if next_value <= 25:
+                result.append(next_value)
+                current_value = next_value
+            else:
+                break
+
+        # # Add the second-to-last item around 25
+        # result.append(result[-1] + (25 - result[-1] + x - 1))
+
+        # Add the last item as positive infinity
+        result.append(float('inf'))
+
+        return result
+
+    types = ["BALI","KALAHARI1","KALAHARI2","SAHARA","SERENGETI L","SERENGETI XL","WAIKIKI"]
+    cleaning_times = [25.4,17.6,17.6,31.0,34.7,34.7,36.3]
+    #cleaning_times = [25.0,15.0,15.0,30.0,35.0,35.0,40.0] # rounded for testing purposes
+    
+    NO_BACK_TO_BACK_FACTOR = 1 # fraction of the non-back-to-backs you  clean immedieately
+    INBETWEEN  = 15.0 # aantal minuten tussen de cleans voor transfer, praatje met gasten, inventory of minipauze
+    HOURS_PER_DAY_AVAILABLE_FOR_CLEANING = 3
+    DIRTY_FACTOR = 1.5 # the cleaning times has been measured when guest leave it 'clean'. When guest pay for cleaning, you'll need more time
+
+    grouped = df.groupby(['date', 'acco_type'])[['vertrek_no_clean', 'vertrek_clean', 'back_to_back']].sum().reset_index()
+    grouped['total_cleans'] = (NO_BACK_TO_BACK_FACTOR*(grouped['vertrek_no_clean'] + grouped[ 'vertrek_clean'])) + grouped['back_to_back']
+    
+    grouped_ = grouped.groupby(['date']).sum(numeric_only=True).reset_index()
+  
+    plot_various_years_in_one_linegraph(grouped_, 'total_cleans')
+    # bins = [0, 1, 5, 10, 15, 20, 25, float('inf')]  # The last bin is for 25 or more
+    # bins = [0, 1, 4, 7, 10, 13, 16,19,22,25, float('inf')]  # The last bin is for 25 or more
+    bins = generate_bins(5)
+    make_combined_frequency_table (grouped_, 'total_cleans', bins)
+    
+    st.write("Bins of 'total cleans' are from - until (not included)")
+    pivot_df = grouped.pivot(index='date', columns='acco_type', values=['total_cleans'])
+    pivot_df.columns = [f'{col[1]}_{col[0]}' for col in pivot_df.columns]
+
+    pivot_df = pivot_df.fillna(0)
+    pivot_df.reset_index(inplace=True)
+    pivot_df['date'] = pd.to_datetime(pivot_df['date'])
+    pivot_df['year'] = pivot_df['date'].dt.year
+   
+    for ty,cl in zip(types,cleaning_times):
+        # pivot_df[f'ct_{ty}'] = pivot_df[f'{ty}_total_cleans'].apply(lambda x: 0 if x <1 else (x * cl*DIRTY_FACTOR) + ((x-1)*INBETWEEN))
+    
+        # Apply the first transformation for rows where 'year' is not equal to 2021
+        pivot_df.loc[pivot_df['year'] > 2021, f'ct_{ty}'] = pivot_df.loc[pivot_df['year'] > 2021, f'{ty}_total_cleans'].apply(lambda x: 0 if x < 1 else (x * cl * DIRTY_FACTOR) + ((x - 1) * INBETWEEN))
+
+        # Apply the second transformation for rows where 'year' is equal to 2021
+        pivot_df.loc[pivot_df['year'] < 2022, f'ct_{ty}'] = pivot_df.loc[pivot_df['year'] < 2022, f'{ty}_total_cleans'].apply(lambda x: 0 if x < 1 else (x * cl) + ((x - 1) * INBETWEEN))
+    pivot_df["TOTAL_CT"] = pivot_df["ct_BALI"]+pivot_df["ct_KALAHARI1"]+pivot_df["ct_KALAHARI2"]+pivot_df["ct_SAHARA"]+pivot_df["ct_SERENGETI L"]+pivot_df["ct_SERENGETI XL"]+pivot_df["ct_WAIKIKI"]
+    
+   
+    plot_various_years_in_one_linegraph(pivot_df, 'TOTAL_CT')
+    pivot_df['STAFFNEEDED'] = pivot_df['TOTAL_CT'] / (HOURS_PER_DAY_AVAILABLE_FOR_CLEANING*60)
+    # Apply the custom rounding function to 'STAFFNEEDED'
+    pivot_df['STAFFNEEDED'] = pivot_df['STAFFNEEDED'].apply(custom_round_up_whole)
+    pivot_df['year'] = pivot_df['date'].dt.year
+    
+    plot_various_years_in_one_linegraph(pivot_df, 'STAFFNEEDED')
+
+     
+    # Create separate graphs for each year
+    for year in pivot_df['year'].unique():
+        year_data = pivot_df[pivot_df['year'] == year]
+        fig = px.bar(year_data, x='date', y='STAFFNEEDED', title=f'STAFFNEEDED for Year {year}')
+        st.plotly_chart(fig)
+    make_combined_frequency_table (pivot_df, 'STAFFNEEDED', None)
+
+
+def make_combined_frequency_table(df, what, bins):
+
+    """ Make a frequency table. Date in Rows, years in columns, frequencyvalues in the cells
+        Args:
+            df (df):    df containing the data (eg. from 01-01-1900 to 31-12-2100).
+                        The year is in the column 'year'
+            what (str): the columnname containing the values to be plotted
+            use_bins (bool) : wheter use the bins
+    """    
+    # Create an empty DataFrame to store the combined frequency table
+    
+    combined_frequency_table = pd.DataFrame(columns=['Year', what, 'Frequency'])
+    for year in df['year'].unique():
+        year_data = df[df['year'] == year]
+        
+        # Create a frequency table for the what column
+        # Create a frequency table with bins for the what column
+        if bins != None :
+            frequency_table = pd.cut(year_data[what], bins=bins, right=False, include_lowest=True)
+            frequency_table = frequency_table.value_counts().reset_index()
+        
+        else:
+            frequency_table = year_data[what].value_counts().reset_index()
+        frequency_table.columns = [what, 'Frequency']
+
+        
+        # Add a 'Year' column to the frequency table
+        frequency_table['Year'] = year
+        
+        # Concatenate the frequency table to the combined table
+        combined_frequency_table = pd.concat([combined_frequency_table, frequency_table], ignore_index=True)
+
+    pivoted_frequency_table = combined_frequency_table.pivot(index=what, columns='Year', values='Frequency').fillna(0)
+
+    # Reset the index and fill NaN values with 0
+    pivoted_frequency_table.reset_index(inplace=True)
+
+    # Print the pivoted frequency table
+    #st.table(pivoted_frequency_table)
+    #st.dataframe(pivoted_frequency_table)
+    #st.dataframe(pivoted_frequency_table.style.hide(axis="index"))
+    st.markdown(pivoted_frequency_table.style.hide(axis="index").to_html(), unsafe_allow_html=True)
+
+def plot_various_years_in_one_linegraph(df, what):
+    """Make a linegraph with the various years as different lines in one graph
+
+    Args:
+        df (df):    df containing the data (eg. from 01-01-1900 to 31-12-2100).
+                    The date is in the column 'date'
+        what (str): the columnname containing the values to be plotted
+    """    
+    df['day_month'] = df['date'].dt.strftime('%d-%m')
+    df['day_month'] = pd.to_datetime(df['day_month'], format='%d-%m')
+    df['year'] = df['date'].dt.year
+
+    pivot_df = df.pivot(index='day_month', columns='year', values=[what]).reset_index()
+    #flatten the column MultiIndex and set the year as the column name/header
+    pivot_df.columns = [f'{col[1]}_{col[0]}' if col[1] else col[0] for col in pivot_df.columns]
+    
+    
+    columns_to_plot = pivot_df.columns.tolist()
+    data=[]
+ 
+    line_colors = ['red', 'blue', 'green', 'orange'] 
+
+    fig = go.Figure()
+    line_width = 1
+    for i, col in enumerate(columns_to_plot[1:]):
+        trace = go.Scatter(x=pivot_df.day_month, y=pivot_df[col],
+                        mode='lines', line=dict(width=line_width, color=line_colors[i]), name=col)
+        data.append(trace)
+    
+    title = f"{what} in various years" 
+    layout = go.Layout( 
+        yaxis=dict(title=f"{what}"), 
+        title=title,
+        xaxis=dict(tickformat="%d-%m"))
+    fig = go.Figure(data=data, layout=layout)
+    st.plotly_chart(fig, use_container_width=True)
 
 def show_checkin_info(df_mutation):
     
@@ -2350,7 +2549,6 @@ def show_checkin_info(df_mutation):
     for busyfactor in [10,15,20,25,30]:
         show_busy_days_per_month_per_year(df_mutation,busyfactor)
 
-
 @st.cache_data()
 def get_data_local():
     """Get the data if the script is run locally
@@ -2358,7 +2556,7 @@ def get_data_local():
     Returns:
         df: the various dataframes
     """    
-    excel_file_2023 = r"C:\Users\rcxsm\Downloads\bezetting2023a.xlsm"
+    excel_file_2023 = r"C:\Users\rcxsm\Downloads\bezetting2023_eind.xlsm"
     maxxton_file = r"C:\Users\rcxsm\Downloads\ReservationDetails.xlsx"
        
     s1 = int(time.time())
@@ -2451,7 +2649,7 @@ def main():
     test = True  # To test or not to test (to see if the fillcolors in the sheet are right.)
     # https://github.com/onedrive/onedrive-sdk-python
     # https://github.com/vgrem/Office365-REST-Python-Client#Working-with-OneDrive-API
-    upload = True
+    upload = False
     if platform.processor() != "" and upload == False:
         df_mutation, df_bookingtable, df_maxxton = get_data_local()
     else:
@@ -2486,7 +2684,8 @@ def main():
                 "occupation graph",
                 
                 "show info from bookingtable",
-
+                "cleaningstaff needed",
+                
                 
             
 
@@ -2577,8 +2776,9 @@ def main():
 
     elif what_to_do == "occupation graph":
         make_occupuation_graph(df_mutation)
-    
-    
+    elif what_to_do == "cleaningstaff needed":
+        cleaningstaff_needed(df_mutation)
+        
     elif what_to_do == "show info from bookingtable":
         for y in years:
             df_bookingtable_year =  df_bookingtable[df_bookingtable["year_int"] == y]
