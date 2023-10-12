@@ -4,7 +4,6 @@ tested against/reproducing https://duo.nl/particulier/rekenhulp-studiefinancieri
 Returns:
     _type_: _description_
 """
-
 # 2024 50000
 # 2026 52593
 # 2061 0
