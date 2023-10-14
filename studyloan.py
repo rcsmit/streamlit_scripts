@@ -39,13 +39,12 @@ def plot_stack_line_graph(df,first,second):
                                             color="rgba(0, 0, 255, 0.5)"), 
                                             name=first )
 
-    
     second_ = go.Scatter(x=df['Year'],
                                 y=df[second],
                                 fill='tonexty',
                                 fillcolor='rgba(255, 0, 0, 0.2)',
                                 line=dict(color='dimgrey', width=.5),
-                                name=second,)
+                                name="second",)
     
     second_['y'] = [a + b for a, b in zip( first_['y'],second_['y'])]
     fig2 = go.Figure()
@@ -73,6 +72,7 @@ def calculate_totals(LEGAL_REPAYMENT,annual_interest_rate,initial_debt,repayment
         initial_debt (int): initial debt in euros
         repayment_time_in_years (int): repayment time in years
         custom_repayment_amount (bool) : custom repayment amount
+        start_repaying(int) : in which month we start repaying
 
     """
     if custom_repayment_amount:
@@ -120,17 +120,12 @@ def calculate_totals(LEGAL_REPAYMENT,annual_interest_rate,initial_debt,repayment
                 total_repayments+=  REPAYMENT
             else:
                 if current_debt == 0:
-                  
                     loan_completed = True
                 elif current_debt > 0:
                     
                     yearly_repayments +=  current_debt
                     total_repayments+=  current_debt
                     current_debt = 0
-                # else:
-                #     current_debt = 0
-                    
-                   
 
         if month % 12 == 0:
             if month > start_repaying:
@@ -144,7 +139,6 @@ def calculate_totals(LEGAL_REPAYMENT,annual_interest_rate,initial_debt,repayment
             cumm_interests.append(total_interests)
             years.append(year)
 
-            
             debts_start_year.append(debt_start_year)
             debt_start_year = current_debt
             debts_end_year.append(current_debt)
@@ -154,14 +148,11 @@ def calculate_totals(LEGAL_REPAYMENT,annual_interest_rate,initial_debt,repayment
             if loan_completed:
                 break
             
-
     st.write(f"Start schuld : €  {round(initial_debt,2)}")
     st.write(f"Wettelijk maandbedrag : € {round(LEGAL_REPAYMENT,2)}")
     st.write(f"Einddatum : 01-01-{year-1}") 
-    st.write(f"Rentebedrag ({annual_interest_rate} %) : € {round(total_interests,2)}")
-    
+    st.write(f"Rentebedrag ({annual_interest_rate} %) : € {round(total_interests)} / € {round(total_interests/repayment_time_in_years)} per jaar / € {round(total_interests/(repayment_time_in_years*12))} per maand")
     st.write(f"Totale aflossing : € {round(total_repayments,2)}")
-    
     st.write(f"Eindschuld : € {round(current_debt,2)}")
     # Create a DataFrame
     data = {
@@ -178,8 +169,6 @@ def calculate_totals(LEGAL_REPAYMENT,annual_interest_rate,initial_debt,repayment
 
     df = pd.DataFrame(data)
 
-    # Initialize variables for remaining interest
-    # Initialize variables for rolling interest and rolling debt
     rolling_interest = 0
     rolling_debt = 0
     paid_to_debt = 0
@@ -187,6 +176,7 @@ def calculate_totals(LEGAL_REPAYMENT,annual_interest_rate,initial_debt,repayment
     df["rolling_interest"] = None
     df["paid_to_debt"] = None
     df["yearly_repayment_hoofdsom"] = None
+
     # Define a function to calculate interest paid and update the rolling interest and debt
     def calculate_interest_and_debt(row):
         nonlocal rolling_interest, rolling_debt
@@ -240,58 +230,23 @@ def calculate_totals(LEGAL_REPAYMENT,annual_interest_rate,initial_debt,repayment
     
     plot_stack_line_graph(df,"paid_to_debt_cumm","Interest Paid_cumm")
     plot_stack_line_graph(df,"paid_to_debt","Interest Paid")
-    # Create a filled area plot for confidence interval
-    
-        
-    # paid_to_debt_y = go.Scatter(x=df['Year'], y=df["paid_to_debt"] , 
-    #                             mode='lines', fill='tonexty', 
-    #                                                     fillcolor='rgba(120, 128, 0, 0.2)',
-    #                                                     line=dict(width=0.7, 
-    #                                                     color="rgba(0, 0, 255, 0.5)"), 
-    #                                                     name="paid_to_debt_cumm" )
-
-    
-    # paid_to_interest_y = go.Scatter(x=df['Year'],
-    #                             y=df["Interest Paid"],
-    #                             fill='tonexty',
-    #                             fillcolor='rgba(255, 0, 0, 0.2)',
-    #                             line=dict(color='dimgrey', width=.5),
-    #                             showlegend=False)
-    
-    # # Add 'paid_to_debt_c' trace on top of 'paid_to_interest_c'
-    # #paid_to_debt_c['y'] = [a + b for a, b in zip(paid_to_interest_c['y'], paid_to_debt_c['y'])]
-
-    # # Add 'paid_to_debt_c' trace on top of 'paid_to_interest_c'
-    # # interest on top
-    # paid_to_interest_y['y'] = [a + b for a, b in zip( paid_to_debt_y['y'],paid_to_interest_y['y'])]
-
-    # # Combine the traces into a single figure
-    # fig3 = go.Figure()
-
-    # fig3.add_trace(paid_to_debt_y)    
-    # fig3.add_trace(paid_to_interest_y) 
-    
-    # # Update layout settings
-    # fig3.update_layout(
-    #     title='Paid interest and debt yearly',
-    #     xaxis_title='Years',
-    #     yaxis_title='Euros',
-    #     showlegend=True,
-    #     hovermode='x'
-    # )
-
-    # # Show the Plotly figure
-    # st.plotly_chart(fig3)
-    
-
-
-
 
 
     st.write(df)
 
 def find_amount_repayment(annual_interest_rate,initial_debt,repayment_time_in_years,start_repaying):
-    # Define a function to calculate the final debt for a given repayment amount
+    """ Binary search approach to find the monthly repayment amount that would result
+        in a final debt of 0. 
+    Args:
+        annual_interest_rate (_type_): _description_
+        initial_debt (_type_): _description_
+        repayment_time_in_years (_type_): _description_
+        start_repaying (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
+
     def calculate_final_debt(repayment,annual_interest_rate,initial_debt,repayment_time_in_years,start_repaying):
         # Calculate monthly interest rate
         monthly_interest_rate = (1 + (annual_interest_rate / 100)) ** (1 / 12) - 1
@@ -325,31 +280,21 @@ def find_amount_repayment(annual_interest_rate,initial_debt,repayment_time_in_ye
 
     # Display the result
     st.write(f"The monthly repayment amount that results in a final debt of 0 is: {monthly_repayment:.3f}")
-    # This script uses a binary search approach to find the monthly repayment amount that would result
-    # in a final debt of 0. The result is st.writeed in a user-friendly format.
     return monthly_repayment
 
-
-
 def interface():
-    annual_interest_rate = st.sidebar.number_input("Yearly interest rate (%)",0.0,99.9,2.95) # 2.56  # Annual interest rate in percentage
+    annual_interest_rate = st.sidebar.number_input("Yearly interest rate (%)",0.0,99.9,2.56) # 2.56  # Annual interest rate in percentage
     initial_debt = st.sidebar.number_input("Initial debt", 0,None,50000) # 25000  # Initial debt
-  
     repayment_time_in_years = st.sidebar.number_input("Repayment in years",0,100,35)
     start_repaying = st.sidebar.number_input("Start repaying after... (months)",0,repayment_time_in_years*12,24)
     custom_repayment_amount = st.sidebar.selectbox("Custom repayment amount",[True,False], 1)
-    
-    
     return annual_interest_rate,initial_debt,repayment_time_in_years,start_repaying,custom_repayment_amount
-
 
 def main():
     st.header("Calculate repayment plan studyloan")
     annual_interest_rate, initial_debt, repayment_time_in_years, start_repaying, custom_repayment_amount = interface()
-    
     monthly_repayment = find_amount_repayment(annual_interest_rate,initial_debt,repayment_time_in_years,start_repaying)
     calculate_totals(monthly_repayment,annual_interest_rate,initial_debt,repayment_time_in_years, custom_repayment_amount,start_repaying)
-
 
 if __name__ == "__main__":
     main()
