@@ -1004,21 +1004,22 @@ def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw, centersmooth):
                     q90 = np.percentile(data, 90)
                     avg = data.mean()
 
-                    df_quantile = df_quantile.append(
-                        {
-                            "date_": date_,
-                            "q10": q10,
-                            "q25": q25,
-                            "q50": q50,
-                            "avg": avg,
+                                    
+                    # Data for the new row
+                    new_row = {
+                        "date_": date_,
+                        "q10": q10,
+                        "q25": q25,
+                        "q50": q50,
+                        "avg": avg,
+                        "q75": q75,
+                        "q90": q90,
+                        "value_in_year": value_in_year
+                    }
 
-                            "q75": q75,
+                    # Append the new row to the DataFrame
+                    df_quantile = pd.concat([df_quantile, pd.DataFrame([new_row])], ignore_index=True)
 
-                            "q90": q90,
-                            "value_in_year" : value_in_year
-                            },
-                        ignore_index=True,
-                    )
 
     df_quantile['date'] = pd.to_datetime(df_quantile.date_, format='%Y-%m-%d',  errors='coerce')
 
