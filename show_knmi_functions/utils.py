@@ -206,8 +206,8 @@ def show_weerstations():
     MAPBOX = "pk.eyJ1IjoicmNzbWl0IiwiYSI6Ii1IeExqOGcifQ.EB6Xcz9f-ZCzd5eQMwSKLQ"
     # original_Name
     df_map=  pd.read_csv(
-        "img_knmi/weerstations.csv",
-        #"img_knmi/leeg.csv",
+        "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/weerstations.csv",
+        #"https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/leeg.csv",
         comment="#",
         delimiter=",",
         low_memory=False,
@@ -270,35 +270,35 @@ def help():
     st.write ("Hier zijn de verschillende mogelijkheden")
     st.subheader("Doorlopend per dag")
     st.write("Wat was de temperatuur in de loop van de tijd?")
-    st.image("img_knmi/doorlopend_per_dag.png")
+    st.image("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/doorlopend_per_dag.png")
 
     st.subheader("Aantal keren")
     st.write("Hoeveel tropische dagen hebben we gehad in een bepaaalde periode?")
-    st.image("img_knmi/aantal_keren.png")
+    st.image("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/aantal_keren.png")
 
     st.subheader("Specifieke dag")
     st.write("Welke temperatuur was het op nieuwjaarsdag door de loop van de tijd?")
-    st.image("img_knmi/specifieke_dag.png")
+    st.image("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/specifieke_dag.png")
 
     st.subheader("Jaargemiddelde")
     st.write("Wat was het jaargemiddelde?")
-    st.image("img_knmi/jaargemiddelde.png")
+    st.image("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/jaargemiddelde.png")
     st.write("Kies hier volledige jaren als periode")
 
     st.subheader("Per dag in div jaren")
     st.write("Kan ik 2021 met 2021 per dag vergelijken?")
-    st.image("img_knmi/per_dag_div_jaren_2020_2021.png")
+    st.image("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/per_dag_div_jaren_2020_2021.png")
 
     st.subheader("Per maand in diverse jaren")
     st.write("Kan ik 2021 met 2021 per maaand vergelijken?")
-    st.image("img_knmi/per_maand_div_jaren_2020_2021.png")
+    st.image("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/per_maand_div_jaren_2020_2021.png")
 
     st.subheader("Percentiles")
     st.write("Wat zijn de uitschieters in het jaar? - kies hiervoor een lange periode")
-    st.image("img_knmi/percentiles.png")
+    st.image("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/percentiles.png")
     st.subheader("Weerstations")
     st.write("Link to map with KNMI stations https://www.google.com/maps/d/u/0/edit?mid=1ePEzqJ4_aNyyTwF5FyUM6XiqhLZPSBjN&ll=52.17534745851063%2C5.197922250000001&z=7")
-    st.image("img_knmi/weerstations.png")
+    st.image("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/weerstations.png")
 
                 
     st.image(
