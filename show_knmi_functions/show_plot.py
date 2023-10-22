@@ -1,33 +1,37 @@
-from imghdr import what
+# from imghdr import what
 import pandas as pd
 import numpy as np
 import streamlit as st
 #from streamlit import caching
-import datetime as dt
+# import datetime as dt
 import scipy.stats as stats
-import math
+# import math
 from show_knmi_functions.utils import show_weerstations, help
-from datetime import datetime
+# from datetime import datetime
 import matplotlib.pyplot as plt
 # import matplotlib
 from matplotlib.backends.backend_agg import RendererAgg
-from matplotlib.animation import FuncAnimation
-from matplotlib.colors import ListedColormap
+# from matplotlib.animation import FuncAnimation
+# from matplotlib.colors import ListedColormap
 
 _lock = RendererAgg.lock
-import sys # for the progressbar
-import shutil # for the progressbar
+# import sys # for the progressbar
+# import shutil # for the progressbar
 
 import statsmodels.api as sm
-import plotly.express as px
+from scipy.stats import norm
+# import plotly.express as px
 import plotly.graph_objects as go
 
-import platform
-import streamlit.components.v1 as components
-import time
-import imageio
-import os
-import webbrowser
+# import platform
+# import streamlit.components.v1 as components
+# import time
+# import imageio
+# import os
+# import webbrowser
+
+from skmisc.loess import loess
+
 
 def climatrend(t, y, p=None, t1=None, t2=None, ybounds=None, drawplot=False, draw30=False):
 
@@ -147,32 +151,72 @@ def climatrend(t, y, p=None, t1=None, t2=None, ybounds=None, drawplot=False, dra
         avt = avt[ind]
         avy = avy[ind]
         avysd = avysd[ind]
+    method = "skmisc"
+    if method== "statsmodels":
+        # Linear LOESS trendline computation
+        span = width / ng
+        loess_model = sm.nonparametric.lowess(yg, tg, frac=span, return_sorted=False)
+        trend = loess_model
 
-    # Linear LOESS trendline computation
-    span = width / ng
-    loess_model = sm.nonparametric.lowess(yg, tg, frac=span, return_sorted=False)
-    trend = loess_model
+        # Confidence limits (normal approximation)
+        trendsd = np.std(yg - trend)
+        z = 1.96  # 1.96 corresponds to a 95% confidence interval (z-score)
+        trendub = trend + z * trendsd
+        trendlb = trend - z * trendsd
 
-    # Confidence limits (normal approximation)
-    trendsd = np.std(yg - trend)
-    z = 1.96  # 1.96 corresponds to a 95% confidence interval (z-score)
-    trendub = trend + z * trendsd
-    trendlb = trend - z * trendsd
+        # Apply bounds
+        trend = np.clip(trend, ybounds[0], ybounds[1])
+        trendub = np.clip(trendub, ybounds[0], ybounds[1])
+        trendlb = np.clip(trendlb, ybounds[0], ybounds[1])
+    else:
+        if len(y)>width:
+            span = width/len(y)
+            
+            l = loess(t,y)
+            
+            
+            # MODEL and CONTROL. Essential for replicating the results from the R script.
+            #
+            # https://has2k1.github.io/scikit-misc/stable/generated/skmisc.loess.loess_model.html#skmisc.loess.loess_model
+            # https://has2k1.github.io/scikit-misc/stable/generated/skmisc.loess.loess_control.html#skmisc.loess.loess_control
+        
+            l.model.span = span
+            l.model.degree = 1
+            l.control.iterations = 1 # must be 1 for replicating the R-script
+            l.control.surface = "direct"
+            l.control.statistics = "exact"
 
-    # Apply bounds
-    trend = np.clip(trend, ybounds[0], ybounds[1])
-    trendub = np.clip(trendub, ybounds[0], ybounds[1])
-    trendlb = np.clip(trendlb, ybounds[0], ybounds[1])
+            l.fit()
+            pred = l.predict(t, stderror=True)
+            conf = pred.confidence()
 
+
+            ste = pred.stderr
+            trend = pred.values
+            trendlb = conf.lower
+            trendub = conf.upper
+        else:
+            trend, trendlb, trendub = [],[],[]
     # p-value for trend
-    pvalue = None
+    
     if t2 in t and t1 in t and t2 >= t1 + 30:
-        y1 = trend[t1 == t][0]
-        y2 = trend[t2 == t][0]
-        y1sd = trendsd[t1 == t][0]
-        y2sd = trendsd[t2 == t][0]
+        idx_t1 = np.where(t == t1)[0][0]
+        idx_t2 = np.where(t == t2)[0][0]
+        y1 = trend[idx_t1]#[0]
+        y2 = trend[idx_t2]#[0]
+        y1sd = ste[idx_t1]#[0]
+        y2sd = ste[idx_t2]#[0]
         # Two-sided test for absence of trend
         pvalue = (1 - norm.cdf(abs(y2 - y1), scale=np.sqrt(y1sd**2 + y2sd**2))) * 2
+
+
+        if pvalue != None:
+            p_txt = (f"pvalue: {round(pvalue,4)}")
+            if pvalue <0.05:
+                st.info(f"**{p_txt}**\n\nThe data indicates a long time change between {t1} and {t2}.")
+            else:
+                st.info(f"**{p_txt}**\n\nThe data does not indicate (or a little) a long time change between {t1} and {t2}.")
+
 
     # Plotting
     if drawplot:
@@ -305,34 +349,36 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
             if len(X_array)>30:
                 #y_hat2, x_space2 = calculate_loess(X_array, Y_array, 0.05, 1, all_x = True, num_points = 200)
                 x_space2, y_hat2, trendlb, trendub  = climatrend(X_array, Y_array)
-
-                loess = go.Scatter(
-                    name=f"{what_to_show_x} Loess",
-                    x=x_space2,
-                    y= y_hat2,
-                    mode='lines',
-                    line=dict(width=1,
-                    color='rgba(255, 0, 255, 1)'
-                    ),
-                    )
-                loess_low = go.Scatter(
-                    name=f"{what_to_show_x} Loess low",
-                    x=x_space2,
-                    y= trendlb,
-                    mode='lines',
-                    line=dict(width=.7,
-                    color='rgba(255, 0, 255, 0.5)'
-                    ),
-                    )
-                loess_high = go.Scatter(
-                    name=f"{what_to_show_x} Loess high",
-                    x=x_space2,
-                    y= trendub,
-                    mode='lines',
-                    line=dict(width=0.7,
-                    color='rgba(255, 0, 255, 0.5)'
-                    ),
-                    )
+                if len(y_hat2) >0:
+                    loess = go.Scatter(
+                        name=f"{what_to_show_x} Loess",
+                        x=x_space2,
+                        y= y_hat2,
+                        mode='lines',
+                        line=dict(width=1,
+                        color='rgba(255, 0, 255, 1)'
+                        ),
+                        )
+                    loess_low = go.Scatter(
+                        name=f"{what_to_show_x} Loess low",
+                        x=x_space2,
+                        y= trendlb,
+                        mode='lines',
+                        line=dict(width=.7,
+                        color='rgba(255, 0, 255, 0.5)'
+                        ),
+                        )
+                    loess_high = go.Scatter(
+                        name=f"{what_to_show_x} Loess high",
+                        x=x_space2,
+                        y= trendub,
+                        mode='lines',
+                        line=dict(width=0.7,
+                        color='rgba(255, 0, 255, 0.5)'
+                        ),
+                        )
+                else:
+                    loess = None
             df["sma"] = df[what_to_show_x].rolling(window=wdw, center=centersmooth).mean()
             if (wdw2 != 999):
                 if (sma2_how == "mean"):
@@ -422,7 +468,7 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
            
             #data = [sma,points]
             data.append(sma)
-            if len(X_array)>30:
+            if len(X_array)>30 and loess !=None:
                 data.append(loess)
                 data.append(loess_low)
                 data.append(loess_high)
