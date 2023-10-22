@@ -61,6 +61,7 @@ def main():
     aantal_kinderen_16_17 = int(st.sidebar.number_input("Aantal kinderen 16-17",0,10,0))
     if methode == "inkomen":
         uren_per_week_ink = int(st.sidebar.number_input("Aantal uren per week",1,100,40))
+        aantal_maanden_werken= st.sidebar.number_input("Aantal maanden werken per jaar",1,12,12)
     else:
         uren_per_week_ink = 1
     bbb_grens = 30000
@@ -74,7 +75,7 @@ def main():
             uren_per_week = uren_per_week_ink  
         else:  
             uren_per_week =  int(inkomen / (uur_salaris * 4.33  * 12))
-        regel = calculate_nettoloon(inkomen/12,12,rekenhuur,huishouden,number_household, toeslagpartner,aantal_kinderen, aantal_kinderen_12_15, aantal_kinderen_16_17, uren_per_week, bbb_grens)
+        regel = calculate_nettoloon(inkomen/12,12,rekenhuur,huishouden,number_household, toeslagpartner,aantal_kinderen, aantal_kinderen_12_15, aantal_kinderen_16_17, uren_per_week, bbb_grens, aantal_maanden_werken)
         
         tabeldata.append(regel)
 

@@ -1,11 +1,7 @@
-# import streamlit as st
-
-# from re import X
 import pandas as pd
-# import plotly.express as px
-# import plotly
-# from plotly.subplots import make_subplots
-
+import plotly.express as px
+import plotly
+plotly.offline.init_notebook_mode(connected=True)
 
 #tarieven 2023
 # https://www2.deloitte.com/nl/nl/pages/tax/articles/belastingplan-2023-overzicht-maatregelen-loonbelasting-inkomstenbelasting.html
@@ -14,25 +10,47 @@ import pandas as pd
 # https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/themaoverstijgend/brochures_en_publicaties/handboek-loonheffingen-2022
 # https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/themaoverstijgend/brochures_en_publicaties/rekenvoorschriften-voor-de-geautomatiseerde-loonadministratie-januari-2022
 
-
 def calculate_inkomstenbelasting(inkomen):
-    grens_2023 = 73031
-   
+    """_summary_
+
+    Args:
+        inkomen (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
+    grens_2023 = 73031 
     grens = grens_2023
     if inkomen < grens:
         belasting = inkomen*0.3693
     else:
         belasting = (grens*0.3693)+((inkomen-grens)* 0.495)
-  
     return round(belasting)
 
 def calculate_arbeidskorting_niet_alle_maanden_werken(maandsalaris, aantal_maanden):
-    arbeidskorting_per_maand = calculate_arbeidskorting_2022(maandsalaris*12)/12
+    """_summary_
+
+    Args:
+        maandsalaris (_type_): _description_
+        aantal_maanden (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
+    arbeidskorting_per_maand = calculate_arbeidskorting(maandsalaris*12)/12
     totale_arbeidskorting = arbeidskorting_per_maand * aantal_maanden
     return totale_arbeidskorting
 
 
 def calculate_heffingskorting(inkomen):
+    """_summary_
+
+    Args:
+        inkomen (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     if inkomen < 22261:
         heffingskorting = 3070
     elif inkomen>73031:
@@ -42,6 +60,14 @@ def calculate_heffingskorting(inkomen):
    
     return round(heffingskorting)
 def calculate_arbeidskorting(inkomen):
+    """_summary_
+
+    Args:
+        inkomen (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     arbeidskorting = 0
     if inkomen <=10741:
         arbeidskorting =	0.08321 * inkomen
@@ -59,6 +85,14 @@ def calculate_arbeidskorting(inkomen):
     return round(arbeidskorting)
 
 def calculate_arbeidskorting_2022(inkomen):
+    """_summary_
+
+    Args:
+        inkomen (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     arbeidskorting = 0
     if inkomen <=10350:
         arbeidskorting =	0.04541 * inkomen
@@ -76,6 +110,14 @@ def calculate_arbeidskorting_2022(inkomen):
     return round(arbeidskorting)
 
 def calculate_heffingskorting_2022(inkomen):
+    """_summary_
+
+    Args:
+        inkomen (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     if inkomen < 21317:
         heffingskorting = 2888
     elif inkomen>69398:
@@ -86,6 +128,14 @@ def calculate_heffingskorting_2022(inkomen):
 
   
 def calculate_inkomstenbelasting_2022(inkomen):
+    """_summary_
+
+    Args:
+        inkomen (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     grens_2022 = 69399
     grens_2021 = 68508
     grens = grens_2022
@@ -97,6 +147,17 @@ def calculate_inkomstenbelasting_2022(inkomen):
     return round(belasting)
 
 def calculate_zorgtoeslag(toetsingsinkomen):
+    """_summary_
+
+    Args:
+        toetsingsinkomen (_type_): _description_
+
+    Raises:
+        Exception: _description_
+
+    Returns:
+        _type_: _description_
+    """    
 # https://www.belastingdienst.nl/wps/wcm/connect/nl/zorgtoeslag/content/hoeveel-zorgtoeslag
 # https://download.belastingdienst.nl/toeslagen/docs/berekening_zorgtoeslag_tg0821z21fd.pdf
 # via https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/themaoverstijgend/brochures_en_publicaties/brochures_en_publicaties_intermediair
@@ -244,6 +305,15 @@ def calculate_huurtoeslag(inkomen, rekenhuur,huishouden,number_household):
     return huurtoeslag
   
 def calculate_nettoloon_simpel (maand_inkomen, aantal_maanden):
+    """_summary_
+
+    Args:
+        maand_inkomen (_type_): _description_
+        aantal_maanden (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     inkomen = maand_inkomen * aantal_maanden
     arbeidskorting = calculate_arbeidskorting_niet_alle_maanden_werken(maand_inkomen, aantal_maanden)
     inkomensten_belasting = calculate_inkomstenbelasting(inkomen)
@@ -275,18 +345,14 @@ def calculate_nettoloon_simpel_2022 (inkomen):
 def twee_vs_drie():
     """Bereken het verschil in inkomstenbelasting tussen 2022 en 2023
     """    
-    import pandas as pd
-
-    import plotly.express as px
-    import plotly
-    plotly.offline.init_notebook_mode(connected=True)
-    list = []
+    
+    list_ = []
     for i in range(1000,200000,1000):
         twee = calculate_nettoloon_simpel_2022(i)
         drie = calculate_nettoloon_simpel(i)
-        list.append([i,twee,drie,i-twee,i-drie,drie-twee])
+        list_.append([i,twee,drie,i-twee,i-drie,drie-twee])
     columns = ["bruto_inkomen", "2022", "2023","te_betalen_2022", "te betalen_2023", "verschil"] 
-    df = pd.DataFrame(list, columns=columns)#.set_index("months_working")
+    df = pd.DataFrame(list_, columns=columns)#.set_index("months_working")
     df["bruto_maand"] = (df["bruto_inkomen"]/12)
     df["verschil_maand"] = df["verschil"]/12
     df["netto_maand_2023"] = df["2023"]/12
@@ -300,7 +366,7 @@ def twee_vs_drie():
     # fig3 = px.line(df, x="bruto_maand", y=["verschil_maand"], title = "Netto 2023 en Verschil per maand vs salaris per maand")
     # plotly.offline.plot(fig3)
 
-def calculate_nettoloon(maand_inkomen,aantal_maanden,rekenhuur,huishouden,number_household, toeslagpartner,aantal_kinderen, aantal_kinderen_12_15, aantal_kinderen_16_17, uren_per_week, bbb_grens):
+def calculate_nettoloon(maand_inkomen,aantal_maanden,rekenhuur,huishouden,number_household, toeslagpartner,aantal_kinderen, aantal_kinderen_12_15, aantal_kinderen_16_17, uren_per_week, bbb_grens, aantal_maanden_werken):
     """_summary_
 
     Args:
@@ -313,7 +379,7 @@ def calculate_nettoloon(maand_inkomen,aantal_maanden,rekenhuur,huishouden,number
         aantal_kinderen_12_15 (_type_): _description_
         aantal_kinderen_16_17 (_type_): _description_
         bbb_grens : inkomen tot waar je geen inkomstenbelasting betaalt
-
+        aantal_maanden_werken : aantal maanden dat je werkt
     Returns:
         _type_: inkomen,  inkomensten_belasting, heffingskorting, arbeidskorting,te_betalen_belasting, netto_loon, huurtoeslag, zorgtoeslag, kindgebonden_budget
  
@@ -321,8 +387,10 @@ def calculate_nettoloon(maand_inkomen,aantal_maanden,rekenhuur,huishouden,number
     inkomen = maand_inkomen * aantal_maanden
     inkomensten_belasting = calculate_inkomstenbelasting(inkomen)
     heffingskorting = calculate_heffingskorting(inkomen)
-    arbeidskorting = calculate_arbeidskorting(inkomen)
-    arbeidskorting = calculate_arbeidskorting_niet_alle_maanden_werken(1600,4)
+    if aantal_maanden_werken == 12:
+        arbeidskorting = calculate_arbeidskorting(inkomen)
+    else:
+        arbeidskorting = calculate_arbeidskorting_niet_alle_maanden_werken(maand_inkomen,aantal_maanden_werken)
 
     te_betalen_belasting = inkomensten_belasting - heffingskorting - arbeidskorting
     if te_betalen_belasting <0:
@@ -340,9 +408,53 @@ def calculate_nettoloon(maand_inkomen,aantal_maanden,rekenhuur,huishouden,number
     regel = [uren_per_week,inkomen,  inkomensten_belasting, heffingskorting, arbeidskorting,te_betalen_belasting, netto_loon, huurtoeslag, zorgtoeslag, kindgebonden_budget, bbb_inkomen]
     return regel
 
+def calculate_nettoloon_simpel_vacansoleil(maand_inkomen, aantal_maanden_werken):
+    """Simpele calculator dat uitrekent hoeveel belasting je moet betalen gegeven een maandsalaris en
+        aantal maanden werken. Met enkele extra opties als bonus etc.
+
+    Args:
+        maand_inkomen (_type_): _description_
+        aantal_maanden_werken : aantal maanden dat je werkt
+    Returns:
+        nothing
+    """
+    bonus = 1178
+    vakantietoeslag = 341
+    reserveringsfactor = 1 
+    inkomen = (maand_inkomen * aantal_maanden_werken * reserveringsfactor) + bonus + vakantietoeslag
+
+
+    inkomensten_belasting = calculate_inkomstenbelasting(inkomen)
+    heffingskorting = calculate_heffingskorting(inkomen)
+    if aantal_maanden_werken == 12:
+        arbeidskorting = calculate_arbeidskorting(inkomen)
+    else:
+        arbeidskorting = calculate_arbeidskorting_niet_alle_maanden_werken(maand_inkomen,aantal_maanden_werken)
+
+    te_betalen_belasting = inkomensten_belasting - heffingskorting - arbeidskorting
+    if te_betalen_belasting <0:
+        te_betalen_belasting = 0
+
+    netto_loon = inkomen - te_betalen_belasting
+    print ("==========================================")
+    print (f"{maand_inkomen = }")
+    print (f"{aantal_maanden_werken = }")
+
+    print(f"{inkomen = }")
+    print ("------------------------------------------")
+    print(f"{inkomensten_belasting = }")
+    print(f"{heffingskorting = }")
+    print(f"{arbeidskorting = }")
+    print(f"{te_betalen_belasting = }")
+    print ("------------------------------------------")
+    
+    print(f"{netto_loon = }")
+
+
 # #print(calculate_nettoloon_simpel_2022 (1000+(2150*7*1.18)))
 def main_aantal_maanden():
-
+    """Netto salaris per maand naar bruto salaris en aantal maanden werken
+    """
     # Define the salaries and number of months
     #salaries = range(1000, 11000, 1000)
     salaries = range(1500, 5000, 200)
@@ -374,12 +486,7 @@ def main_aantal_maanden():
             # zet het extra netto salaris voor een maand meer werken in een tabel
             row.append(int(netto-sup))
             sup= netto
-
-            # zet de te betalen belasting in een tabel
-            #row.append(f"{int((te_betalen/month)/salary*100)}%")
-
-            
-        
+         
         df_row = pd.Series(row, index=df.columns)
         df = pd.concat([df, df_row.to_frame().T])
 
@@ -390,9 +497,9 @@ def main_aantal_maanden():
     print(df)
 
 def main_aantal_uren_per_week():
-
+    """Geen idee wat ik hier berekende
+    """
     # Define the salaries and number of months
-    #salaries = range(1000, 11000, 1000)
     salaries = range(1500, 2500, 100)
     parttime_perc = range(10,110,10)
 
@@ -420,12 +527,6 @@ def main_aantal_uren_per_week():
             # zet het extra netto salaris voor een maand meer werken in een tabel
             row.append(int(netto-sup))
             sup= netto
-
-            # zet de te betalen belasting in een tabel
-            #row.append(f"{int((te_betalen/month)/salary*100)}%")
-
-            
-        
         df_row = pd.Series(row, index=df.columns)
         df = pd.concat([df, df_row.to_frame().T])
 
@@ -436,5 +537,7 @@ def main_aantal_uren_per_week():
     print(df)
 
    
-
-main_aantal_uren_per_week()
+if __name__ == "__main__":
+    main_aantal_uren_per_week()
+    #calculate_nettoloon_simpel_vacansoleil(2160, 7.5)
+    main_aantal_maanden()
