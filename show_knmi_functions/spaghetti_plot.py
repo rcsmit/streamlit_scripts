@@ -29,9 +29,37 @@ def spaghetti_plot(df, what):
     # smooth the upper and lowerbound. Otherwise it's very ugly/jagged
     for b in ['upper_bound', 'lower_bound']:
         pivot_df[b] = pivot_df[b].rolling(9, center=True).mean()
-    
+    lw = pivot_df["lower_bound"]
+    up = pivot_df["upper_bound"]
     pivot_df=pivot_df.reset_index()
-    data=[]
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+                        name=f"low",
+                        x=pivot_df["date_1900"],
+                        #y = pd.concat([lw,up[::-1]]),
+                        y=pivot_df["lower_bound"], #+pivot_df["upper_bound"][::-1],
+                        mode='lines',
+                        fill='tozeroy',
+                        fillcolor='rgba(255, 255, 255, 0.0)',
+                        line=dict(width=0,
+                        color='rgba(0, 0, 0, 1.0)'
+                        ),
+                        ))
+    
+    fig.add_trace(go.Scatter(
+                        name=f"high",
+                        x=pivot_df["date_1900"],
+                        y=pivot_df["upper_bound"],
+                        mode='lines',
+                        fill='tonexty',
+                        fillcolor='rgba(211, 211, 211, 0.5)',
+                        line=dict(width=0,
+                        color='rgba(0, 0, 0, 0.0)'
+                        ),
+                        ))
+    
+    
     for column in pivot_df.columns[1:-4]:
     
         if column == pivot_df.columns[-5]:
@@ -42,45 +70,24 @@ def spaghetti_plot(df, what):
             line = dict(width=.5,
                         color='rgba(255, 0, 255, 0.5)'
                         )
-        x = go.Scatter(
+        fig.add_trace(go.Scatter(
                         name=column,
                         x=pivot_df["date_1900"],
                         y=pivot_df[column],
                         mode='lines',
                         line=line,
-                        )
-        data.append(x)
+                        ))
+       
 
-    higher_bound = go.Scatter(
-                        name=f"high",
-                        x=pivot_df["date_1900"],
-                        y=pivot_df["upper_bound"],
-                        mode='lines',
-                        fill='tonextx',
-                        fillcolor='rgba(211, 211, 211, 0.5)',
-                        line=dict(width=.0,
-                        color='rgba(0, 0, 0, 0.0)'
-                        ),
-                        )
-    lower_bound = go.Scatter(
-                        name=f"low",
-                        x=pivot_df["date_1900"],
-                        y=pivot_df["lower_bound"],
-                        mode='lines',
-                        line=dict(width=.0,
-                        color='rgba(0, 0, 0, 0.0)'
-                        ),
-                        )
     
-    data.append(lower_bound)
-    data.append(higher_bound)
-
-    layout = go.Layout(
+ 
+    fig.update_layout(
             xaxis=dict(title="date",tickformat="%d-%m"),
             yaxis=dict(title=what),
             title=what,)
+    fig.update_xaxes(showgrid=True)
+    fig.update_yaxes(showgrid=True)
     
-    fig = go.Figure(data=data, layout=layout)
     # Create a spaghetti line plot
    
     #fig.update_layout(xaxis=dict(tickformat="%d-%m"))
