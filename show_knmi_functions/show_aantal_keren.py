@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
+from utils import get_data
 
 def show_aantal_keren(df_, gekozen_weerstation, what_to_show_):
     # TODO : stacked bargraphs met meerdere condities
@@ -108,3 +109,11 @@ def plot_df_grouped(months, month_min, month_max,  df_grouped_, veldnaam, title)
     st.plotly_chart(fig)
 
    
+def main():
+   
+    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/result.csv" 
+    df = get_data(url)
+    
+if __name__ == "__main__":
+    # main()
+    print ("")

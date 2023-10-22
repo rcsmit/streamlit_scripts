@@ -1,34 +1,11 @@
-from imghdr import what
 import pandas as pd
 import numpy as np
 import streamlit as st
-#from streamlit import caching
-import datetime as dt
-import scipy.stats as stats
-import math
-from show_knmi_functions.utils import show_weerstations, help
-from datetime import datetime
 import matplotlib.pyplot as plt
-# import matplotlib
 from matplotlib.backends.backend_agg import RendererAgg
-from matplotlib.animation import FuncAnimation
 from matplotlib.colors import ListedColormap
-
 _lock = RendererAgg.lock
-import sys # for the progressbar
-import shutil # for the progressbar
-
-import statsmodels.api as sm
-import plotly.express as px
-import plotly.graph_objects as go
-
-import platform
-import streamlit.components.v1 as components
-import time
-import imageio
-import os
-import webbrowser
-
+from utils import get_data
 def show_warmingstripes(df_, title):
     print (df_)
     df = df_.groupby(df_["YYYY"], sort=True).mean(numeric_only = True).reset_index()
@@ -156,4 +133,12 @@ def show_warmingstripes_matplotlib(df_, title):
 
     fig.savefig('warming-stripes.png')
     st.pyplot(fig)
- 
+
+def main():
+   
+    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/result.csv" 
+    df = get_data(url)
+    
+if __name__ == "__main__":
+    # main()
+    print ("")

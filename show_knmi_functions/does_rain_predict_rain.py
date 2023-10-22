@@ -1,33 +1,8 @@
-from imghdr import what
 import pandas as pd
-import numpy as np
 import streamlit as st
-#from streamlit import caching
-import datetime as dt
-import scipy.stats as stats
-import math
-from show_knmi_functions.utils import show_weerstations, help
-from datetime import datetime
-import matplotlib.pyplot as plt
-# import matplotlib
-from matplotlib.backends.backend_agg import RendererAgg
-from matplotlib.animation import FuncAnimation
-from matplotlib.colors import ListedColormap
-
-_lock = RendererAgg.lock
-import sys # for the progressbar
-import shutil # for the progressbar
-
-import statsmodels.api as sm
 import plotly.express as px
 import plotly.graph_objects as go
-
-import platform
-import streamlit.components.v1 as components
-import time
-import imageio
-import os
-import webbrowser
+from utils import get_data
 
 def does_rain_predict_rain(df):
     """reproducing 
@@ -187,3 +162,12 @@ def does_rain_predict_rain(df):
              title='Average Rainfall per Decade', labels={'DlySumToday': 'Average Rainfall per day (mm)'})
     fig.update_xaxes(tickmode='linear', dtick=10)
     st.plotly_chart(fig)
+
+def main():
+   
+    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/result.csv" 
+    df = get_data(url)
+    
+if __name__ == "__main__":
+    # main()
+    print ("")

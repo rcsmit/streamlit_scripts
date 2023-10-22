@@ -1,24 +1,16 @@
-from imghdr import what
 import pandas as pd
 import numpy as np
 import streamlit as st
 #from streamlit import caching
-import datetime as dt
-import scipy.stats as stats
-import math
-from show_knmi_functions.utils import show_weerstations, help
-from datetime import datetime
 import matplotlib.pyplot as plt
 # import matplotlib
 from matplotlib.backends.backend_agg import RendererAgg
 from matplotlib.animation import FuncAnimation
-from matplotlib.colors import ListedColormap
-
+from utils import get_data
 _lock = RendererAgg.lock
 import sys # for the progressbar
 import shutil # for the progressbar
 
-import statsmodels.api as sm
 import plotly.express as px
 import plotly.graph_objects as go
 
@@ -279,5 +271,11 @@ def  polar_plot(df2,   what_to_show, how):
         plot_matplotlib_line()
         
         
-        
-    
+def main():
+   
+    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/result.csv" 
+    df = get_data(url)
+    polar_plot(df, ["temp_avg"], None)
+
+if __name__ == "__main__":
+    main()

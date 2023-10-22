@@ -3,7 +3,7 @@ import numpy as np
 import streamlit as st
 from datetime import datetime
 import plotly.graph_objects as go
-
+from utils import get_data
 
 def show_per_maand(df, gekozen_weerstation, what_to_show_, groeperen, graph_type):
     what_to_show_ = what_to_show_ if type(what_to_show_) == list else [what_to_show_]
@@ -96,3 +96,12 @@ def show_per_maand(df, gekozen_weerstation, what_to_show_, groeperen, graph_type
             # st.subheader(f"Data of {what_to_show}")
             # st.write(df_pivoted)
 
+        
+def main():
+   
+    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/result.csv" 
+    df = get_data(url)
+    
+if __name__ == "__main__":
+    # main()
+    print ("")

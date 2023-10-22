@@ -6,7 +6,7 @@ import streamlit as st
 # import datetime as dt
 import scipy.stats as stats
 # import math
-from show_knmi_functions.utils import show_weerstations, help
+from utils import get_data
 # from datetime import datetime
 import matplotlib.pyplot as plt
 # import matplotlib
@@ -513,3 +513,11 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
             
     #df =df[[datefield,what_to_show_[0]]]
     #st.write(df)
+def main():
+   
+    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/result.csv" 
+    df = get_data(url)
+    
+if __name__ == "__main__":
+    # main()
+    print ("")
