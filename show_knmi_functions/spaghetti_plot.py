@@ -63,6 +63,25 @@ def spaghetti_plot_(df, what, wdw,  sd_all, sd_day, spaghetti, mean_, last_year)
     pivot_df=pivot_df.reset_index()
 
     fig = go.Figure()
+    if spaghetti:
+        for column in pivot_df.columns[1:-7]:
+        
+            if column == pivot_df.columns[-8] and last_year:
+                # line = dict(width=1,
+                #             color='rgba(255, 0, 0, 1)'
+                #             )
+                pass
+            else:
+                line = dict(width=.5,
+                            color='rgba(255, 0, 255, 0.5)'
+                            )
+                fig.add_trace(go.Scatter(
+                                name=column,
+                                x=pivot_df["date_1900"],
+                                y=pivot_df[column],
+                                mode='lines',
+                                line=line,
+                                ))
     if sd_day:
         fig.add_trace(go.Scatter(
                             name=f"low CI per day",
@@ -138,25 +157,7 @@ def spaghetti_plot_(df, what, wdw,  sd_all, sd_day, spaghetti, mean_, last_year)
                         mode='lines',
                         line=line,
                         ))
-    if spaghetti:
-        for column in pivot_df.columns[1:-7]:
-        
-            if column == pivot_df.columns[-8] and last_year:
-                # line = dict(width=1,
-                #             color='rgba(255, 0, 0, 1)'
-                #             )
-                pass
-            else:
-                line = dict(width=.5,
-                            color='rgba(255, 0, 255, 0.5)'
-                            )
-                fig.add_trace(go.Scatter(
-                                name=column,
-                                x=pivot_df["date_1900"],
-                                y=pivot_df[column],
-                                mode='lines',
-                                line=line,
-                                ))
+    
     
     fig.update_layout(
             xaxis=dict(title="date",tickformat="%d-%m"),
