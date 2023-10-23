@@ -2,7 +2,7 @@ import pandas as pd
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
-from utils import get_data
+from show_knmi_functions.utils import get_data
 
 def show_aantal_keren(df_, gekozen_weerstation, what_to_show_):
     # TODO : stacked bargraphs met meerdere condities

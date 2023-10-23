@@ -1,262 +1,14 @@
-# from imghdr import what
 import pandas as pd
 import numpy as np
 import streamlit as st
-#from streamlit import caching
-# import datetime as dt
 import scipy.stats as stats
-# import math
-from utils import get_data
-# from datetime import datetime
+from show_knmi_functions.utils import get_data, loess_skmisc
 import matplotlib.pyplot as plt
-# import matplotlib
 from matplotlib.backends.backend_agg import RendererAgg
-# from matplotlib.animation import FuncAnimation
-# from matplotlib.colors import ListedColormap
-
 _lock = RendererAgg.lock
-# import sys # for the progressbar
-# import shutil # for the progressbar
-
-import statsmodels.api as sm
-from scipy.stats import norm
-# import plotly.express as px
 import plotly.graph_objects as go
 
-# import platform
-# import streamlit.components.v1 as components
-# import time
-# import imageio
-# import os
-# import webbrowser
-
-from skmisc.loess import loess
-
-
-def climatrend(t, y, p=None, t1=None, t2=None, ybounds=None, drawplot=False, draw30=False):
-
-    """
-    Fit a trendline to an annually sampled time-series by local linear regression (LOESS)
-
-    Parameters:
-    t : numpy array of shape (n,)
-        Years, increasing by 1.
-    y : numpy array of shape (n,)
-        Annual values; missing values as blanks are allowed near the beginning and end.
-    p : float, optional
-        Confidence level for error bounds (default: 0.95).
-    t1 : float, optional
-        First year for which trendline value is compared in the test.
-    t2 : float, optional
-        Second year (see t1) for which trendline value is compared in the test.
-    ybounds : list or array-like, optional
-        Lower/upper bound on the value range of y (default: [-Inf, Inf]).
-    drawplot : bool or str, optional
-        If True, a plot will be drawn. If a string is provided, it will be used as the label on the y-axis.
-        (default: False).
-    draw30 : bool, optional
-        If True, add 30-year moving averages to the plot (default: False).
-
-    Returns:
-    pandas DataFrame or dictionary
-        A DataFrame or dictionary with the following columns/values:
-            't': years,
-            'trend': trendline in y for years in t,
-            'p': confidence level,
-            'trendubound': lower confidence limit,
-            'trendlbound': upper confidence limit,
-            'averaget': central value of t in a 30-year interval,
-            'averagey': 30-year average of y,
-            't1': first year for which trendline value is compared in the test,
-            't2': second year for which trendline value is compared in the test,
-            'pvalue': p-value of the test of no long-term change,
-            'ybounds': bounds on the value range of y.
-
-    Details:
-    The trendline can be regarded as an approximation of a 30-year average, which has a smooth appearance
-    and is extended toward the beginning and end of the time-series.
-
-    It is based on linear local regression, computed using the statsmodels library. It uses a bicubic weight
-    function over a 42-year window. In the central part of the time-series, the variance of the trendline
-    estimate is approximately equal to the variance of a 30-year average.
-
-    To test the proposition of no long-term change between the years t1 and t2, these years need to be supplied.
-    The result is the p-value: the probability (under the proposition) that the estimated trendline values in
-    t2 and t1 differ more than observed.
-
-    Version: 09-Mar-2021
-
-    References:
-    KNMI Technical report TR-389 (see http://bibliotheek.knmi.nl/knmipubTR/TR389.pdf)
-
-    Author: Cees de Valk (cees.de.valk@knmi.nl)
-
-    # https://gitlab.com/cees.de.valk/trend_knmi/-/blob/master/R/climatrend.R?ref_type=heads
-    # translated from R to Python by ChatGPT and adapted by Rene Smit
-    # not tested 100%
-
-    """
-    
-
-    # Fixed parameters
-    width = 42
-    
-    # Check input -> gives error
-
-    # if t is None or y is None or len(t) < 3 or len(t) != len(y):
-    #     raise ValueError("t and y arrays must have equal lengths greater than 2.")
-    # if np.isnan(t).any() or np.isnan(y).sum() < 3:
-    #     raise ValueError("t or y contain too many NA.")
-    
-    # Set default values for p, t1, and t2
-    if p is None:
-        p = 0.95  # default confidence level
-    if t1 is None or t2 is None:
-        t1 = np.inf
-        t2 = -np.inf
-
-    # Set default value for ybounds
-    if ybounds is None:
-        ybounds = [-np.inf, np.inf]
-    elif len(ybounds) != 2:
-        ybounds = [-np.inf, np.inf]
-
-    ybounds = sorted(ybounds)
-
-    # Dimensions and checks
-    t = np.asarray(t, dtype=np.float64)
-    y = np.asarray(y, dtype=np.float64)
-    dt = np.diff(t)[0]
-    n = len(y)
-    ig = ~np.isnan(y)
-    yg = y[ig]
-    tg = t[ig]
-    ng = sum(ig)
-
-    if ng <= 29:
-        raise ValueError("Insufficient valid data (less than 30 observations).")
-
-    # Check values of bounds
-    if np.any(yg < ybounds[0]) or np.any(yg > ybounds[1]):
-        raise ValueError("Stated bounds are not correct: y takes values beyond bounds.")
-
-    # Averages over 30 time-steps
-    avt, avy, avysd = None, None, None
-    if ng > 29:
-        avt = tg + dt / 2  # time (end of time-step, for 30-year averages)
-        avy = np.convolve(yg, np.ones(30) / 30, mode='valid')
-        avy2 = np.convolve(yg**2, np.ones(30) / 30, mode='valid')
-        avysd = np.sqrt(avy2 - avy**2)
-        ind = slice(15, ng - 15)
-        avt = avt[ind]
-        avy = avy[ind]
-        avysd = avysd[ind]
-    method = "skmisc"
-    if method== "statsmodels":
-        # Linear LOESS trendline computation
-        span = width / ng
-        loess_model = sm.nonparametric.lowess(yg, tg, frac=span, return_sorted=False)
-        trend = loess_model
-
-        # Confidence limits (normal approximation)
-        trendsd = np.std(yg - trend)
-        z = 1.96  # 1.96 corresponds to a 95% confidence interval (z-score)
-        trendub = trend + z * trendsd
-        trendlb = trend - z * trendsd
-
-        # Apply bounds
-        trend = np.clip(trend, ybounds[0], ybounds[1])
-        trendub = np.clip(trendub, ybounds[0], ybounds[1])
-        trendlb = np.clip(trendlb, ybounds[0], ybounds[1])
-    else:
-        if len(y)>width:
-            span = width/len(y)
-            
-            l = loess(t,y)
-            
-            
-            # MODEL and CONTROL. Essential for replicating the results from the R script.
-            #
-            # https://has2k1.github.io/scikit-misc/stable/generated/skmisc.loess.loess_model.html#skmisc.loess.loess_model
-            # https://has2k1.github.io/scikit-misc/stable/generated/skmisc.loess.loess_control.html#skmisc.loess.loess_control
-        
-            l.model.span = span
-            l.model.degree = 1
-            l.control.iterations = 1 # must be 1 for replicating the R-script
-            l.control.surface = "direct"
-            l.control.statistics = "exact"
-
-            l.fit()
-            pred = l.predict(t, stderror=True)
-            conf = pred.confidence()
-
-
-            ste = pred.stderr
-            trend = pred.values
-            trendlb = conf.lower
-            trendub = conf.upper
-        else:
-            trend, trendlb, trendub = [],[],[]
-    # p-value for trend
-    
-    if t2 in t and t1 in t and t2 >= t1 + 30:
-        idx_t1 = np.where(t == t1)[0][0]
-        idx_t2 = np.where(t == t2)[0][0]
-        y1 = trend[idx_t1]#[0]
-        y2 = trend[idx_t2]#[0]
-        y1sd = ste[idx_t1]#[0]
-        y2sd = ste[idx_t2]#[0]
-        # Two-sided test for absence of trend
-        pvalue = (1 - norm.cdf(abs(y2 - y1), scale=np.sqrt(y1sd**2 + y2sd**2))) * 2
-
-
-        if pvalue != None:
-            p_txt = (f"pvalue: {round(pvalue,4)}")
-            if pvalue <0.05:
-                st.info(f"**{p_txt}**\n\nThe data indicates a long time change between {t1} and {t2}.")
-            else:
-                st.info(f"**{p_txt}**\n\nThe data does not indicate (or a little) a long time change between {t1} and {t2}.")
-
-
-    # Plotting
-    if drawplot:
-        plt.figure(figsize=(8, 6))
-        ylim = [np.min([np.min(y), np.min(trendlb)]), np.max([np.max(y), np.max(trendub)])]
-        ylim[1] = ylim[0] + (ylim[1] - ylim[0]) * 1.0
-        plt.plot(t, y, 'b-', label='Temperature Data')
-        plt.plot(t, trend, 'r-', lw=2, label='Trendline')
-        plt.fill_between(t, trendlb, trendub, color='grey', alpha=0.5, label='Confidence Interval')
-        
-        if draw30:
-            plt.plot(avt, avy, 'ko', markersize=3, label='30-yr Average')
-
-        plt.xlabel('Year')
-        plt.ylabel('Temperature')
-        plt.grid()
-        plt.legend()
-        plt.show()
-
-    # results_df = pd.DataFrame({
-    #     't': t,
-    #     'trend': trend,
-    #     'p': p,
-    #     'trendubound': trendub,
-    #     'trendlbound': trendlb,
-    #     'averaget': avt,
-    #     'averagey': avy,
-    #     't1': t1,
-    #     't2': t2,
-    #     'pvalue': pvalue,
-    #     'ybounds': ybounds
-    # })
-    
-
-    # return {'t': t, 'trend': trend, 'p': p, 'trendubound': trendub, 'trendlbound': trendlb,
-    #         'averaget': avt, 'averagey': avy, 't1': t1, 't2': t2, 'pvalue': pvalue,
-    #         'ybounds': ybounds}
-    return t, trend, trendlb, trendub
-
-def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_type, centersmooth, show_ci, wdw_ci, show_parts, no_of_parts):
+def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_type, centersmooth, show_ci, show_loess, wdw_ci, show_parts, no_of_parts):
     what_to_show_ = what_to_show_ if type(what_to_show_) == list else [what_to_show_]
     color_list = [
         "#02A6A8",
@@ -322,37 +74,31 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
 
             moving_ci_lower_68 = df[what_to_show_x].rolling(window=wdw_ci).mean() - df[what_to_show_x].rolling(window=wdw_ci).std() * 1
             moving_ci_upper_68 = df[what_to_show_x].rolling(window=wdw_ci).mean() + df[what_to_show_x].rolling(window=wdw_ci).std() * 1
-
-            
-
-          
+  
             # Quantiles and (mean + 2*std) are two different measures of dispersion, which can be used to understand the distribution of a dataset.
- 
             # Quantiles divide a dataset into equal-sized groups, based on the values of the dataset. For example, the median is the 50th percentile, which divides the dataset into two equal-sized groups. Similarly, the 25th percentile divides the dataset into two groups, with 25% of the values below the 25th percentile and 75% of the values above the 25th percentile.
-
             # On the other hand, (mean + 2*std) represents a range of values that are within two standard deviations of the mean. This is sometimes used as a rule of thumb to identify outliers, since values that are more than two standard deviations away from the mean are relatively rare.
-
             # The main difference between quantiles and (mean + 2std) is that quantiles divide the dataset into equal-sized groups based on the values, while (mean + 2std) represents a range of values based on the mean and standard deviation. In other words, quantiles are based on the actual values of the dataset, while (mean + 2*std) is based on the mean and standard deviation, which are summary statistics of the dataset.
-
             # It's also worth noting that (mean + 2std) assumes that the data is normally distributed, while quantiles can be used for any distribution. Therefore, if the data is not normally distributed, (mean + 2std) may not be a reliable measure of dispersion.
             # confidence interval for the mean
             ci = stats.t.interval(0.95, len(df[what_to_show_x])-1, loc=df[what_to_show_x].mean(), scale=sem)
 
             # print confidence interval
-          
-            n_parts = no_of_parts
-            rows_per_part = len(df) // n_parts
-            # Step 2: Calculate the average temperature for each part
-            average_values = [df.iloc[i * rows_per_part:(i + 1) * rows_per_part][what_to_show_x].mean() for i in range(n_parts)]
+            if show_parts:
+                n_parts = no_of_parts
+                rows_per_part = len(df) // n_parts
+                # Step 2: Calculate the average temperature for each part
+                average_values = [df.iloc[i * rows_per_part:(i + 1) * rows_per_part][what_to_show_x].mean() for i in range(n_parts)]
             X_array = df[datefield].values
             Y_array = df[what_to_show_x].values
             if len(X_array)>30:
                 #y_hat2, x_space2 = calculate_loess(X_array, Y_array, 0.05, 1, all_x = True, num_points = 200)
-                x_space2, y_hat2, trendlb, trendub  = climatrend(X_array, Y_array)
+                x_space2, y_hat2, trendlb, trendub  = loess_skmisc(X_array, Y_array)
+               
                 if len(y_hat2) >0:
                     loess = go.Scatter(
                         name=f"{what_to_show_x} Loess",
-                        x=x_space2,
+                        x=X_array,
                         y= y_hat2,
                         mode='lines',
                         line=dict(width=1,
@@ -361,7 +107,7 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
                         )
                     loess_low = go.Scatter(
                         name=f"{what_to_show_x} Loess low",
-                        x=x_space2,
+                        x=X_array,
                         y= trendlb,
                         mode='lines',
                         line=dict(width=.7,
@@ -370,13 +116,21 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
                         )
                     loess_high = go.Scatter(
                         name=f"{what_to_show_x} Loess high",
-                        x=x_space2,
+                        x=X_array,
                         y= trendub,
                         mode='lines',
                         line=dict(width=0.7,
                         color='rgba(255, 0, 255, 0.5)'
                         ),
                         )
+                    # Create a filled area plot for confidence interval
+                    confidence_trace = go.Scatter(x=np.concatenate([X_array, X_array[::-1]]),
+                            y=np.concatenate([trendub, trendlb[::-1]]),
+                                fill='tozeroy',
+                                fillcolor='rgba(0, 128, 0, 0.2)',
+                                line=dict(color='dimgrey', width=.5),
+                                showlegend=True,
+                                name="CI of the trendline")
                 else:
                     loess = None
             df["sma"] = df[what_to_show_x].rolling(window=wdw, center=centersmooth).mean()
@@ -468,10 +222,11 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
            
             #data = [sma,points]
             data.append(sma)
-            if len(X_array)>30 and loess !=None:
+            if len(X_array)>30 and loess !=None and show_loess:
                 data.append(loess)
                 data.append(loess_low)
                 data.append(loess_high)
+                data.append(confidence_trace)
             if wdw2 != 999:
                 data.append(sma2)
             if wdw != 1:

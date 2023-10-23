@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import RendererAgg
 _lock = RendererAgg.lock
 import plotly.graph_objects as go
-from utils import get_data
+from show_knmi_functions.utils import get_data
 
 def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw, centersmooth):
     if len(what_to_show)!=1 :

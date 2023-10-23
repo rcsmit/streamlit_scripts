@@ -2,8 +2,7 @@ import pandas as pd
 import numpy as np
 import streamlit as st
 import datetime as dt
-
-
+from skmisc.loess import loess
 
 def get_data(url):
     header = None
@@ -474,3 +473,107 @@ def help():
         '<a href="https://www.buymeacoffee.com/rcsmit" target="_blank">If you are happy with this dashboard, you can buy me a coffee</a>',
         unsafe_allow_html=True,
     )
+
+
+def loess_skmisc(t, y,  ybounds=None, it=1):
+    """Make a plot with scikit-misc. Scikit-misc is the perfect reproduction of the method used by KNMI
+    See https://github.com/rcsmit/streamlit_scripts/blob/main/loess_scikitmisc.py for the complete version. 
+    See https://github.com/rcsmit/streamlit_scripts/blob/main/loess.py for a comparison of the various methods.
+
+    Args:
+        t : list of time values, increasing by 1.
+        y : list of  values
+        ybounds : list or array-like, optional
+            Lower/upper bound on the value range of y (default: [-Inf, Inf]).
+        it : number of iterations
+     
+    Returns:
+        loess : list with the smoothed values
+        ll : lower bounds
+        ul : upper bounds
+
+
+    """
+
+    # https://has2k1.github.io/scikit-misc/stable/generated/skmisc.loess.loess.html
+    # https://stackoverflow.com/questions/31104565/confidence-interval-for-lowess-in-python
+
+    
+
+    # # Set default values for p, t1, and t2
+    # if p is None:
+    #     p = 0.95  # default confidence level
+    # if t1 is None or t2 is None:
+    #     t1 = np.inf
+    #     t2 = -np.inf
+
+    # Set default value for ybounds
+    if ybounds is None:
+        ybounds = [-np.inf, np.inf]
+    elif len(ybounds) != 2:
+        ybounds = [-np.inf, np.inf]
+
+    ybounds = sorted(ybounds)
+
+    # Dimensions and checks
+    t = np.asarray(t, dtype=np.float64)
+    y = np.asarray(y, dtype=np.float64)
+    dt = np.diff(t)[0]
+    n = len(y)
+    ig = ~np.isnan(y)
+    yg = y[ig]
+    tg = t[ig]
+    ng = sum(ig)
+
+    if ng <= 29:
+        raise ValueError("Insufficient valid data (less than 30 observations).")
+
+    # Check values of bounds
+    if np.any(yg < ybounds[0]) or np.any(yg > ybounds[1]):
+        raise ValueError("Stated bounds are not correct: y takes values beyond bounds.")
+
+    # Averages over 30 time-steps
+    avt, avy, avysd = None, None, None
+    if ng > 29:
+        avt = tg + dt / 2  # time (end of time-step, for 30-year averages)
+        avy = np.convolve(yg, np.ones(30) / 30, mode="valid")
+        avy2 = np.convolve(yg**2, np.ones(30) / 30, mode="valid")
+        avysd = np.sqrt(avy2 - avy**2)
+        ind = slice(
+            15, ng - 14
+        )  # was (15, ng-15) but gives an error, whether the df has an even or uneven length
+        # [ValueError: x and y must have same first dimension, but have shapes (92,) and (93,)]
+        avt = avt[ind]
+        # avy = avy[ind]            # takes away y values, gives error
+        # [ValueError: x and y must have same first dimension, but have shapes (93,) and (78,)]
+        avysd = avysd[ind]
+
+
+    span = 42/len(y)
+    
+
+    l = loess(t,y)
+    
+    
+    # MODEL and CONTROL. Essential for replicating the results from the R script.
+    #
+    # https://has2k1.github.io/scikit-misc/stable/generated/skmisc.loess.loess_model.html#skmisc.loess.loess_model
+    # https://has2k1.github.io/scikit-misc/stable/generated/skmisc.loess.loess_control.html#skmisc.loess.loess_control
+   
+    l.model.span = span
+    l.model.degree = 1
+    l.control.iterations = it # must be 1 for replicating the R-script
+    l.control.surface = "direct"
+    l.control.statistics = "exact"
+
+    l.fit()
+    pred = l.predict(t, stderror=True)
+    conf = pred.confidence()
+
+
+    #ste = pred.stderr
+    loess_values = pred.values
+    ll = conf.lower
+    ul = conf.upper
+    
+    return t, loess_values, ll, ul

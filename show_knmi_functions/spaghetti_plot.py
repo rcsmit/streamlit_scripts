@@ -1,11 +1,21 @@
 import pandas as pd
 import streamlit as st
-from utils import get_data
+from show_knmi_functions.utils import get_data
 import plotly.graph_objects as go
-import datetime as dt
 
 
-def spaghetti_plot(df, what):
+def spaghetti_plot(df, what, wdw):
+    """wrapper for spaghetti plot since show_knmi calles the function with what as list
+
+    Args:
+        df (df): _description_
+        what (list): _description_
+        wdw (int) : window for smoothing the 95% interval
+    """    
+    for w in what:
+        spaghetti_plot_(df, w, wdw)
+
+def spaghetti_plot_(df, what, wdw):
     """Spaghetti plot,
        inspired by https://towardsdatascience.com/make-beautiful-and-useful-spaghetti-plots-with-python-ec4269d7e8c9
        but with a upper-and lowerbound per day (later smoothed)
@@ -13,6 +23,7 @@ def spaghetti_plot(df, what):
     Args:
         df (df): dataframe with info. Date is in 'YYYYMMDD'
         what (str): which column to use
+        wdw (int) : window for smoothing the 95% interval
     """    
     df['date'] = df['YYYYMMDD']
     df['day_of_year'] = df['date'].dt.strftime('%j')
@@ -28,7 +39,7 @@ def spaghetti_plot(df, what):
 
     # smooth the upper and lowerbound. Otherwise it's very ugly/jagged
     for b in ['upper_bound', 'lower_bound']:
-        pivot_df[b] = pivot_df[b].rolling(9, center=True).mean()
+        pivot_df[b] = pivot_df[b].rolling(wdw, center=True).mean()
     lw = pivot_df["lower_bound"]
     up = pivot_df["upper_bound"]
     pivot_df=pivot_df.reset_index()
@@ -98,7 +109,7 @@ def spaghetti_plot(df, what):
 def main():
     url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/result.csv" 
     df = get_data(url)
-    spaghetti_plot(df, 'temp_avg')
+    spaghetti_plot(df, ['temp_avg'])
 
 if __name__ == "__main__":
     main()

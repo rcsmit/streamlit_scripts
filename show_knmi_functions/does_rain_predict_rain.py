@@ -2,7 +2,7 @@ import pandas as pd
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
-from utils import get_data
+from show_knmi_functions.utils import get_data
 
 def does_rain_predict_rain(df):
     """reproducing 

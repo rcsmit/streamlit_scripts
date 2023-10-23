@@ -59,20 +59,6 @@ def show_plot_plotly(title, what_to_show, t, values_, trend, trendlb, trendub, a
         line=dict(width=1, color="rgba(255, 0, 255, 1)"),
     )
     
-    loess_low = go.Scatter(
-        name=f"{what_to_show} Loess low",
-        x=t,
-        y=trendlb,
-        mode="lines",
-        line=dict(width=0.7, color="rgba(255, 0, 255, 0.5)"),
-    )
-    loess_high = go.Scatter(
-        name=f"{what_to_show} Loess high",
-        x=t,
-        y=trendub,
-        mode="lines",
-        line=dict(width=0.7, color="rgba(255, 0, 255, 0.5)"),
-    )
     # Create a filled area plot for confidence interval
     confidence_trace = go.Scatter(x=np.concatenate([t, t[::-1]]),
                             y=np.concatenate([trendub, trendlb[::-1]]),

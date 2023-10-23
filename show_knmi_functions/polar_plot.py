@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 # import matplotlib
 from matplotlib.backends.backend_agg import RendererAgg
 from matplotlib.animation import FuncAnimation
-from utils import get_data
+from show_knmi_functions.utils import get_data
 _lock = RendererAgg.lock
 import sys # for the progressbar
 import shutil # for the progressbar

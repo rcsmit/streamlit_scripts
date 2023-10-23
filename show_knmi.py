@@ -11,6 +11,7 @@ from show_knmi_functions.show_plot import show_plot
 from show_knmi_functions.plot_percentiles import plot_percentiles
 from show_knmi_functions.show_aantal_keren import show_aantal_keren
 from show_knmi_functions.show_per_maand import show_per_maand
+from show_knmi_functions.spaghetti_plot import spaghetti_plot
 
 # INSPRIATION : https://weatherspark.com/m/52666/10/Average-Weather-in-October-in-Utrecht-Netherlands
 # https://radumas.info/blog/tutorial/2017/04/17/percentile-test.html
@@ -23,7 +24,7 @@ def getdata_wrapper(stn, fromx, until):
     #url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\de_bilt_1901_2023_no_header.csv"
     #url = url_local if platform.processor() else url_knmi
     #header = 0  if platform.processor() else None
-    df = get_data(fromx, until, url)
+    df = get_data(url)
     
     if platform.processor():
         df = df[(df["YYYYMMDD"] >= fromx) & (df["YYYYMMDD"] <= until)]
@@ -38,7 +39,7 @@ def interface():
         df, het weerstation, begindatum en einddatum (laatste drie als string)
     """
     mode = st.sidebar.selectbox(
-        "Modus (kies HELP voor hulp)", ["doorlopend per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", "per maand in div jaren", "percentiles", "polar plot/radar chart", "does rain predict rain", "show weerstations", "help"], index=0
+        "Modus (kies HELP voor hulp)", ["doorlopend per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", "spaghetti plot", "per maand in div jaren", "percentiles", "polar plot/radar chart", "does rain predict rain", "show weerstations", "help"], index=0
     )
    
     weer_stations = get_weerstations()
@@ -97,7 +98,9 @@ def interface():
             wdw_ci = st.sidebar.slider("Window confidence intervals", 1, 100, 20)
         else:
             wdw_ci = 1
-
+        show_loess =  st.sidebar.selectbox(
+            "Show loess", [True, False], index=1
+            )
         show_parts =  st.sidebar.selectbox(
             "Show parts", [True, False], index=0
             )
@@ -107,13 +110,11 @@ def interface():
             no_of_parts = None
         groupby_ = st.sidebar.selectbox("Groupby", [True, False], index=1)
     else:
-        wdw, wdw2,sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type,show_ci, wdw_ci,show_parts, no_of_parts, groupby_ = None,None,None,"neerslag_etmaalsom",None,None,None,None,None,None,None, None
+        wdw, wdw2,sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type,show_ci,show_loess, wdw_ci,show_parts, no_of_parts, groupby_ = None,None,None,"neerslag_etmaalsom",None,None,None,None,None,None,None, None, None
 
-    return stn, from_, until_, mode, groupby_, wdw, wdw2,sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type,show_ci, wdw_ci,show_parts, no_of_parts
+    return stn, from_, until_, mode, groupby_, wdw, wdw2,sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type,show_ci, show_loess, wdw_ci,show_parts, no_of_parts
     
-
-
-def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, wdw_ci,show_parts, no_of_parts):
+def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, show_loess, wdw_ci,show_parts, no_of_parts):
     what_to_show_as_txt = list_to_text(what_to_show)
     FROM, UNTIL = check_from_until(from_, until_)
 
@@ -145,11 +146,13 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
         show_per_maand(df, gekozen_weerstation, what_to_show, "per_dag", graph_type)
         datefield = None
         title = f"{what_to_show_as_txt} van {from_} - {until_} in {gekozen_weerstation}"
+    elif mode == "spaghetti plot":
+        wdw = st.sidebar.number_input("window for smoothing the 95% interval",1,len(df),9)
+        spaghetti_plot(df, what_to_show, wdw)
     elif mode == "per maand in div jaren":
         show_per_maand(df, gekozen_weerstation, what_to_show, "maandgem", graph_type)
         datefield = None
         title = f"{what_to_show_as_txt} van {from_} - {until_} in {gekozen_weerstation}"
-    
     elif mode == "aantal keren":
         show_aantal_keren(df, gekozen_weerstation, what_to_show)
     elif mode == "percentiles":
@@ -217,20 +220,15 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
                 st.sidebar.write(
                     "Zorg ervoor dat de datum in de gekozen tijdrange valt voor het beste resultaat "
                 )
-        show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show, graph_type, centersmooth, show_ci, wdw_ci, show_parts, no_of_parts)
-        #try:
+        show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show, graph_type, centersmooth, show_ci, show_loess, wdw_ci, show_parts, no_of_parts)
+        
         show_warmingstripes(df, title)
-        # except:
-        #     pass
+
     st.sidebar.write(f"URL to get data: {url}")
-  
-
-
-
 
 def main():
-    stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, wdw_ci,show_parts, no_of_parts = interface()
-    action(stn, from_, until_, mode, groupby_,  wdw, wdw2,sma2_how,  what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, wdw_ci,show_parts, no_of_parts)
+    stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, show_loess, wdw_ci,show_parts, no_of_parts = interface()
+    action(stn, from_, until_, mode, groupby_,  wdw, wdw2,sma2_how,  what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, show_loess,wdw_ci,show_parts, no_of_parts)
 
 if __name__ == "__main__":
     main()

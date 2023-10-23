@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import RendererAgg
 from matplotlib.colors import ListedColormap
 _lock = RendererAgg.lock
-from utils import get_data
+from show_knmi_functions.utils import get_data
 def show_warmingstripes(df_, title):
     print (df_)
     df = df_.groupby(df_["YYYY"], sort=True).mean(numeric_only = True).reset_index()

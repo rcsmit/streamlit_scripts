@@ -3,7 +3,7 @@ import numpy as np
 import streamlit as st
 from datetime import datetime
 import plotly.graph_objects as go
-from utils import get_data
+from show_knmi_functions.utils import get_data
 
 def show_per_maand(df, gekozen_weerstation, what_to_show_, groeperen, graph_type):
     what_to_show_ = what_to_show_ if type(what_to_show_) == list else [what_to_show_]
