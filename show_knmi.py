@@ -102,7 +102,7 @@ def interface():
             "Show loess", [True, False], index=1
             )
         show_parts =  st.sidebar.selectbox(
-            "Show parts", [True, False], index=0
+            "Show parts", [True, False], index=1
             )
         if show_parts:
             no_of_parts = st.sidebar.slider("Number of parts", 1, 10, 5)
