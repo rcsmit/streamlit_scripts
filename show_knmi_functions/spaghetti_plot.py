@@ -4,7 +4,7 @@ from show_knmi_functions.utils import get_data
 import plotly.graph_objects as go
 
 
-def spaghetti_plot(df, what, wdw, sd_all, sd_day, spaghetti, mean_, last_year):
+def spaghetti_plot(df, what, wdw, sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles):
     """wrapper for spaghetti plot since show_knmi calles the function with what as list
 
     Args:
@@ -13,9 +13,9 @@ def spaghetti_plot(df, what, wdw, sd_all, sd_day, spaghetti, mean_, last_year):
         wdw (int) : window for smoothing the 95% interval
     """    
     for w in what:
-        spaghetti_plot_(df, w, wdw,  sd_all, sd_day, spaghetti, mean_, last_year)
+        spaghetti_plot_(df, w, wdw,  sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles)
 
-def spaghetti_plot_(df, what, wdw,  sd_all, sd_day, spaghetti, mean_, last_year):
+def spaghetti_plot_(df, what, wdw,  sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles):
     """Spaghetti plot,
        inspired by https://towardsdatascience.com/make-beautiful-and-useful-spaghetti-plots-with-python-ec4269d7e8c9
        but with a upper-and lowerbound per day (later smoothed)
@@ -48,6 +48,17 @@ def spaghetti_plot_(df, what, wdw,  sd_all, sd_day, spaghetti, mean_, last_year)
 
         return
     
+    # Assuming pivot_df is your DataFrame
+    def calculate_quantiles(row):
+        return pd.Series([row.quantile(0.025),row.quantile(0.25), row.quantile(0.5), row.quantile(0.75),row.quantile(0.975)])
+
+    quantiles = pivot_df.iloc[:, :-3].apply(calculate_quantiles, axis=1)
+    quantiles.columns = ['2_5_percentile', '25th Percentile', 'Median (50th Percentile)', '75th Percentile','97_5_percentile']
+
+    # Add the quantiles back to your DataFrame
+    pivot_df = pd.concat([pivot_df, quantiles], axis=1)
+
+# Now, pivot_df contains the original columns along with the quantiles
     print (pivot_df)
     pivot_df['upper_bound'] = pivot_df['mean'] + 2 * pivot_df['std']
     pivot_df['lower_bound'] = pivot_df['mean'] - 2 * pivot_df['std']
@@ -56,7 +67,7 @@ def spaghetti_plot_(df, what, wdw,  sd_all, sd_day, spaghetti, mean_, last_year)
     pivot_df['lower_bound_all'] = pivot_df['mean'] - 2 * pivot_df['std_all']
 
     # smooth the upper and lowerbound. Otherwise it's very ugly/jagged
-    for b in ['upper_bound', 'lower_bound','upper_bound_all','lower_bound_all']:
+    for b in ['upper_bound', 'lower_bound','upper_bound_all','lower_bound_all','2_5_percentile', '25th Percentile', 'Median (50th Percentile)', '75th Percentile','97_5_percentile']:
         pivot_df[b] = pivot_df[b].rolling(wdw, center=True).mean()
     lw = pivot_df["lower_bound"]
     up = pivot_df["upper_bound"]
@@ -64,9 +75,9 @@ def spaghetti_plot_(df, what, wdw,  sd_all, sd_day, spaghetti, mean_, last_year)
 
     fig = go.Figure()
     if spaghetti:
-        for column in pivot_df.columns[1:-7]:
+        for column in pivot_df.columns[1:-12]:
         
-            if column == pivot_df.columns[-8] and last_year:
+            if column == pivot_df.columns[-13] and last_year:
                 # line = dict(width=1,
                 #             color='rgba(255, 0, 0, 1)'
                 #             )
@@ -82,6 +93,32 @@ def spaghetti_plot_(df, what, wdw,  sd_all, sd_day, spaghetti, mean_, last_year)
                                 mode='lines',
                                 line=line,
                                 ))
+       
+    if show_quantiles:
+        fig.add_trace(go.Scatter(
+                            name=f"low quantile per day",
+                            x=pivot_df["date_1900"],
+                            #y = pd.concat([lw,up[::-1]]),
+                            y=pivot_df["2_5_percentile"], #+pivot_df["upper_bound"][::-1],
+                            mode='lines',
+                            fill='tozeroy',
+                            fillcolor='rgba(255, 255, 255, 0.0)',
+                            line=dict(width=1,
+                            color='rgba(255, 128, 0, 1.0)'
+                            ),
+                            ))
+        
+        fig.add_trace(go.Scatter(
+                            name=f"high quantile per day",
+                            x=pivot_df["date_1900"],
+                            y=pivot_df["97_5_percentile"],
+                            mode='lines',
+                            fill='tonexty',
+                            fillcolor='rgba(211, 211, 211, 0.5)',
+                            line=dict(width=1,
+                            color='rgba(255, 128, 0, 1.0)'
+                            ),
+                            ))
     if sd_day:
         fig.add_trace(go.Scatter(
                             name=f"low CI per day",
@@ -145,7 +182,7 @@ def spaghetti_plot_(df, what, wdw,  sd_all, sd_day, spaghetti, mean_, last_year)
                         ))
     
     if last_year:
-        ly = pivot_df.columns[-8]
+        ly = pivot_df.columns[-13]
         line = dict(width=1,
                     color='rgba(255, 0, 0, 1)'
                     )

@@ -7,8 +7,28 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import RendererAgg
 _lock = RendererAgg.lock
 import plotly.graph_objects as go
+import plotly.express as px
 
 def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_type, centersmooth, show_ci, show_loess, wdw_ci, show_parts, no_of_parts):
+    """_summary_
+
+    Args:
+        df (_type_): _description_
+        datefield (_type_): _description_
+        title (_type_): _description_
+        wdw (_type_): _description_
+        wdw2 (_type_): _description_
+        sma2_how (_type_): _description_
+        what_to_show_ (_type_): _description_
+        graph_type (_type_): _description_
+        centersmooth (_type_): _description_
+        show_ci (_type_): _description_
+        show_loess (_type_): _description_
+        wdw_ci (_type_): _description_
+        show_parts (_type_): _description_
+        no_of_parts (_type_): _description_
+    """    
+    
     what_to_show_ = what_to_show_ if type(what_to_show_) == list else [what_to_show_]
     color_list = [
         "#02A6A8",
@@ -265,7 +285,10 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
         fig.update_layout(xaxis=dict(tickformat="%d-%m-%Y"))
         st.plotly_chart(fig, use_container_width=True)
         st.info(f"{what_to_show_x} | mean = {avg} | std= {std} | quantiles (68%) [{lower68}, {upper68}] | quantiles (95%) [{lower95}, {upper95}]")
-            
+
+       
+        fig = px.histogram(df, x=what_to_show_x, title=f'Histogram of Column {what_to_show_x}')
+        st.plotly_chart(fig)  
     #df =df[[datefield,what_to_show_[0]]]
     #st.write(df)
 def main():

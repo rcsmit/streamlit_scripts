@@ -154,6 +154,9 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
         mean_ =  st.sidebar.selectbox(
             "Show mean value", [True, False], index=0
             )
+        show_quantiles =  st.sidebar.selectbox(
+            "Show quantiles [2.5-97.5]", [True, False], index=1
+            )
         sd_all =  st.sidebar.selectbox(
             "Show CI calculated with a stdev overall", [True, False], index=1
             )
@@ -163,7 +166,7 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
         spaghetti =  st.sidebar.selectbox(
             "Show spaghetti", [True, False], index=0
             )
-        spaghetti_plot(df, what_to_show, wdw,sd_all, sd_day, spaghetti, mean_, last_year)
+        spaghetti_plot(df, what_to_show, wdw,sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles)
     elif mode == "per maand in div jaren":
         show_per_maand(df, gekozen_weerstation, what_to_show, "maandgem", graph_type)
         datefield = None
@@ -231,6 +234,7 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
                 df = df[
                     (df["YYYYMMDD"].dt.month == month) & (df["YYYYMMDD"].dt.day == day)
                 ]
+                
                 title = f"{what_to_show_as_txt}  op {find_date_for_title(day,month)} van {from_[:4]} - {until_[:4]} in {gekozen_weerstation}"
                 st.sidebar.write(
                     "Zorg ervoor dat de datum in de gekozen tijdrange valt voor het beste resultaat "
