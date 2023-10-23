@@ -90,6 +90,7 @@ def spaghetti_plot_(df, what, wdw,  sd_all, sd_day, spaghetti, mean_, last_year,
                                 name=column,
                                 x=pivot_df["date_1900"],
                                 y=pivot_df[column],
+                                showlegend=False,
                                 mode='lines',
                                 line=line,
                                 ))
