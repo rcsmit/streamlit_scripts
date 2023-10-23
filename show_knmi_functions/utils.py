@@ -97,6 +97,10 @@ def get_data(url):
         # if platform.processor(): 
         #     df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"], format="%Y-%m-%d")
         # else:
+        
+        # df = df[pd.notna(df[what])]
+        # df = df.replace('', None)
+        # df = df.replace('     ', None)
         print (df.dtypes)
         print (df)
         

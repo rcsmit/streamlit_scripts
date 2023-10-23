@@ -27,13 +27,25 @@ def spaghetti_plot_(df, what, wdw):
     """    
     df['date'] = df['YYYYMMDD']
     df['day_of_year'] = df['date'].dt.strftime('%j')
+
+    df = df[pd.notna(df[what])]
+    df = df.replace('', None)
+    df = df.replace('     ', None)
     date_str = df['DD'].astype(str).str.zfill(2) + '-' + df['MM'].astype(str).str.zfill(2) + '-1900'
     #filter out rows with February 29 dates (gives error with converting to datetime)
     df = df[~((df['date'].dt.month == 2) & (df['date'].dt.day == 29))]
     df['date_1900'] = pd.to_datetime(date_str, format='%d-%m-%Y', errors='coerce')
     pivot_df = df.pivot(index='date_1900', columns='YYYY', values=what)
-    pivot_df['mean'] = pivot_df.mean(axis=1) 
-    pivot_df['std'] = pivot_df.std(axis=1) 
+    pivot_df = pivot_df.replace('', None)
+    print (pivot_df)
+
+    try:
+        pivot_df['mean'] = pivot_df.mean(axis=1) 
+        pivot_df['std'] = pivot_df.std(axis=1) 
+    except:
+        st.error(f"There are empty values in {what}")
+
+        return
     pivot_df['upper_bound'] = pivot_df['mean'] + 2 * pivot_df['std']
     pivot_df['lower_bound'] = pivot_df['mean'] - 2 * pivot_df['std']
 
