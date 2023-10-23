@@ -148,7 +148,22 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
         title = f"{what_to_show_as_txt} van {from_} - {until_} in {gekozen_weerstation}"
     elif mode == "spaghetti plot":
         wdw = st.sidebar.number_input("window for smoothing the 95% interval",1,len(df),9)
-        spaghetti_plot(df, what_to_show, wdw)
+        last_year =  st.sidebar.selectbox(
+            "Show / highlight last year", [True, False], index=0
+            )
+        mean_ =  st.sidebar.selectbox(
+            "Show mean value", [True, False], index=0
+            )
+        sd_all =  st.sidebar.selectbox(
+            "Show CI calculated with a stdev overall", [True, False], index=1
+            )
+        sd_day =  st.sidebar.selectbox(
+            "Show CI calculated with a stdev per day", [True, False], index=1
+            )
+        spaghetti =  st.sidebar.selectbox(
+            "Show spaghetti", [True, False], index=0
+            )
+        spaghetti_plot(df, what_to_show, wdw,sd_all, sd_day, spaghetti, mean_, last_year)
     elif mode == "per maand in div jaren":
         show_per_maand(df, gekozen_weerstation, what_to_show, "maandgem", graph_type)
         datefield = None
