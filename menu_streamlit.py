@@ -54,7 +54,11 @@ def main():
                 ["27. Waiting times", "waiting_times_disney_OO"],
                 ["28. Extra pension", "extra_pension_OOP"],
                 ["29. Studyloan", "studyloan"],
+<<<<<<< HEAD
                 ["30. Gasverbruik", "gas_stand_vs_temp"] 
+=======
+                ["30. Gasverbruik", "gas_stand_vs_temp"]
+>>>>>>> 90208a63118c9203ec27d5fcf62ca161a5e229df
                 ]
         #blabla
         # for file in arr:
