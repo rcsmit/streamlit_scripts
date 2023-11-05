@@ -1,0 +1,264 @@
+import pandas as pd
+import plotly.express as px
+
+import streamlit as st
+from scipy.stats import linregress
+import statsmodels.api as sm
+
+def interface():
+    what = st.sidebar.selectbox("What to show",['temp_min','temp_avg','temp_max','graad_dagen',  'T10N', 'zonneschijnduur', 'perc_max_zonneschijnduur', 'glob_straling', 'neerslag_duur', 'neerslag_etmaalsom', 'RH_min', 'RH_max' ],1)
+    window_size = st.sidebar.number_input("Window size",1,100,9)
+    if what =="graad_dagen":
+        afkap_def = 999
+    else:
+        afkap_def = 18
+    afkapgrens_scatter = st.sidebar.number_input("Afkapgrens scatter ",1,999,afkap_def)
+    return what,window_size,afkapgrens_scatter
+
+def calculate_graad_dagen(df_nw_beerta, what):
+
+    """ CaLculate graaddagen. 
+        https://www.olino.org/blog/nl/articles/2009/12/14/het-rekenen-met-graaddagen/
+  
+    Returns:
+        _type_: _description_
+    """    
+    def calculate_graad_dagen_(row):
+        month = row["YYYYMMDD"].month
+        if 4 <= month <= 9:
+            factor = 0.8
+        elif month in [3, 10]:
+            factor = 1.0
+        else:
+            factor = 1.1
+
+        return factor * row['graad_dagen']
+    
+    if what == "graad_dagen":
+        what = "temp_avg"
+    df_nw_beerta["graad_dagen"] = 18 - df_nw_beerta[what]
+    df_nw_beerta["graad_dagen"] = df_nw_beerta["graad_dagen"].apply(lambda x: max(0, x))
+
+    df_nw_beerta["graad_dagen"] = df_nw_beerta.apply(calculate_graad_dagen_, axis=1)
+    return df_nw_beerta
+
+def get_verbruiks_data():
+    excel_file_path = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gasstanden95xxCN5.xlsx" # r"C:\Users\rcxsm\Documents\xls\gasstanden95xxCN5.xlsx"
+    df = pd.read_excel(excel_file_path)
+    df['week_number'] = df['datum'].dt.isocalendar().week
+    df['year_number'] = df['datum'].dt.isocalendar().year
+    return df
+
+def get_weather_info(what):
+    url_nw_beerta = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/nw_beerta.csv"
+    df_nw_beerta =  pd.read_csv(
+                url_nw_beerta,
+                delimiter=",",
+                header=None,
+                comment="#",
+                low_memory=False,
+            )
+    column_replacements_knmi = [
+            [0, "STN"],
+            [1, "YYYYMMDD"],
+            [2, "temp_avg"],
+            [3, "temp_min"],
+            [4, "temp_max"],
+            [5, "T10N"],
+            [6, "zonneschijnduur"],
+            [7, "perc_max_zonneschijnduur"],
+            [8, "glob_straling"],
+            [9, "neerslag_duur"],
+            [10, "neerslag_etmaalsom"],
+            [11, "RH_min"],
+            [12, "RH_max"]
+        ]
+    column_replacements = column_replacements_knmi
+    for c in column_replacements:
+        df_nw_beerta = df_nw_beerta.rename(columns={c[0]: c[1]})
+    to_divide_by_10 = [
+            "temp_avg",
+            "temp_min",
+            "temp_max",
+            "zonneschijnduur",
+            "neerslag_duur",
+            "neerslag_etmaalsom",
+        ]
+        
+    #divide_by_10 = False if platform.processor() else True
+    divide_by_10 = True
+    if divide_by_10:
+        for d in to_divide_by_10:
+            try:
+                df_nw_beerta[d] = df_nw_beerta[d] / 10
+            except:
+                df_nw_beerta[d] = df_nw_beerta[d]
+    df_nw_beerta["YYYYMMDD"] = pd.to_datetime(df_nw_beerta["YYYYMMDD"].astype(str))
+    df_nw_beerta['week_number'] = df_nw_beerta['YYYYMMDD'].dt.isocalendar().week
+    df_nw_beerta['year_number'] = df_nw_beerta['YYYYMMDD'].dt.isocalendar().year
+
+    df_nw_beerta = calculate_graad_dagen(df_nw_beerta, what)
+
+    # Group by 'week_number' and 'year_number' and calculate the average of 'temp_avg'
+    if what =="graad_dagen":
+        result = df_nw_beerta.groupby(['week_number', 'year_number'])[what].sum().reset_index()
+
+    else:
+
+        result = df_nw_beerta.groupby(['week_number', 'year_number']).agg({
+                'temp_avg': 'mean',
+                'temp_min': 'mean',
+                'temp_max': 'mean',
+                'graad_dagen': 'sum',
+                
+                'T10N': 'mean',
+                'zonneschijnduur': 'mean',
+                'perc_max_zonneschijnduur': 'mean',
+                'glob_straling': 'mean',
+                'neerslag_duur': 'mean',
+                'neerslag_etmaalsom': 'mean',
+                'RH_min': 'mean',
+                'RH_max': 'mean' 
+                  }).reset_index()
+    # Display the result
+    print(result)
+    return result
+
+
+def make_scatter(x,y, merged_df):
+    """make a scatter plot, and show correlation and the equation
+
+    Args:
+        x (str): x values-field
+        y (str): y values-field
+        merged_df (str): df
+    """    
+    fig = px.scatter(merged_df, x=x, y=y, hover_data=['year_week'], color='year_number',  trendline='ols')#  trendline_scope="overall", labels={'datum': 'Date', 'verbruik': 'Verbruik'})
+    st.plotly_chart(fig)
+    # Calculate the correlation
+    correlation = merged_df[x].corr(merged_df[y])
+
+    # Perform linear regression to get the equation of the line
+    slope, intercept, r_value, p_value, std_err = linregress(merged_df[x], merged_df[y])
+
+    # Print the correlation and equation of the line
+    st.write(f"Correlation: {correlation:.2f}")
+    st.write(f"Equation of the line: y = {slope:.2f} * x + {intercept:.2f}")
+def multiple_lin_regr(merged_df):
+    """wrapper for the multiple lineair regression
+
+    Args:
+        merged_df (df): df
+    """    
+    st.subheader("Multiple Lineair Regression")
+    y_value, x_values = interface_mulitple_lineair_regression()
+    multiple_lineair_regression(merged_df, x_values, y_value)
+
+def make_plots(what, afkapgrens_scatter, merged_df):
+    """Makes various plots
+
+    Args:
+        df (df): df
+        what (str): what to show
+        afkapgrens_scatter (int): days with a temperature above this, are ignored
+        merged_df (df): df with info
+    """    
+    fig = px.scatter(merged_df, x='year_week', y=[what,'verbruik'], title=f"verbruik en {what} in de tijd")
+    st.plotly_chart(fig)
+
+    fig = px.line(merged_df, x='year_week', y=[f"{what}_sma",'verbruik_sma'], title=f"gladgestreken verbruik en {what} in de tijd")
+    st.plotly_chart(fig)
+
+    df_pivot = merged_df.pivot(index='week_number', columns='year_number', values='verbruik')
+    fig = px.line(df_pivot, labels={'week_number': 'Week Number', 'value': 'Verbruik'}, title="verbruik in verschillende jaren")
+    st.plotly_chart(fig)
+ 
+    df_pivot = merged_df.pivot(index='week_number', columns='year_number', values=what)
+    fig = px.line(df_pivot, labels={'week_number': 'Week Number', 'value': f"{what}"}, title=f"{what} in verschillende jaren")
+    st.plotly_chart(fig)
+
+    merged_df_ = merged_df[merged_df[what] < afkapgrens_scatter]
+    make_scatter(what, 'verbruik', merged_df_)
+    make_scatter(f"{what}_sma", 'verbruik_sma', merged_df_)
+
+def merge_dataframes(df, what, window_size, df_nw_beerta):
+    """Merge the verbruik dataframe with the weather info of Nieuw Beerta
+
+    Args:
+        df (_type_): the dataframe with verbruiks info
+        what (_type_): what to show
+        window_size (_type_): window size for smooth moving average
+        df_nw_beerta (_type_): the dataframe with weather ifno
+
+    Returns:
+        df: merged df
+    """    
+    merged_df = df.merge(df_nw_beerta, on=['year_number', 'week_number'], how='inner')
+    merged_df["year_week"] = merged_df["year_number"].astype(str) +"_" +  merged_df["week_number"].astype(str)
+    merged_df['verbruik_sma'] = merged_df['verbruik'].rolling(window=window_size).mean()
+    merged_df[f"{what}_sma"] = merged_df[what].rolling(window=window_size).mean()
+    return merged_df
+
+
+def interface_mulitple_lineair_regression():
+    """interface for the MLR
+
+    Returns:
+       y_value :
+       x_values :
+    """    
+    y_value = st.selectbox("Y value", ['verbruik'],0)
+    x_values_options = ['temp_avg', 'temp_min','temp_max','graad_dagen', 'T10N', 'zonneschijnduur', 'perc_max_zonneschijnduur', 'glob_straling', 'neerslag_duur', 'neerslag_etmaalsom', 'RH_min', 'RH_max']
+    x_values_default = ['temp_min', 'zonneschijnduur', 'perc_max_zonneschijnduur']
+    x_values = st.multiselect("X values", x_values_options, x_values_default)
+    return y_value,x_values
+
+def multiple_lineair_regression(df_,  x_values, y_value):
+    """Calculates multiple lineair regression. User can choose the Y value and the X values
+
+ 
+        A t-statistic with an absolute value greater than 2 suggests that the coefficient is 
+        statistically significant.
+
+        The p-value associated with each coefficient tests the null hypothesis that the coefficient is zero 
+        (i.e., it has no effect). A small p-value (typically less than 0.05) suggests that the coefficient 
+        is statistically significant.
+        
+        The F-statistic tests the overall significance of the regression model. 
+        A small p-value for the F-statistic indicates that at least one independent variable
+        has a statistically significant effect on the dependent variable.
+    
+    Args:
+        df_ (df): df with info
+        x_values (list): list with the x values 
+        y_value (str): the result variable
+    """    
+   
+   
+    df = df_.dropna(subset=x_values)
+    df = df.dropna(subset=y_value)
+    #df =df[["country","population"]+[y_value]+ x_values]
+      
+    # st.write("**DATA**")
+    # st.write(df)
+    # st.write(f"Length : {len(df)}")
+    x = df[x_values]
+    y = df[y_value]
+  
+    # with statsmodels
+    x = sm.add_constant(x) # adding a constant
+    model = sm.OLS(y, x).fit()
+    st.write("**OUTPUT ORDINARY LEAST SQUARES**")
+    print_model = model.summary()
+    st.write(print_model)
+    
+def main():
+    df = get_verbruiks_data()
+    what, window_size, afkapgrens_scatter = interface()
+    df_nw_beerta = get_weather_info(what)
+    merged_df = merge_dataframes(df, what, window_size, df_nw_beerta)
+    make_plots(what, afkapgrens_scatter, merged_df)
+    multiple_lin_regr(merged_df)
+
+if __name__ == "__main__":
+    main()

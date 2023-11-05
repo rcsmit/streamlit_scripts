@@ -35,7 +35,7 @@ def read():
     Returns:
         df : The dataframe with the data
     """    
-    file = r"C:\Users\rcxsm\Documents\xls\masterfinance_2023.xlsm"
+    file = r"C:\Users\rcxsm\Documents\xls\masterfinance_2023.xlsx"
     #file = r"C:\Users\rcxsm\Documents\python_scripts\python_scripts_rcsmit\input\masterfinance_2023_dummy.xlsm"
     # to be found on
     try:
@@ -63,7 +63,7 @@ def read():
     # df = df[(df['jaar'] == "2023")| (df['jaar'] == "2022") | (df['description'] == "starting balance_2022")]
     
     # de grootboeken kloppen niet als je 2021 toevoegt
-    df = df[(df['jaar'] == "2023")| (df['jaar'] == "2022") |(df['jaar'] == "2021")| (df['description'] == "starting balance_2022")]
+    df = df[(df['jaar'] == "2023")| (df['jaar'] == "2022") | (df['description'] == "starting balance_2022")]
     #df = df[(df['jaar'] == "2023")| (df['jaar'] == "2022") |(df['jaar'] == "2021")| (df['description'] != "STARTING_BALANCE_2022")]
     # Convert all text data in the DataFrame to uppercase
     df = df.apply(lambda x: x.str.upper() if x.dtype == "object" else x)
@@ -534,8 +534,34 @@ def make_graph_daily_trial_balance_totals(df_daily_trial_balance):
     # Render the plot using Streamlit
     st.plotly_chart(fig)
 
+def check_categories_and_maincategories():
+    """Checks the file to see if there are categories with different maincategories, which
+    gives a "duplicates" error in /make_graph_monthly_expenses/
+    
+    """   
+    file_path = r"C:\Users\rcxsm\Documents\xls\masterfinance_2023.xlsx"  # Replace with your file path
+    df = pd.read_excel(file_path, sheet_name='INVOER')
+ 
+    categories = df["category"].unique().tolist()
+   
+    for c in categories:
+        df_=df[df["category"]==c]
+       
+        main_categories = df_["main_category"].unique().tolist()
+        if len(main_categories)>1:
+            print (c)
+            print (main_categories)
 
 def make_graph_monthly_expenses(period, divide_factor, df_):
+    """_summary_
+
+    If it gives an error use /check_categories_and_maincategories/
+
+    Args:
+        period (_type_): _description_
+        divide_factor (_type_): _description_
+        df_ (_type_): _description_
+    """    
     if period == "month":
         st.subheader("Maandelijkse uitgaves/inkomsten")
     else:
@@ -669,4 +695,7 @@ def main():
     df_daily_trial_balance = make_pivot_period_trial_balance(ledger, accounts_source, "daily").T
     make_graph_daily_trial_balance_totals(df_daily_trial_balance)
 
-main()
+if __name__ == "__main__":
+    main()
+    # check_categories_and_maincategories():
+      
