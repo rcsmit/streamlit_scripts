@@ -7,7 +7,7 @@ import statsmodels.api as sm
 
 def interface():
     what = st.sidebar.selectbox("What to show",['temp_min','temp_avg','temp_max','graad_dagen',  'T10N', 'zonneschijnduur', 'perc_max_zonneschijnduur', 'glob_straling', 'neerslag_duur', 'neerslag_etmaalsom', 'RH_min', 'RH_max' ],1)
-    window_size = st.sidebar.number_input("Window size",1,100,9)
+    window_size = st.sidebar.number_input("Window size",1,100,3)
     if what =="graad_dagen":
         afkap_def = 999
     else:
