@@ -58,12 +58,7 @@ def main():
                 ["29. Studyloan", "studyloan"],
                 ["30. Gasverbruik", "gas_stand_vs_temp.py"]
                 ]
-
-    
-        # ["18. Handstand Analyzer", "handstand_analyzer"]
-
-
-    # for file in arr:
+        # for file in arr:
     #     if file[-2:] =="py" and ( file != "welcome.py" and file !="menu_streamlit.py"):
     #         menutext = f"{counter}. {file}"
     #         menutext = menutext.replace("_"," ") # I was too lazy to change it in the list
