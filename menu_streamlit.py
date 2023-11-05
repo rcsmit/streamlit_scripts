@@ -4,9 +4,7 @@ import traceback
 import os
 import platform
 
-
 st.set_page_config(page_title="Streamlit scripts of René Smit")
-
 
 def dynamic_import(module):
     """Import a module stored in a variable
@@ -56,8 +54,9 @@ def main():
                 ["27. Waiting times", "waiting_times_disney_OO"],
                 ["28. Extra pension", "extra_pension_OOP"],
                 ["29. Studyloan", "studyloan"],
-                ["30. Gasverbruik", "gas_stand_vs_temp.py"]
+                ["30. Gasverbruik", "gas_stand_vs_temp"] 
                 ]
+        #blabla
         # for file in arr:
     #     if file[-2:] =="py" and ( file != "welcome.py" and file !="menu_streamlit.py"):
     #         menutext = f"{counter}. {file}"
