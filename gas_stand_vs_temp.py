@@ -4,6 +4,7 @@ import plotly.express as px
 import streamlit as st
 from scipy.stats import linregress
 import statsmodels.api as sm
+from datetime import datetime
 
 def interface():
     what = st.sidebar.selectbox("What to show",['temp_min','temp_avg','temp_max','graad_dagen',  'T10N', 'zonneschijnduur', 'perc_max_zonneschijnduur', 'glob_straling', 'neerslag_duur', 'neerslag_etmaalsom', 'RH_min', 'RH_max' ],1)
@@ -43,14 +44,31 @@ def calculate_graad_dagen(df_nw_beerta, what):
     return df_nw_beerta
 
 def get_verbruiks_data():
-    excel_file_path = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gasstanden95xxCN5.xlsx" # r"C:\Users\rcxsm\Documents\xls\gasstanden95xxCN5.xlsx"
-    df = pd.read_excel(excel_file_path)
+    sheet_id_verbruik = "1j9V-otA53UWaI7-pDS4owU_qtZtjgMK8K5DLaN9kgqk"
+    sheet_name_verbruik = "verbruik"
+    url_verbruik = f"https://docs.google.com/spreadsheets/d/{sheet_id_verbruik}/gviz/tq?tqx=out:csv&sheet={sheet_name_verbruik}"
+    
+    try:
+        # df = pd.read_csv(csv_export_url, delimiter=",", header=0)
+        df = pd.read_csv(url_verbruik, delimiter=",")
+    except:
+        st.error("Error reading verbruik")
+        st.stop()
+    
+
+    # excel_file_path = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gasstanden95xxCN5.xlsx" # r"C:\Users\rcxsm\Documents\xls\gasstanden95xxCN5.xlsx"
+    # df = pd.read_excel(excel_file_path)
+    df["datum"] = pd.to_datetime(df["datum"].astype(str),  format='%d/%m/%Y')
     df['week_number'] = df['datum'].dt.isocalendar().week
     df['year_number'] = df['datum'].dt.isocalendar().year
     return df
 
 def get_weather_info(what):
-    url_nw_beerta = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/nw_beerta.csv"
+    current_datetime = datetime.now()
+    formatted_date = current_datetime.strftime("%Y%m%d")
+
+    url_nw_beerta = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns=260&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start=20190202&end={formatted_date}"
+    #url_nw_beerta = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/nw_beerta.csv"
     df_nw_beerta =  pd.read_csv(
                 url_nw_beerta,
                 delimiter=",",
@@ -193,7 +211,7 @@ def merge_dataframes(df, what, window_size, df_nw_beerta):
     Returns:
         df: merged df
     """    
-    merged_df = df.merge(df_nw_beerta, on=['year_number', 'week_number'], how='inner')
+    merged_df = df.merge(df_nw_beerta, on=['year_number', 'week_number'], how='outer')
     merged_df["year_week"] = merged_df["year_number"].astype(str) +"_" +  merged_df["week_number"].astype(str)
     merged_df['verbruik_sma'] = merged_df['verbruik'].rolling(window=window_size).mean()
     merged_df[f"{what}_sma"] = merged_df[what].rolling(window=window_size).mean()
@@ -258,7 +276,8 @@ def main():
     df_nw_beerta = get_weather_info(what)
     merged_df = merge_dataframes(df, what, window_size, df_nw_beerta)
     make_plots(what, afkapgrens_scatter, merged_df)
-    multiple_lin_regr(merged_df)
+    if what !="graad_dagen":
+        multiple_lin_regr(merged_df)
 
 if __name__ == "__main__":
     main()

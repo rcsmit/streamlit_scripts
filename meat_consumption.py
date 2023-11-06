@@ -8,7 +8,7 @@ import plotly.express as px
 
 from scipy.stats import linregress
 
-# from sklearn import linear_model
+from sklearn import linear_model
 
 import statsmodels.api as sm
 
@@ -72,6 +72,7 @@ def get_data(join_how):
     url_education_mean = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/mean-years-of-schooling-long-run.csv"
     url_education_expected = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/expected-years-of-schooling.csv"
     
+   
     # url_country = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\country_codes.csv"
     # url_meat = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption.csv"
     # url_gm = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gapminder_data_graphs.csv"
@@ -108,6 +109,9 @@ def get_data(join_how):
 
     df_health = pd.read_csv(url_health, delimiter=',')
     df_health = df_health[["health_eff_index_rank" ,"country","health_eff_index"]]
+   
+    # https://ourworldindata.org/grapher/mean-years-of-schooling-long-run
+    # https://ourworldindata.org/grapher/expected-years-of-schooling-vs-share-in-extreme-poverty
    
     df_education_mean =  pd.read_csv(url_education_mean, delimiter=',')
     df_education_mean = df_education_mean[df_education_mean["year"] == 2020]
@@ -291,6 +295,29 @@ def multiple_lineair_regression(df_, show_log_x, show_log_y):
     print_wls_model = wls_model.summary()
     st.write(print_wls_model)
 
+def multiple_lineair_regression_sklearn(df_, show_log_x, show_log_y):
+    """Calculates multiple lineair regression. User can choose the Y value and the X values
+
+    Args:
+        df_ (df): df with info
+    """    
+    st.subheader("Multiple Lineair Regression")
+    y_value = st.selectbox("Y value", ['life_exp',"life_exp_birth","life_exp_5","mort_under_5"],1)
+    x_values_options =  ["meat_cons","cal_day","gdpppp _2011","urban_pop","bmi_over_30","cho_crops","prim_educ_over_25","health_eff_index_rank" ,"health_eff_index","hdi_index","co2_consump","gdp_y","services", 'education_index', 'schooling_mean', 'schooling_expected']
+    x_values_default = ['meat_cons',"cal_day","gdpppp _2011","urban_pop","bmi_over_30","cho_crops", 'health_eff_index','education_index']
+    x_values = st.multiselect("X values", x_values_options, x_values_default)
+    
+   
+    df = df_.dropna(subset=x_values)
+    df = df.dropna(subset=y_value)
+    df =df[["country","population"]+[y_value]+ x_values]
+    if show_log_x:
+        for c in x_values:
+            df[c] = np.log(df[c])
+       
+    if show_log_y:
+        df[y_value] = np.log(df[y_value])
+
 def show_footer():
     """Shows the footer
     """    
@@ -349,7 +376,8 @@ def main():
     """    
     st.header("Meat consumption vs life expectancy")
     st.info("REPRODUCING https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8881926/")
-    join_how = "outer"
+    join_how = "inner"
+
     df = get_data(join_how)
     df["continent"].fillna("UNKNOWN", inplace=True)
     df = df.dropna(subset="iso_2")
@@ -358,6 +386,7 @@ def main():
     make_scatterplot(df, x, y, show_log_x,show_log_y,trendline_per_continent)
     correlation_matrix(df,show_log_x, show_log_y)
     multiple_lineair_regression(df, show_log_x, show_log_y)
+    multiple_lineair_regression_sklearn(df, show_log_x, show_log_y)
     show_footer()
 
 if __name__ == "__main__":
