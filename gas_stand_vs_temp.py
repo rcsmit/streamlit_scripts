@@ -57,14 +57,17 @@ def get_verbruiks_data():
         try:
             # df = pd.read_csv(csv_export_url, delimiter=",", header=0)
             df = pd.read_csv(url_verbruik, delimiter=",")
+            df["datum"] = pd.to_datetime(df["datum"].astype(str),  format='%d/%m/%Y')
+    
         except:
             st.error("Error reading verbruik")
             st.stop()
-    
+
     else:
         excel_file_path = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gasstanden95xxCN5.xlsx" # r"C:\Users\rcxsm\Documents\xls\gasstanden95xxCN5.xlsx"
         df = pd.read_excel(excel_file_path)
-    df["datum"] = pd.to_datetime(df["datum"].astype(str),  format='%d/%m/%Y')
+        df["datum"] = pd.to_datetime(df["datum"].astype(str),  format='%Y-%m-%d')
+    
     df['week_number'] = df['datum'].dt.isocalendar().week
     df['year_number'] = df['datum'].dt.isocalendar().year
     return df
@@ -156,7 +159,9 @@ def make_scatter(x,y, df):
         x (str): x values-field
         y (str): y values-field
         merged_df (str): df
-    """    
+    """   
+    st.subheader("Met trendlijnen")
+   
     fig = px.scatter(df, x=x, y=y, hover_data=['year_week'], color='year_number',  trendline='ols')#  trendline_scope="overall", labels={'datum': 'Date', 'verbruik': 'Verbruik'})
     st.plotly_chart(fig)
     # Calculate the correlation
@@ -169,6 +174,7 @@ def make_scatter(x,y, df):
     st.write(f"Correlation: {correlation:.2f}")
     st.write(f"Equation of the line: y = {slope:.2f} * x + {intercept:.2f}")
 
+    st.subheader("Met betrouwbaarheidsintervallen")
   
     # Create temperature bins (1-degree bins)
     bin_width = 0.5
