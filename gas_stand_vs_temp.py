@@ -5,6 +5,10 @@ import streamlit as st
 from scipy.stats import linregress
 import statsmodels.api as sm
 from datetime import datetime
+import scipy.stats as stats
+import numpy as np
+from skmisc.loess import loess
+
 
 def interface():
     what = st.sidebar.selectbox("What to show",['temp_min','temp_avg','temp_max','graad_dagen',  'T10N', 'zonneschijnduur', 'perc_max_zonneschijnduur', 'glob_straling', 'neerslag_duur', 'neerslag_etmaalsom', 'RH_min', 'RH_max' ],1)
@@ -44,20 +48,22 @@ def calculate_graad_dagen(df_nw_beerta, what):
     return df_nw_beerta
 
 def get_verbruiks_data():
-    sheet_id_verbruik = "1j9V-otA53UWaI7-pDS4owU_qtZtjgMK8K5DLaN9kgqk"
-    sheet_name_verbruik = "verbruik"
-    url_verbruik = f"https://docs.google.com/spreadsheets/d/{sheet_id_verbruik}/gviz/tq?tqx=out:csv&sheet={sheet_name_verbruik}"
+    google_sheets = False
+    if google_sheets:
+        sheet_id_verbruik = "1j9V-otA53UWaI7-pDS4owU_qtZtjgMK8K5DLaN9kgqk"
+        sheet_name_verbruik = "verbruik"
+        url_verbruik = f"https://docs.google.com/spreadsheets/d/{sheet_id_verbruik}/gviz/tq?tqx=out:csv&sheet={sheet_name_verbruik}"
+        
+        try:
+            # df = pd.read_csv(csv_export_url, delimiter=",", header=0)
+            df = pd.read_csv(url_verbruik, delimiter=",")
+        except:
+            st.error("Error reading verbruik")
+            st.stop()
     
-    try:
-        # df = pd.read_csv(csv_export_url, delimiter=",", header=0)
-        df = pd.read_csv(url_verbruik, delimiter=",")
-    except:
-        st.error("Error reading verbruik")
-        st.stop()
-    
-
-    # excel_file_path = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gasstanden95xxCN5.xlsx" # r"C:\Users\rcxsm\Documents\xls\gasstanden95xxCN5.xlsx"
-    # df = pd.read_excel(excel_file_path)
+    else:
+        excel_file_path = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gasstanden95xxCN5.xlsx" # r"C:\Users\rcxsm\Documents\xls\gasstanden95xxCN5.xlsx"
+        df = pd.read_excel(excel_file_path)
     df["datum"] = pd.to_datetime(df["datum"].astype(str),  format='%d/%m/%Y')
     df['week_number'] = df['datum'].dt.isocalendar().week
     df['year_number'] = df['datum'].dt.isocalendar().year
@@ -66,9 +72,9 @@ def get_verbruiks_data():
 def get_weather_info(what):
     current_datetime = datetime.now()
     formatted_date = current_datetime.strftime("%Y%m%d")
-    
-    #url_nw_beerta = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns=260&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start=20190202&end={formatted_date}"
-    url_nw_beerta = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/nw_beerta.csv"
+
+    url_nw_beerta = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns=260&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start=20190202&end={formatted_date}"
+    #url_nw_beerta = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/nw_beerta.csv"
     df_nw_beerta =  pd.read_csv(
                 url_nw_beerta,
                 delimiter=",",
@@ -143,7 +149,7 @@ def get_weather_info(what):
     return result
 
 
-def make_scatter(x,y, merged_df):
+def make_scatter(x,y, df):
     """make a scatter plot, and show correlation and the equation
 
     Args:
@@ -151,17 +157,87 @@ def make_scatter(x,y, merged_df):
         y (str): y values-field
         merged_df (str): df
     """    
-    fig = px.scatter(merged_df, x=x, y=y, hover_data=['year_week'], color='year_number',  trendline='ols')#  trendline_scope="overall", labels={'datum': 'Date', 'verbruik': 'Verbruik'})
+    fig = px.scatter(df, x=x, y=y, hover_data=['year_week'], color='year_number',  trendline='ols')#  trendline_scope="overall", labels={'datum': 'Date', 'verbruik': 'Verbruik'})
     st.plotly_chart(fig)
     # Calculate the correlation
-    correlation = merged_df[x].corr(merged_df[y])
+    correlation = df[x].corr(df[y])
 
     # Perform linear regression to get the equation of the line
-    slope, intercept, r_value, p_value, std_err = linregress(merged_df[x], merged_df[y])
+    slope, intercept, r_value, p_value, std_err = linregress(df[x], df[y])
 
     # Print the correlation and equation of the line
     st.write(f"Correlation: {correlation:.2f}")
     st.write(f"Equation of the line: y = {slope:.2f} * x + {intercept:.2f}")
+
+  
+    # Create temperature bins (1-degree bins)
+    bin_width = 0.5
+    df['temp_bin'] = pd.cut(df['temp_min'], bins=np.arange(df['temp_min'].min(), df['temp_min'].max() + bin_width, bin_width))
+
+    # Group by temperature bins and calculate mean and standard deviation
+    grouped = df.groupby('temp_bin')['verbruik'].agg([np.mean, np.std])
+
+    # Calculate the number of data points in each group
+    grouped['count'] = df.groupby('temp_bin')['verbruik'].count()
+
+    # Define the confidence level (e.g., 95%)
+    confidence_level = 0.95
+
+    # Calculate the margin of error
+    grouped['margin_error'] = grouped['std'] / np.sqrt(grouped['count']) * stats.t.ppf((1 + confidence_level) / 2, grouped['count'] - 1)
+
+    # Calculate confidence intervals
+    grouped['lower_ci'] = grouped['mean'] - grouped['margin_error']
+    grouped['upper_ci'] = grouped['mean'] + grouped['margin_error']
+
+    # Reset the index to make it more readable
+    grouped.reset_index(inplace=True)
+    
+    # Delete rows where margin_error is NaN
+    grouped = grouped.dropna(subset=['mean'])
+    grouped = grouped.dropna(subset=['std'])
+    #Calculate the average temperature for each temp_bin and add it as a new column
+    grouped['average_temp'] = grouped['temp_bin'].apply(lambda x: (x.left + x.right) / 2)
+
+    # Print the results
+    print(grouped)
+    
+    # Create a scatter plot using Plotly Express
+    df_= df.merge(grouped, left_on = 'temp_min', right_on = 'mean', how='outer')
+    print (df_)
+    print (df_.dtypes)
+    import plotly.graph_objects as go
+
+    fig = px.scatter(df_, x='temp_min', y='verbruik', hover_data=['year_week'], color='year_number', )
+    # Add a line for the mean
+    
+    for m in ['mean', 'lower_ci', 'upper_ci']:
+        df_[f"{m}_sma"] = df_[m].rolling(window=3).mean()
+
+    fig.add_trace(go.Scatter(x=df_['average_temp'], y=df_['mean_sma'], ))
+    fig.add_trace(go.Scatter(x=df_['average_temp'], y=df_['lower_ci_sma'],mode='lines', fill='tonexty', 
+                                            fillcolor='rgba(120, 128, 0, 0.0)',
+                                            line=dict(width=0.7, 
+                                            color="rgba(0, 0, 255, 0.5)"),  name="lower CI", ))
+    fig.add_trace(go.Scatter(x=df_['average_temp'], y=df_['upper_ci_sma'],fill='tonexty',
+                                fillcolor='rgba(255, 0, 0, 0.2)',
+                                line=dict(color='dimgrey', width=.5),
+                                name="upper ci", ))
+
+  
+    # Update axis labels
+    fig.update_xaxes(title_text='Temperature (°C)')
+    fig.update_yaxes(title_text='Verbruik')
+
+    # Show the plot
+    st.plotly_chart(fig)
+
+
+
+
+
+
+
 def multiple_lin_regr(merged_df):
     """wrapper for the multiple lineair regression
 
@@ -197,6 +273,7 @@ def make_plots(what, afkapgrens_scatter, merged_df):
 
     merged_df_ = merged_df[merged_df[what] < afkapgrens_scatter]
     make_scatter(what, 'verbruik', merged_df_)
+    st.subheader("Lopend gemiddelde")
     make_scatter(f"{what}_sma", 'verbruik_sma', merged_df_)
 
 def merge_dataframes(df, what, window_size, df_nw_beerta):
