@@ -259,12 +259,13 @@ def poisson_regression(df):
     Args:
         df (_type_): _description_
     """
-    # used in Huynen, 2001.  The Impact of Heat Waves and Cold Spells on Mortality Rates in the Dutch Population
-    #  [uses Poisson loglinear regression analyses]
+    # used in Huynen, 2001.  The Impact of Heat Waves and Cold Spells on Mortality Rates 
+    #  in the Dutch Population [uses Poisson loglinear regression analyses]
     # https://timeseriesreasoning.com/contents/poisson-regression-model/
     # https://education.illinois.edu/docs/default-source/carolyn-anderson/edpsy589/lectures/4_glm/4glm_3_beamer_post.pdf
 
-    #  Regression coefficients for individual lag periods were transformed by using the formula 100 * (exp beta - 1), to the percent change
+    #  Regression coefficients for individual lag periods were transformed by using 
+    #  the formula 100 * (exp beta - 1), to the percent change
     # in mortality associated with a 1°C increase in the average value of cold or heat within
     # the respective lag period ("percent effect").
     # Summing the transformed regression coefficients over individual lag periods yields an
@@ -325,12 +326,12 @@ def main():
     lag = 1
     df[f"OBS_VALUE_lag_{lag}_week"] = df["OBS_VALUE"].shift(lag)
 
-    # Fill the NaN value in the last row of 'AVG_OBS_VALUE' with the corresponding value 
+    # Fill the NaN value in the last row of 'AVG_OBS_VALUE' with the corresponding value
     # from 'OBS_VALUE'
     df["AVG_OBS_VALUE"].iloc[-1] = df["OBS_VALUE"].iloc[-1]
     df["AVG_OBS_VALUE_YEAR"] = df.groupby("year_number")["OBS_VALUE"].transform("mean")
 
-    # Create a new column 'DISTANCE_FROM_AVG' with the distance between OBS_VALUE and 
+    # Create a new column 'DISTANCE_FROM_AVG' with the distance between OBS_VALUE and
     # the average for each year
     df["DISTANCE_FROM_AVG"] = df["OBS_VALUE"] - df["AVG_OBS_VALUE_YEAR"]
 
@@ -397,6 +398,5 @@ def main():
         multiple_lineair_regression(df_higher, ["temp_avg"], "OBS_VALUE")
         poisson_regression(df_higher)
 
-    
 if __name__ == "__main__":
     main()

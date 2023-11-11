@@ -1,8 +1,8 @@
-import streamlit as st
 import importlib
 import traceback
 import os
 import platform
+import streamlit as st
 
 st.set_page_config(page_title="Streamlit scripts of René Smit")
 
@@ -18,6 +18,8 @@ def dynamic_import(module):
     return importlib.import_module(module)
 
 def main():
+    """_summary_
+    """    
     if platform.processor() != "":
         arr = os.listdir("C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\streamlit_scripts")
     else:
@@ -56,11 +58,8 @@ def main():
                 ["29. Studyloan", "studyloan"],
                 ["30. Gasverbruik", "gas_stand_vs_temp"],
                 ["31. Sterfte vs temp", "sterfte_temperatuur"]
-                
                 ]
-    
-    
-        # for file in arr:
+    # for file in arr:
     #     if file[-2:] =="py" and ( file != "welcome.py" and file !="menu_streamlit.py"):
     #         menutext = f"{counter}. {file}"
     #         menutext = menutext.replace("_"," ") # I was too lazy to change it in the list
@@ -70,22 +69,22 @@ def main():
     #         options.append([menutext, file_])
     #         counter +=1
 
-    query_params = st.experimental_get_query_params() # reading  the choice from the URL..
-
-    choice = int(query_params["choice"][0]) if "choice" in query_params else 0 # .. and make it the default value
-
+    query_params = st.experimental_get_query_params()
+    choice = int(query_params["choice"][0]) if "choice" in query_params else 0 
+                                                
     menuchoicelist = [options[n][0] for n, l in enumerate(options)]
 
-    with st.sidebar.expander('MENU: Choose a script | scroll down for options/parameters',  expanded=True):
+    with st.sidebar.expander('MENU: Choose a script | scroll down for options/parameters', expanded=True):
         menu_choice = st.radio("_",menuchoicelist, index=choice)
 
     st.sidebar.markdown("- - - - - - - - - - - - - - - - - - ", unsafe_allow_html=True)
-    st.experimental_set_query_params(choice=menuchoicelist.index(menu_choice)) # setting the choice in the URL
-
+    st.experimental_set_query_params(choice=menuchoicelist.index(menu_choice))
+    
     for n, l in enumerate(options):
         if menu_choice == options[n][0]:
             if platform.processor() != "":
-                m = "C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\streamlit_scripts\\" + options[n][1].replace(" ","_") # I was too lazy to change it in the list
+                m = "C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\streamlit_scripts\\" + options[n][1].replace(" ","_") 
+                # I was too lazy to change it in the list
                 st.write (f"{m }")
             else:
                 m = options[n][1].replace(" ","_") # I was too lazy to change it in the list
