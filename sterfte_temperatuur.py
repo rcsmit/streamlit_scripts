@@ -9,8 +9,7 @@ from statsmodels.tsa.seasonal import seasonal_decompose
 from patsy import dmatrices
 import numpy as np
 
-
-st.set_page_config(layout="wide")
+# st.set_page_config(layout="wide")
 # WAT IS DE INVLOED VAN DE TEMPERATUUR OP DE STERFTE
 #
 # https://medium.com/@marc.jacobs012/oversterfte-en-temperatuur-238a54881493
