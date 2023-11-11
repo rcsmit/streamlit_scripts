@@ -107,7 +107,7 @@ def get_sterfte():
     # Data from https://ec.europa.eu/eurostat/databrowser/product/view/demo_r_mwk_05?lang=en
     # https://ec.europa.eu/eurostat/databrowser/bookmark/fbd80cd8-7b96-4ad9-98be-1358dd80f191?lang=en
     # https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/dataflow/ESTAT/DEMO_R_MWK_05/1.0?references=descendants&detail=referencepartial&format=sdmx_2.1_generic&compressed=true
-    file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\sterfte_eurostats_weekly__2000_01__2023_41.csv"
+    file = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/sterfte_eurostats_weekly__2000_01__2023_41.csv"
 
     df_ = pd.read_csv(
         file,
