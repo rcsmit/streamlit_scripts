@@ -337,8 +337,8 @@ def main():
     st.write(df)
     afkap = 16.5
     what = "temp_avg"
-    df_lower = df[df[what] <= 16.5].copy(deep=True)
-    df_higher = df[df[what] > 16.5]
+    df_lower = df[df[what] <= afkap].copy(deep=True)
+    df_higher = df[df[what] > afkap]
 
     make_scatter(what, "OBS_VALUE", df, "all")
     col1, col2 = st.columns(2)
@@ -391,9 +391,11 @@ def main():
 
     col1, col2 = st.columns(2)
     with col1:
+        st.subheader("t<=16.5")
         multiple_lineair_regression(df_lower, ["temp_avg"], "OBS_VALUE")
         poisson_regression(df_lower)
     with col2:
+        st.subheader("t>16.5")
         multiple_lineair_regression(df_higher, ["temp_avg"], "OBS_VALUE")
         poisson_regression(df_higher)
 
