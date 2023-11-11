@@ -304,6 +304,8 @@ def poisson_regression(df):
 
 def main():
     """_summary_"""
+    st.header("Invloed van temperatuur op sterfte")
+    st.info("https://rcsmit.medium.com/sterfte-vs-temperatuur-b65770af76d3")
     df_sterfte = get_sterfte()
     df_temperature = get_weather_info()
     df = df_sterfte.merge(df_temperature, on=["year_number", "week_number"])
@@ -395,6 +397,6 @@ def main():
         multiple_lineair_regression(df_higher, ["temp_avg"], "OBS_VALUE")
         poisson_regression(df_higher)
 
-
+    
 if __name__ == "__main__":
     main()
