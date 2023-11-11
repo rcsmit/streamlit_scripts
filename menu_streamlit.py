@@ -101,9 +101,7 @@ def main():
             except Exception as e:
                 st.error(f"Function 'main()' in module '{m}' not found or error in the script")
                 st.warning(f"{e}")
-
                 st.warning(traceback.format_exc())
-
                 st.stop()
 
 if __name__ == "__main__":
