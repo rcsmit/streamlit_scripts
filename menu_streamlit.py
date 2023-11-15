@@ -57,7 +57,8 @@ def main():
                 ["28. Extra pension", "extra_pension_OOP"],
                 ["29. Studyloan", "studyloan"],
                 ["30. Gasverbruik", "gas_stand_vs_temp"],
-                ["31. Sterfte vs temp", "sterfte_temperatuur"]
+                ["31. Sterfte vs temp", "sterfte_temperatuur"],
+                ["32. Tax PvdA GL", "tax_pvda_gl"]
                 ]
     # for file in arr:
     #     if file[-2:] =="py" and ( file != "welcome.py" and file !="menu_streamlit.py"):

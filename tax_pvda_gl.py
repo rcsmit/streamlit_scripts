@@ -3,26 +3,50 @@ import plotly.graph_objs as go
 import streamlit as st
 import pandas as pd
 
-def calculate_taxes():
-    def calculate_tax_plan_pvda_gl(income):
-        tax_brackets_plan1 = {
-            25000: 0.3,
-            35000: 0.35,
-            45000: 0.40,
-            65000: 0.45,
-            150000:0.4950,
-            float('inf'): 0.6
-        }
 
+def calculate_taxes(gemiddeld_inkomen_toptarief):
+    
+    tax_brackets_plan_pvda_gl = {
+        25000: 30.0,
+        35000: 35.0,
+        45000: 40.0,
+        65000: 45.0,
+        150000:49.50,
+        float('inf'): 60.0
+    }
+
+            
+    # Convert dictionary to DataFrame
+    df = pd.DataFrame(tax_brackets_plan_pvda_gl.items(), columns=['Income', 'Tax_Rate'])
+
+    if 'df' not in st.session_state:
+    
+        st.session_state.df = df
+        st.session_state.key = 0
+
+    df = st.session_state.df
+    def reset():
+        st.session_state.key += 1
+
+    edited_df =st.data_editor(df, key=f'editor_{st.session_state.key}')
+    st.write("Eerste bedrag is bovenkant van de schijf. Laatste regel is toptarief")                     
+    st.button('Reset', on_click=reset)
+     
+    # Convert DataFrame back to dictionary
+    tax_brackets_plan1 = edited_df.set_index('Income')['Tax_Rate'].to_dict()
+
+
+    def calculate_tax_plan_pvda_gl(income):
+        
         tax = 0
         prev_bracket = 0
 
         for bracket, rate in tax_brackets_plan1.items():
             if income <= bracket:
-                tax += (income - prev_bracket) * rate
+                tax += (income - prev_bracket) * rate/100
                 break
             else:
-                tax += (bracket - prev_bracket) * rate
+                tax += (bracket - prev_bracket) * rate/100
                 prev_bracket = bracket
 
         return tax
@@ -59,7 +83,7 @@ def calculate_taxes():
     # Generate comparison graph
     incomes = list(range(1000, 100000, 1000))
 
-    incomes.append(150000)
+    incomes.append(gemiddeld_inkomen_toptarief)
     taxes_plan1 = [calculate_tax_plan_current(income) for income in incomes]
     taxes_plan2 = [calculate_tax_plan_pvda_gl(income) for income in incomes]
 
@@ -71,7 +95,7 @@ def calculate_taxes():
 
     df = pd.DataFrame(data)
     plot_graph(df)
-    st.write(df)
+
     result = []
     for i in range(0, len(df), 2):
         if i+1 < len(df):
@@ -85,7 +109,7 @@ def calculate_taxes():
 
     return df
 
-def load_inkomen():
+def load_inkomen(gemiddeld_inkomen_toptarief):
     url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\cbs_gestandaardiseerd_inkomen_2021.csv"
     df = pd.read_csv(url)
                      
@@ -98,12 +122,9 @@ def load_inkomen():
     df = df[['Min_Value', 'Max_Value'] + [col for col in df.columns if col not in ['Min_Value', 'Max_Value']]]
 
     df= df[["Income","Alle huishoudens"]]
-    df.loc[len(df)] = [150000, 88]
+    df.loc[len(df)] = [gemiddeld_inkomen_toptarief, 88]
     df = df.dropna(subset=['Income'])
- 
-    
-    
-    print (df)
+
     return df
 
 def merge_dfs(df_inkomen, df_taxes):
@@ -112,20 +133,21 @@ def merge_dfs(df_inkomen, df_taxes):
     df["opbrengensten_pvda_gl"] = df["Alle huishoudens"] * df["PvdA GL"] * 1000
     df["Verschil"] =  df["opbrengensten_pvda_gl"]  -df["opbrengensten_huidig"] 
     
-    st.write(df)
+
     som = df["Verschil"].sum()
     st.info(f"Cummulatief verschil = {format(som, ',.0f')}")
     st.write("Alle huishoudens = Aantal huishoudens x 1000")
     st.write("Huidig / PvdA GL = belasting opbrengst per huishouden")
     st.write("opbrengensten_huidig / opbrengensten_pvda_gl = totaal aantal opbrengsten per inkomensgroep (factor 1000 is meegerekend)")
     st.write("Aangenomen is dat de huishoudens boven de 100.000 euro gemiddeld 150.000 aan inkomsten hebben")
-
+    st.write(df)
 def main():
     st.subheader("Verschil huidig en plan PvdA GL")
 
     st.write("Reproductie en bestudering https://twitter.com/mdradvies/status/172444654377468769 ")
-    df_taxes = calculate_taxes()
-    df_inkomen = load_inkomen()
+    gemiddeld_inkomen_toptarief = st.sidebar.number_input("Gemiddeld inkomen toptarief", 1,1_000_000,150_000)
+    df_taxes = calculate_taxes(gemiddeld_inkomen_toptarief)
+    df_inkomen = load_inkomen(gemiddeld_inkomen_toptarief)
     df_result = merge_dfs(df_inkomen, df_taxes)
 
     st.warning("Er wordt geen rekening gehouden met heffingskortingen. Inkomens boven 100.000 worden genegeerd")
