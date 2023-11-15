@@ -5,7 +5,14 @@ import pandas as pd
 
 
 def calculate_taxes(gemiddeld_inkomen_toptarief):
-    
+    """_summary_
+
+    Args:
+        gemiddeld_inkomen_toptarief (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     tax_brackets_plan_pvda_gl = {
         25000: 30.0,
         35000: 35.0,
@@ -52,6 +59,14 @@ def calculate_taxes(gemiddeld_inkomen_toptarief):
         return tax
 
     def calculate_tax_plan_current(income):
+        """_summary_
+
+        Args:
+            income (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """        
         tax_brackets_plan2 = {
             76000: 0.369,
             float('inf'): 0.4950
@@ -110,7 +125,8 @@ def calculate_taxes(gemiddeld_inkomen_toptarief):
     return df
 
 def load_inkomen(gemiddeld_inkomen_toptarief):
-    url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\cbs_gestandaardiseerd_inkomen_2021.csv"
+    #url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\cbs_gestandaardiseerd_inkomen_2021.csv"
+    url="https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/cbs_gestandaardiseerd_inkomen_2021.csv"
     df = pd.read_csv(url)
                      
     # Splitting the pattern column into two new columns
