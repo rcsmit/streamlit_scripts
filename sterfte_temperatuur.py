@@ -187,7 +187,6 @@ def make_line(x, y, df, title):
     )  # ,  trendline='ols')#  trendline_scope="overall", labels={'datum': 'Date', 'verbruik': 'Verbruik'})
     st.plotly_chart(fig, use_container_width=True)  # Calculate the correlation
 
-
 def multiple_lineair_regression(df_, x_values, y_value):
     """Calculates multiple lineair regression. User can choose the Y value and the X values
 
@@ -258,12 +257,12 @@ def poisson_regression(df):
     Args:
         df (_type_): _description_
     """
-    # used in Huynen, 2001.  The Impact of Heat Waves and Cold Spells on Mortality Rates 
+    # used in Huynen, 2001.  The Impact of Heat Waves and Cold Spells on Mortality Rates
     #  in the Dutch Population [uses Poisson loglinear regression analyses]
     # https://timeseriesreasoning.com/contents/poisson-regression-model/
     # https://education.illinois.edu/docs/default-source/carolyn-anderson/edpsy589/lectures/4_glm/4glm_3_beamer_post.pdf
 
-    #  Regression coefficients for individual lag periods were transformed by using 
+    #  Regression coefficients for individual lag periods were transformed by using
     #  the formula 100 * (exp beta - 1), to the percent change
     # in mortality associated with a 1°C increase in the average value of cold or heat within
     # the respective lag period ("percent effect").
