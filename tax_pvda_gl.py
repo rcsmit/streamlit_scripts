@@ -127,6 +127,24 @@ def calculate_taxes(gemiddeld_inkomen_toptarief):
 def load_inkomen(gemiddeld_inkomen_toptarief):
     # https://www.cbs.nl/nl-nl/visualisaties/inkomensverdeling
     #url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\cbs_gestandaardiseerd_inkomen_2021.csv"
+    
+    def calculate_gross_income(net_income):
+        # Tax brackets and rates
+        lower_tax_rate = 0.369
+        upper_tax_rate = 0.495
+
+        upper_bracket_limit_brut = 76000
+        upper_bracket_limit = (1-lower_tax_rate)*upper_bracket_limit_brut
+        
+        if (net_income <= upper_bracket_limit):
+            # Calculate net income for income within the lower bracket
+            gross_income =  net_income / (1 - lower_tax_rate)
+        else:
+            # Calculate net income for income in the upper bracket
+            gross_income = (upper_bracket_limit / (1 - lower_tax_rate)) + ((net_income - upper_bracket_limit) / (1 - upper_tax_rate))
+
+        return gross_income
+    
     url="https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/cbs_gestandaardiseerd_inkomen_2021.csv"
     url="https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/cbs_besteedbaar_inkomen_2021.csv"
     
@@ -136,15 +154,22 @@ def load_inkomen(gemiddeld_inkomen_toptarief):
     #df[['Min_Value', 'Max_Value']] = df['gestandaardiseerd inkomen (x 1 000 euro)'].str.extract(r"tussen (\d+) en (\d+)")
     df[['Min_Value', 'Max_Value']] = df['besteedbaar inkomen (x 1 000 euro)'].str.extract(r"tussen (\d+) en (\d+)")
     df['Min_Value'] = pd.to_numeric(df['Min_Value'])*1000
-    df['Income'] = pd.to_numeric(df['Max_Value'])*1000
-
+    # Convert 'Max_Value' to numeric if it's not already
+    df['Max_Value'] = pd.to_numeric(df['Max_Value'], errors='coerce')*1000
+    
+    # Apply the calculate_gross_income function to 'Max_Value' column and store it in 'Income'
+    df['Income'] = df['Max_Value']  #.apply(calculate_gross_income)
+    print(df)
+    st.write(df)
     # Assuming 'Min_Value' and 'Max_Value' are the columns you want at the start
     df = df[['Min_Value', 'Max_Value'] + [col for col in df.columns if col not in ['Min_Value', 'Max_Value']]]
 
     df= df[["Income","Alle huishoudens"]]
     df.loc[len(df)] = [gemiddeld_inkomen_toptarief, 88]
     df = df.dropna(subset=['Income'])
+    df['Income'] = df['Income'].astype(int)
 
+        
     return df
 
 def merge_dfs(df_inkomen, df_taxes):
