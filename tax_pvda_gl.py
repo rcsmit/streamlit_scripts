@@ -125,12 +125,16 @@ def calculate_taxes(gemiddeld_inkomen_toptarief):
     return df
 
 def load_inkomen(gemiddeld_inkomen_toptarief):
+    # https://www.cbs.nl/nl-nl/visualisaties/inkomensverdeling
     #url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\cbs_gestandaardiseerd_inkomen_2021.csv"
     url="https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/cbs_gestandaardiseerd_inkomen_2021.csv"
+    url="https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/cbs_besteedbaar_inkomen_2021.csv"
+    
     df = pd.read_csv(url)
                      
     # Splitting the pattern column into two new columns
-    df[['Min_Value', 'Max_Value']] = df['gestandaardiseerd inkomen (x 1 000 euro)'].str.extract(r"tussen (\d+) en (\d+)")
+    #df[['Min_Value', 'Max_Value']] = df['gestandaardiseerd inkomen (x 1 000 euro)'].str.extract(r"tussen (\d+) en (\d+)")
+    df[['Min_Value', 'Max_Value']] = df['besteedbaar inkomen (x 1 000 euro)'].str.extract(r"tussen (\d+) en (\d+)")
     df['Min_Value'] = pd.to_numeric(df['Min_Value'])*1000
     df['Income'] = pd.to_numeric(df['Max_Value'])*1000
 
@@ -149,9 +153,14 @@ def merge_dfs(df_inkomen, df_taxes):
     df["opbrengensten_pvda_gl"] = df["Alle huishoudens"] * df["PvdA GL"] * 1000
     df["Verschil"] =  df["opbrengensten_pvda_gl"]  -df["opbrengensten_huidig"] 
     
-
-    som = df["Verschil"].sum()
-    st.info(f"Cummulatief verschil = {format(som, ',.0f')}")
+    df["totaal_inkomen"] =df["Alle huishoudens"] * 1000* df["Income"]
+    
+    som_verschil = df["Verschil"].sum()
+    som_inkomen = df["totaal_inkomen"].sum()    # zou 464mld moeten zijn 
+                                                # https://longreads.cbs.nl/materiele-welvaart-in-nederland-2022/inkomen-van-huishoudens/
+    st.info(f"Cummulatief verschil = {format(som_verschil, ',.0f')}")
+    st.info(f"Cummulatief inkomen = {format(som_inkomen, ',.0f')}")
+    st.write("x")
     st.write("Alle huishoudens = Aantal huishoudens x 1000")
     st.write("Huidig / PvdA GL = belasting opbrengst per huishouden")
     st.write("opbrengensten_huidig / opbrengensten_pvda_gl = totaal aantal opbrengsten per inkomensgroep (factor 1000 is meegerekend)")
