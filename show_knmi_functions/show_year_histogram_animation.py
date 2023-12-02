@@ -10,8 +10,6 @@ try:
 except:
     from utils import get_data, loess_skmisc
 
-_lock = RendererAgg.lock
-    
 import plotly.express as px
 import plotly.graph_objects as go
 
