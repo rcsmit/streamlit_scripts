@@ -4,15 +4,7 @@ import streamlit as st
 import pandas as pd
 
 
-def calculate_taxes(gemiddeld_inkomen_toptarief):
-    """_summary_
-
-    Args:
-        gemiddeld_inkomen_toptarief (_type_): _description_
-
-    Returns:
-        _type_: _description_
-    """    
+def get_taxbrackets_plan1():
     tax_brackets_plan_pvda_gl = {
         25000: 30.0,
         35000: 35.0,
@@ -42,65 +34,78 @@ def calculate_taxes(gemiddeld_inkomen_toptarief):
     # Convert DataFrame back to dictionary
     tax_brackets_plan1 = edited_df.set_index('Income')['Tax_Rate'].to_dict()
 
+    return tax_brackets_plan1
 
-    def calculate_tax_plan_pvda_gl(income):
-        
-        tax = 0
-        prev_bracket = 0
+def calculate_tax_plan_pvda_gl(income, tax_brackets_plan1):
+    
+    tax = 0
+    prev_bracket = 0
 
-        for bracket, rate in tax_brackets_plan1.items():
-            if income <= bracket:
-                tax += (income - prev_bracket) * rate/100
-                break
-            else:
-                tax += (bracket - prev_bracket) * rate/100
-                prev_bracket = bracket
+    for bracket, rate in tax_brackets_plan1.items():
+        if income <= bracket:
+            tax += (income - prev_bracket) * rate/100
+            break
+        else:
+            tax += (bracket - prev_bracket) * rate/100
+            prev_bracket = bracket
 
-        return tax
+    return tax
 
-    def calculate_tax_plan_current(income):
-        """_summary_
+def calculate_tax_plan_current(income):
+    """_summary_
 
-        Args:
-            income (_type_): _description_
+    Args:
+        income (_type_): _description_
 
-        Returns:
-            _type_: _description_
-        """        
-        tax_brackets_plan2 = {
-            76000: 0.369,
-            float('inf'): 0.4950
-        }
+    Returns:
+        _type_: _description_
+    """        
+    tax_brackets_plan2 = {
+        76000: 0.369,
+        float('inf'): 0.4950
+    }
 
-        tax = 0
-        prev_bracket = 0
+    tax = 0
+    prev_bracket = 0
 
-        for bracket, rate in tax_brackets_plan2.items():
-            if income <= bracket:
-                tax += (income - prev_bracket) * rate
-                break
-            else:
-                tax += (bracket - prev_bracket) * rate
-                prev_bracket = bracket
+    for bracket, rate in tax_brackets_plan2.items():
+        if income <= bracket:
+            tax += (income - prev_bracket) * rate
+            break
+        else:
+            tax += (bracket - prev_bracket) * rate
+            prev_bracket = bracket
 
-        return tax
-    def plot_graph(df):
+    return tax
+def plot_graph(df):
 
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(x=df["Income"], y=df["Huidig"], mode='lines', name='Huidig'))
-        fig.add_trace(go.Scatter(x=df["Income"], y=df["PvdA GL"], mode='lines', name='PvdA GL'))
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=df["Income"], y=df["Huidig"], mode='lines', name='Huidig'))
+    fig.add_trace(go.Scatter(x=df["Income"], y=df["PvdA GL"], mode='lines', name='PvdA GL'))
 
-        fig.update_layout(title='Tax Comparison between Plans',
-                        xaxis_title='Income',
-                        yaxis_title='Tax Amount')
-        st.plotly_chart(fig)
+    fig.update_layout(title='Tax Comparison between Plans',
+                    xaxis_title='Income',
+                    yaxis_title='Tax Amount')
+    st.plotly_chart(fig)
+def calculate_taxes(gemiddeld_inkomen_toptarief, tax_brackets_plan1):
+    """_summary_
+
+    Args:
+        gemiddeld_inkomen_toptarief (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
+
+
+  
 
     # Generate comparison graph
     incomes = list(range(1000, 100000, 1000))
 
     incomes.append(gemiddeld_inkomen_toptarief)
     taxes_plan1 = [calculate_tax_plan_current(income) for income in incomes]
-    taxes_plan2 = [calculate_tax_plan_pvda_gl(income) for income in incomes]
+    taxes_plan2 = [calculate_tax_plan_pvda_gl(income, tax_brackets_plan1) for income in incomes]
 
     data = {
         'Income': incomes,
@@ -124,10 +129,10 @@ def calculate_taxes(gemiddeld_inkomen_toptarief):
 
     return df
 
-def load_inkomen(gemiddeld_inkomen_toptarief):
+def load_inkomen(gemiddeld_inkomen_toptarief, tax_brackets_plan1):
     # https://www.cbs.nl/nl-nl/visualisaties/inkomensverdeling
     #url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\cbs_gestandaardiseerd_inkomen_2021.csv"
-    
+    # https://longreads.cbs.nl/materiele-welvaart-in-nederland-2022/inkomen-van-huishoudens/
     def calculate_gross_income(net_income):
         # Tax brackets and rates
         lower_tax_rate = 0.369
@@ -158,22 +163,20 @@ def load_inkomen(gemiddeld_inkomen_toptarief):
     df['Max_Value'] = pd.to_numeric(df['Max_Value'], errors='coerce')*1000
     
     # Apply the calculate_gross_income function to 'Max_Value' column and store it in 'Income'
-    df['Income'] = df['Max_Value']  #.apply(calculate_gross_income)
-    print(df)
-    st.write(df)
+    df['Income'] = df['Max_Value'].apply(calculate_gross_income)
+
     # Assuming 'Min_Value' and 'Max_Value' are the columns you want at the start
     df = df[['Min_Value', 'Max_Value'] + [col for col in df.columns if col not in ['Min_Value', 'Max_Value']]]
 
-    df= df[["Income","Alle huishoudens"]]
-    df.loc[len(df)] = [gemiddeld_inkomen_toptarief, 88]
+    df= df[["Max_Value","Income","Alle huishoudens"]]
+
     df = df.dropna(subset=['Income'])
     df['Income'] = df['Income'].astype(int)
 
-        
-    return df
+    df['Huidig'] = df['Income'].apply(calculate_tax_plan_current)
+    
+    df["PvdA GL"] = df['Income'].apply(lambda x: calculate_tax_plan_pvda_gl(x, tax_brackets_plan1))
 
-def merge_dfs(df_inkomen, df_taxes):
-    df = df_inkomen. merge(df_taxes, on="Income")
     df["opbrengensten_huidig"] = df["Alle huishoudens"] * df["Huidig"] * 1000
     df["opbrengensten_pvda_gl"] = df["Alle huishoudens"] * df["PvdA GL"] * 1000
     df["Verschil"] =  df["opbrengensten_pvda_gl"]  -df["opbrengensten_huidig"] 
@@ -182,6 +185,7 @@ def merge_dfs(df_inkomen, df_taxes):
     
     som_verschil = df["Verschil"].sum()
     som_inkomen = df["totaal_inkomen"].sum()    # zou 464mld moeten zijn 
+
                                                 # https://longreads.cbs.nl/materiele-welvaart-in-nederland-2022/inkomen-van-huishoudens/
     st.info(f"Cummulatief verschil = {format(som_verschil, ',.0f')}")
     st.info(f"Cummulatief inkomen = {format(som_inkomen, ',.0f')}")
@@ -196,9 +200,13 @@ def main():
 
     st.write("Reproductie en bestudering https://twitter.com/mdradvies/status/172444654377468769 ")
     gemiddeld_inkomen_toptarief = st.sidebar.number_input("Gemiddeld inkomen toptarief", 1,1_000_000,150_000)
-    df_taxes = calculate_taxes(gemiddeld_inkomen_toptarief)
-    df_inkomen = load_inkomen(gemiddeld_inkomen_toptarief)
-    df_result = merge_dfs(df_inkomen, df_taxes)
+    
+    tax_brackets_plan1 = get_taxbrackets_plan1()
+
+    
+    df_taxes = calculate_taxes(gemiddeld_inkomen_toptarief, tax_brackets_plan1)
+    df_inkomen = load_inkomen(gemiddeld_inkomen_toptarief, tax_brackets_plan1)
+   
 
     st.warning("Er wordt geen rekening gehouden met heffingskortingen. Inkomens boven 100.000 worden genegeerd")
 

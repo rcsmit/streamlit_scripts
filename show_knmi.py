@@ -12,7 +12,7 @@ from show_knmi_functions.plot_percentiles import plot_percentiles
 from show_knmi_functions.show_aantal_keren import show_aantal_keren
 from show_knmi_functions.show_per_maand import show_per_maand
 from show_knmi_functions.spaghetti_plot import spaghetti_plot
-
+from show_knmi_functions.show_year_histogram_animation import show_year_histogram_animation
 # INSPRIATION : https://weatherspark.com/m/52666/10/Average-Weather-in-October-in-Utrecht-Netherlands
 # https://radumas.info/blog/tutorial/2017/04/17/percentile-test.html
 
@@ -39,7 +39,7 @@ def interface():
         df, het weerstation, begindatum en einddatum (laatste drie als string)
     """
     mode = st.sidebar.selectbox(
-        "Modus (kies HELP voor hulp)", ["doorlopend per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", "spaghetti plot", "per maand in div jaren", "percentiles", "polar plot/radar chart", "does rain predict rain", "show weerstations", "help"], index=0
+        "Modus (kies HELP voor hulp)", ["doorlopend per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", "spaghetti plot", "per maand in div jaren", "percentiles", "polar plot/radar chart", "show year histogram animation", "does rain predict rain", "show year histogram animation", "show weerstations", "help"], index=0
     )
    
     weer_stations = get_weerstations()
@@ -180,6 +180,8 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
             "Scatter / line", ["scatter", "line"], index=0
             )
         polar_plot(df,  what_to_show, how)
+    elif mode =="show year histogram animation":
+        show_year_histogram_animation(df, what_to_show)
         
     else:
         if mode == "doorlopend per dag":

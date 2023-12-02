@@ -10,18 +10,19 @@ def get_data(url):
         # url =  "https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns=251&vars=TEMP&start=18210301&end=20210310"
         # https://www.knmi.nl/kennis-en-datacentrum/achtergrond/data-ophalen-vanuit-een-script
         # url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=ALL&start={fromx}&end={until}"
-        try:
-            df = pd.read_csv(
-                url,
-                delimiter=",",
-                header=header,
-                comment="#",
-                low_memory=False,
-            )
+        # try:
+        
+        df = pd.read_csv(
+            url,
+            delimiter=",",
+            header=header,
+            comment="#",
+            low_memory=False,
+        )
 
-        except:
-            st.write("FOUT BIJ HET INLADEN.")
-            st.stop()
+        # except as e:
+        #     st.write(f"FOUT BIJ HET INLADEN. {e}")
+        #     st.stop()
         
         # TG        : Etmaalgemiddelde temperatuur (in 0.1 graden Celsius) / Daily mean temperature in (0.1 degrees Celsius)
         # TN        : Minimum temperatuur (in 0.1 graden Celsius) / Minimum temperature (in 0.1 degrees Celsius)
@@ -496,6 +497,9 @@ def loess_skmisc(t, y,  ybounds=None, it=1):
         ll : lower bounds
         ul : upper bounds
 
+    span = 42/len(y), wat de 30 jarig doorlopend gemiddelde benadert
+    https://www.knmi.nl/kennis-en-datacentrum/achtergrond/standaardmethode-voor-berekening-van-een-trend
+    KNMI Technical report TR-389 (see http://bibliotheek.knmi.nl/knmipubTR/TR389.pdf)
 
     """
 
@@ -530,6 +534,9 @@ def loess_skmisc(t, y,  ybounds=None, it=1):
     ng = sum(ig)
 
     if ng <= 29:
+        st.error("Insufficient valid data (less than 30 observations")
+        st.stop()
+
         raise ValueError("Insufficient valid data (less than 30 observations).")
 
     # Check values of bounds
@@ -555,7 +562,7 @@ def loess_skmisc(t, y,  ybounds=None, it=1):
 
     span = 42/len(y)
     
-
+  
     l = loess(t,y)
     
     
