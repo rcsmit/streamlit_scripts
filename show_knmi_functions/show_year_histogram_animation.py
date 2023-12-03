@@ -21,8 +21,6 @@ import statistics
 
 
 def show_animation_histogram_matplotlib(df, what):
-    
-
     # reproducing https://www.linkedin.com/feed/update/urn:li:activity:7134137565661556736/
     # https://svs.gsfc.nasa.gov/5065/
 
