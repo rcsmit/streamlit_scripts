@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.express as px
 import plotly
-plotly.offline.init_notebook_mode(connected=True)
+#plotly.offline.init_notebook_mode(connected=True)
 
 #tarieven 2023
 # https://www2.deloitte.com/nl/nl/pages/tax/articles/belastingplan-2023-overzicht-maatregelen-loonbelasting-inkomstenbelasting.html
