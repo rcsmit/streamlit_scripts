@@ -229,7 +229,7 @@ class CommonParameters:
         )
         self.various_nl = st.sidebar.number_input("Various NL (Total)", 0, 10000, 200)
         self.monthly_costs_asia = st.sidebar.number_input(
-            "Monthly costs Asia", 0, 10000, 650)
+            "Monthly costs Asia", 0, 10000, 750)
         
         self.insurance_asia = st.sidebar.number_input("Travel insurance Asia (per month)", 0, 10000, 75)
         self.various_asia = st.sidebar.number_input("Various Asia total", 0, 10000, 200)

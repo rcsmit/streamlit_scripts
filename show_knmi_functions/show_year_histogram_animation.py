@@ -1,9 +1,12 @@
 import numpy as np
 import streamlit as st
+import streamlit.components.v1 as components
+
 import matplotlib.pyplot as plt
 
-from matplotlib.backends.backend_agg import RendererAgg
-from matplotlib.animation import FuncAnimation
+#from matplotlib.backends.backend_agg import RendererAgg
+#from matplotlib.animation import FuncAnimation
+import matplotlib.animation as animation
 try:
     from show_knmi_functions.utils import get_data, loess_skmisc
 except:
@@ -20,10 +23,15 @@ from scipy.stats import norm
 import statistics 
 
 
-def show_animation_histogram_matplotlib(df, what):
+def show_animation_histogram_plotly(df, what):
     # reproducing https://www.linkedin.com/feed/update/urn:li:activity:7134137565661556736/
     # https://svs.gsfc.nasa.gov/5065/
+    """_summary_
 
+    Args:
+        df (_type_): _description_
+        what (_type_): _description_
+    """
     df['year'] = df['YYYYMMDD'].dt.year
     df[what] = df[what].round().astype(int)
     # Create a pivot table with Year as index and temp_avg frequencies as columns
@@ -39,7 +47,12 @@ def show_animation_histogram_matplotlib(df, what):
     st.plotly_chart(fig)
 
 def make_line_graph_in_time(df, what):
+    """_summary_
 
+    Args:
+        df (_type_): _description_
+        what (_type_): _description_
+    """
     def make_graph(x,y,low,high, std, title):
     
         # Create Plotly figure
@@ -120,6 +133,28 @@ def make_line_graph_in_time(df, what):
     make_graph(x,mean,low,high, std, f"{what} and 95% CI")
     make_graph(x,loess_mean,loess_low,loess_high, loess_std, f"{what} and 95% CI LOESS - benadert 30 jarig doorlopend gemiddelde")
 
+def make_spaghettiplot_plotly(df, what):
+    
+    unique_years = df['year'].unique()
+    fig = go.Figure()
+    x = np.arange(-10, 40, 0.001)
+   
+   
+    fig = go.Figure()
+    for i,year in enumerate(unique_years):
+        values = df[df['year'] == year][what].tolist()
+        
+        print(year)
+        mean = statistics.mean(values) 
+        sd = statistics.stdev(values) 
+
+
+        y = norm.pdf(x, mean, sd)
+        b_value = 255*((i+1)/(len(unique_years)+1))
+        fig.add_trace(go.Scatter(x=x, y=y, mode='lines', line=dict(width=1, color=f'rgba(255, {b_value}, 0, 1)'
+                            ), name=year))
+    
+    st.plotly_chart(fig)
 def make_gif_gaussian_distributions(df, what):
      
  
@@ -158,17 +193,43 @@ def make_gif_gaussian_distributions(df, what):
     for filename__ in set(filenames):
         os.remove(f"{filename__}.png")
 
+def make_animation_artistanimation(df, what):
 
+    def make_graph_artistanimation(year):
+        values = df[df['year'] == year][what].tolist()
+        print(year)
+        x_axis = np.arange(0, 40, 1) 
+        mean = statistics.mean(values) 
+        sd = statistics.stdev(values) 
+        ax.plot(x_axis, norm.pdf(x_axis, mean, sd)) 
+        ax.axvline(mean, color='r', linestyle='--')
+        
+        return ax
+
+
+    fig, ax = plt.subplots()
+    artists = []
+   
+    unique_years = df['year'].unique()
+
+    for y in unique_years:
+        container =  make_graph_artistanimation(y)
+        artists.append(container)
+    st.pyplot (plt)
+
+    ani = animation.ArtistAnimation(fig=fig, artists=artists, interval=400)
+    components.html(ani.to_jshtml(),height=800)
 def show_year_histogram_animation(df, what):
     """MAIN FUNCTION
 
     Args:
         df (_type_): _description_
     """
-    show_animation_histogram_matplotlib(df, what)
+    show_animation_histogram_plotly(df, what)
     make_line_graph_in_time(df, what)
     make_gif_gaussian_distributions(df, what)
-
+    #make_animation_artistanimation(df, what)
+    #make_spaghettiplot_plotly(df, what)
        
 def main():
     what= "temp_avg"
