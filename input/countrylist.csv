@@ -1,0 +1,160 @@
+﻿ISO;Country;UNICEF_Regions;UN_Regions;WHO_Regions;World_Bank_Income_Groups
+AFG;Afghanistan;SA;Asia;EMRO;Low Income
+ALB;Albania;EECA;Europe;EURO;Upper Middle Income
+DZA;Algeria;MENA;Africa;AFRO;Lower Middle Income
+AGO;Angola;ESA;Africa;AFRO;Lower Middle Income
+ARG;Argentina;LAC;Latin America and the Caribbean;AMRO;Upper Middle Income
+ARM;Armenia;EECA;Asia;EURO;Upper Middle Income
+AUS;Australia;EAP;Oceania;WPRO;High Income
+AZE;Azerbaijan;EECA;Asia;EURO;Upper Middle Income
+BHR;Bahrain;MENA;Asia;EMRO;High Income
+BGD;Bangladesh;SA;Asia;SEARO;Lower Middle Income
+BRB;Barbados;LAC;Latin America and the Caribbean;AMRO;High Income
+BLR;Belarus;EECA;Europe;EURO;Upper Middle Income
+BEL;Belgium;WE;Europe;EURO;High Income
+BLZ;Belize;LAC;Latin America and the Caribbean;AMRO;Upper Middle Income
+BEN;Benin;WCA;Africa;AFRO;Lower Middle Income
+BTN;Bhutan;SA;Asia;SEARO;Lower Middle Income
+BOL;Bolivia (Plurinational State of);LAC;Latin America and the Caribbean;AMRO;Lower Middle Income
+BIH;Bosnia and Herzegovina;EECA;Europe;EURO;Upper Middle Income
+BWA;Botswana;ESA;Africa;AFRO;Upper Middle Income
+BRA;Brazil;LAC;Latin America and the Caribbean;AMRO;Upper Middle Income
+BRN;Brunei Darussalam;EAP;Asia;WPRO;High Income
+BGR;Bulgaria;EECA;Europe;EURO;Upper Middle Income
+BFA;Burkina Faso;WCA;Africa;AFRO;Low Income
+BDI;Burundi;ESA;Africa;AFRO;Low Income
+CPV;Cabo Verde;WCA;Africa;AFRO;Lower Middle Income
+KHM;Cambodia;EAP;Asia;WPRO;Lower Middle Income
+CMR;Cameroon;WCA;Africa;AFRO;Lower Middle Income
+CAF;Central African Republic;WCA;Africa;AFRO;Low Income
+TCD;Chad;WCA;Africa;AFRO;Low Income
+CHL;Chile;LAC;Latin America and the Caribbean;AMRO;High Income
+CHN;China;EAP;Asia;WPRO;Upper Middle Income
+COL;Colombia;LAC;Latin America and the Caribbean;AMRO;Upper Middle Income
+COM;Comoros;ESA;Africa;AFRO;Lower Middle Income
+COG;Congo;WCA;Africa;AFRO;Lower Middle Income
+CRI;Costa Rica;LAC;Latin America and the Caribbean;AMRO;Upper Middle Income
+CUB;Cuba;LAC;Latin America and the Caribbean;AMRO;Upper Middle Income
+CZE;Czechia;WE;Europe;EURO;High Income
+CIV;Cote d'Ivoire;WCA;Africa;AFRO;Lower Middle Income
+PRK;Democratic People's Republic of Korea;EAP;Asia;SEARO;Low Income
+COD;Democratic Republic of the Congo;WCA;Africa;AFRO;Low Income
+DJI;Djibouti;ESA;Africa;EMRO;Lower Middle Income
+DOM;Dominican Republic;LAC;Latin America and the Caribbean;AMRO;Upper Middle Income
+ECU;Ecuador;LAC;Latin America and the Caribbean;AMRO;Upper Middle Income
+EGY;Egypt;MENA;Africa;EMRO;Lower Middle Income
+SLV;El Salvador;LAC;Latin America and the Caribbean;AMRO;Lower Middle Income
+GNQ;Equatorial Guinea;WCA;Africa;AFRO;Upper Middle Income
+ERI;Eritrea;ESA;Africa;AFRO;Low Income
+EST;Estonia;WE;Europe;EURO;High Income
+SWZ;Eswatini;ESA;Africa;AFRO;Lower Middle Income
+ETH;Ethiopia;ESA;Africa;AFRO;Low Income
+FJI;Fiji;EAP;Oceania;WPRO;Upper Middle Income
+GAB;Gabon;WCA;Africa;AFRO;Upper Middle Income
+GMB;Gambia;WCA;Africa;AFRO;Low Income
+GEO;Georgia;EECA;Asia;EURO;Upper Middle Income
+DEU;Germany;WE;Europe;EURO;High Income
+GHA;Ghana;WCA;Africa;AFRO;Lower Middle Income
+GRC;Greece;WE;Europe;EURO;High Income
+GTM;Guatemala;LAC;Latin America and the Caribbean;AMRO;Upper Middle Income
+GIN;Guinea;WCA;Africa;AFRO;Low Income
+GNB;Guinea-Bissau;WCA;Africa;AFRO;Low Income
+GUY;Guyana;LAC;Latin America and the Caribbean;AMRO;Upper Middle Income
+HTI;Haiti;LAC;Latin America and the Caribbean;AMRO;Lower Middle Income
+HND;Honduras;LAC;Latin America and the Caribbean;AMRO;Lower Middle Income
+IND;India;SA;Asia;SEARO;Lower Middle Income
+IDN;Indonesia;EAP;Asia;SEARO;Lower Middle Income
+IRN;Iran (Islamic Republic of);MENA;Asia;EMRO;Lower Middle Income
+IRQ;Iraq;MENA;Asia;EMRO;Upper Middle Income
+JAM;Jamaica;LAC;Latin America and the Caribbean;AMRO;Upper Middle Income
+JPN;Japan;EAP;Asia;WPRO;High Income
+JOR;Jordan;MENA;Asia;EMRO;Upper Middle Income
+KAZ;Kazakhstan;EECA;Asia;EURO;Upper Middle Income
+KEN;Kenya;ESA;Africa;AFRO;Lower Middle Income
+KIR;Kiribati;EAP;Oceania;WPRO;Lower Middle Income
+KWT;Kuwait;MENA;Asia;EMRO;High Income
+KGZ;Kyrgyzstan;EECA;Asia;EURO;Lower Middle Income
+LAO;Lao People's Democratic Republic;EAP;Asia;WPRO;Lower Middle Income
+LVA;Latvia;WE;Europe;EURO;High Income
+LBN;Lebanon;MENA;Asia;EMRO;Lower Middle Income
+LSO;Lesotho;ESA;Africa;AFRO;Lower Middle Income
+LBR;Liberia;WCA;Africa;AFRO;Low Income
+LBY;Libya;MENA;Africa;EMRO;Upper Middle Income
+LTU;Lithuania;WE;Europe;EURO;High Income
+MDG;Madagascar;ESA;Africa;AFRO;Low Income
+MWI;Malawi;ESA;Africa;AFRO;Low Income
+MYS;Malaysia;EAP;Asia;WPRO;Upper Middle Income
+MDV;Maldives;SA;Asia;SEARO;Upper Middle Income
+MLI;Mali;WCA;Africa;AFRO;Low Income
+MHL;Marshall Islands;EAP;Oceania;WPRO;Upper Middle Income
+MRT;Mauritania;WCA;Africa;AFRO;Lower Middle Income
+MUS;Mauritius;ESA;Africa;AFRO;Upper Middle Income
+MEX;Mexico;LAC;Latin America and the Caribbean;AMRO;Upper Middle Income
+MNG;Mongolia;EAP;Asia;WPRO;Lower Middle Income
+MNE;Montenegro;EECA;Europe;EURO;Upper Middle Income
+MAR;Morocco;MENA;Africa;EMRO;Lower Middle Income
+MOZ;Mozambique;ESA;Africa;AFRO;Low Income
+MMR;Myanmar;EAP;Asia;SEARO;Lower Middle Income
+NAM;Namibia;ESA;Africa;AFRO;Upper Middle Income
+NRU;Nauru;EAP;Oceania;WPRO;High Income
+NPL;Nepal;SA;Asia;SEARO;Lower Middle Income
+NLD;Netherlands (Kingdom of the);WE;Europe;EURO;High Income
+NIC;Nicaragua;LAC;Latin America and the Caribbean;AMRO;Lower Middle Income
+NER;Niger;WCA;Africa;AFRO;Low Income
+NGA;Nigeria;WCA;Africa;AFRO;Lower Middle Income
+MKD;North Macedonia;EECA;Europe;EURO;Upper Middle Income
+OMN;Oman;MENA;Asia;EMRO;High Income
+PAK;Pakistan;SA;Asia;EMRO;Lower Middle Income
+PAN;Panama;LAC;Latin America and the Caribbean;AMRO;High Income
+PNG;Papua New Guinea;EAP;Oceania;WPRO;Lower Middle Income
+PRY;Paraguay;LAC;Latin America and the Caribbean;AMRO;Upper Middle Income
+PER;Peru;LAC;Latin America and the Caribbean;AMRO;Upper Middle Income
+PHL;Philippines;EAP;Asia;WPRO;Lower Middle Income
+POL;Poland;WE;Europe;EURO;High Income
+PRT;Portugal;WE;Europe;EURO;High Income
+QAT;Qatar;MENA;Asia;EMRO;High Income
+KOR;Republic of Korea;EAP;Asia;WPRO;High Income
+MDA;Republic of Moldova;EECA;Europe;EURO;Upper Middle Income
+ROU;Romania;EECA;Europe;EURO;High Income
+RWA;Rwanda;ESA;Africa;AFRO;Low Income
+LCA;Saint Lucia;LAC;Latin America and the Caribbean;AMRO;Upper Middle Income
+WSM;Samoa;EAP;Oceania;WPRO;Lower Middle Income
+STP;Sao Tome and Principe;WCA;Africa;AFRO;Lower Middle Income
+SAU;Saudi Arabia;MENA;Asia;EMRO;High Income
+SEN;Senegal;WCA;Africa;AFRO;Lower Middle Income
+SRB;Serbia;EECA;Europe;EURO;Upper Middle Income
+SYC;Seychelles;ESA;Africa;AFRO;High Income
+SLE;Sierra Leone;WCA;Africa;AFRO;Low Income
+SGP;Singapore;EAP;Asia;WPRO;High Income
+SLB;Solomon Islands;EAP;Oceania;WPRO;Lower Middle Income
+SOM;Somalia;ESA;Africa;EMRO;Low Income
+ZAF;South Africa;ESA;Africa;AFRO;Upper Middle Income
+SSD;South Sudan;ESA;Africa;EMRO;Low Income
+LKA;Sri Lanka;SA;Asia;SEARO;Lower Middle Income
+PSE;State of Palestine;MENA;Asia;Not Classified;Lower Middle Income
+SDN;Sudan;ESA;Africa;EMRO;Low Income
+SUR;Suriname;LAC;Latin America and the Caribbean;AMRO;Upper Middle Income
+SYR;Syrian Arab Republic;MENA;Asia;EMRO;Low Income
+TJK;Tajikistan;EECA;Asia;EURO;Lower Middle Income
+THA;Thailand;EAP;Asia;SEARO;Upper Middle Income
+TLS;Timor-Leste;EAP;Asia;SEARO;Lower Middle Income
+TGO;Togo;WCA;Africa;AFRO;Low Income
+TON;Tonga;EAP;Oceania;WPRO;Upper Middle Income
+TTO;Trinidad and Tobago;LAC;Latin America and the Caribbean;AMRO;High Income
+TUN;Tunisia;MENA;Africa;EMRO;Lower Middle Income
+TKM;Turkmenistan;EECA;Asia;EURO;Upper Middle Income
+TCA;Turks and Caicos Islands;LAC;Latin America and the Caribbean;Not Classified;High Income
+TUV;Tuvalu;EAP;Oceania;WPRO;Upper Middle Income
+TUR;Türkiye;EECA;Asia;EURO;Upper Middle Income
+UGA;Uganda;ESA;Africa;AFRO;Low Income
+UKR;Ukraine;EECA;Europe;EURO;Lower Middle Income
+TZA;United Republic of Tanzania;ESA;Africa;AFRO;Lower Middle Income
+USA;United States;NA;Northern America;AMRO;High Income
+URY;Uruguay;LAC;Latin America and the Caribbean;AMRO;High Income
+UZB;Uzbekistan;EECA;Asia;EURO;Lower Middle Income
+VUT;Vanuatu;EAP;Oceania;WPRO;Lower Middle Income
+VEN;Venezuela (Bolivarian Republic of);LAC;Latin America and the Caribbean;AMRO;Not Classified
+VNM;Viet Nam;EAP;Asia;WPRO;Lower Middle Income
+YEM;Yemen;MENA;Asia;EMRO;Low Income
+ZMB;Zambia;ESA;Africa;AFRO;Low Income
+ZWE;Zimbabwe;ESA;Africa;AFRO;Lower Middle Income

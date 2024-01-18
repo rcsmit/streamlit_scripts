@@ -36,12 +36,13 @@ def read_ogimet():
     """
 
     # find station codes here https://www.ogimet.com/indicativos.phtml.en
-    # station_code,location_str = "485500-99999", "Koh_Samui"  
+    station_code,location_str = "485500-99999", "Koh_Samui"  
                                    
     # station_code,location_str = "16242","Rome Fiumicino"
-    station_code,location_str = "48327","Chiang_mai"
+    # station_code,location_str = "48327","Chiang_mai"
     
-    start_date = datetime(2000, 1, 1)
+    # start_date = datetime(2000, 1, 1)
+    start_date = datetime(2023, 1, 1)
     end_date = datetime.today()  # You could use the desired end date
     number_of_days = (end_date - start_date).days 
     batches = int(number_of_days / 50)+1 # number of batches
@@ -188,6 +189,7 @@ def main():
     fig = px.imshow(table)
     #fig.show()
     st.plotly_chart(fig)
+    st.info("Source weather info: https://ogimet.com/")
 
     ''''
     Data until mid july 2023, not automaticall updated
