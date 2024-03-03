@@ -86,7 +86,7 @@ def calculate_weibull_pdf_not_used(x, scale, shape):
 
 
 
-@st.cache(ttl=60 * 60 * 24)
+@st.cache_data(ttl=60 * 60 * 24)
 def read():
     sheet_id = "1Lqddg3Rsq0jhFgL5U-HwvDdo0473QBZtjbAp9ol8kcg"
     sheet_name = "gegevens"

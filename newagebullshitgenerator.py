@@ -245,6 +245,8 @@ def main():
     st.sidebar.title('New Age Bullshit generator')
     if st.sidebar.button('GENERATE'):
         main_()
+    else:
+        st.info("Press generate in the sidebar")
 
     tekst = (
         '<hr>Made by Rene Smit. (<a href=\'http://www.twitter.com/rcsmit\'>@rcsmit</a>) <br>'

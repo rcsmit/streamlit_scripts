@@ -76,8 +76,8 @@ def get_weather_info(what):
     current_datetime = datetime.now()
     formatted_date = current_datetime.strftime("%Y%m%d")
 
-    url_nw_beerta = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns=260&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start=20190202&end={formatted_date}"
-    #url_nw_beerta = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/nw_beerta.csv"
+    #url_nw_beerta = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns=260&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start=20190202&end={formatted_date}"
+    url_nw_beerta = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/nw_beerta.csv"
     df_nw_beerta =  pd.read_csv(
                 url_nw_beerta,
                 delimiter=",",

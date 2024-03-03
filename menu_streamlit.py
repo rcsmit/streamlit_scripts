@@ -21,7 +21,7 @@ def main():
     """_summary_
     """    
     if platform.processor() != "":
-        arr = os.listdir("C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\streamlit_scripts")
+        arr = os.listdir("C:\\Users\\rcxsm\\Documents\\python_scripts\\streamlit_scripts")
     else:
         arr = os.listdir()
 
@@ -84,7 +84,8 @@ def main():
     for n, l in enumerate(options):
         if menu_choice == options[n][0]:
             if platform.processor() != "":
-                m = "C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\streamlit_scripts\\" + options[n][1].replace(" ","_") 
+                #m = "C:\\Users\\rcxsm\\Documents\\python_scripts\\streamlit_scripts\\" + options[n][1].replace(" ","_") 
+                m =  options[n][1].replace(" ","_") 
                 # I was too lazy to change it in the list
                 st.write (f"{m }")
             else:

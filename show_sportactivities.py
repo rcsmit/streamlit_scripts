@@ -90,6 +90,7 @@ def last_manipulations_df(df):
     print (df.dtypes)
     df = df.sort_values(by=['Datum_xy'])
     df["YYYY"] = df["Datum_xy"].dt.year
+
     df["MM"] = df["Datum_xy"].dt.month
     df["DD"] = df["Datum_xy"].dt.day
     df["count"] = 1
@@ -331,7 +332,7 @@ def find_fastest_activities(df):
 
 def find_km_per_year(df):
     # Aantal kilometers per jaar
-    df_afstand_jaar = df.groupby(["YYYY"]).sum().reset_index()
+    df_afstand_jaar = df.groupby(["YYYY"]).sum(numeric_only=True).reset_index()
     #df_afstand_jaar = df_afstand_jaar[["Afstand"]]
     df_afstand_jaar["afstand_per_keer_per_jaar"] = df_afstand_jaar["Afstand"] / df_afstand_jaar["count"]
 

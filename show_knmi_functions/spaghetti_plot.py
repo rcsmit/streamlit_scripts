@@ -104,7 +104,7 @@ def spaghetti_plot_(df, what, wdw,  sd_all, sd_day, spaghetti, mean_, last_year,
                             mode='lines',
                             fill='tozeroy',
                             fillcolor='rgba(255, 255, 255, 0.0)',
-                            s
+                            
                             ))
         
         fig.add_trace(go.Scatter(

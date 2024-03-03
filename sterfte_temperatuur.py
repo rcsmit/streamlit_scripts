@@ -22,8 +22,8 @@ def get_weather_info():
     current_datetime = datetime.now()
     formatted_date = current_datetime.strftime("%Y%m%d")
 
-    url_nw_beerta = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns=260&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start=20000101&end={formatted_date}"
-    # url_nw_beerta = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/nw_beerta.csv"
+    #url_nw_beerta = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns=260&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start=20000101&end={formatted_date}"
+    url_nw_beerta = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/nw_beerta.csv"
     df_nw_beerta = pd.read_csv(
         url_nw_beerta,
         delimiter=",",
@@ -234,7 +234,7 @@ def decomposed(merged_df):
     )
 
     merged_df.set_index("common_time_column", inplace=True)
-
+    merged_df = merged_df.fillna(0)
     decomposition = seasonal_decompose(
         merged_df["temp_avg"], model="additive", period=52
     )
@@ -380,7 +380,7 @@ def main():
             f"{what} > {afkap} / distance from yearavg",
         )
         make_scatter(what, "obs_2461", df_higher, f"{what} > {afkap} / 2461=100")
-    decomposed(df)
+    # decomposed(df) #gives errors
 
     col1, col2 = st.columns(2)
     with col1:
