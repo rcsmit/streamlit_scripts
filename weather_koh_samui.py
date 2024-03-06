@@ -154,26 +154,56 @@ def show_month(df, to_show, month, month_names, where):
    
 
     st.plotly_chart(fig)
+def cross_table_montly_avg(df, to_show, where, y_axis_zero):  
+    # CROSS TABLE WITH MONTLY AVERAGES
+    st.subheader (f"Monthly averages of {to_show} - {where}")
+    crosstable = pd.pivot_table(df, values=to_show, index='Month', columns='Year', aggfunc='mean').round(1)
+    st.write (crosstable)
+
+    st.subheader (f"Monthly averages of {to_show} - {where}")
+    # Create the heatmap using Plotly Express
+    fig = px.imshow(crosstable)
+    #fig.show()
+    st.plotly_chart(fig)
+
+     # SHOW MONTLY AVERAGES THROUGH THE YEARS
+    transposed_df = crosstable.T
+    fig_x = go.Figure()
+
+    for column in transposed_df.columns:
+        fig_x.add_trace(go.Scatter(x=transposed_df.index, y=transposed_df[column], mode='lines', name=column))
+
+    fig_x.update_layout(title=f'Monthly averages of {to_show} through time - {where}',
+                    xaxis_title='Years',
+                    yaxis_title=f'Montly average of {to_show}')
+    if y_axis_zero:
+        fig_x.update_layout(yaxis_range=[0, max(transposed_df.max())])
+
+
+    st.plotly_chart(fig_x)
+
 
 def main():
     """Show the data from Ogimet in a graph, and average values per month per year
     """    
-    where = st.sidebar.selectbox("Location to show", ["Koh Samui", "Chiang Mai", "Rome Fiumicino"]
-                         )
-    st.title(f"Weather info from {where}")
+                         
     
     
-    df_ = get_data(where)
+    
+    where = st.sidebar.selectbox("Location to show", ["Koh Samui", "Chiang Mai", "Rome Fiumicino"])
 
     to_show = st.sidebar.selectbox("What to show x", ["T_Max","T_Min","T_Mean","Hr_Med","Wind_Max","Wind_Mean","SLP","STN","Vis","Prec","Diary"],0)
     window_size =  st.sidebar.slider("Window for SMA",1,365,7) 
     y_axis_zero = st.sidebar.selectbox("Y axis start at zero", [True,False],1)
     multiply_minus_one = st.sidebar.selectbox("Multiply by -1", [True,False],1)
+    treshold_value = st.sidebar.number_input("Treshold value (incl.)")
+    above_under = st.sidebar.selectbox("Above or below", ["above", "equal", "below"],0)
+
     # Create a line plot using Plotly Express
     month_names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
     month = month_names.index(st.sidebar.selectbox("Month", month_names, index=0)) + 1
     
-    
+    df_ = get_data(where)
     if multiply_minus_one:
         # Make a copy of the DataFrame without the "Date" column
         df_copy = df_.drop(columns=['Date']).copy()
@@ -194,51 +224,42 @@ def main():
     df['Year'] = df['Date'].dt.year
     df = df.sort_values(by='Date')
   
+    st.title(f"Weather info from {where}")
+    
+    line_graph(to_show, window_size, y_axis_zero, df)
+    cross_table_montly_avg(df, to_show, where, y_axis_zero)
+    
    
-    df[f'{to_show}_SMA'] = df[to_show].rolling(window=window_size).mean()
-
-    fig = px.line(df, x='Date', y=[to_show, f'{to_show}_SMA'],
-                title=f'{to_show} over Time with SMA',
-                labels={'value':to_show},
-                line_shape='linear')
-    # Set the range of the y-axis to start from 0
-    if y_axis_zero:
-        fig.update_layout(yaxis_range=[0, max(df[to_show])])
-
-    # fig.show()
-    # plotly.offline.plot(fig)
-    st.plotly_chart(fig)
     
-    # CROSS TABLE WITH MONTLY AVERAGES
-    st.subheader (f"Monthly averages of {to_show} - {where}")
-    crosstable = pd.pivot_table(df, values=to_show, index='Month', columns='Year', aggfunc='mean').round(1)
-    st.write (crosstable)
+    show_treshold(where, to_show, treshold_value, above_under, df)
 
-    st.subheader (f"Monthly averages of {to_show} - {where}")
-    # Create the heatmap using Plotly Express
-    fig = px.imshow(crosstable)
-    #fig.show()
-    st.plotly_chart(fig)
+    show_warmingstripes(df, to_show, where)
     
-    # SHOW MONTLY AVERAGES THROUGH THE YEARS
-    transposed_df = crosstable.T
-    fig_x = go.Figure()
+    show_month(df, to_show, month, month_names,where)
 
-    for column in transposed_df.columns:
-        fig_x.add_trace(go.Scatter(x=transposed_df.index, y=transposed_df[column], mode='lines', name=column))
+    
+    show_info()
 
-    fig_x.update_layout(title=f'Monthly averages of {to_show} through time - {where}',
-                    xaxis_title='Years',
-                    yaxis_title=f'Montly average of {to_show}')
-    if y_axis_zero:
-        fig_x.update_layout(yaxis_range=[0, max(transposed_df.max())])
+def show_info():
+    st.info("Source weather info: https://ogimet.com/")
 
+    ''''
+    Data until mid july 2023, not automaticall updated
+    T_max = Max. temperature taken from explicit Tmax. report (°C)
+    T_Min = Min. temperature taken from explicit Tmax. report (°C)
+    T_Mean = Mean temperature derived from 8 observations (°C)
+    Hr_Med = Mean relative humidity derived from 8 dew point observations (%)
+    Wind_Max = Max wind speed computed from 8 observations (km/h)
+    Wind_Mean =Mean wind speed computed from 8 observations (km/h) 
+    SLP = Mean sea level pressure computed from 8 observations (mb)
+    STN = Mean pressure at station level computed from 8 observations (mb)
+    Vis = Mean visibility computed from 8 observations (km)
+    Prec = Prec. computed from 1 report of 24-hour precipitation amount (mm)
+    Diary = (images, not in use)
+    Source https://ogimet.com/cgi-bin/gsodres?lang=en&ind=485500-99999&ord=DIR&ano=2000&mes=01&day=1&ndays=500
+    '''
 
-    st.plotly_chart(fig_x)
-
-    treshold_value = st.sidebar.number_input("Treshold value (incl.)")
-    above_under = st.sidebar.selectbox("Above or below", ["above", "equal", "below"],0)
-
+def show_treshold(where, to_show, treshold_value, above_under, df):
     if above_under =="above":
     # Filter the DataFrame to include only the rows where Temperature is above 30 degrees
         df_above_30 = df[df[to_show] >= treshold_value]
@@ -266,30 +287,20 @@ def main():
     #fig.show()
     st.plotly_chart(fig)
 
-    show_warmingstripes(df, to_show, where)
-    
-    show_month(df, to_show, month, month_names,where)
+def line_graph(to_show, window_size, y_axis_zero, df):
+    df[f'{to_show}_SMA'] = df[to_show].rolling(window=window_size).mean()
 
-    
-    st.info("Source weather info: https://ogimet.com/")
+    fig = px.line(df, x='Date', y=[to_show, f'{to_show}_SMA'],
+                title=f'{to_show} over Time with SMA',
+                labels={'value':to_show},
+                line_shape='linear')
+    # Set the range of the y-axis to start from 0
+    if y_axis_zero:
+        fig.update_layout(yaxis_range=[0, max(df[to_show])])
 
-    ''''
-    Data until mid july 2023, not automaticall updated
-
-    T_max = Max. temperature taken from explicit Tmax. report (°C)
-    T_Min = Min. temperature taken from explicit Tmax. report (°C)
-    T_Mean = Mean temperature derived from 8 observations (°C)
-    Hr_Med = Mean relative humidity derived from 8 dew point observations (%)
-    Wind_Max = Max wind speed computed from 8 observations (km/h)
-    Wind_Mean =Mean wind speed computed from 8 observations (km/h) 
-    SLP = Mean sea level pressure computed from 8 observations (mb)
-    STN = Mean pressure at station level computed from 8 observations (mb)
-    Vis = Mean visibility computed from 8 observations (km)
-    Prec = Prec. computed from 1 report of 24-hour precipitation amount (mm)
-    Diary = (images, not in use)
-
-    Source https://ogimet.com/cgi-bin/gsodres?lang=en&ind=485500-99999&ord=DIR&ano=2000&mes=01&day=1&ndays=500
-    '''
+    # fig.show()
+    # plotly.offline.plot(fig)
+    st.plotly_chart(fig)
 @st.cache_data(ttl=24*60*60)
 def get_data(where):
     load_local = True if platform.processor() else False
