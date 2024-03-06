@@ -27,6 +27,11 @@ import streamlit as st
 import platform
 import os
 
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_agg import RendererAgg
+from matplotlib.colors import ListedColormap
+_lock = RendererAgg.lock
+import numpy as np
 # when using without Streamlit, to avoid 127.0.0.1 refused to connect :
 # plotly.offline.init_notebook_mode(connected=True)
     
@@ -42,7 +47,9 @@ def read_ogimet():
     # station_code,location_str = "48327","Chiang_mai"
     
     # start_date = datetime(2000, 1, 1)
-    start_date = datetime(2023, 1, 1)
+    start_date = datetime(2023, 12, 15)
+
+    end_date = datetime(2023, 12, 31)
     end_date = datetime.today()  # You could use the desired end date
     number_of_days = (end_date - start_date).days 
     batches = int(number_of_days / 50)+1 # number of batches
@@ -71,7 +78,7 @@ def read_ogimet():
         if temp_table.empty:
             continue
 
-        temp_table = temp_table.iloc[2:]  # Remove the first two rows, which usually contains units
+        #temp_table = temp_table.iloc[1:]  # Remove the first two rows, which usually contains units
 
         date_vec = pd.date_range(end=request_date - timedelta(days=1), periods=len(temp_table), freq="1D")
         temp_table["Date"] = date_vec
@@ -80,9 +87,73 @@ def read_ogimet():
 
     # observations = observations[observations["Date"] <= end_date] # gives an error. I just delete the last rows in the CSV file
 
-    observations.to_csv(f"irbid_weather_{location_str}_2023.csv", index=False)
+    observations.to_csv(f"irbid_weather_{location_str}_2024.csv", index=False)
     # You have to replace ---- with [nothing]. (Don't use [None], since it will turn the column into a text/object column) 
     print(observations)
+
+def show_warmingstripes(df_, to_show, where):
+    print (df_)
+    df = df_.groupby(df_["Year"], sort=True).mean(numeric_only = True).reset_index()
+    #df_grouped = df.groupby([df[valuefield]], sort=True).sum().reset_index()
+    # Based on code of Sebastian Beyer
+    # https://github.com/sebastianbeyer/warmingstripes/blob/master/warmingstripes.py
+
+    # the colors in this colormap come from http://colorbrewer2.org
+    # the 8 more saturated colors from the 9 blues / 9 reds
+    # https://matplotlib.org/matplotblog/posts/warming-stripes/
+    cmap = ListedColormap(
+        [
+            "#08306b",
+            "#08519c",
+            "#2171b5",
+            "#4292c6",
+            "#6baed6",
+            "#9ecae1",
+            "#c6dbef",
+            "#deebf7",
+            "#fee0d2",
+            "#fcbba1",
+            "#fc9272",
+            "#fb6a4a",
+            "#ef3b2c",
+            "#cb181d",
+            "#a50f15",
+            "#67000d",
+        ]
+    )
+    # https://github.com/sebastianbeyer/warmingstripes/blob/master/warmingstripes.py
+    temperatures = df[to_show].tolist()
+    stacked_temps = np.stack((temperatures, temperatures))
+    with _lock:
+        # plt.figure(figsize=(4,18))
+        fig, ax = plt.subplots()
+
+        fig = ax.imshow(
+            stacked_temps,
+            cmap=cmap,
+            aspect=40,
+        )
+        plt.gca().set_axis_off()
+
+        plt.title(f"{to_show} in {where}")
+        plt.gca().xaxis.set_major_locator(plt.NullLocator())
+        plt.gca().yaxis.set_major_locator(plt.NullLocator())
+        # plt.show()
+        # st.pyplot(fig) - gives an error
+        st.set_option("deprecation.showPyplotGlobalUse", False)
+        st.pyplot()
+def show_month(df, to_show, month, month_names, where):
+   
+    # Filter data for month == 3
+    df_march = df[df['Month'] == month]
+
+                
+    fig = px.line(df_march, x='Day', y=to_show, color='Year', labels={'temp': 'Temperature (°C)'}, title=f'{to_show} for {month_names[month-1]} in {where}')
+
+    # Show the plot
+   
+
+    st.plotly_chart(fig)
 
 def main():
     """Show the data from Ogimet in a graph, and average values per month per year
@@ -98,6 +169,9 @@ def main():
     window_size =  st.sidebar.slider("Window for SMA",1,365,7) 
     y_axis_zero = st.sidebar.selectbox("Y axis start at zero", [True,False],1)
     multiply_minus_one = st.sidebar.selectbox("Multiply by -1", [True,False],1)
+    # Create a line plot using Plotly Express
+    month_names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    month = month_names.index(st.sidebar.selectbox("Month", month_names, index=0)) + 1
     
     
     if multiply_minus_one:
@@ -114,6 +188,8 @@ def main():
 
 
     df['Date'] = pd.to_datetime(df['Date'])
+    df['Day'] = df['Date'].dt.day
+    
     df['Month'] = df['Date'].dt.month
     df['Year'] = df['Date'].dt.year
     df = df.sort_values(by='Date')
@@ -189,6 +265,12 @@ def main():
     fig = px.imshow(table)
     #fig.show()
     st.plotly_chart(fig)
+
+    show_warmingstripes(df, to_show, where)
+    
+    show_month(df, to_show, month, month_names,where)
+
+    
     st.info("Source weather info: https://ogimet.com/")
 
     ''''

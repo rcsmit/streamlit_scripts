@@ -362,6 +362,7 @@ def show_footer():
     st.write("* Mean years of schooling estimates the average number of years of total schooling adults aged 25 years and older have received. This data extends back to the year 1870 and is based on the combination of data from Lee and Lee (2016); Barro-Lee (2018); and the UN Development Programme. Fifteen is the projected maximum of this indicator for 2025.")
     st.write("* Expected years of schooling measures the number of years of schooling that a child of school entrance age can expect to receive if the current age-specific enrollment rates persist throughout the child’s life by country. Eighteen is equivalent to achieving a master's degree in most countries.")
     st.write("* education_index = ((schooling_expected / 18) + (schooling_mean / 15) )/2 " )
+    st.write("Male height: https://www.researchgate.net/publication/295394901_Major_correlates_of_male_height_A_study_of_105_countries")
     st.info("Country codes and info: https://countrycode.org/")
     st.subheader("Discussion")
     st.write("* Data is from different years")
