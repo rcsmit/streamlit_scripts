@@ -69,14 +69,17 @@ def get_data(join_how):
     url_education_mean = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/mean-years-of-schooling-long-run.csv"
     url_education_expected = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/expected-years-of-schooling.csv"
     url_length = 'https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/length_male.csv'
-   
+    url_length_eur = 'https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/length_male_europe.csv'
+    #url_length_eur = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\length_male_europe.csv"
+    #url_length = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\length_male.csv"
     # url_country = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\country_codes.csv"
     # url_meat = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption.csv"
     # url_gm = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gapminder_data_graphs.csv"
     # url_health = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\health_efficiency_index.csv"
     # url_education_mean = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\mean-years-of-schooling-long-run.csv"
     # url_education_expected = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\expected-years-of-schooling.csv"
-    
+
+ 
     df_country =  pd.read_csv(url_country, delimiter=',')
     df_country = df_country.fillna(0)
     for v in ["population","area"]:
@@ -119,13 +122,22 @@ def get_data(join_how):
     df_education_expected = df_education_expected.dropna(subset=['iso_3'])
     df_education_mean = df_education_mean.dropna(subset=['iso_3'])
    
+    # Grasgruber P, Sebera M, Hrazdira E, Cacek J, Kalina T. Major correlates of male height: A study of 105 countries. Econ Hum Biol. 2016;21:172-195
+    # https://www.sciencedirect.com/science/article/pii/S1570677X16300065
+
+    # europe: https://www.sciencedirect.com/science/article/pii/S1570677X14000665?via%3Dihub#sec0115
     df_length = pd.read_csv(url_length, delimiter=',')
+    df_length_eur = pd.read_csv(url_length_eur, delimiter=',')
     merged_df_0 = pd.merge(df_meat, df_country, how="outer", on='country')
     merged_df_1 = merged_df_0.merge(df_gm_2018, how=join_how, on='country')
     merged_df_2 = merged_df_1.merge(df_health,  how=join_how, on="country")
     merged_df_3 = merged_df_2.merge(df_education_mean, on="iso_3", how=join_how)
-    merged_df_4 = merged_df_3.merge(df_length, on="iso_3", how=join_how)
     
+    df_l = pd.concat([df_length, df_length_eur])
+    #df_l = df_length_eur
+    #st.write(df_l)
+    print (df_l.dtypes)
+    merged_df_4 = merged_df_3.merge(df_l, on="iso_3", how=join_how)
     df = merged_df_4.merge(df_education_expected, on="iso_3", how=join_how)
     df["education_index"] = ((df["schooling_expected"] / 18) + (df["schooling_mean"] /15) )/2
 
@@ -203,11 +215,12 @@ def correlation_matrix(df,show_log_x, show_log_y):
     Args:
         df (_type_): _description_
     """
+
     columns_meat =   ["meat_cons","life_exp_birth","life_exp_5","mort_under_5","cal_day","gdpppp _2011","urban_pop","bmi_over_30","cho_crops","prim_educ_over_25"]
     columns_health = ["health_eff_index_rank" ,"health_eff_index"]
     columns_gm = ["life_exp","hdi_index","co2_consump","gdp_y","services"]
     columns_educ = ["schooling_mean", "schooling_expected","education_index"]
-    columns = columns_meat + columns_health + columns_gm +columns_educ
+    columns = columns_meat + columns_health + columns_gm +columns_educ +["Height"]
 
     df_corr = df[columns].copy(deep=True)
     if show_log_x and show_log_y:
@@ -251,7 +264,7 @@ def multiple_lineair_regression(df, show_log_x, show_log_y):
         df_ (df): df with info
     """    
     st.subheader("Multiple Lineair Regression")
-    y_value_ = st.selectbox("Y value", ['life_exp',"life_exp_birth","life_exp_5","mort_under_5"],1)
+    y_value_ = st.selectbox("Y value", ['life_exp',"life_exp_birth","life_exp_5","mort_under_5", "Height"],1)
     x_values_options =  ["meat_cons","cal_day","gdpppp _2011","urban_pop","bmi_over_30","cho_crops","prim_educ_over_25","health_eff_index_rank" ,"health_eff_index","hdi_index","co2_consump","gdp_y","services", 'education_index', 'schooling_mean', 'schooling_expected']
     x_values_default = ['meat_cons',"cal_day","gdpppp _2011","urban_pop","bmi_over_30","cho_crops", 'health_eff_index','education_index']
     x_values = st.multiselect("X values", x_values_options, x_values_default)
@@ -326,7 +339,7 @@ def multiple_lineair_regression_sklearn(df_, show_log_x, show_log_y):
         df_ (df): df with info
     """    
     st.subheader("Multiple Lineair Regression")
-    y_value = st.selectbox("Y value", ['life_exp',"life_exp_birth","life_exp_5","mort_under_5"],1)
+    y_value = st.selectbox("Y value", ['life_exp',"life_exp_birth","life_exp_5","mort_under_5", "Height"],1)
     x_values_options =  ["meat_cons","cal_day","gdpppp _2011","urban_pop","bmi_over_30","cho_crops","prim_educ_over_25","health_eff_index_rank" ,"health_eff_index","hdi_index","co2_consump","gdp_y","services", 'education_index', 'schooling_mean', 'schooling_expected']
     x_values_default = ['meat_cons',"cal_day","gdpppp _2011","urban_pop","bmi_over_30","cho_crops", 'health_eff_index','education_index']
     x_values = st.multiselect("X values", x_values_options, x_values_default)

@@ -1,0 +1,49 @@
+Country/Region,n,age_min,age_max,year_min,year_max,Height,Source,iso_3
+Herzegovina,819,17,,2001,2003,185.2,Pineau et al. (2005) (pers. communication),HER
+Netherlands,211,20,21,2009,,183.8,Schönbeck et al. (2013),NLD
+Montenegro,710,18,19,2013,,183.2,S. Popović-pers. communication,MNE
+Iceland,146,18,,2008,2009,181.8,Arngrímsson et al. (2012) (pers. communication),ISL
+Sweden,2408,17,20,2008,2009,181.4,Sjöberg et al. (2012),SWE
+Lithuania,195,18,,2001,,181.3,Tutkuviene (2005),LTU
+Czech Republic,302,18,29,2011,2013,181.2,A survey of physical fitness conducted by the authors,CZE
+Estonia,603,20,25,2003,2005,180.9,Kaarma et al_ 2008,EST
+Serbia,1187,20,29,2006,,180.9,J. Grozdanov - pers. communication,SRB
+Denmark,25454,18,,2006,,180.6,Denmark Statistical Yearbook 2007 (conscripts),DNK
+Croatia,358,18,,2006,2008,180.5,Juresa et al. (2012),HRV
+Germany,317,18,24,2008,2011,180.2,DEGS1 (communication with authors),DEU
+Latvia,102,18,19,2005,2006,180.1,Céderštréma et al. (2006),LVA
+Norway,,18,19,2007,,179.9,Statistics Norway 2007 (conscripts),NOR
+Slovenia,7033,21,,2012,,179.8,G. Starc-pers. communication,SVN
+Austria,,19,,2009,2011,179.6,Gleiss et al. (2013),AUT
+Belgium,,18,,2005,,179.5,DINBelg 2005    ,BEL
+Australia,295,25,30,1999,2000,179.4,AusDiab survey (1999-2000) (S. Tanamas - pers. comm.),AUS
+Slovakia,823,18,,2011,,179.3,L. Ševčíková - pers. communication,SVK
+USA,664,20,39,2003,2006,178.9,McDowell et al. (2008),USA
+Bosnia,88,18,,2003,,178.8,Hadžihalilović et al. (2006),BIH
+Finland,14939,20,,2011,,178.6,M. Santtila-pers. communication,FIN
+Ireland,162,18,29,2007,,178.5,Harrington et al. (2008) (communication with authors),IRL
+Poland,846,18,,2007,2009,178.5,Kułaga et al. (2010),POL
+Northern Ireland,144,20,25,2010,2012,178.5,Northern Ireland Health Survey (comm. with authors),NIR
+Switzerland,29707,18,22,2009,,178.2,Staub et al. (2011),CHE
+Greece,3982,18,26,2006,2007,178.1,Papadimitriou et al. (2008),GRC
+Scotland,1231,20,29,2008,2011,178.0,Scottish Health Survey 2008-11 (comm. with authors),GBR
+France,110,18,29,2006,,177.8,French nutrition and health survey (2006),FRA
+New Zealand,158,19,30,2008,2009,177.8,New Zealand Adult Nutrition Survey (2008-2009),NZL
+England,1084,25,34,2008,,177.6,Health Survey for England 2008,ENG
+Hungary,890,18,,2003,2006,177.5,,HUN
+Belarus,209,18,,2005,2007,177.5,Tehako et al. (2008),BLR
+Macedonia,596,18,,2012,,177.4,Gontarev et al. (2012) (pers. communication),MKD
+Spain,1275,18,24,2000,2004,177.3,Carrascosa Lezcano et al. (2008),ESP
+Russia,1077,20,25,2004,2005,177.3,RLMS (http://www.cpc.unc.edu/projects/rlms-hse),RUS
+Italy,,18,,1999,2004,176.5,Cacciari et al. (2006),ITA
+Georgia,69,18,,2012,,176.3,Kharabadze et al. (2012) (pers. communication),GEO
+Romania,>1259,18,20,1999,2006,176.0,An unweighted mean of 3 local studies,ROU
+Bulgaria,643,18,29,2003,2008,175.9,A weighted mean of 6 studies,BGR
+Ukraine,208,17,,2009,,175.9,Platonova (2011),UKR
+Moldova,,20,24,2005,,175.3,Estimate (based on the Moldova DHS survey 2005),MDA
+Cyprus,339,17.5,18.5,2006,2007,174.6,Photiou (2007)  ,CYP
+Albania,649,20,29,2008,2009,174.0,Albania DHS survey (2008-2009) (comm. with authors),ALB
+Portugal,696,18,,2008,,173.9,Sardinha et al. (2010) (D. Santos-pers. communication),PRT
+Turkey,325,20,22,2007,,173.6,Işeri and Arslan (2009) (comm. with authors),TUR
+Azerbaijan,341,20,24,2006,,172.9,Azerbaijan DHS survey 2006 (comm. with authors),AZE
+Armenia,,20,24,2005,,171.9,Estimate (based on the Armenia DHS survey 2005),ARM
