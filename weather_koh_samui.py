@@ -86,21 +86,32 @@ def read_ogimet():
         counter += 1
 
     # observations = observations[observations["Date"] <= end_date] # gives an error. I just delete the last rows in the CSV file
-
+    observations = observations.sort_values(by='Date')
     observations.to_csv(f"irbid_weather_{location_str}_2024.csv", index=False)
     # You have to replace ---- with [nothing]. (Don't use [None], since it will turn the column into a text/object column) 
     print(observations)
 
 def show_warmingstripes(df_, to_show, where):
-    print (df_)
-    df = df_.groupby(df_["Year"], sort=True).mean(numeric_only = True).reset_index()
-    #df_grouped = df.groupby([df[valuefield]], sort=True).sum().reset_index()
+    """_summary_
+
     # Based on code of Sebastian Beyer
     # https://github.com/sebastianbeyer/warmingstripes/blob/master/warmingstripes.py
 
     # the colors in this colormap come from http://colorbrewer2.org
     # the 8 more saturated colors from the 9 blues / 9 reds
     # https://matplotlib.org/matplotblog/posts/warming-stripes/
+    
+
+    Args:
+        df_ (_type_): _description_
+        to_show (_type_): _description_
+        where (_type_): _description_
+    """ 
+    
+    df = df_.groupby(df_["Year"], sort=True).mean(numeric_only = True).reset_index()
+    #df_grouped = df.groupby([df[valuefield]], sort=True).sum().reset_index()
+    
+
     cmap = ListedColormap(
         [
             "#08306b",
@@ -121,7 +132,6 @@ def show_warmingstripes(df_, to_show, where):
             "#67000d",
         ]
     )
-    # https://github.com/sebastianbeyer/warmingstripes/blob/master/warmingstripes.py
     temperatures = df[to_show].tolist()
     stacked_temps = np.stack((temperatures, temperatures))
     with _lock:
@@ -142,19 +152,54 @@ def show_warmingstripes(df_, to_show, where):
         # st.pyplot(fig) - gives an error
         st.set_option("deprecation.showPyplotGlobalUse", False)
         st.pyplot()
-def show_month(df, to_show, month, month_names, where):
-   
-    # Filter data for month == 3
-    df_march = df[df['Month'] == month]
+def show_month(df, to_show, day_min, day_max, month, month_names, where):
+    """Show graph with to_show in different lines for each years for a certain (period of) a month
+       Show a frequency table of this data
+       Show a histogram of this data 
 
-                
-    fig = px.line(df_march, x='Day', y=to_show, color='Year', labels={'temp': 'Temperature (°C)'}, title=f'{to_show} for {month_names[month-1]} in {where}')
-
-    # Show the plot
-   
-
+    Args:
+        df (_type_): _description_
+        to_show (_type_): _description_
+        day_min (_type_): _description_
+        day_max (_type_): _description_
+        month (_type_): _description_
+        month_names (_type_): _description_
+        where (_type_): _description_
+    """   
+    
+    df_month = df[(df['Month'] == month) & (df['Day']>=day_min) & (df['Day']<=day_max)]             
+    fig = px.line(df_month, x='Day', y=to_show, color='Year', labels={'temp': 'Temperature (°C)'}, title=f'{to_show} for {month_names[month-1]} in {where}')
     st.plotly_chart(fig)
+
+    frequency_table = df_month[to_show].value_counts().reset_index()
+    frequency_table.columns = [to_show, 'Frequency']
+    # Sort the frequency table by the variable 'to_show'
+    frequency_table = frequency_table.sort_values(by=to_show, ascending=False)
+    # Calculate cumulative absolute frequency
+    frequency_table['Cumulative Absolute Frequency'] = frequency_table['Frequency'].cumsum()
+
+    # Calculate cumulative percentage
+    total_absolute_frequency = frequency_table['Frequency'].sum()
+    frequency_table['Cumulative Percentage'] = (frequency_table['Cumulative Absolute Frequency'] / total_absolute_frequency) * 100
+
+    # Display the frequency table
+    st.write(frequency_table)
+
+    # Histogram using Plotly Express
+    fig = px.histogram(df_month, x=to_show, title=f'Histogram of {to_show}', labels={to_show: f'{to_show}', 'count': 'Frequency'})
+    st.plotly_chart(fig)
+
+    show_warmingstripes(df_month, to_show, where)
+
 def cross_table_montly_avg(df, to_show, where, y_axis_zero):  
+    """_summary_
+
+    Args:
+        df (_type_): _description_
+        to_show (_type_): _description_
+        where (_type_): _description_
+        y_axis_zero (_type_): _description_
+    """
     # CROSS TABLE WITH MONTLY AVERAGES
     st.subheader (f"Monthly averages of {to_show} - {where}")
     crosstable = pd.pivot_table(df, values=to_show, index='Month', columns='Year', aggfunc='mean').round(1)
@@ -178,67 +223,7 @@ def cross_table_montly_avg(df, to_show, where, y_axis_zero):
                     yaxis_title=f'Montly average of {to_show}')
     if y_axis_zero:
         fig_x.update_layout(yaxis_range=[0, max(transposed_df.max())])
-
-
     st.plotly_chart(fig_x)
-
-
-def main():
-    """Show the data from Ogimet in a graph, and average values per month per year
-    """    
-                         
-    
-    
-    
-    where = st.sidebar.selectbox("Location to show", ["Koh Samui", "Chiang Mai", "Rome Fiumicino"])
-
-    to_show = st.sidebar.selectbox("What to show x", ["T_Max","T_Min","T_Mean","Hr_Med","Wind_Max","Wind_Mean","SLP","STN","Vis","Prec","Diary"],0)
-    window_size =  st.sidebar.slider("Window for SMA",1,365,7) 
-    y_axis_zero = st.sidebar.selectbox("Y axis start at zero", [True,False],1)
-    multiply_minus_one = st.sidebar.selectbox("Multiply by -1", [True,False],1)
-    treshold_value = st.sidebar.number_input("Treshold value (incl.)")
-    above_under = st.sidebar.selectbox("Above or below", ["above", "equal", "below"],0)
-
-    # Create a line plot using Plotly Express
-    month_names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-    month = month_names.index(st.sidebar.selectbox("Month", month_names, index=0)) + 1
-    
-    df_ = get_data(where)
-    if multiply_minus_one:
-        # Make a copy of the DataFrame without the "Date" column
-        df_copy = df_.drop(columns=['Date']).copy()
-
-        # Multiply all values by -1
-        df_copy = df_copy * -1
-
-        # Combine the "Date" column back with the modified values
-        df = pd.concat([df_['Date'], df_copy], axis=1)
-    else:
-        df = df_
-
-
-    df['Date'] = pd.to_datetime(df['Date'])
-    df['Day'] = df['Date'].dt.day
-    
-    df['Month'] = df['Date'].dt.month
-    df['Year'] = df['Date'].dt.year
-    df = df.sort_values(by='Date')
-  
-    st.title(f"Weather info from {where}")
-    
-    line_graph(to_show, window_size, y_axis_zero, df)
-    cross_table_montly_avg(df, to_show, where, y_axis_zero)
-    
-   
-    
-    show_treshold(where, to_show, treshold_value, above_under, df)
-
-    show_warmingstripes(df, to_show, where)
-    
-    show_month(df, to_show, month, month_names,where)
-
-    
-    show_info()
 
 def show_info():
     st.info("Source weather info: https://ogimet.com/")
@@ -260,6 +245,15 @@ def show_info():
     '''
 
 def show_treshold(where, to_show, treshold_value, above_under, df):
+    """_summary_
+
+    Args:
+        where (_type_): _description_
+        to_show (_type_): _description_
+        treshold_value (_type_): _description_
+        above_under (_type_): _description_
+        df (_type_): _description_
+    """    
     if above_under =="above":
     # Filter the DataFrame to include only the rows where Temperature is above 30 degrees
         df_above_30 = df[df[to_show] >= treshold_value]
@@ -288,6 +282,14 @@ def show_treshold(where, to_show, treshold_value, above_under, df):
     st.plotly_chart(fig)
 
 def line_graph(to_show, window_size, y_axis_zero, df):
+    """_summary_
+
+    Args:
+        to_show (_type_): _description_
+        window_size (_type_): _description_
+        y_axis_zero (_type_): _description_
+        df (_type_): _description_
+    """    
     df[f'{to_show}_SMA'] = df[to_show].rolling(window=window_size).mean()
 
     fig = px.line(df, x='Date', y=[to_show, f'{to_show}_SMA'],
@@ -327,6 +329,55 @@ def get_data(where):
     df_ = pd.read_csv(url)
     return df_
 
+
+
+def main():
+    """Show the data from Ogimet in a graph, and average values per month per year
+    """    
+                         
+    
+    
+    
+    where = st.sidebar.selectbox("Location to show", ["Koh Samui", "Chiang Mai", "Rome Fiumicino"])
+    to_show = st.sidebar.selectbox("What to show x", ["T_Max","T_Min","T_Mean","Hr_Med","Wind_Max","Wind_Mean","SLP","STN","Vis","Prec","Diary"],0)
+    window_size =  st.sidebar.slider("Window for SMA",1,365,7) 
+    y_axis_zero = st.sidebar.selectbox("Y axis start at zero", [True,False],1)
+    multiply_minus_one = st.sidebar.selectbox("Multiply by -1", [True,False],1)
+    treshold_value = st.sidebar.number_input("Treshold value (incl.)")
+    above_under = st.sidebar.selectbox("Above or below", ["above", "equal", "below"],0)
+
+    month_names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    month = month_names.index(st.sidebar.selectbox("Month", month_names, index=0)) + 1
+    day_min, day_max  = st.slider("days",1,31,(1,15))
+    df_ = get_data(where)
+    if multiply_minus_one:
+        # needed for for ex. visability 
+        # Make a copy of the DataFrame without the "Date" column
+        df_copy = df_.drop(columns=['Date']).copy()
+
+        # Multiply all values by -1
+        df_copy = df_copy * -1
+
+        # Combine the "Date" column back with the modified values
+        df = pd.concat([df_['Date'], df_copy], axis=1)
+    else:
+        df = df_
+
+
+    df['Date'] = pd.to_datetime(df['Date'])
+    df['Day'] = df['Date'].dt.day
+    df['Month'] = df['Date'].dt.month
+    df['Year'] = df['Date'].dt.year
+    df = df.sort_values(by='Date')
+  
+    st.title(f"Weather info from {where}")
+    
+    line_graph(to_show, window_size, y_axis_zero, df)
+    cross_table_montly_avg(df, to_show, where, y_axis_zero)   
+    show_treshold(where, to_show, treshold_value, above_under, df)
+    show_warmingstripes(df, to_show, where) 
+    show_month(df, to_show, day_min, day_max,month, month_names,where)
+    show_info()
 
 if __name__ == "__main__":
     #read_ogimet()

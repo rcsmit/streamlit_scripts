@@ -68,7 +68,7 @@ def get_data(join_how):
     url_health =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/health_efficiency_index.csv"
     url_education_mean = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/mean-years-of-schooling-long-run.csv"
     url_education_expected = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/expected-years-of-schooling.csv"
-    
+    url_length = 'https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/length_male.csv'
    
     # url_country = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\country_codes.csv"
     # url_meat = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption.csv"
@@ -119,11 +119,14 @@ def get_data(join_how):
     df_education_expected = df_education_expected.dropna(subset=['iso_3'])
     df_education_mean = df_education_mean.dropna(subset=['iso_3'])
    
+    df_length = pd.read_csv(url_length, delimiter=',')
     merged_df_0 = pd.merge(df_meat, df_country, how="outer", on='country')
     merged_df_1 = merged_df_0.merge(df_gm_2018, how=join_how, on='country')
     merged_df_2 = merged_df_1.merge(df_health,  how=join_how, on="country")
     merged_df_3 = merged_df_2.merge(df_education_mean, on="iso_3", how=join_how)
-    df = merged_df_3.merge(df_education_expected, on="iso_3", how=join_how)
+    merged_df_4 = merged_df_3.merge(df_length, on="iso_3", how=join_how)
+    
+    df = merged_df_4.merge(df_education_expected, on="iso_3", how=join_how)
     df["education_index"] = ((df["schooling_expected"] / 18) + (df["schooling_mean"] /15) )/2
 
     # # Find countries in df but not in df_gm

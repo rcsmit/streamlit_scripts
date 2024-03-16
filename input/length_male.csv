@@ -1,0 +1,64 @@
+﻿Country/Region,n,age_min,age_max,year_min,year_max,Height,Source,iso_3
+France: French Polynesia,232,18,24,2010,,178.6,French Polynesia STEPS 2010,PYF
+Tonga,229,18,20,2008,,176.7,Swinburn et al. (2011) (pers. communication),TON
+USA: American Samoa,272,25,34,2004,,175.9,American Samoa: STEPS 2004,ASM
+Maori (New Zealand),,19,30,2008,2008,175.9,New Zealand Adult Nutrition Survey 2008–09,NZL
+Kazakhstan,200,18,,2002,2004,175.6,Estimate (based on Facchini et al., 2007),KAZ
+Lebanon,343,20,30,2009,,175.5,Naja et al. (2011) (pers. communication),LBN
+Algeria,55,18,,2010,2011,174.6,Musaiger et al. (2012) (pers. communication),DZA
+Israel (Israeli-born only),1845,20,25,2010,,174.5,IDF (R. Kayouf—pers. communication),ISR
+South Korea,,20,,2005,,174.3,Moon (2011),KOR
+Tunisia,456,18,20,2005,,174.2,Aounallah-Skhiri et al. (2008) (B. Maire—pers. comm.),TUN
+Fiji,289,18,,2007,2008,174.1,Swinburn et al. (2011) (P. Kremer—pers. comm.),FJI
+Samoa,186,24,30,2010,,173.9,Hawley et al. (2014) (S. McGarvey—pers. comm.),WSM
+United Arab Emirates (Dubai),164,17,19,2009,2011,173.5,Al-Hazzaa et al. (2011) (pers. comm.),ARE
+Palestine (incl. Gaza),197,17,19,2013,,173.5,PMS survey (2013) (A. Aburub—pers. comm.),PSE
+Iran,,21,25,2001,2005,173.4,Haghdoost et al. (2008),IRN
+"Libya (Derna, northeast)",108,18,30,2014,,172.9,T. Elhisadi (pers. communication),LBY
+Bahrain,146,17,19,2009,2011,172.5,Al-Hazzaa et al. (2011) (pers. comm.),BHR
+Taiwan,199,18,30,2003,2008,172.3,A weighted mean of 2 samples,TWN
+China,3853,19,,2010,,172.1,China: General Administration of Sport,CHN
+Kuwait,111,20,24,2006,,172.1,Kuwait STEPS 2006,KWT
+Japan,1512,20,24,2006,,172.1,Japan: Official Statistics,JPN
+Qatar,713,18,44,2012,,171.7,Qatar STEPS 2012,QAT
+China: Hong-Kong,468,18,,2005,2006,171.7,So et al. (2008),HKG
+Morocco,3005,18,24,2011,,171.7,K. El Rhazi—pers. communication,MAR
+Singapore,,21,25,2010,,171.5,Ministry of Health,Singapore,SGP
+Kyrgyzstan,-,20,24,2012,,171.3,Estimate (based on Kyrgyzstan DHS 2012),KGZ
+Uzbekistan,602,20,25,2002,,171.1,Uzbekistan DHS 2002 (pers. comm.),UZB
+Syria (Aleppo),229,18,25,2004,,171.0,Fouad et al. (2006) (pers. comm.),SYR
+Turkmenistan,-,20,24,2000,,170.9,Estimate (based on Turkmenistan DHS 2000),TKM
+Jordan,181,18,29,2009,2010,170.9,Y. S. Khader–pers. communication,JOR
+Iraq,603,25,34,2006,,170.9,Iraq STEPS 2006,IRQ
+Egypt,845,20,24,2008,,170.3,El-Zanaty and Way (2009),EGY
+Tajikistan,-,20,24,2012,,170.1,Estimate (based on Tajikistan DHS 2012),TJK
+Saudi Arabia (Al Ula + Taif),646,20,30,2005,2007,169.9,Taha et al. (2009),SAU
+Fed. St. of Micronesia (Chuuk),174,25,34,2006,,169.9,FSM (Chuuk): STEPS 2006,FSM
+Kiribati,163,25,34,2004,,169.8,Kiribati STEPS 2004,KIR
+Guam,59,18,30,2011,2012,169.8,Y. C. Paulino—pers. communication,GUM
+Oman (Muscat City),224,17,19,2009,2011,169.6,Al-Hazzaa et al. (2011),OMN
+Mongolia,400,15,24,2009,,168.2,Mongolia STEPS 2009,MNG
+Afghanistan,-,18,29,2010,,167.9,Estimate (based on Afghanistan MICS4 2010),AFG
+Vanuatu,698,25,34,2011,,167.8,Vanuatu STEPS 2011,VUT
+Pakistan,-,20,24,2012,2013,167.8,Estimate (based on Pakistan DHS 2012–13),PAK
+Thailand,855,20,30,2009,,167.6,Aekplakorn et al., 2014 (pers. communication),THA
+Malaysia,823,18,19,2006,,167.5,Malaysia NHMS 2006,MYS
+Solomon Islands,263,25,34,2005,,167.4,Solomon Islands STEPS 2005,SLB
+Brunei,473,20,25,2009,2011,166.9,Z. Bin Kamis—pers. communication,BRN
+Maldives (Malé),244,15,24,2011,,166.1,Maldives STEPS 2011,MDV
+North Korea (refugees),520,20,27,2000,2007,165.6,Pak et al. (2011),PRK
+Sri Lanka,312,18,29,2005,2006,165.6,Ranasinghe et al. (2011),LKA
+India,21,394,20,29,2005,2006,165.2,Mamidi et al. (2011),IND
+Vietnam,,22,26,2009,,164.4,Vietnam: General nutrition survey 2009–10,VNM
+Marshall Islands,177,25,34,2002,,164.1,Marshall Islands STEPS 2002,MHL
+Indonesia,1275,20,25,2007,2008,163.9,Sohn (2015) (pers. communication),IDN
+Myanmar/Burma,619,25,34,2009,,163.9,Myanmar STEPS 2009,MMR
+Bhutan (Thimphu City),255,25,34,2007,,163.8,Bhutan STEPS 2007,BTN
+Philippines,,20,29,2011,,163.8,FNRI 2011 (G. Gironella–pers. comm.),PHL
+Laos (Vientiane City),370,25,34,2008,,163.6,Laos STEPS 2008,LAO
+Yemen,374,20,25,2005,2006,163.1,Yemen—Household Budget Survey Project (2013),YEM
+Papua New Guinea,334,25,34,2008,2009,163.1,PNG STEPS 2008–09,PNG
+Nepal,286,15,29,2012,2013,163.0,Nepal STEPS 2012–13,NPL
+Bangladesh,1172,25,34,2010,,162.7,Bangladesh STEPS 2010,BGD
+Cambodia,526,25,34,2010,,162.4,Cambodia STEPS 2010,KHM
+Timor-Leste,713,20,29,2003,,161.6,Timor-Leste DHS 2003,TLS
