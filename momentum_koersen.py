@@ -1,13 +1,7 @@
 import yfinance as yf
 import pandas as pd
-
-import numpy as np
 import plotly.graph_objects as go
 import streamlit as st
-import datetime as dt
-from forex_python.converter import get_rate
-from forex_python.converter import CurrencyRates
-from datetime import datetime, date
 
 # https://quantpedia.com/strategies/currency-momentum-factor/
 
@@ -22,42 +16,41 @@ def get_data(choice, period, interval, window):
         auto_adjust=True,
         prepost=False,
     )
-    # print (data)
+
     if interval in ["1d","5d","1wk","1mo","3mo"]:
         index_field = "Date"
     elif interval in [ "1m","2m","5m","15m","30m","60m","90m","1h"]:
         index_field = "Datetime"
     df = pd.DataFrame(data)
 
-    # data = yf.download(tickers=(choice), start="2021-11-27",interval=interval,group_by='ticker',auto_adjust=True,prepost=False)
-    # df = pd.DataFrame(data)
     if len(df) == 0:
         st.error(f"No data or wrong input - {choice}")
-        #df = None
+        
         st.stop()
     else:
         df['rownumber'] = np.arange(len(df))
     column_name = "close_" + choice
     df[column_name] = df["Close"]
     df = df.reset_index()
-    print (df)
+ 
     try:
         df["Date"] = df[index_field]
     except:
         df["Date"] = df["index"]
     df = df[["Date", column_name]]
-    print (df)
   
     # Add a new column 'sma' with 3-period SMA
     df['sma'] = df[column_name].rolling(window=window, center=True).mean()
-    print (df)
+
     return df
 
 def show_plot(df, rate_column):
-    
-    # Create a Plotly figure
-    fig = go.Figure()
+    """_summary_
 
+    Args:
+        df (_type_): _description_
+        rate_column (_type_): _description_
+    """    
     # Add a line trace for the close_EURTHB=X column
     #fig.add_trace(go.Scatter(x=df['Date'], y=df[rate_column], mode='lines+markers', name=rate_column))
 
@@ -84,7 +77,11 @@ def show_plot(df, rate_column):
     st.plotly_chart(fig)
 
 def input_options():
-    # https://finance.yahoo.com/lookup?s=-usd&.tsrc=fin-srch
+    """_summary_
+
+    Returns:
+        _type_: _description_
+    """    
     
     choice = st.sidebar.selectbox("Which ticker", ["EURTHB=X", "BTC-USD", "BTC-EUR"],0)
     period = st.sidebar.selectbox("Period", ["1d","5d","1mo","3mo","6mo","1y","2y","5y","10y","ytd","max"], 5)
@@ -94,8 +91,17 @@ def input_options():
 
 
 
-# Function to determine rate change
+
 def determine_rate_change(prev_rate, curr_rate):
+    """ Function to determine rate change
+
+    Args:
+        prev_rate (_type_): _description_
+        curr_rate (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     if curr_rate < prev_rate:
         return 'decreasing'
     elif curr_rate == prev_rate:
@@ -103,8 +109,17 @@ def determine_rate_change(prev_rate, curr_rate):
     else:
         return 'increasing'
 
-# Function to create transition matrix
+
 def create_transition_matrix(df, rate_column):
+    """Function to create transition matrix
+
+    Args:
+        df (_type_): _description_
+        rate_column (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     transitions = {
         'decreasing': {'decreasing': 0, 'same': 0, 'increasing': 0},
         'same': {'decreasing': 0, 'same': 0, 'increasing': 0},
