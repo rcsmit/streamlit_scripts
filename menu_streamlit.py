@@ -60,7 +60,8 @@ def main():
                 ["31. Sterfte vs temp", "sterfte_temperatuur"],
                 ["32. Tax PvdA GL", "tax_pvda_gl"],
                 ["33. Momentum currency", "momentum_koersen"],
-                ["34. Acroyoga groups", "acroyoga_groups"]
+                ["34. Acroyoga groups", "acroyoga_groups"],
+                ["35. Life Expectancy NL","life_expectancy_nl"]
                 ]
     # for file in arr:
     #     if file[-2:] =="py" and ( file != "welcome.py" and file !="menu_streamlit.py"):

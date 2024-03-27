@@ -16,7 +16,7 @@ class PensionCalculator:
         
         self.current_age = 46
         self.retirement_age = 69
-        self.max_age= 120
+        self.max_age= 110
         # self.expected_life_expectancy = 81.4
         # self.expected_life_expectancy_sd = 10
         self.annual_return_rate =2.0
@@ -60,13 +60,12 @@ class PensionCalculator:
         self.sexe = st.sidebar.selectbox("sexe", ["male", "female"],0)
         self.current_age = st.sidebar.number_input("Current Age:", value=self.current_age)
         self.retirement_age = st.sidebar.number_input("Retirement Age:", value=self.retirement_age)
+        if self.current_age > self.retirement_age:
+            st.error("You cannot be older than your retirement age")
+            st.stop()
         self.max_age = st.sidebar.number_input("Maximum Age:", value=self.max_age)
-        #self.expected_life_expectancy = st.sidebar.number_input("Expected Life Expectancy:", value=self.expected_life_expectancy)
-        #self.expected_life_expectancy_sd = st.sidebar.number_input("Expected Life Expectancy SD:", value=self.expected_life_expectancy_sd)
         self.birthyear = self.current_year - self.current_age
         st.sidebar.write(f"Years to go to pension: {self.retirement_age - self.current_age}")
-        #st.sidebar.write(f"Number of years to sustain {round(self.expected_life_expectancy - self.retirement_age,1)}")
-        #st.sidebar.write(f"Ratio : {round((self.expected_life_expectancy - self.retirement_age) / (self.retirement_age - self.current_age),1)}")
         
         st.sidebar.subheader("--- Rates ---") 
         self.annual_return_rate = st.sidebar.number_input("Annual Interest Rate (%):", value=self.annual_return_rate)
@@ -173,7 +172,6 @@ class PensionCalculator:
                     # use of the AG2022 table. 
                     probability_to_die = df_prob_die[str(current_year)].to_numpy()[df_prob_die['age'].to_numpy() == age].item()
                     
-                    #probability_to_die = df_prob_die.loc[df_prob_die['age'] == age, str(current_year)].values[0]
                     if random.random() <= probability_to_die:
                                 deceased_ages.append(age)
                                 saldo_at_death_values.append(balance)
@@ -213,13 +211,11 @@ class PensionCalculator:
                         probability_to_die = 0.6
                     else:
                         probability_to_die = df_prob_die[str(current_year)].to_numpy()[df_prob_die['age'].to_numpy() == age].item()
-                    #probability_to_die = df_prob_die.loc[df_prob_die['age'] == age, str(current_year)].values[0]
                     if random.random() <= probability_to_die:
                                 deceased_ages.append(age)
                                 saldo_at_death_values.append(balance)
                                 person_alive = False
 
-                
             results.append({
                 'annual_contribution_values': annual_contribution_values,
                 'balance_values': balance_values,
@@ -251,7 +247,7 @@ class PensionCalculator:
         st.write(f"Time needed: {s2-s1} seconds")
         #self.show_ages_at_death(num_simulations, self.deceased_ages)
 
-    def show_ages_at_death(self, num_simulations,):
+    def show_ages_at_death(self, num_simulations,sexe, current_age):
         """Show a graph of the age of death of people in the simulations
 
         Args:
@@ -320,20 +316,21 @@ class PensionCalculator:
         for c in ["cdf", "cdf_1"]:
             if c =="cdf":
                 l = [50,75,95,99]
-                name  ='Cumulative Distribution Function (CDF) of Ages'
+                name  =f'Cumulative Distribution Function (CDF) of Ages ({sexe} - {current_age})'
                 name2 = "CDF"
+                verb = "to be deceased"
             else:
                 #  Complementary Cumulative Distribution Function (CCDF),
-                l = [5,25,5,1]
-                name = "Survival function"
+                l = [50,25,5,1]
+                name = f"Survival function ({sexe} - {current_age})"
                 name2 = "CCDF"
+                verb = "to be still alive"
             # Create CDF plot using Plotly
             fig = go.Figure()
             fig.add_trace(go.Scatter(x=end_table['ages'], y=end_table[c], mode='lines', name=name2))
             fig.update_layout(title=name,
                             xaxis_title='Age',
                             yaxis_title=name2)
-
             
             for prob in l: 
                 # Find the age where cumulative probability is closest to 0.5
@@ -344,7 +341,7 @@ class PensionCalculator:
 
                 # Add vertical line at age where cumulative probability is 0.5
                 fig.add_vline(x=age_at_prob, line_dash="dash", line_color="red", annotation_text=f"{exact_probability}")
-                st.write(f"{exact_probability}% probability at {age_at_prob} years")
+                st.write(f"{exact_probability}% probability {verb} at {age_at_prob} years")
             st.plotly_chart(fig)
 
 
@@ -479,7 +476,7 @@ def main():
 
     calculator.calculate_pension(num_simulations=calculator.num_simulations)
     calculator.plot_values_with_confidence_intervals("balance_values")
-    calculator.show_ages_at_death(calculator.num_simulations)
+    calculator.show_ages_at_death(calculator.num_simulations, calculator.sexe, calculator.current_age)
     calculator.show_total_balance()
 
 if __name__ == "__main__":
