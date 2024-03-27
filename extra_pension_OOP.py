@@ -23,7 +23,7 @@ class PensionCalculator:
         self.annual_return_rate_sd = 0.0
         self.inflation = 2.62
         self.inflation_sd = 0.0
-
+        self.taxes = 1.0
         self.additional_monthly_need_how = "with inflation"
         self.monthly_pension_without_reduction_original = 1458
         self.years_shortfall = 7
@@ -73,6 +73,8 @@ class PensionCalculator:
         self.inflation = st.sidebar.number_input("Average Annual Inflation Rate (%):", value=self.inflation)
         self.annual_return_rate_sd = st.sidebar.number_input("Annual Interest Rate SD(%):", value=self.annual_return_rate_sd)
         self.inflation_sd = st.sidebar.number_input("Average Annual Inflation Rate SD(%):", value=self.inflation_sd)
+        self.taxes = st.sidebar.number_input("Taxes (%):", value=self.taxes)
+        
         st.sidebar.subheader("--- Pension data ---")
         self.monthly_pension_without_reduction_original = st.sidebar.number_input("Monthly Pension without Reduction (current price level):", value=self.monthly_pension_without_reduction_original)
         self.years_shortfall = st.sidebar.number_input("Years of Shortfall:", value=self.years_shortfall)
@@ -144,7 +146,8 @@ class PensionCalculator:
                 # Generate random values for annual_return_rate and inflation
                 if  balance>0:
                     interest = round(balance * (annual_return_rate / 100), 2)
-                    balance += interest 
+                    taxes_amount = round(balance * (self.taxes / 100), 2)
+                    balance += interest - taxes_amount 
                 else:
                     interest = 0
                 balance +=  annual_contribution_original
@@ -185,7 +188,9 @@ class PensionCalculator:
             for j in range(years_until_retirement + 1, self.max_age - self.current_age + 1):
                 if balance >0 :
                     interest = balance * (annual_return_rate / 100)
-                    balance += interest
+                    taxes_amount = round(balance * (self.taxes / 100), 2)
+                    balance += interest - taxes_amount 
+                    
                 else:
                     interest = 0
                 balance -= annual_shortfall_corrected
@@ -261,33 +266,6 @@ class PensionCalculator:
         age_counts.columns = ['ages', 'frequency']
         end_table = all_ages.merge(age_counts, on='ages', how='left').fillna(0)
 
-        # trace = go.Histogram(
-        #     x=self.deceased_ages,
-        #     xbins=dict(
-        #         start=min(self.deceased_ages),
-        #         end=max(self.deceased_ages),
-        #         size=1  # Adjust the bin size as needed
-        #     ),
-        #     opacity=0.7  # Set the opacity of bars
-        # )
-
-        # # Create the layout for the histogram
-        # layout = go.Layout(
-        #     title='Histogram Deceased ages',
-        #     xaxis=dict(title='Value'),
-        #     yaxis=dict(title='Frequency'),
-        # )
-
-        # # Create the figure and plot it
-        # fig3 = go.Figure(data=[trace], layout=layout)
-        #fig3= go.Bar(x=end_table["ages"], y=end_table["frequency"])
-        # fig3.add_vline(x=statistics.median(self.deceased_ages), line_dash="dash", line_color="grey", annotation_text="mediaan", annotation_position="top right")
-        # fig3.add_vline(x=self.percentile_2_5, line_dash="dash", line_color="grey", annotation_text="2.5%", annotation_position="top right")
-        # fig3.add_vline(x=self.percentile_25, line_dash="dash", line_color="grey", annotation_text="25%", annotation_position="top right")
-        # fig3.add_vline(x=self.percentile_75, line_dash="dash", line_color="grey", annotation_text="75%", annotation_position="top right")
-        
-        # fig3.add_vline(x=self.percentile_97_5, line_dash="dash", line_color="grey", annotation_text="97.5%", annotation_position="top right")
-        
         vlines = [statistics.median(self.deceased_ages), self.percentile_2_5, self.percentile_25, self.percentile_75, self.percentile_97_5]
         vtxt = ["median", "2,5%", "25%", "75%", "97,5%"]
         # Create a bar graph
@@ -320,12 +298,59 @@ class PensionCalculator:
 
         # Update the layout to adjust the appearance of the graph
         fig3.update_layout(
-            title="Age Frequency Bar Graph with Vertical Line at 40",
+            title="Age Frequency Bar Graph",
             xaxis_title="Ages",
             yaxis_title="Frequency",
         )
         st.plotly_chart(fig3)
-   
+
+        # CDF
+                
+        # Sort by ages
+        end_table = end_table.sort_values(by='ages')
+
+        # Calculate cumulative sum of frequencies
+        end_table['cumulative_frequency'] = end_table['frequency'].cumsum()
+
+        # Normalize cumulative sum to get proportions
+        end_table['cdf'] = end_table['cumulative_frequency'] / end_table['cumulative_frequency'].max()*100
+        # Normalize cumulative sum to get proportions
+        end_table['cdf_1'] = 100-(end_table['cumulative_frequency'] / end_table['cumulative_frequency'].max())*100
+
+        for c in ["cdf", "cdf_1"]:
+            if c =="cdf":
+                l = [50,75,95,99]
+                name  ='Cumulative Distribution Function (CDF) of Ages'
+                name2 = "CDF"
+            else:
+                #  Complementary Cumulative Distribution Function (CCDF),
+                l = [5,25,5,1]
+                name = "Survival function"
+                name2 = "CCDF"
+            # Create CDF plot using Plotly
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=end_table['ages'], y=end_table[c], mode='lines', name=name2))
+            fig.update_layout(title=name,
+                            xaxis_title='Age',
+                            yaxis_title=name2)
+
+            
+            for prob in l: 
+                # Find the age where cumulative probability is closest to 0.5
+                age_at_prob = end_table.loc[(end_table[c] - prob).abs().idxmin()]['ages']
+                        
+                # Find the exact probability at that age
+                exact_probability = round((end_table.loc[end_table['ages'] == age_at_prob, c].values[0]),1)
+
+                # Add vertical line at age where cumulative probability is 0.5
+                fig.add_vline(x=age_at_prob, line_dash="dash", line_color="red", annotation_text=f"{exact_probability}")
+                st.write(f"{exact_probability}% probability at {age_at_prob} years")
+            st.plotly_chart(fig)
+
+
+        
+
+
         st.write(f"Average age at death of {num_simulations} individuals ({self.sexe}): {round(sum(self.deceased_ages)/len(self.deceased_ages),1)} - SD {round(np.std(self.deceased_ages),1)}")
         st.write(f"Median age at death: {round(statistics.median(self.deceased_ages),1)}")
         st.write (f"2.5% Percentile: {self.percentile_2_5:.2f} / 95% Percentile: {self.percentile_95:.2f} / 97.5% Percentile: {self.percentile_97_5:.2f}")
