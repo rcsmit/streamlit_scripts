@@ -27,7 +27,7 @@ def getdata_wrapper(stn, fromx, until):
     #url = url_local if platform.processor() else url_knmi
     #header = 0  if platform.processor() else None
     df = get_data(url)
-    
+     
     if platform.processor():
         df = df[(df["YYYYMMDD"] >= fromx) & (df["YYYYMMDD"] <= until)]
     return df, url

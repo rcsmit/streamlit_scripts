@@ -44,15 +44,11 @@ def last_day(df, gekozen_weerstation, what_to_show_, value):
     fig = go.Figure()
 
     # Add a scatter plot trace
-
-
-        # Add a scatter plot trace for the original data
     fig.add_trace(go.Scatter(x=first_zero_temp['year_'],
                             y=moving_avg,
                             mode='lines',  # Use markers for scatter plot
                             marker=dict(color='black'),  # Set marker color to blue
                             name='SMA 30 years'))
-
 
     fig.add_trace(go.Scatter(x=first_zero_temp['year_'],
                             y=first_zero_temp['day_of_year'],
