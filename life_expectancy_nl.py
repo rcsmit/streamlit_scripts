@@ -7,9 +7,6 @@ import streamlit as st
 import pandas as pd
 import datetime
 
-
-
-
 class PensionCalculator:
     def __init__(self):
         # Initialize default values
@@ -52,20 +49,23 @@ class PensionCalculator:
                 
             # display_progress_bar(_,num_simulations)
             person_alive = True
-            for j in range(0, self.max_age - self.current_age + 1):
+            for j in range(0, (10*self.max_age - self.current_age) + 1):
                 if person_alive:
-                    age = self.current_age +j
+                    age_ = (10*self.current_age) +j
                     # use of the AG2022 table. 
-                    if age>100:
+                    if age_>1000:
                         # values not given in the table. Rounded to 0.6
                         probability_to_die = 0.6
                     else:
-                        probability_to_die = df_prob_die[str(self.current_year)].to_numpy()[df_prob_die['age'].to_numpy() == age].item()
-                    
+                        probability_to_die = (df_prob_die[str(self.current_year)].to_numpy()[df_prob_die['age'].to_numpy() == int(age_/10)].item())/10
+                    age= age_/10
                     if random.random() <= probability_to_die:
-                                deceased_ages.append(age)
-                                person_alive = False
+                        deceased_ages.append(age)
+                        # print (f"Person {_} died at {age} years")
+                        person_alive = False
                     # use of the AG2022 table
+            # if person_alive:
+            #     print (f" person {_} is still alive")
   
         # Store all results in the instance variable
         
@@ -73,7 +73,7 @@ class PensionCalculator:
         self.median_age_at_death = round(statistics.median(deceased_ages),1)
   
         sorted_ages = np.sort(deceased_ages)
-
+      
         self.percentile_2_5 = np.percentile(sorted_ages, 2.5)
         self.percentile_95 = np.percentile(sorted_ages, 95)
         self.percentile_25 = np.percentile(sorted_ages, 25)
@@ -106,13 +106,19 @@ class PensionCalculator:
         st.plotly_chart(fig)  
 
         df_deceased = pd.DataFrame({'ages': self.deceased_ages})
-        all_ages = pd.DataFrame({'ages':  range(self.current_age, self.max_age+ 1)})
+
+        # Generate the sequence of ages with steps of 0.1
+        ages_with_steps = np.arange(self.current_age, self.max_age + 0.1, 0.1)
+
+        # Create a DataFrame
+        all_ages = pd.DataFrame({'ages': ages_with_steps})
+        #all_ages = pd.DataFrame({'ages':  range(self.current_age, self.max_age+ 1)})
 
         # Count the frequency of each age in the 'deceased_ages' list
         age_counts = df_deceased['ages'].value_counts().reset_index()
         age_counts.columns = ['ages', 'frequency']
-        end_table = all_ages.merge(age_counts, on='ages', how='left').fillna(0)
-
+        end_table = all_ages.merge(age_counts, on='ages', how='right')#.fillna(0)
+       
         vlines = [statistics.median(self.deceased_ages), self.percentile_2_5, self.percentile_25, self.percentile_75, self.percentile_97_5]
         vtxt = ["median", "2,5%", "25%", "75%", "97,5%"]
         # Create a bar graph
@@ -163,7 +169,7 @@ class PensionCalculator:
         end_table['cdf'] = end_table['cumulative_frequency'] / end_table['cumulative_frequency'].max()*100
         # Normalize cumulative sum to get proportions
         end_table['cdf_1'] = 100-(end_table['cumulative_frequency'] / end_table['cumulative_frequency'].max())*100
-
+        
         for c in ["cdf", "cdf_1"]:
             st.write("______________________________")
             if c =="cdf":

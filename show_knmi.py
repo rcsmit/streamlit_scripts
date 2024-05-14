@@ -13,6 +13,8 @@ from show_knmi_functions.show_aantal_keren import show_aantal_keren
 from show_knmi_functions.show_per_maand import show_per_maand
 from show_knmi_functions.spaghetti_plot import spaghetti_plot
 from show_knmi_functions.show_year_histogram_animation import show_year_histogram_animation
+from show_knmi_functions.last_day import last_day
+
 # INSPRIATION : https://weatherspark.com/m/52666/10/Average-Weather-in-October-in-Utrecht-Netherlands
 # https://radumas.info/blog/tutorial/2017/04/17/percentile-test.html
 
@@ -39,7 +41,8 @@ def interface():
         df, het weerstation, begindatum en einddatum (laatste drie als string)
     """
     mode = st.sidebar.selectbox(
-        "Modus (kies HELP voor hulp)", ["doorlopend per dag", "aantal keren", "specifieke dag", "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", "spaghetti plot", "per maand in div jaren", "percentiles", "polar plot/radar chart", "show year histogram animation", "does rain predict rain", "show year histogram animation", "show weerstations", "help"], index=0
+        "Modus (kies HELP voor hulp)", ["doorlopend per dag", "aantal keren", "specifieke dag","last day",
+                                        "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", "spaghetti plot", "per maand in div jaren", "percentiles", "polar plot/radar chart", "show year histogram animation", "does rain predict rain", "show year histogram animation", "show weerstations", "help"], index=0
     )
    
     weer_stations = get_weerstations()
@@ -139,6 +142,9 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
         help()
     elif mode == "does rain predict rain":
         does_rain_predict_rain(df)
+    elif mode == "last day":
+        value = 0
+        last_day(df, gekozen_weerstation, what_to_show, value)
     elif mode == "show weerstations":
         show_weerstations()
 
