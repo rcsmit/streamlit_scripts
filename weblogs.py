@@ -90,8 +90,9 @@ def main():
         st.subheader(f"{row['titel']}")
         st.write(f"{row['datum']}")
         if row['kopfoto'] != "_":
-            image_url = f"https://github.com/rcsmit/streamlit_scripts/tree/main/printbak/thumbnails/{row['kopfoto']}"
-           
+            #image_url = f"https://github.com/rcsmit/streamlit_scripts/tree/main/printbak/thumbnails/{row['kopfoto']}?raw=true"
+            image_url = f"https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/printbak/thumbnails/{row['kopfoto']}"
+            #st.write(image_url)
             st.image(image_url)
         #st.write(f"{row['artikel']}")
         st.markdown(f"{row['artikel']}", unsafe_allow_html = True)
