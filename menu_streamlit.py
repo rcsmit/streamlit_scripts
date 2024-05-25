@@ -61,7 +61,7 @@ def main():
                 ["32. Tax PvdA GL", "tax_pvda_gl"],
                 ["33. Momentum currency", "momentum_koersen"],
                 ["34. Acroyoga groups", "acroyoga_groups"],
-                ["35. Life Expectancy NL","life_expectancy_nl"]
+                ["35. Life Expectancy NL","life_expectancy_nl"],
                 ["36. Weblogs","weblogs"]
                 ]
     
