@@ -83,6 +83,7 @@ def main():
         st.error("Select one of more blogs")
         st.stop()
 
+
     for index, row in df.iterrows():
         # st.write(f"Row {index}:")
         # st.write(f"id: {row['id']}")
