@@ -1,0 +1,354 @@
+
+    Sub blablameter()
+'Geinspireerd door -Tiggeler, Eric- en -Vuijk, Mieke-,  De Zwarte Woordenlijst: Lexicon van modern taalmisbruik, Den Haag, SDU Uitgevers,2004(2) / Eerste druk: 2003
+ 
+'Code gebasseerd op nieuwsgroepbericht :
+'Van:Doug Robbins - Word MVP (dkr@mvps.org)
+'Onderwerp:Re: Word Count
+'Discussies:alt.comp.freeware, microsoft.public.word.docmanagement, alt.writing
+'Datum:2003-03-30 04:52:46 PST
+
+
+'Verbeterpuntjes/ideeen
+' - gewogen waardes meenemen / ja/nee
+' - vervoegingen werkwoorden
+' - uitbreidingen woorden (slagvaardig vs. slagvaardigheid)
+
+
+    Dim SingleWord As String           'Raw word pulled from docConst
+    Const maxwords = 9000               'Maximum unique words allowed
+         Dim Words(maxwords) As String      'Array to hold unique words
+         Const hoeveelwoorden = 101
+         Dim blabla(hoeveelwoorden)
+         Dim zwaarte(hoeveelwoorden)
+         Dim gewogen(hoeveelwoorden)
+         
+         Dim Freq(maxwords) As Integer      'Frequency counter for Unique Words
+         Dim WordNum As Integer             'Number of unique words
+         Dim ByFreq As Boolean              'Flag for sorting order
+         Dim ttlwds As Long                 'Total words in the document
+         Dim Excludes As String             'Words to be excluded
+         Dim Found As Boolean               'Temporary flag
+         Dim j, k, l, Temp As Integer       'Temporary variables
+         Dim tword As String                '
+Dim totaalgewogen As Integer
+Dim totaalfreq As Integer
+
+blabla(1) = "slagvaardig"
+blabla(2) = "dynamisch"
+blabla(3) = "innovatief"
+blabla(4) = "efficiency"
+blabla(101) = "effectiviteit"
+blabla(5) = "stukje"
+blabla(6) = "gericht"
+blabla(7) = "functie"
+blabla(8) = "implementeren"
+blabla(9) = "communiceren"
+blabla(10) = "terugkoppelen"
+blabla(11) = "win-win"
+blabla(12) = "oplossingen"
+blabla(13) = "invulen"
+blabla(14) = "meerwaarde"
+blabla(15) = "afstemmen"
+blabla(16) = "commitment"
+blabla(17) = "partner"
+blabla(18) = "integraal"
+blabla(19) = "flexibke"
+blabla(20) = "trject"
+blabla(21) = "gaan voor"
+blabla(22) = "go "
+blabla(23) = "visie"
+blabla(24) = "impuls"
+blabla(25) = "resources"
+blabla(26) = "synergie"
+blabla(27) = "hokje"
+blabla(28) = "unique selling point"
+blabla(29) = "transparant"
+blabla(30) = "geïntegreerd"
+blabla(31) = "sturen"
+blabla(32) = "missie"
+blabla(33) = "stakeholder"
+blabla(34) = "managen"
+blabla(35) = "kernprocessen"
+blabla(36) = "maatwerk"
+blabla(37) = "profileren"
+blabla(38) = "relatie"
+blabla(39) = "kans"
+blabla(40) = "kortsluiten"
+blabla(41) = "ambitie"
+blabla(42) = "proactief"
+blabla(43) = "actief"
+blabla(44) = "performance"
+blabla(45) = "output"
+blabla(46) = "optimaliseren"
+blabla(47) = "levelen"
+blabla(48) = "neerzetten"
+blabla(49) = "monitoren"
+blabla(50) = "materiaal"
+blabla(51) = "sturen"
+blabla(52) = "approach"
+blabla(53) = "bilateraaltje"
+blabla(54) = "asset"
+blabla(55) = "cehcken"
+blabla(56) = "adresseren"
+blabla(57) = "assesment"
+blabla(58) = "concpet"
+blabla(59) = "toko"
+blabla(60) = "oppakken"
+blabla(61) = "core business"
+blabla(62) = "de kar trekken"
+blabla(63) = "handen en voeten geven"
+blabla(64) = "dealen"
+blabla(65) = "doorpakken"
+blabla(66) = "slagvaardig"
+blabla(67) = "professional"
+blabla(68) = "empoweren"
+blabla(69) = "effort"
+blabla(70) = "faciliteren"
+blabla(71) = "cultuur"
+blabla(72) = "focus"
+blabla(73) = "incentive"
+blabla(74) = "ontlvechten"
+blabla(75) = "handlen"
+blabla(76) = "inventariseren"
+blabla(77) = "coördineren"
+blabla(78) = "kwalitatief"
+blabla(79) = "speler"
+blabla(80) = "level playingfield"
+blabla(81) = "luisteren"
+blabla(82) = "resultaatgericht"
+blabla(83) = "meenemne"
+blabla(84) = "primair"
+blabla(85) = "complex"
+blabla(86) = "bottom line"
+blabla(87) = "skills"
+blabla(88) = "solutions"
+blabla(89) = "context"
+blabla(90) = "spagaat"
+blabla(91) = "modaliteiten"
+blabla(92) = "gehalte"
+blabla(93) = "spoor"
+blabla(94) = "strategisch"
+blabla(95) = "benchemarken"
+blabla(96) = "tool"
+blabla(97) = "adviseur"
+blabla(98) = "competenties"
+blabla(99) = "verhaal"
+blabla(100) = "afhechten"
+zwaarte(1) = 100
+zwaarte(2) = 99
+zwaarte(3) = 98
+zwaarte(4) = 96
+zwaarte(101) = 96
+zwaarte(5) = 95
+zwaarte(6) = 94
+zwaarte(7) = 93
+zwaarte(8) = 92
+zwaarte(9) = 91
+zwaarte(10) = 90
+zwaarte(11) = 89
+zwaarte(12) = 88
+zwaarte(13) = 87
+zwaarte(14) = 86
+zwaarte(15) = 85
+zwaarte(16) = 84
+zwaarte(17) = 83
+zwaarte(18) = 82
+zwaarte(19) = 81
+zwaarte(20) = 80
+zwaarte(21) = 79
+zwaarte(22) = 78
+zwaarte(23) = 77
+zwaarte(24) = 76
+zwaarte(25) = 75
+zwaarte(26) = 74
+zwaarte(27) = 73
+zwaarte(28) = 72
+zwaarte(29) = 71
+zwaarte(30) = 70
+zwaarte(31) = 69
+zwaarte(32) = 68
+zwaarte(33) = 67
+zwaarte(34) = 66
+zwaarte(35) = 65
+zwaarte(36) = 64
+zwaarte(37) = 63
+zwaarte(38) = 62
+zwaarte(39) = 61
+zwaarte(40) = 60
+zwaarte(41) = 59
+zwaarte(42) = 58
+zwaarte(43) = 57
+zwaarte(44) = 56
+zwaarte(45) = 55
+zwaarte(46) = 54
+zwaarte(47) = 53
+zwaarte(48) = 52
+zwaarte(49) = 51
+zwaarte(50) = 50
+zwaarte(51) = 49
+zwaarte(52) = 48
+zwaarte(53) = 47
+zwaarte(54) = 46
+zwaarte(55) = 45
+zwaarte(56) = 44
+zwaarte(57) = 43
+zwaarte(58) = 42
+zwaarte(59) = 41
+zwaarte(60) = 40
+zwaarte(61) = 39
+zwaarte(62) = 38
+zwaarte(63) = 37
+zwaarte(64) = 36
+zwaarte(65) = 35
+zwaarte(66) = 34
+zwaarte(67) = 33
+zwaarte(68) = 32
+zwaarte(69) = 31
+zwaarte(70) = 30
+zwaarte(71) = 29
+zwaarte(72) = 28
+zwaarte(73) = 27
+zwaarte(74) = 26
+zwaarte(75) = 25
+zwaarte(76) = 24
+zwaarte(77) = 23
+zwaarte(78) = 22
+zwaarte(79) = 21
+zwaarte(80) = 20
+zwaarte(81) = 19
+zwaarte(82) = 18
+zwaarte(83) = 17
+zwaarte(84) = 16
+zwaarte(85) = 15
+zwaarte(86) = 14
+zwaarte(87) = 13
+zwaarte(88) = 12
+zwaarte(89) = 11
+zwaarte(90) = 10
+zwaarte(91) = 9
+zwaarte(92) = 8
+zwaarte(93) = 7
+zwaarte(94) = 6
+zwaarte(95) = 5
+zwaarte(96) = 4
+zwaarte(97) = 3
+zwaarte(98) = 2
+zwaarte(99) = 1
+zwaarte(100) = 0.1
+
+
+
+         ' Set up excluded words
+         'Excludes = "[the][a][of][is][to][for][this][that][by][be][and][are]"
+         Excludes = ""
+         'Excludes = InputBox$("Enter words that you wish to exclude, surrounding each word with [ ].", "Excluded Words", "")
+         'Excludes = Excludes & InputBox$("The following words are excluded: " & Excludes & ". Enter words that you wish to exclude, surrounding each word with [ ].", "Excluded Words", "")
+         ' Find out how to sort
+         ByFreq = True
+         'Ans = InputBox$("Sort by WORD or by FREQ?", "Sort order", "FREQ")
+         'If Ans = "" Then End
+         'If UCase(Ans) = "WORD" Then
+         '    ByFreq = False
+         'End If
+
+         Selection.HomeKey Unit:=wdStory
+         System.Cursor = wdCursorWait
+         WordNum = 0
+         ttlwds = ActiveDocument.Words.Count
+         totalwords = ActiveDocument.Words.Count
+
+         ' Control the repeat
+         For Each aword In ActiveDocument.Words
+             SingleWord = Trim(LCase(aword))
+             If SingleWord < "a" Or SingleWord > "z" Then SingleWord = ""
+                'Out of range?
+             If InStr(Excludes, "[" & SingleWord & "]") Then SingleWord = ""
+                'On exclude list?
+                If Len(SingleWord) > 0 Then
+                    Found = False
+                    For j = 1 To hoeveelwoorden
+                     If blabla(j) = SingleWord Then
+                         'Words(j) = blabla(j)
+                         Freq(j) = Freq(j) + 1
+                         Found = True
+                         Exit For
+                     End If
+                    Next j
+             End If
+             ttlwds = ttlwds - 1
+             StatusBar = "Remaining: " & ttlwds
+        Next aword
+
+         ' Now sort it into word order
+         For j = 1 To hoeveelwoorden - 1
+             k = j
+             For l = j + 1 To hoeveelwoorden
+                 If (Not ByFreq And Words(l) < Words(k)) Or (ByFreq And Freq(l) > Freq(k)) Then k = l
+             Next l
+             If k <> j Then
+                 'tword = Words(j)
+                 'Words(j) = Words(k)
+                 'Words(k) = tword
+                 tblabla = blabla(j)
+                 blabla(j) = blabla(k)
+                 blabla(k) = tblabla
+                 Temp = Freq(j)
+                 Freq(j) = Freq(k)
+                 Freq(k) = Temp
+                 
+                 Tzwaarte = zwaarte(j)
+               zwaarte(j) = zwaarte(k)
+                zwaarte(k) = Tzwaarte
+             End If
+             StatusBar = "Sorting: " & WordNum - j
+         Next j
+
+         ' Now write out the results
+         tmpName = ActiveDocument.AttachedTemplate.FullName
+         Documents.Add Template:=tmpName, NewTemplate:=False
+         Selection.ParagraphFormat.TabStops.ClearAll
+         With Selection
+             For j = 1 To hoeveelwoorden
+                gewogen(j) = Freq(j) * zwaarte(j)
+        totaalfreq = totaalfreq + Freq(j)
+                totaalgewogen = totaalgewogen + gewogen(j)
+                If Freq(j) > 0 Then
+                 .TypeText Text:=blabla(j) & vbTab & Trim(Str(Freq(j))) & vbTab & Trim(Str(zwaarte(j))) & vbTab & Trim(Str(gewogen(j))) & vbCrLf
+                End If
+                
+             Next j
+         End With
+         blablascore = totaalgewogen / totalwords
+         ActiveDocument.Range.Select
+         Selection.ConvertToTable
+         Selection.Collapse wdCollapseStart
+         ActiveDocument.Tables(1).Rows.Add BeforeRow:=Selection.Rows(1)
+         ActiveDocument.Tables(1).Cell(1, 1).Range.InsertBefore "Woord"
+         ActiveDocument.Tables(1).Cell(1, 2).Range.InsertBefore "Aantal"
+         ActiveDocument.Tables(1).Cell(1, 3).Range.InsertBefore "Wegingsfactor"
+         ActiveDocument.Tables(1).Cell(1, 4).Range.InsertBefore "Score"
+         ActiveDocument.Tables(1).Range.ParagraphFormat.Alignment = wdAlignParagraphCenter
+         ActiveDocument.Tables(1).Rows.Add
+         ActiveDocument.Tables(1).Cell(ActiveDocument.Tables(1).Rows.Count, 1).Range.InsertBefore "Totaal voorkomend/gewogen score"
+    ActiveDocument.Tables(1).Cell(ActiveDocument.Tables(1).Rows.Count, 2).Range.InsertBefore totaalfreq
+         ActiveDocument.Tables(1).Cell(ActiveDocument.Tables(1).Rows.Count, 4).Range.InsertBefore totaalgewogen
+         ActiveDocument.Tables(1).Rows.Add
+         ActiveDocument.Tables(1).Cell(ActiveDocument.Tables(1).Rows.Count, 1).Range.InsertBefore "Total words in Document"
+         ActiveDocument.Tables(1).Cell(ActiveDocument.Tables(1).Rows.Count, 4).Range.InsertBefore totalwords
+         'ActiveDocument.Tables(1).Rows.Add
+         'ActiveDocument.Tables(1).Cell(ActiveDocument.Tables(1).Rows.Count, 1).Range.InsertBefore "Number of different words in Document"
+         'ActiveDocument.Tables(1).Cell(ActiveDocument.Tables(1).Rows.Count, 4).Range.InsertBefore Trim(Str(WordNum))
+         ActiveDocument.Tables(1).Rows.Add
+         ActiveDocument.Tables(1).Cell(ActiveDocument.Tables(1).Rows.Count, 1).Range.InsertBefore "Blablascore"
+         ActiveDocument.Tables(1).Cell(ActiveDocument.Tables(1).Rows.Count, 4).Range.InsertBefore blablascore
+         
+         'For i = ActiveDocument.SpellingErrors.Count To 1 Step -1
+         '  SendKeys "%c"
+         '  ActiveDocument.SpellingErrors(i).CheckSpelling
+         'Next i
+         System.Cursor = wdCursorNormal
+         Selection.HomeKey wdStory
+
+End Sub
+

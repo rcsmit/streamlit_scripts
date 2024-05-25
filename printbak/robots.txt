@@ -1,0 +1,45 @@
+<!-- #include virtual="/counter/counter.asp" -->
+<%
+    '**************************************
+    ' Name: List all files in a directory
+    ' Description:Uses the new file FileSyst
+    '     emObject in the scripting library to lis
+    '     t all the files in the c:\inetpub\script
+    '     s\ directory with a link to them. You ca
+    '     n modify this code to list all the files
+    '     in any directory.
+    ' By: Ian Ippolito (RAC)
+    '
+    'This code is copyrighted and has    
+    'limited warranties.Please see http://w
+    'ww.Planet-Source-Code.com/vb/scripts/ShowCode.asp?txtCodeId=44&lngWId=4    
+    'for details.    
+    '**************************************
+    %>
+    <HTML>
+    <BODY>
+    <%
+    Dim objFileScripting, objFolder
+    Dim filename, filecollection, strDirectoryPath, strUrlPath
+    	strDirectoryPath="d:\www\yepcheck.com\www\printbak\"
+  	'	strUrlPath="/printbak/"
+    	'/rcsmit/database/links.mdb
+	'd:\www\yepcheck.com\database\.mdb
+    	'get file scripting object
+    	Set objFileScripting = CreateObject("Scripting.FileSystemObject")
+    	'Return folder object
+
+    	Set objFolder = objFileScripting.GetFolder("d:\www\yepcheck.com\www\printbak\")
+    	'return file collection In folder
+    	Set filecollection = objFolder.Files
+    	'create the links
+    	For Each filename In filecollection
+		response.write "go"
+    		Filename=right(Filename,len(Filename)-InStrRev(Filename, "\"))
+    		Response.Write "<A HREF=""" & strUrlPath & filename & """>" & filename & "</A><BR>"
+    	Next
+    %>
+    </BODY>
+    </HTML>
+
+

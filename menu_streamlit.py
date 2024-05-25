@@ -62,6 +62,7 @@ def main():
                 ["33. Momentum currency", "momentum_koersen"],
                 ["34. Acroyoga groups", "acroyoga_groups"],
                 ["35. Life Expectancy NL","life_expectancy_nl"]
+                ["36. Weblogs","weblogs"]
                 ]
     
     # for file in arr:

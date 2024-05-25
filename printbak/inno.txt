@@ -1,0 +1,22 @@
+Dim fso, folder, folder1, s, sf, file
+Set fso = CreateObject("Scripting.FileSystemObject")
+Set folder = fso.GetFolder("c:\tmp\")                      'bron
+For Each file In folder.Files
+        s = (Left(file.Name, 2))
+        s2 = Val(s)
+                
+        Selection.TypeText Text:=file.Name & vbCr
+        Selection.TypeText Text:=s & vbCr
+        Selection.TypeText Text:=s2 & vbCr
+        
+        
+        If s > hoogste Then hoogste = s     
+              
+Next
+nieuwe = s + 1
+nieuwnummer = Format(nieuwe, "0000000")
+Selection.TypeText Text:="s=" & s
+Selection.TypeText Text:="#" & vbCr
+Selection.TypeText Text:="nieuwe=" & nieuwe & vbCr
+Selection.TypeText Text:="#" & vbCr
+Selection.TypeText Text:="nieuwnummer=" & nieuwnummer & vbCr

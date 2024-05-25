@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<opml version="1.0">
+	<head>
+		<title>Wizz RSS OPML Export</title>
+	</head>
+	<body>
+		<outline text="RSS feeds">
+			<outline text="poker">
+				<outline text="nieuws, portals en magazines">
+					<outline text="NL">
+						<outline text="LowLimitPoker.nl: poker regels, strategie en reviews." type="rss" xmlUrl="http://www.lowlimitpoker.nl/feed/" wizzstat="Read" feedHome=""/>
+						<outline text="NL PokerNews FreeRolls" type="rss" xmlUrl="http://nl.pokernews.com/freeroll-toernooien/rss.xml" wizzstat="Read" feedHome="http://nl.pokernews.com/freeroll-toernooien/"/>
+						<outline text="nl pokernews.com" type="rss" xmlUrl="http://nl.pokernews.com/nieuws/xml.rss" wizzstat="Read" feedHome=""/>
+						<outline text="Poker Strategie | nl.pokernews.com" type="rss" xmlUrl="http://nl.pokernews.com/poker-strategy/rss.xml" wizzstat="Read" feedHome="http://nl.pokernews.com/strategy/"/>
+						<outline text="Poker News | nl.pokernews.com" type="rss" xmlUrl="http://nl.pokernews.com/nieuws/rss.xml" wizzstat="Read" feedHome="http://nl.pokernews.com/news/"/>
+					</outline>
+					<outline text="EN">
+						<outline text="PokerParty Blog" type="rss" xmlUrl="http://burnandturnpoker.blogspot.com/feeds/posts/default?alt=rss" wizzstat="Read" feedHome="http://burnandturnpoker.blogspot.com/index.html"/>
+						<outline text="Wicked Chops Poker" type="rss" xmlUrl="http://wickedchopspoker.blogs.com/my_weblog/rss.xml" wizzstat="Read" feedHome="http://wickedchopspoker.blogs.com/my_weblog/"/>
+						<outline text="The Hendon Mob Newest Articles" type="rss" xmlUrl="http://www.thehendonmob.com/rss/feed/articles.xml" wizzstat="Unread" feedHome=""/>
+						<outline text="CardPlayer.com - Current Poker News" type="rss" xmlUrl="http://www.cardplayer.com/poker_news/rss" wizzstat="Read" feedHome="http://www.cardplayer.com/"/>
+						<outline text="Poker News | pokernews.com" type="rss" xmlUrl="http://uk.pokernews.com/news/rss.xml" wizzstat="Unread" feedHome=""/>
+					</outline>
+					<outline text="FR">
+						<outline text="fr. Poker News | pokernews.com" type="rss" xmlUrl="http://fr.pokernews.com/news/rss.xml" wizzstat="Read" feedHome="http://fr.pokernews.com/news/"/>
+						<outline text="fr Poker Strategy | pokernews.com" type="rss" xmlUrl="http://fr.pokernews.com/strategie/rss.xml" wizzstat="Read" feedHome="http://fr.pokernews.com/strategy/"/>
+						<outline text="Le poker à toute blind" type="rss" xmlUrl="http://interactif.blogs.liberation.fr/lepokeratouteblind/rss.xml" wizzstat="Read" feedHome="http://interactif.blogs.liberation.fr/lepokeratouteblind/"/>
+					</outline>
+				</outline>
+				<outline text="spelers">
+					<outline text="NL">
+						<outline text="u like my style?!" type="rss" xmlUrl="http://mcjeen.blogspot.com/feeds/posts/default?alt=rss" wizzstat="Read" feedHome="http://mcjeen.blogspot.com/index.html"/>
+						<outline text="The Story of lipiton 1973" type="rss" xmlUrl="http://lipiton1973.blogspot.com/rss.xml" wizzstat="Read" feedHome="http://lipiton1973.blogspot.com"/>
+						<outline text="Mike&#39;s Poker Blog" type="rss" xmlUrl="http://mikelitt.blogspot.com/feeds/posts/default?alt=rss" wizzstat="Read" feedHome="http://mikelitt.blogspot.com/index.html"/>
+						<outline text="Moving up" type="rss" xmlUrl="http://claudiusonline.blogspot.com/feeds/posts/default?alt=rss" wizzstat="Read" feedHome="http://claudiusonline.blogspot.com/index.html"/>
+						<outline text="J_RIP" type="rss" xmlUrl="http://jrip.blogspot.com/feeds/posts/default?alt=rss" wizzstat="Read" feedHome="http://jrip.blogspot.com/index.html"/>
+						<outline text="Niels &#39;pilz&#39; Rijneveld" type="rss" xmlUrl="http://pilz.web-log.nl/pilz/rss.xml" wizzstat="Read" feedHome="http://pilz.web-log.nl/pilz/"/>
+						<outline text="MrKranky" type="rss" xmlUrl="http://tireagle.blogspot.com/rss.xml" wizzstat="Read" feedHome="http://tireagle.blogspot.com"/>
+						<outline text="Steven / Je probeert eens wat..." type="rss" xmlUrl="http://zadelhoff.blogspot.com/feeds/posts/default?alt=rss" wizzstat="Read" feedHome="http://zadelhoff.blogspot.com/index.html"/>
+						<outline text="highstake">
+							<outline text="Scorpy; The Dutch hope for a Bracelet" type="rss" xmlUrl="http://scorpy21.blogspot.com/rss.xml" wizzstat="Read" feedHome="http://scorpy21.blogspot.com"/>
+							<outline text="Sven Polarski" type="rss" xmlUrl="http://polarski.blogspot.com/rss.xml" wizzstat="Read" feedHome="http://polarski.blogspot.com"/>
+							<outline text="How did he know?! Abel" type="rss" xmlUrl="http://howdidheknow.net/?feed=rss2" wizzstat="Read" feedHome="http://howdidheknow.net"/>
+						</outline>
+						<outline text="magicmetmark / pokerblog" type="rss" xmlUrl="http://magicmetmark.blogspot.com/feeds/posts/default?alt=rss" wizzstat="Unread" feedHome=""/>
+						<outline text="Sneeker De Ultieme Pokerchallenge: Van $0 naar $1,000,000  " type="rss" xmlUrl="http://sneeker.blogspot.com/rss.xml" wizzstat="Unread" feedHome=""/>
+						<outline text="Edme79 / My Poker Journey" type="rss" xmlUrl="http://edmuntus.blogspot.com/feeds/posts/default?alt=rss" wizzstat="Read" feedHome="http://edmuntus.blogspot.com/index.html"/>
+						<outline text="DaBruns droomt van........" type="rss" xmlUrl="http://dabruns.blogspot.com/feeds/posts/default?alt=rss" wizzstat="Unread" feedHome=""/>
+						<outline text="EasyCompany&#39;s road to the WSOP" type="rss" xmlUrl="http://easycompanypoker.blogspot.com/rss.xml" wizzstat="Unread" feedHome=""/>
+						<outline text="Tice&#39;s Poker Adventures" type="rss" xmlUrl="http://www.thijsbakx.nl/?feed=rss2" wizzstat="Unread" feedHome=""/>
+						<outline text="Smooth / My Way To Pro" type="rss" xmlUrl="http://smoothtells.blogspot.com/feeds/posts/default?alt=rss" wizzstat="Read" feedHome="http://smoothtells.blogspot.com/index.html"/>
+						<outline text="Snake : Online Poker : Meer dan een hobby!!!" type="rss" xmlUrl="http://thebelgiansnake.blogspot.com/feeds/posts/default?alt=rss" wizzstat="Unread" feedHome=""/>
+						<outline text="Poker Unlimited! :: Subforum bekijken - Probleem van de Week" type="rss" xmlUrl="http://forum.pokerunlimited.nl/probleem-van-de-week-f2.html" wizzstat="" feedHome=""/>
+					</outline>
+					<outline text="EN">
+					</outline>
+					<outline text="FR">
+						<outline text="Frédéric Dupont Poker Blog" type="rss" xmlUrl="http://fredericdupont.blogspot.com/feeds/posts/default?alt=rss" wizzstat="Read" feedHome="http://fredericdupont.blogspot.com/index.html"/>
+						<outline text="Raoulshiro On Poker" type="rss" xmlUrl="http://raoulshironpoker.typepad.fr/raoulshiro_on_poker/rss.xml" wizzstat="Read" feedHome="http://raoulshironpoker.typepad.fr/raoulshiro_on_poker/"/>
+						<outline text="LOW STAKES POKER" type="rss" xmlUrl="http://low-stakes-poker.blogspot.com/feeds/posts/default?alt=rss" wizzstat="Unread" feedHome=""/>
+						<outline text="on_air poker blog" type="rss" xmlUrl="http://onairpoker.blogspot.com/feeds/posts/default?alt=rss" wizzstat="Unread" feedHome=""/>
+						<outline text="ALADDIN&#39;S TEAM" type="rss" xmlUrl="http://aladdinsteam.blogspot.com/rss.xml" wizzstat="Unread" feedHome=""/>
+						<outline text="Le blog d&#39;Oléastre" type="rss" xmlUrl="http://oleastre.canalblog.com/rss.xml" wizzstat="Unread" feedHome=""/>
+						<outline text="Le poker" type="rss" xmlUrl="http://pokermakk.over-blog.com/rss2.php" wizzstat="Unread" feedHome=""/>
+						<outline text="highstake/pro">
+							<outline text="F. Montmirel / poker-gagnant" type="rss" xmlUrl="http://www.over-pair.com/rss2.php" wizzstat="Read" feedHome="http://www.over-pair.com"/>
+						</outline>
+						<outline text="LA VIE D UN JOUEUR DE POKER" type="rss" xmlUrl="http://laviedunjoueurdepoker.blogspot.com/feeds/posts/default?alt=rss" wizzstat="Unread" feedHome=""/>
+						<outline text="That&#39;s Poker" type="rss" xmlUrl="http://thatspoker.free.fr/dotclear/rss.php" wizzstat="Unread" feedHome=""/>
+						<outline text="Player of Poker" type="rss" xmlUrl="http://www.blogholdempoker.com/rss2.php" wizzstat="Unread" feedHome=""/>
+					</outline>
+				</outline>
+			</outline>
+		</outline>
+	</body>
+</opml>

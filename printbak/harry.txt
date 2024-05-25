@@ -1,0 +1,232 @@
+Date: Sun, 22 May 2005 16:56:41 +0200 
+From: harry nijenstein <h.nijenstein@hccnet.nl> 
+Subject: Re: TO DO LIJST - actigo 
+To: ""René C. Smit"" <rc.smit@planet.nl> 
+X-Mailer: Microsoft Outlook Express 6.00.2900.2180 
+Original-recipient: rfc822;rc.smit@planet.nl 
+
+
+Hallo René,
+
+
+Volgens mij staan de volgende zaken nog open voor actigo (bij elkaar gezocht in oude emails):
+
+
+**
+Mogelijkheid om een nieuwsbrief voor actigo te verzenden (als bij agmachine).
+**
+Mogelijkheid om tussen de berichten ook banners mee te sturen (in nieuwsbrief en op website ook laten zien).
+KAN DIT?
+ZO JA, HOEVEEL GAAT DAT ONGEVEER KOSTEN (IN TIJD OF GELD)?
+**
+Forum:
+bruikbare voorbeelden zijn te vinden op
+http://www.fiets.nl/forum/
+http://www.wandelpad.nl/forum/list.php/f=1
+**
+Er staan nu een aantal engelstalige berichten in de database.
+Bij het overgaan naar de oude versie werkt de taalwissel echter niet.
+In welke file wordt die taalwissel geregeld?
+Default.asp en news.asp pas ik steeds aan als ik nieuwe berichten heb toegevoegd.
+Kun je op korte termijn hier naar kijken?
+**
+Mogelijkheid om banners per categorie en subcategorie te vertonen (zoals je dat bij agmachine gebouwd hebt).
+(Werkt dat ook als de banner op een andere website staat?)
+Kan dit nog voor het weekend (dan verander ik zolang niets in de database)?
+**
+Sorry, voor het weekend heb ik dus niet gered.
+HET BERICHT IS OP MAANDAG VERSTUURD, DUS HET DUURT NOG EVEN
+VOOR HET WEER WEEKEND IS.
+Is de database vrij?
+DATABASE IS VRIJ TOT HET WEEKEND.
+In welk bestand wil je de banners zien? Er zijn nl. geen
+aparte pagina's
+per categorie. (alleen per subcategorie dus)
+IK DACHT AAN EEN SYSTEEM ALS BIJ AGMACHINE, WAAR DE BANNER
+NU IN DE TABEL BIJ DE CATEGORIE STAAT.
+**
+Lay-out van het nieuwsdeel van de website graag als bij agmachine: grotere koppen met de rubrieknamen, titels van de berichten op een witte achtergrond (alles is nu wel erg in dezelfde kleur), en minder leeg tussen de categorieën.
+**
+De titels van de berichten krijg ik niet op een witte
+achtergrond helaas...
+HELAAS, MAAR VALT MEE TE LEVEN.
+**
+Hoe doe je het nu bij agmachine ook al weer? welk bestand
+kopieer en plak je?
+IK GEBRUIK DE CODE VAN
+http://www.agmachine-benelux.com/mailingnieuws.asp?soort=light&d=8
+EN COPIEER DIE.
+**
+De datum achter de bericht-titels in een kleiner lettertype als de bericht-titels zelf.
+Op de één of andere manier pakt hij dit ook niet.
+Waarschijnlijk ligt dit
+aan het gebruik van CSS, hier zal ik nog even in duiken
+**
+Zoeken: graag in hele database (niet alleen bij
+reisorganisaties, ook bij nieuwsberichten, net als bij
+agmachine).
+**
+
+
+
+
+Harry
+
+
+From: harry nijenstein <h.nijenstein@hccnet.nl>
+Subject: Re: TO DO LIJST - agmachine
+To: ""René C. Smit"" <rc.smit@planet.nl>  
+
+
+Dag René,
+
+
+Volgens mij staan de volgende zaken nog open voor agmachine (meest bij elkaar gezocht in oude emails):
+
+
+**
+De partnerprogramma's maken het mogelijk om met trefwoorden
+gerichte banners te plaatsen. Bijvoorbeeld bij de categorie
+trekkers alleen advertenties voor boeken over trekkers. Het
+moet dus op de een of andere manier gekoppeld worden aan de
+database. Weet jij hoe het werkt met iframes? Zoniet, dan
+stuur ik wel een berichtje naar Amazon met de vraag hoe dit
+moet.
+
+
+Volgens mij kan ik dit niet meteen uit de database halen. Op welke pagina
+wil je de advertentie(s) hebben?
+...snip...
+img src en een link worden ingevoerd, apart in twee
+velden. Kan ik onderstaande code in één van beide velden
+zetten, of gaat dat niet?
+
+
+<iframe
+src="<http://rcm.amazon.com/e/cm?t=agricumaching-20&o=1&p=15&l=st1&mode=books&search=TRACTOR&fc1=779110&=1&lc1=006633&lt1=_blank&f=ifr&bg1=F6FCDC&f=ifr>http://rcm.amazon.com/e/cm?t=agricumaching-20&o=1&p=15&l=st1&mode=books&search=TRACTOR&fc1=779110&=1&lc1=006633&lt1=_blank&f=ifr&bg1=F6FCDC&f=ifr" marginwidth="0" marginheight="0" width="468" height="240" border="0" frameborder="0" style="border:none;" scrolling="no">
+</iframe>
+**
+Forum:
+bruikbare voorbeelden zijn te vinden op
+http://www.fiets.nl/forum/
+http://www.wandelpad.nl/forum/list.php/f=1
+**
+Bij nieuwsberichten de tijd van invoeren niet meer tonen.
+**
+Bij nieuwsberichten de datum achter de titel in kleiner lettertype dan de titel zelf.
+**
+Is het ingewikkeld om ook de mogelijkheid voor banners onder aan de getoonde lijst te maken?
+
+
+Op zich niet. De vraag is voor hoeveel categorien/subcategorien je drie of vier banners hebt.
+VOORLOPIG SPEELT HET NOG NIET.
+KUN JE WEL EEN INDRUK GEVEN VAN DE TIJD/KOSTEN DIE ER MEE GEMOEID IS?
+
+
+Nee, sorry
+OOK NIET IN DE ORDER VAN 1 UUR, 1 DAG, 1 WEEK??
+**
+
+
+Wat betreft de banners in de nieuwsbrief:
+>Is het gemakkelijk om tussen elke categorie
+> >nieuwsberichten een banner
+...snip...
+IK KAN LEVEN MET DIT NADEEL. WANNEER KUN JE HET BOUWEN?
+Dat extra veld bestaat al.
+IN WELKE TABEL?
+
+
+Ik weet even niet meer waar dit over gaat
+HET GAAT OM HET PLAATSEN VAN EEN BANNER IN DE NIEUWSBRIEF.
+VOLGENS JOU KAN DAT BLIJKBAAR AL ('Dat extra veld bestaat
+al').
+IN WELK VELD KAN IK EEN BANNER ZETTEN, ZODAT HIJ OPGENOMEN
+WORDT IN DE NIEUWSBRIEF BIJ DE BETREFFENDE CATEGORIE?
+**
+
+
+Ik weet alleen niet welke bestanden je nu
+gebruikt voor de nieuwsbrief. news.asp bevat gewoon links!
+DE LINKS STAAN AAN HET ...
+...snip...
+... VANDAAN GEHAALD.
+DAAR ZOU BIJ MOETEN KOMEN DAT ERGENS GEKEKEN MOET WORDEN OF ER OOK EEN BANNER MEEGENOMEN MOET WORDEN.
+
+
+Ook dit snap ik even niet meer.
+GAAT OVER HETZELFDE ALS HIERBOVEN: HOE KRIJG IK OP EEN
+GEMAKKELIJKE MANIER BANNERS OPGENOMEN IN DE NIEUWSBRIEF, HET
+LIEFTS GELINKT AAN EEN CATEGORIE?
+**
+
+
+Ik denk dat er langzaamaan misschien belangstelling voor de betaalde nieuwsbrief komt. Ondanks de gewijzigde tekst op de ...
+...snip...
+Ligt er aan hoe uitgebreid je de ledenadministratie-sectie wil hebben.
+WAT BEDOEL JE MET LEDENADMINISTRATIE-SECTIE.
+WAT ZIJN DE MOGELIJKHEDEN.
+
+
+Mogelijkheden:
+- Mensen moeten steeds opnieuw inloggen
+- Ik kan met cookies gaan werken, zodat mensen niet steeds
+opnieuw hoeven
+in te loggen. Hier heb ik echter geen ervaring mee
+- leden administratie: hoe automatisch wil je dingen maken?
+Kunnen mensen
+zich automatisch aanmelden enzo? Welke gegevens moeten er
+bij worden
+gehouden? etc. etc
+HET MOOIST IS NATUURLIJK OM ALLES AUTOMATISCH TE DOEN.
+AUTOMATISCHE LEDENADMINISTRATIE HOEFT VOORLOPIG NOG NIET.
+MET COOKIES WERKEN ZODAT MENSEN NIET STEEDS OPNIEUW HOEVEN
+INLOGGEN MOET WEL.
+ZIE JE ZITTEN OM DAT TE DOEN, ONDANKS DAT JE ER GEEN
+ERVARING MEE HEBT?
+**
+
+
+Verder schrijf je:
+"Er moet nog iets worden gemaakt dat de links worden geteld, maar dat volgt nog."
+Bedoel je hiermee dat ...
+...snip...
+... mee, totdat je weet wat je exact wilt
+met de multiple banners.
+IK WACHT EVEN OP JOUW REACTIES OP BOVENSTAANDE OPMERKINGEN.
+
+
+**
+
+
+Ook schrijf je:
+"Trouwens, de database wordt steeds groter!"
+De database wordt inderdaad steeds groter. Omdat uploaden nu ...
+...snip...
+Is dat ingewikkeld om te maken?
+Dan moet ik waarschijnlijk alle code nakijken en veranderen.
+HOEVEEL TIJD/GELD GAAT DAT KOSTEN?
+
+
+Zou ik dan maar de nieuws en de andere gegevens apart maken?
+Ik zou niet weten hoe ik het voor elkaar krijg dat berichten ouder dan 2
+jaar automatisch naar een andere database gaan.
+ZE HOEVEN OOK NIET AUTOMATISCH NAAR EEN ANDERE DATABASE.
+IK KAN ZE HANDMATIG OVERZETTEN.
+VOORDELEN VAN EEN OPGESPLITSTE DATABASE: ZOEKEN IN DE
+RECENTE BERICHTEN GAAT SNELLER, EN HET UPLOADEN DUURT NIET
+ZO LANG.
+**
+In de lijst met bedrijven die verschijnt bij 'machines' en bij 'bedrijven'
+zouden naast de merken ook de machine-subcategorieën getoond moeten worden.
+Het liefst steeds eerst de subcategorie met daarachter tussen haakjes het
+merk (b.v. rupstrekkers (Fendt)).
+**
+'Bedrijven' linkt volgens mij naar alle leveranciers. Dit zou opgesplitst
+moeten worden in 'fabrikanten' en 'importeurs' en ook zo gevuld moeten
+worden vanuit de tabel.
+**
+
+
+
+Harry 
