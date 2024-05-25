@@ -28,7 +28,8 @@ def read():
             st.warning("error met laden")
             st.stop()
     elif filetype == 'xls':
-        file = r"input\entry_all_blogs.xlsx"
+        file = "https://github.com/rcsmit/streamlit_scripts/raw/main/input/entry_all_blogs.xlsx"
+        #file = r"input\entry_all_blogs.xlsx"
         sheet = "entry"
         try:
             df = pd.read_excel (file,
