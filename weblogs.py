@@ -68,7 +68,7 @@ def main():
     df = df.fillna('_')
 
     # Replace 'xxxx' in the 'artikel' column
-    df['artikel'] = df['artikel'].replace('http://www.yepcheck.com/printbak/', r'printbak\\', regex=True)
+    df['artikel'] = df['artikel'].replace('http://www.yepcheck.com/printbak/', r'https://github.com/rcsmit/streamlit_scripts/tree/main/printbak/', regex=True)
     df['artikel'] = df['artikel'].astype(str).replace('_x000D_','')
     df['artikel'] = df['artikel'].replace('<P>','')
     df['artikel'] = df['artikel'].replace('</P>','/n')
@@ -90,7 +90,7 @@ def main():
         st.subheader(f"{row['titel']}")
         st.write(f"{row['datum']}")
         if row['kopfoto'] != "_":
-            image_url = f"printbak\\thumbnails\\{row['kopfoto']}"
+            image_url = f"https://github.com/rcsmit/streamlit_scripts/tree/main/printbak/thumbnails/{row['kopfoto']}"
            
             st.image(image_url)
         #st.write(f"{row['artikel']}")
