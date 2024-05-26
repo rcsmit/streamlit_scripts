@@ -78,7 +78,7 @@ def main():
     #         options.append([menutext, file_])
     #         counter +=1
 
-    query_params = st.experimental_get_query_params()
+    query_params = st.get_query_params()
     choice = int(query_params["choice"][0]) if "choice" in query_params else 0 
                                                 
     menuchoicelist = [options[n][0] for n, l in enumerate(options)]
