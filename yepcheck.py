@@ -229,7 +229,8 @@ def fetch_dochters_dropdown(db_path):
 
 def main():
     db_path = "input\\yepcheck.sqlite"
-    st.write("x")
+    db_path ="https://github.com/rcsmit/streamlit_scripts/blob/main/input/yepcheck.sqlite"
+    #st.write("x")
     #display_database_contents(db_path)
     
     display_table_and_column_names(db_path)
