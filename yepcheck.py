@@ -229,7 +229,7 @@ def fetch_dochters_dropdown(db_path):
 
 def main():
     db_path = r"input\yepcheck.sqlite"
-    #display_database_contents(db_path)
+    display_database_contents(db_path)
     #display_table_and_column_names(db_path)
     #delete_rows_except_first_100(db_path, "mailinglist")
     selected_dochter_id = fetch_dochters_dropdown(db_path)
@@ -243,7 +243,6 @@ def main():
     else:
         # Show items from selected categories
         fetch_items_with_categorie(db_path, selected_dochter_id, selected_categories)
-
 
 if __name__ == "__main__":
     main()
