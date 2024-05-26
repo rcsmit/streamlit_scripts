@@ -227,7 +227,7 @@ def fetch_dochters_dropdown(db_path):
     return selected_dochter_id
 
 
-if __name__ == "__main__":
+def main():
     db_path = r"input\yepcheck.sqlite"
     #display_database_contents(db_path)
     #display_table_and_column_names(db_path)
@@ -243,3 +243,8 @@ if __name__ == "__main__":
     else:
         # Show items from selected categories
         fetch_items_with_categorie(db_path, selected_dochter_id, selected_categories)
+
+
+if __name__ == "__main__":
+    main()
+    
