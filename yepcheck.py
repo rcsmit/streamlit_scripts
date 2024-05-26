@@ -228,6 +228,7 @@ def fetch_dochters_dropdown(db_path):
 
 
 def main():
+    st.sidebar.image("yepcheck.gif")
     db_path = "yepcheck.sqlite"
     #db_path = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/yepcheck.sqlite"
     #st.write("x")
