@@ -233,8 +233,7 @@ def main():
     #st.write("x")
     #display_database_contents(db_path)
     
-    display_table_and_column_names(db_path)
-    st.stop()
+    #display_table_and_column_names(db_path)
     #delete_rows_except_first_100(db_path, "mailinglist")
     selected_dochter_id = fetch_dochters_dropdown(db_path)
  
