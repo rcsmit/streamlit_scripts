@@ -62,10 +62,11 @@ def main():
                 ["33. Momentum currency", "momentum_koersen"],
                 ["34. Acroyoga groups", "acroyoga_groups"],
                 ["35. Life Expectancy NL","life_expectancy_nl"],
-                ["36. Weblogs","weblogs"]
+                ["36. Weblogs","weblogs"],
+                ["37. Yepcheck","yepcheck"]
                 ]
     
-    
+
     # for file in arr:
     #     if file[-2:] =="py" and ( file != "welcome.py" and file !="menu_streamlit.py"):
     #         menutext = f"{counter}. {file}"
