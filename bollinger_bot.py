@@ -66,8 +66,18 @@ def plot_portfolio_value(data):
     # Add portfolio value line
     fig.add_trace(go.Scatter(x=data.index, y=data['Portfolio Value'], mode='lines', name='Portfolio Value'))
 
+    # Add buy signals
+    buy_signals = data[data['Signal'] == 1]
+    fig.add_trace(go.Scatter(x=buy_signals.index, y=buy_signals['Portfolio Value'], mode='markers', name='Buy Signal', marker=dict(symbol='triangle-up', color='green', size=10)))
+
+    # Add sell signals
+    sell_signals = data[data['Signal'] == -1]
+    fig.add_trace(go.Scatter(x=sell_signals.index, y=sell_signals['Portfolio Value'], mode='markers', name='Sell Signal', marker=dict(symbol='triangle-down', color='red', size=10)))
+
     # Customize layout
     fig.update_layout(title='Portfolio Value Over Time', xaxis_title='Date', yaxis_title='Portfolio Value', template='plotly_dark')
+
+    
 
     st.plotly_chart(fig)
 def plot_data(data):
@@ -77,8 +87,8 @@ def plot_data(data):
     fig.add_trace(go.Scatter(x=data.index, y=data['Close'], mode='lines', name='Close Price'))
 
     # Add Bollinger Bands
-    fig.add_trace(go.Scatter(x=data.index, y=data['Bollinger High'], mode='lines', name='Bollinger High', line=dict(dash='dash')))
-    fig.add_trace(go.Scatter(x=data.index, y=data['Bollinger Low'], mode='lines', name='Bollinger Low', line=dict(dash='dash')))
+    fig.add_trace(go.Scatter(x=data.index, y=data['Bollinger High'], mode='lines', name='Bollinger High', line=dict(dash='dash', width=0.7)))
+    fig.add_trace(go.Scatter(x=data.index, y=data['Bollinger Low'], mode='lines', name='Bollinger Low', line=dict(dash='dash',width=0.7)))
 
     # Add buy signals
     buy_signals = data[data['Signal'] == 1]
