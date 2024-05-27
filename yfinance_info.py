@@ -433,4 +433,7 @@ def main():
 
 
     st.sidebar.markdown(tekst, unsafe_allow_html=True)
-main()
+if __name__ == "__main__":
+    main()
+
+

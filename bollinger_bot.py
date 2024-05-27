@@ -111,7 +111,7 @@ def calculate_cagr(cash, final_value, years):
     cagr = (final_value / cash) ** (1 / years) - 1
     return cagr
 
-if __name__ == "__main__":
+def main():
     symbol = st.sidebar.selectbox("symbol", (['AAPL', 'BTC-USD', 'ETH-USD']))
     start_date = st.sidebar.text_input("start date", '2015-01-01')
     end_date = st.sidebar.text_input("end date", '2022-07-01')
@@ -139,3 +139,6 @@ if __name__ == "__main__":
     st.write(f"ROI buy and hold: {cagr_hold} % over {years} years")
 
     
+
+if __name__ == "__main__":
+    main()
