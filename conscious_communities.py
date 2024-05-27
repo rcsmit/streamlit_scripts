@@ -48,7 +48,8 @@ def main():
     df_["LON"] = df_["LON"].astype(float)
     layer_list = df_['Layer'].unique().tolist()
 
-    layers_to_show = st.sidebar.multiselect("Layers to show", layer_list,["Conscious_communities"])
+    layers_to_show = st.sidebar.multiselect("Layers to show", layer_list,layer_list)
+
     if layers_to_show == []:
         st.error("Choose a layer")
         st.stop()
