@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import folium
 from streamlit_folium import st_folium
+from folium.plugins import MarkerCluster
 from folium.features import DivIcon
 from folium import plugins
 def read():
@@ -63,6 +64,10 @@ def main():
     for i,l in enumerate(layers_to_show):
         df = df_[df_['Layer'] == l]
         
+        # create a marker cluster 
+        # https://python-visualization.github.io/folium/latest/user_guide/plugins/marker_cluster.html
+        marker_cluster = MarkerCluster(disableClusteringAtZoom=5).add_to(m)
+        
         for index, row in df.iterrows():
             if row["remarks"] != "None":
                 remarks_ = row["remarks"]
@@ -77,14 +82,14 @@ def main():
                                     color=[kleur[i]],
                                     fill_color =[kleur[i]],
                                     fill_opacity=0.7,
-                                    ).add_to(m)
+                                    ).add_to(marker_cluster)
             folium.map.Marker(depot_node,
                             icon=DivIcon(
                                 icon_size=(30,30),
                                 icon_anchor=(5,14),
                                 html=f'<div style="font-size: 10pt">%s</div>' % row["Name"],
                             ),tooltip=remarks
-                            ).add_to(m)  
+                            ).add_to(marker_cluster)  
 
         st.markdown("""
                     <style>
