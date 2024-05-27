@@ -63,7 +63,8 @@ def main():
                 ["34. Acroyoga groups", "acroyoga_groups"],
                 ["35. Life Expectancy NL","life_expectancy_nl"],
                 ["36. Weblogs","weblogs"],
-                ["37. Yepcheck","yepcheck"]
+                ["37. Yepcheck","yepcheck"], 
+                ["38. Bollinger Bot","bollinger_bot"]
                 ]
     
 
