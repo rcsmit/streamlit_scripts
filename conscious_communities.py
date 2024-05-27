@@ -76,7 +76,7 @@ def main():
                 
             depot_node = (row["LAT"], row["LON"]) 
             remarks = f'<b>{row["Name"]}</b><br><i>{remarks_}</i><br><br>{row["city__"]}<br>{row["provincie"]}<br>{row["country__"]}<br>{row["continent"]}<br>{depot_node}'
-                       
+
             folium.CircleMarker(location=depot_node,
                                     radius=3,    
                                     color=[kleur[i]],
