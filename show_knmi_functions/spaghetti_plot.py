@@ -4,18 +4,21 @@ from show_knmi_functions.utils import get_data
 import plotly.graph_objects as go
 
 
-def spaghetti_plot(df, what, wdw, sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles):
+def spaghetti_plot(df, what, wdw, wdw_interval, sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles):
     """wrapper for spaghetti plot since show_knmi calles the function with what as list
 
     Args:
         df (df): _description_
         what (list): _description_
+
         wdw (int) : window for smoothing the 95% interval
+        sd_all :  Show CI calculated with a stdev overall
+        sd_day : show CI calculated with a stdev per day
     """    
     for w in what:
-        spaghetti_plot_(df, w, wdw,  sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles)
+        spaghetti_plot_(df, w, wdw, wdw_interval  sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles)
 
-def spaghetti_plot_(df, what, wdw,  sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles):
+def spaghetti_plot_(df, what, wdw, wdw_interval,  sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles):
     """Spaghetti plot,
        inspired by https://towardsdatascience.com/make-beautiful-and-useful-spaghetti-plots-with-python-ec4269d7e8c9
        but with a upper-and lowerbound per day (later smoothed)
@@ -23,7 +26,7 @@ def spaghetti_plot_(df, what, wdw,  sd_all, sd_day, spaghetti, mean_, last_year,
     Args:
         df (df): dataframe with info. Date is in 'YYYYMMDD'
         what (str): which column to use
-        wdw (int) : window for smoothing the 95% interval
+        wdw_interval (int) : window for smoothing the 95% interval
     """    
     df['date'] = df['YYYYMMDD']
     df['day_of_year'] = df['date'].dt.strftime('%j')
@@ -35,6 +38,7 @@ def spaghetti_plot_(df, what, wdw,  sd_all, sd_day, spaghetti, mean_, last_year,
     #filter out rows with February 29 dates (gives error with converting to datetime)
     df = df[~((df['date'].dt.month == 2) & (df['date'].dt.day == 29))]
     df['date_1900'] = pd.to_datetime(date_str, format='%d-%m-%Y', errors='coerce')
+    df[what] = df[what].rolling(wdw, center=True).mean()
     pivot_df = df.pivot(index='date_1900', columns='YYYY', values=what)
     pivot_df = pivot_df.replace('', None)
     print (pivot_df)
@@ -68,7 +72,7 @@ def spaghetti_plot_(df, what, wdw,  sd_all, sd_day, spaghetti, mean_, last_year,
 
     # smooth the upper and lowerbound. Otherwise it's very ugly/jagged
     for b in ['upper_bound', 'lower_bound','upper_bound_all','lower_bound_all','2_5_percentile', '25th Percentile', 'Median (50th Percentile)', '75th Percentile','97_5_percentile']:
-        pivot_df[b] = pivot_df[b].rolling(wdw, center=True).mean()
+        pivot_df[b] = pivot_df[b].rolling(wdw_interval, center=True).mean()
     lw = pivot_df["lower_bound"]
     up = pivot_df["upper_bound"]
     pivot_df=pivot_df.reset_index()
