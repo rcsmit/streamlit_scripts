@@ -173,7 +173,11 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
         spaghetti =  st.sidebar.selectbox(
             "Show spaghetti", [True, False], index=0
             )
-        spaghetti_plot(df, what_to_show, wdw, wdw_interval,sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles)
+        gradient =  st.sidebar.selectbox(
+            "Show Gradient", ["None", "Pubu", "Purd", "Greys", "Plasma"], index=0
+            )
+        
+        spaghetti_plot(df, what_to_show, wdw, wdw_interval,sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles, gradient)
     elif mode == "per maand in div jaren":
         show_per_maand(df, gekozen_weerstation, what_to_show, "maandgem", graph_type)
         datefield = None
