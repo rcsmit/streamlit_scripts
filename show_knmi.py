@@ -169,6 +169,7 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
         sd_day =  st.sidebar.selectbox(
             "Show CI calculated with a stdev per day", [True, False], index=1
             )
+        
         spaghetti =  st.sidebar.selectbox(
             "Show spaghetti", [True, False], index=0
             )

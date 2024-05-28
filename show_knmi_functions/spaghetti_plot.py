@@ -16,7 +16,7 @@ def spaghetti_plot(df, what, wdw, wdw_interval, sd_all, sd_day, spaghetti, mean_
         sd_day : show CI calculated with a stdev per day
     """    
     for w in what:
-        spaghetti_plot_(df, w, wdw, wdw_interval  sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles)
+        spaghetti_plot_(df, w, wdw, wdw_interval, sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles)
 
 def spaghetti_plot_(df, what, wdw, wdw_interval,  sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles):
     """Spaghetti plot,
