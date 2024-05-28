@@ -118,7 +118,6 @@ def spaghetti_plot_(df, what, wdw, wdw_interval,  sd_all, sd_day, spaghetti, mea
             colors = [colormap[i] for i in color_indices] 
             
         for i, column in enumerate(pivot_df.columns[1:-12]):
-        
             if column == pivot_df.columns[-13] and last_year:
                 # line = dict(width=1,
                 #             color='rgba(255, 0, 0, 1)'
