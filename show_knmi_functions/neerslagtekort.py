@@ -166,7 +166,7 @@ def neerslagtekort(df):
 
 def get_dataframe(FROM, UNTIL):
     
-    stations = [260,235,290,278,240,249,391,286,251,319,283]
+    stations = [260,235]#,290,278,240,249,391,286,251,319,283]
     #  De Bilt,  260
     # De Kooy, 235
     # Groningen, 280
@@ -219,7 +219,7 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
     make_spaggetti(df_master,  "neerslag_etmaalsom")
     make_spaggetti(df_master,  "cumm_neerslag_etmaalsom")
 
-    
+    st.write(daily_avg_cumulative_neerslagtekort)
      # Create a line plot using Plotly
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=daily_avg_cumulative_neerslagtekort.index, y=daily_avg_cumulative_neerslagtekort["cumulative_neerslagtekort"], mode='lines', name="cumulative_neerslagtekort"))
@@ -234,7 +234,7 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
 def show_stations():
     # Define the data
     data = {
-        "stationsnr":       [260, 235, 280, 278, 240, 249, None, 340, 391, 286, 251, 319, 283],
+        "stationsnr":       [260, 235, 280, 278, 240, 249, None, None, 391, 286, 251, 319, 283],
         "genoemd in tekst": ["De Bilt", "De Kooy", "Groningen", "Heerde", "Hoofddorp", "Hoorn", "Kerkwerve", "Oudenbosch", "Roermond", "Ter Apel", "West-Terschelling", "Westdorpe", "Winterswijk"],
         "gebruikte data": ["De Bilt", "De Kooy", "Eelde", "Heino", "Schiphol", "Berkhout", "- NIET OPGENOMEN : (312 en 324 geven lege results)", "Niet opgenomen (340 heeft geen neerslagetmaalsom)", "Arcen", "Nieuw Beerta", "Hoorn Terschilling", "Westdorpe", "Hupsel"],
         
