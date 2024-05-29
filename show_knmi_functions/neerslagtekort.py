@@ -63,14 +63,14 @@ def neerslagtekort_(df):
     wdwx =1
 
     if wdwx>1:
-        for what in ["temp_max",  "neerslag_etmaalsom", "glob_straling"]: 
+        for what in ["temp_avg",  "neerslag_etmaalsom", "glob_straling"]: 
             try:  
                 df[f"{what}_sma"] = df[what].rolling(7, center=True).mean()
             except:
                 st.error(f"Missing values in {what}")
                 st.stop()
     else:
-        for what in ["temp_max",  "neerslag_etmaalsom", "glob_straling"]: 
+        for what in ["temp_avg",  "neerslag_etmaalsom", "glob_straling"]: 
             df[f"{what}_sma"] = df[f"{what}"] 
         
     df['glob_straling_Wm2_sma'] = (df['glob_straling'] * 10**4) / 86400
@@ -81,7 +81,7 @@ def neerslagtekort_(df):
     df = df[(df['month'] >= 4) & (df['month'] <= 9)]
     
     # Applying the function
-    df["eref"] = df.apply(lambda row: makkink(row["temp_max_sma"], row["glob_straling_Wm2_sma"]), axis=1)
+    df["eref"] = df.apply(lambda row: makkink(row["temp_avg_sma"], row["glob_straling_Wm2_sma"]), axis=1)
     # Conversion factor for kg/(m²·s) to mm/day
     conversion_factor = 86400 # Assuming 1 kg/m² of water is equivalent to 86.4 mm of water depth over 24 hours
 
@@ -125,7 +125,7 @@ def neerslagtekort(df):
     plot_neerslagtekort(df)
     spaghetti_plot(df, ['neerslag_etmaalsom'], 3, 3, False, False, True, False, True, False, "Greys", False)
     spaghetti_plot(df, ['neerslag_etmaalsom'], 3, 3, False, False, True, False, True, False, "Greys", True)
-    spaghetti_plot(df, ['temp_max'], 3, 3, False, False, True, False, True, False, "Greys", False)
+    spaghetti_plot(df, ['temp_avg'], 3, 3, False, False, True, False, True, False, "Greys", False)
     spaghetti_plot(df, ['referentiegewasverdamping_mm_day'], 1,1, False, False, True, False, True, False, "Greys", False)
     spaghetti_plot(df, ['referentiegewasverdamping_mm_day'], 1,1, False, False, True, False, True, False, "Greys", True)
 
