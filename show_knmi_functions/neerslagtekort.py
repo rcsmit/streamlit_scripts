@@ -120,7 +120,7 @@ def neerslagtekort(df):
     spaghetti_plot(df, ['neerslag_etmaalsom'], 3, 3, False, False, True, False, True, False, "Greys", False)
     spaghetti_plot(df, ['neerslag_etmaalsom'], 3, 3, False, False, True, False, True, False, "Greys", True)
     spaghetti_plot(df, ['temp_max'], 3, 3, False, False, True, False, True, False, "Greys", False)
-
+    spaghetti_plot(df, ['referentiegewasverdamping_mm_day'], 1,1, False, False, True, False, True, False, "Greys", False)
 def get_dataframe(FROM, UNTIL):
     
     stations = [260,235,290,278,240,249,391,286,251,319,283]
