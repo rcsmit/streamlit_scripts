@@ -156,6 +156,8 @@ def neerslagtekort(df):
     spaghetti_plot(df, ['neerslag_etmaalsom'], 3, 3, False, False, True, False, True, False, "Pubu", False)
     spaghetti_plot(df, ['neerslag_etmaalsom'], 3, 3, False, False, True, False, True, False, "Pubu", True)
     spaghetti_plot(df, ['temp_avg'], 3, 3, False, False, True, False, True, False, "Pubu", False)
+    spaghetti_plot(df, ['temp_max'], 3, 3, False, False, True, False, True, False, "Pubu", False)
+    
     spaghetti_plot(df, ['eref'], 1,1, False, False, True, False, True, False, "Pubu", False)
     spaghetti_plot(df, ['eref'], 1,1, False, False, True, False, True, False, "Pubu", True)
 
