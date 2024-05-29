@@ -115,7 +115,7 @@ def neerslagtekort_(df):
     df['year'] = df['YYYYMMDD'].dt.year
     df['month'] = df['YYYYMMDD'].dt.month
     #df = df[(df['month'] >= 4) & (df['month'] <= 9)]
-    st.write(df)
+   
 
     # Applying the function
     df["eref"] = df.apply(lambda row: makkink(row["temp_avg_sma"],row["temp_max_sma"], row["glob_straling"]), axis=1)
