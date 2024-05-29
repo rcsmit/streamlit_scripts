@@ -62,7 +62,7 @@ def neerslagtekort_(df):
     df['neerslag_etmaalsom'].replace(-0.1, 0, inplace=True)
     for what in ["temp_max",  "neerslag_etmaalsom", "glob_straling"]: 
         try:  
-            df[f"{what}_sma"] = df[what].rolling(1, center=True).mean()
+            df[f"{what}_sma"] = df[what].rolling(7, center=True).mean()
         except:
             st.error(f"Missing values in {what}")
             st.stop()
