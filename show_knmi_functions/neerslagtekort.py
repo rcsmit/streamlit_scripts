@@ -114,7 +114,7 @@ def neerslagtekort_(df):
     df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"].astype(str))
     df['year'] = df['YYYYMMDD'].dt.year
     df['month'] = df['YYYYMMDD'].dt.month
-    #df = df[(df['month'] >= 4) & (df['month'] <= 9)]
+    df = df[(df['month'] >= 4) & (df['month'] <= 9)]
    
 
     # Applying the function
