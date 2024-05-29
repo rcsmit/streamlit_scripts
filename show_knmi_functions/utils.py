@@ -95,13 +95,7 @@ def get_data(url):
         column_replacements = column_replacements_knmi
         for c in column_replacements:
             df = df.rename(columns={c[0]: c[1]})
-        # if platform.processor(): 
-        #     df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"], format="%Y-%m-%d")
-        # else:
-        
-        # df = df[pd.notna(df[what])]
-        # df = df.replace('', None)
-        # df = df.replace('     ', None)
+       
         print (df.dtypes)
         print (df)
         
@@ -161,6 +155,7 @@ def get_data(url):
         if divide_by_10:
             for d in to_divide_by_10:
                 try:
+                    df[d] = pd.to_numeric(df[d])
                     df[d] = df[d] / 10
                 except:
                     df[d] = df[d]
