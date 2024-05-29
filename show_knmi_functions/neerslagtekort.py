@@ -41,7 +41,7 @@ def makkink(temp,  straling):
         temp (_type_): _description_
         straling (_type_): _description_
     """    
-    s = calculate_s(temp)
+    s = calculate_s(temp/10)
     lambdaa = 2.45*10**6
     c1 = 0.65
     c2 = 0
