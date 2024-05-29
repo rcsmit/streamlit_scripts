@@ -81,7 +81,7 @@ def neerslagtekort_(df):
 
     # Convert referentiegewasverdamping from kg/(m²·s) to mm/day
     df['referentiegewasverdamping_mm_day'] = df['eref'] * conversion_factor
-    df["neerslagtekort"] =   df["neerslag_etmaalsom"] - df["referentiegewasverdamping_mm_day"] 
+    df["neerslagtekort"] =     df["referentiegewasverdamping_mm_day"] -df["neerslag_etmaalsom"]
     df['cumulative_neerslagtekort'] = df.groupby('year')['neerslagtekort'].cumsum()
  
     return df   
