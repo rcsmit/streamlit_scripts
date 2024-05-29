@@ -70,7 +70,6 @@ def neerslagtekort_(df):
     df['glob_straling_Wm2_sma'] = (df['glob_straling'] * 10**4) / 86400
     
     df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"].astype(str))
-
     df['year'] = df['YYYYMMDD'].dt.year
     df['month'] = df['YYYYMMDD'].dt.month
     df = df[(df['month'] >= 4) & (df['month'] <= 9)]
