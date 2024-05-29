@@ -119,6 +119,7 @@ def neerslagtekort(df):
     
     plot_neerslagtekort(df)
     spaghetti_plot(df, ['neerslag_etmaalsom'], 7, 7, False, False, True, False, True, False, "Greys", False)
+    spaghetti_plot(df, ['neerslag_etmaalsom'], 7, 7, False, False, True, False, True, False, "Greys", True)
 
 def get_dataframe(FROM, UNTIL):
     
