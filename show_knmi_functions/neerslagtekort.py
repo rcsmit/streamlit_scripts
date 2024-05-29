@@ -240,9 +240,9 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
         fig.add_trace(go.Scatter(x=pivot_daily_avg_cumulative_neerslagtekort.index, y=pivot_daily_avg_cumulative_neerslagtekort[column], mode='lines', name=str(column)))
 
     fig.update_layout(
-        title=f'{values} from various stations',
+        title=f'Cum. neerslagtekort from various stations',
         xaxis_title='Date',
-        yaxis_title=values)
+        yaxis_title="Cum. neerslagtekort")
     st.plotly_chart(fig)
 
     
