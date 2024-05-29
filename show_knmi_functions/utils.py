@@ -156,7 +156,7 @@ def get_data(url):
             st.write(url)
             for d in to_divide_by_10:
                 df['neerslag_etmaalsom'].replace(" ", 0, inplace=True)
-                df[d] = pd.to_numeric(df[d])
+                #df[d] = pd.to_numeric(df[d])
                 try:
                     
                     df[d] = df[d] / 10
