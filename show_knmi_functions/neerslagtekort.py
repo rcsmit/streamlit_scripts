@@ -14,7 +14,8 @@ except:
 # https://www.knmi.nl/nederland-nu/klimatologie/geografische-overzichten/historisch-neerslagtekort
 # http://grondwaterformules.nl/index.php/vuistregels/neerslag-en-verdamping/langjarige-grondwateraanvulling
 
-
+# Nog implementeren "   In deze grafiek wordt de berekening stopgezet indien het doorlopend 
+#                       tekort op nul uitkomt en weer hervat zodra er een tekort optreedt."
 def calculate_s(temp):
     """s = de afgeleide naar temperatuur van de verzadigingsdampspanning
        (mbar/°C)
