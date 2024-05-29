@@ -233,7 +233,7 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
 
     daily_avg_cumulative_neerslagtekort['date_1900'] = pd.to_datetime(daily_avg_cumulative_neerslagtekort['YYYYMMDD'].dt.strftime('%d-%m-1900'), format='%d-%m-%Y')
 
-    pivot_daily_avg_cumulative_neerslagtekort = df_master.pivot(index='date_1900', columns='year', values='cumulatieve_neerslagtekort')
+    pivot_daily_avg_cumulative_neerslagtekort = daily_avg_cumulative_neerslagtekort.pivot(index='date_1900', columns='year', values='cumulatieve_neerslagtekort')
     # Create a line plot using Plotly
     fig = go.Figure()
     for column in pivot_daily_avg_cumulative_neerslagtekort.columns:
