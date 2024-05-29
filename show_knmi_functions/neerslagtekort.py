@@ -77,7 +77,7 @@ def neerslagtekort_(df):
     # Applying the function
     df["eref"] = df.apply(lambda row: makkink(row["temp_max_sma"], row["glob_straling_Wm2_sma"]), axis=1)
     # Conversion factor for kg/(m²·s) to mm/day
-    conversion_factor = 86400  # Assuming 1 kg/m² of water is equivalent to 86.4 mm of water depth over 24 hours
+    conversion_factor = 86400/2  # Assuming 1 kg/m² of water is equivalent to 86.4 mm of water depth over 24 hours
 
     # Convert referentiegewasverdamping from kg/(m²·s) to mm/day
     df['referentiegewasverdamping_mm_day'] = df['eref'] * conversion_factor
