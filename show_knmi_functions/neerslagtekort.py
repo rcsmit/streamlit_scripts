@@ -31,7 +31,7 @@ def calculate_s(temp):
     c = 237.73
     s = ((a*b*c)/((c+temp)**2))*math.exp((b*temp)/(c+temp))
     return s
-def makkink(temp,  straling):
+def makkink(temp_avg, temp_max,  straling):
     """_summary_
     Referentiegewasverdamping is de hoeveelheid water die verdampt uit een grasveld dat goed voorzien is van water en nutriënten. Deze waarde wordt in de hydrologie gebruikt als basis om te kunnen berekenen hoeveel water verdampt uit oppervlaktes grond met diverse soorten gewassen.
     Het KNMI berekent sinds 1 april 1987 de referentie-gewasverdamping met de formule van Makkink.
@@ -43,7 +43,8 @@ def makkink(temp,  straling):
         temp (_type_): _description_
         straling (_type_): _description_
     """    
-    s = calculate_s(temp)
+    temp_x = (temp_avg + temp_max)/2
+    s = calculate_s(temp_x)
     lambdaa = 2.45*10**6
     c1 = 0.65
     c2 = 0
@@ -82,7 +83,7 @@ def neerslagtekort_(df):
     df = df[(df['month'] >= 4) & (df['month'] <= 9)]
     
     # Applying the function
-    df["eref"] = df.apply(lambda row: makkink((row["temp_avg_sma"]+row["temp_max_avg"])/2, row["glob_straling_Wm2_sma"]), axis=1)
+    df["eref"] = df.apply(lambda row: makkink((row["temp_avg_sma"],row["temp_max_avg"], row["glob_straling_Wm2_sma"]), axis=1)
     # Conversion factor for kg/(m²·s) to mm/day
     conversion_factor = 86400 # Assuming 1 kg/m² of water is equivalent to 86.4 mm of water depth over 24 hours
 
