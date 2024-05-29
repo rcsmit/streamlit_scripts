@@ -154,6 +154,7 @@ def get_data(url):
         divide_by_10 = True
         if divide_by_10:
             for d in to_divide_by_10:
+                df['neerslag_etmaalsom'].replace(" ", 0, inplace=True)
                 df[d] = pd.to_numeric(df[d])
                 try:
                     
