@@ -1,6 +1,6 @@
 import pandas as pd
 import streamlit as st
-from show_knmi_functions.utils import get_data
+from utils import get_data
 import plotly.graph_objects as go
 import plotly.express as px  # For easy colormap generation
 import numpy as np  # For linspace to distribute sampling
@@ -263,7 +263,7 @@ def spaghetti_plot_(df, what, wdw, wdw_interval,  sd_all, sd_day, spaghetti, mea
 def main():
     url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/result.csv" 
     df = get_data(url)
-    spaghetti_plot(df, ['temp_avg'])
+    spaghetti_plot(df, ['temp_avg'], 7, 7, False, False, True, False, True, False, "Greys")
 
 if __name__ == "__main__":
     main()
