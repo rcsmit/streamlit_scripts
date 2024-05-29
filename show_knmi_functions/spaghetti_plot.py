@@ -5,6 +5,7 @@ import plotly.graph_objects as go
 import plotly.express as px  # For easy colormap generation
 import numpy as np  # For linspace to distribute sampling
 
+
 def spaghetti_plot(df, what, wdw, wdw_interval, sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles, gradient):
     """wrapper for spaghetti plot since show_knmi calles the function with what as list
 
