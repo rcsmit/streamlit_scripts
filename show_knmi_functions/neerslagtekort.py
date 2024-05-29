@@ -188,6 +188,19 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
         xaxis_title='Date',
         yaxis_title='Value')
     st.plotly_chart(fig)
+
+    st.write(daily_avg_cumulative_neerslagtekort)
+     # Create a line plot using Plotly
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=daily_avg_cumulative_neerslagtekort.index, y=daily_avg_cumulative_neerslagtekort["cumulative_neerslagtekort"], mode='lines', name="cumulative_neerslagtekort"))
+
+    fig.update_layout(
+        title='Pivot Table Values - Line Plot',
+        xaxis_title='Date',
+        yaxis_title='Value')
+    st.plotly_chart(fig)
+
+
 if __name__ == "__main__":
     #main()
     fromx = datetime.strptime("2023-01-01", "%Y-%m-%d").date()
