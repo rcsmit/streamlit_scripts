@@ -16,8 +16,6 @@ def spaghetti_plot(df, what, wdw, wdw_interval, sd_all, sd_day, spaghetti, mean_
         df (df): dataframe with info. Date is in 'YYYYMMDD'
         what (list with strings): which column(s) to use
         wdw_interval (int) : window for smoothing the 95% interval
-        df (df): _description_
-        what (str): _description_
         wdw (int): sma window for the value
         wdw_interval (int): sma window for upper and lower bound
         sd_all (bool): calculate SD over all the values
@@ -25,7 +23,7 @@ def spaghetti_plot(df, what, wdw, wdw_interval, sd_all, sd_day, spaghetti, mean_
         spaghetti (bool): show the spaghetti
         mean_ (bool): show the mean
         last_year (bool): show the last year
-        show_quantiles (bool): show the quantiles
+        show_quantiles (bool): show the quantiles - calculated with pd.Series([row.quantile(0.025)])
         gradient (string): One of  "None" (as string), "Pubu", "Purd", "Greys" or "Plasma". 
                             See https://plotly.com/python/builtin-colorscales/
         cumulative (bool): Show the cumulative value
@@ -39,26 +37,6 @@ def spaghetti_plot_(df, what, wdw, wdw_interval,  sd_all, sd_day, spaghetti, mea
     """Spaghetti plot,
        inspired by https://towardsdatascience.com/make-beautiful-and-useful-spaghetti-plots-with-python-ec4269d7e8c9
        but with a upper-and lowerbound per day (later smoothed)
-
-    Args:
-        df (df): dataframe with info. Date is in 'YYYYMMDD'
-        what (list with strings): which column(s) to use
-        wdw_interval (int) : window for smoothing the 95% interval
-        df (df): _description_
-        what (str): _description_
-        wdw (int): sma window for the value
-        wdw_interval (int): sma window for upper and lower bound
-        sd_all (bool): calculate SD over all the values
-        sd_day (bool): calculate SD per day
-        spaghetti (bool): show the spaghetti
-        mean_ (bool): show the mean
-        last_year (bool): show the last year
-        show_quantiles (bool): show the quantiles
-        gradient (string): One of  "None" (as string), "Pubu", "Purd", "Greys" or "Plasma". 
-                            See https://plotly.com/python/builtin-colorscales/
-        cumulative (bool): Show the cumulative value
-    Returns:
-        _type_: _description_
     """    
        
 
