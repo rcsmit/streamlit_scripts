@@ -41,7 +41,7 @@ def makkink(temp,  straling):
         temp (_type_): _description_
         straling (_type_): _description_
     """    
-    s = calculate_s(temp/10)
+    s = calculate_s(temp)
     lambdaa = 2.45*10**6
     c1 = 0.65
     c2 = 0
@@ -119,6 +119,7 @@ def neerslagtekort(df):
     plot_neerslagtekort(df)
     spaghetti_plot(df, ['neerslag_etmaalsom'], 7, 7, False, False, True, False, True, False, "Greys", False)
     spaghetti_plot(df, ['neerslag_etmaalsom'], 7, 7, False, False, True, False, True, False, "Greys", True)
+    spaghetti_plot(df, ['temp_avg'], 7, 7, False, False, True, False, True, False, "Greys", False)
 
 def get_dataframe(FROM, UNTIL):
     
