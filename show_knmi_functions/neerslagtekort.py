@@ -59,6 +59,7 @@ def neerslagtekort_(df):
         _type_: _description_
     """    
     df=df.fillna(0)
+    df['neerslag_etmaalsom'].replace(-0.1, 0, inplace=True)
     for what in ["temp_avg",  "neerslag_etmaalsom", "glob_straling"]: 
         try:  
             df[f"{what}_sma"] = df[what].rolling(1, center=True).mean()
@@ -67,7 +68,7 @@ def neerslagtekort_(df):
             st.stop()
     
     df['glob_straling_Wm2_sma'] = (df['glob_straling'] * 10**4) / 3600
-    df['neerslag_etmaalsom'].replace(-0.1, 0, inplace=True)
+    
     df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"].astype(str))
 
     df['year'] = df['YYYYMMDD'].dt.year
