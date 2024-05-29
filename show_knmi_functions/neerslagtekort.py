@@ -113,7 +113,7 @@ def neerslagtekort_(df):
     df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"].astype(str))
     df['year'] = df['YYYYMMDD'].dt.year
     df['month'] = df['YYYYMMDD'].dt.month
-    df = df[(df['month'] >= 4) & (df['month'] <= 9)]
+    #df = df[(df['month'] >= 4) & (df['month'] <= 9)]
     st.write(df)
     # Applying the function
     df["eref"] = df.apply(lambda row: makkink(row["temp_avg_sma"],row["temp_max_sma"], row["glob_straling"]), axis=1)
@@ -210,7 +210,6 @@ def main():
 def neerslagtekort_meerdere_stations(FROM, UNTIL):
     
     df_master, daily_avg_cumulative_neerslagtekort = get_dataframe(FROM, UNTIL)
-    print (df_master)
     # Pivot and calculate statistics
     pivot_table = df_master.pivot(index='YYYYMMDD', columns='STN', values="cumulative_neerslagtekort")
     print (daily_avg_cumulative_neerslagtekort)
