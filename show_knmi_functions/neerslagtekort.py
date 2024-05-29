@@ -4,6 +4,7 @@ import plotly.graph_objects as go
 import plotly.express as px  # For easy colormap generation
 # import numpy as np  # For linspace to distribute sampling
 import math
+from datetime import datetime
 try:
     from show_knmi_functions.spaghetti_plot import spaghetti_plot
     from show_knmi_functions.utils import get_data
@@ -113,7 +114,7 @@ def neerslagtekort(df):
     df = neerslagtekort_(df)
     
     plot_neerslagtekort(df)
-    spaghetti_plot(df, ['neerslag_etmaalsom'], 7, 7, False, False, True, False, True, False, "Greys")
+    spaghetti_plot(df, ['neerslag_etmaalsom'], 7, 7, False, False, True, False, True, False, "Greys", False)
 
 def get_dataframe(FROM, UNTIL):
     
@@ -181,5 +182,7 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
     st.plotly_chart(fig)
 if __name__ == "__main__":
     #main()
-    main_meerdere_stations()
+    fromx = datetime.strptime("2023-01-01", "%Y-%m-%d").date()
+    until = datetime.strptime("2023-12-31", "%Y-%m-%d").date()
+    neerslagtekort_meerdere_stations(fromx, until)
     

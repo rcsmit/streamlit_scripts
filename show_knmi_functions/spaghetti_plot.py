@@ -10,63 +10,83 @@ import plotly.express as px  # For easy colormap generation
 import numpy as np  # For linspace to distribute sampling
 
 
-def spaghetti_plot(df, what, wdw, wdw_interval, sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles, gradient):
+def spaghetti_plot(df, what, wdw, wdw_interval, sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles, gradient, cumulative):
     """wrapper for spaghetti plot since show_knmi calles the function with what as list
 
     Args:
+        df (df): dataframe with info. Date is in 'YYYYMMDD'
+        what (list with strings): which column(s) to use
+        wdw_interval (int) : window for smoothing the 95% interval
         df (df): _description_
-        what (list): _description_
-
-        wdw (int) : window for smoothing the 95% interval
-        sd_all :  Show CI calculated with a stdev overall
-        sd_day : show CI calculated with a stdev per day
-    """    
+        what (str): _description_
+        wdw (int): sma window for the value
+        wdw_interval (int): sma window for upper and lower bound
+        sd_all (bool): calculate SD over all the values
+        sd_day (bool): calculate SD per day
+        spaghetti (bool): show the spaghetti
+        mean_ (bool): show the mean
+        last_year (bool): show the last year
+        show_quantiles (bool): show the quantiles
+        gradient (string): One of  "None" (as string), "Pubu", "Purd", "Greys" or "Plasma". 
+                            See https://plotly.com/python/builtin-colorscales/
+        cumulative (bool): Show the cumulative value
+    Returns:
+        _type_: _description_
+    """       
     for w in what:
-        spaghetti_plot_(df, w, wdw, wdw_interval, sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles, gradient)
+        spaghetti_plot_(df, w, wdw, wdw_interval, sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles, gradient, cumulative)
 
-def spaghetti_plot_(df, what, wdw, wdw_interval,  sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles, gradient):
+def spaghetti_plot_(df, what, wdw, wdw_interval,  sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles, gradient, cumulative):
     """Spaghetti plot,
        inspired by https://towardsdatascience.com/make-beautiful-and-useful-spaghetti-plots-with-python-ec4269d7e8c9
        but with a upper-and lowerbound per day (later smoothed)
 
     Args:
         df (df): dataframe with info. Date is in 'YYYYMMDD'
-        what (str): which column to use
+        what (list with strings): which column(s) to use
         wdw_interval (int) : window for smoothing the 95% interval
+        df (df): _description_
+        what (str): _description_
+        wdw (int): sma window for the value
+        wdw_interval (int): sma window for upper and lower bound
+        sd_all (bool): calculate SD over all the values
+        sd_day (bool): calculate SD per day
+        spaghetti (bool): show the spaghetti
+        mean_ (bool): show the mean
+        last_year (bool): show the last year
+        show_quantiles (bool): show the quantiles
+        gradient (string): One of  "None" (as string), "Pubu", "Purd", "Greys" or "Plasma". 
+                            See https://plotly.com/python/builtin-colorscales/
+        cumulative (bool): Show the cumulative value
+    Returns:
+        _type_: _description_
     """    
-    gemini = True
-    if gemini:
-        df['date'] = pd.to_datetime(df['YYYYMMDD'], format='%Y%m%d')
-        df['day_of_year'] = df['date'].dt.dayofyear
-        df[what] = pd.to_numeric(df[what], errors='coerce')  # Convert to numeric, handle errors
+       
 
-        # Filter and prepare the data more efficiently
-        df_filtered = df.dropna(subset=what).copy()  # Avoid modifying original DataFrame
-        df_filtered[what] = df_filtered[what].rolling(wdw, center=True).mean()
+    df['date'] = pd.to_datetime(df['YYYYMMDD'], format='%Y%m%d')
+    df['day_of_year'] = df['date'].dt.dayofyear
+    df[what] = pd.to_numeric(df[what], errors='coerce')  # Convert to numeric, handle errors
 
-        # Exclude February 29th dates before pivot
-        df_filtered = df_filtered[~((df_filtered['date'].dt.month == 2) & (df_filtered['date'].dt.day == 29))]
-        df_filtered['date_1900'] = pd.to_datetime(df_filtered['date'].dt.strftime('%d-%m-1900'), format='%d-%m-%Y')
+    # Filter and prepare the data more efficiently
+    df_filtered = df.dropna(subset=what).copy()  # Avoid modifying original DataFrame
+    df_filtered[what] = df_filtered[what].rolling(wdw, center=True).mean()
 
+    # Exclude February 29th dates before pivot
+    df_filtered = df_filtered[~((df_filtered['date'].dt.month == 2) & (df_filtered['date'].dt.day == 29))]
+    df_filtered['date_1900'] = pd.to_datetime(df_filtered['date'].dt.strftime('%d-%m-1900'), format='%d-%m-%Y')
+
+
+    # Compute the cumulative value, starting each year at January 1st
+    df_filtered['year'] = df_filtered['date'].dt.year
+    df_filtered['cumulative'] = df_filtered.groupby('year')[what].cumsum()
+    
+    if cumulative:
         # Pivot and calculate statistics
-        pivot_df = df_filtered.pivot(index='date_1900', columns='YYYY', values=what)
+        pivot_df = df_filtered.pivot(index='date_1900', columns='year', values='cumulative')
     else:
-            
-        df['date'] = df['YYYYMMDD']
-        df['day_of_year'] = df['date'].dt.strftime('%j')
-
-        df = df[pd.notna(df[what])]
-        df = df.replace('', None)
-        df = df.replace('     ', None)
-        date_str = df['DD'].astype(str).str.zfill(2) + '-' + df['MM'].astype(str).str.zfill(2) + '-1900'
-        #filter out rows with February 29 dates (gives error with converting to datetime)
-        df = df[~((df['date'].dt.month == 2) & (df['date'].dt.day == 29))]
-        df['date_1900'] = pd.to_datetime(date_str, format='%d-%m-%Y', errors='coerce')
-        df[what] = df[what].rolling(wdw, center=True).mean()
-        pivot_df = df.pivot(index='date_1900', columns='YYYY', values=what)
+        pivot_df = df_filtered.pivot(index='date_1900', columns='YYYY', values=what)
+        
     pivot_df = pivot_df.replace('', None)
-    # print (pivot_df)
-    # print (pivot_df.std().values)
     pivot_df['std_all'] = pivot_df.std().values.mean()
     try:
         pivot_df['mean'] =  pivot_df.iloc[:, :-1].mean(axis=1) 
@@ -268,7 +288,7 @@ def spaghetti_plot_(df, what, wdw, wdw_interval,  sd_all, sd_day, spaghetti, mea
 def main():
     url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/result.csv" 
     df = get_data(url)
-    spaghetti_plot(df, ['temp_avg'], 7, 7, False, False, True, False, True, False, "Greys")
+    spaghetti_plot(df, ['temp_avg'], 7, 7, False, False, True, False, True, False, "Greys", True)
 
 if __name__ == "__main__":
     main()
