@@ -63,7 +63,6 @@ def neerslagtekort_(df):
     df=df.fillna(0)
     df['neerslag_etmaalsom'].replace(-0.1, 0, inplace=True)
     wdwx =1
-
     if wdwx>1:
         for what in ["temp_avg", "temp_max", "neerslag_etmaalsom", "glob_straling"]: 
             try:  
