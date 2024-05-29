@@ -229,20 +229,20 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
     st.plotly_chart(fig)
 
     st.write("""
-                # genoemd in tekst, gebruikte data, stationsnr
-               #  De Bilt, De Bilt 260
-                # De Kooy, De Kooy, 235
-                # Groningen, Eelde, 280
-                # Heerde, Heino, 278
-                # Hoofddorp, Schiphol, 240
-                # Hoorn, Berkhout, 249
-                # Kerkwerve, - NIET OPGENOMEN : (312 en 324 geven lege results)
-                # Oudenbosch, 340 (heeft geen neerslagetmaalsom)
-                # Roermond, Arcen, 391
-                # Ter Apel, Nieuw Beerta, 286
-                # West-Terschelling, Hoorn Terschilling, 251
-                # Westdorpe, Westdorpe, 319
-                # Winterswijk, Hupsel, 283
+                genoemd in tekst, gebruikte data, stationsnr
+                De Bilt, De Bilt 260
+                De Kooy, De Kooy, 235
+                Groningen, Eelde, 280
+                Heerde, Heino, 278
+                Hoofddorp, Schiphol, 240
+                Hoorn, Berkhout, 249
+                Kerkwerve, - NIET OPGENOMEN : (312 en 324 geven lege results)
+                Oudenbosch, 340 (heeft geen neerslagetmaalsom)
+                Roermond, Arcen, 391
+                Ter Apel, Nieuw Beerta, 286
+                West-Terschelling, Hoorn Terschilling, 251
+                Westdorpe, Westdorpe, 319
+                Winterswijk, Hupsel, 283
              """)
 
 def make_spaggetti(df_master, values):
@@ -254,9 +254,9 @@ def make_spaggetti(df_master, values):
         fig.add_trace(go.Scatter(x=pivot_table.index, y=pivot_table[column], mode='lines', name=str(column)))
 
     fig.update_layout(
-        title='Pivot Table Values - Line Plot',
+        title=f'{value} from various stations',
         xaxis_title='Date',
-        yaxis_title='Value')
+        yaxis_title=values)
     st.plotly_chart(fig)
 
 if __name__ == "__main__":
