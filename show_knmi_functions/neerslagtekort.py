@@ -189,7 +189,7 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
         yaxis_title='Value')
     st.plotly_chart(fig)
 
-    st.write(daily_avg_cumulative_neerslagtekort)
+    
      # Create a line plot using Plotly
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=daily_avg_cumulative_neerslagtekort.index, y=daily_avg_cumulative_neerslagtekort["cumulative_neerslagtekort"], mode='lines', name="cumulative_neerslagtekort"))
