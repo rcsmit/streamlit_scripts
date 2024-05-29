@@ -194,8 +194,8 @@ def get_dataframe(FROM, UNTIL):
         
         df_master = pd.concat([df_master, df])  # Concatenate data for each station to df_master
     
-    daily_avg_cumulative_neerslagtekort = df_master.groupby('YYYYMMDD')['cumulative_neerslagtekort'].mean()#.reset_index()
-    
+    daily_avg_cumulative_neerslagtekort = df_master.groupby('YYYYMMDD')['cumulative_neerslagtekort'].mean().reset_index()
+
     return df_master, daily_avg_cumulative_neerslagtekort
 
 
@@ -220,7 +220,7 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
     
      # Create a line plot using Plotly
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=daily_avg_cumulative_neerslagtekort["YYYYMMDD"], y=daily_avg_cumulative_neerslagtekort["cumulative_neerslagtekort"], mode='lines', name="cumulative_neerslagtekort"))
+    fig.add_trace(go.Scatter(x=daily_avg_cumulative_neerslagtekort.index, y=daily_avg_cumulative_neerslagtekort["cumulative_neerslagtekort"], mode='lines', name="cumulative_neerslagtekort"))
 
     fig.update_layout(
         title='Pivot Table Values - Line Plot',
@@ -254,7 +254,7 @@ def make_spaggetti(df_master, values):
         fig.add_trace(go.Scatter(x=pivot_table.index, y=pivot_table[column], mode='lines', name=str(column)))
 
     fig.update_layout(
-        title=f'{values} from various stations',
+        title=f'{value} from various stations',
         xaxis_title='Date',
         yaxis_title=values)
     st.plotly_chart(fig)
