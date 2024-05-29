@@ -166,7 +166,7 @@ def neerslagtekort(df):
 
 def get_dataframe(FROM, UNTIL):
     
-    stations = [260,235]#,290,278,240,249,391,286,251,319,283]
+    stations = [260,235,290,278,240,249,391,286,251,319,283]
     #  De Bilt,  260
     # De Kooy, 235
     # Groningen, 280
@@ -240,9 +240,11 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
         fig.add_trace(go.Scatter(x=pivot_daily_avg_cumulative_neerslagtekort.index, y=pivot_daily_avg_cumulative_neerslagtekort[column], mode='lines', name=str(column)))
 
     fig.update_layout(
-        title=f'Cum. neerslagtekort from various stations',
+        title=f'Landelijk gemiddelde cumm. neerslagtekort over 11 stations over de veschillende jaren',
         xaxis_title='Date',
+        xaxis=dict(title="date",tickformat="%d-%m"),
         yaxis_title="Cum. neerslagtekort")
+   
     st.plotly_chart(fig)
 
     
