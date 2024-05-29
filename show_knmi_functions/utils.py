@@ -154,8 +154,9 @@ def get_data(url):
         divide_by_10 = True
         if divide_by_10:
             for d in to_divide_by_10:
+                df[d] = pd.to_numeric(df[d])
                 try:
-                    df[d] = pd.to_numeric(df[d])
+                    
                     df[d] = df[d] / 10
                 except:
                     df[d] = df[d]
