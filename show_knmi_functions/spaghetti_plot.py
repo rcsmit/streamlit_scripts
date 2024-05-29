@@ -251,8 +251,8 @@ def spaghetti_plot_(df, what, wdw, wdw_interval,  sd_all, sd_day, spaghetti, mea
     fig.update_xaxes(showgrid=True)
     fig.update_yaxes(showgrid=True)
     
-    fig.update_traces(hovertemplate=None)  # Disable hover info for faster rendering
-    fig.update_layout(showlegend=False)   # Disable legend for faster rendering
+    #fig.update_traces(hovertemplate=None)  # Disable hover info for faster rendering
+    #fig.update_layout(showlegend=False)   # Disable legend for faster rendering
 
     # Create a spaghetti line plot
    
