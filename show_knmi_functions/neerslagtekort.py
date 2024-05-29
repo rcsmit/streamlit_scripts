@@ -234,7 +234,7 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
 def show_stations():
     # Define the data
     data = {
-        "stationsnr":       [260, 235, 280, 278, 240, 249, None, 340, 391, 286, 251, 319, 283]
+        "stationsnr":       [260, 235, 280, 278, 240, 249, None, 340, 391, 286, 251, 319, 283],
         "genoemd in tekst": ["De Bilt", "De Kooy", "Groningen", "Heerde", "Hoofddorp", "Hoorn", "Kerkwerve", "Oudenbosch", "Roermond", "Ter Apel", "West-Terschelling", "Westdorpe", "Winterswijk"],
         "gebruikte data": ["De Bilt", "De Kooy", "Eelde", "Heino", "Schiphol", "Berkhout", "- NIET OPGENOMEN : (312 en 324 geven lege results)", "Niet opgenomen (340 heeft geen neerslagetmaalsom)", "Arcen", "Nieuw Beerta", "Hoorn Terschilling", "Westdorpe", "Hupsel"],
         
