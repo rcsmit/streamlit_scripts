@@ -95,7 +95,7 @@ def neerslagtekort_(df):
     Returns:
         _type_: _description_
     """    
-    df=df.fillna(0)
+    df=df.fillna(0.0)
     df['neerslag_etmaalsom'].replace(-0.1, 0, inplace=True)
     wdwx =1
     if wdwx>1:
