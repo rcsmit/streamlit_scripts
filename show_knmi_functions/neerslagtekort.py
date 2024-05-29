@@ -220,6 +220,7 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
     make_spaggetti(df_master,  "cumm_neerslag_etmaalsom")
 
     st.write(daily_avg_cumulative_neerslagtekort)
+    daily_avg_cumulative_neerslagtekort['year'] = daily_avg_cumulative_neerslagtekort['YYYYMMDD'].dt.year
      # Create a line plot using Plotly
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=daily_avg_cumulative_neerslagtekort.index, y=daily_avg_cumulative_neerslagtekort["cumulative_neerslagtekort"], mode='lines', name="cumulative_neerslagtekort"))
@@ -229,6 +230,22 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
         xaxis_title='Date',
         yaxis_title='Value')
     st.plotly_chart(fig)
+
+    daily_avg_cumulative_neerslagtekort['date_1900'] = pd.to_datetime(daily_avg_cumulative_neerslagtekort['YYYYMMDD'].dt.strftime('%d-%m-1900'), format='%d-%m-%Y')
+
+    pivot_daily_avg_cumulative_neerslagtekort = df_master.pivot(index='date_1900', columns='year', values='cumulatieve_neerslagtekort')
+    # Create a line plot using Plotly
+    fig = go.Figure()
+    for column in pivot_daily_avg_cumulative_neerslagtekort.columns:
+        fig.add_trace(go.Scatter(x=pivot_daily_avg_cumulative_neerslagtekort.index, y=pivot_daily_avg_cumulative_neerslagtekort[column], mode='lines', name=str(column)))
+
+    fig.update_layout(
+        title=f'{values} from various stations',
+        xaxis_title='Date',
+        yaxis_title=values)
+    st.plotly_chart(fig)
+
+    
     show_stations()
     
 def show_stations():
