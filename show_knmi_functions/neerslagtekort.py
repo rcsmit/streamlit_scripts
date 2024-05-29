@@ -189,7 +189,7 @@ def get_dataframe(FROM, UNTIL):
         url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start={fromx}&end={until}"
      
         df_s = get_data(url)
-        df_s = df_s.fillna(0)
+        df_s = df_s.fillna(0, inplace= True)
         df= neerslagtekort_(df_s)
         
         df_master = pd.concat([df_master, df])  # Concatenate data for each station to df_master
