@@ -60,7 +60,7 @@ def neerslagtekort_(df):
     """    
     df=df.fillna(0)
     df['neerslag_etmaalsom'].replace(-0.1, 0, inplace=True)
-    for what in ["temp_avg",  "neerslag_etmaalsom", "glob_straling"]: 
+    for what in ["temp_max",  "neerslag_etmaalsom", "glob_straling"]: 
         try:  
             df[f"{what}_sma"] = df[what].rolling(1, center=True).mean()
         except:
@@ -75,7 +75,7 @@ def neerslagtekort_(df):
     df = df[(df['month'] >= 4) & (df['month'] <= 9)]
     
     # Applying the function
-    df["eref"] = df.apply(lambda row: makkink(row["temp_avg_sma"], row["glob_straling_Wm2_sma"]), axis=1)
+    df["eref"] = df.apply(lambda row: makkink(row["temp_max_sma"], row["glob_straling_Wm2_sma"]), axis=1)
     # Conversion factor for kg/(m²·s) to mm/day
     conversion_factor = 864  # Assuming 1 kg/m² of water is equivalent to 86.4 mm of water depth over 24 hours
 
