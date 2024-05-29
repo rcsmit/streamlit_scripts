@@ -194,8 +194,8 @@ def get_dataframe(FROM, UNTIL):
         
         df_master = pd.concat([df_master, df])  # Concatenate data for each station to df_master
     
-    daily_avg_cumulative_neerslagtekort = df_master.groupby('YYYYMMDD')['cumulative_neerslagtekort'].mean().reset_index()
-
+    daily_avg_cumulative_neerslagtekort = df_master.groupby('YYYYMMDD')['cumulative_neerslagtekort'].mean()#.reset_index()
+    st.write(daily_avg_cumulative_neerslagtekort)
     return df_master, daily_avg_cumulative_neerslagtekort
 
 
