@@ -229,23 +229,22 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
         xaxis_title='Date',
         yaxis_title='Value')
     st.plotly_chart(fig)
+    show_stations()
+    
+def show_stations():
+    # Define the data
+    data = {
+        "stationsnr":       [260, 235, 280, 278, 240, 249, None, 340, 391, 286, 251, 319, 283]
+        "genoemd in tekst": ["De Bilt", "De Kooy", "Groningen", "Heerde", "Hoofddorp", "Hoorn", "Kerkwerve", "Oudenbosch", "Roermond", "Ter Apel", "West-Terschelling", "Westdorpe", "Winterswijk"],
+        "gebruikte data": ["De Bilt", "De Kooy", "Eelde", "Heino", "Schiphol", "Berkhout", "- NIET OPGENOMEN : (312 en 324 geven lege results)", "Niet opgenomen (340 heeft geen neerslagetmaalsom)", "Arcen", "Nieuw Beerta", "Hoorn Terschilling", "Westdorpe", "Hupsel"],
+        
+    }
 
-    st.write("""
-                genoemd in tekst, gebruikte data, stationsnr
-                De Bilt, De Bilt 260
-                De Kooy, De Kooy, 235
-                Groningen, Eelde, 280
-                Heerde, Heino, 278
-                Hoofddorp, Schiphol, 240
-                Hoorn, Berkhout, 249
-                Kerkwerve, - NIET OPGENOMEN : (312 en 324 geven lege results)
-                Oudenbosch, 340 (heeft geen neerslagetmaalsom)
-                Roermond, Arcen, 391
-                Ter Apel, Nieuw Beerta, 286
-                West-Terschelling, Hoorn Terschilling, 251
-                Westdorpe, Westdorpe, 319
-                Winterswijk, Hupsel, 283
-             """)
+    # Create the DataFrame
+    df = pd.DataFrame(data)
+
+    # Display the DataFrame
+    st.write(df)
 
 def make_spaggetti(df_master, values):
     pivot_table = df_master.pivot(index='YYYYMMDD', columns='STN', values=values)
