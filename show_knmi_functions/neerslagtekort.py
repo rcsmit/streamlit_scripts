@@ -226,7 +226,7 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
     fig.add_trace(go.Scatter(x=daily_avg_cumulative_neerslagtekort['YYYYMMDD'], y=daily_avg_cumulative_neerslagtekort["cumulative_neerslagtekort"], mode='lines', name="cumulative_neerslagtekort"))
 
     fig.update_layout(
-        title='Pivot Table Values - Line Plot',
+        title='Landelijk gemiddelde cumm. neerslagtekort over 11 stations door de tijd heen',
         xaxis_title='Date',
         yaxis_title='Value')
     st.plotly_chart(fig)
@@ -243,7 +243,7 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
         fig.add_trace(go.Scatter(x=pivot_daily_avg_cumulative_neerslagtekort.index, y=pivot_daily_avg_cumulative_neerslagtekort[column], mode='lines', name=str(column)))
 
     fig.update_layout(
-        title=f'Landelijk gemiddelde cumm. neerslagtekort over 11 stations over de veschillende jaren',
+        title=f'Landelijk gemiddelde cumm. neerslagtekort over 11 stations / verschillende jaren',
         xaxis_title='Date',
         xaxis=dict(title="date",tickformat="%d-%m"),
         yaxis_title="Cum. neerslagtekort")
