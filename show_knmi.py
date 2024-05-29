@@ -46,7 +46,7 @@ def interface():
                                         "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", "spaghetti plot", "per maand in div jaren", "percentiles", "polar plot/radar chart", "show year histogram animation", "does rain predict rain","neerslagtekort", "show year histogram animation", "show weerstations", "help"], index=0
     )
    
-   
+
     weer_stations = get_weerstations()
     weerstation_namen = []
     for w in weer_stations:
@@ -150,7 +150,7 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
     elif mode == "show weerstations":
         show_weerstations()
     elif mode == "neerslagtekort":
-        neerslagtekort()
+        neerslagtekort(df)
     elif mode == "per dag in div jaren":
         show_per_maand(df, gekozen_weerstation, what_to_show, "per_dag", graph_type)
         datefield = None
