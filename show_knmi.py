@@ -14,7 +14,7 @@ from show_knmi_functions.show_per_maand import show_per_maand
 from show_knmi_functions.spaghetti_plot import spaghetti_plot
 from show_knmi_functions.show_year_histogram_animation import show_year_histogram_animation
 from show_knmi_functions.last_day import last_day
-from show_knmi_functions.neerslagtekort import neerslagtekort
+from show_knmi_functions.neerslagtekort import neerslagtekort, neerslagtekort_meerdere_stations
 
 # INSPRIATION : https://weatherspark.com/m/52666/10/Average-Weather-in-October-in-Utrecht-Netherlands
 # https://radumas.info/blog/tutorial/2017/04/17/percentile-test.html
@@ -43,7 +43,7 @@ def interface():
     """
     mode = st.sidebar.selectbox(
         "Modus (kies HELP voor hulp)", ["doorlopend per dag", "aantal keren", "specifieke dag","last day",
-                                        "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", "spaghetti plot", "per maand in div jaren", "percentiles", "polar plot/radar chart", "show year histogram animation", "does rain predict rain","neerslagtekort", "show year histogram animation", "show weerstations", "help"], index=0
+                                        "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", "spaghetti plot", "per maand in div jaren", "percentiles", "polar plot/radar chart", "show year histogram animation", "does rain predict rain","neerslagtekort","neerslagtekort_meerdere", "show year histogram animation", "show weerstations", "help"], index=0
     )
    
 
@@ -151,6 +151,8 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
         show_weerstations()
     elif mode == "neerslagtekort":
         neerslagtekort(df)
+    elif mode == "neerslagtekort_meerdere":
+        neerslagtekort_meerdere_stations(FROM, UNTIL)
     elif mode == "per dag in div jaren":
         show_per_maand(df, gekozen_weerstation, what_to_show, "per_dag", graph_type)
         datefield = None

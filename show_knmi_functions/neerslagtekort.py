@@ -1,11 +1,15 @@
 import pandas as pd
 import streamlit as st
-from show_knmi_functions.utils import get_data
 import plotly.graph_objects as go
 import plotly.express as px  # For easy colormap generation
 # import numpy as np  # For linspace to distribute sampling
 import math
-from show_knmi_functions.spaghetti_plot import spaghetti_plot
+try:
+    from show_knmi_functions.spaghetti_plot import spaghetti_plot
+    from show_knmi_functions.utils import get_data
+except:
+    from spaghetti_plot import spaghetti_plot
+    from utils import get_data
 # https://www.knmi.nl/nederland-nu/klimatologie/geografische-overzichten/historisch-neerslagtekort
 # http://grondwaterformules.nl/index.php/vuistregels/neerslag-en-verdamping/langjarige-grondwateraanvulling
 
@@ -45,15 +49,27 @@ def makkink(temp,  straling):
     eref = (c1 * (s/(s+gamma)) * kin + c2)/lambdaa
     return eref
 def neerslagtekort_(df):
-    for what in ["temp_avg",  "neerslag_etmaalsom", "glob_straling"]:
-        df[f"{what}_sma"] = df[what].rolling(3, center=True).mean()
+    """Functie die het neerslagtekort berekent
+
+    Args:
+        df (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
+    df=df.fillna(0)
+    for what in ["temp_avg",  "neerslag_etmaalsom", "glob_straling"]:   
+        df[f"{what}_sma"] = df[what].rolling(1, center=True).mean()
+   
+    
     df['glob_straling_Wm2_sma'] = (df['glob_straling'] * 10**4) / 3600
     df['neerslag_etmaalsom'].replace(-0.1, 0, inplace=True)
-    df['YYYYMMDD'] = pd.to_datetime(df['YYYYMMDD'])
+    df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"].astype(str))
+
     df['year'] = df['YYYYMMDD'].dt.year
     df['month'] = df['YYYYMMDD'].dt.month
     df = df[(df['month'] >= 4) & (df['month'] <= 9)]
-
+    
     # Applying the function
     df["eref"] = df.apply(lambda row: makkink(row["temp_avg_sma"], row["glob_straling_Wm2_sma"]), axis=1)
     # Conversion factor for kg/(m²·s) to mm/day
@@ -63,7 +79,7 @@ def neerslagtekort_(df):
     df['referentiegewasverdamping_mm_day'] = df['eref'] * conversion_factor
     df["neerslagtekort"] =   df["neerslag_etmaalsom"] - df["referentiegewasverdamping_mm_day"] 
     df['cumulative_neerslagtekort'] = df.groupby('year')['neerslagtekort'].cumsum()
-
+ 
     return df   
 
 def plot_neerslagtekort(df):
@@ -91,20 +107,79 @@ def plot_neerslagtekort(df):
     st.plotly_chart(fig)
 
 def neerslagtekort(df):
+    """deze routine wordt aangeroepen vanuit de algemene knmi menu
+
+    """    
     df = neerslagtekort_(df)
+    
     plot_neerslagtekort(df)
     spaghetti_plot(df, ['neerslag_etmaalsom'], 7, 7, False, False, True, False, True, False, "Greys")
-   
+
+def get_dataframe(FROM, UNTIL):
+    
+    stations = [260,235,290,278,240,249,391,286,251,319,283]
+    #  De Bilt,  260
+    # De Kooy, 235
+    # Groningen, 280
+    # Heerde, 278
+    # Hoofddorp, 240
+    # Hoorn, 249
+    # Kerkwerve, 312 en 324 geven lege results)
+    # Oudenbosch, 340 (heeft geen neerslagetmaalsom)
+    # Roermond, 391
+    # Ter Apel, 286
+    # West-Terschelling, 251
+    # Westdorpe  319
+    # Winterswijk. 283
+    df_master = pd.DataFrame()  
+    for stn in stations:
+        fromx, until =  FROM.strftime("%Y%m%d"), UNTIL.strftime("%Y%m%d")
+        # fromx="20230101"
+
+        # until="20231231"     
+        url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start={fromx}&end={until}"
+     
+        df_s = get_data(url)
+
+        df= neerslagtekort_(df_s)
+        
+        df_master = pd.concat([df_master, df])  # Concatenate data for each station to df_master
+    
+    daily_avg_cumulative_neerslagtekort = df_master.groupby('YYYYMMDD')['cumulative_neerslagtekort'].mean().reset_index()
+
+    return df_master, daily_avg_cumulative_neerslagtekort
+
+
 def main():
+
     url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/result.csv" 
-    df = get_data(url)
     
-    
+    df = get_data(url)   
     df = neerslagtekort_(df)
     st.write (df)
     plot_neerslagtekort(df)
     spaghetti_plot(df, ['neerslag_etmaalsom'], 7, 7, False, False, True, False, True, False, "Greys")
    
+def neerslagtekort_meerdere_stations(FROM, UNTIL):
+    
+    df_master, daily_avg_cumulative_neerslagtekort = get_dataframe(FROM, UNTIL)
+    print (df_master)
+    # Pivot and calculate statistics
+    pivot_table = df_master.pivot(index='YYYYMMDD', columns='STN', values="cumulative_neerslagtekort")
+    print (daily_avg_cumulative_neerslagtekort)
+
+
+    # Create a line plot using Plotly
+    fig = go.Figure()
+    for column in pivot_table.columns:
+        fig.add_trace(go.Scatter(x=pivot_table.index, y=pivot_table[column], mode='lines', name=str(column)))
+
+    fig.update_layout(
+        title='Pivot Table Values - Line Plot',
+        xaxis_title='Date',
+        yaxis_title='Value')
+    st.plotly_chart(fig)
 if __name__ == "__main__":
-    main()
-    #print(calculate_s(-5))
+    #main()
+    main_meerdere_stations()
+    
