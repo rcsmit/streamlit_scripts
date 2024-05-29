@@ -69,7 +69,10 @@ def neerslagtekort_(df):
             except:
                 st.error(f"Missing values in {what}")
                 st.stop()
-    
+    else:
+        for what in ["temp_max",  "neerslag_etmaalsom", "glob_straling"]: 
+            df[f"{what}_sma"] = df[f"{what}"] 
+        
     df['glob_straling_Wm2_sma'] = (df['glob_straling'] * 10**4) / 86400
     
     df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"].astype(str))
