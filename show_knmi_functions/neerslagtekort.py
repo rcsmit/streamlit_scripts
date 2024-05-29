@@ -44,7 +44,7 @@ def makkink(temp,  straling):
     gamma = 0.66
     eref = (c1 * (s/(s+gamma)) * kin + c2)/lambdaa
     return eref
-def neerslagtekort(df):
+def neerslagtekort_(df):
     for what in ["temp_avg",  "neerslag_etmaalsom", "glob_straling"]:
         df[f"{what}_sma"] = df[what].rolling(3, center=True).mean()
     df['glob_straling_Wm2_sma'] = (df['glob_straling'] * 10**4) / 3600
@@ -90,13 +90,17 @@ def plot_neerslagtekort(df):
 
     st.plotly_chart(fig)
 
-
+def neerslagtekort(df):
+    df = neerslagtekort_(df)
+    plot_neerslagtekort(df)
+    spaghetti_plot(df, ['neerslag_etmaalsom'], 7, 7, False, False, True, False, True, False, "Greys")
+   
 def main():
     url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/result.csv" 
     df = get_data(url)
     
     
-    df = neerslagtekort(df)
+    df = neerslagtekort_(df)
     st.write (df)
     plot_neerslagtekort(df)
     spaghetti_plot(df, ['neerslag_etmaalsom'], 7, 7, False, False, True, False, True, False, "Greys")
