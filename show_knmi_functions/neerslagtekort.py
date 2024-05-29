@@ -7,7 +7,7 @@ import plotly.express as px  # For easy colormap generation
 import math
 from spaghetti_plot import spaghetti_plot
 # https://www.knmi.nl/nederland-nu/klimatologie/geografische-overzichten/historisch-neerslagtekort
-
+# http://grondwaterformules.nl/index.php/vuistregels/neerslag-en-verdamping/langjarige-grondwateraanvulling
 
 def calculate_s(temp):
     """s = de afgeleide naar temperatuur van de verzadigingsdampspanning
