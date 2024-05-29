@@ -1,14 +1,13 @@
 import pandas as pd
 import streamlit as st
-from show_knmi_functions.utils import get_data
+from utils import get_data
 import plotly.graph_objects as go
 import plotly.express as px  # For easy colormap generation
 # import numpy as np  # For linspace to distribute sampling
 import math
-from show_knmi_functions.spaghetti_plot import spaghetti_plot
+from spaghetti_plot import spaghetti_plot
 # https://www.knmi.nl/nederland-nu/klimatologie/geografische-overzichten/historisch-neerslagtekort
 # http://grondwaterformules.nl/index.php/vuistregels/neerslag-en-verdamping/langjarige-grondwateraanvulling
-
 
 def calculate_s(temp):
     """s = de afgeleide naar temperatuur van de verzadigingsdampspanning
