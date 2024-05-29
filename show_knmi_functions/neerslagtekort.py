@@ -254,7 +254,7 @@ def make_spaggetti(df_master, values):
         fig.add_trace(go.Scatter(x=pivot_table.index, y=pivot_table[column], mode='lines', name=str(column)))
 
     fig.update_layout(
-        title=f'{value} from various stations',
+        title=f'{values} from various stations',
         xaxis_title='Date',
         yaxis_title=values)
     st.plotly_chart(fig)
