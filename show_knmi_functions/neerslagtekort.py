@@ -37,6 +37,8 @@ def makkink(temp,  straling):
     Het KNMI berekent sinds 1 april 1987 de referentie-gewasverdamping met de formule van Makkink.
     https://nl.wikipedia.org/wiki/Referentie-gewasverdamping
 
+    temp_avg geeft te lage waardes (110 ipv 130)
+    temp_max geeft te hoge waardes (150 ipv 130)
     Args:
         temp (_type_): _description_
         straling (_type_): _description_
