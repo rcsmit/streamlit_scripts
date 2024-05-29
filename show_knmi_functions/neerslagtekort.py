@@ -21,10 +21,10 @@ def calculate_s(temp):
        (mbar/°C)
        https://nl.wikipedia.org/wiki/Referentie-gewasverdamping
     Args:
-        temp (_type_): _description_
+        temp (float):temperatuur
 
     Returns:
-        _type_: _description_
+        float: de afgeleide naar temperatuur van de verzadigingsdampspanning
     """
 
     a = 6.1078
@@ -33,13 +33,41 @@ def calculate_s(temp):
     s = ((a*b*c)/((c+temp)**2))*math.exp((b*temp)/(c+temp))
     return s
 def makkink(temp_avg, temp_max,  straling):
-    """_summary_
+    """ Berekening van referentie-gewasverdamping met de formule van Makkink.
     Referentiegewasverdamping is de hoeveelheid water die verdampt uit een grasveld dat goed voorzien is van water en nutriënten. Deze waarde wordt in de hydrologie gebruikt als basis om te kunnen berekenen hoeveel water verdampt uit oppervlaktes grond met diverse soorten gewassen.
     Het KNMI berekent sinds 1 april 1987 de referentie-gewasverdamping met de formule van Makkink.
     https://nl.wikipedia.org/wiki/Referentie-gewasverdamping
 
+
+    lambdaa = verdampingswarmte van water (2.45E6 J/kg bij 20 graden Celsius (°C))
+    eref  = referentiegewasverdamping (kg/m^{2}*s)
+    c_1 = constante (De Bruin (1981) vond hiervoor een waarde van ca. 0.65)
+    c_2 = constante (De Bruin (1981) vond hiervoor een waarde van ca. 0)
+    K_in = kortgolvig inkomende straling (W/m^{2})
+    gamma = psychrometerconstante (ca 0.66 mbar/°C op zeeniveau)
+    s = de afgeleide naar temperatuur van de verzadigingsdampspanning (mbar/°C)
+    T = temperatuur (°C)
+
     temp_avg geeft te lage waardes (110 ipv 130)
     temp_max geeft te hoge waardes (150 ipv 130)
+
+    CONVERSION STRALING
+    globale straling van in J/cm2 naar Wm2
+    Joules (J)** is a unit of energy.
+    Watts (W)** is a unit of power, defined as energy per unit time (1 W = 1 J/s).
+    10^4 cm2 = 1 m2
+
+    Convert energy (J/m²) to power (W/m²).  Power is energy per unit time.
+    If the radiation is measured over a specific time period, say 1 second, then:
+    1 J/m² over 1 second = 1 W/m²
+    For example, if the global radiation is given in J/cm² per day, you would 
+    first convert it to J/m² and then divide by the number of seconds in a day (86400 seconds) to get W/m².
+
+    CONVERSION EREF
+    Conversion factor for kg/(m²·s) to mm/day
+    Convert referentiegewasverdamping from kg/(m²·s) to mm/day
+    Assuming 1 kg/m² of water is equivalent to 86.4 mm of water depth over 24 hours
+
     Args:
         temp (_type_): _description_
         straling (_type_): _description_
@@ -49,10 +77,15 @@ def makkink(temp_avg, temp_max,  straling):
     lambdaa = 2.45*10**6
     c1 = 0.65
     c2 = 0
-    kin = straling
+    conversion_factor_straling =  10**4 / 86400
+    kin = straling * conversion_factor_straling
+
     gamma = 0.66
-    eref = (c1 * (s/(s+gamma)) * kin + c2)/lambdaa
+
+    conversion_factor_eref = 86400 
+    eref = (c1 * (s/(s+gamma)) * kin + c2)/lambdaa * conversion_factor_eref
     return eref
+
 def neerslagtekort_(df):
     """Functie die het neerslagtekort berekent
 
@@ -76,7 +109,6 @@ def neerslagtekort_(df):
         for what in ["temp_avg", "temp_max", "neerslag_etmaalsom", "glob_straling"]: 
             df[f"{what}_sma"] = df[f"{what}"] 
         
-    df['glob_straling_Wm2_sma'] = (df['glob_straling'] * 10**4) / 86400
     
     df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"].astype(str))
     df['year'] = df['YYYYMMDD'].dt.year
@@ -84,13 +116,8 @@ def neerslagtekort_(df):
     df = df[(df['month'] >= 4) & (df['month'] <= 9)]
     
     # Applying the function
-    df["eref"] = df.apply(lambda row: makkink(row["temp_avg_sma"],row["temp_max_sma"], row["glob_straling_Wm2_sma"]), axis=1)
-    # Conversion factor for kg/(m²·s) to mm/day
-    conversion_factor = 86400 # Assuming 1 kg/m² of water is equivalent to 86.4 mm of water depth over 24 hours
-
-    # Convert referentiegewasverdamping from kg/(m²·s) to mm/day
-    df['referentiegewasverdamping_mm_day'] = df['eref'] * conversion_factor
-    df["neerslagtekort"] =     df["referentiegewasverdamping_mm_day"] -df["neerslag_etmaalsom"]
+    df["eref"] = df.apply(lambda row: makkink(row["temp_avg_sma"],row["temp_max_sma"], row["glob_straling"]), axis=1)
+    df["neerslagtekort"] =     df["eref"] -df["neerslag_etmaalsom"]
     df['cumulative_neerslagtekort'] = df.groupby('year')['neerslagtekort'].cumsum()
  
     return df   
