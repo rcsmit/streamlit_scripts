@@ -149,7 +149,7 @@ def get_data(url):
             "neerslag_duur",
             "neerslag_etmaalsom",
         ]
-        
+        df["glob_straling"] = pd.to_numeric(df["glob_straling"], errors='coerce')
         #divide_by_10 = False if platform.processor() else True
         divide_by_10 = True
         if divide_by_10:
