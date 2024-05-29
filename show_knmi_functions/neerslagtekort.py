@@ -97,6 +97,7 @@ def neerslagtekort_(df):
     """    
     df=df.fillna(0.0)
     df['neerslag_etmaalsom'].replace(-0.1, 0, inplace=True)
+    
     wdwx =1
     if wdwx>1:
         for what in ["temp_avg", "temp_max", "neerslag_etmaalsom", "glob_straling"]: 
@@ -115,7 +116,7 @@ def neerslagtekort_(df):
     df['month'] = df['YYYYMMDD'].dt.month
     #df = df[(df['month'] >= 4) & (df['month'] <= 9)]
     st.write(df)
-    
+
     # Applying the function
     df["eref"] = df.apply(lambda row: makkink(row["temp_avg_sma"],row["temp_max_sma"], row["glob_straling"]), axis=1)
     df["neerslagtekort"] =     df["eref"] -df["neerslag_etmaalsom"]
@@ -188,7 +189,7 @@ def get_dataframe(FROM, UNTIL):
         url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start={fromx}&end={until}"
      
         df_s = get_data(url)
-
+        df_s = df_s.fillna(0)
         df= neerslagtekort_(df_s)
         
         df_master = pd.concat([df_master, df])  # Concatenate data for each station to df_master
