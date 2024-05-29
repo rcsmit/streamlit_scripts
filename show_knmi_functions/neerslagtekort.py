@@ -153,11 +153,11 @@ def neerslagtekort(df):
     df = neerslagtekort_(df)
     
     plot_neerslagtekort(df)
-    spaghetti_plot(df, ['neerslag_etmaalsom'], 3, 3, False, False, True, False, True, False, "Greys", False)
-    spaghetti_plot(df, ['neerslag_etmaalsom'], 3, 3, False, False, True, False, True, False, "Greys", True)
-    spaghetti_plot(df, ['temp_avg'], 3, 3, False, False, True, False, True, False, "Greys", False)
-    spaghetti_plot(df, ['eref'], 1,1, False, False, True, False, True, False, "Greys", False)
-    spaghetti_plot(df, ['eref'], 1,1, False, False, True, False, True, False, "Greys", True)
+    spaghetti_plot(df, ['neerslag_etmaalsom'], 3, 3, False, False, True, False, True, False, "Pubu", False)
+    spaghetti_plot(df, ['neerslag_etmaalsom'], 3, 3, False, False, True, False, True, False, "Pubu", True)
+    spaghetti_plot(df, ['temp_avg'], 3, 3, False, False, True, False, True, False, "Pubu", False)
+    spaghetti_plot(df, ['eref'], 1,1, False, False, True, False, True, False, "Pubu", False)
+    spaghetti_plot(df, ['eref'], 1,1, False, False, True, False, True, False, "Pubu", True)
 
 
 def get_dataframe(FROM, UNTIL):
@@ -203,7 +203,7 @@ def main():
     df = neerslagtekort_(df)
     st.write (df)
     plot_neerslagtekort(df)
-    spaghetti_plot(df, ['neerslag_etmaalsom'], 7, 7, False, False, True, False, True, False, "Greys")
+    spaghetti_plot(df, ['neerslag_etmaalsom'], 7, 7, False, False, True, False, True, False, "Pubu")
    
 def neerslagtekort_meerdere_stations(FROM, UNTIL):
     
