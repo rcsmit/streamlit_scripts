@@ -214,8 +214,8 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
     df_master, daily_avg_cumulative_neerslagtekort = get_dataframe(FROM, UNTIL)
     # Pivot and calculate statistics
 
-    make_spaggetti(df_master, daily_avg_cumulative_neerslagtekort, "cumulative_neerslagtekort")
-    make_spaggetti(df_master, daily_avg_cumulative_neerslagtekort, "neerslag_etmaalsom")
+    make_spaggetti(df_master,  "cumulative_neerslagtekort")
+    make_spaggetti(df_master,  "neerslag_etmaalsom")
 
     
      # Create a line plot using Plotly
