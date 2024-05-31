@@ -78,7 +78,7 @@ def  polar_plot(df2,   what_to_show, how):
             ]
             
             if how == "line":
-
+                # geeft foutmelding  als number of days groter is dan 3--9-2021 and 29-05-2024 = 1047 DAGEN
                 try:
                     # works locally
                     fig = px.line_polar(df2, r=w, color='YYYY', theta='angle_degrees',color_discrete_sequence=px.colors.sequential.Plasma_r, line_close=False, hover_data=['YYYYMMDD'])
@@ -86,6 +86,7 @@ def  polar_plot(df2,   what_to_show, how):
                     fig = px.line_polar(df2, r=w, color='YYYY', theta='angle_degrees', line_close=False, hover_data=['YYYYMMDD'])
                 
                 fig.update_traces(line=dict(width=0.75))
+            
             
             elif how == "scatter":
                 fig = px.scatter_polar(df2, r=w, color='YYYY', theta='angle_degrees', hover_data=['YYYYMMDD'])
