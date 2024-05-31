@@ -400,9 +400,18 @@ def help():
     st.write("Welke temperatuur was het op nieuwjaarsdag door de loop van de tijd?")
     st.image("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/specifieke_dag.png")
 
+    st.subheder("Last day")
+    st.write ("Wanneer was het voor het laatst 0 graden in de afgelopen jaren.")
+    st.image("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/lastday.png")
+
     st.subheader("Jaargemiddelde")
     st.write("Wat was het jaargemiddelde?")
     st.image("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/jaargemiddelde.png")
+    st.write("Kies hier volledige jaren als periode")
+
+    st.subheader("Maandgemiddelde")
+    st.write("Wat was het jaargemiddelde?")
+    st.image("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/maandgemiddelde.png")
     st.write("Kies hier volledige jaren als periode")
 
     st.subheader("Per dag in div jaren")
@@ -413,9 +422,31 @@ def help():
     st.write("Kan ik 2021 met 2021 per maaand vergelijken?")
     st.image("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/per_maand_div_jaren_2020_2021.png")
 
+    st.subheader("Spaghettiplot")
+    st.write("Spaghettiplot. Laatste jaar en gemiddelde extra benadrukt")
+    st.image("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/spaghettiplot.png")
+
     st.subheader("Percentiles")
     st.write("Wat zijn de uitschieters in het jaar? - kies hiervoor een lange periode")
     st.image("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/percentiles.png")
+    
+    st.subheader("Polorplot/radarchart")
+    st.write("A polar plot")
+    
+    st.subheader("Show year histogram animation")
+    st.write("_")
+    st.subheader("Does rain predict rain")
+    st.write("reproducing https://medium.com/towards-data-science/does-rain-predict-rain-us-weather-data-and-the-correlation-of-rain-today-and-tomorrow-3a62eda6f7f7")
+    st.image("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/rainpredict.png")
+    
+    st.subheader("Neerslagtekort")
+    st.write("reproducing RIVM graph")
+    st.image("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/neerslagtekort.png")
+
+    st.subheader("Neerslagtekort meerdere")
+    st.write("reproducing RIVM graph")
+    st.image("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/neerslagtekortmeerdere.png")
+    
     st.subheader("Weerstations")
     st.write("Link to map with KNMI stations https://www.google.com/maps/d/u/0/edit?mid=1ePEzqJ4_aNyyTwF5FyUM6XiqhLZPSBjN&ll=52.17534745851063%2C5.197922250000001&z=7")
     st.image("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/weerstations.png")
