@@ -400,7 +400,7 @@ def help():
     st.write("Welke temperatuur was het op nieuwjaarsdag door de loop van de tijd?")
     st.image("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/specifieke_dag.png")
 
-    st.subheder("Last day")
+    st.subheader("Last day")
     st.write ("Wanneer was het voor het laatst 0 graden in de afgelopen jaren.")
     st.image("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/lastday.png")
 
