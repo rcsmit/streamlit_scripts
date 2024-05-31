@@ -43,10 +43,13 @@ def interface():
     """
     mode = st.sidebar.selectbox(
         "Modus (kies HELP voor hulp)", ["doorlopend per dag", "aantal keren", "specifieke dag","last day",
-                                        "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", "spaghetti plot", "per maand in div jaren", "percentiles", "polar plot/radar chart", "show year histogram animation", "does rain predict rain","neerslagtekort","neerslagtekort_meerdere", "show year histogram animation", "show weerstations", "help"], index=0
+                                        "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", 
+                                        "spaghetti plot", "per maand in div jaren", "percentiles", 
+                                        "polar plot/radar chart", "show year histogram animation",
+                                        "does rain predict rain","neerslagtekort","neerslagtekort_meerdere", 
+                                        "show year histogram animation", "show weerstations", "help"], index=17
     )
    
-
     weer_stations = get_weerstations()
     weerstation_namen = []
     for w in weer_stations:
@@ -66,8 +69,7 @@ def interface():
     from_ = st.sidebar.text_input("startdatum (yyyy-mm-dd) from 1-1-1900", start_)
     until_ = st.sidebar.text_input("enddatum (yyyy-mm-dd)", today)
 
-    if mode != "does rain predict rain":
-
+    if mode not in ["does rain predict rain","neerslagtekort","neerslagtekort_meerdere"] :
         show_options = [
             "temp_min",
             "temp_avg",
@@ -81,10 +83,9 @@ def interface():
         ]
 
         what_to_show = st.sidebar.multiselect("Wat weer te geven", show_options, "temp_max")
-        #if len(what_to_show)==1:
+       
         graph_type = st.sidebar.selectbox("Graph type (plotly=interactive)", ["pyplot", "plotly"], index=1)
-        #else:
-        #    graph_type = "pyplot"
+
 
         wdw = st.sidebar.slider("Window smoothing curves", 1, 45, 7)
         wdw2 = st.sidebar.number_input("Window smoothing curves 2 (999 for none)", 1, 999, 999)

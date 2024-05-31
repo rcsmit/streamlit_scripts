@@ -21,9 +21,6 @@ def get_data(url):
             low_memory=False,
         )
 
-        # except as e:
-        #     st.write(f"FOUT BIJ HET INLADEN. {e}")
-        #     st.stop()
         
         # TG        : Etmaalgemiddelde temperatuur (in 0.1 graden Celsius) / Daily mean temperature in (0.1 degrees Celsius)
         # TN        : Minimum temperatuur (in 0.1 graden Celsius) / Minimum temperature (in 0.1 degrees Celsius)
@@ -43,24 +40,10 @@ def get_data(url):
         # STN,YYYYMMDD,DDVEC,FHVEC,FG,FHX,FHXH,FHN,FHNH,FXX,FXXH,TG,TN,TNH,TX,TXH,T10N,T10NH,SQ,SP,Q,
         # 21 22  3   4    5   6 7  8  9   30   1    2   3   4  5  6
         # DR,RH,RHX,RHXH,PG,PX,PXH,PN,PNH,VVN,VVNH,VVX,VVXH,NG,UG,UX,UXH,UN,UNH,EV24
-        column_replacements_knmi_nw_beerta = [
-            [0, "STN"],
-            [1, "YYYYMMDD"],
-            [11, "temp_avg"],
-            [12, "temp_min"],
-            [14, "temp_max"],
-            [16, "T10N"],
-            [18, "zonneschijnduur"],
-            [19, "perc_max_zonneschijnduur"],
-            [20, "glob_straling"],
-            [21, "neerslag_duur"],
-            [22, "neerslag_etmaalsom"],
-            [38, "RH_min"],
-            [36, "RH_max"]
-        ]
+
         # 0   1           2     3     4    5       6     7      8    9    100    11   12
         # STN,YYYYMMDD,   TG,   TN,   TX, T10N,   SQ,   SP,    Q,   DR,   RH,   UN,   UX
-        column_replacements_knmi = [
+        column_replacements = [
             [0, "STN"],
             [1, "YYYYMMDD"],
             [2, "temp_avg"],
@@ -75,30 +58,9 @@ def get_data(url):
             [11, "RH_min"],
             [12, "RH_max"]
         ]
-        column_replacements_local = [
-            [0, "ID"],
-            [1, "STN"],
-            [2, "YYYYMMDD"],
-            [3, "temp_avg"],
-            [4, "temp_min"],
-            [5, "temp_max"],
-            [6, "T10N"],
-            [7, "zonneschijnduur"],
-            [8, "perc_max_zonneschijnduur"],
-            [9, "glob_straling"],
-            [10, "neerslag_duur"],
-            [11, "neerslag_etmaalsom"],
-            [12, "RH_min"],
-            [13, "RH_max"]
-        ]
-
-        #column_replacements = column_replacements_local if platform.processor() else column_replacements_knmi
-        column_replacements = column_replacements_knmi
+   
         for c in column_replacements:
             df = df.rename(columns={c[0]: c[1]})
-       
-        print (df.dtypes)
-        print (df)
         
         df["YYYYMMDD"] = pd.to_datetime(df["YYYYMMDD"].astype(str))
         df["YYYY"] = df["YYYYMMDD"].dt.year
@@ -151,26 +113,20 @@ def get_data(url):
             "neerslag_etmaalsom",
         ]
         df["glob_straling"] = pd.to_numeric(df["glob_straling"], errors='coerce')
-        #divide_by_10 = False if platform.processor() else True
-        divide_by_10 = True
-        if divide_by_10:
-           
-            for d in to_divide_by_10:
-                df['neerslag_etmaalsom'].replace(" ", 0, inplace=True)
-                df[d] = pd.to_numeric(df[d], errors='coerce')
-                try:
-                    
-                    df[d] = df[d] / 10
-                except:
-                    df[d] = df[d]
+    
+        for d in to_divide_by_10:
+            df['neerslag_etmaalsom'].replace(" ", 0, inplace=True)
+            df[d] = pd.to_numeric(df[d], errors='coerce')
+            try:   
+                df[d] = df[d] / 10
+            except:
+                df[d] = df[d]
 
     df["spec_humidity_knmi_derived"] = df.apply(lambda x: rh2q(x['RH_min'],x['temp_max'], 1020),axis=1)
     df["abs_humidity_knmi_derived"] =df.apply(lambda x: rh2ah(x['RH_min'],x['temp_max']),axis=1)
     df["globale_straling_log10"] =df.apply(lambda x: log10(x['glob_straling']),axis=1) #  np.log10(df["glob_straling"])
     
     return df
-
-
 
 def rh2q(rh, t, p ):
     """Compute the Specific Humidity (Bolton 1980):
@@ -230,7 +186,7 @@ def log10(t):
     return x
 
 def check_from_until(from_, until_):
-    """Checks whethe start- and enddate are valid.
+    """Checks whether the start- and enddate are valid.
 
     Args:
         from_ (string): start date
@@ -375,15 +331,11 @@ def show_weerstations():
     # original_Name
     df_map=  pd.read_csv(
         "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/weerstations.csv",
-        #"https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/leeg.csv",
         comment="#",
         delimiter=",",
         low_memory=False,
     )
     df_map = df_map[["original_Name", "lat", "lon"]]
-    #df_map = df_map.head(1)
-    
-    #st.map(data=df_map, zoom=None, use_container_width=True)
 
     # Adding code so we can have map default to the center of the data
     midpoint = (np.average(df_map['lat']), np.average(df_map['lon']))
@@ -505,8 +457,6 @@ def loess_skmisc(t, y,  ybounds=None, it=1):
     # https://has2k1.github.io/scikit-misc/stable/generated/skmisc.loess.loess.html
     # https://stackoverflow.com/questions/31104565/confidence-interval-for-lowess-in-python
 
-    
-
     # # Set default values for p, t1, and t2
     # if p is None:
     #     p = 0.95  # default confidence level
@@ -561,9 +511,7 @@ def loess_skmisc(t, y,  ybounds=None, it=1):
 
     span = 42/len(y)
     
-  
     l = loess(t,y)
-    
     
     # MODEL and CONTROL. Essential for replicating the results from the R script.
     #
@@ -579,8 +527,6 @@ def loess_skmisc(t, y,  ybounds=None, it=1):
     l.fit()
     pred = l.predict(t, stderror=True)
     conf = pred.confidence()
-
-
     #ste = pred.stderr
     loess_values = pred.values
     ll = conf.lower
