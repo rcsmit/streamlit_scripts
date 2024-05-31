@@ -1,10 +1,16 @@
 import pandas as pd
 import streamlit as st
 import plotly.graph_objects as go
-import plotly.express as px  # For easy colormap generation
-# import numpy as np  # For linspace to distribute sampling
+# import plotly.express as px  # For easy colormap generation
+import numpy as np  # For linspace to distribute sampling
 import math
 from datetime import datetime
+
+
+from scipy.stats import linregress
+import statsmodels.api as sm
+from scipy import stats
+
 try:
     from show_knmi_functions.spaghetti_plot import spaghetti_plot
     from show_knmi_functions.utils import get_data
@@ -163,10 +169,18 @@ def neerslagtekort(df):
     spaghetti_plot(df, ['eref'], 1,1, False, False, True, False, True, False, "Pubu", False)
     spaghetti_plot(df, ['eref'], 1,1, False, False, True, False, True, False, "Pubu", True)
 
+@st.cache_data
+def get_dataframe_multiple(FROM, UNTIL):
+    """Get the dataframe with info from multiple stations
 
-def get_dataframe(FROM, UNTIL):
-    
-    stations = [260,235,290,278,240,249,391,286,251,319,283]
+    Args:
+        FROM (str): date as datetime.strptime("2023-01-01", "%Y-%m-%d").date()
+        UNTIL (str): date as datetime.strptime("2023-01-01", "%Y-%m-%d").date()
+
+    Returns:
+        _type_: _description_
+    """    
+    stations = [260,235,280,278,240,249,391,286,251,319,283]
     #  De Bilt,  260
     # De Kooy, 235
     # Groningen, 280
@@ -180,23 +194,29 @@ def get_dataframe(FROM, UNTIL):
     # West-Terschelling, 251
     # Westdorpe  319
     # Winterswijk. 283
-    df_master = pd.DataFrame()  
-    for stn in stations:
-        fromx, until =  FROM.strftime("%Y%m%d"), UNTIL.strftime("%Y%m%d")
-        # fromx="20230101"
-
-        # until="20231231"     
+    df_master_ = pd.DataFrame()  
+    for i, stn in enumerate(stations):
+        print (f"Downloading {i+1}/{len(stations)}")
+        fromx, until =  FROM.strftime("%Y%m%d"), UNTIL.strftime("%Y%m%d")    
         url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start={fromx}&end={until}"
      
         df_s = get_data(url)
         df_s = df_s.fillna(0)
         df= neerslagtekort_(df_s)
-        
-        df_master = pd.concat([df_master, df])  # Concatenate data for each station to df_master
+        df_master_ = pd.concat([df_master_, df])  # Concatenate data for each station to df_master
     
-    daily_avg_cumulative_neerslagtekort = df_master.groupby('YYYYMMDD')['cumulative_neerslagtekort'].mean().reset_index()
+    data = {
+        "STN":       [260, 235, 280, 278, 240, 249, 391, 286, 251, 319, 283],
+        "stn_in_txt": ["De Bilt", "De Kooy", "Groningen", "Heerde", "Hoofddorp", "Hoorn",  "Roermond", "Ter Apel", "West-Terschelling", "Westdorpe", "Winterswijk"],
+        "stn_data": ["De Bilt", "De Kooy", "Eelde", "Heino", "Schiphol", "Berkhout",  "Arcen", "Nieuw Beerta", "Hoorn Terschilling", "Westdorpe", "Hupsel"],
+        
+    }
 
-    return df_master, daily_avg_cumulative_neerslagtekort
+    # Create the DataFrame
+    df_station = pd.DataFrame(data)
+    df_master=pd.merge(df_master_,df_station,how="left",on="STN")
+    st.write(df_master)
+    return df_master
 
 
 def main():
@@ -208,32 +228,51 @@ def main():
     st.write (df)
     plot_neerslagtekort(df)
     spaghetti_plot(df, ['neerslag_etmaalsom'], 7, 7, False, False, True, False, True, False, "Pubu")
-   
+    # fromx = datetime.strptime("2000-01-01", "%Y-%m-%d").date()
+    # until = datetime.strptime("2023-12-31", "%Y-%m-%d").date()
+    # neerslagtekort_meerdere_stations(fromx, until)
+    
 def neerslagtekort_meerdere_stations(FROM, UNTIL):
     
-    df_master, daily_avg_cumulative_neerslagtekort = get_dataframe(FROM, UNTIL)
-    # Pivot and calculate statistics
-    df_master["cumm_neerslag_etmaalsom"] = df_master.groupby('STN')["neerslag_etmaalsom"].cumsum()
+    df_master = get_dataframe_multiple(FROM, UNTIL)
+
+
+    daily_avg_cumulative_neerslagtekort = df_master.groupby('YYYYMMDD')['cumulative_neerslagtekort'].mean().reset_index()
+    df_master['year'] = df_master['YYYYMMDD'].dt.year
    
+    # # Pivot and calculate statistics
+    df_master["cumm_neerslag_etmaalsom"] = df_master.groupby(['STN', 'year'])["neerslag_etmaalsom"].cumsum()
+    #df_grouped = df.groupby(['STN', 'year'])['value'].cumsum()
+
     make_spaggetti(df_master,  "cumulative_neerslagtekort")
     make_spaggetti(df_master,  "neerslag_etmaalsom")
     make_spaggetti(df_master,  "cumm_neerslag_etmaalsom")
+    plot_daily_cumm_neerslagtekort(daily_avg_cumulative_neerslagtekort)
+    plot_average_various_years(daily_avg_cumulative_neerslagtekort)
+    max_value_each_year(daily_avg_cumulative_neerslagtekort)
+    multiple_lineair_regression(df_master)
+    show_stations()
+def max_value_each_year(df):
+    # Create scatter plot with Plotly
+    max_cumulative_neerslagtekort = df.groupby('year')['cumulative_neerslagtekort'].max()
+    avg_cumulative_neerslagtekort = df.groupby('year')['cumulative_neerslagtekort'].mean()
+    last_cumulative_neerslagtekort = df.groupby('year')['cumulative_neerslagtekort'].last()
 
-    st.write(daily_avg_cumulative_neerslagtekort)
-    daily_avg_cumulative_neerslagtekort['year'] = daily_avg_cumulative_neerslagtekort['YYYYMMDD'].dt.year
-     # Create a line plot using Plotly
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=daily_avg_cumulative_neerslagtekort['YYYYMMDD'], y=daily_avg_cumulative_neerslagtekort["cumulative_neerslagtekort"], mode='lines', name="cumulative_neerslagtekort"))
-
+    fig.add_trace(go.Scatter(x=max_cumulative_neerslagtekort.index, y=max_cumulative_neerslagtekort.values, name='max',mode='lines'))
+    fig.add_trace(go.Scatter(x=avg_cumulative_neerslagtekort.index, y=avg_cumulative_neerslagtekort.values,  name='avg',mode='lines'))
+    fig.add_trace(go.Scatter(x=last_cumulative_neerslagtekort.index, y=last_cumulative_neerslagtekort.values,  name='last',mode='lines'))
+                  
     fig.update_layout(
-        title='Landelijk gemiddelde cumm. neerslagtekort over 11 stations door de tijd heen',
-        xaxis_title='Date',
-        yaxis_title='Value')
+        xaxis_title='Year',
+        yaxis_title='Maximum and mean Cumulative Precipitation Deficit',
+        title='Maximale, gemiddelde en laatste neerslagtekort over 11 meetstations'
+    )
+
     st.plotly_chart(fig)
 
-
-
-
+    
+def plot_average_various_years(daily_avg_cumulative_neerslagtekort):
     daily_avg_cumulative_neerslagtekort['date_1900'] = pd.to_datetime(daily_avg_cumulative_neerslagtekort['YYYYMMDD'].dt.strftime('%d-%m-1900'), format='%d-%m-%Y')
 
     pivot_daily_avg_cumulative_neerslagtekort = daily_avg_cumulative_neerslagtekort.pivot(index='date_1900', columns='year', values='cumulative_neerslagtekort')
@@ -250,8 +289,17 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
    
     st.plotly_chart(fig)
 
-    
-    show_stations()
+def plot_daily_cumm_neerslagtekort(daily_avg_cumulative_neerslagtekort):
+    daily_avg_cumulative_neerslagtekort['year'] = daily_avg_cumulative_neerslagtekort['YYYYMMDD'].dt.year
+     # Create a line plot using Plotly
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=daily_avg_cumulative_neerslagtekort['YYYYMMDD'], y=daily_avg_cumulative_neerslagtekort["cumulative_neerslagtekort"], mode='markers',  name="cumulative_neerslagtekort"))
+
+    fig.update_layout(
+        title='Landelijk gemiddelde cumm. neerslagtekort over 11 stations door de tijd heen',
+        xaxis_title='Date',
+        yaxis_title='Value')
+    st.plotly_chart(fig)
     
 def show_stations():
     # Define the data
@@ -266,15 +314,34 @@ def show_stations():
     df = pd.DataFrame(data)
 
     # Display the DataFrame
+    st.subheader("Gebruikte weerstations")
     st.write(df)
 
 def make_spaggetti(df_master, values):
-    pivot_table = df_master.pivot(index='YYYYMMDD', columns='STN', values=values)
-   
+    min_date = df_master['YYYYMMDD'].min()
+    max_date = df_master['YYYYMMDD'].max()
+    date_range = pd.date_range(min_date, max_date, freq='D')
+
+    # Reindex the pivot table to include all the dates in the date range
+    pivot_table = df_master.pivot(index='YYYYMMDD', columns='stn_in_txt', values=values)
+    pivot_table = pivot_table.reindex(date_range)
+
+    
     # Create a line plot using Plotly
     fig = go.Figure()
     for column in pivot_table.columns:
-        fig.add_trace(go.Scatter(x=pivot_table.index, y=pivot_table[column], mode='lines', name=str(column)))
+
+        y_values = pivot_table[column]
+        x_values = pivot_table.index
+        y_values[(x_values.month < 4) | (x_values.month > 9)] = np.nan
+        
+        # x_values = x_values[(x_values.month >= 4) & (x_values.month <= 9)]
+        # y_values = y_values[(x_values.month >= 4) & (x_values.month <= 9)]
+        fig.add_trace(go.Scatter(x=x_values, y=y_values, mode='lines', name=str(column)))
+                      
+
+
+        # fig.add_trace(go.Scatter(x=pivot_table.index, y=pivot_table[column], mode='lines', name=str(column)))
 
     fig.update_layout(
         title=f'{values} from various stations',
@@ -282,9 +349,35 @@ def make_spaggetti(df_master, values):
         yaxis_title=values)
     st.plotly_chart(fig)
 
+
+def multiple_lineair_regression(df):
+    """Calculates multiple lineair regression. User can choose the Y value and the X values
+    Args:
+        df_ (df): df with info
+    """    
+    st.subheader("Multiple Lineair Regression")
+    y_value_ = "eref" 
+    x_values_options =  ["temp_avg","temp_max","glob_straling","neerslag_etmaalsom"]
+    x_values_default =  ["temp_avg","temp_max","glob_straling","neerslag_etmaalsom"]
+    x_values = st.multiselect("X values", x_values_options, x_values_default)
+    intercept=  st.checkbox("Intercept", False)
+    df =df[["STN","YYYYMMDD"]+[y_value_]+ x_values]
+    x = df[x_values]
+    y = df[y_value_]
+    
+    # with statsmodels
+    if intercept:
+        x= sm.add_constant(x) # adding a constant
+    
+    model = sm.OLS(y, x, missing='drop').fit()
+
+    st.write("**OUTPUT ORDINARY LEAST SQUARES**")
+    print_model = model.summary()
+    st.write(print_model)
+
 if __name__ == "__main__":
     #main()
-    fromx = datetime.strptime("2023-01-01", "%Y-%m-%d").date()
+    fromx = datetime.strptime("2000-01-01", "%Y-%m-%d").date()
     until = datetime.strptime("2023-12-31", "%Y-%m-%d").date()
     neerslagtekort_meerdere_stations(fromx, until)
     
