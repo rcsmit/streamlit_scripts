@@ -5,7 +5,7 @@ import platform
 
 from show_knmi_functions.utils import show_weerstations, help,  list_to_text,check_from_until, find_date_for_title, download_button,get_weerstations, get_data
 from show_knmi_functions.does_rain_predict_rain import does_rain_predict_rain
-from show_knmi_functions.polar_plot import polar_plot
+from show_knmi_functions.polar_plot import polar_plot, polar_debug
 from show_knmi_functions.show_warmingstripes import show_warmingstripes
 from show_knmi_functions.show_plot import show_plot
 from show_knmi_functions.plot_percentiles import plot_percentiles
@@ -200,6 +200,9 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
             "Scatter / line", ["scatter", "line"], index=0
             )
         polar_plot(df,  what_to_show, how)
+    elif mode == "polar_debug":
+       
+        polar_debug(df)
     elif mode =="show year histogram animation":
         show_year_histogram_animation(df, what_to_show)
         

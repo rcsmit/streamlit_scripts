@@ -290,7 +290,64 @@ def  polar_plot(df2,   what_to_show, how):
         plot_polar_plotly("line")
         
         plot_matplotlib_line()
-        
+
+
+def polar_debug(df2):
+    """function with the minimal needed to show the error
+
+    Args:
+        df2 (_type_): _description_
+
+    """    
+
+ 
+      
+    df2["YYYYMMDD_"] = pd.to_datetime(df2["YYYYMMDD"], format="%Y%m%d")
+    # Convert the timestamp to the number of seconds since the start of the year.
+    df2['secs'] = (df2.YYYYMMDD_ - pd.to_datetime(df2.YYYYMMDD.dt.year, format='%Y')).dt.total_seconds()
+    df2['dayofyear'] =  df2["YYYYMMDD_"].dt.dayofyear
+    df2['angle_rad']=((360/365)*df2['dayofyear'])*np.pi/180 # = hoek in radialen
+    # Approximate the angle as the number of seconds for the timestamp divide by
+    # the number of seconds in an average year.
+    df2['angle_degrees'] = df2['secs'] / (365.25 * 86400) *360  #   * 2 * np.pi
+    big_angle= 360/12  # How we split our polar space
+       
+    st.subheader(f"Plotly - debug")
+    months = [
+        "januari",
+        "februari",
+        "maart",
+        "april",
+        "mei",
+        "juni",
+        "juli",
+        "augustus",
+        "september",
+        "oktober",
+        "november",
+        "december",
+    ]
+    
+    st.write("geeft foutmelding  als number of days groter is dan 3--9-2021 and 29-05-2024 = 1047 DAGEN")
+    # https://plotly.com/python/reference/scatterpolargl/
+
+    fig = px.line_polar(df2, r="temp_avg", color='YYYY', theta='angle_degrees', line_close=False, hover_data=['YYYYMMDD'])  
+    fig.update_traces(line=dict(width=0.75))
+    
+    fig.update_layout(coloraxis={"colorbar":{"dtick":1}}) #only integers in legeenda
+    labelevery = 6
+    fig.update_layout(
+        polar={
+            "angularaxis": {
+                "tickmode": "array",
+                "tickvals": list(range(0, 360, 180 // labelevery)),
+                "ticktext": months,
+            }
+        }
+    )
+    st.plotly_chart(fig)
+
+     
         
 def main():
    
