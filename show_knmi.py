@@ -44,7 +44,7 @@ def interface():
     mode = st.sidebar.selectbox(
         "Modus (kies HELP voor hulp)", ["doorlopend per dag", "aantal keren", "specifieke dag","last day",
                                         "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", 
-                                        "spaghetti plot", "per maand in div jaren", "percentiles", 
+                                        "per maand in div jaren",  "spaghetti plot","percentiles", 
                                         "polar plot/radar chart", "show year histogram animation",
                                         "does rain predict rain","neerslagtekort","neerslagtekort_meerdere", 
                                         "show weerstations", "help"], index=16
