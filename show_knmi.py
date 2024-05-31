@@ -16,6 +16,7 @@ from show_knmi_functions.show_year_histogram_animation import show_year_histogra
 from show_knmi_functions.last_day import last_day
 from show_knmi_functions.neerslagtekort import neerslagtekort, neerslagtekort_meerdere_stations
 
+
 # INSPRIATION : https://weatherspark.com/m/52666/10/Average-Weather-in-October-in-Utrecht-Netherlands
 # https://radumas.info/blog/tutorial/2017/04/17/percentile-test.html
 
