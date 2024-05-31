@@ -66,7 +66,7 @@ def  polar_plot(df2,   what_to_show, how):
             
             if how == "line":
                 fig = px.line_polar(df2, r=w, color='YYYY', theta='angle_degrees',color_discrete_sequence=px.colors.sequential.Plasma_r, line_close=False, hover_data=['YYYYMMDD'])
-                fig.update_traces(line=dict(width=0.75))
+                #fig.update_traces(line=dict(width=0.75))
             
             elif how == "scatter":
                 fig = px.scatter_polar(df2, r=w, color='YYYY', theta='angle_degrees', hover_data=['YYYYMMDD'])
