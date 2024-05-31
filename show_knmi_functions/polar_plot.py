@@ -6,7 +6,10 @@ import matplotlib.pyplot as plt
 # import matplotlib
 from matplotlib.backends.backend_agg import RendererAgg
 from matplotlib.animation import FuncAnimation
-from show_knmi_functions.utils import get_data
+try:
+    from show_knmi_functions.utils import get_data
+except:
+    from utils import get_data
 _lock = RendererAgg.lock
 import sys # for the progressbar
 import shutil # for the progressbar
@@ -22,6 +25,16 @@ import os
 import webbrowser
 
 def  polar_plot(df2,   what_to_show, how):
+    """_summary_
+
+    Args:
+        df2 (_type_): _description_
+        what_to_show (_type_): _description_
+        how (_type_): "line" or "scatter"
+
+    Returns:
+        _type_: _description_
+    """    
     # https://scipython.com/blog/visualizing-the-temperature-in-cambridge-uk/
     # import numpy as np
     # import pandas as pd
@@ -65,8 +78,14 @@ def  polar_plot(df2,   what_to_show, how):
             ]
             
             if how == "line":
-                fig = px.line_polar(df2, r=w, color='YYYY', theta='angle_degrees',color_discrete_sequence=px.colors.sequential.Plasma_r, line_close=False, hover_data=['YYYYMMDD'])
-                #fig.update_traces(line=dict(width=0.75))
+
+                try:
+                    # works locally
+                    fig = px.line_polar(df2, r=w, color='YYYY', theta='angle_degrees',color_discrete_sequence=px.colors.sequential.Plasma_r, line_close=False, hover_data=['YYYYMMDD'])
+                except:
+                    fig = px.line_polar(df2, r=w, color='YYYY', theta='angle_degrees', line_close=False, hover_data=['YYYYMMDD'])
+                
+                fig.update_traces(line=dict(width=0.75))
             
             elif how == "scatter":
                 fig = px.scatter_polar(df2, r=w, color='YYYY', theta='angle_degrees', hover_data=['YYYYMMDD'])
