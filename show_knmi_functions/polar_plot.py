@@ -332,8 +332,8 @@ def polar_debug(df2):
     # https://plotly.com/python/reference/scatterpolargl/
 
     fig = px.line_polar(df2, r="temp_avg", color='YYYY', theta='angle_degrees',  hover_data=['YYYYMMDD'])  
-    fig.update_traces(line=dict(width=0.75))
-    
+    #fig.update_traces(line=dict(width=0.75))
+    # line_close=False,
     fig.update_layout(coloraxis={"colorbar":{"dtick":1}}) #only integers in legeenda
     labelevery = 6
     fig.update_layout(
