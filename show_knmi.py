@@ -138,9 +138,9 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
         datefield = groupby_how
     else:
         datefield = "YYYYMMDD"
-    with st.expander("Dataframe"):
-        st.write(df)
-        download_button(df)
+    # with st.expander("Dataframe"):
+    #     st.write(df)
+    #     download_button(df)
     
     if mode == "help":
         help()
