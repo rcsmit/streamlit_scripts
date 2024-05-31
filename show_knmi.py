@@ -48,7 +48,7 @@ def interface():
                                         "per maand in div jaren",  "spaghetti plot","percentiles", 
                                         "polar plot/radar chart", "show year histogram animation",
                                         "does rain predict rain","neerslagtekort","neerslagtekort_meerdere", 
-                                        "show weerstations", "help"], index=16
+                                        "show weerstations", "help", "polar_debug"], index=16
     )
     if mode !=  "neerslagtekort_meerdere":
         weer_stations = get_weerstations()
