@@ -47,21 +47,21 @@ def interface():
                                         "spaghetti plot", "per maand in div jaren", "percentiles", 
                                         "polar plot/radar chart", "show year histogram animation",
                                         "does rain predict rain","neerslagtekort","neerslagtekort_meerdere", 
-                                        "show year histogram animation", "show weerstations", "help"], index=17
+                                        "show weerstations", "help"], index=16
     )
-   
-    weer_stations = get_weerstations()
-    weerstation_namen = []
-    for w in weer_stations:
-        weerstation_namen.append(w[1])
-    weerstation_namen.sort()
+    if mode !=  "neerslagtekort_meerdere":
+        weer_stations = get_weerstations()
+        weerstation_namen = []
+        for w in weer_stations:
+            weerstation_namen.append(w[1])
+        weerstation_namen.sort()
 
-    gekozen_weerstation = st.sidebar.selectbox(
-        "Weerstation", weerstation_namen, index=4
-    )
-    for w in weer_stations:
-        if gekozen_weerstation == w[1]:
-            stn = w[0]
+        gekozen_weerstation = st.sidebar.selectbox(
+            "Weerstation", weerstation_namen, index=4
+        )
+        for w in weer_stations:
+            if gekozen_weerstation == w[1]:
+                stn = w[0]
 
     DATE_FORMAT = "%m/%d/%Y"
     start_ = "2019-01-01"

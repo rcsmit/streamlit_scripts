@@ -170,7 +170,7 @@ def neerslagtekort(df):
     spaghetti_plot(df, ['eref'], 1,1, False, False, True, False, True, False, "Pubu", True)
 
 @st.cache_data
-def get_dataframe_multiple(FROM, UNTIL):
+def get_dataframe_multiple(stations,FROM, UNTIL):
     """Get the dataframe with info from multiple stations
 
     Args:
@@ -180,20 +180,7 @@ def get_dataframe_multiple(FROM, UNTIL):
     Returns:
         _type_: _description_
     """    
-    stations = [260,235,280,278,240,249,391,286,251,319,283]
-    #  De Bilt,  260
-    # De Kooy, 235
-    # Groningen, 280
-    # Heerde, 278
-    # Hoofddorp, 240
-    # Hoorn, 249
-    # Kerkwerve, 312 en 324 geven lege results)
-    # Oudenbosch, 340 (heeft geen neerslagetmaalsom)
-    # Roermond, 391
-    # Ter Apel, 286
-    # West-Terschelling, 251
-    # Westdorpe  319
-    # Winterswijk. 283
+  
     df_master_ = pd.DataFrame()  
     for i, stn in enumerate(stations):
         print (f"Downloading {i+1}/{len(stations)}")
@@ -215,7 +202,7 @@ def get_dataframe_multiple(FROM, UNTIL):
     # Create the DataFrame
     df_station = pd.DataFrame(data)
     df_master=pd.merge(df_master_,df_station,how="left",on="STN")
-    st.write(df_master)
+ 
     return df_master
 
 
@@ -233,8 +220,36 @@ def main():
     # neerslagtekort_meerdere_stations(fromx, until)
     
 def neerslagtekort_meerdere_stations(FROM, UNTIL):
-    
-    df_master = get_dataframe_multiple(FROM, UNTIL)
+    stations_ = [260,235,280,278,240,249,391,286,251,319,283]
+
+    data = {
+    "STN": [260, 235, 280, 278, 240, 249, 391, 286, 251, 319, 283],
+    "stn_in_txt": ["De Bilt", "De Kooy", "Groningen", "Heerde", "Hoofddorp", "Hoorn", "Roermond", "Ter Apel", "West-Terschelling", "Westdorpe", "Winterswijk"],
+    "stn_data": ["De Bilt", "De Kooy", "Eelde", "Heino", "Schiphol", "Berkhout", "Arcen", "Nieuw Beerta", "Hoorn Terschilling", "Westdorpe", "Hupsel"],
+    }
+    # Create a dictionary to map station names to STN values
+    stn_dict = dict(zip(data["stn_data"], data["STN"]))
+
+    # Create a dropdown menu with the station names
+    selected_stations = st.sidebar.multiselect("Select stations:", options=data["stn_data"], default=data["stn_data"])
+
+    # Map the selected names to their corresponding STN values
+    stations = [stn_dict[name] for name in selected_stations]
+    #  De Bilt,  260
+    # De Kooy, 235
+    # Groningen, 280
+    # Heerde, 278
+    # Hoofddorp, 240
+    # Hoorn, 249
+    # Kerkwerve, 312 en 324 geven lege results)
+    # Oudenbosch, 340 (heeft geen neerslagetmaalsom)
+    # Roermond, 391
+    # Ter Apel, 286
+    # West-Terschelling, 251
+    # Westdorpe  319
+    # Winterswijk. 283
+   
+    df_master = get_dataframe_multiple(stations, FROM, UNTIL)
 
 
     daily_avg_cumulative_neerslagtekort = df_master.groupby('YYYYMMDD')['cumulative_neerslagtekort'].mean().reset_index()
