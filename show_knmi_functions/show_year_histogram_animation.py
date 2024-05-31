@@ -225,6 +225,7 @@ def show_year_histogram_animation(df, what):
     Args:
         df (_type_): _description_
     """
+    df = df.fillna(0)
     show_animation_histogram_plotly(df, what)
     make_line_graph_in_time(df, what)
     make_gif_gaussian_distributions(df, what)
