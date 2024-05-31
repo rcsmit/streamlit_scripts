@@ -330,7 +330,7 @@ def polar_debug(df2):
     
     st.write("geeft foutmelding  als number of days groter is dan 3--9-2021 and 29-05-2024 = 1047 DAGEN")
     # https://plotly.com/python/reference/scatterpolargl/
-
+     
     fig = px.line_polar(df2, r="temp_avg", color='YYYY', theta='angle_degrees',  hover_data=['YYYYMMDD'])  
     #fig.update_traces(line=dict(width=0.75))
     # line_close=False,
