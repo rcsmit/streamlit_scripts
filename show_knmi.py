@@ -62,7 +62,7 @@ def interface():
         for w in weer_stations:
             if gekozen_weerstation == w[1]:
                 stn = w[0]
-    else
+    else:
         stn = None
 
     DATE_FORMAT = "%m/%d/%Y"
