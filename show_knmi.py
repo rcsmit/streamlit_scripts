@@ -22,12 +22,8 @@ from show_knmi_functions.neerslagtekort import neerslagtekort, neerslagtekort_me
 
 #@st.cache_data (ttl=60 * 60 * 24)
 def getdata_wrapper(stn, fromx, until):
-    #url=r"C:\Users\rcxsm\Downloads\df_knmi_de_bilt_01011901_27072023.csv"
-    #url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\knmi_nw_beerta_no_header.csv"
     url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start={fromx}&end={until}"
-    #url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\de_bilt_1901_2023_no_header.csv"
-    #url = url_local if platform.processor() else url_knmi
-    #header = 0  if platform.processor() else None
+    
     df = get_data(url)
      
     if platform.processor():

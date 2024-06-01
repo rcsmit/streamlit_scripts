@@ -4,7 +4,7 @@ import streamlit as st
 import datetime as dt
 from skmisc.loess import loess
 
-@st.cache_data
+#@st.cache_data
 def get_data(url):
     header = None
     with st.spinner(f"GETTING ALL DATA ... {url}"):
@@ -16,7 +16,6 @@ def get_data(url):
         df = pd.read_csv(
             url,
             delimiter=",",
-            header=header,
             comment="#",
             low_memory=False,
         )
@@ -434,7 +433,7 @@ def help():
     st.write("A polar plot")
     st.image("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/polarplot.png")
     
-    
+
     st.subheader("Show year histogram animation")
     st.write("_")
     st.subheader("Does rain predict rain")
