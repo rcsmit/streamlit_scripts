@@ -12,15 +12,19 @@ def get_data(url):
         # url =  "https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns=251&vars=TEMP&start=18210301&end=20210310"
         # https://www.knmi.nl/kennis-en-datacentrum/achtergrond/data-ophalen-vanuit-een-script
         # url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=ALL&start={fromx}&end={until}"
-        # try:
+        try:
         
-        df = pd.read_csv(
-            url,
-            delimiter=",",
-            header= header,
-            comment="#",
-            low_memory=False,
-        )
+            df = pd.read_csv(
+                url,
+                delimiter=",",
+                header= header,
+                comment="#",
+                low_memory=False,
+            )
+
+        except:
+            st.error("Error reading data")
+            st.stop()
 
         
         # TG        : Etmaalgemiddelde temperatuur (in 0.1 graden Celsius) / Daily mean temperature in (0.1 degrees Celsius)
