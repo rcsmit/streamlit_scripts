@@ -221,25 +221,28 @@ def main():
     # neerslagtekort_meerdere_stations(fromx, until)
     
 def neerslagtekort_meerdere_stations(FROM, UNTIL):
-    stations_ = [260,235,280,278,240,249,391,286,251,319,283]
+    dropdown = True
+    if dropdown:
+        # dit dropdown menu komt niet tevoorschijn bij share.streamlit.io
+        data = {
+        "STN": [260, 235, 280, 278, 240, 249, 391, 286, 251, 319, 283],
+        "stn_in_txt": ["De Bilt", "De Kooy", "Groningen", "Heerde", "Hoofddorp", "Hoorn", "Roermond", "Ter Apel", "West-Terschelling", "Westdorpe", "Winterswijk"],
+        "stn_data": ["De Bilt", "De Kooy", "Eelde", "Heino", "Schiphol", "Berkhout", "Arcen", "Nieuw Beerta", "Hoorn Terschilling", "Westdorpe", "Hupsel"],
+        }
+        stnxx = ["De Bilt", "De Kooy"]
+        # Create a dictionary to map station names to STN values
+        stn_dict = dict(zip(data["stn_data"], data["STN"]))
 
-    data = {
-    "STN": [260, 235, 280, 278, 240, 249, 391, 286, 251, 319, 283],
-    "stn_in_txt": ["De Bilt", "De Kooy", "Groningen", "Heerde", "Hoofddorp", "Hoorn", "Roermond", "Ter Apel", "West-Terschelling", "Westdorpe", "Winterswijk"],
-    "stn_data": ["De Bilt", "De Kooy", "Eelde", "Heino", "Schiphol", "Berkhout", "Arcen", "Nieuw Beerta", "Hoorn Terschilling", "Westdorpe", "Hupsel"],
-    }
-    stnxx = ["De Bilt", "De Kooy"]
-    # Create a dictionary to map station names to STN values
-    stn_dict = dict(zip(data["stn_data"], data["STN"]))
-
-    # Create a dropdown menu with the station names
-    #selected_stations = st.sidebar.multiselect("Select stations:", options=data["stn_data"], default=data["stn_data"])
-    selected_stations = st.sidebar.multiselect("Select stations:", options=data["stn_data"], default=stnxx)
-    if len(selected_stations)==0:
-        st.error("Select at least one station")
-        st.stop()
-    # Map the selected names to their corresponding STN values
-    stations = [stn_dict[name] for name in selected_stations]
+        # Create a dropdown menu with the station names
+        #selected_stations = st.sidebar.multiselect("Select stations:", options=data["stn_data"], default=data["stn_data"])
+        selected_stations = st.sidebar.multiselect("Select stations:", options=data["stn_data"], default=stnxx)
+        if len(selected_stations)==0:
+            st.error("Select at least one station")
+            st.stop()
+        # Map the selected names to their corresponding STN values
+        stations = [stn_dict[name] for name in selected_stations]
+    else:
+        stations = [260,235,280,278,240,249,391,286,251,319,283]
     #  De Bilt,  260
     # De Kooy, 235
     # Groningen, 280
