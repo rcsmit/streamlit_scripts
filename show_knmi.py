@@ -20,7 +20,7 @@ from show_knmi_functions.neerslagtekort import neerslagtekort, neerslagtekort_me
 # INSPRIATION : https://weatherspark.com/m/52666/10/Average-Weather-in-October-in-Utrecht-Netherlands
 # https://radumas.info/blog/tutorial/2017/04/17/percentile-test.html
 
-@st.cache_data (ttl=60 * 60 * 24)
+#@st.cache_data (ttl=60 * 60 * 24)
 def getdata_wrapper(stn, fromx, until):
     #url=r"C:\Users\rcxsm\Downloads\df_knmi_de_bilt_01011901_27072023.csv"
     #url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\knmi_nw_beerta_no_header.csv"
