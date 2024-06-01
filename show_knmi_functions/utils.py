@@ -7,6 +7,7 @@ from skmisc.loess import loess
 #@st.cache_data
 def get_data(url):
     header = None
+    print (url)
     with st.spinner(f"GETTING ALL DATA ... {url}"):
         # url =  "https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns=251&vars=TEMP&start=18210301&end=20210310"
         # https://www.knmi.nl/kennis-en-datacentrum/achtergrond/data-ophalen-vanuit-een-script
@@ -115,7 +116,7 @@ def get_data(url):
         df["glob_straling"] = pd.to_numeric(df["glob_straling"], errors='coerce')
     
         for d in to_divide_by_10:
-            df['neerslag_etmaalsom'].replace(" ", 0, inplace=True)
+            df['neerslag_etmaalsom'].replace(" ", 0)
             df[d] = pd.to_numeric(df[d], errors='coerce')
             try:   
                 df[d] = df[d] / 10
