@@ -169,7 +169,7 @@ def neerslagtekort(df):
     spaghetti_plot(df, ['eref'], 1,1, False, False, True, False, True, False, "Pubu", False)
     spaghetti_plot(df, ['eref'], 1,1, False, False, True, False, True, False, "Pubu", True)
 
-@st.cache_data
+#@st.cache_data
 def get_dataframe_multiple(stations,FROM, UNTIL):
     """Get the dataframe with info from multiple stations
 
