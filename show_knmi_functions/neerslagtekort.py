@@ -312,7 +312,7 @@ def scatter_eref_t(df):
     mode='lines',
     line=dict(color='red', width=2),
     name='Trendline',
-    z=10
+    
     )
     fig.add_trace(trendline)
 
