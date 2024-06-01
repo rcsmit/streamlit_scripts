@@ -256,8 +256,7 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
     # West-Terschelling, 251
     # Westdorpe  319
     # Winterswijk. 283
-    print (selected_stations)
-    print (stations)
+   
     df_master = get_dataframe_multiple_(stations, FROM, UNTIL)
 
 
@@ -288,6 +287,7 @@ def first_day_of_dryness(df_master):
         .reset_index()
     )
     
+
     pivot_table = df.pivot(index='year', columns='stn_data', values='YYYYMMDD')
     # Calculate the mean across columns
     pivot_table['mean'] = pivot_table.mean(axis=1)
