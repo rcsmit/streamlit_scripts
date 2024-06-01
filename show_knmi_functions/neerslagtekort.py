@@ -221,7 +221,7 @@ def main():
     # neerslagtekort_meerdere_stations(fromx, until)
     
 def neerslagtekort_meerdere_stations(FROM, UNTIL):
-    dropdown = True
+    dropdown = False
     if dropdown:
         # dit dropdown menu komt niet tevoorschijn bij share.streamlit.io
         data = {
