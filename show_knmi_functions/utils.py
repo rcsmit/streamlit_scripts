@@ -16,6 +16,7 @@ def get_data(url):
         df = pd.read_csv(
             url,
             delimiter=",",
+            header= header,
             comment="#",
             low_memory=False,
         )
