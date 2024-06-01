@@ -233,8 +233,8 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
     stn_dict = dict(zip(data["stn_data"], data["STN"]))
 
     # Create a dropdown menu with the station names
-    #selected_stations = st.sidebar.multiselect("Select stations:", options=data["stn_data"], default=data["stn_data"])
-    selected_stations = st.sidebar.multiselect("Select stations:", options=data["stn_data"], default=stnxx)
+    selected_stations = st.sidebar.multiselect("Select stations:", options=data["stn_data"], default=data["stn_data"])
+    #selected_stations = st.sidebar.multiselect("Select stations:", options=data["stn_data"], default=stnxx)
     if len(selected_stations)==0:
         st.error("Select at least one station")
         st.stop()
