@@ -4,7 +4,7 @@ import streamlit as st
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import RendererAgg
 from matplotlib.colors import ListedColormap
-_lock = RendererAgg.lock
+#_lock = RendererAgg.lock
 from show_knmi_functions.utils import get_data
 def show_warmingstripes(df_, title):
     print (df_)
