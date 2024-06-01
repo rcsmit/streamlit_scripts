@@ -122,8 +122,9 @@ def interface():
 def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, show_loess, wdw_ci,show_parts, no_of_parts):
     what_to_show_as_txt = list_to_text(what_to_show)
     FROM, UNTIL = check_from_until(from_, until_)
-    df_getdata, url = getdata_wrapper(stn, FROM.strftime("%Y%m%d"), UNTIL.strftime("%Y%m%d"))
-    df = df_getdata.copy(deep=False)
+    if (stn !=None) or (mode == "help"):
+        df_getdata, url = getdata_wrapper(stn, FROM.strftime("%Y%m%d"), UNTIL.strftime("%Y%m%d"))
+        df = df_getdata.copy(deep=False)
     
     if groupby_:
         groupby_how = st.sidebar.selectbox("Groupby", ["year", "year_month"], index=1)
