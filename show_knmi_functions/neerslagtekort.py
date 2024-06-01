@@ -170,7 +170,7 @@ def neerslagtekort(df):
     spaghetti_plot(df, ['eref'], 1,1, False, False, True, False, True, False, "Pubu", True)
 
 #@st.cache_data
-def get_dataframe_multiple(stations,FROM, UNTIL):
+def get_dataframe_multiple_(stations,FROM, UNTIL):
     """Get the dataframe with info from multiple stations
 
     Args:
@@ -249,7 +249,7 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
     # Westdorpe  319
     # Winterswijk. 283
    
-    df_master = get_dataframe_multiple(stations, FROM, UNTIL)
+    df_master = get_dataframe_multiple_(stations, FROM, UNTIL)
 
 
     daily_avg_cumulative_neerslagtekort = df_master.groupby('YYYYMMDD')['cumulative_neerslagtekort'].mean().reset_index()
