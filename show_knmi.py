@@ -151,7 +151,7 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
     elif mode == "neerslagtekort":
         neerslagtekort(df)
     elif mode == "neerslagtekort_meerdere":
-        
+        st.subheader("Neerslagtekort")
         try:
             neerslagtekort_meerdere_stations(FROM, UNTIL)
         except:
