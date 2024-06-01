@@ -5,7 +5,7 @@ import scipy.stats as stats
 from show_knmi_functions.utils import get_data, loess_skmisc
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import RendererAgg
-_lock = RendererAgg.lock
+#_lock = RendererAgg.lock
 import plotly.graph_objects as go
 import plotly.express as px
 
@@ -45,34 +45,34 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
         st.stop()
 
     if graph_type=="pyplot"  :
-        with _lock:
-            fig1x = plt.figure()
-            ax = fig1x.add_subplot(111)
-            for i, what_to_show in enumerate(what_to_show_):
-                sma = df[what_to_show].rolling(window=wdw, center=centersmooth).mean()
-                ax = df[what_to_show].plot(
-                    label="_nolegend_",
-                    linestyle="dotted",
-                    color=color_list[i],
-                    linewidth=0.5,
-                )
-                ax = sma.plot(label=what_to_show, color=color_list[i], linewidth=0.75)
-            
-            #ax.set_xticks(df[datefield]) #TOFIX : this gives an strange graph
-            if datefield == "YYYY":
-                ax.set_xticklabels(df[datefield], fontsize=6, rotation=90)
-            else:
-                ax.set_xticklabels(df[datefield].dt.date, fontsize=6, rotation=90)
-            xticks = ax.xaxis.get_major_ticks()
-            for i, tick in enumerate(xticks):
-                if i % 10 != 0:
-                    tick.label1.set_visible(False)
+        # with _lock:
+        fig1x = plt.figure()
+        ax = fig1x.add_subplot(111)
+        for i, what_to_show in enumerate(what_to_show_):
+            sma = df[what_to_show].rolling(window=wdw, center=centersmooth).mean()
+            ax = df[what_to_show].plot(
+                label="_nolegend_",
+                linestyle="dotted",
+                color=color_list[i],
+                linewidth=0.5,
+            )
+            ax = sma.plot(label=what_to_show, color=color_list[i], linewidth=0.75)
+        
+        #ax.set_xticks(df[datefield]) #TOFIX : this gives an strange graph
+        if datefield == "YYYY":
+            ax.set_xticklabels(df[datefield], fontsize=6, rotation=90)
+        else:
+            ax.set_xticklabels(df[datefield].dt.date, fontsize=6, rotation=90)
+        xticks = ax.xaxis.get_major_ticks()
+        for i, tick in enumerate(xticks):
+            if i % 10 != 0:
+                tick.label1.set_visible(False)
 
-            plt.xticks()
-            plt.grid(which="major", axis="y")
-            plt.title(title)
-            plt.legend()
-            st.pyplot(fig1x)
+        plt.xticks()
+        plt.grid(which="major", axis="y")
+        plt.title(title)
+        plt.legend()
+        st.pyplot(fig1x)
     else:
         fig = go.Figure()
         data=[]

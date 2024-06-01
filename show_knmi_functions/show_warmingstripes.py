@@ -39,25 +39,25 @@ def show_warmingstripes(df_, title):
     # https://github.com/sebastianbeyer/warmingstripes/blob/master/warmingstripes.py
     temperatures = df["temp_avg"].tolist()
     stacked_temps = np.stack((temperatures, temperatures))
-    with _lock:
-        # plt.figure(figsize=(4,18))
-        fig, ax = plt.subplots()
+    #with _lock:
+    # plt.figure(figsize=(4,18))
+    fig, ax = plt.subplots()
 
-        fig = ax.imshow(
-            stacked_temps,
-            cmap=cmap,
-            aspect=40,
-        )
-        plt.gca().set_axis_off()
+    fig = ax.imshow(
+        stacked_temps,
+        cmap=cmap,
+        aspect=40,
+    )
+    plt.gca().set_axis_off()
 
-        plt.title(title)
-        plt.gca().xaxis.set_major_locator(plt.NullLocator())
-        plt.gca().yaxis.set_major_locator(plt.NullLocator())
-        # plt.show()
-        # st.pyplot(fig) - gives an error
-        st.set_option("deprecation.showPyplotGlobalUse", False)
-        st.pyplot()
-        show_warmingstripes_matplotlib(df_, title)
+    plt.title(title)
+    plt.gca().xaxis.set_major_locator(plt.NullLocator())
+    plt.gca().yaxis.set_major_locator(plt.NullLocator())
+    # plt.show()
+    # st.pyplot(fig) - gives an error
+    st.set_option("deprecation.showPyplotGlobalUse", False)
+    st.pyplot()
+    show_warmingstripes_matplotlib(df_, title)
 
 def show_warmingstripes_matplotlib(df_, title):
     # https://matplotlib.org/matplotblog/posts/warming-stripes/

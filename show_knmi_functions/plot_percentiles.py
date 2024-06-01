@@ -4,7 +4,7 @@ import streamlit as st
 import matplotlib.pyplot as plt
 # import matplotlib
 from matplotlib.backends.backend_agg import RendererAgg
-_lock = RendererAgg.lock
+# _lock = RendererAgg.lock
 import plotly.graph_objects as go
 from show_knmi_functions.utils import get_data
 
@@ -84,43 +84,43 @@ def plot_percentiles(df, gekozen_weerstation, what_to_show, wdw, centersmooth):
     graph_type = "plotly"
     if graph_type == "pyplot":
 
-        with _lock:
-            fig1x = plt.figure()
-            ax = fig1x.add_subplot(111)
-            idx = 0
-            df_quantile.plot(x='date',y='avg', ax=ax, linewidth=0.75,
-                            color=colors[idx],
-                            label="avg")
-            # df_quantile.plot(x='date',y='q50', ax=ax, linewidth=0.75,
-            #                 color="yellow",
-            #                 label="mediaan",  alpha=0.75)
-            df_quantile.plot(x='date',y='value_in_year', ax=ax,
-                            color="black",  linewidth=0.75,
-                            label=f"value in {year_to_show}")
-            ax.fill_between(df_quantile['date'],
-                            y1=df_quantile['q25'],
-                            y2=df_quantile['q75'],
-                            alpha=0.30, facecolor=colors[idx])
-            ax.fill_between(df_quantile['date'],
-                            y1=df_quantile['q10'],
-                            y2=df_quantile['q90'],
-                            alpha=0.15, facecolor=colors[idx])
+        #with _lock:
+        fig1x = plt.figure()
+        ax = fig1x.add_subplot(111)
+        idx = 0
+        df_quantile.plot(x='date',y='avg', ax=ax, linewidth=0.75,
+                        color=colors[idx],
+                        label="avg")
+        # df_quantile.plot(x='date',y='q50', ax=ax, linewidth=0.75,
+        #                 color="yellow",
+        #                 label="mediaan",  alpha=0.75)
+        df_quantile.plot(x='date',y='value_in_year', ax=ax,
+                        color="black",  linewidth=0.75,
+                        label=f"value in {year_to_show}")
+        ax.fill_between(df_quantile['date'],
+                        y1=df_quantile['q25'],
+                        y2=df_quantile['q75'],
+                        alpha=0.30, facecolor=colors[idx])
+        ax.fill_between(df_quantile['date'],
+                        y1=df_quantile['q10'],
+                        y2=df_quantile['q90'],
+                        alpha=0.15, facecolor=colors[idx])
 
-            ax.set_xticks(df_quantile["date"].index)
-            # if datefield == "YYYY":
-            #     ax.set_xticklabels(df[datefield], fontsize=6, rotation=90)
-            # else:
-            ax.set_xticklabels(df_quantile["date"], fontsize=6, rotation=90)
-            xticks = ax.xaxis.get_major_ticks()
-            for i, tick in enumerate(xticks):
-                if i % 10 != 0:
-                    tick.label1.set_visible(False)
+        ax.set_xticks(df_quantile["date"].index)
+        # if datefield == "YYYY":
+        #     ax.set_xticklabels(df[datefield], fontsize=6, rotation=90)
+        # else:
+        ax.set_xticklabels(df_quantile["date"], fontsize=6, rotation=90)
+        xticks = ax.xaxis.get_major_ticks()
+        for i, tick in enumerate(xticks):
+            if i % 10 != 0:
+                tick.label1.set_visible(False)
 
-            # plt.xticks()
-            plt.grid(which="major", axis="y")
-            plt.title(title)
-            plt.legend()
-            st.pyplot(fig1x)
+        # plt.xticks()
+        plt.grid(which="major", axis="y")
+        plt.title(title)
+        plt.legend()
+        st.pyplot(fig1x)
     else:
         fig = go.Figure()
         q10 = go.Scatter(
