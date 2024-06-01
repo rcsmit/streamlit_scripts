@@ -333,15 +333,6 @@ def polar_debug(df2):
      
     fig = px.line_polar(df2, r="temp_avg",   render_mode='webgl',  color='YYYY', theta='angle_degrees',  hover_data=['YYYYMMDD'])  
 
-#     trace = go.Scatterpolargl(
-#     r=r,
-#     theta=theta,
-#     mode='markers',  # or 'lines' if you want lines
-#     marker=dict(
-#         color='blue',
-#         size=3
-#     )
-# )
     
     #fig.update_traces(line=dict(width=0.75))
     # line_close=False,
