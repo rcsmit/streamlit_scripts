@@ -4,7 +4,7 @@ import streamlit as st
 import datetime as dt
 from skmisc.loess import loess
 
-#@st.cache_data
+st.cache_data
 def get_data(url):
     header = None
     print (url)

@@ -126,8 +126,24 @@ def neerslagtekort_(df):
     # Applying the function
     df["eref"] = df.apply(lambda row: makkink(row["temp_avg_sma"],row["temp_max_sma"], row["glob_straling"]), axis=1)
     df["neerslagtekort"] =     df["eref"] -df["neerslag_etmaalsom"]
-    df['cumulative_neerslagtekort'] = df.groupby('year')['neerslagtekort'].cumsum()
- 
+    
+    def cumsum_with_reset(series):
+        cumsum = 0
+        cumsum_list = []
+        
+        for value in series:
+            cumsum += value
+            if cumsum < 0:
+       
+                cumsum = 0
+            cumsum_list.append(cumsum)
+        return pd.Series(cumsum_list, index=series.index)
+
+    df['cumulative_neerslagtekort_'] = df.groupby('year')['neerslagtekort'].cumsum()
+    #df['cumulative_neerslagtekort'] = df.groupby('year')['neerslagtekort'].apply(cumsum_with_reset)
+    df['cumulative_neerslagtekort'] = df.groupby('year')['neerslagtekort'].apply(cumsum_with_reset).reset_index(level=0, drop=True)
+
+
     return df   
 
 def plot_neerslagtekort(df):
@@ -169,7 +185,7 @@ def neerslagtekort(df):
     spaghetti_plot(df, ['eref'], 1,1, False, False, True, False, True, False, "Pubu", False)
     spaghetti_plot(df, ['eref'], 1,1, False, False, True, False, True, False, "Pubu", True)
 
-#@st.cache_data
+@st.cache_data
 def get_dataframe_multiple_(stations,FROM, UNTIL):
     """Get the dataframe with info from multiple stations
 
@@ -231,10 +247,12 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
     stnxx = ["De Bilt", "De Kooy"]
     # Create a dictionary to map station names to STN values
     stn_dict = dict(zip(data["stn_data"], data["STN"]))
-
+    debug =False
     # Create a dropdown menu with the station names
-    selected_stations = st.sidebar.multiselect("Select stations:", options=data["stn_data"], default=data["stn_data"])
-    #selected_stations = st.sidebar.multiselect("Select stations:", options=data["stn_data"], default=stnxx)
+    if debug:
+        selected_stations = st.sidebar.multiselect("Select stations:", options=data["stn_data"], default=stnxx)
+    else:
+        selected_stations = st.sidebar.multiselect("Select stations:", options=data["stn_data"], default=data["stn_data"])
     if len(selected_stations)==0:
         st.error("Select at least one station")
         st.stop()
@@ -265,7 +283,6 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
     df_master["cumm_neerslag_etmaalsom"] = df_master.groupby(['STN', 'year'])["neerslag_etmaalsom"].cumsum()
     #df_grouped = df.groupby(['STN', 'year'])['value'].cumsum()
   
-
     make_spaggetti(df_master,  "cumulative_neerslagtekort")
     make_spaggetti(df_master,  "neerslag_etmaalsom")
     make_spaggetti(df_master,  "cumm_neerslag_etmaalsom")
@@ -277,32 +294,112 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
    
     show_stations()
 def first_day_of_dryness(df_master):
-    afkapwaarde = st.sidebar.number_input("Treshold first day of dryness",1,365, 50)
-    df = (
-        df_master[df_master.cumulative_neerslagtekort >= afkapwaarde]
+    mode = st.sidebar.selectbox("Modus", ["first","max","count"], 0)
+    if mode !="max":
+        afkapwaarde = st.sidebar.number_input("Treshold first day of dryness",1,365, 50)
+    else:
+        afkapwaarde = None
+    if mode =="first":
+        df = (df_master[df_master.cumulative_neerslagtekort >= afkapwaarde]
         .groupby(['stn_data', 'year'])['YYYYMMDD']
         .min()
         .reset_index()
-    )
+         )
+        title = f'First day of dryness.  Treshold = {afkapwaarde}'
+    elif  mode =="count":
+        df = (df_master[df_master.cumulative_neerslagtekort >= afkapwaarde]
+        .groupby(['stn_data', 'year'])['YYYYMMDD']
+        .count()
+        .reset_index()
+         )
+        title = f'Number of days above {afkapwaarde}'
     
+    elif mode =="max":
+        df_max = df_master.groupby(['stn_data', 'year'])['cumulative_neerslagtekort'].idxmax()
 
+        # Extract the 'YYYYMMDD' values from the index of 'df_max'
+        df = df_master.loc[df_max.values, ['stn_data','YYYYMMDD']].reset_index(drop=True)
+        df['year'] = df['YYYYMMDD'].dt.year
+        title = "Day of Maximum value "
+        
+    
     pivot_table = df.pivot(index='year', columns='stn_data', values='YYYYMMDD')
     # Calculate the mean across columns
     pivot_table['mean'] = pivot_table.mean(axis=1)
-    fig = go.Figure()
-    for column in pivot_table.columns:
-        # Extract day of year
-        pivot_table[column] = pivot_table[column].dt.dayofyear
-        y_values = pivot_table[column]
-        x_values = pivot_table.index
 
-        fig.add_trace(go.Scatter(x=x_values, y=y_values, mode='lines', name=str(column)))
+    # Create a new dataframe with all the years in the desired range
+    years = pd.DataFrame({
+        'year': pd.date_range(start=f'{pivot_table.index.min()}-01-01', end=f'{pivot_table.index.max()}-12-31', freq='Y').year
+    })
 
-    fig.update_layout(
-        title=f'First day of dryness. Day 1 is 1st of Jan. Treshold = {afkapwaarde}',
-        xaxis_title='Year',
-        yaxis_title='Date')
-    st.plotly_chart(fig)
+    # Merge the two dataframes on the 'year' column, using a left join to keep all the years in the final dataframe
+    pivot_table = pd.merge(years, pivot_table, on='year', how='left')
+
+    # Fill the missing values in the 'x' and 'y' columns with a suitable value, such as 0 or NaN
+    pivot_table.fillna(0)
+    pivot_table.set_index('year', inplace=True)
+   
+    if mode !="count":
+        # Create a dictionary that maps the day of year to the corresponding date in the format "mm-dd"
+        day_of_year_to_date = {day.dayofyear: day.strftime('%d-%m') for day in pd.date_range(start='2023-01-01', end='2023-12-31')}
+    
+        fig = go.Figure()
+        for i,column in enumerate(pivot_table.columns):
+            # Extract day of year
+            pivot_table[column] = pivot_table[column].dt.dayofyear
+
+            #pivot_table[column] = pivot_table[column].dt.strftime('%d-%m')
+            y_values = pivot_table[column]
+            x_values = pivot_table.index
+    
+            #fig.add_trace(go.Scatter(x=x_values, y=y_values, mode='lines', name=str(column)))
+            fig.add_trace(go.Scatter(
+                    x=pivot_table.index,
+                    y=pivot_table[column],
+                    mode='lines+markers',
+                    name=column,
+                    text=[day_of_year_to_date.get(y, 'Unknown Date') for y in pivot_table[column]],
+                
+                    hovertemplate='%{text}'
+                ))
+        # Custom tick labels for y-axis
+        tickvals = pd.date_range(start='2023-01-01', end='2023-12-31', freq='M').dayofyear
+        ticktext = pd.date_range(start='2023-01-01', end='2023-12-31', freq='M').strftime('%m-%d')
+
+        # Update layout
+        fig.update_layout(
+            title=title,
+            xaxis_title='Year',
+            yaxis_title='Date (Month-Day)',
+            yaxis=dict(
+                range=[90, None],
+                tickmode='array',
+                tickvals=tickvals,
+                ticktext=ticktext
+            )
+        )    
+    
+    
+        st.plotly_chart(fig)
+    elif mode =="count":
+        
+        fig = go.Figure()
+        for i,column in enumerate(pivot_table.columns):
+            fig.add_trace(go.Scatter(
+                    x=pivot_table.index,
+                    y=pivot_table[column],
+                    mode='lines+markers',
+                    name=column,))
+                    
+        fig.update_layout(
+            title=title,
+            xaxis_title='Year',
+            )
+          
+    
+    
+        st.plotly_chart(fig)
+
     with st.expander("values"):
         st.write(pivot_table)
     
