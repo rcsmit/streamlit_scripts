@@ -290,7 +290,7 @@ def  polar_plot(df2,   what_to_show, how):
         try:
             plot_polar_plotly("line")
         except:
-            st.error("Gives an error when more than 1000 values")
+            st.error(f"Gives an error when more than 1000 values. Current length {len(df2)} values")
             st.stop()
         plot_matplotlib_line()
 
