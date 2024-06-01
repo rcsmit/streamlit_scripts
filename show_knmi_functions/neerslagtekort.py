@@ -254,7 +254,7 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
 
     daily_avg_cumulative_neerslagtekort = df_master.groupby('YYYYMMDD')['cumulative_neerslagtekort'].mean().reset_index()
     df_master['year'] = df_master['YYYYMMDD'].dt.year
-   
+    
     # # Pivot and calculate statistics
     df_master["cumm_neerslag_etmaalsom"] = df_master.groupby(['STN', 'year'])["neerslag_etmaalsom"].cumsum()
     #df_grouped = df.groupby(['STN', 'year'])['value'].cumsum()
@@ -265,6 +265,13 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
     plot_daily_cumm_neerslagtekort(daily_avg_cumulative_neerslagtekort)
     plot_average_various_years(daily_avg_cumulative_neerslagtekort)
     max_value_each_year(daily_avg_cumulative_neerslagtekort)
+    first_20_degrees_df = (
+        df_master[df_master.cumulative_neerslagtekort >= 50]
+        .groupby('stationnumber')['date']
+        .min()
+        .reset_index()
+    )
+    st.write(first_20_degrees_df)
     multiple_lineair_regression(df_master)
     show_stations()
 def max_value_each_year(df):
