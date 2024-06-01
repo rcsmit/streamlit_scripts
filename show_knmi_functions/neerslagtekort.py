@@ -280,7 +280,7 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
    
     show_stations()
 def first_day_of_dryness(df_master):
-    afkapwaarde = 150
+    afkapwaarde = st.sidebar.number_input("Treshold",1,365, 150)
     df = (
         df_master[df_master.cumulative_neerslagtekort >= afkapwaarde]
         .groupby(['stn_data', 'year'])['YYYYMMDD']
