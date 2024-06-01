@@ -253,6 +253,7 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
     # West-Terschelling, 251
     # Westdorpe  319
     # Winterswijk. 283
+    print (selected_stations)
     print (stations)
     df_master = get_dataframe_multiple_(stations, FROM, UNTIL)
 
