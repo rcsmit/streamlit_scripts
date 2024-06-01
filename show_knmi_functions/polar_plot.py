@@ -10,7 +10,7 @@ try:
     from show_knmi_functions.utils import get_data
 except:
     from utils import get_data
-_lock = RendererAgg.lock
+#_lock = RendererAgg.lock
 import sys # for the progressbar
 import shutil # for the progressbar
 
