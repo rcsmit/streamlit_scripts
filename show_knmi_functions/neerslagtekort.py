@@ -221,6 +221,7 @@ def main():
     # neerslagtekort_meerdere_stations(fromx, until)
     
 def neerslagtekort_meerdere_stations(FROM, UNTIL):
+  
     dropdown = False
     if dropdown:
         # dit dropdown menu komt niet tevoorschijn bij share.streamlit.io
@@ -243,19 +244,19 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
         stations = [stn_dict[name] for name in selected_stations]
     else:
         stations = [260,235,280,278,240,249,391,286,251,319,283]
-    #  De Bilt,  260
-    # De Kooy, 235
-    # Groningen, 280
-    # Heerde, 278
-    # Hoofddorp, 240
-    # Hoorn, 249
-    # Kerkwerve, 312 en 324 geven lege results)
-    # Oudenbosch, 340 (heeft geen neerslagetmaalsom)
-    # Roermond, 391
-    # Ter Apel, 286
-    # West-Terschelling, 251
-    # Westdorpe  319
-    # Winterswijk. 283
+        #  De Bilt,  260
+        # De Kooy, 235
+        # Groningen, 280
+        # Heerde, 278
+        # Hoofddorp, 240
+        # Hoorn, 249
+        # Kerkwerve, 312 en 324 geven lege results)
+        # Oudenbosch, 340 (heeft geen neerslagetmaalsom)
+        # Roermond, 391
+        # Ter Apel, 286
+        # West-Terschelling, 251
+        # Westdorpe  319
+        # Winterswijk. 283
    
     df_master = get_dataframe_multiple_(stations, FROM, UNTIL)
 
@@ -379,7 +380,7 @@ def make_spaggetti(df_master, values):
     date_range = pd.date_range(min_date, max_date, freq='D')
 
     # Reindex the pivot table to include all the dates in the date range
-    pivot_table = df_master.pivot(index='YYYYMMDD', columns='stn_in_txt', values=values)
+    pivot_table = df_master.pivot(index='YYYYMMDD', columns='stn_data', values=values)
     pivot_table = pivot_table.reindex(date_range)
 
     

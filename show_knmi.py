@@ -151,7 +151,12 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
     elif mode == "neerslagtekort":
         neerslagtekort(df)
     elif mode == "neerslagtekort_meerdere":
-        neerslagtekort_meerdere_stations(FROM, UNTIL)
+        
+        try:
+            neerslagtekort_meerdere_stations(FROM, UNTIL)
+        except:
+            st.error("Under construction")
+            st.stop()
     elif mode == "per dag in div jaren":
         show_per_maand(df, gekozen_weerstation, what_to_show, "per_dag", graph_type)
         datefield = None
