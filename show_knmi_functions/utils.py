@@ -434,6 +434,7 @@ def help():
     st.write("A polar plot")
     st.image("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/img_knmi/polarplot.png")
     
+    
     st.subheader("Show year histogram animation")
     st.write("_")
     st.subheader("Does rain predict rain")
