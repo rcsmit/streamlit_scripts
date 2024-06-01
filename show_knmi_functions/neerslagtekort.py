@@ -1,7 +1,7 @@
 import pandas as pd
 import streamlit as st
 import plotly.graph_objects as go
-# import plotly.express as px  # For easy colormap generation
+import plotly.express as px  # For easy colormap generation
 import numpy as np  # For linspace to distribute sampling
 import math
 from datetime import datetime
@@ -291,8 +291,44 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
     max_value_each_year(daily_avg_cumulative_neerslagtekort)
     first_day_of_dryness(df_master)
     multiple_lineair_regression(df_master)
-   
+    scatter_eref_t(df_master)
     show_stations()
+
+def scatter_eref_t(df):
+    # Create the scatter plot using Plotly Express
+    fig = px.scatter(df, x='temp_max', y='eref' )
+
+    
+    # Calculate trendline coefficients
+    x = df['temp_max'].values
+    y = df['eref'].values
+    
+    m, b = np.polyfit(x, y, 1)
+
+    # Add trendline
+    trendline = go.Scatter(
+    x=df['eref'],
+    y=df['eref'] * m + b,  # y = mx + b
+    mode='lines',
+    line=dict(color='red', width=2),
+    name='Trendline',
+    z=10
+    )
+    fig.add_trace(trendline)
+
+    # Add trendline equation to annotation
+    trend_eqn = f'y = {m:.2f}x + {b:.2f}'
+    fig.add_annotation(
+        x=0.9,
+        y=0.9,
+        text=trend_eqn,
+        showarrow=False,
+        font=dict(size=16, color='red')
+    )
+
+
+    # Display the plot
+    st.plotly_chart(fig)
 def first_day_of_dryness(df_master):
     mode = st.sidebar.selectbox("Modus", ["first","max","count"], 0)
     if mode !="max":
