@@ -183,14 +183,15 @@ def get_dataframe_multiple_(stations,FROM, UNTIL):
   
     df_master_ = pd.DataFrame()  
     for i, stn in enumerate(stations):
-        print (f"Downloading {i+1}/{len(stations)}")
-        fromx, until =  FROM.strftime("%Y%m%d"), UNTIL.strftime("%Y%m%d")    
-        url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start={fromx}&end={until}"
-     
-        df_s = get_data(url)
-        df_s = df_s.fillna(0)
-        df= neerslagtekort_(df_s)
-        df_master_ = pd.concat([df_master_, df])  # Concatenate data for each station to df_master
+        if stn !=None:
+            print (f"Downloading {i+1}/{len(stations)}")
+            fromx, until =  FROM.strftime("%Y%m%d"), UNTIL.strftime("%Y%m%d")    
+            url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start={fromx}&end={until}"
+        
+            df_s = get_data(url)
+            df_s = df_s.fillna(0)
+            df= neerslagtekort_(df_s)
+            df_master_ = pd.concat([df_master_, df])  # Concatenate data for each station to df_master
     
     data = {
         "STN":       [260, 235, 280, 278, 240, 249, 391, 286, 251, 319, 283],
@@ -227,12 +228,16 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
     "stn_in_txt": ["De Bilt", "De Kooy", "Groningen", "Heerde", "Hoofddorp", "Hoorn", "Roermond", "Ter Apel", "West-Terschelling", "Westdorpe", "Winterswijk"],
     "stn_data": ["De Bilt", "De Kooy", "Eelde", "Heino", "Schiphol", "Berkhout", "Arcen", "Nieuw Beerta", "Hoorn Terschilling", "Westdorpe", "Hupsel"],
     }
+    stnxx = ["De Bilt", "De Kooy"]
     # Create a dictionary to map station names to STN values
     stn_dict = dict(zip(data["stn_data"], data["STN"]))
 
     # Create a dropdown menu with the station names
-    selected_stations = st.sidebar.multiselect("Select stations:", options=data["stn_data"], default=data["stn_data"])
-
+    #selected_stations = st.sidebar.multiselect("Select stations:", options=data["stn_data"], default=data["stn_data"])
+    selected_stations = st.sidebar.multiselect("Select stations:", options=data["stn_data"], default=stnxx)
+    if len(selected_stations)==0:
+        st.error("Select at least one station")
+        st.stop()
     # Map the selected names to their corresponding STN values
     stations = [stn_dict[name] for name in selected_stations]
     #  De Bilt,  260
@@ -258,6 +263,7 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
     # # Pivot and calculate statistics
     df_master["cumm_neerslag_etmaalsom"] = df_master.groupby(['STN', 'year'])["neerslag_etmaalsom"].cumsum()
     #df_grouped = df.groupby(['STN', 'year'])['value'].cumsum()
+  
 
     make_spaggetti(df_master,  "cumulative_neerslagtekort")
     make_spaggetti(df_master,  "neerslag_etmaalsom")
@@ -265,15 +271,39 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
     plot_daily_cumm_neerslagtekort(daily_avg_cumulative_neerslagtekort)
     plot_average_various_years(daily_avg_cumulative_neerslagtekort)
     max_value_each_year(daily_avg_cumulative_neerslagtekort)
-    first_20_degrees_df = (
-        df_master[df_master.cumulative_neerslagtekort >= 50]
-        .groupby('stationnumber')['date']
+    first_day_of_dryness(df_master)
+    multiple_lineair_regression(df_master)
+   
+    show_stations()
+def first_day_of_dryness(df_master):
+    afkapwaarde = 150
+    df = (
+        df_master[df_master.cumulative_neerslagtekort >= afkapwaarde]
+        .groupby(['stn_data', 'year'])['YYYYMMDD']
         .min()
         .reset_index()
     )
-    st.write(first_20_degrees_df)
-    multiple_lineair_regression(df_master)
-    show_stations()
+    
+    pivot_table = df.pivot(index='year', columns='stn_data', values='YYYYMMDD')
+    # Calculate the mean across columns
+    pivot_table['mean'] = pivot_table.mean(axis=1)
+    fig = go.Figure()
+    for column in pivot_table.columns:
+        # Extract day of year
+        pivot_table[column] = pivot_table[column].dt.dayofyear
+        y_values = pivot_table[column]
+        x_values = pivot_table.index
+
+        fig.add_trace(go.Scatter(x=x_values, y=y_values, mode='lines', name=str(column)))
+
+    fig.update_layout(
+        title=f'First day of dryness. Day 1 is 1st of Jan. Treshold = {afkapwaarde}',
+        xaxis_title='Year',
+        yaxis_title='Date')
+    st.plotly_chart(fig)
+    with st.expander("values"):
+        st.write(pivot_table)
+    
 def max_value_each_year(df):
     # Create scatter plot with Plotly
     max_cumulative_neerslagtekort = df.groupby('year')['cumulative_neerslagtekort'].max()
