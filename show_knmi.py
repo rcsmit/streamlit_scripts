@@ -81,6 +81,7 @@ def interface():
             "neerslag_etmaalsom","neerslag_etmaalsom_div_duur","RH_min","RH_max","spec_humidity_knmi_derived","abs_humidity_knmi_derived","globale_straling_log10",
         ]
 
+
         what_to_show = st.sidebar.multiselect("Wat weer te geven", show_options, "temp_max")
        
         graph_type = st.sidebar.selectbox("Graph type (plotly=interactive)", ["pyplot", "plotly"], index=1)
