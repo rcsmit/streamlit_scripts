@@ -153,6 +153,8 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
                                 name="CI of the trendline")
                 else:
                     loess = None
+            else:
+                loess = None
             df["sma"] = df[what_to_show_x].rolling(window=wdw, center=centersmooth).mean()
             if (wdw2 != 999):
                 if (sma2_how == "mean"):
