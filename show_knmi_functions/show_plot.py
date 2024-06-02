@@ -111,7 +111,7 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
                 average_values = [df.iloc[i * rows_per_part:(i + 1) * rows_per_part][what_to_show_x].mean() for i in range(n_parts)]
             X_array = df[datefield].values
             Y_array = df[what_to_show_x].values
-            if len(X_array)>42:
+            if (len(X_array)>42) and (show_loess=True):
                 #y_hat2, x_space2 = calculate_loess(X_array, Y_array, 0.05, 1, all_x = True, num_points = 200)
                 x_space2, y_hat2, trendlb, trendub  = loess_skmisc(X_array, Y_array)
                
