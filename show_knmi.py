@@ -211,18 +211,12 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
         show_year_histogram_animation(df, what_to_show)
         
     else:
+        # all commands who use show_plot() and show_warmingstripes()
         if mode == "doorlopend per dag":
-            # datefield = "YYYYMMDD"
             title = f"{what_to_show_as_txt} van {from_} - {until_} in {gekozen_weerstation}"
-            #graph_type = "plotly"
-            # graph_type = "pyplot" #too slow
-
         else:
-            #graph_type = "pyplot"
             datefield = "YYYY"
             if mode == "jaargemiddelde":
-
-                #graph_type = "plotly"
                 df = df.groupby(["YYYY"], sort=True).mean(numeric_only = True).reset_index()
                 st.write(df)
                 title = f"Jaargemiddelde {what_to_show_as_txt}  van {from_[:4]} - {until_[:4]} in {gekozen_weerstation}"
@@ -243,7 +237,6 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
                 title = f"Maandgemiddelde (maand = {month_min}-{month_max}) - {what_to_show} in {gekozen_weerstation}"
                
             elif mode == "specifieke dag":
-                #graph_type = "plotly"
                 day = st.sidebar.number_input("Dag", 1, 31, 1, None, format="%i")
                 months = [
                     "januari",
@@ -269,10 +262,9 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
                     "Zorg ervoor dat de datum in de gekozen tijdrange valt voor het beste resultaat "
                 )
         show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show, graph_type, centersmooth, show_ci, show_loess, wdw_ci, show_parts, no_of_parts)
-        
-        show_warmingstripes(df, title)
+        show_warmingstripes(df, what, title)
 
-        st.sidebar.write(f"URL to get data: {url}")
+    st.sidebar.write(f"URL to get data: {url}")
 
 def main():
     stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, show_loess, wdw_ci,show_parts, no_of_parts = interface()

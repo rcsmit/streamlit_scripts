@@ -6,7 +6,7 @@ from matplotlib.backends.backend_agg import RendererAgg
 from matplotlib.colors import ListedColormap
 #_lock = RendererAgg.lock
 from show_knmi_functions.utils import get_data
-def show_warmingstripes(df_, title):
+def show_warmingstripes(df_, what, title):
     print (df_)
     df = df_.groupby(df_["YYYY"], sort=True).mean(numeric_only = True).reset_index()
     #df_grouped = df.groupby([df[valuefield]], sort=True).sum().reset_index()
@@ -37,7 +37,7 @@ def show_warmingstripes(df_, title):
         ]
     )
     # https://github.com/sebastianbeyer/warmingstripes/blob/master/warmingstripes.py
-    temperatures = df["temp_avg"].tolist()
+    temperatures = df[what].tolist()
     stacked_temps = np.stack((temperatures, temperatures))
     #with _lock:
     # plt.figure(figsize=(4,18))
@@ -57,14 +57,14 @@ def show_warmingstripes(df_, title):
     # st.pyplot(fig) - gives an error
     st.set_option("deprecation.showPyplotGlobalUse", False)
     st.pyplot()
-    show_warmingstripes_matplotlib(df_, title)
+    show_warmingstripes_matplotlib(df_, what title)
 
-def show_warmingstripes_matplotlib(df_, title):
+def show_warmingstripes_matplotlib(df_, what, title):
     # https://matplotlib.org/matplotblog/posts/warming-stripes/
-    st.subheader("Code from Matplotlib site")
+    st.subheader(f"Code from Matplotlib site - {title}")
     df = df_.groupby(df_["YYYY"], sort=True).mean(numeric_only = True).reset_index()
-    avg_temperature = df["temp_avg"].mean()
-    df["anomaly"] = df["temp_avg"]-avg_temperature
+    avg_temperature = df[what].mean()
+    df["anomaly"] = df[what]-avg_temperature
 
     #stacked_temps = np.stack((temperatures, temperatures))
     import matplotlib.pyplot as plt
