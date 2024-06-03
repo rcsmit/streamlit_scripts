@@ -241,7 +241,10 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
                 line=dict(width=1, dash='dash'),
             )
 
-
+            if wdw != 1:
+                data.append(points)
+            #data = [sma,points]
+            data.append(sma)
             if len(X_array)>42 and loess !=None and show_loess:
                 data.append(loess)
                 data.append(loess_low)
@@ -258,10 +261,7 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
                 data.append(ci_upper_trace_68)
                 #data.append(ci_area_trace_95)
                 #data.append(ci_area_trace_68)
-            if wdw != 1:
-                data.append(points)
-            #data = [sma,points]
-            data.append(sma)
+
             layout = go.Layout(
                 yaxis=dict(title=what_to_show_x),
                 title=title,)
