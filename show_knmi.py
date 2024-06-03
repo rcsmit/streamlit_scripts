@@ -99,7 +99,7 @@ def interface():
         graph_type = st.sidebar.selectbox("Graph type (plotly=interactive)", ["pyplot", "plotly"], index=1)
 
 
-        wdw = st.sidebar.slider("Window smoothing curves", 1, 45, 7)
+        wdw = st.sidebar.number_input("Window smoothing curves", 1, 999, 7)
         wdw2 = st.sidebar.number_input("Window smoothing curves 2 (999 for none)", 1, 999, 999)
         if wdw2 != 999:
             sma2_how = st.sidebar.selectbox("SMA2 How", ["mean", "median"], 0)
