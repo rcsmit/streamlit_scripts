@@ -34,6 +34,7 @@ data = {
 df = pd.DataFrame(data)
 df["Pigs"] = df["Pigs"]*1000
 def plot(x,y):
+    st.subheader(f"{y} vs {x}")
     fig = px.scatter(df, x=x, y=y)
 
     # Add annotations
@@ -56,7 +57,7 @@ df["inh_sqm"] = round(df["Inhabitants"]/df["Surface"],1)
 
 plot("Inhabitants", "Pigs" )
 plot ("inh_sqm", "pig_sqm")
-plot("Surface", "Pigs" 
+plot("Surface", "Pigs")
 st.write(df)
 
 st.subheader("Sources")
