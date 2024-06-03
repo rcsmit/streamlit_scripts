@@ -51,7 +51,7 @@ def show_warmingstripes(df_, what_to_show, title):
         )
         plt.gca().set_axis_off()
 
-        plt.title(title)
+        plt.title(what)
         plt.gca().xaxis.set_major_locator(plt.NullLocator())
         plt.gca().yaxis.set_major_locator(plt.NullLocator())
         # plt.show()
@@ -62,7 +62,7 @@ def show_warmingstripes(df_, what_to_show, title):
 
 def show_warmingstripes_matplotlib(df_, what, title):
     # https://matplotlib.org/matplotblog/posts/warming-stripes/
-    st.subheader(f"Code from Matplotlib site - {title}")
+    st.subheader(f"Code from Matplotlib site - {what}")
     df = df_.groupby(df_["YYYY"], sort=True).mean(numeric_only = True).reset_index()
     avg_temperature = df[what].mean()
     df["anomaly"] = df[what]-avg_temperature
