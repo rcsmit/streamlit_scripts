@@ -180,7 +180,7 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
                 x=df[datefield],
                 y= df["sma"],
                 mode='lines',
-                line=dict(width=2,
+                line=dict(width=1.5,
                 color='rgba(255, 0, 255, 1)'
                 ),
                 )
