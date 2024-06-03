@@ -3,33 +3,32 @@ import streamlit as st
 from datetime import datetime
 import platform
 
-try:
-        
-    from show_knmi_functions.utils import show_weerstations, help,  list_to_text,check_from_until, find_date_for_title, download_button,get_weerstations, get_data
-    from show_knmi_functions.does_rain_predict_rain import does_rain_predict_rain
-    from show_knmi_functions.polar_plot import polar_plot, polar_debug
-    from show_knmi_functions.show_warmingstripes import show_warmingstripes
-    from show_knmi_functions.show_plot import show_plot
-    from show_knmi_functions.plot_percentiles import plot_percentiles
-    from show_knmi_functions.show_aantal_keren import show_aantal_keren
-    from show_knmi_functions.show_per_maand import show_per_maand
-    from show_knmi_functions.spaghetti_plot import spaghetti_plot
-    from show_knmi_functions.show_year_histogram_animation import show_year_histogram_animation
-    from show_knmi_functions.last_day import last_day
-    from show_knmi_functions.neerslagtekort import neerslagtekort, neerslagtekort_meerdere_stations
-except:
-    from utils import show_weerstations, help,  list_to_text,check_from_until, find_date_for_title, download_button,get_weerstations, get_data
-    from does_rain_predict_rain import does_rain_predict_rain
-    from polar_plot import polar_plot, polar_debug
-    from show_warmingstripes import show_warmingstripes
-    from show_plot import show_plot
-    from plot_percentiles import plot_percentiles
-    from show_aantal_keren import show_aantal_keren
-    from show_per_maand import show_per_maand
-    from spaghetti_plot import spaghetti_plot
-    from show_year_histogram_animation import show_year_histogram_animation
-    from last_day import last_day
-    from neerslagtekort import neerslagtekort, neerslagtekort_meerdere_stations
+    
+from show_knmi_functions.utils import show_weerstations, help,  list_to_text,check_from_until, find_date_for_title, download_button,get_weerstations, get_data
+from show_knmi_functions.does_rain_predict_rain import does_rain_predict_rain
+from show_knmi_functions.polar_plot import polar_plot, polar_debug
+from show_knmi_functions.show_warmingstripes import show_warmingstripes
+from show_knmi_functions.show_plot import show_plot
+from show_knmi_functions.plot_percentiles import plot_percentiles
+from show_knmi_functions.show_aantal_keren import show_aantal_keren
+from show_knmi_functions.show_per_maand import show_per_maand
+from show_knmi_functions.spaghetti_plot import spaghetti_plot
+from show_knmi_functions.show_year_histogram_animation import show_year_histogram_animation
+from show_knmi_functions.last_day import last_day
+from show_knmi_functions.neerslagtekort import neerslagtekort, neerslagtekort_meerdere_stations
+# except:
+#     from utils import show_weerstations, help,  list_to_text,check_from_until, find_date_for_title, download_button,get_weerstations, get_data
+#     from does_rain_predict_rain import does_rain_predict_rain
+#     from polar_plot import polar_plot, polar_debug
+#     from show_warmingstripes import show_warmingstripes
+#     from show_plot import show_plot
+#     from plot_percentiles import plot_percentiles
+#     from show_aantal_keren import show_aantal_keren
+#     from show_per_maand import show_per_maand
+#     from spaghetti_plot import spaghetti_plot
+#     from show_year_histogram_animation import show_year_histogram_animation
+#     from last_day import last_day
+#     from neerslagtekort import neerslagtekort, neerslagtekort_meerdere_stations
 # INSPRIATION : https://weatherspark.com/m/52666/10/Average-Weather-in-October-in-Utrecht-Netherlands
 # https://radumas.info/blog/tutorial/2017/04/17/percentile-test.html
 
@@ -275,7 +274,7 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
                     "Zorg ervoor dat de datum in de gekozen tijdrange valt voor het beste resultaat "
                 )
         show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show, graph_type, centersmooth, show_ci, show_loess, wdw_ci, show_parts, no_of_parts)
-        show_warmingstripes(df, what, title)
+        show_warmingstripes(df, what_to_show, title)
 
     st.sidebar.write(f"URL to get data: {url}")
 

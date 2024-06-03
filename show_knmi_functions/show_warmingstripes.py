@@ -6,58 +6,59 @@ from matplotlib.backends.backend_agg import RendererAgg
 from matplotlib.colors import ListedColormap
 #_lock = RendererAgg.lock
 from show_knmi_functions.utils import get_data
-def show_warmingstripes(df_, what, title):
-    print (df_)
-    df = df_.groupby(df_["YYYY"], sort=True).mean(numeric_only = True).reset_index()
-    #df_grouped = df.groupby([df[valuefield]], sort=True).sum().reset_index()
-    # Based on code of Sebastian Beyer
-    # https://github.com/sebastianbeyer/warmingstripes/blob/master/warmingstripes.py
+def show_warmingstripes(df_, what_to_show, title):
+    for what in what_to_show:
+        print (df_)
+        df = df_.groupby(df_["YYYY"], sort=True).mean(numeric_only = True).reset_index()
+        #df_grouped = df.groupby([df[valuefield]], sort=True).sum().reset_index()
+        # Based on code of Sebastian Beyer
+        # https://github.com/sebastianbeyer/warmingstripes/blob/master/warmingstripes.py
 
-    # the colors in this colormap come from http://colorbrewer2.org
-    # the 8 more saturated colors from the 9 blues / 9 reds
-    # https://matplotlib.org/matplotblog/posts/warming-stripes/
-    cmap = ListedColormap(
-        [
-            "#08306b",
-            "#08519c",
-            "#2171b5",
-            "#4292c6",
-            "#6baed6",
-            "#9ecae1",
-            "#c6dbef",
-            "#deebf7",
-            "#fee0d2",
-            "#fcbba1",
-            "#fc9272",
-            "#fb6a4a",
-            "#ef3b2c",
-            "#cb181d",
-            "#a50f15",
-            "#67000d",
-        ]
-    )
-    # https://github.com/sebastianbeyer/warmingstripes/blob/master/warmingstripes.py
-    temperatures = df[what].tolist()
-    stacked_temps = np.stack((temperatures, temperatures))
-    #with _lock:
-    # plt.figure(figsize=(4,18))
-    fig, ax = plt.subplots()
+        # the colors in this colormap come from http://colorbrewer2.org
+        # the 8 more saturated colors from the 9 blues / 9 reds
+        # https://matplotlib.org/matplotblog/posts/warming-stripes/
+        cmap = ListedColormap(
+            [
+                "#08306b",
+                "#08519c",
+                "#2171b5",
+                "#4292c6",
+                "#6baed6",
+                "#9ecae1",
+                "#c6dbef",
+                "#deebf7",
+                "#fee0d2",
+                "#fcbba1",
+                "#fc9272",
+                "#fb6a4a",
+                "#ef3b2c",
+                "#cb181d",
+                "#a50f15",
+                "#67000d",
+            ]
+        )
+        # https://github.com/sebastianbeyer/warmingstripes/blob/master/warmingstripes.py
+        temperatures = df[what].tolist()
+        stacked_temps = np.stack((temperatures, temperatures))
+        #with _lock:
+        # plt.figure(figsize=(4,18))
+        fig, ax = plt.subplots()
 
-    fig = ax.imshow(
-        stacked_temps,
-        cmap=cmap,
-        aspect=40,
-    )
-    plt.gca().set_axis_off()
+        fig = ax.imshow(
+            stacked_temps,
+            cmap=cmap,
+            aspect=40,
+        )
+        plt.gca().set_axis_off()
 
-    plt.title(title)
-    plt.gca().xaxis.set_major_locator(plt.NullLocator())
-    plt.gca().yaxis.set_major_locator(plt.NullLocator())
-    # plt.show()
-    # st.pyplot(fig) - gives an error
-    st.set_option("deprecation.showPyplotGlobalUse", False)
-    st.pyplot()
-    show_warmingstripes_matplotlib(df_, what title)
+        plt.title(title)
+        plt.gca().xaxis.set_major_locator(plt.NullLocator())
+        plt.gca().yaxis.set_major_locator(plt.NullLocator())
+        # plt.show()
+        # st.pyplot(fig) - gives an error
+        st.set_option("deprecation.showPyplotGlobalUse", False)
+        st.pyplot()
+        show_warmingstripes_matplotlib(df_, what title)
 
 def show_warmingstripes_matplotlib(df_, what, title):
     # https://matplotlib.org/matplotblog/posts/warming-stripes/
