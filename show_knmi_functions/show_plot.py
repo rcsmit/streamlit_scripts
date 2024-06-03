@@ -180,8 +180,8 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
                 x=df[datefield],
                 y= df["sma"],
                 mode='lines',
-                line=dict(width=1,
-                color='rgba(0, 0, 255, 0.6)'
+                line=dict(width=2,
+                color='rgba(255, 0, 255, 1)'
                 ),
                 )
             if wdw != 1:
@@ -192,8 +192,8 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
                     mode='markers',
                     showlegend=False,
                     marker=dict(
-                    #color='LightSkyBlue',
-                    size=3))
+                    color='LightSkyBlue',
+                    size=1))
             # Create traces for the moving confidence interval as filled areas
             ci_area_trace_95 = go.Scatter(
                 name=f"{what_to_show_x} 95% CI",
