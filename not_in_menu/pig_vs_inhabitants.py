@@ -56,7 +56,7 @@ df["inh_sqm"] = round(df["Inhabitants"]/df["Surface"],1)
 
 plot("Inhabitants", "Pigs" )
 plot ("inh_sqm", "pig_sqm")
-
+plot("Surface", "Pigs" 
 st.write(df)
 
 st.subheader("Sources")
