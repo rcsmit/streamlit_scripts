@@ -58,7 +58,7 @@ def show_warmingstripes(df_, what_to_show, title):
         # st.pyplot(fig) - gives an error
         st.set_option("deprecation.showPyplotGlobalUse", False)
         st.pyplot()
-        show_warmingstripes_matplotlib(df_, what title)
+        show_warmingstripes_matplotlib(df_, what, title)
 
 def show_warmingstripes_matplotlib(df_, what, title):
     # https://matplotlib.org/matplotblog/posts/warming-stripes/
