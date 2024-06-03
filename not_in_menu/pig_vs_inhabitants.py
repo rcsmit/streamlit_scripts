@@ -58,3 +58,8 @@ plot("Inhabitants", "Pigs" )
 plot ("inh_sqm", "pig_sqm")
 
 st.write(df)
+
+st.subheader("Sources")
+st.write("https://ec.europa.eu/eurostat/databrowser/view/apro_mt_lspig/default/table?lang=en")
+st.write("https://en.wikipedia.org/wiki/List_of_European_countries_by_population (UN estimate 2023)")
+st.write("https://en.wikipedia.org/wiki/List_of_European_countries_by_area)")
