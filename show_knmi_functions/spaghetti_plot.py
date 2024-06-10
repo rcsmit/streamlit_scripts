@@ -29,7 +29,12 @@ def spaghetti_plot(df, what, wdw, wdw_interval, sd_all, sd_day, spaghetti, mean_
         cumulative (bool): Show the cumulative value
     Returns:
         _type_: _description_
-    """       
+    """     
+    min = st.sidebar.number_input("Maand minimaal (incl)", 1,12,1)
+    max = st.sidebar.number_input("Maand maximaal (incl)", 1,12,12)
+    
+    df['month'] = df['YYYYMMDD'].dt.month
+    df = df[(df['month'] >= min) & (df['month'] <= max)]  
     for w in what:
         spaghetti_plot_(df, w, wdw, wdw_interval, sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles, gradient, cumulative)
 
