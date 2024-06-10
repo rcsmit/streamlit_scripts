@@ -224,7 +224,7 @@ def spaghetti_plot_(df, what, wdw, wdw_interval,  sd_all, sd_day, spaghetti, mea
                             ),
                             ))
     if mean_:
-        line = dict(width=.5,
+        line = dict(width=.8,
                         color='rgba(0, 0, 255, 1)'
                         )
         fig.add_trace(go.Scatter(
@@ -237,7 +237,7 @@ def spaghetti_plot_(df, what, wdw, wdw_interval,  sd_all, sd_day, spaghetti, mea
     
     if last_year:
         ly = pivot_df.columns[-13]
-        line = dict(width=1,
+        line = dict(width=1.3,
                     color='rgba(255, 0, 0, 1)'
                     )
           
