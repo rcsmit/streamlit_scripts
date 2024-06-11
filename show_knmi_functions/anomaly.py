@@ -21,7 +21,7 @@ def anomaly(df, what_):
     wdw=st.sidebar.number_input ("Window moving average", 1,365,31)
     one_color = st.sidebar.selectbox("One color for anomaly graph", [True,False], 1)
     calculate_last_year_with_avg =  st.sidebar.selectbox("Include last year in average", [True,False], 0)
-    smooth_before_distracting = =  st.sidebar.selectbox("Smooth before distracting", [True,False], 0)
+    smooth_before_distracting =  st.sidebar.selectbox("Smooth before distracting", [True,False], 0)
     for what in what_:
         st.subheader(what)
         df['date_1900'] = pd.to_datetime(df['YYYYMMDD'].dt.strftime('%m-%d-2000'), format='mixed')
