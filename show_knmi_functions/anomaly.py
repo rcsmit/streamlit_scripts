@@ -19,7 +19,7 @@ import plotly.graph_objects as go
 
 def anomaly(df, what_):
     wdw=st.sidebar.number_input ("Window moving average", 1,365,31)
-    one_color = st.sidebar.selectbox("One color for anomaly graph", [True,False], 0)
+    one_color = st.sidebar.selectbox("One color for anomaly graph", [True,False], 1)
     calculate_last_year_with_avg =  st.sidebar.selectbox("Include last year in average", [True,False], 0)
     
     for what in what_:
@@ -37,7 +37,8 @@ def anomaly(df, what_):
         last_year = df[df['YYYYMMDD'] >= (most_recent_date - pd.Timedelta(days=365+31))]
         df_anomalie = pd.merge(average_temps, last_year, on="date_1900")
         df_anomalie = df_anomalie.sort_values(by='YYYYMMDD')
-
+        min_date= df_anomalie['YYYYMMDD'].min().strftime("%d-%m-%Y")
+        max_date = df_anomalie['YYYYMMDD'].max().strftime("%d-%m-%Y")
         df_anomalie["verschil"] = df_anomalie[f"{what}_y"]-  df_anomalie[f"{what}_x"]
         df_anomalie[f"{what}_x"] = df_anomalie[f"{what}_x"] .rolling(wdw, center=False).mean()
         df_anomalie[f"{what}_y"] = df_anomalie[f"{what}_y"] .rolling(wdw, center=False).mean()
@@ -46,9 +47,9 @@ def anomaly(df, what_):
         df_anomalie = df_anomalie.tail(366)
 
         plot_lines (df_anomalie, what, wdw)
-        plot_anomalie_really (df_anomalie, what,wdw, one_color)
+        plot_anomalie_really (df_anomalie, what,wdw, one_color, min_date, max_date)
 
-def plot_anomalie_really (df_anomalie, what,wdw, one_color):
+def plot_anomalie_really (df_anomalie, what,wdw, one_color, min_date, max_date):
     fig = go.Figure()
     if one_color:
         #Add average temperature trace
@@ -61,10 +62,15 @@ def plot_anomalie_really (df_anomalie, what,wdw, one_color):
         ))
     else:
 
-        # Trace for values above 0 (green fill)
+        # Separate positive and negative values
+        df_anomalie['pos_diff'] = df_anomalie['verschil'].apply(lambda x: x if x > 0 else 0)
+        df_anomalie['neg_diff'] = df_anomalie['verschil'].apply(lambda x: x if x < 0 else 0)
+
+
+        # Trace for positive differences
         fig.add_trace(go.Scatter(
             x=df_anomalie['YYYYMMDD'],
-            y=np.where(df_anomalie['verschil'] >= 0, df_anomalie['verschil'], np.nan),
+            y=df_anomalie['pos_diff'],
             mode='lines',
             fill='tozeroy',
             fillcolor='rgba(0, 255, 0, 0.2)',  # Green fill with transparency
@@ -72,16 +78,17 @@ def plot_anomalie_really (df_anomalie, what,wdw, one_color):
             name='Positive Difference'
         ))
 
-        # Trace for values below 0 (red fill)
+        # Trace for negative differences
         fig.add_trace(go.Scatter(
             x=df_anomalie['YYYYMMDD'],
-            y=np.where(df_anomalie['verschil'] <= 0, df_anomalie['verschil'], np.nan),
+            y=df_anomalie['neg_diff'],
             mode='lines',
             fill='tozeroy',
             fillcolor='rgba(255, 0, 0, 0.2)',  # Red fill with transparency
             line=dict(color='red'),
             name='Negative Difference'
         ))
+    
 
     # Add a horizontal line at y=0
     fig.add_shape(type='line',
@@ -89,13 +96,13 @@ def plot_anomalie_really (df_anomalie, what,wdw, one_color):
                 y0=0,
                 x1=df_anomalie['YYYYMMDD'].max(),
                 y1=0,
-                line=dict(color='LightSeaGreen', width=2, dash='dash'))
+                line=dict(color='Black', width=2,))
 
 
     fig.update_layout(
             xaxis=dict(title="date",tickformat="%d-%m-%Y"),
             yaxis=dict(title=what),
-            title=f"Anomaly of {what}, moving average {wdw} days" ,)
+            title=f"Anomaly of {what}, sma({wdw}) - last year compared ith average of {min_date} - {max_date} " ,)
     fig.update_xaxes(showgrid=True)
     fig.update_yaxes(showgrid=True)
     
@@ -109,7 +116,7 @@ def plot_lines (df_anomalie, what, wdw):
         x=df_anomalie['YYYYMMDD'],
         y=df_anomalie[f"{what}_x"],
         mode='lines',
-        name='Average Temperature'
+        name=f'Average {what}'
     ))
 
     # Add last year's temperature trace
@@ -117,7 +124,7 @@ def plot_lines (df_anomalie, what, wdw):
         x=df_anomalie['YYYYMMDD'],
         y=df_anomalie[f"{what}_y"],
         mode='lines',
-        name='Last Year Temperature'
+        name=f'Last Year {what}'
     ))
 
 
