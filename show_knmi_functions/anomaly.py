@@ -37,8 +37,8 @@ def anomaly(df, what_):
         last_year = df[df['YYYYMMDD'] >= (most_recent_date - pd.Timedelta(days=365+31))]
         df_anomalie = pd.merge(average_temps, last_year, on="date_1900")
         df_anomalie = df_anomalie.sort_values(by='YYYYMMDD')
-        min_date= df_anomalie['YYYYMMDD'].min().strftime("%d-%m-%Y")
-        max_date = df_anomalie['YYYYMMDD'].max().strftime("%d-%m-%Y")
+        min_date= df['YYYYMMDD'].min().strftime("%d-%m-%Y")
+        max_date = df['YYYYMMDD'].max().strftime("%d-%m-%Y")
         df_anomalie["verschil"] = df_anomalie[f"{what}_y"]-  df_anomalie[f"{what}_x"]
         df_anomalie[f"{what}_x"] = df_anomalie[f"{what}_x"] .rolling(wdw, center=False).mean()
         df_anomalie[f"{what}_y"] = df_anomalie[f"{what}_y"] .rolling(wdw, center=False).mean()
