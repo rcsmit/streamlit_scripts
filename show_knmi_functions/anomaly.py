@@ -111,7 +111,7 @@ def plot_anomalie_really (df_anomalie, what,wdw, one_color, min_date, max_date):
     fig.update_layout(
             xaxis=dict(title="date",tickformat="%d-%m-%Y"),
             yaxis=dict(title=what),
-            title=f"Anomaly of {what}, sma({wdw}) - last year compared ith average of {min_date} - {max_date} " ,)
+            title=f"Anomaly of {what}, sma({wdw}) - last year compared with average of {min_date} - {max_date} " ,)
     fig.update_xaxes(showgrid=True)
     fig.update_yaxes(showgrid=True)
     
