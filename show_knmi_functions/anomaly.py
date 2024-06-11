@@ -21,7 +21,7 @@ def anomaly(df, what_):
     wdw=st.sidebar.number_input ("Window moving average", 1,365,31)
     one_color = st.sidebar.selectbox("One color for anomaly graph", [True,False], 1)
     calculate_last_year_with_avg =  st.sidebar.selectbox("Include last year in average", [True,False], 0)
-    
+    smooth_before_distracting = =  st.sidebar.selectbox("Smooth before distracting", [True,False], 0)
     for what in what_:
         st.subheader(what)
         df['date_1900'] = pd.to_datetime(df['YYYYMMDD'].dt.strftime('%m-%d-2000'), format='mixed')
@@ -39,10 +39,19 @@ def anomaly(df, what_):
         df_anomalie = df_anomalie.sort_values(by='YYYYMMDD')
         min_date= df['YYYYMMDD'].min().strftime("%d-%m-%Y")
         max_date = df['YYYYMMDD'].max().strftime("%d-%m-%Y")
-        df_anomalie["verschil"] = df_anomalie[f"{what}_y"]-  df_anomalie[f"{what}_x"]
-        df_anomalie[f"{what}_x"] = df_anomalie[f"{what}_x"] .rolling(wdw, center=False).mean()
-        df_anomalie[f"{what}_y"] = df_anomalie[f"{what}_y"] .rolling(wdw, center=False).mean()
-        df_anomalie["verschil"] = df_anomalie["verschil"] .rolling(wdw, center=False).mean()
+        
+        if smooth_before_distracting:
+            df_anomalie[f"{what}_x"] = df_anomalie[f"{what}_x"] .rolling(wdw, center=False).mean()
+            df_anomalie[f"{what}_y"] = df_anomalie[f"{what}_y"] .rolling(wdw, center=False).mean()
+            df_anomalie["verschil"] = df_anomalie[f"{what}_y"]-  df_anomalie[f"{what}_x"]
+        else:
+                
+            df_anomalie["verschil"] = df_anomalie[f"{what}_y"]-  df_anomalie[f"{what}_x"]
+            df_anomalie["verschil"] = df_anomalie["verschil"] .rolling(wdw, center=False).mean()
+
+            df_anomalie[f"{what}_x"] = df_anomalie[f"{what}_x"] .rolling(wdw, center=False).mean()
+            df_anomalie[f"{what}_y"] = df_anomalie[f"{what}_y"] .rolling(wdw, center=False).mean()
+            
         # Select the last 365 rows
         df_anomalie = df_anomalie.tail(366)
 
