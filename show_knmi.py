@@ -15,6 +15,7 @@ from show_knmi_functions.show_per_maand import show_per_maand
 from show_knmi_functions.spaghetti_plot import spaghetti_plot
 from show_knmi_functions.show_year_histogram_animation import show_year_histogram_animation
 from show_knmi_functions.last_day import last_day
+from show_knmi_functions.anomaly import anomaly
 from show_knmi_functions.neerslagtekort import neerslagtekort, neerslagtekort_meerdere_stations
 # except:
 #     from utils import show_weerstations, help,  list_to_text,check_from_until, find_date_for_title, download_button,get_weerstations, get_data
@@ -53,10 +54,10 @@ def interface():
     mode = st.sidebar.selectbox(
         "Modus (kies HELP voor hulp)", ["doorlopend per dag", "aantal keren", "specifieke dag","last day",
                                         "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", 
-                                        "per maand in div jaren",  "spaghetti plot","percentiles", 
+                                        "per maand in div jaren",  "spaghetti plot","anomaly", "percentiles", 
                                         "polar plot/radar chart", "show year histogram animation",
                                         "does rain predict rain","neerslagtekort","neerslagtekort_meerdere", 
-                                        "show weerstations", "help", "polar_debug"], index=16
+                                        "show weerstations", "help", "polar_debug"], index=17
     )
     if mode !=  "neerslagtekort_meerdere":
         weer_stations = get_weerstations()
@@ -96,37 +97,41 @@ def interface():
 
         what_to_show = st.sidebar.multiselect("Wat weer te geven", show_options, "temp_max")
        
-        graph_type = st.sidebar.selectbox("Graph type (plotly=interactive)", ["pyplot", "plotly"], index=1)
+        if mode != "anomaly":
+            graph_type = st.sidebar.selectbox("Graph type (plotly=interactive)", ["pyplot", "plotly"], index=1)
 
 
-        wdw = st.sidebar.number_input("Window smoothing curves", 1, 999, 7)
-        wdw2 = st.sidebar.number_input("Window smoothing curves 2 (999 for none)", 1, 999, 999)
-        if wdw2 != 999:
-            sma2_how = st.sidebar.selectbox("SMA2 How", ["mean", "median"], 0)
+            wdw = st.sidebar.number_input("Window smoothing curves", 1, 999, 7)
+            wdw2 = st.sidebar.number_input("Window smoothing curves 2 (999 for none)", 1, 999, 999)
+            if wdw2 != 999:
+                sma2_how = st.sidebar.selectbox("SMA2 How", ["mean", "median"], 0)
+            else:
+                sma2_how = None
+            centersmooth =  st.sidebar.selectbox(
+                "Smooth in center", [True, False], index=0
+                )
+            st.sidebar.write("Smoothing niet altijd aanwezig")
+            show_ci =  st.sidebar.selectbox(
+                "Show CI", [True, False], index=1
+                )
+            if show_ci:
+                wdw_ci = st.sidebar.slider("Window confidence intervals", 1, 100, 20)
+            else:
+                wdw_ci = 1
+            show_loess =  st.sidebar.selectbox(
+                "Show loess", [True, False], index=1
+                )
+            show_parts =  st.sidebar.selectbox(
+                "Show parts", [True, False], index=1
+                )
+            if show_parts:
+                no_of_parts = st.sidebar.slider("Number of parts", 1, 10, 5)
+            else:
+                no_of_parts = None
+            groupby_ = st.sidebar.selectbox("Groupby", [True, False], index=1)
         else:
-            sma2_how = None
-        centersmooth =  st.sidebar.selectbox(
-            "Smooth in center", [True, False], index=0
-            )
-        st.sidebar.write("Smoothing niet altijd aanwezig")
-        show_ci =  st.sidebar.selectbox(
-            "Show CI", [True, False], index=1
-            )
-        if show_ci:
-            wdw_ci = st.sidebar.slider("Window confidence intervals", 1, 100, 20)
-        else:
-            wdw_ci = 1
-        show_loess =  st.sidebar.selectbox(
-            "Show loess", [True, False], index=1
-            )
-        show_parts =  st.sidebar.selectbox(
-            "Show parts", [True, False], index=1
-            )
-        if show_parts:
-            no_of_parts = st.sidebar.slider("Number of parts", 1, 10, 5)
-        else:
-            no_of_parts = None
-        groupby_ = st.sidebar.selectbox("Groupby", [True, False], index=1)
+            wdw, wdw2,sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type,show_ci,show_loess, wdw_ci,show_parts, no_of_parts, groupby_ = None,None,None,what_to_show,None,None,None,None,None,None,None, None, None
+
     else:
         wdw, wdw2,sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type,show_ci,show_loess, wdw_ci,show_parts, no_of_parts, groupby_ = None,None,None,"neerslag_etmaalsom",None,None,None,None,None,None,None, None, None
 
@@ -209,6 +214,8 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
         title = f"{what_to_show_as_txt} van {from_} - {until_} in {gekozen_weerstation}"
     elif mode == "aantal keren":
         show_aantal_keren(df, gekozen_weerstation, what_to_show)
+    elif mode == "anomaly":
+        anomaly(df, what_to_show)
     elif mode == "percentiles":
         plot_percentiles(df,  gekozen_weerstation, what_to_show, wdw, centersmooth)
     elif mode == "polar plot/radar chart":
