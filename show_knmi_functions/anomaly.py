@@ -15,7 +15,19 @@ import shutil # for the progressbar
 
 import plotly.express as px
 import plotly.graph_objects as go
+from utils import loess_skmisc
 
+# Define the pandas accessor
+@pd.api.extensions.register_series_accessor("loess")
+class LoessAccessor:
+    def __init__(self, pandas_obj):
+        self._obj = pandas_obj
+
+    def apply(self, ybounds=None, it=1):
+        t = np.arange(len(self._obj))
+        y = self._obj.values
+        _, loess_values, ll, ul = loess_skmisc(t, y, ybounds, it)
+        return loess_values
 
 def anomaly(df, what_):
     wdw=st.sidebar.number_input ("Window moving average", 1,365,31)
@@ -40,23 +52,47 @@ def anomaly(df, what_):
         min_date= df['YYYYMMDD'].min().strftime("%d-%m-%Y")
         max_date = df['YYYYMMDD'].max().strftime("%d-%m-%Y")
         
-        if smooth_before_distracting == "before":
-            df_anomalie[f"{what}_x"] = df_anomalie[f"{what}_x"] .rolling(wdw, center=False).mean()
-            df_anomalie[f"{what}_y"] = df_anomalie[f"{what}_y"] .rolling(wdw, center=False).mean()
-            df_anomalie["verschil"] = df_anomalie[f"{what}_y"]-  df_anomalie[f"{what}_x"]
-        elif smooth_before_distracting == "after":
-                
-            df_anomalie["verschil"] = df_anomalie[f"{what}_y"]-  df_anomalie[f"{what}_x"]
-            df_anomalie["verschil"] = df_anomalie["verschil"] .rolling(wdw, center=False).mean()
+        loess_x = True
+        if loess_x == True:
+            if smooth_before_distracting == "before":
+                df_anomalie[f"{what}_x"] = df_anomalie[f"{what}_x"] .loess.apply()
+                df_anomalie[f"{what}_y"] = df_anomalie[f"{what}_y"] .loess.apply()
+                df_anomalie["verschil"] = df_anomalie[f"{what}_y"]-  df_anomalie[f"{what}_x"]
 
-            df_anomalie[f"{what}_x"] = df_anomalie[f"{what}_x"] .rolling(wdw, center=False).mean()
-            df_anomalie[f"{what}_y"] = df_anomalie[f"{what}_y"] .rolling(wdw, center=False).mean()
-        elif smooth_before_distracting == "only avg":
-            df_anomalie[f"{what}_x"] = df_anomalie[f"{what}_x"] .rolling(wdw, center=False).mean()
-            df_anomalie["verschil"] = df_anomalie[f"{what}_y"]-  df_anomalie[f"{what}_x"]
+                
+            elif smooth_before_distracting == "after":
+                    
+                df_anomalie["verschil"] = df_anomalie[f"{what}_y"]-  df_anomalie[f"{what}_x"]
+                df_anomalie["verschil"] = df_anomalie["verschil"] .loess.apply()
+
+                df_anomalie[f"{what}_x"] = df_anomalie[f"{what}_x"] .loess.apply()
+                df_anomalie[f"{what}_y"] = df_anomalie[f"{what}_y"] .loess.apply()
+            elif smooth_before_distracting == "only avg":
+                df_anomalie[f"{what}_x"] = df_anomalie[f"{what}_x"] .loess.apply()
+                df_anomalie["verschil"] = df_anomalie[f"{what}_y"]-  df_anomalie[f"{what}_x"]
+            else:
+                st.error(f"error in smooth before distracting = {smooth_before_distracting}")
+                st.stop()
         else:
-            st.error(f"error in smooth before distracting = {smooth_before_distracting}")
-            st.stop()
+            if smooth_before_distracting == "before":
+                df_anomalie[f"{what}_x"] = df_anomalie[f"{what}_x"] .rolling(wdw, center=False).mean()
+                df_anomalie[f"{what}_y"] = df_anomalie[f"{what}_y"] .rolling(wdw, center=False).mean()
+                df_anomalie["verschil"] = df_anomalie[f"{what}_y"]-  df_anomalie[f"{what}_x"]
+
+                
+            elif smooth_before_distracting == "after":
+                    
+                df_anomalie["verschil"] = df_anomalie[f"{what}_y"]-  df_anomalie[f"{what}_x"]
+                df_anomalie["verschil"] = df_anomalie["verschil"] .rolling(wdw, center=False).mean()
+
+                df_anomalie[f"{what}_x"] = df_anomalie[f"{what}_x"] .rolling(wdw, center=False).mean()
+                df_anomalie[f"{what}_y"] = df_anomalie[f"{what}_y"] .rolling(wdw, center=False).mean()
+            elif smooth_before_distracting == "only avg":
+                df_anomalie[f"{what}_x"] = df_anomalie[f"{what}_x"] .rolling(wdw, center=False).mean()
+                df_anomalie["verschil"] = df_anomalie[f"{what}_y"]-  df_anomalie[f"{what}_x"]
+            else:
+                st.error(f"error in smooth before distracting = {smooth_before_distracting}")
+                st.stop()
         # Select the last 365 rows
         df_anomalie = df_anomalie.tail(366)
 
@@ -171,7 +207,7 @@ def main():
     df["month_year"] = df["month"] + " - " + df["year"]
     df["year_month"] = df["year"] + " - " +  df["MM"].astype(str).str.zfill(2)
     df["month_day"] = df["month"] + " - " + df["day"]
-    anomaly(df, "temp_avg")
+    anomaly(df, ["temp_avg"])
 
 
 
