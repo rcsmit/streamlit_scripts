@@ -8,8 +8,6 @@ except:
     from utils import get_data, loess_skmisc
 
 import plotly.graph_objects as go
-
-
 # Define the pandas accessor
 @pd.api.extensions.register_series_accessor("loess")
 class LoessAccessor:
