@@ -20,6 +20,7 @@ class LoessAccessor:
         _, loess_values, ll, ul = loess_skmisc(t, y, ybounds, it)
         return loess_values
 
+
 def anomaly(df, what_):
     sma = st.sidebar.selectbox("Method for smoothing", ["loess", 'sma'], 1)
     if sma=="sma":
