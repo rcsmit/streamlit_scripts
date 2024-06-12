@@ -21,7 +21,9 @@ class LoessAccessor:
         return loess_values
 
 def anomaly(df, what_):
-    wdw=st.sidebar.number_input ("Window moving average", 1,365,31)
+    sma = st.sidebar.selectbox("Method for smoothing", ["loess", 'sma'], 1)
+    if sma=="sma":
+        wdw=st.sidebar.number_input ("Window moving average", 1,365,31)
     one_color = st.sidebar.selectbox("One color for anomaly graph", [True,False], 1)
     calculate_last_year_with_avg =  st.sidebar.selectbox("Include last year in average", [True,False], 0)
     smooth_before_distracting =  st.sidebar.selectbox("Smooth before distracting", ["before", "after", "only avg"], 0)
@@ -43,7 +45,11 @@ def anomaly(df, what_):
         min_date= df['YYYYMMDD'].min().strftime("%d-%m-%Y")
         max_date = df['YYYYMMDD'].max().strftime("%d-%m-%Y")
         
-        loess_x = True
+        if sma == "sma":
+            loess_x = False
+        else:
+            loess_x = True
+
         if loess_x == True:
             if smooth_before_distracting == "before":
                 df_anomalie[f"{what}_x"] = df_anomalie[f"{what}_x"] .loess.apply()
