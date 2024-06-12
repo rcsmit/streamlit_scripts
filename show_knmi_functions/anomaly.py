@@ -6,16 +6,15 @@ import matplotlib.pyplot as plt
 # import matplotlib
 
 try:
-    from show_knmi_functions.utils import get_data
+    from show_knmi_functions.utils import get_data, loess_skmisc
 except:
-    from utils import get_data
+    from utils import get_data, loess_skmisc
 #_lock = RendererAgg.lock
 import sys # for the progressbar
 import shutil # for the progressbar
 
 import plotly.express as px
 import plotly.graph_objects as go
-from utils import loess_skmisc
 
 # Define the pandas accessor
 @pd.api.extensions.register_series_accessor("loess")
