@@ -22,6 +22,7 @@ class LoessAccessor:
 
 
 def anomaly(df, what_):
+    st.write("_")
     sma = st.sidebar.selectbox("Method for smoothing", ["loess", 'sma'], 1)
     if sma=="sma":
         wdw=st.sidebar.number_input ("Window moving average", 1,365,31)
@@ -148,11 +149,16 @@ def plot_anomalie_really (df_anomalie, what,wdw, one_color, min_date, max_date):
                 y1=0,
                 line=dict(color='Black', width=2,))
 
+    if wdw ==None:
+        title=f"Anomaly of {what}, loess({30}) - last year compared with average of {min_date} - {max_date} " 
+    else:
+        title=f"Anomaly of {what}, sma({wdw}) - last year compared with average of {min_date} - {max_date} " 
 
     fig.update_layout(
             xaxis=dict(title="date",tickformat="%d-%m-%Y"),
             yaxis=dict(title=what),
-            title=f"Anomaly of {what}, sma({wdw}) - last year compared with average of {min_date} - {max_date} " ,)
+            title=title,)
+
     fig.update_xaxes(showgrid=True)
     fig.update_yaxes(showgrid=True)
     
