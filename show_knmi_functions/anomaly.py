@@ -25,6 +25,8 @@ def anomaly(df, what_):
     sma = st.sidebar.selectbox("Method for smoothing", ["loess", 'sma'], 1)
     if sma=="sma":
         wdw=st.sidebar.number_input ("Window moving average", 1,365,31)
+    else:
+        wdw= None
     one_color = st.sidebar.selectbox("One color for anomaly graph", [True,False], 1)
     calculate_last_year_with_avg =  st.sidebar.selectbox("Include last year in average", [True,False], 0)
     smooth_before_distracting =  st.sidebar.selectbox("Smooth before distracting", ["before", "after", "only avg"], 0)
