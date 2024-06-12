@@ -16,6 +16,7 @@ import shutil # for the progressbar
 import plotly.express as px
 import plotly.graph_objects as go
 
+
 # Define the pandas accessor
 @pd.api.extensions.register_series_accessor("loess")
 class LoessAccessor:
