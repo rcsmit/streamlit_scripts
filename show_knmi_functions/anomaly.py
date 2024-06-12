@@ -1,19 +1,12 @@
 import pandas as pd
 import numpy as np
 import streamlit as st
-#from streamlit import caching
-import matplotlib.pyplot as plt
-# import matplotlib
 
 try:
     from show_knmi_functions.utils import get_data, loess_skmisc
 except:
     from utils import get_data, loess_skmisc
-#_lock = RendererAgg.lock
-import sys # for the progressbar
-import shutil # for the progressbar
 
-import plotly.express as px
 import plotly.graph_objects as go
 
 
