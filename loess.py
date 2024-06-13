@@ -374,6 +374,7 @@ def climatrend(
 
     References:
     KNMI Technical report TR-389 (see http://bibliotheek.knmi.nl/knmipubTR/TR389.pdf)
+    https://www.knmi.nl/kennis-en-datacentrum/publicatie/standard-method-for-determining-a-climatological-trend
 
     Author: Cees de Valk (cees.de.valk@knmi.nl)
 

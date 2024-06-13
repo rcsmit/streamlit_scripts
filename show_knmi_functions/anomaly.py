@@ -8,18 +8,6 @@ except:
     from utils import get_data, loess_skmisc
 
 import plotly.graph_objects as go
-# Define the pandas accessor
-@pd.api.extensions.register_series_accessor("loess")
-class LoessAccessor:
-    def __init__(self, pandas_obj):
-        self._obj = pandas_obj
-
-    def apply(self, ybounds=None, it=1):
-        t = np.arange(len(self._obj))
-        y = self._obj.values
-        _, loess_values, ll, ul = loess_skmisc(t, y, ybounds, it)
-        return loess_values
-
 
 def anomaly(df, what_):
     st.write("_")
@@ -216,6 +204,61 @@ def main():
     anomaly(df, ["temp_avg"])
 
 
+def test():
+
+
+    import plotly.graph_objects as go
+    import pandas as pd
+    import utils
+
+    #url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/result.csv" 
+    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/de_bilt_jaargem_1901_2022.csv" 
+    
+
+    df = pd.read_csv(
+        url,
+        delimiter=",",
+        header= 0,
+        comment="#",
+        low_memory=False,
+    )
+    df['temp_avg_loess'] = df['temp_avg'].loess.apply()
+  
+    fig = go.Figure()
+
+    # Add traces for temp_loess and temp
+    fig.add_trace(go.Scatter(x=df['YYYY'], y=df['temp_avg'], name='Actual Temperature'))
+    fig.add_trace(go.Scatter(x=df['YYYY'], y=df['temp_avg_loess'], mode='lines', name='LOESS Temperature'))
+    
+    # Update layout
+    fig.update_layout(title='Temperature Comparison',
+                    xaxis_title='Date',
+                    yaxis_title='Temperature (°C)')
+    st.plotly_chart(fig)
+    #fig.show()
+
+
+    
+    X_array = df["YYYY"].values
+    Y_array = df["temp_avg"].values
+   
+    t, loess_values, ll, ul = loess_skmisc(X_array, Y_array)
+
+    fig = go.Figure()
+
+    # Add traces for temp_loess and temp
+    fig.add_trace(go.Scatter(x=t, y=Y_array, name='Actual Temperature'))
+    fig.add_trace(go.Scatter(x=t, y=loess_values, mode='lines', name='LOESS Temperature'))
+    fig.add_trace(go.Scatter(x=t, y=ll, mode='lines', name='Lower bound'))
+    fig.add_trace(go.Scatter(x=t, y=ul, mode='lines', name='Upper bound'))
+    
+    # Update layout
+    fig.update_layout(title='Temperature Comparison',
+                    xaxis_title='Date',
+                    yaxis_title='Temperature (°C)')
+    st.plotly_chart(fig)
+    #fig.show()
 
 if __name__ == "__main__":
-    main()
+    #main()
+    test()

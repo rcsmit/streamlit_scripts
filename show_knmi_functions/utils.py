@@ -4,6 +4,19 @@ import streamlit as st
 import datetime as dt
 from skmisc.loess import loess
 
+# Define the pandas accessor
+@pd.api.extensions.register_series_accessor("loess")
+class LoessAccessor:
+    def __init__(self, pandas_obj):
+        self._obj = pandas_obj
+
+    def apply(self, ybounds=None, it=1):
+        t = np.arange(len(self._obj))
+        y = self._obj.values
+        _, loess_values, ll, ul = loess_skmisc(t, y, ybounds, it)
+        return loess_values
+
+
 st.cache_data
 def get_data(url):
     header = None
@@ -496,12 +509,7 @@ def loess_skmisc(t, y,  ybounds=None, it=1):
     # https://has2k1.github.io/scikit-misc/stable/generated/skmisc.loess.loess.html
     # https://stackoverflow.com/questions/31104565/confidence-interval-for-lowess-in-python
 
-    # # Set default values for p, t1, and t2
-    # if p is None:
-    #     p = 0.95  # default confidence level
-    # if t1 is None or t2 is None:
-    #     t1 = np.inf
-    #     t2 = -np.inf
+ 
 
     # Set default value for ybounds
     if ybounds is None:
@@ -530,23 +538,6 @@ def loess_skmisc(t, y,  ybounds=None, it=1):
     # Check values of bounds
     if np.any(yg < ybounds[0]) or np.any(yg > ybounds[1]):
         raise ValueError("Stated bounds are not correct: y takes values beyond bounds.")
-
-    # Averages over 30 time-steps
-    avt, avy, avysd = None, None, None
-    if ng > 29:
-        avt = tg + dt / 2  # time (end of time-step, for 30-year averages)
-        avy = np.convolve(yg, np.ones(30) / 30, mode="valid")
-        avy2 = np.convolve(yg**2, np.ones(30) / 30, mode="valid")
-        avysd = np.sqrt(avy2 - avy**2)
-        ind = slice(
-            15, ng - 14
-        )  # was (15, ng-15) but gives an error, whether the df has an even or uneven length
-        # [ValueError: x and y must have same first dimension, but have shapes (92,) and (93,)]
-        avt = avt[ind]
-        # avy = avy[ind]            # takes away y values, gives error
-        # [ValueError: x and y must have same first dimension, but have shapes (93,) and (78,)]
-        avysd = avysd[ind]
-
 
     span = 42/len(y)
     
