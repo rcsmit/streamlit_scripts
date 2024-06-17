@@ -4,6 +4,15 @@ import streamlit as st
 import datetime as dt
 from skmisc.loess import loess
 
+# C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\show_knmi_functions\utils.py:8: UserWarning: registration of accessor <class 'show_knmi_functions.utils.LoessAccessor'> under name 'loess' for type <class 'pandas.core.series.Series'> is overriding a preexisting attribute with the same name.
+ # @pd.api.extensions.register_series_accessor("loess")
+# https://stackoverflow.com/questions/69720999/how-to-prevent-pandas-accessor-to-issue-override-warning
+try:
+    #delete the accessor to avoid warning 
+    del pd.DataFrame.loess
+except AttributeError:
+    pass
+
 # Define the pandas accessor
 @pd.api.extensions.register_series_accessor("loess")
 class LoessAccessor:
