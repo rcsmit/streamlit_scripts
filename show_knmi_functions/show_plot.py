@@ -282,9 +282,9 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
                                             y=[avg_val, avg_val],
                                             mode='lines', line=dict(color='red'),showlegend=False, name=f'Avg Part {i + 1}'))
                 
-               
-   
-        fig.update_layout(xaxis=dict(tickformat="%d-%m-%Y"))
+       
+        # Nog implementeren in het menu
+        #fig.update_layout(xaxis=dict(tickformat="%d-%m-%Y"), yaxis=dict(range=[0, 12]))
         st.plotly_chart(fig, use_container_width=True)
         st.info(f"{what_to_show_x} | mean = {avg} | std= {std} | quantiles (68%) [{lower68}, {upper68}] | quantiles (95%) [{lower95}, {upper95}]")
 

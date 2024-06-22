@@ -83,7 +83,7 @@ def spaghetti_plot_(df, what, wdw, wdw_interval,  sd_all, sd_day, spaghetti, mea
     columns = list(df_filtered.columns)
     columns.append(columns.pop(columns.index('neerslag_etmaalsom')))
     df_filtered = df_filtered[columns]
-    st.write(df_filtered)
+
 
     # Compute the cumulative value, starting each year at January 1st
     
@@ -163,16 +163,23 @@ def spaghetti_plot_(df, what, wdw, wdw_interval,  sd_all, sd_day, spaghetti, mea
         else:
             end = -12 
         for i, column in enumerate(pivot_df.columns[2:end]):
-            if cumulative:
-                name = f"{int(column)-1} - {int(column)}"
+            if cumulative & (shift_days!=0):
+                ly = pivot_df.columns[-13]
+       
+                count_ly = pivot_df[ly].count()
+                if count_ly  + shift_days <365 :
+                
+                    name = f"{int(column)} - {int(column)+1}"
+                else:
+                    name = f"{int(column)} - {int(column)+1}"
             else:
-                name=column
+                name = f"{int(column)}"
             if gradient != "None":
                 line_color = colors[i]  
                 line = dict(width=0.5, color=line_color)
             else:
                 line = dict(width=0.5)
-            
+                
             fig.add_trace(go.Scatter(
                             name=name,
                             x=x_axis,
@@ -270,14 +277,14 @@ def spaghetti_plot_(df, what, wdw, wdw_interval,  sd_all, sd_day, spaghetti, mea
     
     if last_year:
         ly = pivot_df.columns[-13]
-        st.write(len(pivot_df[ly]))
+       
         count_ly = pivot_df[ly].count()
-        st.write(count_ly)
+       
         if count_ly  + shift_days <365 :
             
             name = int(ly)
         else:
-            name = name
+            name = f"{int(column)+1} - {int(column)+2}"
         line = dict(width=1.7,
                     color='rgba(255, 0, 0, 1)'
                     )
