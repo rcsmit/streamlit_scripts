@@ -21,8 +21,7 @@ def last_day(df, gekozen_weerstation, what_to_show_, value):
         what_to_show_ (_type_): _description_
         value (_type_): _description_
     """    
-    st.info("Make a plot that shows the last day that the minimum temperature was
-    0 degrees. Inspired by a plot in the Volkskrant 14th May 2024. Grey area is IJsheiligen (Ice Saints), 11 to 15 May")
+    st.info("Make a plot that shows the last day that the minimum temperature was 0 degrees. Inspired by a plot in the Volkskrant 14th May 2024. Grey area is IJsheiligen (Ice Saints), 11 to 15 May")
      
     df['date'] = pd.to_datetime(df["YYYYMMDD"].astype(str))
     df['year_'] = df['date'].dt.year
