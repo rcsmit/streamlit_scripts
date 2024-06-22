@@ -2,7 +2,11 @@ import pandas as pd
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
-# from show_knmi_functions.utils import get_data
+
+try:
+    from show_knmi_functions.utils import get_data, loess_skmisc
+except:
+    from utils import get_data, loess_skmisc
 
 def last_day(df, gekozen_weerstation, what_to_show_, value):
     """Make a plot that shows the last day that the minimum temperature was
@@ -17,11 +21,9 @@ def last_day(df, gekozen_weerstation, what_to_show_, value):
         what_to_show_ (_type_): _description_
         value (_type_): _description_
     """    
-    import matplotlib.pyplot as plt
-
-    # Assuming 'df' is your DataFrame with 'date' and what_to_show_ columns
-    # Convert 'date' to datetime and extract year and day of year
-    
+    st.info("Make a plot that shows the last day that the minimum temperature was
+    0 degrees. Inspired by a plot in the Volkskrant 14th May 2024. Grey area is IJsheiligen (Ice Saints), 11 to 15 May")
+     
     df['date'] = pd.to_datetime(df["YYYYMMDD"].astype(str))
     df['year_'] = df['date'].dt.year
     df['day_of_year'] = df['date'].dt.dayofyear
@@ -38,7 +40,9 @@ def last_day(df, gekozen_weerstation, what_to_show_, value):
     # Plotting
     
     # Calculate the 30-year moving average
-    moving_avg = first_zero_temp['day_of_year'].rolling(window=30, center=False).mean()
+    #moving_avg = first_zero_temp['day_of_year'].rolling(window=30, center=False).mean()
+    moving_avg = first_zero_temp['day_of_year'].loess.apply()
+
 
     # Create a line plot
     fig = go.Figure()
@@ -48,7 +52,7 @@ def last_day(df, gekozen_weerstation, what_to_show_, value):
                             y=moving_avg,
                             mode='lines',  # Use markers for scatter plot
                             marker=dict(color='black'),  # Set marker color to blue
-                            name='SMA 30 years'))
+                            name='SMA 30 years (LOESS)'))
 
     fig.add_trace(go.Scatter(x=first_zero_temp['year_'],
                             y=first_zero_temp['day_of_year'],
