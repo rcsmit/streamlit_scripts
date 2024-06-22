@@ -56,8 +56,8 @@ def interface():
                                         "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", 
                                         "per maand in div jaren",  "spaghetti plot","anomaly", "percentiles", 
                                         "polar plot/radar chart", "show year histogram animation",
-                                        "does rain predict rain","neerslagtekort","neerslagtekort_meerdere", 
-                                        "show weerstations", "help", "polar_debug"], index=17
+                                        "does rain predict rain","neerslagtekort","neerslagtekort_meerdere", "warmingstripes",
+                                        "show weerstations", "help", "polar_debug"], index=18
     )
     if mode !=  "neerslagtekort_meerdere":
         weer_stations = get_weerstations()
@@ -97,7 +97,7 @@ def interface():
 
         what_to_show = st.sidebar.multiselect("Wat weer te geven", show_options, "temp_max")
        
-        if mode != "anomaly":
+        if (mode != "anomaly") & (mode!= "warmingstripes"):
             graph_type = st.sidebar.selectbox("Graph type (plotly=interactive)", ["pyplot", "plotly"], index=1)
 
 
@@ -130,11 +130,14 @@ def interface():
                 no_of_parts = None
             groupby_ = st.sidebar.selectbox("Groupby", [True, False], index=1)
         else:
-            wdw, wdw2,sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type,show_ci,show_loess, wdw_ci,show_parts, no_of_parts, groupby_ = None,None,None,what_to_show,None,None,None,None,None,None,None, None, None
+            # (mode == "anomaly") & (mode== "warmingstripes")
+            wdw, wdw2,sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type,show_ci,show_loess, wdw_ci,show_parts, no_of_parts, groupby_ = None,None,None,what_to_show,gekozen_weerstation,None,None,None,None,None,None, None, None
 
     else:
+        # ["does rain predict rain","neerslagtekort","neerslagtekort_meerdere"] 
         wdw, wdw2,sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type,show_ci,show_loess, wdw_ci,show_parts, no_of_parts, groupby_ = None,None,None,"neerslag_etmaalsom",None,None,None,None,None,None,None, None, None
-
+    
+   
     return stn, from_, until_, mode, groupby_, wdw, wdw2,sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type,show_ci, show_loess, wdw_ci,show_parts, no_of_parts
     
 
@@ -221,6 +224,14 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
         anomaly(df, what_to_show)
     elif mode == "percentiles":
         plot_percentiles(df,  gekozen_weerstation, what_to_show, wdw, centersmooth)
+    elif mode == "warmingstripes":
+        st.write(gekozen_weerstation)
+        title = f"{what_to_show_as_txt} van {from_} - {until_} in {gekozen_weerstation}"
+        mode  = st.sidebar.selectbox(
+            "Mode", ["Classic", "New", "Matplotlib"], index=0
+            )
+        show_warmingstripes(df, what_to_show, title,mode )
+        
     elif mode == "polar plot/radar chart":
         how = st.sidebar.selectbox(
             "Scatter / line", ["scatter", "line"], index=0
@@ -284,7 +295,7 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
                     "Zorg ervoor dat de datum in de gekozen tijdrange valt voor het beste resultaat "
                 )
         show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show, graph_type, centersmooth, show_ci, show_loess, wdw_ci, show_parts, no_of_parts)
-        show_warmingstripes(df, what_to_show, title)
+        # show_warmingstripes(df, what_to_show, title, False)
 
     st.sidebar.write(f"URL to get data: {url}")
 

@@ -154,6 +154,7 @@ def get_data(url):
     df["globale_straling_log10"] =df.apply(lambda x: log10(x['glob_straling']),axis=1) #  np.log10(df["glob_straling"])
     mask = (df['neerslag_duur'].notna()) & (df['neerslag_duur'].ne(0))
     df.loc[mask, 'neerslag_etmaalsom_div_duur'] = df.loc[mask, 'neerslag_etmaalsom'] / df.loc[mask, 'neerslag_duur']     
+    df['neerslag_etmaalsom'] = df['neerslag_etmaalsom'].replace(-0.1, 0)
     return df
 
 def rh2q(rh, t, p ):
