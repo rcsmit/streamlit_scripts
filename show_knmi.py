@@ -33,7 +33,11 @@ from show_knmi_functions.neerslagtekort import neerslagtekort, neerslagtekort_me
 # INSPRIATION : https://weatherspark.com/m/52666/10/Average-Weather-in-October-in-Utrecht-Netherlands
 # https://radumas.info/blog/tutorial/2017/04/17/percentile-test.html
 
-#@st.cache_data (ttl=60 * 60 * 24)
+pd.set_option('future.no_silent_downcasting', True) 
+pd.options.mode.chained_assignment = None  
+
+
+@st.cache_data (ttl=60 * 60 * 24)
 def getdata_wrapper(stn, fromx, until):
     url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start={fromx}&end={until}"
     

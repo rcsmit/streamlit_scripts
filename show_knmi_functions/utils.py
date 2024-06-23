@@ -157,6 +157,40 @@ def get_data(url):
     df['neerslag_etmaalsom'] = df['neerslag_etmaalsom'].replace(-0.1, 0)
     return df
 
+
+def date_to_daynumber(date_str):
+    """
+    Convert a date in "dd-mm" format to the day number of the year.
+
+    Args:
+        date_str (str): The date string in "dd-mm" format.
+
+    Returns:
+        int or str: The day number of the year, or an error message if the date is not valid.
+    """
+    # Dictionary with the number of days in each month (non-leap year)
+    days_in_month = {
+        '01': 31, '02': 28, '03': 31, '04': 30, '05': 31, '06': 30,
+        '07': 31, '08': 31, '09': 30, '10': 31, '11': 30, '12': 31
+    }
+
+    try:
+        day, month = date_str.split('-')
+        day = int(day)
+        if month not in days_in_month:
+            return "Invalid date: The month is not valid."
+        max_days = days_in_month[month]
+        if day < 1 or day > max_days:
+            return "Invalid date: The day is not valid."
+
+        # Calculate the day number
+        day_number = sum(days_in_month[m] for m in list(days_in_month.keys())[:list(days_in_month.keys()).index(month)]) + day
+
+        return day_number
+    except ValueError:
+        st.error  ("Invalid date: The date format should be 'dd-mm'.")
+        st.stop()
+
 def rh2q(rh, t, p ):
     """Compute the Specific Humidity (Bolton 1980):
             e = 6.112*exp((17.67*Td)/(Td + 243.5));

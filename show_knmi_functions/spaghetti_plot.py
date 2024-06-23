@@ -1,9 +1,9 @@
 import pandas as pd
 import streamlit as st
 try:
-    from show_knmi_functions.utils import get_data
+    from show_knmi_functions.utils import get_data, date_to_daynumber
 except:
-    from utils import get_data
+    from utils import get_data, date_to_daynumber
 
 import plotly.graph_objects as go
 import plotly.express as px  # For easy colormap generation
@@ -32,7 +32,11 @@ def spaghetti_plot(df, what, wdw, wdw_interval, sd_all, sd_day, spaghetti, mean_
     """     
     df['month'] = df['YYYYMMDD'].dt.month
     
-    shift_days = st.sidebar.number_input("Shift days", 0,365,0)
+
+
+    #shift_days = st.sidebar.number_input("Shift days", 0,365,0)
+    date_str = st.sidebar.text_input("X axis starts at (dd-mm)", "01-01")
+    shift_days = date_to_daynumber(date_str) -1
     if shift_days ==0:
         min = st.sidebar.number_input("Maand minimaal (incl)", 1,12,1)
         max = st.sidebar.number_input("Maand maximaal (incl)", 1,12,12)
