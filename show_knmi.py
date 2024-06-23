@@ -11,7 +11,7 @@ from show_knmi_functions.show_warmingstripes import show_warmingstripes
 from show_knmi_functions.show_plot import show_plot
 from show_knmi_functions.plot_percentiles import plot_percentiles
 from show_knmi_functions.show_aantal_keren import show_aantal_keren
-from show_knmi_functions.show_per_maand import show_per_maand
+from show_knmi_functions.show_per_periode import show_per_periode
 from show_knmi_functions.spaghetti_plot import spaghetti_plot
 from show_knmi_functions.show_year_histogram_animation import show_year_histogram_animation
 from show_knmi_functions.last_day import last_day
@@ -25,7 +25,7 @@ from show_knmi_functions.neerslagtekort import neerslagtekort, neerslagtekort_me
 #     from show_plot import show_plot
 #     from plot_percentiles import plot_percentiles
 #     from show_aantal_keren import show_aantal_keren
-#     from show_per_maand import show_per_maand
+#     from show_per_periode import show_per_periode
 #     from spaghetti_plot import spaghetti_plot
 #     from show_year_histogram_animation import show_year_histogram_animation
 #     from last_day import last_day
@@ -57,11 +57,11 @@ def interface():
     """
     mode = st.sidebar.selectbox(
         "Modus (kies HELP voor hulp)", ["doorlopend per dag", "aantal keren", "specifieke dag","last day",
-                                        "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", 
+                                        "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", "per week in div jaren", 
                                         "per maand in div jaren",  "spaghetti plot","anomaly", "percentiles", 
                                         "polar plot/radar chart", "show year histogram animation",
                                         "does rain predict rain","neerslagtekort","neerslagtekort_meerdere", "warmingstripes",
-                                        "show weerstations", "help", "polar_debug"], index=18
+                                        "show weerstations", "help", "polar_debug"], index=19
     )
     if mode !=  "neerslagtekort_meerdere":
         weer_stations = get_weerstations()
@@ -187,7 +187,7 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
             st.error("Under construction")
             st.stop()
     elif mode == "per dag in div jaren":
-        show_per_maand(df, gekozen_weerstation, what_to_show, "per_dag", graph_type)
+        show_per_periode(df, gekozen_weerstation, what_to_show, "per_dag", graph_type)
         datefield = None
         title = f"{what_to_show_as_txt} van {from_} - {until_} in {gekozen_weerstation}"
     elif mode == "spaghetti plot":
@@ -217,9 +217,13 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
         cumulative = st.sidebar.selectbox(
             "Show cumulative values", [True, False], index=0
             )
-        spaghetti_plot(df, what_to_show, wdw, wdw_interval,sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles, gradient, cumulative)
+        spaghetti_plot(df, what_to_show, wdw, wdw_interval,sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles, gradient, cumulative, True)
     elif mode == "per maand in div jaren":
-        show_per_maand(df, gekozen_weerstation, what_to_show, "maandgem", graph_type)
+        show_per_periode(df, gekozen_weerstation, what_to_show, "maandgem", graph_type)
+        datefield = None
+        title = f"{what_to_show_as_txt} van {from_} - {until_} in {gekozen_weerstation}"
+    elif mode == "per week in div jaren":
+        show_per_periode(df, gekozen_weerstation, what_to_show, "weekgem", graph_type)
         datefield = None
         title = f"{what_to_show_as_txt} van {from_} - {until_} in {gekozen_weerstation}"
     elif mode == "aantal keren":

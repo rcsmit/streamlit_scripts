@@ -28,7 +28,8 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
         show_parts (_type_): _description_
         no_of_parts (_type_): _description_
     """    
-    
+    if len(df)<wdw:
+        st.info("Window for smoothing too small. Make window smaller or period larger")
     what_to_show_ = what_to_show_ if type(what_to_show_) == list else [what_to_show_]
     color_list = [
         "#02A6A8",
@@ -181,7 +182,7 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
                 y= df["sma"],
                 mode='lines',
                 line=dict(width=1.5,
-                color='rgba(255, 0, 255, 1)'
+                #color='rgba(255, 0, 255, 1)'
                 ),
                 )
             if wdw != 1:
@@ -192,7 +193,7 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
                     mode='markers',
                     showlegend=False,
                     marker=dict(
-                    color='Blue',
+                    #color='Blue',
                     size=1))
             # Create traces for the moving confidence interval as filled areas
             ci_area_trace_95 = go.Scatter(

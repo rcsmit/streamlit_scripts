@@ -9,7 +9,7 @@ import plotly.graph_objects as go
 import plotly.express as px  # For easy colormap generation
 import numpy as np  # For linspace to distribute sampling
 
-def spaghetti_plot(df, what, wdw, wdw_interval, sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles, gradient, cumulative):
+def spaghetti_plot(df, what, wdw, wdw_interval, sd_all, sd_day, spaghetti, mean_, last_year, show_quantiles, gradient, cumulative, show_shift=False):
     """wrapper for spaghetti plot since show_knmi calles the function with what as list
 
     Args:
@@ -27,20 +27,23 @@ def spaghetti_plot(df, what, wdw, wdw_interval, sd_all, sd_day, spaghetti, mean_
         gradient (string): One of  "None" (as string), "Pubu", "Purd", "Greys" or "Plasma". 
                             See https://plotly.com/python/builtin-colorscales/
         cumulative (bool): Show the cumulative value
+        show_shift : show possibility to shift xas (default:False)
     Returns:
         _type_: _description_
     """     
     df['month'] = df['YYYYMMDD'].dt.month
     
+    if show_shift:
 
-
-    #shift_days = st.sidebar.number_input("Shift days", 0,365,0)
-    date_str = st.sidebar.text_input("X axis starts at (dd-mm)", "01-01")
-    shift_days = date_to_daynumber(date_str) -1
-    if shift_days ==0:
-        min = st.sidebar.number_input("Maand minimaal (incl)", 1,12,1)
-        max = st.sidebar.number_input("Maand maximaal (incl)", 1,12,12)
-        df = df[(df['month'] >= min) & (df['month'] <= max)] 
+        #shift_days = st.sidebar.number_input("Shift days", 0,365,0)
+        date_str = st.sidebar.text_input("X axis starts at (dd-mm)", "01-01")
+        shift_days = date_to_daynumber(date_str) -1
+        if shift_days ==0:
+            min = st.sidebar.number_input("Maand minimaal (incl)", 1,12,1)
+            max = st.sidebar.number_input("Maand maximaal (incl)", 1,12,12)
+            df = df[(df['month'] >= min) & (df['month'] <= max)] 
+    else:
+        shift_days=0
     df["dayofyear"] = df['YYYYMMDD'].dt.dayofyear
     
     for w in what:
