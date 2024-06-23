@@ -21,8 +21,8 @@ def last_day(df, gekozen_weerstation, what_to_show_, value):
         what_to_show_ (_type_): _description_
         value (_type_): _description_
     """    
-    st.info("Make a plot that shows the last day that the minimum temperature was 0 degrees. Inspired by a plot in the Volkskrant 14th May 2024. Grey area is IJsheiligen (Ice Saints), 11 to 15 May")
-     
+    st.info("Make a plot that shows the last day that the minimum temperature was 0 degrees. Inspired by a plot in the Volkskrant 14th May 2024.Oange is April. Grey area is IJsheiligen (Ice Saints), 11 to 15 May")
+    st.info ("https://www.volkskrant.nl/binnenland/laatste-vorst-van-het-jaar-valt-steeds-vaker-lang-voor-ijsheiligen~bf189dbf/")
     df['date'] = pd.to_datetime(df["YYYYMMDD"].astype(str))
     df['year_'] = df['date'].dt.year
     df['day_of_year'] = df['date'].dt.dayofyear
@@ -39,18 +39,25 @@ def last_day(df, gekozen_weerstation, what_to_show_, value):
     # Plotting
     
     # Calculate the 30-year moving average
-    #moving_avg = first_zero_temp['day_of_year'].rolling(window=30, center=False).mean()
-    moving_avg = first_zero_temp['day_of_year'].loess.apply()
+    moving_avg = first_zero_temp['day_of_year'].rolling(window=30, center=False).mean()
+    moving_avg_loess = first_zero_temp['day_of_year'].loess.apply()
 
 
     # Create a line plot
     fig = go.Figure()
 
     # Add a scatter plot trace
+
     fig.add_trace(go.Scatter(x=first_zero_temp['year_'],
                             y=moving_avg,
                             mode='lines',  # Use markers for scatter plot
                             marker=dict(color='black'),  # Set marker color to blue
+                            name='SMA 30 years'))
+    
+    fig.add_trace(go.Scatter(x=first_zero_temp['year_'],
+                            y=moving_avg_loess,
+                            mode='lines',  # Use markers for scatter plot
+                            marker=dict(color='red'),  # Set marker color to blue
                             name='SMA 30 years (LOESS)'))
 
     fig.add_trace(go.Scatter(x=first_zero_temp['year_'],
@@ -72,12 +79,37 @@ def last_day(df, gekozen_weerstation, what_to_show_, value):
         line=dict(width=0),
         name ='IJsheiligen',
     )
+
+    # fig.add_shape(
+    #     type="rect",
+    #     xref="paper", yref="y",
+    #     x0=0, y0=32,
+    #     x1=1, y1=50,
+    #     fillcolor="yellow",
+    #     opacity=0.3,
+    #     layer="below",
+    #     line=dict(width=0),
+    #     name ='Februari',
+    # )
+
+    fig.add_shape(
+        type="rect",
+        xref="paper", yref="y",
+        x0=0, y0=81,
+        x1=1, y1=111,
+        fillcolor="orange",
+        opacity=0.3,
+        layer="below",
+        line=dict(width=0),
+        name ='April',
+    )
     # Update layout
     fig.update_layout(title='Last Day of Zero Temperature Each Year (1900-2023)',
                     xaxis_title='Year',
                     yaxis_title='Day of the Year',
                     showlegend=True,
-                    xaxis=dict(tickmode='linear'))  # Ensure linear tick mode for x-axis
+                    xaxis=dict(tickmode='linear',  dtick=10  ))  # Ensure linear tick mode for x-axis. 
+                                                                    # Set dtick to 10 to show every 10th year
 
     # Show plot
     st.plotly_chart(fig)
