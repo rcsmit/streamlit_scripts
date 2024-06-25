@@ -35,6 +35,11 @@ from show_knmi_functions.neerslagtekort import neerslagtekort, neerslagtekort_me
 
 pd.set_option('future.no_silent_downcasting', True) 
 pd.options.mode.chained_assignment = None  
+try:
+    #delete the accessor to avoid warning 
+    del pd.DataFrame.loess
+except AttributeError:
+    pass
 
 
 @st.cache_data (ttl=60 * 60 * 24)
@@ -309,6 +314,7 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
     st.sidebar.write(f"URL to get data: {url}")
 
 def main():
+    st.write("Weather NL")
     stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, show_loess, wdw_ci,show_parts, no_of_parts = interface()
     action(stn, from_, until_, mode, groupby_,  wdw, wdw2,sma2_how,  what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, show_loess,wdw_ci,show_parts, no_of_parts)
 
