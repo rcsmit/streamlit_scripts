@@ -50,7 +50,13 @@ def last_day(df, gekozen_weerstation, what_to_show_):
         # Find the first occurrence of 0 temperature for each year
         if first_last == "extremes":
             years = df["year_"].unique()
-        # Display hottest and coldest days
+            df["year_shifted"] =  df["year_"].shift(180)
+        
+            first_year = df["year_"].min()
+            fill_value = first_year - 1
+            df["year_shifted"].fillna(fill_value, inplace=True)
+            st.write(df)
+            # Display hottest and coldest days
             hottest_dates, hottest_temps = [],[]
             coldest_dates, coldest_temps =[],[]
             for y in years:
@@ -147,7 +153,7 @@ def last_day(df, gekozen_weerstation, what_to_show_):
                 # Calculate the 30-year moving average
                 moving_avg = first_zero_temp['day_of_year'].rolling(window=30, center=False).mean()
                 # Apply LOESS smoothing (placeholder, actual implementation needed)
-                moving_avg_loess = loess_skmisc(first_zero_temp['year_'], first_zero_temp['day_of_year'], frac=0.3)
+                moving_avg_loess = loess_skmisc(first_zero_temp['year_'], first_zero_temp['day_of_year'])
 
             # Create a line plot
             fig = go.Figure()
