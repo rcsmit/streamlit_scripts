@@ -153,7 +153,7 @@ def last_day(df, gekozen_weerstation, what_to_show_):
                 # Calculate the 30-year moving average
                 moving_avg = first_zero_temp['day_of_year'].rolling(window=30, center=False).mean()
                 # Apply LOESS smoothing (placeholder, actual implementation needed)
-                moving_avg_loess = loess_skmisc(first_zero_temp['year_'], first_zero_temp['day_of_year'])
+                # moving_avg_loess = loess_skmisc(first_zero_temp['year_'], first_zero_temp['day_of_year'])
 
             # Create a line plot
             fig = go.Figure()
@@ -166,11 +166,11 @@ def last_day(df, gekozen_weerstation, what_to_show_):
                                         marker=dict(color='black'),  # Set marker color to black
                                         name='SMA 30 years'))
                 
-                fig.add_trace(go.Scatter(x=first_zero_temp['year_'],
-                                        y=moving_avg_loess,
-                                        mode='lines',  # Use markers for scatter plot
-                                        marker=dict(color='red'),  # Set marker color to red
-                                        name='SMA 30 years (LOESS)'))
+                # fig.add_trace(go.Scatter(x=first_zero_temp['year_'],
+                #                         y=moving_avg_loess,
+                #                         mode='lines',  # Use markers for scatter plot
+                #                         marker=dict(color='red'),  # Set marker color to red
+                #                         name='SMA 30 years (LOESS)'))
 
             fig.add_trace(go.Scatter(x=first_zero_temp['year_'],
                                     y=first_zero_temp['date_1900'],
