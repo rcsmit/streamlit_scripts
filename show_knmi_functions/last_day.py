@@ -55,7 +55,7 @@ def last_day(df, gekozen_weerstation, what_to_show_):
             first_year = df["year_"].min()
             fill_value = first_year - 1
             df["year_shifted"].fillna(fill_value, inplace=True)
-            st.write(df)
+           
             # Display hottest and coldest days
             hottest_dates, hottest_temps = [],[]
             coldest_dates, coldest_temps =[],[]
@@ -83,11 +83,11 @@ def last_day(df, gekozen_weerstation, what_to_show_):
             h_dates = pd.to_datetime(hottest_dates)
 
             # Change year to 1900 and format to dd-mm-1900
-            formatted_h_dates = [(date.replace(year=1900)).strftime('%d-%m-%Y') for date in h_dates]
+            formatted_h_dates = [(date.replace(year=1900)).strftime('%Y-%m-%d') for date in h_dates]
             c_dates = pd.to_datetime(coldest_dates)
 
             # Change year to 1900 and format to dd-mm-1900
-            formatted_c_dates = [(date.replace(year=1900)).strftime('%d-%m-%Y') for date in c_dates]
+            formatted_c_dates = [(date.replace(year=1900)).strftime('%Y-%m-%d') for date in c_dates]
 
 
             fig = go.Figure()
