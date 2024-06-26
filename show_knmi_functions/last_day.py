@@ -80,11 +80,12 @@ def last_day(df, gekozen_weerstation, what_to_show_):
            
 
             # Convert list of string dates to datetime
-            h_dates = pd.to_datetime(hottest_dates)
+            h_dates = pd.to_datetime(hottest_dates, dayfirst=True)
 
             # Change year to 1900 and format to dd-mm-1900
             formatted_h_dates = [(date.replace(year=1900)).strftime('%Y-%m-%d') for date in h_dates]
-            c_dates = pd.to_datetime(coldest_dates)
+            c_dates = pd.to_datetime(coldest_dates, dayfirst=True)
+
 
             # Change year to 1900 and format to dd-mm-1900
             formatted_c_dates = [(date.replace(year=1900)).strftime('%Y-%m-%d') for date in c_dates]
