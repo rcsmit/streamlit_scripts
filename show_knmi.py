@@ -178,8 +178,8 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
     elif mode == "does rain predict rain":
         does_rain_predict_rain(df)
     elif mode == "last day":
-        value = 0
-        last_day(df, gekozen_weerstation, what_to_show, value)
+       
+        last_day(df, gekozen_weerstation, what_to_show)
     elif mode == "show weerstations":
         show_weerstations()
     elif mode == "neerslagtekort":
