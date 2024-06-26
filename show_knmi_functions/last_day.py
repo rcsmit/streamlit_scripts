@@ -73,9 +73,9 @@ def last_day(df, gekozen_weerstation, what_to_show_):
                 hottest_temps.append(hottest_temp)
                 coldest_dates.append(coldest_date)
                 coldest_temps.append(coldest_temp)
-                st.subheader(f"{y}")
-                st.write(f"In {y}, the lowest value is on {coldest_date} with a {what_to_show} of {coldest_temp}°C.")
-                st.write(f"In {y}, the highest value is on {hottest_date} with a {what_to_show} of {hottest_temp}°C.")
+                # st.subheader(f"{y}")
+                # st.write(f"In {y}, the lowest value is on {coldest_date} with a {what_to_show} of {coldest_temp}°C.")
+                # st.write(f"In {y}, the highest value is on {hottest_date} with a {what_to_show} of {hottest_temp}°C.")
                 
            
 
