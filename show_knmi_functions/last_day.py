@@ -29,8 +29,11 @@ def last_day(df, gekozen_weerstation, what_to_show_):
     print (df)
     # Filter rows where temperature reaches the value
     df = df.dropna(subset=what_to_show_)
-    ijsheiligen = st.sidebar.selectbox("Show ijsheiligen", [True, False],0)
-    if ijsheiligen:
+    #ijsheiligen = st.sidebar.selectbox("Show ijsheiligen", [True, False],0)
+
+    first_last =st.sidebar.selectbox("First or last", ["first", "last", "extremes", "ijsheiligen"],2)
+        
+    if first_last == "ijsheiligen":
         min_month, max_month = 1,6
         value, first_last = 0, "last"
         what_to_show_ = ['temp_min']
@@ -39,7 +42,6 @@ def last_day(df, gekozen_weerstation, what_to_show_):
     
     else:
         value = st.sidebar.number_input("Waarde", -99.0,99.0,0.0)
-        first_last =st.sidebar.selectbox("First or last", ["first", "last", "extremes"],2)
         min_month = st.sidebar.number_input("Maand minimaal (incl)", 1,12,1)
         max_month = st.sidebar.number_input("Maand maximaal (incl)", 1,12,12)
     df = df[(df['MM'] >= min_month) & (df['MM'] <= max_month)] 
@@ -54,7 +56,7 @@ def last_day(df, gekozen_weerstation, what_to_show_):
         
             first_year = df["year_"].min()
             fill_value = first_year - 1
-            df["year_shifted"].fillna(fill_value, inplace=True)
+            df["year_shifted"] = df["year_shifted"].fillna(fill_value)
            
             # Display hottest and coldest days
             hottest_dates, hottest_temps = [],[]
@@ -178,7 +180,7 @@ def last_day(df, gekozen_weerstation, what_to_show_):
                                     mode=marker_line,  # Use markers for scatter plot
                                     marker=dict(color='blue'),  # Set marker color to blue
                                     name=f'{first_last} Day of {value} {what_to_show}'))
-            if ijsheiligen:
+            if first_last == "ijsheiligen":
                 # Add a horizontal bar for "IJsheiligen" from 11 May to 15 May
                 ijsheiligen_start = pd.Timestamp(year=1900, month=5, day=11)
                 ijsheiligen_end = pd.Timestamp(year=1900, month=5, day=15)
