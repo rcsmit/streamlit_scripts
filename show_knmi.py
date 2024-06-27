@@ -106,7 +106,7 @@ def interface():
 
         what_to_show = st.sidebar.multiselect("Wat weer te geven", show_options, "temp_max")
        
-        if (mode != "anomaly") & (mode!= "warmingstripes"):
+        if (mode != "anomaly") & (mode!= "warmingstripes") & (mode!= "last day"):
             graph_type = st.sidebar.selectbox("Graph type (plotly=interactive)", ["pyplot", "plotly"], index=1)
 
 
