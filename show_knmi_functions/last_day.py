@@ -226,7 +226,7 @@ def last_day(df, gekozen_weerstation, what_to_show_):
 
     
 def main():
-    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/result.csv" 
+    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/result1900.csv" 
     df = get_data(url)
     what_to_show_ = ["temp_max"]
     
