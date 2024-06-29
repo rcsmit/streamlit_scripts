@@ -17,13 +17,15 @@ def get_data(who):
         url_new = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_new.csv"
         url_2022 = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2022.csv"
         url_2023a = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2023a.csv"
+        url_2023b = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2023b.csv"
         
         df_new = pd.read_csv(url_new, delimiter=';')
         df_2022 = pd.read_csv(url_2022, delimiter=',')
         df_2023a = pd.read_csv(url_2023a, delimiter=',')
+        df_2023b = pd.read_csv(url_2023b, delimiter=',')
     
        
-        for idx, d in enumerate([df_new, df_2022,df_2023a]):
+        for idx, d in enumerate([df_new, df_2022,df_2023a,df_2023b]):
             if idx == 0:
                 create_extra_date_time_columns(d,"new")
             else:
@@ -31,6 +33,7 @@ def get_data(who):
        
         df_2022 = rename_columns(df_2022)
         df_2023a = rename_columns(df_2023a)
+        df_2023b = rename_columns(df_2023b)
            
        
         
@@ -38,7 +41,8 @@ def get_data(who):
         df_tm_2022 = pd.concat([df_2022, df_new], ignore_index=False)
 
         #df = df_2023a.append(df_tm_2022, ignore_index=False)
-        df = pd.concat([df_2023a, df_tm_2022], ignore_index=False)
+        df_ = pd.concat([df_2023a, df_tm_2022], ignore_index=False)
+        df = pd.concat([df_2023b, df_], ignore_index=False)
 
         df['Tijd_h'] = pd.to_datetime(df['Tijd']).dt.hour
         df['Tijd_m'] = pd.to_datetime(df['Tijd']).dt.minute
@@ -379,7 +383,8 @@ def shoe_distances(df):
                 ["13/03/2016", "Lunarglide 7"],
                 ["14/09/2018", "lunarglide 9"],
                 ["14/04/2021", "Zoom 37"],
-                ["14/02/2023", "Asics GT2000 10"]]
+                ["14/02/2023", "Asics GT2000 10"],
+                ["29/06/2024", "Asics Gel pulse 13"]]
     shoe_list = add_end_date(shoe_list)
     table = []
     for shoe in shoe_list:

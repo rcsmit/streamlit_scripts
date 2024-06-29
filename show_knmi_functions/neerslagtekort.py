@@ -78,7 +78,7 @@ def makkink(temp_avg, temp_max,  straling):
         temp (_type_): _description_
         straling (_type_): _description_
     """    
-    temp_x = (temp_avg + temp_max)/2
+    temp_x = (temp_avg*100 + temp_max*0)/100
     s = calculate_s(temp_x)
     lambdaa = 2.45*10**6
     c1 = 0.65
@@ -102,7 +102,7 @@ def neerslagtekort_(df):
         _type_: _description_
     """    
     df=df.fillna(0.0)
-    df['neerslag_etmaalsom'].replace(-0.1, 0, inplace=True)
+    df['neerslag_etmaalsom'].replace(-0.1, 0)
     
     wdwx =1
     if wdwx>1:
@@ -122,11 +122,11 @@ def neerslagtekort_(df):
     df['month'] = df['YYYYMMDD'].dt.month
     df = df[(df['month'] >= 4) & (df['month'] <= 9)]
    
-
+    #st.write(df)
     # Applying the function
     df["eref"] = df.apply(lambda row: makkink(row["temp_avg_sma"],row["temp_max_sma"], row["glob_straling"]), axis=1)
     df["neerslagtekort"] =     df["eref"] -df["neerslag_etmaalsom"]
-    
+    df["neerslagtekort_off"] = df["EV24"]  -df["neerslag_etmaalsom"]
     def cumsum_with_reset(series):
         cumsum = 0
         cumsum_list = []
@@ -139,9 +139,11 @@ def neerslagtekort_(df):
             cumsum_list.append(cumsum)
         return pd.Series(cumsum_list, index=series.index)
 
-    df['cumulative_neerslagtekort_'] = df.groupby('year')['neerslagtekort'].cumsum()
-    #df['cumulative_neerslagtekort'] = df.groupby('year')['neerslagtekort'].apply(cumsum_with_reset)
+    df['cumulative_neerslagtekort_'] = df.groupby('year')['neerslagtekort_off'].cumsum()
+    df['cumulative_neerslagtekort_off_'] = df.groupby('year')['neerslagtekort_off'].cumsum()
+    #df['cumulative_neerslagtekort_off'] = df.groupby('year')['neerslagtekort_off'].apply(cumsum_with_reset)
     df['cumulative_neerslagtekort'] = df.groupby('year')['neerslagtekort'].apply(cumsum_with_reset).reset_index(level=0, drop=True)
+    df['cumulative_neerslagtekort_off'] = df.groupby('year')['neerslagtekort_off'].apply(cumsum_with_reset).reset_index(level=0, drop=True)
 
 
     return df   
@@ -153,7 +155,8 @@ def plot_neerslagtekort(df):
     fig = go.Figure()
 
     for year, data in df.groupby('year'):
-        fig.add_trace(go.Scatter(x=data['date_1900'], y=data['cumulative_neerslagtekort'], mode='lines', name=str(year)))
+        #fig.add_trace(go.Scatter(x=data['date_1900'], y=data['cumulative_neerslagtekort'], mode='lines', name=str(year)))
+        fig.add_trace(go.Scatter(x=data['date_1900'], y=data['cumulative_neerslagtekort_off'], mode='lines', name=f"{str(year)}"))
 
     fig.update_layout(
         title='Cumulative Precipitation Deficit (Neerslagtekort) from April to September - Spaghetti Plot',
@@ -202,7 +205,7 @@ def get_dataframe_multiple_(stations,FROM, UNTIL):
         if stn !=None:
             print (f"Downloading {i+1}/{len(stations)}")
             fromx, until =  FROM.strftime("%Y%m%d"), UNTIL.strftime("%Y%m%d")    
-            url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start={fromx}&end={until}"
+            url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX:EV24&start={fromx}&end={until}"
         
             df_s = get_data(url)
             df_s = df_s.fillna(0)
@@ -275,40 +278,45 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
    
     df_master = get_dataframe_multiple_(stations, FROM, UNTIL)
 
-
-    daily_avg_cumulative_neerslagtekort = df_master.groupby('YYYYMMDD')['cumulative_neerslagtekort'].mean().reset_index()
+    daily_avg_cumulative_neerslagtekort_non_off = df_master.groupby('YYYYMMDD')['cumulative_neerslagtekort'].mean().reset_index()
+    
+    daily_avg_cumulative_neerslagtekort = df_master.groupby('YYYYMMDD')['cumulative_neerslagtekort_off'].mean().reset_index()
     df_master['year'] = df_master['YYYYMMDD'].dt.year
     
     # # Pivot and calculate statistics
     df_master["cumm_neerslag_etmaalsom"] = df_master.groupby(['STN', 'year'])["neerslag_etmaalsom"].cumsum()
+    df_master["cumm_temp_avg"] = df_master.groupby(['STN', 'year'])["temp_avg"].cumsum()
+    
     #df_grouped = df.groupby(['STN', 'year'])['value'].cumsum()
   
     make_spaggetti(df_master,  "cumulative_neerslagtekort")
     make_spaggetti(df_master,  "neerslag_etmaalsom")
     make_spaggetti(df_master,  "cumm_neerslag_etmaalsom")
-    plot_daily_cumm_neerslagtekort(daily_avg_cumulative_neerslagtekort)
+    make_spaggetti(df_master,  "cumm_temp_avg")
+    plot_daily_cumm_neerslagtekort(daily_avg_cumulative_neerslagtekort, daily_avg_cumulative_neerslagtekort_non_off)
     plot_average_various_years(daily_avg_cumulative_neerslagtekort)
     max_value_each_year(daily_avg_cumulative_neerslagtekort)
     first_day_of_dryness(df_master)
     multiple_lineair_regression(df_master)
-    scatter_eref_t(df_master)
+    scatter(df_master, 'temp_max','eref')
+    scatter(df_master, 'temp_max',"neerslag_etmaalsom")
     show_stations()
 
-def scatter_eref_t(df):
+def scatter(df,x,y):
     # Create the scatter plot using Plotly Express
-    fig = px.scatter(df, x='temp_max', y='eref' )
+    fig = px.scatter(df, x=x, y=y )
 
     
     # Calculate trendline coefficients
-    x = df['temp_max'].values
-    y = df['eref'].values
+    x_ = df[x].values
+    y_ = df[y].values
     
-    m, b = np.polyfit(x, y, 1)
+    m, b = np.polyfit(x_, y_, 1)
 
     # Add trendline
     trendline = go.Scatter(
-    x=df['eref'],
-    y=df['eref'] * m + b,  # y = mx + b
+    x=df[x],
+    y=df[x] * m + b,  # y = mx + b
     mode='lines',
     line=dict(color='red', width=2),
     name='Trendline',
@@ -351,7 +359,7 @@ def first_day_of_dryness(df_master):
         title = f'Number of days above {afkapwaarde}'
     
     elif mode =="max":
-        df_max = df_master.groupby(['stn_data', 'year'])['cumulative_neerslagtekort'].idxmax()
+        df_max = df_master.groupby(['stn_data', 'year'])['cumulative_neerslagtekort_off'].idxmax()
 
         # Extract the 'YYYYMMDD' values from the index of 'df_max'
         df = df_master.loc[df_max.values, ['stn_data','YYYYMMDD']].reset_index(drop=True)
@@ -365,7 +373,7 @@ def first_day_of_dryness(df_master):
 
     # Create a new dataframe with all the years in the desired range
     years = pd.DataFrame({
-        'year': pd.date_range(start=f'{pivot_table.index.min()}-01-01', end=f'{pivot_table.index.max()}-12-31', freq='Y').year
+        'year': pd.date_range(start=f'{pivot_table.index.min()}-01-01', end=f'{pivot_table.index.max()}-12-31', freq='YE').year
     })
 
     # Merge the two dataframes on the 'year' column, using a left join to keep all the years in the final dataframe
@@ -399,8 +407,8 @@ def first_day_of_dryness(df_master):
                     hovertemplate='%{text}'
                 ))
         # Custom tick labels for y-axis
-        tickvals = pd.date_range(start='2023-01-01', end='2023-12-31', freq='M').dayofyear
-        ticktext = pd.date_range(start='2023-01-01', end='2023-12-31', freq='M').strftime('%m-%d')
+        tickvals = pd.date_range(start='2023-01-01', end='2023-12-31', freq='ME').dayofyear
+        ticktext = pd.date_range(start='2023-01-01', end='2023-12-31', freq='ME').strftime('%m-%d')
 
         # Update layout
         fig.update_layout(
@@ -441,9 +449,9 @@ def first_day_of_dryness(df_master):
     
 def max_value_each_year(df):
     # Create scatter plot with Plotly
-    max_cumulative_neerslagtekort = df.groupby('year')['cumulative_neerslagtekort'].max()
-    avg_cumulative_neerslagtekort = df.groupby('year')['cumulative_neerslagtekort'].mean()
-    last_cumulative_neerslagtekort = df.groupby('year')['cumulative_neerslagtekort'].last()
+    max_cumulative_neerslagtekort = df.groupby('year')['cumulative_neerslagtekort_off'].max()
+    avg_cumulative_neerslagtekort = df.groupby('year')['cumulative_neerslagtekort_off'].mean()
+    last_cumulative_neerslagtekort = df.groupby('year')['cumulative_neerslagtekort_off'].last()
 
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=max_cumulative_neerslagtekort.index, y=max_cumulative_neerslagtekort.values, name='max',mode='lines'))
@@ -462,7 +470,7 @@ def max_value_each_year(df):
 def plot_average_various_years(daily_avg_cumulative_neerslagtekort):
     daily_avg_cumulative_neerslagtekort['date_1900'] = pd.to_datetime(daily_avg_cumulative_neerslagtekort['YYYYMMDD'].dt.strftime('%d-%m-1900'), format='%d-%m-%Y')
 
-    pivot_daily_avg_cumulative_neerslagtekort = daily_avg_cumulative_neerslagtekort.pivot(index='date_1900', columns='year', values='cumulative_neerslagtekort')
+    pivot_daily_avg_cumulative_neerslagtekort = daily_avg_cumulative_neerslagtekort.pivot(index='date_1900', columns='year', values='cumulative_neerslagtekort_off')
     # Create a line plot using Plotly
     fig = go.Figure()
     for column in pivot_daily_avg_cumulative_neerslagtekort.columns:
@@ -476,11 +484,12 @@ def plot_average_various_years(daily_avg_cumulative_neerslagtekort):
    
     st.plotly_chart(fig)
 
-def plot_daily_cumm_neerslagtekort(daily_avg_cumulative_neerslagtekort):
+def plot_daily_cumm_neerslagtekort(daily_avg_cumulative_neerslagtekort, daily_avg_cumulative_neerslagtekort_non_off):
     daily_avg_cumulative_neerslagtekort['year'] = daily_avg_cumulative_neerslagtekort['YYYYMMDD'].dt.year
      # Create a line plot using Plotly
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=daily_avg_cumulative_neerslagtekort['YYYYMMDD'], y=daily_avg_cumulative_neerslagtekort["cumulative_neerslagtekort"], mode='markers',  name="cumulative_neerslagtekort"))
+    fig.add_trace(go.Scatter(x=daily_avg_cumulative_neerslagtekort['YYYYMMDD'], y=daily_avg_cumulative_neerslagtekort["cumulative_neerslagtekort_off"], mode='markers',  marker=dict(size=2) , name="cumulative_neerslagtekort"))
+    fig.add_trace(go.Scatter(x=daily_avg_cumulative_neerslagtekort_non_off['YYYYMMDD'], y=daily_avg_cumulative_neerslagtekort_non_off["cumulative_neerslagtekort"], mode='markers',  marker=dict(size=2) ,name="cumulative_neerslagtekort off"))
 
     fig.update_layout(
         title='Landelijk gemiddelde cumm. neerslagtekort over 11 stations door de tijd heen',

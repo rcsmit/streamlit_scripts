@@ -26,7 +26,7 @@ class LoessAccessor:
         return loess_values
 
 
-@st.cache_data
+#@st.cache_data
 def get_data(url):
     header = None
     print (url)
@@ -63,6 +63,7 @@ def get_data(url):
         # RH        : Etmaalsom van de neerslag (in 0.1 mm) (-1 voor <0.05 mm) / Daily precipitation amount (in 0.1 mm) (-1 for <0.05 mm)
         # UN        : Minimale relatieve vochtigheid (in procenten)
         # UX        : Maximale relatieve vochtigheid (in procenten)
+        # EV24      : Referentiegewasverdamping (Makkink) (in 0.1 mm) / Potential evapotranspiration (Makkink) (in 0.1 mm)
         #  0  1          2    3    4  5   6     7   8   9    10  11  12 3   4  5  16     7    8  9 20  
         # STN,YYYYMMDD,DDVEC,FHVEC,FG,FHX,FHXH,FHN,FHNH,FXX,FXXH,TG,TN,TNH,TX,TXH,T10N,T10NH,SQ,SP,Q,
         # 21 22  3   4    5   6 7  8  9   30   1    2   3   4  5  6
@@ -83,7 +84,8 @@ def get_data(url):
             [9, "neerslag_duur"],
             [10, "neerslag_etmaalsom"],
             [11, "RH_min"],
-            [12, "RH_max"]
+            [12, "RH_max"],
+            [13, "EV24"]
         ]
    
         for c in column_replacements:
@@ -138,11 +140,12 @@ def get_data(url):
             "zonneschijnduur",
             "neerslag_duur",
             "neerslag_etmaalsom",
+            "EV24"
         ]
         df["glob_straling"] = pd.to_numeric(df["glob_straling"], errors='coerce')
-    
+        df['neerslag_etmaalsom'].replace(" ", 0)
         for d in to_divide_by_10:
-            df['neerslag_etmaalsom'].replace(" ", 0)
+            
             df[d] = pd.to_numeric(df[d], errors='coerce')
             try:   
                 df[d] = df[d] / 10
@@ -155,6 +158,7 @@ def get_data(url):
     mask = (df['neerslag_duur'].notna()) & (df['neerslag_duur'].ne(0))
     df.loc[mask, 'neerslag_etmaalsom_div_duur'] = df.loc[mask, 'neerslag_etmaalsom'] / df.loc[mask, 'neerslag_duur']     
     df['neerslag_etmaalsom'] = df['neerslag_etmaalsom'].replace(-0.1, 0)
+    
     return df
 
 

@@ -64,7 +64,8 @@ def main():
                 ["[35] Life Expectancy NL","life_expectancy_nl"],
                 ["[36] Weblogs","weblogs"],
                 ["[37] Yepcheck","yepcheck"], 
-                ["[38] Bollinger Bot","bollinger_bot"]
+                ["[38] Bollinger Bot","bollinger_bot"],
+                ["[39] No shows","no_shows"]
                 ]
     
     

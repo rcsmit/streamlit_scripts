@@ -42,9 +42,9 @@ except AttributeError:
     pass
 
 
-@st.cache_data (ttl=60 * 60 * 24)
+#@st.cache_data (ttl=60 * 60 * 24)
 def getdata_wrapper(stn, fromx, until):
-    url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start={fromx}&end={until}"
+    url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX:EV24&start={fromx}&end={until}"
     
     df = get_data(url)
      
@@ -186,11 +186,11 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
         neerslagtekort(df)
     elif mode == "neerslagtekort_meerdere":
         st.subheader("Neerslagtekort")
-        try:
-            neerslagtekort_meerdere_stations(FROM, UNTIL)
-        except:
-            st.error("Under construction")
-            st.stop()
+        #try:
+        neerslagtekort_meerdere_stations(FROM, UNTIL)
+        # except:
+        #     st.error("Under construction")
+        #     st.stop()
     elif mode == "per dag in div jaren":
         show_per_periode(df, gekozen_weerstation, what_to_show, "per_dag", graph_type)
         datefield = None
@@ -264,7 +264,7 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
             datefield = "YYYY"
             if mode == "jaargemiddelde":
                 df = df.groupby(["YYYY"], sort=True).mean(numeric_only = True).reset_index()
-                st.write(df)
+                #st.write(df)
                 title = f"Jaargemiddelde {what_to_show_as_txt}  van {from_[:4]} - {until_[:4]} in {gekozen_weerstation}"
                 st.sidebar.write(
                     "Zorg ervoor dat de einddatum op 31 december valt voor het beste resultaat "
@@ -310,8 +310,11 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
         
         show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show, graph_type, centersmooth, show_ci, show_loess, wdw_ci, show_parts, no_of_parts)
         # show_warmingstripes(df, what_to_show, title, False)
-
-    st.sidebar.write(f"URL to get data: {url}")
+    try:
+        st.sidebar.write(f"URL to get data: {url}")
+    except:
+        # in case of neerslag tekort meerdere
+        pass
 
 def main():
     
