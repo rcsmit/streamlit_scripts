@@ -233,6 +233,7 @@ def select(df, select_field, van, tot):
     return df
 
 def select_maand(df, maand, jaar):
+    
     df = df[(df["MM"] == maand) & ( df["YYYY"] == jaar )].copy(deep=False)
     return df
 
@@ -274,18 +275,18 @@ def show_df(df, heatmap, title):
     st.write(df.style.format(None, na_rep="-", precision=2))
     #delete the last row and column
     df = df.iloc[:-1, :-1]
-
+    if heatmap:
     # Generate a heatmap
-    fig = px.imshow(df,
-                    labels=dict(x="Year", y="Month", color="Value"),
-                    x=df.columns,
-                    y=df.index)
+        fig = px.imshow(df,
+                        labels=dict(x="Year", y="Month", color="Value"),
+                        x=df.columns,
+                        y=df.index)
 
-    fig.update_layout(title="Heatmap of Values by Month and Year",
-                    xaxis_title="Year",
-                    yaxis_title="Month")
+        fig.update_layout(title="Heatmap of Values by Month and Year",
+                        xaxis_title="Year",
+                        yaxis_title="Month")
 
-    st.plotly_chart(fig)
+        st.plotly_chart(fig)
 
     # if heatmap == True:
     #     st.write(f"Heatmap {max_value}")
@@ -457,7 +458,7 @@ def show_all(df):
 def find_activities_in_month(df):
     # Activeitein in een bepaalde maand
     month = st.sidebar.slider("Maand", 7,12,1)
-    year = st.sidebar.slider("Jaar", 2010,2021,2021)
+    year = st.sidebar.slider("Jaar", 2010,2024,2021)
 
 
     df_maand_jaar = select_maand(df, month, year)
@@ -475,7 +476,7 @@ def find_activities_in_month(df):
                     "november",
                     "december",
                 ]
-    show_df(df_maand_jaar, True, f"Activiteiten in {months[month-1]} {year}")
+    show_df(df_maand_jaar, False, f"Activiteiten in {months[month-1]} {year}")
 def find_biggest_distances(df):
     # Verste activiteiten
     df = df.sort_values(by=['Afstand'], ascending = False)

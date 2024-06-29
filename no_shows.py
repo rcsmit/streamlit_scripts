@@ -385,7 +385,8 @@ def main():
     st.info("https://www.nytimes.com/2007/05/30/business/30bump.html?pagewanted=all&_r=0")
 
 
-main()
+if __name__ == "__main__":
+    main()
 
 #107 x 0,9 = 96.3
  # binominal - n=107, x=96 (X<=96)=0.5
