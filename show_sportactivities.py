@@ -34,23 +34,29 @@ def get_data(who):
         df_2022 = rename_columns(df_2022)
         df_2023a = rename_columns(df_2023a)
         df_2023b = rename_columns(df_2023b)
-           
-       
-        
-        #df_tm_2022 = df_2022.append(df_new, ignore_index=False)
+    
         df_tm_2022 = pd.concat([df_2022, df_new], ignore_index=False)
 
         #df = df_2023a.append(df_tm_2022, ignore_index=False)
         df_ = pd.concat([df_2023a, df_tm_2022], ignore_index=False)
         df = pd.concat([df_2023b, df_], ignore_index=False)
+        # st.write(df["Tijd"])
+        # df['Tijd_h'] = pd.to_datetime(df['Tijd'], format='%H:%M:%S').dt.hour
+        # df['Tijd_m'] = pd.to_datetime(df['Tijd'], format='%H:%M:%S').dt.minute
+        # df['Tijd_s'] = pd.to_datetime(df['Tijd'], format='%H:%M:%S').dt.second
 
-        df['Tijd_h'] = pd.to_datetime(df['Tijd']).dt.hour
-        df['Tijd_m'] = pd.to_datetime(df['Tijd']).dt.minute
-        df['Tijd_s'] = pd.to_datetime(df['Tijd']).dt.second
+        #Convert 'Tijd' column to timedelta
+        df['Tijd_timedelta'] = pd.to_timedelta(df['Tijd'])
+
+        # Extract the hour, minute, second, and fractional second from the timedelta column
+        df['Tijd_h'] = df['Tijd_timedelta'].dt.components['hours']
+        df['Tijd_m'] = df['Tijd_timedelta'].dt.components['minutes']
+        df['Tijd_s'] = df['Tijd_timedelta'].dt.components['seconds']
+        df['Tijd_ms'] = df['Tijd_timedelta'].dt.components['milliseconds']
         df['Tijd_seconds'] = (df['Tijd_h']*3600) + (df['Tijd_m']*60) + df['Tijd_s'] 
         df['gem_snelh'] = df['Afstand'] / df['Tijd_seconds'] * 3600.0 
 
-        df = filter_df(df, "Activiteittype",1).copy(deep=False)
+        df = filter_df(df, "Activiteittype",2).copy(deep=False)
         
     elif who == "Didier":
         url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/activities_didier.csv"
@@ -263,9 +269,23 @@ def show_scatter(df, x, what, cat, title):
         st.plotly_chart(fig)
 
 def show_df(df, heatmap, title):
-    max_value = df.max()
+    #max_value = df.max()
     st.write(title)
     st.write(df.style.format(None, na_rep="-", precision=2))
+    #delete the last row and column
+    df = df.iloc[:-1, :-1]
+
+    # Generate a heatmap
+    fig = px.imshow(df,
+                    labels=dict(x="Year", y="Month", color="Value"),
+                    x=df.columns,
+                    y=df.index)
+
+    fig.update_layout(title="Heatmap of Values by Month and Year",
+                    xaxis_title="Year",
+                    yaxis_title="Month")
+
+    st.plotly_chart(fig)
 
     # if heatmap == True:
     #     st.write(f"Heatmap {max_value}")
@@ -329,6 +349,7 @@ def find_fastest_per_year(df):
 def find_fastest_activities(df):
     # Snelste activiteiten
     df = df.sort_values(by=['gem_snelh'], ascending = False)
+   
     show_df(df.head(25), True, "Snelste activiteiten")
     #show_df(df_legenda.style.format(None, na_rep="-").applymap(lambda x:  cell_background_helper(x,"lineair", max_value,None)).set_precision(2))
     find_pr_of_year(df, "gem_snelh")
@@ -374,23 +395,23 @@ def add_end_date(shoe_list):
     return shoe_list
 
 def shoe_distances(df):
-    shoe_list = [["28/07/2010", "brooks gts9"],
-                ["15/01/2011", "saucony pro ride 3"], #roodgrijswit
-                ["18/04/2011", "Nike Lunar Eclips+"],  #grijsgeelpaars
-                ["09/03/2012", "Nike Lunar Eclips"], # water reppelent
-                ["25/04/2013", "nike lunareclipse 3"], #zwart geel
-                ["31/07/2014", "nike lunarglide 6"],
-                ["13/03/2016", "Lunarglide 7"],
-                ["14/09/2018", "lunarglide 9"],
-                ["14/04/2021", "Zoom 37"],
-                ["14/02/2023", "Asics GT2000 10"],
-                ["29/06/2024", "Asics Gel pulse 13"]]
+    shoe_list = [["28/07/2010", "brooks gts9","_"],
+                ["15/01/2011", "saucony pro ride 3","rood grijs wit"], #roodgrijswit
+                ["18/04/2011", "Nike Lunar Eclips+","grijs geel paars"],  #grijsgeelpaars
+                ["09/03/2012", "Nike Lunar Eclips", "water repelent"], # water reppelent
+                ["25/04/2013", "nike lunareclipse 3", "zwart geel"], #zwart geel
+                ["31/07/2014", "nike lunarglide 6", "_"],
+                ["13/03/2016", "Lunarglide 7", "Zwart wit mesh"],
+                ["14/09/2018", "lunarglide 9", "Zwart wit mesh"],
+                ["14/04/2021", "Zoom 37", "Zart blauw rood"],
+                ["14/02/2023", "Asics GT2000 10", "Blauw"],
+                ["29/06/2024", "Asics Gel pulse 13",  "Zwart neongroengeel"]]
     shoe_list = add_end_date(shoe_list)
     table = []
     for shoe in shoe_list:
         
         start = dt.datetime.strptime(shoe[0], '%d/%m/%Y').date()
-        until =  dt.datetime.strptime(shoe[2], '%d/%m/%Y').date()
+        until =  dt.datetime.strptime(shoe[3], '%d/%m/%Y').date()
         # Calculate the difference in days
         days_diff = (until - start).days
 
@@ -399,8 +420,8 @@ def shoe_distances(df):
 
         
         number_of_activities, distance, avg_speed = in_between_two_dates(df, start ,  until, False )
-        table.append([shoe[1],shoe[0],shoe[2],days_diff,round(days_diff/365,1), number_of_activities, distance, avg_speed])
-    cols = ["shoe_name", "start", "end", "days", "years", "activities", "distance", "avg_speed"]
+        table.append([shoe[1],shoe[2],shoe[0],shoe[3],days_diff,round(days_diff/365,1), number_of_activities, distance, avg_speed])
+    cols = ["shoe_name", "color","start", "end", "days", "years", "activities", "distance", "avg_speed"]
     
     # Create the DataFrame
     df = pd.DataFrame(table, columns=cols)
@@ -426,6 +447,7 @@ def find_nr_activities_per_month_per_year(df):
 
 def find_avg_km_avg_speed_per_year(df):
     # Gemiddelde afstand en snelheid per jaar
+    df=df[["YYYY","Afstand","gem_snelh"]]
     df_mean = df.groupby(["YYYY"]).mean()
     df_mean = df_mean[["Afstand","gem_snelh"]]
     show_scatter(df_mean, "Afstand", "gem_snelh", False, "Gemiddelde afstand en snelheid per jaar")
@@ -535,11 +557,12 @@ def main():
         shoe_distances
          ]
     st.sidebar.subheader("Menu")
-    menu_choice = st.sidebar.radio("",lijst, index=0)
+    menu_choice = st.sidebar.radio("_",lijst, index=0)
     for i, choice in enumerate(lijst):
         if menu_choice == choice:
             st.header(lijst[i])
             functies[i](df)
 
 if __name__ == "__main__":
+    st.write("------------")
     main()
