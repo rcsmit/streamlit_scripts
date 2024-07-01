@@ -196,8 +196,8 @@ def main():
                 website = " "
                 
             depot_node = (row["LAT"], row["LON"]) 
-            google_link = f"https://www.google.com/maps/@{row["LAT"]},{row["LON"]},17z"
-            maps_search = f'https://www.google.com/maps/search/{row["naam"].replace(" ","+")}@/{row["LAT"]},{row["LON"]},15z' 
+            google_link = f"https://www.google.com/maps/\@{row["LAT"]},{row["LON"]},17z"
+            maps_search = f'https://www.google.com/maps/search/{row["naam"].replace(" ","+")}\@/{row["LAT"]},{row["LON"]},15z' 
             remarks = f'<div style="font-size: 12pt; font-family: Arial, Helvetica, sans-serif;"><b>{row["naam"]}</b><br><i>{remarks_}</i><br>{website}<br>{row["address"]}<br>Click for more info</div>'
             html = f'<div style="font-size: 12pt;  font-family: Arial, Helvetica, sans-serif;"><b>{row["naam"]}</b><br>{row["address"]}<br><br><i>{remarks_}</i><br><A HREF="{website}" target="_blank">{website}</A><br><br><a href="{maps_search}" target="_blank">Google maps search</a><BR><BR><B>INFO FROM 2019 or earlier. CHECK INFO</B><br><br>{row["Layer"]}</div>'
 
