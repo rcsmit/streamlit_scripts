@@ -201,6 +201,7 @@ def main():
             remarks = f'<div style="font-size: 12pt; font-family: Arial, Helvetica, sans-serif;"><b>{row["naam"]}</b><br><i>{remarks_}</i><br>{website}<br>{row["address"]}<br>Click for more info</div>'
             html = f'<div style="font-size: 12pt;  font-family: Arial, Helvetica, sans-serif;"><b>{row["naam"]}</b><br>{row["address"]}<br><br><i>{remarks_}</i><br><A HREF="{website}" target="_blank">{website}</A><br><br><a href="{maps_search}" target="_blank">Google maps search</a><BR><BR><B>INFO FROM 2019 or earlier. CHECK INFO</B><br><br>{row["Layer"]}</div>'
 
+
             # Create an iframe to contain the HTML
             iframe = folium.IFrame(html, width=400, height=200)
 
