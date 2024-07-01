@@ -239,6 +239,7 @@ def main():
     df_concat = pd.DataFrame()
     for i,l in enumerate(layers_to_show):
         df_temp = df_[df_['Layer'] == l]
+        df_temp=df_temp[["naam","address","website","remarks"]]
         df_concat = pd.concat([df_concat,df_temp])
         st.subheader(l)
         st.table(df_temp)
