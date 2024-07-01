@@ -56,10 +56,11 @@ def show_credits():
     st.write(credits, unsafe_allow_html=True)
 
 def create_icon_function(color: str) -> str:
+    # we have to divide by 2 because the markers are added twice.
     return f"""
     function(cluster) {{
         return L.divIcon({{
-            html: '<font size=4 color="{color}"><center>' + cluster.getChildCount() + '</center></font>',
+            html: '<font size=4 color="{color}"><center>' + cluster.getChildCount()/2 + '</center></font>',
             className: 'mycluster marker-cluster marker-cluster-small',
             iconSize: new L.Point(40, 40),
         }});
@@ -102,13 +103,16 @@ def create_map(layers_to_show: list, df: pd.DataFrame):
             """
             iframe = folium.IFrame(html, width=400, height=300)
             popup = folium.Popup(iframe, max_width=2650)
+            # markers are added twice to the cluster, we'll have to correct later
             folium.CircleMarker(
                 location=depot_node, radius=3, color=colors[i % len(colors)],
                 fill_color=colors[i % len(colors)], fill_opacity=0.7
             ).add_to(cluster)
             folium.Marker(
                 location=depot_node,
-                icon=DivIcon(html=f'<div style="width: 300px;font-size: 10pt">{row[name_field]}</div>'),
+                icon_size=(30,30),
+                icon_anchor=(0,5),
+                icon=DivIcon(html=f'<div style="width: 300px;font-size: 12pt">{row[name_field]}</div>'),
                 tooltip=row[name_field], popup=popup
             ).add_to(cluster)
 
