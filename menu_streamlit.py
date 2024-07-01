@@ -66,7 +66,7 @@ def main():
                 ["[37] Yepcheck","yepcheck"], 
                 ["[38] Bollinger Bot","bollinger_bot"],
                 ["[39] No shows","no_shows"],
-                ["[40] Rome","Rome infomap"]
+                ["[40] Rome","Rome infomap"] 
                 ]
     
     
