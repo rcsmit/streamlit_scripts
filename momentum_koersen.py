@@ -142,8 +142,13 @@ def create_transition_matrix(df, rate_column):
 
 
 def main():
-    st.header("Momentum koersen")
+    st.header("Momentum koersen")   
+
+
     choice, period, interval, window = input_options()
+    st.info("""Analyzes and displays transition matrices to identify patterns in rate changes.
+               This app can be used for momentum analysis of currencies and cryptocurrencies, 
+               providing insights into trends and potential market movements.""")
     df = get_data(choice, period, interval, window)
     st.write (df)
     rate_column = f'close_{choice}'
