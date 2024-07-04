@@ -158,6 +158,7 @@ def main():
         st.table(df_temp)
 
     csv = convert_df(df_concat)
+    st.write("")
     st.download_button("Click to download", csv, f"info_{layer}.csv", "text/csv", key=f'download-csv-{layer}')
 
     show_credits()
