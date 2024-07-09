@@ -212,8 +212,10 @@ class CommonParameters:
         #      x.return_flighttickets, x.flighttickets_visa_run,extras, debug):
         
         self.proposed_salary_month = st.sidebar.number_input(
-            "Proposed salary per month", 0, 10000, 2130
+            "Proposed gross salary per month", 0, 10000, 2369
         )
+        self.calculate_extras = st.sidebar.selectbox("Include extras (vak.geld/-dgn, transtieverg.)", [True,False], index=0)
+        
         self.fixed_monthly_costs = st.sidebar.number_input(
             "Fixed monthly costs ('vaste lasten')", 0, 10000, 80
         )
@@ -229,7 +231,7 @@ class CommonParameters:
         )
         self.various_nl = st.sidebar.number_input("Various NL (Total)", 0, 10000, 200)
         self.monthly_costs_asia = st.sidebar.number_input(
-            "Monthly costs Asia", 0, 10000, 750)
+            "Monthly costs Asia", 0, 10000, 850)
         
         self.insurance_asia = st.sidebar.number_input("Travel insurance Asia (per month)", 0, 10000, 75)
         self.various_asia = st.sidebar.number_input("Various Asia total", 0, 10000, 200)
@@ -245,7 +247,6 @@ class CommonParameters:
         )  # integrated in montly costs asia 400 / flightickets asia
         self.min_delta = 0  # st.sidebar.number_input("min_delta",None,None,0)
         self.max_delta = 100  # st.sidebar.number_input("max_delta",None,None,100)
-        self.calculate_extras = st.sidebar.selectbox("Include extras (vak.geld/-dgn, transtieverg.)", [True,False], index=0)
         self.debug = st.sidebar.selectbox("Show all lines/graphs", [True,False], index=1)
         self.show_output = False #st.sidebar.selectbox("Show output", [True,False], index=1)
              

@@ -5,9 +5,9 @@ import plotly.express as px  # For easy colormap generation
 import numpy as np  # For linspace to distribute sampling
 import math
 from datetime import datetime
-
-
 from scipy.stats import linregress
+
+from scipy.stats import linregress, t
 import statsmodels.api as sm
 from scipy import stats
 
@@ -338,7 +338,7 @@ def scatter(df,x,y):
     # Display the plot
     st.plotly_chart(fig)
 def first_day_of_dryness(df_master):
-    mode = st.sidebar.selectbox("Modus", ["first","max","count"], 0)
+    mode = st.sidebar.selectbox("Modus [first|max|count]", ["first","max","count"], 0)
     if mode !="max":
         afkapwaarde = st.sidebar.number_input("Treshold first day of dryness",1,365, 50)
     else:
@@ -465,8 +465,116 @@ def max_value_each_year(df):
     )
 
     st.plotly_chart(fig)
+    trend = st.sidebar.selectbox("Trend [True] of Mean[False]", [True,False],0)
 
+    # checking https://x.com/mkeulemans/status/1810592523347210703
+    scatter_luxe(max_cumulative_neerslagtekort.index, max_cumulative_neerslagtekort.values, "max", trend)
+    scatter_luxe(avg_cumulative_neerslagtekort.index, avg_cumulative_neerslagtekort.values, "avg", trend)
+    scatter_luxe(last_cumulative_neerslagtekort.index, last_cumulative_neerslagtekort.values, "last", trend)
+   
+
+def scatter_luxe(x,y, title, trend):
+    """Make scatterplot, trendline, equitation and R2 with two lists
+
+    Args:
+        x (_type_): _description_
+        y (_type_): _description_
+    """
+
+    # Calculate the linear regression
+    slope, intercept, r_value, p_value, std_err = linregress(x, y)
+    line = slope * np.array(x) + intercept
+
+    # Create the scatter plot
+    fig = go.Figure()
+
+    # Add scatter plot
+    fig.add_trace(go.Scatter(x=x, y=y, mode='markers+lines', name='Data'))
+
+
+    if trend == True:
+       
+        # Prepare the equation and R^2
+        equation = f'y = {slope:.2f}x + {intercept:.2f}'
+        r_squared = f'R² = {r_value**2:.2f}'
+
+
+        
+        # Calculate the residuals and standard deviation
+        residuals = y - line
+        std_res = np.std(residuals)
+
+        # Calculate prediction intervals (2x standard deviation of residuals)
+        conf = 2 * std_res
+        lower_bound = line - conf
+        upper_bound = line + conf
+        # Create the scatter plot
+        
+
+        # Add trendline
+        fig.add_trace(go.Scatter(x=x, y=line, mode='lines',  line=dict(width=2), name='Trendline'))
+
+        # Add confidence interval
+        fig.add_trace(go.Scatter(
+            x=np.concatenate([x, x[::-1]]),
+            y=np.concatenate([upper_bound, lower_bound[::-1]]),
+            fill='toself',
+            fillcolor='rgba(0,100,80,0.1)',
+            line=dict(color='rgba(255,255,255,0)'),
+            hoverinfo="skip",
+            showlegend=True,
+            name='95% Confidence Interval'
+        ))
+
+        # Add equation and R^2 annotation
+        fig.add_annotation(x=max(x), y=max(y), 
+                        text=f'{equation}<br>{r_squared}', 
+                        showarrow=False, 
+                        font=dict(size=12))
+
+        
+    else:
+
+       
+        # Calculate the mean of y-values
+        mean_y = np.mean(y)
+        std_y = np.std(y)
+        
+        conf = 2*std_y
     
+        # Add horizontal mean line
+        fig.add_trace(go.Scatter(
+            x=[min(x), max(x)],
+            y=[mean_y, mean_y],
+            mode='lines',
+            line=dict(color='blue', dash='dash'),
+            name='Mean'
+        ))
+
+        # Add shaded areas for mean ± 2 standard deviations
+        fig.add_trace(go.Scatter(
+            x=[min(x), max(x), max(x), min(x)],
+            y=[mean_y + conf, mean_y + conf, mean_y - conf, mean_y - conf],
+            fill='toself',
+            fillcolor='rgba(100,0,80,0.1)',
+            line=dict(color='rgba(255,255,255,0)'),
+            hoverinfo="skip",
+            showlegend=True,
+            name='Mean ± 2 SD'
+        ))
+
+       
+
+       
+    # Show the figure
+    # Update layout
+    fig.update_layout(
+        title=f'Neerslagtekort - {title}',
+        xaxis_title='X-axis',
+        yaxis_title='Y-axis',
+        showlegend=True
+    )
+    st.plotly_chart(fig)
 def plot_average_various_years(daily_avg_cumulative_neerslagtekort):
     daily_avg_cumulative_neerslagtekort['date_1900'] = pd.to_datetime(daily_avg_cumulative_neerslagtekort['YYYYMMDD'].dt.strftime('%d-%m-1900'), format='%d-%m-%Y')
 

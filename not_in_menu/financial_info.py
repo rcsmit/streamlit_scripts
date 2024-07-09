@@ -63,10 +63,10 @@ def read():
     # df = df[(df['jaar'] == "2023")| (df['jaar'] == "2022") | (df['description'] == "starting balance_2022")]
     
     # de grootboeken kloppen niet als je 2021 toevoegt
-    df = df[(df['jaar'] == "2023")| (df['jaar'] == "2022") | (df['description'] == "starting balance_2022")]
+    df = df[(df['jaar'] == "2024")|(df['jaar'] == "2023")| (df['jaar'] == "2022") | (df['description'] == "starting balance_2022")]
     #df = df[(df['jaar'] == "2023")| (df['jaar'] == "2022") |(df['jaar'] == "2021")| (df['description'] != "STARTING_BALANCE_2022")]
     # Convert all text data in the DataFrame to uppercase
-    df = df.apply(lambda x: x.str.upper() if x.dtype == "object" else x)
+    #df = df.apply(lambda x: x.str.upper() if x.dtype == "object" else x)
     df = df.fillna(0)
 
     new_table = []
@@ -94,6 +94,8 @@ class Account:
 
     def debit(self, amount):
         self.balance += amount
+
+        
 
     def credit(self, amount):
         self.balance -= amount
@@ -247,7 +249,7 @@ def make_pivot_period_trial_balance(ledger, accounts_source, period):
     """    
     # Define the start and end year
     start_year = 2023
-    end_year = 2023
+    end_year = 2024
 
     # Initialize an empty DataFrame to store the trial balances
     trial_balance_df = pd.DataFrame(columns=['Date', 'Account', 'Balance'])
@@ -298,9 +300,9 @@ def make_monthly_list():
     """
 
     last_days = [(datetime.datetime(2021, 12, 31)).date()]
-    for year in range(2021, 2024):
+    for year in range(2021, 2025):
         for month in range(1, 13):
-            if month >10 and year == 2023:
+            if month >7 and year == 2024:
                 break
             else:
                 if month == 12:
@@ -408,8 +410,6 @@ def show_sunburst_annotated(df, year, divide_factor):
     df["TOTAL_x_inv"] = df["TOTAL_x"]*-1 
     df["TOTAL_x_inv_divided"] = df["TOTAL_x_inv"]/divide_factor
 
-   
-   
 
     df=df[[aaa,bbb,ccc,ddd]]
 
@@ -577,8 +577,8 @@ def make_graph_monthly_expenses(period, divide_factor, df_):
 
     df_t_['month'] = df_t_['index']
 
-    df_t_ = df_t_.drop(['index'], axis=1)
 
+    df_t_ = df_t_.drop(['index'], axis=1)
     st.write(df_t_)
     # Delete first row (starting balance) and last three rows
     df_t_ = df_t_.iloc[1:-3]
@@ -601,7 +601,7 @@ def make_graph_monthly_expenses(period, divide_factor, df_):
     st.plotly_chart(fig2)
     
 
-    for y in ["2022", "2023"]:
+    for y in ["2022", "2023", "2024"]:
         show_sunburst_annotated(df_, y, divide_factor)
 
 def give_totals_boodschappen(df):
@@ -656,7 +656,6 @@ def main():
     df, df_cat = read()
     st.write(df)
     give_totals_boodschappen(df)
-
 
 
     accounts = pd.concat([df['source'], df[modus]]).unique().tolist()
