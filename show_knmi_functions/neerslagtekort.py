@@ -497,6 +497,7 @@ def scatter_luxe(x,y, title, trend):
         # Prepare the equation and R^2
         equation = f'y = {slope:.2f}x + {intercept:.2f}'
         r_squared = f'R² = {r_value**2:.2f}'
+        r_ = f'R = {r_value:.2f}'
 
 
         
@@ -528,7 +529,7 @@ def scatter_luxe(x,y, title, trend):
 
         # Add equation and R^2 annotation
         fig.add_annotation(x=max(x), y=max(y), 
-                        text=f'{equation}<br>{r_squared}', 
+                        text=f'{equation}<br>{r_}<br>{r_squared}', 
                         showarrow=False, 
                         font=dict(size=12))
 
