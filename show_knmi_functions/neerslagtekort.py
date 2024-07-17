@@ -580,12 +580,17 @@ def plot_average_various_years(daily_avg_cumulative_neerslagtekort):
     daily_avg_cumulative_neerslagtekort['date_1900'] = pd.to_datetime(daily_avg_cumulative_neerslagtekort['YYYYMMDD'].dt.strftime('%d-%m-1900'), format='%d-%m-%Y')
 
     pivot_daily_avg_cumulative_neerslagtekort = daily_avg_cumulative_neerslagtekort.pivot(index='date_1900', columns='year', values='cumulative_neerslagtekort_off')
+    
+    # Compute the median across years for each day
+    median_daily_cumulative_neerslagtekort = pivot_daily_avg_cumulative_neerslagtekort.median(axis=1)
+
+    # Plot the median
+    fig.add_trace(go.Scatter(x=median_daily_cumulative_neerslagtekort.index, y=median_daily_cumulative_neerslagtekort, mode='lines', line=dict(color='red', width=3, dash='dash'), name='Median'))
+
     # Create a line plot using Plotly
     fig = go.Figure()
     for column in pivot_daily_avg_cumulative_neerslagtekort.columns:
         if column == 2024:
-
-
             fig.add_trace(go.Scatter(x=pivot_daily_avg_cumulative_neerslagtekort.index, y=pivot_daily_avg_cumulative_neerslagtekort[column], mode='lines', line=dict(color='black',width=3), name=str(column)))
         else:
             fig.add_trace(go.Scatter(x=pivot_daily_avg_cumulative_neerslagtekort.index, y=pivot_daily_avg_cumulative_neerslagtekort[column], mode='lines', line=dict(width=0.8),name=str(column)))
