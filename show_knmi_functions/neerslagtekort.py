@@ -593,7 +593,7 @@ def plot_average_various_years(daily_avg_cumulative_neerslagtekort):
         else:
             fig.add_trace(go.Scatter(x=pivot_daily_avg_cumulative_neerslagtekort.index, y=pivot_daily_avg_cumulative_neerslagtekort[column], mode='lines', line=dict(width=0.8),name=str(column)))
     # Plot the median
-    fig.add_trace(go.Scatter(x=median_daily_cumulative_neerslagtekort.index, y=median_daily_cumulative_neerslagtekort, mode='lines', line=dict(color='red', width=3, dash='dash'), name='Median'))
+    fig.add_trace(go.Scatter(x=median_daily_cumulative_neerslagtekort.index, y=median_daily_cumulative_neerslagtekort, mode='lines', line=dict(color='red', width=3), name='Median'))
         
     fig.update_layout(
         title=f'Landelijk gemiddelde cumm. neerslagtekort over 11 stations / verschillende jaren',
