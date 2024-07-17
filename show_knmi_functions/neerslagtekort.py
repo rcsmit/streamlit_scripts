@@ -584,9 +584,7 @@ def plot_average_various_years(daily_avg_cumulative_neerslagtekort):
     # Compute the median across years for each day
     median_daily_cumulative_neerslagtekort = pivot_daily_avg_cumulative_neerslagtekort.median(axis=1)
 
-    # Plot the median
-    fig.add_trace(go.Scatter(x=median_daily_cumulative_neerslagtekort.index, y=median_daily_cumulative_neerslagtekort, mode='lines', line=dict(color='red', width=3, dash='dash'), name='Median'))
-
+    
     # Create a line plot using Plotly
     fig = go.Figure()
     for column in pivot_daily_avg_cumulative_neerslagtekort.columns:
@@ -594,7 +592,9 @@ def plot_average_various_years(daily_avg_cumulative_neerslagtekort):
             fig.add_trace(go.Scatter(x=pivot_daily_avg_cumulative_neerslagtekort.index, y=pivot_daily_avg_cumulative_neerslagtekort[column], mode='lines', line=dict(color='black',width=3), name=str(column)))
         else:
             fig.add_trace(go.Scatter(x=pivot_daily_avg_cumulative_neerslagtekort.index, y=pivot_daily_avg_cumulative_neerslagtekort[column], mode='lines', line=dict(width=0.8),name=str(column)))
-            
+    # Plot the median
+    fig.add_trace(go.Scatter(x=median_daily_cumulative_neerslagtekort.index, y=median_daily_cumulative_neerslagtekort, mode='lines', line=dict(color='red', width=3, dash='dash'), name='Median'))
+        
     fig.update_layout(
         title=f'Landelijk gemiddelde cumm. neerslagtekort over 11 stations / verschillende jaren',
         xaxis_title='Date',
