@@ -26,11 +26,11 @@ import plotly.graph_objects as go
 import streamlit as st
 import platform
 import os
-
+from io import StringIO
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_agg import RendererAgg
+#from matplotlib.backends.backend_agg import RendererAgg
 from matplotlib.colors import ListedColormap
-_lock = RendererAgg.lock
+#_lock = RendererAgg.lock
 import numpy as np
 # when using without Streamlit, to avoid 127.0.0.1 refused to connect :
 # plotly.offline.init_notebook_mode(connected=True)
@@ -41,15 +41,16 @@ def read_ogimet():
     """
 
     # find station codes here https://www.ogimet.com/indicativos.phtml.en
-    station_code,location_str = "485500-99999", "Koh_Samui"  
+    #station_code,location_str = "485500-99999", "Koh_Samui"  
                                    
     # station_code,location_str = "16242","Rome Fiumicino"
     # station_code,location_str = "48327","Chiang_mai"
+    station_code,location_str = "16105","Venezia"
     
-    # start_date = datetime(2000, 1, 1)
-    start_date = datetime(2023, 12, 15)
+    start_date = datetime(2010, 1, 1)
+    #start_date = datetime(2023, 12, 15)
 
-    end_date = datetime(2023, 12, 31)
+    # end_date = datetime(2023, 12, 31)
     end_date = datetime.today()  # You could use the desired end date
     number_of_days = (end_date - start_date).days 
     batches = int(number_of_days / 50)+1 # number of batches
@@ -71,22 +72,35 @@ def read_ogimet():
 
         url = f"https://ogimet.com/cgi-bin/gsodres?lang=en&ind={station_code}&ord=DIR&ano={year}&mes={month}&day={day}&ndays=50" # Global Summary Of the Day (GSOD), is some days behind # soup.find_all("table")[3]
         print (f"Retreiving {url} {counter} / {batches}")
+        counter += 1
         response = requests.get(url)
         soup = BeautifulSoup(response.content, "html5lib")
-        temp_table = pd.read_html(str(soup.find_all("table")[3]), encoding="utf-8")[0]
-        print(temp_table)
+        #temp_table = pd.read_html(str(soup.find_all("table")[3]), encoding="utf-8")[0]
+
+
+        # Assuming soup is already defined and contains your parsed HTML
+        html_string = str(soup.find_all("table")[3])
+        html_io = StringIO(html_string)
+
+        # Now pass the StringIO object to read_html
+        temp_table = pd.read_html(html_io, encoding="utf-8")[0]
+
+        
         if temp_table.empty:
+            
             continue
+        else:
+            print(temp_table)
 
         #temp_table = temp_table.iloc[1:]  # Remove the first two rows, which usually contains units
 
         date_vec = pd.date_range(end=request_date - timedelta(days=1), periods=len(temp_table), freq="1D")
         temp_table["Date"] = date_vec
         observations = pd.concat([temp_table, observations])
-        counter += 1
+        
 
     # observations = observations[observations["Date"] <= end_date] # gives an error. I just delete the last rows in the CSV file
-    observations = observations.sort_values(by='Date')
+    observations = observations.sort_values(by=('Date','Date'))
     observations.to_csv(f"irbid_weather_{location_str}_2024.csv", index=False)
     # You have to replace ---- with [nothing]. (Don't use [None], since it will turn the column into a text/object column) 
     print(observations)
@@ -134,24 +148,24 @@ def show_warmingstripes(df_, to_show, where):
     )
     temperatures = df[to_show].tolist()
     stacked_temps = np.stack((temperatures, temperatures))
-    with _lock:
-        # plt.figure(figsize=(4,18))
-        fig, ax = plt.subplots()
+    #with _lock:
+    # plt.figure(figsize=(4,18))
+    fig, ax = plt.subplots()
 
-        fig = ax.imshow(
-            stacked_temps,
-            cmap=cmap,
-            aspect=40,
-        )
-        plt.gca().set_axis_off()
+    fig = ax.imshow(
+        stacked_temps,
+        cmap=cmap,
+        aspect=40,
+    )
+    plt.gca().set_axis_off()
 
-        plt.title(f"{to_show} in {where}")
-        plt.gca().xaxis.set_major_locator(plt.NullLocator())
-        plt.gca().yaxis.set_major_locator(plt.NullLocator())
-        # plt.show()
-        # st.pyplot(fig) - gives an error
-        st.set_option("deprecation.showPyplotGlobalUse", False)
-        st.pyplot()
+    plt.title(f"{to_show} in {where}")
+    plt.gca().xaxis.set_major_locator(plt.NullLocator())
+    plt.gca().yaxis.set_major_locator(plt.NullLocator())
+    # plt.show()
+    # st.pyplot(fig) - gives an error
+    st.set_option("deprecation.showPyplotGlobalUse", False)
+    st.pyplot()
 def show_month(df, to_show, day_min, day_max, month, month_names, where):
     """Show graph with to_show in different lines for each years for a certain (period of) a month
        Show a frequency table of this data
@@ -316,7 +330,8 @@ def get_data(where):
     locations = {
         "Koh Samui": "weather_ko_samui.csv",
         "Chiang Mai": "weather_chiang_mai.csv",
-        "Rome Fiumicino": "weather_rome_fiumicino.csv"
+        "Rome Fiumicino": "weather_rome_fiumicino.csv",
+        "Venezia": "weather_venezia.csv"
     }
 
     # Check if the 'where' value is valid
@@ -338,7 +353,7 @@ def main():
     
     
     
-    where = st.sidebar.selectbox("Location to show", ["Koh Samui", "Chiang Mai", "Rome Fiumicino"])
+    where = st.sidebar.selectbox("Location to show", ["Koh Samui", "Chiang Mai", "Rome Fiumicino","Venezia"])
     to_show = st.sidebar.selectbox("What to show x", ["T_Max","T_Min","T_Mean","Hr_Med","Wind_Max","Wind_Mean","SLP","STN","Vis","Prec","Diary"],0)
     window_size =  st.sidebar.slider("Window for SMA",1,365,7) 
     y_axis_zero = st.sidebar.selectbox("Y axis start at zero", [True,False],1)
@@ -348,8 +363,9 @@ def main():
 
     month_names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
     month = month_names.index(st.sidebar.selectbox("Month", month_names, index=0)) + 1
-    day_min, day_max  = st.slider("days",1,31,(1,15))
+    day_min, day_max  = st.sidebar.slider("days",1,31,(1,15))
     df_ = get_data(where)
+   
     if multiply_minus_one:
         # needed for for ex. visability 
         # Make a copy of the DataFrame without the "Date" column
@@ -362,7 +378,7 @@ def main():
         df = pd.concat([df_['Date'], df_copy], axis=1)
     else:
         df = df_
-
+  
 
     df['Date'] = pd.to_datetime(df['Date'])
     df['Day'] = df['Date'].dt.day

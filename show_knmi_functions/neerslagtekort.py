@@ -583,8 +583,11 @@ def plot_average_various_years(daily_avg_cumulative_neerslagtekort):
     # Create a line plot using Plotly
     fig = go.Figure()
     for column in pivot_daily_avg_cumulative_neerslagtekort.columns:
-        fig.add_trace(go.Scatter(x=pivot_daily_avg_cumulative_neerslagtekort.index, y=pivot_daily_avg_cumulative_neerslagtekort[column], mode='lines', name=str(column)))
-
+        if column == 2024:
+            fig.add_trace(go.Scatter(x=pivot_daily_avg_cumulative_neerslagtekort.index, y=pivot_daily_avg_cumulative_neerslagtekort[column], mode='lines', line=dict(width=2), name=str(column)))
+        else:
+            fig.add_trace(go.Scatter(x=pivot_daily_avg_cumulative_neerslagtekort.index, y=pivot_daily_avg_cumulative_neerslagtekort[column], mode='lines', line=dict(width=0.8),name=str(column)))
+            
     fig.update_layout(
         title=f'Landelijk gemiddelde cumm. neerslagtekort over 11 stations / verschillende jaren',
         xaxis_title='Date',

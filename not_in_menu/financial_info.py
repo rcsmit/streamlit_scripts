@@ -267,8 +267,11 @@ def make_pivot_period_trial_balance(ledger, accounts_source, period):
         # Loop through each account and retrieve the trial balance on the first day of the month
         for a in accounts_source:
             balance = round(ledger.ask_trial_balance_date(a, my_date),2)
+            trial_balance_df=trial_balance_df.fillna(0)
             # Append the trial balance to the DataFrame
             trial_balance_df = pd.concat([trial_balance_df, pd.DataFrame({'Date': [my_date], 'Account': [a], 'Balance': [balance]})], ignore_index=True)
+
+
 
     # Create the pivot table
     pivot_table = pd.pivot_table(trial_balance_df, values='Balance', index=['Account'], columns=['Date'])
@@ -648,7 +651,7 @@ def give_totals_boodschappen(df):
     st.write("Average Monthly Spending:")
     st.write(average_monthly_spending)
 def main():
-   
+    print ("-----------")
     modus = st.sidebar.selectbox("Modus", ["income_expenses","category", "main_category"], index = 1)
     period = st.sidebar.selectbox("Period", ["month","year"], index = 0)
     divide_factor = st.sidebar.number_input("Sunburst delen door",1.0,12.0,1.0)
