@@ -592,35 +592,58 @@ def plot_average_various_years(daily_avg_cumulative_neerslagtekort):
     
     # Compute the maximum across years for each day
     max_daily_cumulative_neerslagtekort = pivot_daily_avg_cumulative_neerslagtekort.max(axis=1)
-
+    copy_knmi= st.sidebar("replicate graph as KNMI graph", [True,False],0)
     # Create a line plot using Plotly
     fig = go.Figure()
     for column in pivot_daily_avg_cumulative_neerslagtekort.columns:
-        if column == 2024:
-            fig.add_trace(go.Scatter(x=pivot_daily_avg_cumulative_neerslagtekort.index, y=pivot_daily_avg_cumulative_neerslagtekort[column], mode='lines', line=dict(color='black',width=3), name=str(column)))
+        if copy_knmi:
+            #replicate knmi graph
+            if column == 2024:
+                fig.add_trace(go.Scatter(x=pivot_daily_avg_cumulative_neerslagtekort.index, y=pivot_daily_avg_cumulative_neerslagtekort[column], mode='lines', line=dict(color='black',width=3), name=str(column)))
+            elif column == 1976:
+                fig.add_trace(go.Scatter(x=pivot_daily_avg_cumulative_neerslagtekort.index, y=pivot_daily_avg_cumulative_neerslagtekort[column], mode='lines', line=dict(color='red',width=1.5),name=str(column)))
+            elif column == 2018:
+                fig.add_trace(go.Scatter(x=pivot_daily_avg_cumulative_neerslagtekort.index, y=pivot_daily_avg_cumulative_neerslagtekort[column], mode='lines', line=dict(color='grey',width=1.5),name=str(column)))
+            else:
+                #fig.add_trace(go.Scatter(x=pivot_daily_avg_cumulative_neerslagtekort.index, y=pivot_daily_avg_cumulative_neerslagtekort[column], mode='lines', line=dict(color='red',width=0.8),name=str(column)))
+                pass
         else:
-            fig.add_trace(go.Scatter(x=pivot_daily_avg_cumulative_neerslagtekort.index, y=pivot_daily_avg_cumulative_neerslagtekort[column], mode='lines', line=dict(width=0.8),name=str(column)))
+            if column == 2024:
+                fig.add_trace(go.Scatter(x=pivot_daily_avg_cumulative_neerslagtekort.index, y=pivot_daily_avg_cumulative_neerslagtekort[column], mode='lines', line=dict(color='black',width=3), name=str(column)))
+            else:
+                fig.add_trace(go.Scatter(x=pivot_daily_avg_cumulative_neerslagtekort.index, y=pivot_daily_avg_cumulative_neerslagtekort[column], mode='lines', line=dict(color='red',width=0.8),name=str(column)))
+                
     # Plot the median
     fig.add_trace(go.Scatter(x=median_daily_cumulative_neerslagtekort.index, y=median_daily_cumulative_neerslagtekort, mode='lines', line=dict(color='blue', width=3), name='Median'))
-
-    # Plot the 5th and 95th percentiles with shaded area
-    fig.add_trace(go.Scatter(
-        x=percentile_5_daily_cumulative_neerslagtekort.index, 
-        y=percentile_5_daily_cumulative_neerslagtekort, 
-        mode='lines', 
-        line=dict(color='green', width=3), 
-        name='5th Percentile',
-        fill=None  # No fill for the lower bound
-    ))
-
-    fig.add_trace(go.Scatter(
+    if copy_knmi:
+        fig.add_trace(go.Scatter(
         x=percentile_95_daily_cumulative_neerslagtekort.index, 
         y=percentile_95_daily_cumulative_neerslagtekort, 
         mode='lines', 
-        line=dict(color='green', width=3), 
+        line=dict(color='green', width=2), 
         name='95th Percentile',
-        fill='tonexty',  # Fill the area between this trace and the previous one
-        fillcolor='rgba(192,192,192,0.2)'  # Light grey fill color with transparency
+        
+    ))
+    else:
+            
+        # Plot the 5th and 95th percentiles with shaded area
+        fig.add_trace(go.Scatter(
+            x=percentile_5_daily_cumulative_neerslagtekort.index, 
+            y=percentile_5_daily_cumulative_neerslagtekort, 
+            mode='lines', 
+            line=dict(color='grey', width=2), 
+            name='5th Percentile',
+            fill=None  # No fill for the lower bound
+        ))
+
+        fig.add_trace(go.Scatter(
+            x=percentile_95_daily_cumulative_neerslagtekort.index, 
+            y=percentile_95_daily_cumulative_neerslagtekort, 
+            mode='lines', 
+            line=dict(color='grey', width=2), 
+            name='95th Percentile',
+            fill='tonexty',  # Fill the area between this trace and the previous one
+            fillcolor='rgba(192,192,192,0.2)'  # Light grey fill color with transparency
     ))
    # Plot the maximum values
     fig.add_trace(go.Scatter(x=max_daily_cumulative_neerslagtekort.index, y=max_daily_cumulative_neerslagtekort, mode='lines', line=dict(color='black', width=2, dash='dashdot'), name='Maximum'))
