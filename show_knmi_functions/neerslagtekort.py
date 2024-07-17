@@ -584,7 +584,9 @@ def plot_average_various_years(daily_avg_cumulative_neerslagtekort):
     fig = go.Figure()
     for column in pivot_daily_avg_cumulative_neerslagtekort.columns:
         if column == 2024:
-            fig.add_trace(go.Scatter(x=pivot_daily_avg_cumulative_neerslagtekort.index, y=pivot_daily_avg_cumulative_neerslagtekort[column], mode='lines', line=dict(width=2), name=str(column)))
+
+
+            fig.add_trace(go.Scatter(x=pivot_daily_avg_cumulative_neerslagtekort.index, y=pivot_daily_avg_cumulative_neerslagtekort[column], mode='lines', line=dict(color='black',width=3), name=str(column)))
         else:
             fig.add_trace(go.Scatter(x=pivot_daily_avg_cumulative_neerslagtekort.index, y=pivot_daily_avg_cumulative_neerslagtekort[column], mode='lines', line=dict(width=0.8),name=str(column)))
             
