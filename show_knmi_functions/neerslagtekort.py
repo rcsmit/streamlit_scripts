@@ -592,7 +592,7 @@ def plot_average_various_years(daily_avg_cumulative_neerslagtekort):
     
     # Compute the maximum across years for each day
     max_daily_cumulative_neerslagtekort = pivot_daily_avg_cumulative_neerslagtekort.max(axis=1)
-    copy_knmi= st.sidebar("replicate graph as KNMI graph", [True,False],0)
+    copy_knmi= st.sidebar.selectbox("replicate graph as KNMI graph", [True,False],0)
     # Create a line plot using Plotly
     fig = go.Figure()
     for column in pivot_daily_avg_cumulative_neerslagtekort.columns:
