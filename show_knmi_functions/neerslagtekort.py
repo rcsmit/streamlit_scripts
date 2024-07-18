@@ -279,7 +279,6 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
     df_master = get_dataframe_multiple_(stations, FROM, UNTIL)
 
     daily_avg_cumulative_neerslagtekort_non_off = df_master.groupby('YYYYMMDD')['cumulative_neerslagtekort'].mean().reset_index()
-    
     daily_avg_cumulative_neerslagtekort = df_master.groupby('YYYYMMDD')['cumulative_neerslagtekort_off'].mean().reset_index()
     df_master['year'] = df_master['YYYYMMDD'].dt.year
     
@@ -584,7 +583,9 @@ def plot_average_various_years(daily_avg_cumulative_neerslagtekort, daily_avg_cu
     if use_official:
         pivot_daily_avg_cumulative_neerslagtekort = daily_avg_cumulative_neerslagtekort.pivot(index='date_1900', columns='year', values='cumulative_neerslagtekort_off')
     else:
+        daily_avg_cumulative_neerslagtekort_non_off['year'] = daily_avg_cumulative_neerslagtekort_non_off['YYYYMMDD'].dt.year
         st.write(daily_avg_cumulative_neerslagtekort_non_off)
+        
         pivot_daily_avg_cumulative_neerslagtekort = daily_avg_cumulative_neerslagtekort_non_off.pivot(index='date_1900', columns='year', values='cumulative_neerslagtekort')
     
     # Compute the median across years for each day
@@ -666,8 +667,8 @@ def plot_daily_cumm_neerslagtekort(daily_avg_cumulative_neerslagtekort, daily_av
     daily_avg_cumulative_neerslagtekort['year'] = daily_avg_cumulative_neerslagtekort['YYYYMMDD'].dt.year
      # Create a line plot using Plotly
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=daily_avg_cumulative_neerslagtekort['YYYYMMDD'], y=daily_avg_cumulative_neerslagtekort["cumulative_neerslagtekort_off"], mode='markers',  marker=dict(size=2) , name="cumulative_neerslagtekort"))
-    fig.add_trace(go.Scatter(x=daily_avg_cumulative_neerslagtekort_non_off['YYYYMMDD'], y=daily_avg_cumulative_neerslagtekort_non_off["cumulative_neerslagtekort"], mode='markers',  marker=dict(size=2) ,name="cumulative_neerslagtekort off"))
+    fig.add_trace(go.Scatter(x=daily_avg_cumulative_neerslagtekort['YYYYMMDD'], y=daily_avg_cumulative_neerslagtekort["cumulative_neerslagtekort_off"], mode='markers',  marker=dict(size=2) , name="cumulative_neerslagtekort off"))
+    fig.add_trace(go.Scatter(x=daily_avg_cumulative_neerslagtekort_non_off['YYYYMMDD'], y=daily_avg_cumulative_neerslagtekort_non_off["cumulative_neerslagtekort"], mode='markers',  marker=dict(size=2) ,name="cumulative_neerslagtekort non-off"))
 
     fig.update_layout(
         title='Landelijk gemiddelde cumm. neerslagtekort over 11 stations door de tijd heen',
