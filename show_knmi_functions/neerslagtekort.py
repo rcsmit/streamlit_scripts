@@ -192,6 +192,9 @@ def neerslagtekort(df):
 def get_dataframe_multiple_(stations,FROM, UNTIL):
     """Get the dataframe with info from multiple stations
 
+
+    NB: Globale straling en EV24 is pas vanaf 1-07-1957 bekend
+
     Args:
         FROM (str): date as datetime.strptime("2023-01-01", "%Y-%m-%d").date()
         UNTIL (str): date as datetime.strptime("2023-01-01", "%Y-%m-%d").date()
@@ -222,7 +225,6 @@ def get_dataframe_multiple_(stations,FROM, UNTIL):
     # Create the DataFrame
     df_station = pd.DataFrame(data)
     df_master=pd.merge(df_master_,df_station,how="left",on="STN")
-    st.write(df_master)
     return df_master
 
 
