@@ -294,7 +294,7 @@ def neerslagtekort_meerdere_stations(FROM, UNTIL):
     make_spaggetti(df_master,  "cumm_neerslag_etmaalsom")
     make_spaggetti(df_master,  "cumm_temp_avg")
     plot_daily_cumm_neerslagtekort(daily_avg_cumulative_neerslagtekort, daily_avg_cumulative_neerslagtekort_non_off)
-    plot_average_various_years(daily_avg_cumulative_neerslagtekort)
+    plot_average_various_years(daily_avg_cumulative_neerslagtekort, daily_avg_cumulative_neerslagtekort_non_off)
     max_value_each_year(daily_avg_cumulative_neerslagtekort)
     first_day_of_dryness(df_master)
     multiple_lineair_regression(df_master)
@@ -576,14 +576,14 @@ def scatter_luxe(x,y, title, trend):
         showlegend=True
     )
     st.plotly_chart(fig)
-def plot_average_various_years(daily_avg_cumulative_neerslagtekort):
+def plot_average_various_years(daily_avg_cumulative_neerslagtekort, daily_avg_cumulative_neerslagtekort_non_off):
     daily_avg_cumulative_neerslagtekort['date_1900'] = pd.to_datetime(daily_avg_cumulative_neerslagtekort['YYYYMMDD'].dt.strftime('%d-%m-1900'), format='%d-%m-%Y')
     
     use_official =  st.sidebar.selectbox("Use official", [True,False],0)
     if use_official:
         pivot_daily_avg_cumulative_neerslagtekort = daily_avg_cumulative_neerslagtekort.pivot(index='date_1900', columns='year', values='cumulative_neerslagtekort_off')
     else:
-        pivot_daily_avg_cumulative_neerslagtekort = daily_avg_cumulative_neerslagtekort.pivot(index='date_1900', columns='year', values='cumulative_neerslagtekort')
+        pivot_daily_avg_cumulative_neerslagtekort = daily_avg_cumulative_neerslagtekort_non_off.pivot(index='date_1900', columns='year', values='cumulative_neerslagtekort')
     
     # Compute the median across years for each day
     median_daily_cumulative_neerslagtekort = pivot_daily_avg_cumulative_neerslagtekort.median(axis=1)
