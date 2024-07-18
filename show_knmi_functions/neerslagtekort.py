@@ -222,7 +222,7 @@ def get_dataframe_multiple_(stations,FROM, UNTIL):
     # Create the DataFrame
     df_station = pd.DataFrame(data)
     df_master=pd.merge(df_master_,df_station,how="left",on="STN")
- 
+    st.write(df_master)
     return df_master
 
 
@@ -584,8 +584,7 @@ def plot_average_various_years(daily_avg_cumulative_neerslagtekort, daily_avg_cu
         pivot_daily_avg_cumulative_neerslagtekort = daily_avg_cumulative_neerslagtekort.pivot(index='date_1900', columns='year', values='cumulative_neerslagtekort_off')
     else:
         daily_avg_cumulative_neerslagtekort_non_off['year'] = daily_avg_cumulative_neerslagtekort_non_off['YYYYMMDD'].dt.year
-        st.write(daily_avg_cumulative_neerslagtekort_non_off)
-        
+            
         pivot_daily_avg_cumulative_neerslagtekort = daily_avg_cumulative_neerslagtekort_non_off.pivot(index='date_1900', columns='year', values='cumulative_neerslagtekort')
     
     # Compute the median across years for each day
