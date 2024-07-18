@@ -578,6 +578,7 @@ def scatter_luxe(x,y, title, trend):
     st.plotly_chart(fig)
 def plot_average_various_years(daily_avg_cumulative_neerslagtekort, daily_avg_cumulative_neerslagtekort_non_off):
     daily_avg_cumulative_neerslagtekort['date_1900'] = pd.to_datetime(daily_avg_cumulative_neerslagtekort['YYYYMMDD'].dt.strftime('%d-%m-1900'), format='%d-%m-%Y')
+    daily_avg_cumulative_neerslagtekort_non_off['date_1900'] = pd.to_datetime(daily_avg_cumulative_neerslagtekort_non_off['YYYYMMDD'].dt.strftime('%d-%m-1900'), format='%d-%m-%Y')
     
     use_official =  st.sidebar.selectbox("Use official", [True,False],0)
     if use_official:
