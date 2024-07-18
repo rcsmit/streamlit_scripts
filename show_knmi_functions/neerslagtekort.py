@@ -583,6 +583,7 @@ def plot_average_various_years(daily_avg_cumulative_neerslagtekort, daily_avg_cu
     if use_official:
         pivot_daily_avg_cumulative_neerslagtekort = daily_avg_cumulative_neerslagtekort.pivot(index='date_1900', columns='year', values='cumulative_neerslagtekort_off')
     else:
+        st.write(daily_avg_cumulative_neerslagtekort_non_off)
         pivot_daily_avg_cumulative_neerslagtekort = daily_avg_cumulative_neerslagtekort_non_off.pivot(index='date_1900', columns='year', values='cumulative_neerslagtekort')
     
     # Compute the median across years for each day
