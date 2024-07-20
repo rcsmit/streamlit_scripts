@@ -48,7 +48,7 @@ def read_ogimet():
     station_code,location_str = "16105","Venezia"
     
     start_date = datetime(2010, 1, 1)
-    #start_date = datetime(2023, 12, 15)
+    start_date = datetime(2024, 1, 1)
 
     # end_date = datetime(2023, 12, 31)
     end_date = datetime.today()  # You could use the desired end date
@@ -203,6 +203,38 @@ def show_month(df, to_show, day_min, day_max, month, month_names, where):
     fig = px.histogram(df_month, x=to_show, title=f'Histogram of {to_show}', labels={to_show: f'{to_show}', 'count': 'Frequency'})
     st.plotly_chart(fig)
 
+    # Frequency table
+    df_month['Temp_Bin'] = pd.cut(df_month[to_show], bins=range(int(df_month[to_show].min()), int(df_month[to_show].max()) + 2))
+    frequency_table = df_month.pivot_table(index='Temp_Bin', columns='Year', aggfunc='size', fill_value=0)
+
+    # Reset the index for plotting
+    frequency_table = frequency_table.reset_index()
+    frequency_table['Temp_Bin'] = frequency_table['Temp_Bin'].apply(lambda x: x.mid)
+
+    # Display the frequency table
+    st.write(frequency_table)
+
+    # Frequency line graph
+    frequency_table_melted = frequency_table.melt(id_vars='Temp_Bin', var_name='Year', value_name='Frequency')
+    fig = px.line(frequency_table_melted, x='Temp_Bin', y='Frequency', color='Year',
+                  labels={'Temp_Bin': 'Temperature (°C)', 'Frequency': 'Frequency'},
+                  title=f'Frequency of {to_show} for {month_names[month-1]} in {where}')
+    st.plotly_chart(fig)
+    nbins = len(range(int(df_month[to_show].min()), int(df_month[to_show].max()) + 2))
+    # Histogram of the to_show variable
+    fig = px.histogram(df_month, x=to_show, nbins=nbins, title=f'Histogram of {to_show}', 
+                       labels={to_show: f'{to_show}', 'count': 'Frequency'})
+    st.plotly_chart(fig)
+
+
+
+    # Frequency line graph
+    frequency_table_melted = frequency_table.melt(id_vars='Temp_Bin', var_name='Year', value_name='Frequency')
+    fig = px.line(frequency_table_melted, x='Temp_Bin', y='Frequency', color='Year',
+                  labels={'Temp_Bin': 'Temperature (°C)', 'Frequency': 'Frequency'},
+                  title=f'Frequency of {to_show} for {month_names[month-1]} in {where}')
+    st.plotly_chart(fig)
+
     show_warmingstripes(df_month, to_show, where)
 
 def cross_table_montly_avg(df, to_show, where, y_axis_zero):  
@@ -346,15 +378,60 @@ def get_data(where):
 
 
 
+# Function to convert Celsius to Fahrenheit
+def celsius_to_fahrenheit(celsius):
+    return (celsius * 9/5) + 32
+
+# Function to convert Fahrenheit to Celsius
+def fahrenheit_to_celsius(fahrenheit):
+    return (fahrenheit - 32) * 5/9
+
+# Function to calculate Heat Index
+def calculate_heat_index(T, RH):
+    # Formula for heat index calculation in Fahrenheit
+    HI = (-42.379 + 2.04901523 * T + 10.14333127 * RH 
+          - 0.22475541 * T * RH - 0.00683783 * T**2 
+          - 0.05481717 * RH**2 + 0.00122874 * T**2 * RH 
+          + 0.00085282 * T * RH**2 - 0.00000199 * T**2 * RH**2)
+    return HI
+
+# Function to calculate Wind Chill
+def calculate_wind_chill(T, V):
+    # Formula for wind chill calculation in Fahrenheit
+    WC = 35.74 + 0.6215 * T - 35.75 * (V**0.16) + 0.4275 * T * (V**0.16)
+    return WC
+
+# Function to determine the feels-like temperature
+def feels_like_temperature(row):
+    T_C = row['T_Mean']
+    RH = row['Hr_Med']
+    V_mph = float(row['Wind_Max']) * 0.621371  # Converting km/h to mph
+    
+    T_F = celsius_to_fahrenheit(T_C)
+    
+    if T_F >= 80:
+        # Calculate Heat Index
+        feels_like_F = calculate_heat_index(T_F, RH)
+    elif T_F <= 50 and V_mph >= 3:
+        # Calculate Wind Chill
+        feels_like_F = calculate_wind_chill(T_F, V_mph)
+    else:
+        feels_like_F = T_F  # No adjustment
+    
+    feels_like_C = fahrenheit_to_celsius(feels_like_F)
+    return feels_like_C
+
+
+
 def main():
     """Show the data from Ogimet in a graph, and average values per month per year
     """    
                          
-    
+
     
     
     where = st.sidebar.selectbox("Location to show", ["Koh Samui", "Chiang Mai", "Rome Fiumicino","Venezia"])
-    to_show = st.sidebar.selectbox("What to show x", ["T_Max","T_Min","T_Mean","Hr_Med","Wind_Max","Wind_Mean","SLP","STN","Vis","Prec","Diary"],0)
+    to_show = st.sidebar.selectbox("What to show x", ["T_Max","T_Min","T_Mean","Hr_Med","Wind_Max","Wind_Mean","SLP","STN","Vis","Prec","Diary", "Feels_Like"],0)
     window_size =  st.sidebar.slider("Window for SMA",1,365,7) 
     y_axis_zero = st.sidebar.selectbox("Y axis start at zero", [True,False],1)
     multiply_minus_one = st.sidebar.selectbox("Multiply by -1", [True,False],1)
@@ -363,7 +440,7 @@ def main():
 
     month_names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
     month = month_names.index(st.sidebar.selectbox("Month", month_names, index=0)) + 1
-    day_min, day_max  = st.sidebar.slider("days",1,31,(1,15))
+    day_min, day_max  = st.sidebar.slider("days",1,31,(1,31))
     df_ = get_data(where)
    
     if multiply_minus_one:
@@ -385,7 +462,10 @@ def main():
     df['Month'] = df['Date'].dt.month
     df['Year'] = df['Date'].dt.year
     df = df.sort_values(by='Date')
-  
+    # Apply the feels_like_temperature function to each row in the DataFrame
+    df['Feels_Like'] = df.apply(feels_like_temperature, axis=1)
+
+    
     st.title(f"Weather info from {where}")
     
     line_graph(to_show, window_size, y_axis_zero, df)

@@ -64,6 +64,7 @@ def get_data(url):
         # UN        : Minimale relatieve vochtigheid (in procenten)
         # UX        : Maximale relatieve vochtigheid (in procenten)
         # EV24      : Referentiegewasverdamping (Makkink) (in 0.1 mm) / Potential evapotranspiration (Makkink) (in 0.1 mm)
+        # FHX       : Hoogste uurgemiddelde windsnelheid (in 0.1 m/s)
         #  0  1          2    3    4  5   6     7   8   9    10  11  12 3   4  5  16     7    8  9 20  
         # STN,YYYYMMDD,DDVEC,FHVEC,FG,FHX,FHXH,FHN,FHNH,FXX,FXXH,TG,TN,TNH,TX,TXH,T10N,T10NH,SQ,SP,Q,
         # 21 22  3   4    5   6 7  8  9   30   1    2   3   4  5  6
@@ -85,7 +86,8 @@ def get_data(url):
             [10, "neerslag_etmaalsom"],
             [11, "RH_min"],
             [12, "RH_max"],
-            [13, "EV24"]
+            [13, "EV24"],
+            [14, "wind_max"]
         ]
    
         for c in column_replacements:
@@ -140,10 +142,12 @@ def get_data(url):
             "zonneschijnduur",
             "neerslag_duur",
             "neerslag_etmaalsom",
-            "EV24"
+            "EV24",
+            "wind_max"
         ]
         df["glob_straling"] = pd.to_numeric(df["glob_straling"], errors='coerce')
         df['neerslag_etmaalsom'].replace(" ", 0)
+        st.write(df)
         for d in to_divide_by_10:
             
             df[d] = pd.to_numeric(df[d], errors='coerce')
@@ -158,7 +162,8 @@ def get_data(url):
     mask = (df['neerslag_duur'].notna()) & (df['neerslag_duur'].ne(0))
     df.loc[mask, 'neerslag_etmaalsom_div_duur'] = df.loc[mask, 'neerslag_etmaalsom'] / df.loc[mask, 'neerslag_duur']     
     df['neerslag_etmaalsom'] = df['neerslag_etmaalsom'].replace(-0.1, 0)
-    
+    df['gevoelstemperatuur'] = df.apply(feels_like_temperature, axis=1)
+
     return df
 
 
@@ -244,6 +249,58 @@ def rh2ah(rh, t ):
     except:
         x= None
     return  x
+
+
+# Function to convert Celsius to Fahrenheit
+def celsius_to_fahrenheit(celsius):
+    return (celsius * 9/5) + 32
+
+# Function to convert Fahrenheit to Celsius
+def fahrenheit_to_celsius(fahrenheit):
+    return (fahrenheit - 32) * 5/9
+
+# Function to calculate Heat Index
+def calculate_heat_index(T, RH):
+    # https://wonder.cdc.gov/wonder/help/Climate/ta_htindx.PDF
+    # Formula for heat index calculation in Fahrenheit
+    HI = (-42.379 + 2.04901523 * T + 10.14333127 * RH 
+          - 0.22475541 * T * RH - 0.00683783 * T**2 
+          - 0.05481717 * RH**2 + 0.00122874 * T**2 * RH 
+          + 0.00085282 * T * RH**2 - 0.00000199 * T**2 * RH**2)
+    return HI
+
+# Function to calculate Wind Chill
+def calculate_wind_chill(T, V):
+    # Formula for wind chill calculation in Fahrenheit
+    # https://unidata.github.io/MetPy/v0.10/_static/FCM-R19-2003-WindchillReport.pdf
+
+    WC = 35.74 + 0.6215 * T - 35.75 * (V**0.16) + 0.4275 * T * (V**0.16)
+    return WC
+
+# Function to determine the feels-like temperature
+def feels_like_temperature(row):
+    
+    T_C = row['temp_avg']
+    RH = (row["RH_min"] + row["RH_max"])/2
+
+    V_mph = float(row['wind_max']) * 2.23694# Convert Wind_Max from m/s to mph
+    # V_mph = float(row['wind_Max']) * 0.621371  # Converting km/h to mph
+    
+    T_F = celsius_to_fahrenheit(T_C)
+    
+    if T_F >= 80:
+        # Calculate Heat Index
+        feels_like_F = calculate_heat_index(T_F, RH)
+    elif T_F <= 50 and V_mph >= 3:
+        # Calculate Wind Chill
+        feels_like_F = calculate_wind_chill(T_F, V_mph)
+    else:
+        feels_like_F = T_F  # No adjustment
+    
+    feels_like_C = fahrenheit_to_celsius(feels_like_F)
+    return feels_like_C
+
+
 
 def log10(t):
     try:

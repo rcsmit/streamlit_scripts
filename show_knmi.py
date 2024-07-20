@@ -44,7 +44,7 @@ except AttributeError:
 
 #@st.cache_data (ttl=60 * 60 * 24)
 def getdata_wrapper(stn, fromx, until):
-    url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX:EV24&start={fromx}&end={until}"
+    url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX:EV24:FHX&start={fromx}&end={until}"
     
     df = get_data(url)
      
@@ -95,12 +95,18 @@ def interface():
             "temp_min",
             "temp_avg",
             "temp_max",
+            "gevoelstemperatuur",
             "T10N",
             "zonneschijnduur",
             "perc_max_zonneschijnduur",
             "glob_straling",
             "neerslag_duur",
-            "neerslag_etmaalsom","neerslag_etmaalsom_div_duur","RH_min","RH_max","spec_humidity_knmi_derived","abs_humidity_knmi_derived","globale_straling_log10",
+            "neerslag_etmaalsom",
+            "neerslag_etmaalsom_div_duur",
+            "RH_min","RH_max",
+            "spec_humidity_knmi_derived",
+            "abs_humidity_knmi_derived",
+            "globale_straling_log10",
         ]
 
 
@@ -155,7 +161,7 @@ def interface():
 def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show, gekozen_weerstation, centersmooth, graph_type, show_ci, show_loess, wdw_ci,show_parts, no_of_parts):
     what_to_show_as_txt = list_to_text(what_to_show)
     FROM, UNTIL = check_from_until(from_, until_)
-    if (stn !=None) or (mode == "help"):
+    if (stn !=None) and (mode != "help"):
         df_getdata, url = getdata_wrapper(stn, FROM.strftime("%Y%m%d"), UNTIL.strftime("%Y%m%d"))
         df = df_getdata.copy(deep=False)
     
