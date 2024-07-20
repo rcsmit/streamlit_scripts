@@ -162,8 +162,10 @@ def get_data(url):
     mask = (df['neerslag_duur'].notna()) & (df['neerslag_duur'].ne(0))
     df.loc[mask, 'neerslag_etmaalsom_div_duur'] = df.loc[mask, 'neerslag_etmaalsom'] / df.loc[mask, 'neerslag_duur']     
     df['neerslag_etmaalsom'] = df['neerslag_etmaalsom'].replace(-0.1, 0)
-    df['gevoelstemperatuur'] = df.apply(feels_like_temperature, axis=1)
+    #df['gevoelstemperatuur'] = df.apply(feels_like_temperature, axis=1)
 
+    df['gevoelstemperatuur_avg'] = df.apply(feels_like_temperature, axis=1, temp_type="temp_avg")
+    df['gevoelstemperatuur_max'] = df.apply(feels_like_temperature, axis=1, temp_type="temp_max")
     return df
 
 
@@ -278,9 +280,17 @@ def calculate_wind_chill(T, V):
     return WC
 
 # Function to determine the feels-like temperature
-def feels_like_temperature(row):
+def feels_like_temperature(row, temp_type):
     
-    T_C = row['temp_avg']
+    #T_C = row['temp_avg']
+
+    if temp_type == 'temp_avg':
+        T_C = row['temp_avg']
+    elif temp_type == 'temp_max':
+        T_C = row['temp_max']
+    else:
+        raise ValueError("Invalid temperature type. Use 'temp_avg' or 'temp_max'.")
+
     RH = (row["RH_min"] + row["RH_max"])/2
 
     V_mph = float(row['wind_max']) * 2.23694# Convert Wind_Max from m/s to mph

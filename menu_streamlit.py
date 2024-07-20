@@ -67,7 +67,8 @@ def main():
                 ["[38] Bollinger Bot","bollinger_bot"],
                 ["[39] No shows","no_shows"],
                 ["[40] Rome infomap","rome"],
-                ["[41] Leisurewords","leisurewords"]  
+                ["[41] Leisurewords","leisurewords"],
+                ["[42] Feels like temp.","feels_like_temperature"],
                 ]
     
     
