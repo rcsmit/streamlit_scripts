@@ -80,8 +80,8 @@ def retrieve_prijzen():
     # sheet_name_prijzen = "prijzen"
     # url_prijzen = f"https://docs.google.com/spreadsheets/d/{sheet_id_prijzen}/gviz/tq?tqx=out:csv&sheet={sheet_name_prijzen}"
     if platform.processor() != "":
-    
-        url_prijzen = r"C:\Users\rcxsm\Downloads\prijzen.csv"
+
+        url_prijzen = r"C:\Users\rcxsm\Downloads\vacansoleil\prijzen.csv"
     else:
         url_prijzen = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/prijzen_dummy.csv"
     df_prijzen = pd.read_csv(url_prijzen, delimiter=",")
@@ -2556,9 +2556,10 @@ def get_data_local():
     Returns:
         df: the various dataframes
     """    
-    excel_file_2023 = r"C:\Users\rcxsm\Downloads\bezetting2023_eind.xlsm"
-    maxxton_file = r"C:\Users\rcxsm\Downloads\ReservationDetails.xlsx"
+    excel_file_2023 = r"C:\Users\rcxsm\Downloads\vacansoleil\bezetting2023_eind.xlsm"
+    maxxton_file = r"C:\Users\rcxsm\Downloads\vacansoleil\ReservationDetails.xlsx"
        
+
     s1 = int(time.time())
     wb_2023 = load_workbook(excel_file_2023, data_only=True) 
     df_maxxton = pd.read_excel(maxxton_file)   

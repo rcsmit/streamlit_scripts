@@ -2,6 +2,8 @@ import streamlit as st
 import plotly.express as px
 import pandas as pd
 
+import plotly.graph_objs as go
+
 # Function to convert Celsius to Fahrenheit
 def celsius_to_fahrenheit(celsius):
     return (celsius * 9/5) + 32
@@ -12,6 +14,7 @@ def fahrenheit_to_celsius(fahrenheit):
 
 # Function to calculate Heat Index
 def calculate_heat_index(T, RH):
+    # https://wonder.cdc.gov/wonder/help/Climate/ta_htindx.PDF
     HI = (-42.379 + 2.04901523 * T + 10.14333127 * RH 
           - 0.22475541 * T * RH - 0.00683783 * T**2 
           - 0.05481717 * RH**2 + 0.00122874 * T**2 * RH 
@@ -20,6 +23,8 @@ def calculate_heat_index(T, RH):
 
 # Function to calculate Wind Chill
 def calculate_wind_chill(T, V):
+    # https://unidata.github.io/MetPy/v0.10/_static/FCM-R19-2003-WindchillReport.pdf
+
     WC = 35.74 + 0.6215 * T - 35.75 * (V**0.16) + 0.4275 * T * (V**0.16)
     return WC
 
@@ -33,22 +38,63 @@ def main():
     st.title("Feels-Like Temperature Calculator")
 
     # User inputs
-    temp_celsius = st.sidebar.slider("Select temperature in degrees celcius", min_value=-10, max_value=50, value=25)
+    temp_celsius = st.sidebar.number_input("Select temperature in degrees celcius", min_value=-10, max_value=50, value=30)
 
     T_F = celsius_to_fahrenheit(temp_celsius)
 
     data = []
     if T_F >= 80:
         # Calculate Heat Index
+        RH_input = st.sidebar.number_input("Relative humidity", min_value=0, max_value=100, value=70)
+        feels_like_F_ = calculate_heat_index(T_F, RH_input)
+        feels_like_C_low_ = fahrenheit_to_celsius(feels_like_F_-1.3)  
+        feels_like_C_high_ =  fahrenheit_to_celsius(feels_like_F_+1.3)  
+        feels_like_C_ = fahrenheit_to_celsius(feels_like_F_)
+        st.sidebar.info(f"Feels like : {round(feels_like_C_,1)} [{round(feels_like_C_low_,1)}-{round(feels_like_C_high_,1)}] ")
         for RH in range (0,101):
             feels_like_F = calculate_heat_index(T_F, RH)
-            feels_like_C = fahrenheit_to_celsius(feels_like_F)
-        
-            data.append({"RH": RH,  "Feels-Like Temperature (°C)": feels_like_C})
+            feels_like_C = round(fahrenheit_to_celsius(feels_like_F),2)
+            feels_like_C_low = round(fahrenheit_to_celsius(feels_like_F-1.7),2)  
+            feels_like_C_high =  round(fahrenheit_to_celsius(feels_like_F+1.7),2)   
+            data.append({"RH": RH,  "Feels-Like Temperature (°C)": feels_like_C, "low": feels_like_C_low, "high": feels_like_C_high})
         df = pd.DataFrame(data)
         
-        # Plotting with Plotly
-        fig = px.line(df, x="RH", y="Feels-Like Temperature (°C)", title=f"Feels-Like Temperature vs. Relatively humidity, temp = {temp_celsius} ", labels={"RH": "RH", "Feels-Like Temperature (°C)": "Feels-Like Temperature (°C)"})
+       
+            
+        # Create the line for Feels-Like Temperature
+        line = go.Scatter(
+            x=df['RH'], 
+            y=df['Feels-Like Temperature (°C)'], 
+            mode='lines', 
+            name='Feels-Like Temperature (°C)'
+        )
+
+        # Create the filled area between low and high
+        fill = go.Scatter(
+            x=df['RH'].tolist() + df['RH'][::-1].tolist(), 
+            y=df['high'].tolist() + df['low'][::-1].tolist(), 
+            fill='toself', 
+            fillcolor='rgba(128, 128, 128, 0.2)', 
+            line=dict(color='rgba(255, 255, 255, 0)'), 
+            showlegend=False,
+            name='Range'
+        )
+
+        # Create the layout
+        layout = go.Layout(
+            title='Feels-Like Temperature vs. Relative Humidity',
+            xaxis=dict(title='Relative Humidity (%)'),
+            yaxis=dict(title='Feels-Like Temperature (°C)'),
+            showlegend=True,
+           
+        
+        )
+
+        # Create the figure and add traces
+        fig = go.Figure(data=[fill, line], layout=layout)
+
+        # Show the plot
+
         st.plotly_chart(fig)
     elif T_F <= 50:
         # Calculate Wind Chill
