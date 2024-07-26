@@ -20,7 +20,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 import requests
 from bs4 import BeautifulSoup
-import plotly
+
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
@@ -34,7 +34,13 @@ from matplotlib.colors import ListedColormap
 import numpy as np
 # when using without Streamlit, to avoid 127.0.0.1 refused to connect :
 # plotly.offline.init_notebook_mode(connected=True)
-    
+
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
+import numpy as np
+import datetime as dt
+
+
 def read_ogimet():
     """Read the data from Ogimet and save it to a CSV file. Reading the data while running the script every time
        is not encouraged, see above.
@@ -47,10 +53,10 @@ def read_ogimet():
     # station_code,location_str = "48327","Chiang_mai"
     station_code,location_str = "16105","Venezia"
     
-    start_date = datetime(2010, 1, 1)
-    start_date = datetime(2024, 1, 1)
+    #start_date = datetime(2010, 1, 1)
+    start_date = datetime(1900, 1, 1)
 
-    # end_date = datetime(2023, 12, 31)
+    end_date = datetime(2009, 12, 31)
     end_date = datetime.today()  # You could use the desired end date
     number_of_days = (end_date - start_date).days 
     batches = int(number_of_days / 50)+1 # number of batches
@@ -257,20 +263,70 @@ def cross_table_montly_avg(df, to_show, where, y_axis_zero):
     #fig.show()
     st.plotly_chart(fig)
 
-     # SHOW MONTLY AVERAGES THROUGH THE YEARS
+    #  # SHOW MONTLY AVERAGES THROUGH THE YEARS
+    # transposed_df = crosstable.T
+    # fig_x = go.Figure()
+
+    # for column in transposed_df.columns:
+    #     fig_x.add_trace(go.Scatter(x=transposed_df.index, y=transposed_df[column], mode='lines', name=column))
+
+    # fig_x.update_layout(title=f'Monthly averages of {to_show} through time - {where}',
+    #                 xaxis_title='Years',
+    #                 yaxis_title=f'Montly average of {to_show}')
+    # if y_axis_zero:
+    #     fig_x.update_layout(yaxis_range=[0, max(transposed_df.max())])
+    # st.plotly_chart(fig_x)
+
     transposed_df = crosstable.T
+
+    # Initialize a new Plotly figure
     fig_x = go.Figure()
 
+    # Create a scatter plot with a trendline for each month
     for column in transposed_df.columns:
-        fig_x.add_trace(go.Scatter(x=transposed_df.index, y=transposed_df[column], mode='lines', name=column))
+        # Extract the data for the current month
+        x = transposed_df.index.values.reshape(-1, 1)  # Years
+        y = transposed_df[column].values  # Monthly averages
 
-    fig_x.update_layout(title=f'Monthly averages of {to_show} through time - {where}',
-                    xaxis_title='Years',
-                    yaxis_title=f'Montly average of {to_show}')
+
+        mask = ~np.isnan(y)
+        x_filtered = x[mask].reshape(-1, 1)
+        y_filtered = y[mask]
+        
+        # Create scatter plot for the current month
+        fig_x.add_trace(go.Scatter(x=x_filtered.flatten(), y=y_filtered, mode='markers', name=f'{column} Scatter'))
+
+        # Fit a linear regression model
+        if len(y_filtered) > 1:  # Ensure there are enough data points to fit a model
+            model = LinearRegression()
+            model.fit(x_filtered, y_filtered)
+            trendline = model.predict(x_filtered)
+
+            # Calculate the equation and R² value
+            slope = model.coef_[0]
+            intercept = model.intercept_
+            r_squared = r2_score(y_filtered, trendline)
+
+            # Add the trendline to the plot
+            fig_x.add_trace(go.Scatter(x=x_filtered.flatten(), y=trendline, mode='lines', name=f'{column} Trendline'))
+
+            # Add annotations for the equation and R² value
+            equation_text = f'y = {slope:.2f}x + {intercept:.2f} | R² = {r_squared:.2f}'
+            st.write(f"{column} - {equation_text}")
+            #fig_x.add_annotation(x=x_filtered.flatten()[-1], y=trendline[-1], text=equation_text, showarrow=True, arrowhead=1)
+
+    # Update layout
+    fig_x.update_layout(
+        title=f'Monthly averages of {to_show} through time - {where}',
+        xaxis_title='Years',
+        yaxis_title=f'Monthly average of {to_show}'
+    )
+
     if y_axis_zero:
         fig_x.update_layout(yaxis_range=[0, max(transposed_df.max())])
-    st.plotly_chart(fig_x)
 
+    # Display the plot using Streamlit
+    st.plotly_chart(fig_x)
 def show_info():
     st.info("Source weather info: https://ogimet.com/")
 
@@ -314,13 +370,73 @@ def show_treshold(where, to_show, treshold_value, above_under, df):
         st.error("ERROR")
         st.stop()
     
+    # st.subheader(f"Numbers of days per month that {to_show} was {au_txt} {treshold_value} - {where}")
+    # # Create a pivot table to count the occurrences of temperatures above 30 degrees per month and year
+    # table = pd.pivot_table(df_above_30, values=to_show, index='Month', columns='Year', aggfunc='count', fill_value=0)
+    # all_months = range(1, 13)
+    # all_years = df['Year'].unique()
+    # table = table.reindex(index=all_months, columns=all_years, fill_value=0)
+    # st.write(table)
+
+
+    # Generate the subheader
     st.subheader(f"Numbers of days per month that {to_show} was {au_txt} {treshold_value} - {where}")
-    # Create a pivot table to count the occurrences of temperatures above 30 degrees per month and year
+
+    # Create a pivot table to count the occurrences of temperatures above the threshold per month and year
     table = pd.pivot_table(df_above_30, values=to_show, index='Month', columns='Year', aggfunc='count', fill_value=0)
     all_months = range(1, 13)
     all_years = df['Year'].unique()
     table = table.reindex(index=all_months, columns=all_years, fill_value=0)
     st.write(table)
+
+    # Transpose the table for easier plotting
+    transposed_table = table.T
+
+    # Initialize a new Plotly figure
+    fig_x = go.Figure()
+
+    # Create a scatter plot with a trendline for each month
+    for month in transposed_table.columns:
+        # Extract the data for the current month and filter out NaN values
+        x = transposed_table.index.values
+        y = transposed_table[month].values
+
+        mask = ~np.isnan(y)
+        x_filtered = x[mask].reshape(-1, 1)
+        y_filtered = y[mask]
+
+        # Create scatter plot for the current month
+        fig_x.add_trace(go.Scatter(x=x_filtered.flatten(), y=y_filtered, mode='markers', name=f'Month {month} Scatter'))
+
+        # Fit a linear regression model
+        if len(y_filtered) > 1:  # Ensure there are enough data points to fit a model
+            model = LinearRegression()
+            model.fit(x_filtered, y_filtered)
+            trendline = model.predict(x_filtered)
+
+            # Calculate the equation and R² value
+            slope = model.coef_[0]
+            intercept = model.intercept_
+            r_squared = r2_score(y_filtered, trendline)
+
+            # Add the trendline to the plot
+            fig_x.add_trace(go.Scatter(x=x_filtered.flatten(), y=trendline, mode='lines', name=f'Month {month} Trendline'))
+
+            # Add annotations for the equation and R² value
+            equation_text = f'y = {slope:.2f}x + {intercept:.2f} | R² = {r_squared:.2f}'
+            st.write(f"{month} - {equation_text}")
+            
+            # fig_x.add_annotation(x=x_filtered.flatten()[-1], y=trendline[-1], text=equation_text, showarrow=True, arrowhead=1)
+
+    # Update layout
+    fig_x.update_layout(
+        title=f'Numbers of days per month that {to_show} was {au_txt} {treshold_value} - {where}',
+        xaxis_title='Years',
+        yaxis_title=f'Number of days {to_show} was {au_txt} {treshold_value}'
+    )
+
+    # Display the plot using Streamlit
+    st.plotly_chart(fig_x)
 
     st.subheader(f"Numbers of days per month that {to_show} was {au_txt} {treshold_value} - {where}")
     fig = px.imshow(table)
@@ -422,14 +538,49 @@ def feels_like_temperature(row):
     return feels_like_C
 
 
+def check_from_until(from_, until_):
+    """Checks whether the start- and enddate are valid.
+
+    Args:
+        from_ (string): start date
+        until_ (string): end date
+
+    Returns:
+        FROM, UNTIL : start- and end date in datetime
+
+    """
+    
+    try:
+        FROM = dt.datetime.strptime(from_, "%Y-%m-%d").date()
+    except:
+        st.error("Please make sure that the startdate is in format yyyy-mm-dd")
+        st.stop()
+
+    try:
+        UNTIL = dt.datetime.strptime(until_, "%Y-%m-%d").date()
+    except:
+        st.error("Please make sure that the enddate is in format yyyy-mm-dd")
+        st.stop()
+
+    if FROM >= UNTIL:
+        st.warning("Make sure that the end date is not before the start date")
+        st.stop()
+
+    return FROM, UNTIL
 
 def main():
     """Show the data from Ogimet in a graph, and average values per month per year
     """    
                          
 
-    
-    
+    start_ = "2019-01-01"
+    today = datetime.today().strftime("%Y-%m-%d")
+    from_ = st.sidebar.text_input("startdatum (yyyy-mm-dd) from 1-1-1900", start_)
+    until_ = st.sidebar.text_input("enddatum (yyyy-mm-dd)", today)
+    FROM, UNTIL = check_from_until(from_, until_)
+    # Convert FROM and UNTIL to datetime
+    FROM = pd.to_datetime(FROM)
+    UNTIL = pd.to_datetime(UNTIL)
     where = st.sidebar.selectbox("Location to show", ["Koh Samui", "Chiang Mai", "Rome Fiumicino","Venezia"])
     to_show = st.sidebar.selectbox("What to show x", ["T_Max","T_Min","T_Mean","Hr_Med","Wind_Max","Wind_Mean","SLP","STN","Vis","Prec","Diary", "Feels_Like"],0)
     window_size =  st.sidebar.slider("Window for SMA",1,365,7) 
@@ -455,9 +606,13 @@ def main():
         df = pd.concat([df_['Date'], df_copy], axis=1)
     else:
         df = df_
-  
-
     df['Date'] = pd.to_datetime(df['Date'])
+
+    # Filter the DataFrame based on the start and end dates
+    df = df[(df['Date'] >= FROM) & (df['Date'] <= UNTIL)]
+
+
+
     df['Day'] = df['Date'].dt.day
     df['Month'] = df['Date'].dt.month
     df['Year'] = df['Date'].dt.year

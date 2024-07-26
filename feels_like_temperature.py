@@ -54,13 +54,11 @@ def main():
         for RH in range (0,101):
             feels_like_F = calculate_heat_index(T_F, RH)
             feels_like_C = round(fahrenheit_to_celsius(feels_like_F),2)
-            feels_like_C_low = round(fahrenheit_to_celsius(feels_like_F-1.7),2)  
-            feels_like_C_high =  round(fahrenheit_to_celsius(feels_like_F+1.7),2)   
+            feels_like_C_low = round(fahrenheit_to_celsius(feels_like_F-1.3),2)  
+            feels_like_C_high =  round(fahrenheit_to_celsius(feels_like_F+1.3),2)   
             data.append({"RH": RH,  "Feels-Like Temperature (°C)": feels_like_C, "low": feels_like_C_low, "high": feels_like_C_high})
         df = pd.DataFrame(data)
-        
-       
-            
+              
         # Create the line for Feels-Like Temperature
         line = go.Scatter(
             x=df['RH'], 

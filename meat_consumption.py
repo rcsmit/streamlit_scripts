@@ -414,7 +414,7 @@ def main():
     """    
     st.header("Meat consumption vs life expectancy")
     st.info("REPRODUCING https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8881926/")
-    st.info("https://rcsmit.medium.com/longer-living-due-to-eating-meat-or-something-else-7225f0055c1f")
+    st.info("https://rene-smit.com/prolonged-lifespan-is-it-attributable-to-meat-consumption-or-other-factors/")
     join_how = "outer"
 
     df = get_data(join_how)
