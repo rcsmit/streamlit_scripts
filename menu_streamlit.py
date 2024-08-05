@@ -69,6 +69,8 @@ def main():
                 ["[40] Rome infomap","rome"],
                 ["[41] Leisurewords","leisurewords"],
                 ["[42] Feels like temp.","feels_like_temperature"],
+                ["[43] Cleaning simulation","cleaning_simulation"],
+                ["[44] CPI vs loon","cpi_loon"],
                 ]
     
     
