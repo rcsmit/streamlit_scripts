@@ -95,7 +95,7 @@ def plot_loon(df, reference_date, yaxis_range):
     # Show the plot
     st.plotly_chart(fig)
 def plot(df, reference_date):
-    yaxis_range = [df[['CPI_index_', 'CPI_afgeleid_index_', 'loon_40_index_', 'loon_38_index_', 'loon_36_index_']].min().min(), df[['CPI_index_', 'CPI_afgeleid_index_', 'loon_40_index_', 'loon_38_index_', 'loon_36_index_']].max().max()]
+    yaxis_range = [df[['CPI_index_', 'CPI_afgeleid_index_', 'loon_40_index_', 'loon_38_index_', 'loon_36_index_', 'loon_40_index_div_CPI_index_','loon_38_index_div_CPI_index_','loon_36_index_div_CPI_index_']].min().min(), df[['CPI_index_', 'CPI_afgeleid_index_', 'loon_40_index_', 'loon_38_index_', 'loon_36_index_', 'loon_40_index_div_CPI_index_','loon_38_index_div_CPI_index_','loon_36_index_div_CPI_index_']].max().max()]
 
     # Create a line plot for each indexed column using plotly.express
     fig = px.line(df, x='datum', y=['CPI_index_', 'CPI_afgeleid_index_', 'loon_40_index_', 'loon_38_index_', 'loon_36_index_', 'loon_40_index_div_CPI_index_','loon_38_index_div_CPI_index_','loon_36_index_div_CPI_index_'],
