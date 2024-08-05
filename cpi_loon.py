@@ -53,6 +53,9 @@ def calculate_indexes(df, reference_date):
     df['loon_38_index_'] = (df['loon_38'] / ref_loon_38) * 100
     df['loon_36_index_'] = (df['loon_36'] / ref_loon_36) * 100
     
+    df['loon_40_index_div_CPI_index_'] =  df['loon_40_index_']/df['CPI_index_'] *100
+    df['loon_38_index_div_CPI_index_'] =  df['loon_38_index_']/df['CPI_index_'] *100
+    df['loon_36_index_div_CPI_index_'] =  df['loon_36_index_']/df['CPI_index_'] *100
     return df
 
 
@@ -95,7 +98,7 @@ def plot(df, reference_date):
     yaxis_range = [df[['CPI_index_', 'CPI_afgeleid_index_', 'loon_40_index_', 'loon_38_index_', 'loon_36_index_']].min().min(), df[['CPI_index_', 'CPI_afgeleid_index_', 'loon_40_index_', 'loon_38_index_', 'loon_36_index_']].max().max()]
 
     # Create a line plot for each indexed column using plotly.express
-    fig = px.line(df, x='datum', y=['CPI_index_', 'CPI_afgeleid_index_', 'loon_40_index_', 'loon_38_index_', 'loon_36_index_'],
+    fig = px.line(df, x='datum', y=['CPI_index_', 'CPI_afgeleid_index_', 'loon_40_index_', 'loon_38_index_', 'loon_36_index_', 'loon_40_index_div_CPI_index_','loon_38_index_div_CPI_index_','loon_36_index_div_CPI_index_'],
                 labels={
                     'value': f'Index ({reference_date} = 100)',
                     'datum': 'Date'
