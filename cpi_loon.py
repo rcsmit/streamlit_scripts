@@ -125,7 +125,7 @@ def main():
     st.header("Minimumloon vs prijsindex")
     df = get_df()
     dates = df["datum"].tolist()
-    reference_date = st.selectbox("Reference date = 100", dates)
+    reference_date = st.selectbox("Reference date = 100", dates, 3)
 
     df = calculate_indexes(df, reference_date)
     yaxis_range = plot (df, reference_date)
