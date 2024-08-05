@@ -52,11 +52,11 @@ def calculate_indexes(df, reference_date):
     df['loon_40_index_'] = (df['loon_40'] / ref_loon_40) * 100
     df['loon_38_index_'] = (df['loon_38'] / ref_loon_38) * 100
     df['loon_36_index_'] = (df['loon_36'] / ref_loon_36) * 100
-
+    
     return df
 
 
-def plot_loon(df, reference_date):
+def plot_loon(df, reference_date, yaxis_range):
     fig = go.Figure()
 
     # Add traces for CPI and CPI_afgeleid on primary y-axis
@@ -75,7 +75,7 @@ def plot_loon(df, reference_date):
         yaxis=dict(
             title=f'CPI Index (reference_date = 100)',
             side='left',
-             range=[90, 150] 
+             range=[yaxis_range[0], yaxis_range[1]] 
         ),
         yaxis2=dict(
             title='Loon',
@@ -92,6 +92,7 @@ def plot_loon(df, reference_date):
     # Show the plot
     st.plotly_chart(fig)
 def plot(df, reference_date):
+    yaxis_range = [df[['CPI_index_', 'CPI_afgeleid_index_', 'loon_40_index_', 'loon_38_index_', 'loon_36_index_']].min().min(), df[['CPI_index_', 'CPI_afgeleid_index_', 'loon_40_index_', 'loon_38_index_', 'loon_36_index_']].max().max()]
 
     # Create a line plot for each indexed column using plotly.express
     fig = px.line(df, x='datum', y=['CPI_index_', 'CPI_afgeleid_index_', 'loon_40_index_', 'loon_38_index_', 'loon_36_index_'],
@@ -105,11 +106,18 @@ def plot(df, reference_date):
     fig.update_layout(
         yaxis_title=f'Index ({reference_date} = 100)',
         xaxis_title='Date',
-        legend_title_text='Variables'
+        legend_title_text='Variables',
+        yaxis=dict(
+            title=f'CPI Index (reference_date = 100)',
+            side='left',
+             range=[yaxis_range[0], yaxis_range[1]] 
+        ),
     )
-
+ 
+ 
     # Show the plot
     st.plotly_chart(fig)
+    return yaxis_range
 def main():
     st.header("Minimumloon vs prijsindex")
     df = get_df()
@@ -117,8 +125,8 @@ def main():
     reference_date = st.selectbox("Reference date = 100", dates)
 
     df = calculate_indexes(df, reference_date)
-    plot (df, reference_date)
-    plot_loon(df, reference_date)
+    yaxis_range = plot (df, reference_date)
+    plot_loon(df, reference_date, yaxis_range)
     st.info("Bron CPI: https://www.cbs.nl/nl-nl/cijfers/detail/83131NED")
     
     st.info("Deze tabel bevat cijfers over het prijsverloop van een pakket goederen en diensten dat een gemiddeld Nederlands huishouden aanschaft. Dit wordt de consumentenprijsindex (CPI) genoemd. In de tabel staat ook de afgeleide consumentenprijsindex: dit is de CPI waarin het effect van veranderingen in de tarieven van productgebonden belastingen (bijvoorbeeld btw en accijns op alcohol en tabak) en subsidies en van consumptiegebonden belastingen (bijvoorbeeld motorrijtuigenbelasting) is verwijderd.")
