@@ -310,8 +310,10 @@ def feels_like_temperature(row, temp_type):
         feels_like_F = calculate_wind_chill(T_F, V_mph)
     else:
         feels_like_F = T_F  # No adjustment
-    
-    feels_like_C = fahrenheit_to_celsius(feels_like_F)
+    try:
+        feels_like_C = fahrenheit_to_celsius(feels_like_F)
+    except:
+        feels_like_C = None
     return feels_like_C
 
 
