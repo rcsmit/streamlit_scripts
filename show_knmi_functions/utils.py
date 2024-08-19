@@ -284,25 +284,34 @@ def calculate_wind_chill(T, V):
 
 # Function to determine the feels-like temperature
 def feels_like_temperature(row, temp_type):
-    
-    #T_C = row['temp_avg']
+    # Dictionary to map temp_type to the corresponding column
+    temp_mapping = {
+        'temp_avg': 'temp_avg',
+        'temp_max': 'temp_max'
+    }
 
-    if temp_type == 'temp_avg':
-        T_C = row['temp_avg']
-    elif temp_type == 'temp_max':
-        T_C = row['temp_max']
+    # Get the temperature based on the temp_type
+    T_C = row.get(temp_mapping.get(temp_type))
+    if T_C is None:
+        raise ValueError(f"Invalid temperature type: '{temp_type}'. Use 'temp_avg' or 'temp_max'.")
+
+    # Calculate average relative humidity, considering missing values
+    RH_min = row.get('RH_min')
+    RH_max = row.get('RH_max')
+    
+    if RH_min is not None and RH_max is not None:
+        RH = (RH_min + RH_max) / 2
     else:
-        raise ValueError("Invalid temperature type. Use 'temp_avg' or 'temp_max'.")
-    try:
-        RH = (row["RH_min"] + row["RH_max"])/2
-    except:
         RH = None
-    V_mph = float(row['wind_max']) * 2.23694# Convert Wind_Max from m/s to mph
-    # V_mph = float(row['wind_Max']) * 0.621371  # Converting km/h to mph
-    
+
+    # Convert wind speed from m/s to mph (default to 0 if wind_max is missing)
+    V_mph = row.get('wind_max', 0) * 2.23694  # Default to 0 if wind_max is missing
+
+    # Convert Celsius to Fahrenheit
     T_F = celsius_to_fahrenheit(T_C)
-    
-    if T_F >= 80:
+
+    # Determine feels-like temperature
+    if T_F >= 80 and RH is not None:
         # Calculate Heat Index
         feels_like_F = calculate_heat_index(T_F, RH)
     elif T_F <= 50 and V_mph >= 3:
@@ -310,12 +319,10 @@ def feels_like_temperature(row, temp_type):
         feels_like_F = calculate_wind_chill(T_F, V_mph)
     else:
         feels_like_F = T_F  # No adjustment
-    try:
-        feels_like_C = fahrenheit_to_celsius(feels_like_F)
-    except:
-        feels_like_C = None
-    return feels_like_C
 
+    # Convert back to Celsius
+    feels_like_C = fahrenheit_to_celsius(feels_like_F)
+    return feels_like_C
 
 
 def log10(t):
