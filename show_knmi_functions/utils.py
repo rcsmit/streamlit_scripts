@@ -263,12 +263,15 @@ def fahrenheit_to_celsius(fahrenheit):
 
 # Function to calculate Heat Index
 def calculate_heat_index(T, RH):
-    # https://wonder.cdc.gov/wonder/help/Climate/ta_htindx.PDF
-    # Formula for heat index calculation in Fahrenheit
-    HI = (-42.379 + 2.04901523 * T + 10.14333127 * RH 
-          - 0.22475541 * T * RH - 0.00683783 * T**2 
-          - 0.05481717 * RH**2 + 0.00122874 * T**2 * RH 
-          + 0.00085282 * T * RH**2 - 0.00000199 * T**2 * RH**2)
+    try:
+        # https://wonder.cdc.gov/wonder/help/Climate/ta_htindx.PDF
+        # Formula for heat index calculation in Fahrenheit
+        HI = (-42.379 + 2.04901523 * T + 10.14333127 * RH 
+            - 0.22475541 * T * RH - 0.00683783 * T**2 
+            - 0.05481717 * RH**2 + 0.00122874 * T**2 * RH 
+            + 0.00085282 * T * RH**2 - 0.00000199 * T**2 * RH**2)
+    except:
+        HI = None
     return HI
 
 # Function to calculate Wind Chill
@@ -290,9 +293,10 @@ def feels_like_temperature(row, temp_type):
         T_C = row['temp_max']
     else:
         raise ValueError("Invalid temperature type. Use 'temp_avg' or 'temp_max'.")
-
-    RH = (row["RH_min"] + row["RH_max"])/2
-
+    try:
+        RH = (row["RH_min"] + row["RH_max"])/2
+    except:
+        RH = None
     V_mph = float(row['wind_max']) * 2.23694# Convert Wind_Max from m/s to mph
     # V_mph = float(row['wind_Max']) * 0.621371  # Converting km/h to mph
     
