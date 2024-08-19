@@ -299,9 +299,10 @@ def feels_like_temperature(row, temp_type):
     RH_min = row.get('RH_min')
     RH_max = row.get('RH_max')
     
-    if RH_min is not None and RH_max is not None:
+    try:
         RH = (RH_min + RH_max) / 2
-    else:
+    except:
+        #  unsupported operand type(s) for /: 'str' and 'int'
         RH = None
 
     # Convert wind speed from m/s to mph (default to 0 if wind_max is missing)
