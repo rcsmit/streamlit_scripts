@@ -13,7 +13,7 @@ def calculate_year_delta(x, what_to_return):
     Args:
         x (oject) : various variables
         what_to_return (str): "delta" or "row"
-
+        output (bool) : Show calculation
     Returns:
         int : the amount of money that I gain or loose in a year given the arguments
             or
@@ -72,8 +72,63 @@ def calculate_year_delta(x, what_to_return):
 
     row = [x.number_of_month_working_nl,delta, number_of_months_in_asia,number_of_months_in_nl,salary_gross_year,transition_payment,extras,  total_income_gross ,pensioen_bijdrage , total_income_netto,  expenses_fix,expenses_nl,expenses_asia,expenses_asia_extra,  expenses_total,  
            belastingen,belastingen_nieuw, inkomsten_belasting, arbeidskorting, heffingskorting,arbeidskorting+ heffingskorting,  belastingdruk]
+    
     if what_to_return == "delta":
+       
         to_return = delta
+
+    elif what_to_return =="row_with_output":
+        if x.when_output == x.number_of_month_working_nl:
+            st.info(f"Calculation for working {int(x.number_of_month_working_nl)} months ")
+            
+                    
+            st.code(f"""Number of months working :                  {f'{x.number_of_month_working_nl:>10,.0f}'.replace(',', ' ')}
+Number of months in Asia :                  {f'{number_of_months_in_asia:>10,.0f}'.replace(',', ' ')}
+
+INCOME
+Gross Annual Salary*            {f'{int(salary_gross_year):>10,.0f}'.replace(',', ' ')}
++ Extras                        {f'{int(extras):>10,.0f}'.replace(',', ' ')}
+  (transition payment/reservations)
+Total gross income              {f'{int(total_income_gross):>10,.0f}'.replace(',', ' ')}
+- Pension contribution          {f'{int(pensioen_bijdrage):>10,.0f}'.replace(',', ' ')}
+- Taxes                         {f'{int(belastingen):>10,.0f}'.replace(',', ' ')}
+                                 ---------
+Total Net Income                                                {f'{int(total_income_netto):>10,.0f}'.replace(',', ' ')}
+
+EXPENSES
+Fixed expenses (all year long)* {f'{int(expenses_fix):>10,.0f}'.replace(',', ' ')}
+Monthly expenses Europe         {f'{int(x.monthly_costs_nl*number_of_months_in_nl):>10,.0f}'.replace(',', ' ')}
+                   (working)*
+Miscellaneous NL Expenses       {f'{int(x.various_nl):>10,.0f}'.replace(',', ' ')}
+Non-working Months in NL*       {f'{int(x.monthly_costs_nl_non_working * x.months_nl_non_working):>10,.0f}'.replace(',', ' ')}
+                                 ---------
+Total expenses Europe                             {f'{int(expenses_nl):>10,.0f}'.replace(',', ' ')}
+
+Monthly expenses Asia*          {f'{int((x.monthly_costs_asia+x.insurance_asia)*number_of_months_in_asia):>10,.0f}'.replace(',', ' ')}
+Travel insurance*               {f'{int((x.insurance_asia)*number_of_months_in_asia):>10,.0f}'.replace(',', ' ')}
+Return flight tickets           {f'{int(x.return_flighttickets):>10,.0f}'.replace(',', ' ')}
+Flight tickets(visa runs)       {f'{int(x.flighttickets_visa_run):>10,.0f}'.replace(',', ' ')}
+Various Asia                    {f'{int(x.various_asia):>10,.0f}'.replace(',', ' ')}
+Flights within Asia*            {f'{int((int(number_of_months_in_asia/3)*x.flight_tickets_asia)):>10,.0f}'.replace(',', ' ')}
+Visas in Asia                   {f'{int(x.visas_asia):>10,.0f}'.replace(',', ' ')}
+                                   -------
+Total Expenses Asia                              {f'{int(expenses_asia):>10,.0f}'.replace(',', ' ')}
+
+Total Expenses                                                  {f'{int(expenses_total):>10,.0f}'.replace(',', ' ')}
+                                                                ==========
+Change of assets in the year                                    {f'{int(delta):>10,.0f}'.replace(',', ' ')}
+
+=== Breakdown of Monthly Costs ===
+Gross Annual Salary               {f'{x.proposed_salary_month:>10,.0f}'.replace(',', ' ')} * {f'{int(x.number_of_month_working_nl):>2}'} = {f'{int(x.proposed_salary_month * x.number_of_month_working_nl):>10,.0f}'.replace(',', ' ')}
+Fixed expenses (all year long)    {f'{x.fixed_monthly_costs:>10,.0f}'.replace(',', ' ')} * {f'{12:>2}'} = {f'{x.fixed_monthly_costs*12:>10,.0f}'.replace(',', ' ')}
+Monthly expenses Europe (working) {f'{int(x.monthly_costs_nl):>10,.0f}'.replace(',', ' ')} * {f'{int(number_of_months_in_nl):>2}'} = {f'{int(x.monthly_costs_nl*number_of_months_in_nl):>10,.0f}'.replace(',', ' ')}
+Non-working Months in NL          {f'{int(x.monthly_costs_nl_non_working):>10,.0f}'.replace(',', ' ')} * {f'{x.months_nl_non_working:>2}'} = {f'{int(x.monthly_costs_nl_non_working * x.months_nl_non_working):>10,.0f}'.replace(',', ' ')}
+Monthly expenses Asia             {f'{int(x.monthly_costs_asia):>10,.0f}'.replace(',', ' ')} * {f'{int(number_of_months_in_asia):>2}'} = {f'{int((x.monthly_costs_asia)*number_of_months_in_asia):>10,.0f}'.replace(',', ' ')}
+Travel insurance                  {f'{int(x.insurance_asia):>10,.0f}'.replace(',', ' ')} * {f'{int(number_of_months_in_asia):>2}'} = {f'{int((x.insurance_asia)*number_of_months_in_asia):>10,.0f}'.replace(',', ' ')}
+Flights within Asia :             {f'{x.flight_tickets_asia:>10,.0f}'.replace(',', ' ')} * {f'{int((int(number_of_months_in_asia/3))):>2}'} = {f'{int((int(number_of_months_in_asia/3) * x.flight_tickets_asia)):>10,.0f}'.replace(',', ' ')}
+""")
+
+        to_return = row
     else:
         to_return = row
     return to_return
@@ -103,7 +158,7 @@ def make_graph_values(x):
     for number_of_month_working_nl_ in range (0,121):
         x.number_of_month_working_nl = number_of_month_working_nl_ / 10
 
-        row = calculate_year_delta(x, what_to_return="row")
+        row = calculate_year_delta(x, what_to_return="row_with_output")
         list_total.append(row)
     columns = ["number_of_month_working_nl", "DELTA","number_of_months_in_asia","number_of_months_in_nl","salary_gross_year_excl_extras","transition_payment","extras","total_income_gross ","pensioen_bijdrage ","total_income_netto","expenses_fix","expenses_nl","expenses_asia","expenses_asia_extra","expenses_total", "werkelijk_te_betalen_belastingen", "werkelijk_te_betalen_belastingen_new", "inkomsten_belasting", "arbeidskorting", "heffingskorting", "totale_korting", "belastingdruk"]
     total_df = pd.DataFrame(list_total, columns=columns)#.set_index("months_working")
@@ -176,6 +231,8 @@ def calculate_delta_main(x):
     """Calculate the delta with various salaries over various months working
 
     Args:
+        x:
+        when_output: the month in which we want output. 0 for never output
 
     """    
     
@@ -212,7 +269,7 @@ class CommonParameters:
         #      x.return_flighttickets, x.flighttickets_visa_run,extras, debug):
         
         self.proposed_salary_month = st.sidebar.number_input(
-            "Proposed gross salary per month", 0, 10000, 2369
+            "Proposed gross salary per month", 0, 10000, 2300
         )
         self.calculate_extras = st.sidebar.selectbox("Include extras (vak.geld/-dgn, transtieverg.)", [True,False], index=0)
         
@@ -227,18 +284,18 @@ class CommonParameters:
         )
 
         self.monthly_costs_nl = st.sidebar.number_input(
-            "Monthly costs NL working", 0, 10000, 450
+            "Monthly costs Europe working", 0, 10000, 450
         )
         self.various_nl = st.sidebar.number_input("Various NL (Total)", 0, 10000, 200)
         self.monthly_costs_asia = st.sidebar.number_input(
-            "Monthly costs Asia", 0, 10000, 850)
+            "Monthly costs Asia", 0, 10000, 1000)
         
         self.insurance_asia = st.sidebar.number_input("Travel insurance Asia (per month)", 0, 10000, 75)
         self.various_asia = st.sidebar.number_input("Various Asia total", 0, 10000, 200)
         self.flight_tickets_asia = st.sidebar.number_input(
-            "Flight tickets Asia (per 3 mnd)", 0, 10000, 200
+            "Flight tickets Asia (per 3 mnd)", 0, 10000, 0
         )  # per 3 mnd  = (int(i/3)) * flight_tickets_asia
-        self.visas_asia = st.sidebar.number_input("Visas Asia", 0, 10000, 100)
+        self.visas_asia = st.sidebar.number_input("Visas Asia", 0, 10000,0)
         self.return_flighttickets = st.sidebar.number_input(
             "Return Flights NL-Asia", 0, 10000, 1200
         )
@@ -249,6 +306,7 @@ class CommonParameters:
         self.max_delta = 100  # st.sidebar.number_input("max_delta",None,None,100)
         self.debug = st.sidebar.selectbox("Show all lines/graphs", [True,False], index=1)
         self.show_output = False #st.sidebar.selectbox("Show output", [True,False], index=1)
+        self.when_output = st.sidebar.number_input("Show calculation for x months (-1 = never)", -1,12,-1)
              
 def main():
     st.header("Various calculations about the total amount of money gained/lost vs. number of months working")
@@ -258,6 +316,7 @@ def main():
     common_param = CommonParameters()
 
     make_graph_values(common_param)
+    
     calculate_delta_main(common_param)
     main_solver_how_much_salary(common_param)
     main_solver_how_many_months(common_param)

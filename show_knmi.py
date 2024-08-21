@@ -42,7 +42,7 @@ except AttributeError:
     pass
 
 
-#@st.cache_data (ttl=60 * 60 * 24)
+@st.cache_data (ttl=60 * 60 * 24)
 def getdata_wrapper(stn, fromx, until):
     url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX:EV24:FHX&start={fromx}&end={until}"
     
