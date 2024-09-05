@@ -144,7 +144,6 @@ def calculate_pensioenbijdrage(salary_gross_month, number_of_month_working_nl):
     Returns:
         int : amount of pensioenbijdrage
     """
-
     pensioen_bijdrage_ = (((salary_gross_month*12*1.08)-15935)*0.1265*number_of_month_working_nl/12)
     pensioen_bijdrage = 0 if  pensioen_bijdrage_ < 0 else pensioen_bijdrage_
     return pensioen_bijdrage
