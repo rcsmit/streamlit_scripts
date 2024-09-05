@@ -82,8 +82,9 @@ def calculate_year_delta(x, what_to_return):
             st.info(f"Calculation for working {int(x.number_of_month_working_nl)} months ")
             
                     
-            st.code(f"""Number of months working :                  {f'{x.number_of_month_working_nl:>10,.0f}'.replace(',', ' ')}
-Number of months in Asia :                  {f'{number_of_months_in_asia:>10,.0f}'.replace(',', ' ')}
+            st.code(f"""Number of months working :      {f'{x.number_of_month_working_nl:>10,.0f}'.replace(',', ' ')}
+Number of months in Asia :      {f'{number_of_months_in_asia:>10,.0f}'.replace(',', ' ')}
+Number of months with parents : {f'{x.months_nl_non_working:>10,.0f}'.replace(',', ' ')}
 
 INCOME
 Gross Annual Salary*            {f'{int(salary_gross_year):>10,.0f}'.replace(',', ' ')}

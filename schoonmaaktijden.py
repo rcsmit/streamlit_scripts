@@ -15,6 +15,8 @@ from itertools import cycle
 import time
 # partly derived from https://stackoverflow.com/a/37036082/4173718
 
+
+# https://chatgpt.com/c/de742f40-3c1d-41c2-9287-76539aa6cdcf
 def calculate_weibull_pdf(x, scale, shape):
 
     return (shape/scale) * ((x/scale)**(shape - 1)) * np.exp(-1*((x/scale)**shape))
