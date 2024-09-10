@@ -547,7 +547,11 @@ def plot_macd_2(df, choice,  buy_price, sell_price, macd_signal, x_as_label):
     st.plotly_chart(fig, use_container_width=True)
 
 def main():
-    st.set_page_config(layout="wide")
+    try:
+        st.set_page_config(layout="wide")
+    except:
+        pass
+    
     st.header("Crypto dashboard / watchlist of René Smit")
 
 

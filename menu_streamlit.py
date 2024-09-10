@@ -72,7 +72,7 @@ def main():
                 ["[43] Cleaning simulation","cleaning_simulation"],
                 ["[44] CPI vs loon","cpi_loon"],
                 ["[45] Crypto Dashboard","crypto_dashboard"],
-                ["[46] Datafitter","data_fitter"],
+               
                
                 ["[48] Transcript Thai","transcript_thai"],
 
