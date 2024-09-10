@@ -665,4 +665,5 @@ def main():
     # https://www.weerstationhaaksbergen.nl/weather/index.php/Weblog/zonnestraling-en-zonnepanelen.html
 
 
-main()
+if __name__ == "__main__":
+    main()
