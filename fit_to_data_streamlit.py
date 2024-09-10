@@ -14,7 +14,7 @@ import math
 # https://stackoverflow.com/questions/55212002/how-do-i-use-scipy-optimize-curve-fit-with-panda-df
 
 def main():
-    st.subheader("Find formula for Personal contribution in the calculation of the housing allowance )
+    st.subheader("Find formula for personal contribution ("basishuur", the part of the rent you have to pay yourself) in the calculation of the housing allowance )
     st.info("A graph was given. Goal was to find a formula to describe the graph, to implement in some code")
     if platform.processor() != "":   
         file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\eigen_bijdrage2022.csv" 
@@ -188,7 +188,7 @@ def main():
     plt.legend()
 
     st.pyplot(fig)
-    st.info("https://download.belastingdienst.nl/toeslagen/docs/berekening_huurtoeslag_tg0831z21fd.pdf")
+    st.info("Official formula is Basishuur = (factor a x rekeninkomen^2) + (factor b x rekeninkomen) + taakstellingsbedrag. https://download.belastingdienst.nl/toeslagen/docs/berekening_huurtoeslag_tg0831z21fd.pdf")
 if __name__ == "__main__":
     main()
 
