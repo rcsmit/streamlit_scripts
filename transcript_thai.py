@@ -22,10 +22,10 @@ def main():
     st.text_input("Searchstring", searchstring)
     for l in searchstring:
         if l == " ":
-            print ("SPACE")
+            st.write ("SPACE")
         
         else:
-            print (l)
+            st.write (l)
             df_ = df.loc[df['Letter'] == l]
             if len(df_)>0:
                 
@@ -34,10 +34,10 @@ def main():
                 for c in range(len(columns)):
                     x = (df_.iloc[0,c])
                     if x != "#":
-                        print (f"{x}")
+                        st.write (f"{x}")
                     
             else:
-                print ("NOT FOUND")
+                st.write ("NOT FOUND")
 
 
 if __name__ == "__main__":
