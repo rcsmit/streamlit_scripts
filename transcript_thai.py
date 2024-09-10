@@ -38,6 +38,7 @@ def main():
                     
             else:
                 st.write ("NOT FOUND")
+            st.write("_______")
 
 
 if __name__ == "__main__":
