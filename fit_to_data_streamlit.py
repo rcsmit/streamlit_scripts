@@ -173,7 +173,6 @@ def main():
     b_2021= 0.002453085056
     fig =  plt.figure()
 
-
     plt.plot(xdata, func(xdata, a_2021,b_2021), 'b-',
             label='ministeriele regeling 2021' ) 
     plt.plot(xdata, func(xdata, a_2022,b_2022), 'b--',
