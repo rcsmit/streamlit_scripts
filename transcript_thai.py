@@ -19,6 +19,7 @@ def main():
     df=df.fillna("#")
    
     searchstring = "สวัสดี ฉันชื่อเรเน่"
+    st.text_input("Searchstring", searchstring)
     for l in searchstring:
         if l == " ":
             print ("SPACE")
