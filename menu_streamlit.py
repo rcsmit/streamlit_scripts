@@ -74,7 +74,7 @@ def main():
                 ["[45] Crypto Dashboard","crypto_dashboard"],
                
                
-                ["[48] Transcript Thai","transcript_thai"],
+                ["[46] Transcript Thai","transcript_thai"],
 
                 ]
     

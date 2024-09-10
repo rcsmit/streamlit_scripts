@@ -180,5 +180,5 @@ def main():
     if st.sidebar.button("Rerun"):
         st.rerun()
 
-
-main()
+if __name__ == "__main__":
+    main()

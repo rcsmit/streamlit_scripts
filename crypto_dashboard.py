@@ -708,7 +708,9 @@ def show_graph_in_column(time_zone, wdw, center_boll, z1, z2,  choice, period, i
         if which_to_show == "MACD" or which_to_show =="Both":
             show_plot_macd(df, choice, x_as_label, ma1, ma2)
 
-main()
+if __name__ == "__main__":
+    main()
+
 
 # https://towardsdatascience.com/detection-of-price-support-and-resistance-levels-in-python-baedc44c34c9
 
