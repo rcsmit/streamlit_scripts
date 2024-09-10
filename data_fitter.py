@@ -178,7 +178,7 @@ def main():
     df_results = pd.DataFrame.from_dict(results, orient='index')
     df_results = df_results.sort_values(by=["SSE"]).reset_index()
     # Print DataFrame
-    print(df_results)
+    st.write(df_results)
 
 if __name__ == "__main__":
     #caching.clear_cache()

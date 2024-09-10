@@ -73,7 +73,7 @@ def main():
                 ["[44] CPI vs loon","cpi_loon"],
                 ["[45] Crypto Dashboard","crypto_dashboard"],
                 ["[46] Datafitter","data_fitter"],
-                ["[47] Get forex data","get_forex_data_st"],
+               
                 ["[48] Transcript Thai","transcript_thai"],
 
                 ]

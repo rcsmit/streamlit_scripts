@@ -20,10 +20,11 @@ def save_df(df, name):
     )
     name_ = OUTPUT_DIR + name + ".csv"
     compression_opts = dict(method=None, archive_name=name_)
-    df.to_csv(name_, index=False, compression=compression_opts)
-
-    print("--- Saving " + name_ + " ---")
-
+    try:
+        df.to_csv(name_, index=False, compression=compression_opts)
+        print("--- Saving " + name_ + " ---")
+    except:
+        print ("error saving data")
 def fill_up_weekend_days(df):
     """In the data there are no rates for the weekend. We generate extra rows and fill up 
     the saturday and sunday with the values of Friday
@@ -123,6 +124,7 @@ def main():
         "Date", var_name="currency", value_name="rate"
     )
     st.write (df_totaal_unpacked)
+
     save_df(df_totaal_unpacked, "currencydata_2016_2022_unpacked")
 
 if __name__ == "__main__":
