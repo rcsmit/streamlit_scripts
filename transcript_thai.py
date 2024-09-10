@@ -41,7 +41,7 @@ def main():
             else:
                 st.write ("NOT FOUND")
           
-        st.write(df_output)
+    st.write(df_output)
 
 if __name__ == "__main__":
     main()
