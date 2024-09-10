@@ -8,8 +8,8 @@ import warnings
 import streamlit as st
 import platform
 import math
-from matplotlib.backends.backend_agg import RendererAgg
-_lock = RendererAgg.lock
+# from matplotlib.backends.backend_agg import RendererAgg
+# _lock = RendererAgg.lock
 
 # https://stackoverflow.com/questions/55212002/how-do-i-use-scipy-optimize-curve-fit-with-panda-df
 
