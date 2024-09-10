@@ -26,17 +26,10 @@ def main():
             st.write ("SPACE")
         
         else:
-            st.write (l)
             df_ = df.loc[df['Letter'] == l]
             if len(df_)>0:
                 df_output = pd.concat([df_output, df_], ignore_index=True)
-                # st.write(df_)
-                # columns = df_.columns
-                # xx=""
-                # for c in range(len(columns)):
-                #     x = (df_.iloc[0,c])
-                #     if x != "#":
-                #         st.write (f"{x}")
+               
                     
             else:
                 st.write ("NOT FOUND")
