@@ -122,7 +122,7 @@ def main():
     df_totaal_unpacked = df_totaal.melt(
         "Date", var_name="currency", value_name="rate"
     )
-    print (df_totaal_unpacked)
+    st.write (df_totaal_unpacked)
     save_df(df_totaal_unpacked, "currencydata_2016_2022_unpacked")
 
 if __name__ == "__main__":
