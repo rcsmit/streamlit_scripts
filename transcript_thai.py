@@ -20,6 +20,7 @@ def main():
    
     searchstring = "สวัสดี ฉันชื่อเรเน่"
     st.text_input("Searchstring", searchstring)
+    df_output=pd.dataframe()
     for l in searchstring:
         if l == " ":
             st.write ("SPACE")
@@ -28,18 +29,20 @@ def main():
             st.write (l)
             df_ = df.loc[df['Letter'] == l]
             if len(df_)>0:
-                
-                columns = df_.columns
-                xx=""
-                for c in range(len(columns)):
-                    x = (df_.iloc[0,c])
-                    if x != "#":
-                        st.write (f"{x}")
+                 df_output = pd.concat(df_output,df_)
+           
+                # st.write(df_)
+                # columns = df_.columns
+                # xx=""
+                # for c in range(len(columns)):
+                #     x = (df_.iloc[0,c])
+                #     if x != "#":
+                #         st.write (f"{x}")
                     
             else:
                 st.write ("NOT FOUND")
-            st.write("_______")
-
+          
+        st.write(df_output)
 
 if __name__ == "__main__":
     main()
