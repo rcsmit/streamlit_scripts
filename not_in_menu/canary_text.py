@@ -49,6 +49,8 @@ def detect_version(canary_text):
    
 
 def main():
+
+    st.info("reating canary traps involves embedding unique identifiers in different versions of a document to identify leaks or unauthorized sharing")
     # https://chat.openai.com/c/6ab1bb09-5b28-4944-ad5c-67898489b309
     # Example usage
     text = """What is Lorem Ipsum? Lorem Ipsum is simply dummy text of the printing and typesetting industry. 

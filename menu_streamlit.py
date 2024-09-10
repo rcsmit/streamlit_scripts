@@ -71,6 +71,11 @@ def main():
                 ["[42] Feels like temp.","feels_like_temperature"],
                 ["[43] Cleaning simulation","cleaning_simulation"],
                 ["[44] CPI vs loon","cpi_loon"],
+                ["[45] Crypto Dashboard","crypto_dashboard"],
+                ["[46] Datafitter","data_fitter"],
+                ["[47] Get forex data","get_forex_data_st"],
+                ["[48] Transcript Thai","transcript_thai"],
+
                 ]
     
     

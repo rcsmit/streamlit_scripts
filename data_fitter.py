@@ -159,22 +159,27 @@ def make_pdf(dist, params, size=10000):
 
     return pdf
 
-# Load data from statsmodels datasets
-# data = pd.Series(sm.datasets.elnino.load_pandas().data.set_index('YEAR').values.ravel())
-data_ = [56, 18, 15, 30, 34, 30, 7, 15, 44, 23, 50, 20, 50, 18, 19, 32, 40, 36, 26, 30, 8, 15, 
-         19, 23, 30, 74, 25, 34, 28, 61, 22, 13, 14, 70, 38, 31, 29, 31, 42, 62, 7, 40, 56, 28, 
-         35, 12, 13, 13, 7, 30, 23, 42, 36, 38, 30, 25, 13, 55, 40, 40, 10, 10, 16,
-          27, 17, 15, 43, 27, 30, 22, 10, 27, 48, 30, 53, 24, 58, 11, 17, 26, 13, 86, 26, 40, 
-          25, 13, 17, 47, 51, 41, 9, 13, 29, 5, 22, 15, 20, 75, 54, 40, 11, 34, 35, 37, 36, 39, 
-          41, 40, 33, 28, 57, 45, 16, 12, 33, 27, 14, 26, 16, 18, 19, 70, 15, 11, 46, 35, 20, 22, 
-          60, 7, 67, 28, 14, 15, 49, 20, 20, 40, 26, 20, 19, 26, 83, 22, 32, 29, 20, 14, 15, 38]
-data = pd.Series(data_)
-# Pl
-# Find best fit distribution
+def main():
+    # Load data from statsmodels datasets
+    # data = pd.Series(sm.datasets.elnino.load_pandas().data.set_index('YEAR').values.ravel())
+    data_ = [56, 18, 15, 30, 34, 30, 7, 15, 44, 23, 50, 20, 50, 18, 19, 32, 40, 36, 26, 30, 8, 15, 
+            19, 23, 30, 74, 25, 34, 28, 61, 22, 13, 14, 70, 38, 31, 29, 31, 42, 62, 7, 40, 56, 28, 
+            35, 12, 13, 13, 7, 30, 23, 42, 36, 38, 30, 25, 13, 55, 40, 40, 10, 10, 16,
+            27, 17, 15, 43, 27, 30, 22, 10, 27, 48, 30, 53, 24, 58, 11, 17, 26, 13, 86, 26, 40, 
+            25, 13, 17, 47, 51, 41, 9, 13, 29, 5, 22, 15, 20, 75, 54, 40, 11, 34, 35, 37, 36, 39, 
+            41, 40, 33, 28, 57, 45, 16, 12, 33, 27, 14, 26, 16, 18, 19, 70, 15, 11, 46, 35, 20, 22, 
+            60, 7, 67, 28, 14, 15, 49, 20, 20, 40, 26, 20, 19, 26, 83, 22, 32, 29, 20, 14, 15, 38]
+    data = pd.Series(data_)
+    # Pl
+    # Find best fit distribution
 
-results = fit_data(data)
+    results = fit_data(data)
 
-df_results = pd.DataFrame.from_dict(results, orient='index')
-df_results = df_results.sort_values(by=["SSE"]).reset_index()
-# Print DataFrame
-print(df_results)
+    df_results = pd.DataFrame.from_dict(results, orient='index')
+    df_results = df_results.sort_values(by=["SSE"]).reset_index()
+    # Print DataFrame
+    print(df_results)
+
+if __name__ == "__main__":
+    #caching.clear_cache()
+    main()
