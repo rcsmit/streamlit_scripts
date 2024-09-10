@@ -10,7 +10,6 @@ import numpy as np
 pd.options.mode.chained_assignment = None  # default='warn'
 import streamlit as st
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_agg import RendererAgg
 
 from patsy import dmatrices
 import numpy as np
@@ -21,7 +20,7 @@ import scipy
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 
-_lock = RendererAgg.lock
+
 
 import numpy as np
 
