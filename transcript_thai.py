@@ -20,7 +20,7 @@ def main():
    
     searchstring = "สวัสดี ฉันชื่อเรเน่"
     st.text_input("Searchstring", searchstring)
-    df_output=pd.dataframe()
+    df_output = pd.DataFrame()
     for l in searchstring:
         if l == " ":
             st.write ("SPACE")
@@ -29,8 +29,7 @@ def main():
             st.write (l)
             df_ = df.loc[df['Letter'] == l]
             if len(df_)>0:
-                 df_output = pd.concat(df_output,df_)
-           
+                df_output = pd.concat([df_output, df_], ignore_index=True)
                 # st.write(df_)
                 # columns = df_.columns
                 # xx=""
