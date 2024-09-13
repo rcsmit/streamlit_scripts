@@ -35,9 +35,9 @@ class PensionCalculator:
         """
         deceased_ages= []
         if self.sexe== "male":
-            df_prob_die = pd.read_csv("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/AG2022DefinitiefGevalideerd_male.csv")
+            df_prob_die = pd.read_csv("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/AG2024DefinitiefGevalideerd_male.csv")
         else:
-            df_prob_die = pd.read_csv("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/AG2022DefinitiefGevalideerd_female.csv")
+            df_prob_die = pd.read_csv("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/AG2024DefinitiefGevalideerd_female.csv")
 
     
        
@@ -217,7 +217,8 @@ def main():
     calculator.calculate_pension(calculator.num_simulations)
     # calculator.show_ages_at_death(calculator.num_simulations, calculator.sexe, calculator.current_age)
 
-    st.info("Projections Life Table AG2022 } https://www.actuarieelgenootschap.nl/kennisbank/ag-l-projections-life-table-ag2022.htm")
+    #st.info("Projections Life Table AG2022 } https://www.actuarieelgenootschap.nl/kennisbank/ag-l-projections-life-table-ag2022.htm")
+    st.info("Projections Life Table AG2024 https://www.actuarieelgenootschap.nl/kennisbank/prognosetafel-ag2024-2")
 
    
 if __name__ == "__main__":
