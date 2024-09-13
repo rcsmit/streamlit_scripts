@@ -199,7 +199,7 @@ class PensionCalculator:
 
                 # Add vertical line at age where cumulative probability is 0.5
                 fig.add_vline(x=age_at_prob, line_dash="dash", line_color="red", annotation_text=f"{exact_probability}")
-                st.write(f"{exact_probability}% probability {verb} at {age_at_prob} years (in {round(age_at_prob-.current_age,2)} years)")
+                st.write(f"{exact_probability}% probability {verb} at {age_at_prob} years (in {round(age_at_prob-self.current_age,2)} years)")
             st.plotly_chart(fig)
 
         st.write(f"Average age at death of {num_simulations} individuals ({self.sexe}): {round(sum(self.deceased_ages)/len(self.deceased_ages),1)} - SD {round(np.std(self.deceased_ages),1)}")
