@@ -10,7 +10,7 @@ import datetime
 class PensionCalculator:
     def __init__(self):
         # Initialize default values
-        self.current_age = 46
+        self.current_age = 47
         self.max_age= 110
         # Get the current date and time
         current_datetime = datetime.datetime.now()
@@ -179,7 +179,7 @@ class PensionCalculator:
                 verb = "to be deceased"
             else:
                 #  Complementary Cumulative Distribution Function (CCDF),
-                l = [90,75,50,25,5,1]
+                l = [99,95,90,75,50,25,5,1]
                 name = f"Survival function ({self.sexe} - {self.current_age})"
                 name2 = "CCDF"
                 verb = "to be still alive"
