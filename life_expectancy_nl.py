@@ -7,7 +7,7 @@ import streamlit as st
 import pandas as pd
 import datetime
 
-class PensionCalculator:
+class LifeExpectancyCalculator:
     def __init__(self):
         # Initialize default values
         self.current_age = 47
@@ -27,8 +27,8 @@ class PensionCalculator:
         self.new_method =  True # st.sidebar.selectbox("Use AG table", [True, False],0)
         self.print_individual =  st.sidebar.selectbox("Print individual runs", [True, False],1)
 
-    def calculate_pension(self, num_simulations):
-        """Calculate the pension and balances
+    def calculate_life_expectancy(self, num_simulations):
+        """Calculate life expectancy
 
         Args:
             num_simulations (int, optional): num simulations. Defaults to 1000.
@@ -82,14 +82,14 @@ class PensionCalculator:
 
                   
             
-        # Filter data for age 54
-        age_54_data = df_prob_die[df_prob_die['age'] == self.current_age]
+        # Filter data for age x
+        age_x_data = df_prob_die[df_prob_die['age'] == self.current_age]
 
         # Create trace for age 54
-        trace = go.Scatter(x=age_54_data.columns[1:],
-                        y=age_54_data.iloc[0, 1:],
+        trace = go.Scatter(x=age_x_data.columns[1:],
+                        y=age_x_data.iloc[0, 1:],
                         mode='lines',
-                        name=f'Age {age_54_data.iloc[0, 0]}')
+                        name=f'Age {age_x_data.iloc[0, 0]}')
 
         # Create layout
         layout = go.Layout(title=f'Probability to Die Over Time for Age {self.current_age}',
@@ -211,15 +211,17 @@ class PensionCalculator:
       
 def main():
     st.title("Dutch life expectancy and mortality/survival chances")
-    calculator = PensionCalculator()
+    st.info("This script is a Streamlit application that simulates life expectancy and mortality using data from Dutch actuarial tables (AG2024). It allows users to input parameters like age and gender and run simulations to predict the age of death for individuals.")
+    calculator = LifeExpectancyCalculator()
 
     calculator.interface()
-    calculator.calculate_pension(calculator.num_simulations)
+    calculator.calculate_life_expectancy(calculator.num_simulations)
     # calculator.show_ages_at_death(calculator.num_simulations, calculator.sexe, calculator.current_age)
 
     #st.info("Projections Life Table AG2022 } https://www.actuarieelgenootschap.nl/kennisbank/ag-l-projections-life-table-ag2022.htm")
     st.info("Projections Life Table AG2024 https://www.actuarieelgenootschap.nl/kennisbank/prognosetafel-ag2024-2")
 
+    st.info("Statistics Netherlands (CBS) uses different techniques for life expectancy https://pure.rug.nl/ws/portalfiles/portal/13869387/stoeldraijer_et_al_2013_DR.pdf")
    
 if __name__ == "__main__":
     main()
