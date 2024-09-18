@@ -33,6 +33,9 @@ def main():
    
     searchstring_ = "สวัสดี ฉันชื่อเรเน่"
     searchstring = st.text_input("Searchstring", searchstring_)
+    if searchstring=="":
+        st.error("Enter a search string")
+        st.stop()
     df_output = pd.DataFrame()
     for l in searchstring:
       
