@@ -13,18 +13,32 @@ def read():
     #df = df[:-1]  #remove last row which appears to be a Nan
     
     return df
+def reorder_columns(df_output):
+    # List the columns of your dataframe
+    cols = df_output.columns.tolist()
 
+    # Find the positions of "Letter" and "Sounds like"
+    letter_index = cols.index('Letter')
+    sounds_like_index = cols.index('Sounds like')
+
+    # Move the "Sounds like" column to immediately after the "Letter" column
+    cols.insert(letter_index + 1, cols.pop(sounds_like_index))
+
+    # Reorder the dataframe with the new column order
+    df_output = df_output[cols]  
+    return df_output
 def main():
     df = read()
-    df=df.fillna("#")
+    df=df.fillna(".")
    
-    searchstring = "สวัสดี ฉันชื่อเรเน่"
-    st.text_input("Searchstring", searchstring)
+    searchstring_ = "สวัสดี ฉันชื่อเรเน่"
+    searchstring = st.text_input("Searchstring", searchstring_)
     df_output = pd.DataFrame()
     for l in searchstring:
+      
         if l == " ":
-            st.write ("SPACE")
-        
+            # st.write ("SPACE")
+            pass
         else:
             df_ = df.loc[df['Letter'] == l]
             if len(df_)>0:
@@ -32,9 +46,15 @@ def main():
                
                     
             else:
-                st.write ("NOT FOUND")
-          
-    st.write(df_output)
+                st.write (f"NOT FOUND {l}")
 
+    df_output = reorder_columns(df_output)
+    # Combine all values from the 'sound' column into one string
+    combined_sound_string = ' '.join(df_output['sound'].astype(str))
+
+    # Display the result
+    st.info(combined_sound_string)
+    st.write(df_output)
+    print (df_output.dtypes)
 if __name__ == "__main__":
     main()
