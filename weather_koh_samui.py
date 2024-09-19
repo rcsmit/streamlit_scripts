@@ -170,7 +170,7 @@ def show_warmingstripes(df_, to_show, where):
     plt.gca().yaxis.set_major_locator(plt.NullLocator())
     # plt.show()
     # st.pyplot(fig) - gives an error
-    st.set_option("deprecation.showPyplotGlobalUse", False)
+    #st.set_option("deprecation.showPyplotGlobalUse", False)
     st.pyplot()
 def show_month(df, to_show, day_min, day_max, month, month_names, where):
     """Show graph with to_show in different lines for each years for a certain (period of) a month
@@ -241,7 +241,7 @@ def show_month(df, to_show, day_min, day_max, month, month_names, where):
                   title=f'Frequency of {to_show} for {month_names[month-1]} in {where}')
     st.plotly_chart(fig)
 
-    show_warmingstripes(df_month, to_show, where)
+    #show_warmingstripes(df_month, to_show, where)
 
 def cross_table_montly_avg(df, to_show, where, y_axis_zero):  
     """_summary_

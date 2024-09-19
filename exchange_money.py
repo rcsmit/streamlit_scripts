@@ -31,19 +31,17 @@ def find_rate_yfinance():
     rate_yfinance = df.iloc[-1, -2]  # last available close-rate
     return rate_yfinance
 
+rate_yfinance = find_rate_yfinance() #36.62453  # find_rate_yfinance()
 
 cost_creditcard_fix = 4.5  # in euro
 cost_creditcard_variable = 1.02  # in %
+rate_cc = rate_yfinance / cost_creditcard_variable
 
 cost_debitcard_fix = 0  # in euro
 cost_debitcard_variable = 1.012  # in %
+rate_dc = rate_yfinance / cost_debitcard_variable
 
 cost_atm = 220  # in baht
-
-
-rate_yfinance = find_rate_yfinance() #36.62453  # find_rate_yfinance()
-rate_cc = rate_yfinance / cost_creditcard_variable
-rate_dc = rate_yfinance / cost_debitcard_variable
 
 rate_xe = 35.77
 rate_street = rate_yfinance * 0.98 # 0.98637 # 35.11

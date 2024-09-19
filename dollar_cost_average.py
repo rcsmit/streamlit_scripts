@@ -273,7 +273,7 @@ def rendement_one_starting_date(investment_interval, initial_investment):
 def main():
     """Main function to run the dollar-cost averaging tool using Streamlit."""
     st.title("Dollar-cost averaging tool")
-
+    st.info("https://rene-smit.com/dollar-cost-averaging-or-all-at-once/")
     # Set the parameters 
     
     what = st.sidebar.selectbox("What to do", ["one date", "various dates"], 1)
@@ -291,4 +291,4 @@ if __name__ == "__main__":
     print(f"_________________________________")
     
     main()
-    st.info("Article: https://rcsmit.medium.com/dollar-cost-averaging-or-all-at-once-e62c7d6a7442")
+    
