@@ -6,8 +6,8 @@ from scipy import stats
 #from scipy.stats import weibull_min
 import pandas as pd
 from statistics import mean
-from matplotlib.backends.backend_agg import RendererAgg
-_lock = RendererAgg.lock
+# from matplotlib.backends.backend_agg import RendererAgg
+# _lock = RendererAgg.lock
 import streamlit as st
 import random
 from itertools import cycle
@@ -178,8 +178,8 @@ def lineplot(data, acco_name):
     """
     data_serie = pd.Series(data)
     sma = data_serie.rolling(window=5, center=False).mean()
-
-    with _lock:
+    if 1==1:
+    # with _lock:
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
         ax.plot(data, linestyle="dotted")
@@ -192,7 +192,8 @@ def lineplot(data, acco_name):
 
 def extra_plots(what, acco_name, data, bins_formula, bins, shape, scale):
     #with st.expander(f"Extra plots {what}" , expanded = False):
-    with _lock:
+    if 1==1:
+    # with _lock:
         fig_extra_plot = plt.figure()
         ax = fig_extra_plot.add_subplot(1, 1, 1)
         if what =="PDF":
@@ -258,7 +259,8 @@ def extra_plot_pmf(df, acco_name, data, bins_formula, bins, shape, scale, binwid
         st.write (f"{round( 100 * (calculate_weibull_cdf (x, scale, shape)),1)} % of the cleans are done in less than {x} minutes. (reality: {round(temp_aantal/totaal_aantal*100,1)} % = {temp_aantal} acco's) ")
     st.write (f"{round (100 - ( 100 * (calculate_weibull_cdf (x, scale, shape))),1)} % of the cleans need more than {x} minutes. (reality: {round (100 - (temp_aantal/totaal_aantal*100),1)} % = {totaal_aantal - temp_aantal} acco's) ")
 
-    with _lock:
+    if 1==1:
+    # with _lock:
         bins_new = []
         y_new, y_reality = [],[]
         j = 0
@@ -337,7 +339,8 @@ def extra_plot_cdf(df, acco_name, data, bins_formula, bins, shape, scale, binwid
     #len_reeks_test = len(reeks_test)
 
 
-    with _lock:
+    if 1==1:
+    # with _lock:
         bins_new = []
         y_new, y_reality = [],[]
         fig_extra_plot = plt.figure()
@@ -404,7 +407,8 @@ def calculate_and_plot(df_selection, data, acco_name, modus, animation, binwidth
     #binwidth = max(data)/10
 
     bins = np.arange(min(data), max(data) + binwidth, binwidth)
-    with _lock:
+    if 1==1:
+    # with _lock:
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
         ax3 = ax.twinx()
