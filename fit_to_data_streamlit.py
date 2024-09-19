@@ -14,7 +14,7 @@ import math
 # https://stackoverflow.com/questions/55212002/how-do-i-use-scipy-optimize-curve-fit-with-panda-df
 
 def main():
-    st.subheader("Find formula for personal contribution ("basishuur", the part of the rent you have to pay yourself) in the calculation of the housing allowance )
+    st.subheader("Find formula for personal contribution ("basishuur", the part of the rent you have to pay yourself) in the calculation of the housing allowance")
     st.info("A graph was given. Goal was to find a formula to describe the graph, to implement in some code")
     if platform.processor() != "":   
         file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\eigen_bijdrage2022.csv" 
