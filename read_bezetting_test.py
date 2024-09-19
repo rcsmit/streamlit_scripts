@@ -14,7 +14,9 @@ test = False  # To test or not to test (to see if the fillcolors in the sheet ar
 
 local = True
 if local:
-    excel_file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\dummy_occupation.xlsx"
+    #excel_file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\dummy_occupation.xlsx"
+    excel_file = r"https://github.com/rcsmit/streamlit_scripts/blob/main/input/dummy_occupation.xlsx?raw=true"
+    
     wb = load_workbook(excel_file, data_only=True)
 else:
     excel_file = r"https://github.com/rcsmit/streamlit_scripts/blob/main/input/dummy_occupation.xlsx?raw=true"

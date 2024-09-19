@@ -593,7 +593,7 @@ def main():
     st.title(
         "De relatie tussen Zonnepanelenopbrengst en meteorologische omstandigheden"
     )
-    st.write("More info here: https://rcsmit.medium.com/calculating-the-yield-of-solar-panels-e385fb4aa58e")
+    st.write("More info here: https://rene-smit.com/calculating-the-yield-of-solar-panels/")
     df = get_data()
     groupby_ = st.sidebar.selectbox("Groupby", [True, False], index=1)
     if groupby_:
