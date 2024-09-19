@@ -183,6 +183,7 @@ def how_much_baht_do_i_get_for_x_euro(i):
     cc, dc, cc_with_conv, dc_with_conv, street = calculate_from_euro(i)
     print(f"EURO {i} -> BAHT : cc={cc} dc={dc} cc_with_conv={cc_with_conv} dc_with_conv={dc_with_conv} street={street}")
 
+
 def main():
     st.subheader("Currency Exchange Calculation")
     st.info("""
