@@ -1,6 +1,9 @@
 import pandas as pd
 import streamlit as st
 import numpy as np
+from deep_translator import GoogleTranslator
+
+
 # @st.cache(ttl=60 * 60 * 24)
 def read():
     #https://docs.google.com/spreadsheets/d/1o_HefbzKnRudVoR64rTZELK_YJ8F2ubDQ3pKjnvWkOQ/edit?usp=sharing
@@ -75,6 +78,11 @@ def main():
    
     searchstring_ = "สวัสดี ฉันชื่อเรเน่"
     searchstring = st.text_input("Searchstring", searchstring_)
+
+    to_translate = 'I want to translate this text'
+    translated = GoogleTranslator(source='auto', target='en').translate(searchstring)
+    st.info(translated)
+
     if searchstring=="":
         st.error("Enter a search string")
         st.stop()
