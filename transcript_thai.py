@@ -81,7 +81,7 @@ def main():
 
     to_translate = 'I want to translate this text'
     translated = GoogleTranslator(source='auto', target='en').translate(searchstring)
-    st.info(translated)
+    st.success(translated)
 
     if searchstring=="":
         st.error("Enter a search string")
