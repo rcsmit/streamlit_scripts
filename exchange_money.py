@@ -184,6 +184,22 @@ def how_much_baht_do_i_get_for_x_euro(i):
     print(f"EURO {i} -> BAHT : cc={cc} dc={dc} cc_with_conv={cc_with_conv} dc_with_conv={dc_with_conv} street={street}")
 
 def main():
+    st.subheader("Currency Exchange Calculation")
+    st.info("""
+            Compare Euros to Baht and Baht to Euros for different methods (credit card, debit card, street exchange).
+            Find the break-even point where different methods give the same value.
+
+            **Exchange Rates:**
+            YFinance rate: Real-time EUR/THB rate from Yahoo Finance.
+            Street rate: 98% of the YFinance rate.
+            
+
+            **Costs:**
+            Credit card: €4.50 fixed + 1.02% variable fee.
+            Debit card: No fixed fee + 1.012% variable fee.
+            Conversion rate: 91,2%  of the YFinance rate.
+            ATM fee: ฿220 per transaction (both credit card as debit card)
+            """)
     from_baht()
     from_euro()
     how_much_euro_do_i_get_for_x_baht(30000)
