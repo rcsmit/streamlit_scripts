@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 
 import plotly.express as px
 
+@st.cache_data()
 def get_data(who):
     if who == "Rene":
         url_new = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_new.csv"
@@ -341,7 +342,7 @@ def find_pr_of_year(df, field):
 
 def find_fastest_per_year(df):
     distance = st.sidebar.slider("Distance", 0,30,5)
-    margin = st.sidebar.slider("Distance", 0.0,0.5,0.2,0.05)
+    margin = st.sidebar.slider("Margin", 0.0,0.5,0.2,0.05)
     fields = ["Datum","Titel", "Afstand","Tijd", "gem_snelh", "YYYY"]
     df = select(df, "Afstand", distance-margin,distance+margin)
     find_pr_of_year(df, "gem_snelh")
@@ -367,10 +368,9 @@ def find_km_per_year(df):
     show_bar(df_afstand_jaar, "YYYY", "count", "Aantal per jaar")
     show_bar(df_afstand_jaar, "YYYY", "afstand_per_keer_per_jaar", "Km per activiteit per jaar")
 
-    show_df(df_afstand_jaar[["YYYY", "Afstand"]], True, "Afstand per jaar")
-    show_df(df_afstand_jaar[["YYYY", "count"]], True, "Aantal keren per jaar")
-
-    show_df(df_afstand_jaar[["YYYY", "afstand_per_keer_per_jaar"]], True, "Afstand per keer per jaar")
+    show_df(df_afstand_jaar[["YYYY", "Afstand"]], False, "Afstand per jaar")
+    show_df(df_afstand_jaar[["YYYY", "count"]], False, "Aantal keren per jaar")
+    show_df(df_afstand_jaar[["YYYY", "afstand_per_keer_per_jaar"]], False, "Afstand per keer per jaar")
 def add_end_date(shoe_list):
         
     # Get the current date
