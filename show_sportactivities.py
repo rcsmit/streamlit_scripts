@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 
 import plotly.express as px
 
-@st.cache_data()
+#@st.cache_data()
 def get_data(who):
     if who == "Rene":
         url_new = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_new.csv"
@@ -36,10 +36,21 @@ def get_data(who):
         df_2023a = rename_columns(df_2023a)
         df_2023b = rename_columns(df_2023b)
     
+        # supress The behavior of DataFrame concatenation with empty or all-NA entries is deprecated.
+        # In a future version, this will no longer exclude empty or all-NA columns when determining 
+        # the result dtypes. To retain the old behavior, exclude the relevant entries before the 
+        # concat operation.
+        df_new = df_new.dropna(axis=1, how='all')
+        df_2022 = df_2022.dropna(axis=1, how='all')
+        df_2023a = df_2023a.dropna(axis=1, how='all')
+        df_2023b = df_2023b.dropna(axis=1, how='all')
+
         df_tm_2022 = pd.concat([df_2022, df_new], ignore_index=False)
+
 
         #df = df_2023a.append(df_tm_2022, ignore_index=False)
         df_ = pd.concat([df_2023a, df_tm_2022], ignore_index=False)
+       
         df = pd.concat([df_2023b, df_], ignore_index=False)
         # st.write(df["Tijd"])
         # df['Tijd_h'] = pd.to_datetime(df['Tijd'], format='%H:%M:%S').dt.hour
@@ -79,11 +90,12 @@ def create_extra_date_time_columns(df, what):
         df["Datum_xy"] = pd.to_datetime(df["Datum"], format="%d-%m-%Y")
     else:
         df['Datum_x'] = pd.to_datetime(df['Datum']).dt.date
-        df["Datum_xy"] = pd.to_datetime(df["Datum"], format="%Y-%m-%d %H:%M:%S", infer_datetime_format=True)
+        df["Datum_xy"] = pd.to_datetime(df["Datum"], format="%Y-%m-%d %H:%M:%S") #, infer_datetime_format=True)
         
         df["Tijd_xy"] = pd.to_datetime(df["Datum"], format="%Y-%m-%d %H:%M:%S")
         df['Tijd_x'] = pd.to_datetime(df['Tijd_xy']).dt.strftime('%H:%M:%S')
-        df['Tijd_y'] = pd.to_datetime(df['Tijd']).dt.time
+        # st.write(df['Tijd_y'])
+        # df['Tijd_y'] = pd.to_datetime(df['Tijd'], format="%H:%M:%S").dt.time
         df["Leeg"] = None
         df["gem_snelh"] = None
 
@@ -98,7 +110,7 @@ def rename_columns(df):
     return df
 
 def last_manipulations_df(df):
-    print (df.dtypes)
+   
     df = df.sort_values(by=['Datum_xy'])
     df["YYYY"] = df["Datum_xy"].dt.year
 
@@ -564,6 +576,13 @@ def main():
             st.header(lijst[i])
             functies[i](df)
 
+ 
 if __name__ == "__main__":
-    st.write("------------")
+    import os
+    import datetime
+    os.system('cls')
+
+    print(f"--------------{datetime.datetime.now()}-------------------------")
+
+    
     main()
