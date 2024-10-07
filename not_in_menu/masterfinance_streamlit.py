@@ -5,6 +5,8 @@ Created on Tue Oct 20 17:34:44 2020
 @author: rcxsm
 """
 
+# C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\not_in_menu\edit_master_finance.py
+
 import pandas as pd
 import numpy as np
 #import openpyxl
@@ -158,13 +160,13 @@ def read(sheet_id):
             st.warning("error met laden")
             st.stop()
     elif filetype == 'xls':
-        file = "C:\\Users\\rcxsm\\Documents\\xls\\masterfinance_.xlsm"   
+        file = "C:\\Users\\rcxsm\\Documents\\xls\\masterfinance_2023.xlsx"   
         sheet = sheet_id
         try:
             df = pd.read_excel (file,
                                 sheet_name= sheet,
                                 header=0,
-                                usecols= "a,b,f,h,k,l,m,n",
+                                usecols= "a,b,g,h,k,l,m,n",
                                 names=["id","bron","datum","bedrag",
                        "tegenpartij","in_uit","hoofdrub","rubriek"],)
             #df["datum"] = pd.to_datetime(df["datum"], format="%Y-%m-%d")
@@ -214,19 +216,24 @@ def save_df(df, name):
 def in_and_out_per_period(df, period):
     st.header(f"IN EN UIT PER {period}")
     table = pd.pivot_table(df, values='bedrag', index=[period],
-            columns=['in_uit'],  aggfunc=np.sum,fill_value=0).reset_index()
-    st.write(table)
+            columns=['in_uit'],  aggfunc='sum',fill_value=0).reset_index()
+    
 
     # for index, row in table.iterrows():
     #     table.at[index,"UIT_TOT"] = row.UIT + row.UIT_VL + row.UIT_AZIE + row.UIT_AZIE_VOORAF
     #     table.at[index,"verschil"] = row.IN + row.UIT + row.UIT_VL + row.UIT_AZIE + row.UIT_AZIE_VOORAF
 
+    for c in ["UIT_AZIE_VOORAF","UIT_AZIE","UIT_VL","UIT", "IN"]: 
+        if c not in table.columns:
+            table[c] = 0  # or any other default value
+            
     table["UIT_TOT"] =  table["UIT"] + table["UIT_VL"] + table["UIT_AZIE"]  + table["UIT_AZIE_VOORAF"]
     table["verschil"] = table["IN"] + table["UIT"] + table["UIT_VL"]+ table["UIT_AZIE"]  + table["UIT_AZIE_VOORAF"]
-    st.write(table) 
+   
+
     #save_df(table, "IN_OUT_PER_YEAR")
     table_met_som = pd.pivot_table(df, values='bedrag', index=[period],
-            columns=['in_uit'], margins=True, aggfunc=np.sum,fill_value=0).reset_index()
+            columns=['in_uit'], margins=True, aggfunc='sum',fill_value=0).reset_index()
 
     barchart_in_uit(table,  f"Inkomsten en uitgaven per {period}", period)
     barchart(table,"verschil", f"Saldo van inkomsten en uitgaven per {period}", period)
@@ -259,9 +266,9 @@ def uitgaven_per_period(df, period,modus):
     #     df.at[index,'bedrag'] = row.bedrag *-1
 
     table_uitg_pivot = pd.pivot_table(table_uitg, values='invbedrag', index=[period],
-            columns=[modus], aggfunc=np.sum, fill_value=0, margins=False).round().reset_index()  #.plot.bar(stacked=True)
+            columns=[modus], aggfunc='sum', fill_value=0, margins=False).round().reset_index()  #.plot.bar(stacked=True)
     table_uitg_pivot_azie = pd.pivot_table(table_uitg_azie, values='invbedrag', index=[period],
-            columns=[modus], aggfunc=np.sum, fill_value=0, margins=True).round().reset_index()  #.plot.bar(stacked=True)
+            columns=[modus], aggfunc='sum', fill_value=0, margins=True).round().reset_index()  #.plot.bar(stacked=True)
 
     columnlist =  table_uitg_pivot.columns.tolist()
     columnlist = columnlist[1:]
@@ -287,24 +294,27 @@ def sunburst_chart(df, years_to_show):
 
     df = df.replace("zorgtoeslag", "zorgverzekering")
   
-    df_sunburst = df.groupby(["jaar", "in_uit","hoofdrub", "rubriek"]).sum().reset_index()
-    df_sunburst = df_sunburst[df_sunburst["in_uit"] != "IN"]
-   
-    st.write(df_sunburst)
-    # show_sunburst(years_to_show, df_sunburst)
-    show_sunburst_annotated(years_to_show, df_sunburst)
+    df_sunburst = df.groupby(["jaar", "in_uit","hoofdrub", "rubriek"]).sum(numeric_only=True).reset_index()
+    df_sunburst = df_sunburst[(df_sunburst["in_uit"] != "IN") & (df_sunburst["bedrag"] <0 ) &(df_sunburst["in_uit"] != "KRUIS") & (df_sunburst["in_uit"] != "STARTING_BALANCE")& (df_sunburst["in_uit"] != "FICTIEVE_W_V")]
+    # attention, if there are negative values, the sunburst is not shown
+    show_sunburst(years_to_show, df_sunburst)
+    #show_sunburst_annotated(years_to_show, df_sunburst)
     for y in years_to_show:
         df_sunburst_year = df_sunburst[df_sunburst['jaar'] == y]
         if len(df_sunburst_year) >0 :
-            # show_sunburst(y, df_sunburst_year)
-            show_sunburst_annotated(y, df_sunburst_year)
+            show_sunburst(y, df_sunburst_year)
+            #show_sunburst_annotated(y, df_sunburst_year)
+        else:
+            st.warning(f"No items for year {y}")
 
 def show_sunburst(years_to_show, df_sunburst):
     st.subheader(f" -- {years_to_show} ---")
+    st.write(df_sunburst)
+    
     fig = px.sunburst(df_sunburst,
                   path=["in_uit","hoofdrub", "rubriek"],
                   values="invbedrag",
-                  title=f"Uitgaven {years_to_show}",width=750, height=750,)  
+                  title=f"Uitgaven {years_to_show}",width=1000, height=1000,)  
     st.plotly_chart(fig)
 
 def show_sunburst_annotated(years_to_show, df):
@@ -369,8 +379,7 @@ def show_sunburst_annotated(years_to_show, df):
         ),
         plot_bgcolor='rgba(0,0,0,0)',
         autosize=False,
-        width=800,
-        height=800,
+       
     )
     st.plotly_chart(fig)
 
@@ -395,7 +404,7 @@ def uitgaves_categorie_per_period(df,hr, modus, period):
 
     df_gt_hr = df.loc[df[modus] ==hr].copy(deep=False)
 
-    table = df_gt_hr.groupby([period]).sum().reset_index()
+    table = df_gt_hr.groupby([period]).sum(numeric_only=True).reset_index()
     table = table[[period, "invbedrag"]]
     barchart(table,"invbedrag", f"Uitgegeven aan {hr}", period)
     lengte= len(table)
@@ -456,7 +465,7 @@ def main():
     sheet_id = "INVOER"
     df = read(sheet_id)
     FROM, UNTIL = interface_selectperiod()
-
+    st.write(df)
     years_possible   =  df['jaar'].drop_duplicates().sort_values().tolist()
     years = st.sidebar.multiselect("Jaren",years_possible, years_possible)
 

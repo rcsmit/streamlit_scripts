@@ -1,9 +1,13 @@
 import openpyxl
 from datetime import datetime
 # Load the workbook
+
+# C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\not_in_menu\masterfinance_streamlit.py
+
+
 workbook = openpyxl.load_workbook('C:\\Users\\rcxsm\\Documents\\xls\\masterfinance_2023.xlsx')
 # Save the workbook
-workbook.save(f'C:\\Users\\rcxsm\\Documents\\xls\\masterfinance_2023_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx')
+workbook.save(f'C:\\Users\\rcxsm\\Documents\\xls\\masterfinance_2023_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx')
 
 # Get the sheets
 invoer_sheet = workbook['INVOER']
@@ -11,9 +15,10 @@ rules_sheet = workbook['RULES']
 
 # Read rules into a dictionary
 rules = {row[1].lower(): row[2:6] for row in rules_sheet.iter_rows(min_row=2, values_only=True) if row[1]}
-
+print ("Working")
 # Process INVOER sheet
 for row in invoer_sheet.iter_rows(min_row=2, min_col=8, max_col=19):
+    
     description_invoer = row[3].value
     amount_invoer = row[0].value
 
