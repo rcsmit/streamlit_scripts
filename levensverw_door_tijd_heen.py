@@ -100,25 +100,29 @@ def make_graph(data_combined):
     fig_vrouwen = go.Figure()
 
     # List of target ages
-    leeftijden = [0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-    #leeftijden = range(0,101)
-    # Loop through the target ages and add traces
-    for i,leeftijd in enumerate(leeftijden):
-        data_combined_ = data_combined[data_combined["LeeftijdOp31December"] == leeftijd].copy(deep=True)
-        
-        add_trace(fig_totaal, data_combined_, "average_year_x", "Te_bereiken_leeftijd_totaal", leeftijd,i)
-        add_trace(fig_mannen, data_combined_, "average_year_x", "Te_bereiken_leeftijd_mannen", leeftijd,i)
-        add_trace(fig_vrouwen, data_combined_, "average_year_x", "Te_bereiken_leeftijd_vrouwen", leeftijd,i)
+    leeftijden1 = [0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    leeftijden2 = range(0,101)
+    for leeftijden_,header in zip([leeftijden1,leeftijden2],["Tien jaars bins", "alle leeftijden"]):
+        st.subheader(header)
+        min = int(data_combined["average_year_x"].min())
+        max = int(data_combined["average_year_x"].max())
+        # Loop through the target ages and add traces
+        for i,leeftijd in enumerate(leeftijden_):
+            data_combined_ = data_combined[data_combined["LeeftijdOp31December"] == leeftijd].copy(deep=True)
+            
+            add_trace(fig_totaal, data_combined_, "average_year_x", "Te_bereiken_leeftijd_totaal", leeftijd,i)
+            add_trace(fig_mannen, data_combined_, "average_year_x", "Te_bereiken_leeftijd_mannen", leeftijd,i)
+            add_trace(fig_vrouwen, data_combined_, "average_year_x", "Te_bereiken_leeftijd_vrouwen", leeftijd,i)
 
-    # Update layout for all figures
-    update_layout(fig_totaal, "Levensverwachting door de tijd mannen en vrouwen (1861-2023)")
-    update_layout(fig_mannen, "Levensverwachting door de tijd mannen (1861-2023)")
-    update_layout(fig_vrouwen, "Levensverwachting door de tijd vrouwen (1861-2023)")
+        # Update layout for all figures
+        update_layout(fig_totaal, f"Levensverwachting door de tijd - mannen en vrouwen ({min}-{max})")
+        update_layout(fig_mannen, f"Levensverwachting door de tijd - mannen ({min}-{max})")
+        update_layout(fig_vrouwen, f"Levensverwachting door de tijd - vrouwen ({min}-{max})")
 
-    # Display the plots
-    st.plotly_chart(fig_totaal)
-    st.plotly_chart(fig_mannen)
-    st.plotly_chart(fig_vrouwen)
+        # Display the plots
+        st.plotly_chart(fig_totaal)
+        st.plotly_chart(fig_mannen)
+        st.plotly_chart(fig_vrouwen)
 
 
 def process_genders(data):
@@ -173,11 +177,14 @@ def process_data(data):
     return data
 
 def main():
-    print("go")
+    
     data = get_data()
     data = process_data(data)
     data = process_genders(data)
+    data_1950 = data[data["average_year"]>=1950]
     make_graph(data)
+    st.header("Na 1950")
+    make_graph(data_1950)
     st.info("Source: CBS (tabel 37360ned). Inspired by https://x.com/ActuaryByDay/status/1845129341362905148")
 
 if __name__ == "__main__":
