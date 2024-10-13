@@ -257,7 +257,7 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
                 # data.append(loess_high)
                 data.append(low)
                 data.append(high)
-                data.append(confidence_trace)
+                #data.append(confidence_trace)
             if wdw2 != 999:
                 data.append(sma2)
             
