@@ -74,6 +74,7 @@ def main():
                 ["[45] Crypto Dashboard","crypto_dashboard"],
                 ["[46] Transcript Thai","transcript_thai"],
                 ["[47] Levensverw. in tijd ", "levensverw_door_tijd_heen",],
+                ["[48] Images2pdf","images_to_pdf"],
 
                 ]
     
