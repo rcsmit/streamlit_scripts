@@ -115,9 +115,10 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
             if (len(X_array)>42) and (show_loess==True):
                 #y_hat2, x_space2 = calculate_loess(X_array, Y_array, 0.05, 1, all_x = True, num_points = 200)
                 x_space2, y_hat2, trendlb, trendub  = loess_skmisc(X_array, Y_array)
-                high = y_hat2 + 2*std
-                low = y_hat2 - 2*std
+                
                 if len(y_hat2) >0:
+                    high = y_hat2 + 2*std
+                    low = y_hat2 - 2*std
                     loess = go.Scatter(
                         name=f"{what_to_show_x} Loess",
                         x=X_array,
@@ -259,7 +260,7 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
             if wdw2 != 999:
                 data.append(sma2)
             
-            
+
             if show_ci:
                 # Append the moving confidence interval traces to the data list
                 data.append(ci_lower_trace_95)
