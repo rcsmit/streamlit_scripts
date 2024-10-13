@@ -149,13 +149,14 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
                         ),
                         )
                     # Create a filled area plot for confidence interval
-                    confidence_trace = go.Scatter(x=np.concatenate([X_array, X_array[::-1]]),
-                            y=np.concatenate([high, low[::-1]]),
-                                fill='tozeroy',
-                                fillcolor='rgba(0, 128, 0, 0.2)',
-                                line=dict(color='dimgrey', width=.5),
-                                showlegend=True,
-                                name="CI")
+                    confidence_trace = None
+                    # confidence_trace = go.Scatter(x=np.concatenate([X_array, X_array[::-1]]),
+                    #         y=np.concatenate([high, low[::-1]]),
+                    #             fill='tozeroy',
+                    #             fillcolor='rgba(0, 128, 0, 0.2)',
+                    #             line=dict(color='dimgrey', width=.5),
+                    #             showlegend=True,
+                    #             name="CI")
                 else:
                     loess = None
             else:
