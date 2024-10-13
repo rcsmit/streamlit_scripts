@@ -22,3 +22,4 @@ streamlit_folium
 scikit-misc
 simpy
 deep_translator
+cbsodata
