@@ -259,6 +259,7 @@ def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_ty
             if wdw2 != 999:
                 data.append(sma2)
             
+            
             if show_ci:
                 # Append the moving confidence interval traces to the data list
                 data.append(ci_lower_trace_95)
