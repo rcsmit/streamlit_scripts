@@ -11,6 +11,7 @@ import numpy as np
 from PyPDF2 import PdfReader, PdfWriter
 import time
 from pathlib import Path
+import platform
 
 def sanitize_directory_input(user_input):
     """
@@ -106,7 +107,7 @@ def correct_image_rotation(image):
 
     return image
 
-def rotate_one_file_streamlit():
+def rotate_one_file_streamlit(_):
     #uploaded_image = st.file_uploader("Upload JPEG or JPG Image", type=["pdf"], accept_multiple_files=False)
 
    
@@ -162,7 +163,7 @@ def rotate_one_file_streamlit():
                 print(f'Error renaming {file}: {e}')
         st.success ("Done")  
 
-def merge_multiple_images_to_one_pdf():
+def merge_multiple_images_to_one_pdf(_):
     """ Convert one or multiple files into a pdf
         Uses streamlit, Adviced is to use a split screen to easy drag and drop.  
         based on https://www.youtube.com/watch?v=RPN-HxvAQnQ
@@ -243,7 +244,7 @@ def merge_multiple_images_to_one_pdf():
     else:
         st.info(".")
 
-def split_landscape_into_two_portrait_one_file_streamlit():
+def split_landscape_into_two_portrait_one_file_streamlit(_):
 
     """ Split a landscape image into two equal portrait images. 
         Uses streamlit, Adviced is to use a split screen to easy drag and drop.
@@ -335,7 +336,7 @@ def merge_directory_to_one_pdf(dir_name):
                 except Exception as e:
                     st.write(f"Can't delete file {e}")
 
-def auto_contrast_color_one_file_streamlit():
+def auto_contrast_color_one_file_streamlit(_):
     """auto contrast color of one single uploaded file
     """    
     uploaded_image = st.file_uploader("Upload JPEG or JPG Image", type=["jpeg", "jpg","png"], accept_multiple_files=False)
@@ -636,51 +637,49 @@ def get_secure_directory_input(default_dir):
 
 def main():
     # Streamlit UI
-    st.title("JPEG/JPG to PDF Converter")
+    st.title("Image and PDF Processor")
+    if platform.processor() != "":
     
-    choice = st.selectbox("What to do", ["merge images to one pdf","rotate one file pdf", "split image in two","merge directory", 
-                                         "auto contrast color_one file", 
-                                        "resize directory", "auto contrast directory", 
-                                        "rotate image directory", "convert separate files", 
-                                        "rotate pdf directory", "read song titles", 
-                                        "rename intro", "find and replace in filename"], 0)
+
+        TASKS = {
+                "Merge images to one PDF": merge_multiple_images_to_one_pdf,
+                "Rotate one PDF file": rotate_one_file_streamlit,
+                "auto contrast one_file":auto_contrast_color_one_file_streamlit, 
+                "merge directory":merge_directory_to_one_pdf,
+                "split image in two":split_landscape_into_two_portrait_one_file_streamlit,
+                "resize directory":resize_directory,
+                "auto contrast directory":auto_contrast_directory, 
+                "rotate image directory":rotate_image_directory, 
+                "convert separate files":convert_directory_seperate_files_in_directory, 
+                "rotate pdf directory":rotate_pdf_directory, 
+                "read song titles":read_song_titles, 
+                "rename intro":rename_files_via_dictionary, 
+                "find and replace in filename":find_and_replace_in_filename,
+                # Add more tasks here...
+            }
+    else:
+        TASKS = {
+                "Merge images to one PDF": merge_multiple_images_to_one_pdf,
+                "Rotate one PDF file": rotate_one_file_streamlit,
+                "auto contrast one_file":auto_contrast_color_one_file_streamlit, 
+                "split image in two":split_landscape_into_two_portrait_one_file_streamlit,
+                # Add more tasks here...
+            }
+        
+        st.info("More tasks if script is run locally. Download at https://github.com/rcsmit/streamlit_scripts/blob/main/images_to_pdf.py")
+       
     
+    # # Use the keys of the TASKS dictionary for the selectbox options
+    selected_task = st.selectbox("Choose a task", list(TASKS.keys()))
     # this is staying up all the time, to make successive batch processing easier
     #dir_name = remove_quotes_if_present(st.text_input("directory",))
     dir_name = get_secure_directory_input(r"C:\Users\rcxsm\Downloads\test")
     
-    if choice == "merge images to one pdf":
-        merge_multiple_images_to_one_pdf()
-    elif choice == "rotate one file":
-        rotate_one_file_streamlit() 
-    elif choice == "auto contrast colort one_file":
-        auto_contrast_color_one_file_streamlit() 
-    
-    elif choice=="merge directory":
-        merge_directory_to_one_pdf(dir_name)
-    elif choice == "split image in two":
-        split_landscape_into_two_portrait_one_file_streamlit()
-    elif choice == "resize directory":
-        resize_directory(dir_name)
-    elif choice == "auto contrast directory":
-        auto_contrast_directory(dir_name) 
-    elif choice == "rotate image directory":
-        rotate_image_directory(dir_name) 
-    elif choice == "convert separate files":
-        convert_directory_seperate_files_in_directory(dir_name) 
-    elif choice == "rotate pdf directory":
-        rotate_pdf_directory(dir_name) 
-    elif choice == "read song titles":
-        read_song_titles(dir_name) 
-    elif choice == "rename intro":
-        rename_files_via_dictionary(dir_name) 
-    elif choice == "find and replace in filename":
-        find_and_replace_in_filename(dir_name) 
-    else:
-        st.warning("ERROR")
-        st.stop()
+    # if st.button("Run Task"):
+    #     # Call the selected function
+    TASKS[selected_task](dir_name)
 
-if __name__ == "__main__":
+if  __name__ == "__main__":
     import datetime
     os.system('cls')
 
