@@ -23,3 +23,5 @@ scikit-misc
 simpy
 deep_translator
 cbsodata
+pytesseract
+PyPDF2
