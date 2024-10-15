@@ -657,6 +657,16 @@ def main():
                 "find and replace in filename":find_and_replace_in_filename,
                 # Add more tasks here...
             }
+         # # Use the keys of the TASKS dictionary for the selectbox options
+        # this is staying up all the time, to make successive batch processing easier
+        #dir_name = remove_quotes_if_present(st.text_input("directory",))
+        selected_task = st.selectbox("Choose a task", list(TASKS.keys()))
+        
+        
+        dir_name = get_secure_directory_input(r"C:\Users\rcxsm\Downloads\test")
+        
+        # if st.button("Run Task"):
+        #     # Call the selected function
     else:
         TASKS = {
                 "Merge images to one PDF": merge_multiple_images_to_one_pdf,
@@ -665,18 +675,12 @@ def main():
                 "split image in two":split_landscape_into_two_portrait_one_file_streamlit,
                 # Add more tasks here...
             }
+        selected_task = st.selectbox("Choose a task", list(TASKS.keys()))
         
         st.info("More tasks if script is run locally. Download at https://github.com/rcsmit/streamlit_scripts/blob/main/images_to_pdf.py")
        
     
-    # # Use the keys of the TASKS dictionary for the selectbox options
-    selected_task = st.selectbox("Choose a task", list(TASKS.keys()))
-    # this is staying up all the time, to make successive batch processing easier
-    #dir_name = remove_quotes_if_present(st.text_input("directory",))
-    dir_name = get_secure_directory_input(r"C:\Users\rcxsm\Downloads\test")
-    
-    # if st.button("Run Task"):
-    #     # Call the selected function
+   
     TASKS[selected_task](dir_name)
 
 if  __name__ == "__main__":
