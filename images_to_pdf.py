@@ -675,6 +675,7 @@ def main():
                 "split image in two":split_landscape_into_two_portrait_one_file_streamlit,
                 # Add more tasks here...
             }
+        dir_name = None
         selected_task = st.selectbox("Choose a task", list(TASKS.keys()))
         
         st.info("More tasks if script is run locally. Download at https://github.com/rcsmit/streamlit_scripts/blob/main/images_to_pdf.py")
