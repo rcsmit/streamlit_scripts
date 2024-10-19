@@ -50,7 +50,7 @@ class PensionCalculator:
         self.cost_house = st.sidebar.number_input("cost_house (%):", value=self.cost_house)
         
         st.sidebar.subheader("--- Simulations ---")
-        self.num_simulations = st.sidebar.number_input("Number of simulations",1,10_000_000,10) #00)
+        self.num_simulations = st.sidebar.number_input("Number of simulations",1,10_000_000,1000) #00)
         self.new_method =  True # st.sidebar.selectbox("Use AG table", [True, False],0)
         self.print_individual =  st.sidebar.selectbox("Print individual runs", [True, False],1)
 
