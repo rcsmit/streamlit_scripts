@@ -413,6 +413,6 @@ def main():
     #calculator.plot_values_with_confidence_intervals("balance_values")
     #calculator.show_ages_at_death(calculator.num_simulations, calculator.sexe, calculator.current_age)
     #calculator.show_total_balance()
-
+    st.info("Not a serious financial advice. Use with care.\nBased on mortality chances in the Netherlands, 2022 (https://www.actuarieelgenootschap.nl/kennisbank/prognosetafel-ag2022-2)")
 if __name__ == "__main__":
     main()
