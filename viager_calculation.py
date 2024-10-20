@@ -175,8 +175,7 @@ class PensionCalculator:
 
         #st.write(f"{year_simuation} : {age=} {annual_compensation_values=} - {balance_values=} - {interest_values=}")
         
-              
-
+            
     def show_output(self,calc_results):
         #print (calc_results)
         if sum(calc_results["saldo_at_death_values"]) > 0:
@@ -556,7 +555,7 @@ def optimizer():
                     hover_data=['Result'])  # Adding
     st.plotly_chart(fig)
     complete_graph()
-    
+
 def main():
     modus = st.sidebar.selectbox("Modus",["calculator", "optimizer", "complete graph"])
     if modus =="calculator":
