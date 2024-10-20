@@ -25,3 +25,4 @@ deep_translator
 cbsodata
 pytesseract
 PyPDF2
+pymannkendall
