@@ -134,8 +134,8 @@ def show_station_data():
     """Show a table with the information about the measurement stations
     """
     st.subheader("Measurement station info")
-    url_dateranges =  r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\daterages_neerslagstations.csv"
-    url_stations =  r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\stations.csv"
+    url_dateranges = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/daterages_neerslagstations.csv"
+    url_stations =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/stations.csv"
     df_dateranges = pd.read_csv(url_dateranges)
     df_stations = pd.read_csv(url_stations)
     #df_dateranges = df_dateranges["STN"].astype(int)
