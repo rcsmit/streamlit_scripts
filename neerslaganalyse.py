@@ -74,13 +74,13 @@ def load_and_combine_data():
                 r'C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\stations_911_to_983.csv']
 
     
-    else:
-        files= [r'https://raw.githubusercontent.com/rcsmit/COVIDcases/main/input/stations_1_to_194.csv', 
-                r'https://raw.githubusercontent.com/rcsmit/COVIDcases/main/input/stations_195_to_344.csv', 
-                r'https://raw.githubusercontent.com/rcsmit/COVIDcases/main/input/stations_345_to_530.csv', 
-                r'https://raw.githubusercontent.com/rcsmit/COVIDcases/main/input/stations_531_to_716.csv', 
-                r'https://raw.githubusercontent.com/rcsmit/COVIDcases/main/input/stations_718_to_910.csv', 
-                r'https://raw.githubusercontent.com/rcsmit/COVIDcases/main/input/stations_911_to_983.csv']
+    else:        
+        files= [r'https://raw.githubusercontent.com/rcsmit/COVIDcases/refs/heads/main/input/stations_1_to_194.csv', 
+                r'https://raw.githubusercontent.com/rcsmit/COVIDcases/refs/heads/main/input/stations_195_to_344.csv', 
+                r'https://raw.githubusercontent.com/rcsmit/COVIDcases/refs/heads/main/input/stations_345_to_530.csv', 
+                r'https://raw.githubusercontent.com/rcsmit/COVIDcases/refs/heads/main/input/stations_531_to_716.csv', 
+                r'https://raw.githubusercontent.com/rcsmit/COVIDcases/refs/heads/main/input/stations_718_to_910.csv', 
+                r'https://raw.githubusercontent.com/rcsmit/COVIDcases/refs/heads/main/input/stations_911_to_983.csv']
 
 
 
