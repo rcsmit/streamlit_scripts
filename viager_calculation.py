@@ -556,6 +556,7 @@ def optimizer():
                     hover_data=['Result'])  # Adding
     st.plotly_chart(fig)
     complete_graph()
+    
 def main():
     modus = st.sidebar.selectbox("Modus",["calculator", "optimizer", "complete graph"])
     if modus =="calculator":
