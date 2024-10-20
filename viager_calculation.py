@@ -172,10 +172,8 @@ class PensionCalculator:
                     'total_house_costs': int(costs_house)
                 }
             
-
         #st.write(f"{year_simuation} : {age=} {annual_compensation_values=} - {balance_values=} - {interest_values=}")
-        
-            
+       
     def show_output(self,calc_results):
         #print (calc_results)
         if sum(calc_results["saldo_at_death_values"]) > 0:
