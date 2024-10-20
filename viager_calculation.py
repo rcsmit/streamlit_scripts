@@ -6,16 +6,17 @@ import plotly.graph_objects as go
 import streamlit as st
 import pandas as pd
 import datetime
-
+import plotly.express as px
+    
 class PensionCalculator:
-    def __init__(self):
+    def __init__(self, current_age=90,monthly_compensation_original=2000 ):
         # Initialize default values
         self.house_value_at_start = 200_000
-        self.pay_out_at_start = 50_000
-        self.monthly_compensation_original = 2000
+        self.pay_out_at_start = 0
+        self.monthly_compensation_original = monthly_compensation_original
         self.monthly_contribution_original_how = "with inflation"
         
-        self.current_age = 90
+        self.current_age = current_age
         self.max_age= 120
         self.sexe = "male"
         self.annual_return_rate =2.0
@@ -24,7 +25,9 @@ class PensionCalculator:
         self.inflation_sd = 0.0
         self.cost_house = 1.0
         self.additional_monthly_need_how = "with inflation"
-        
+        self.num_simulations=10
+        self.new_method =  True
+        self.print_individual =  False
         # Get the current date and time
         current_datetime = datetime.datetime.now()
 
@@ -53,9 +56,9 @@ class PensionCalculator:
         self.cost_house = st.sidebar.number_input("Maintenance costs house (%):", value=self.cost_house)
         
         st.sidebar.subheader("--- Simulations ---")
-        self.num_simulations = st.sidebar.number_input("Number of simulations",1,10_000_000,1000) #00)
+        self.num_simulations = st.sidebar.number_input("Number of simulations",1,10_000_000,self.num_simulations) #00)
         self.new_method =  True # st.sidebar.selectbox("Use AG table", [True, False],0)
-        self.print_individual =  st.sidebar.selectbox("Print individual runs", [True, False],1)
+        self.print_individual =  False # st.sidebar.selectbox("Print individual runs", [True, False],1)
 
     def load_life_table(self):
         base_url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/"
@@ -67,9 +70,15 @@ class PensionCalculator:
             # values not given in the table. Rounded to 0.6
             probability_to_die = 0.6
         else:
-            probability_to_die = self.df_prob_die[str(year_simulation)].to_numpy()[self.df_prob_die['age'].to_numpy() == age].item()
-        return random.random() <= probability_to_die
-    def calculate_pension(self):
+            probability_to_die = self.df_prob_die[str(year_simulation)].to_numpy()[self.df_prob_die['age'].to_numpy() == age] #.item()
+        
+        if random.random() <= probability_to_die:
+            return True
+        else:
+            return False
+
+        
+    def calculate_pension(self, mode):
         """Calculate the pension and balances
 
         Args:
@@ -89,7 +98,7 @@ class PensionCalculator:
             # Check if the current iteration is a multiple of 10%
             if completion_percentage % 10 == 0:
                 s2x = int(time.time())
-                print(f"Progress: {int(completion_percentage)}% complete [{_+1}/{self.num_simulations}] [Round : {s2x-s2y} seconds | Cummulative : {s2x-s1} seconds]")
+                #print(f"Progress: {int(completion_percentage)}% complete [{_+1}/{self.num_simulations}] [Round : {s2x-s2y} seconds | Cummulative : {s2x-s1} seconds]")
                 s2y = s2x
             
             sim_result = self.run_single_simulation()
@@ -102,16 +111,19 @@ class PensionCalculator:
             value_house_values.append(sim_result['final_house_value'])
             costs_house_values.append(sim_result['total_house_costs'])
         s2 = int(time.time())
-        print(f"Time needed: {s2-s1} seconds")
-        return {
-            'results': results,
-            'deceased_ages': deceased_ages,
-            'saldo_at_death_values': saldo_at_death_values,
-            'paid_out_values': paid_out_values,
-            'value_house_values': value_house_values,
-            'costs_house_values': costs_house_values
-        }
-    
+        #print(f"Time needed: {s2-s1} seconds")
+        if mode == "simulate":
+            return round(sum(saldo_at_death_values)/len(saldo_at_death_values))
+        else:
+            return {
+                'results': results,
+                'deceased_ages': deceased_ages,
+                'saldo_at_death_values': saldo_at_death_values,
+                'paid_out_values': paid_out_values,
+                'value_house_values': value_house_values,
+                'costs_house_values': costs_house_values
+            }
+        
         # #self.show_output(num_simulations, deceased_ages, saldo_at_death_values, paid_out_values, value_house_values, costs_house_values)
         
         # 
@@ -131,7 +143,7 @@ class PensionCalculator:
         costs_house=0
         
         value_house = self.house_value_at_start
-        for j in range(1, self.max_age - self.current_age + 1):
+        for j in range(1, int(self.max_age - self.current_age + 1)):
             
             if person_alive:
                 value_house = value_house * ((100+ annual_return_rate) / 100)
@@ -166,7 +178,7 @@ class PensionCalculator:
               
 
     def show_output(self,calc_results):
-        print (calc_results)
+        #print (calc_results)
         if sum(calc_results["saldo_at_death_values"]) > 0:
             st.info(f"Average saldo at the death of  {self.num_simulations} persons ({self.sexe}) : {round(sum(calc_results["saldo_at_death_values"])/len(calc_results["saldo_at_death_values"]))}. Total Profit for viager buyer : {round(sum(calc_results["saldo_at_death_values"]))}")# - SD {round(np.std(saldo_at_death_values),1)}")
         else:
@@ -425,16 +437,141 @@ class PensionCalculator:
         fig5.add_hline(y=0,  line_color="black")
         st.plotly_chart(fig5)   
 
-def main():
+def complete_graph():
+    """ Make a grap with the compensation on the x axis and the saldo at the Yaxis. Every age has her own line
+        This to make the break even point visible
+    """
+    # Define parameters
+    start_compensation = 500
+    max_compensation = 5000
+    compensation_step = 100
+
+    # Create a list of ages and compensations
+    ages = list(range(20, 91,10))
+    compensations = list(range(start_compensation, max_compensation + 1, compensation_step))
+
+    # Create a DataFrame to store results
+    pension_results = pd.DataFrame(index=compensations, columns=ages)
+
+    # Loop through each combination of age and compensation
+    for age in ages:
+        print (age)
+        for compensation in compensations:
+            calculator = PensionCalculator(age, compensation)
+            result = calculator.calculate_pension("simulate")
+            pension_results.loc[compensation, age] = result  # Fill in the result
+
+
+    # Make sure to reset the index to get the compensation as a column
+    pension_results.reset_index(inplace=True)
+    pension_results.rename(columns={'index': 'Compensation'}, inplace=True)
+
+    # Melt the DataFrame to long format for Plotly
+    pension_results_melted = pension_results.melt(id_vars='Compensation', var_name='Age', value_name='Result')
+
+    # Plot results with different lines for each age
+    fig = px.line(pension_results_melted, 
+                x='Compensation', 
+                y='Result', 
+                color='Age',  # Different lines for each age
+                labels={'Compensation': 'Monthly Compensation', 'Result': 'Pension Result'},
+                title='Pension Results by Compensation for Different Ages')
+    # Add a thick horizontal line at y=0
+    fig.add_shape(
+        type='line',
+        x0=pension_results['Compensation'].min(),  # Start of the line on x-axis
+        y0=0,  # Start of the line on y-axis
+        x1=pension_results['Compensation'].max(),  # End of the line on x-axis
+        y1=0,  # End of the line on y-axis
+        line=dict(color='Red', width=2)  # Color and thickness of the line
+    )
+    # Show the plot in Streamlit
+    st.plotly_chart(fig)
+
+def optimizer():
+    """Find break even point (when the endsaldo is 0) given a certain age
+    """    
+    # Define parameters
+    tolerance = 100000  # Tolerance for near-zero results
+    start_compensation = 0
+    max_compensation = 5000
+    compensation_step = 20
+    age_list, compensation_list, result_list = [],[],[]
+    # Create a list of ages and compensations
+    ages = list(range(20, 101,5))
+    min_compensation = 0
+    # Create a DataFrame to store results
    
-    calculator = PensionCalculator()
+    current_compensation =0
+    # Loop through each combination of age and compensation
+    for age in ages:
+        temp_saldo = 1000000000
+        if age %10 ==0:
+            print (age)
+        for compensation in range(min_compensation, max_compensation,compensation_step):
+            calculator = PensionCalculator(age, compensation)
+            result = calculator.calculate_pension("simulate")
+                       
+            if result <0:
+                if abs(result) < abs(temp_saldo):
+                    temp_saldo = result
+                else:
+                    age_list.append(age)
+                    compensation_list.append(compensation)
+                    result_list.append(result)
+                    # min_compensation = compensation
+                    print(f"Found combination: Age={age}, Compensation={compensation}, Result={result}")
+                    break
+                    
+            else:
+                if abs(result) < abs(temp_saldo):
+                    temp_saldo = abs(result)
+                else:
+                    age_list.append(age)
+                    compensation_list.append(compensation)
+                    result_list.append(result)
+                    min_compensation = compensation
+                    print(f"Found combination: Age={age}, Compensation={compensation}, Result={result}")
+                    
+                    break
 
-    calculator.interface()
-    #if st.button("GO"):
-        
-    results = calculator.calculate_pension()
-    calculator.show_output(results)
+    
+    print(age_list)
+    print(compensation_list)
+    print(result_list)
 
+
+    results_df = pd.DataFrame({
+        'Age': age_list,
+        'Compensation': compensation_list,
+        'Result': result_list
+    })
+    # Plot results in a scatter plot
+    # Plot results in a scatter plot with mouseover tooltips
+    fig = px.scatter(results_df, 
+                    x='Age', 
+                    y='Compensation', 
+                    labels={'Age': 'Age', 'Compensation': 'Monthly Compensation'},
+                    title=f'Combinations of Age and Compensation with Pension Result',
+                    hover_data=['Result'])  # Adding
+    st.plotly_chart(fig)
+    complete_graph()
+def main():
+    modus = st.sidebar.selectbox("Modus",["calculator", "optimizer", "complete graph"])
+    if modus =="calculator":
+        calculator = PensionCalculator()
+        calculator.interface()
+      
+        #if st.button("GO"):
+            
+        results = calculator.calculate_pension("calculate")
+        calculator.show_output(results)
+    elif modus == "optimizer": 
+        optimizer()
+    else:
+        complete_graph()
+
+    
     #calculator.plot_values_with_confidence_intervals("balance_values")
     #calculator.show_ages_at_death(calculator.num_simulations, calculator.sexe, calculator.current_age)
     #calculator.show_total_balance()
@@ -445,4 +582,6 @@ if __name__ == "__main__":
     #os.system('cls')
     print(f"--------------{datetime.datetime.now()}-------------------------")
     main()
+    
+    #scipy()
     
