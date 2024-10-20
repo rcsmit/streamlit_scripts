@@ -26,3 +26,4 @@ cbsodata
 pytesseract
 PyPDF2
 pymannkendall
+polars
