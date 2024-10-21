@@ -496,11 +496,7 @@ def main():
     calculator = PensionCalculator()
     calculator.interface()
     if modus =="calculator":
-        
-        
-      
-        #if st.button("GO"):
-            
+
         results = calculator.calculate_pension("calculate")
         calculator.show_output(results)
     elif modus == "optimizer": 
