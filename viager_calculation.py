@@ -386,14 +386,14 @@ def complete_graph(self):
     ages = list(range(self.start_age, self.max_age,self.age_step))
     compensations = list(range(self.start_compensation, self.max_compensation + 1, self.compensation_step))
 
-
+    placeholder=st.empty()
     # Create a DataFrame to store results
     pension_results = pd.DataFrame(index=compensations, columns=ages)
 
     # Loop through each combination of age and compensation
-    for age in ages:
-        print (age)
-        for compensation in compensations:
+    for i,age in enumerate(ages):
+        for j,compensation in enumerate(compensations):
+            placeholder.info (f"Calculating - age : {age} [{i+1}/{len(ages)}] | compensation : {compensation} [{j+1}/{len(compensations)}]")
             self.current_age = age
             self.monthly_compensation_original = compensation
           
@@ -401,7 +401,7 @@ def complete_graph(self):
             result = self.calculate_pension("simulate")
             pension_results.loc[compensation, age] = result  # Fill in the result
 
-
+    placeholder.empty()
     # Make sure to reset the index to get the compensation as a column
     pension_results.reset_index(inplace=True)
     pension_results.rename(columns={'index': 'Compensation'}, inplace=True)
@@ -439,13 +439,14 @@ def optimizer(self):
 
     age_list, compensation_list, result_list = [],[],[]
    
-   
+    placeholder=st.empty()
     # Loop through each combination of age and compensation
-    for age in ages:
+    
+    for i,age in enumerate(ages):
         temp_saldo = 1000000000
-        if age %10 ==0:
-            print (age)
-        for compensation in compensations:
+        
+        for j,compensation in enumerate(compensations):
+            placeholder.info (f"Calculating - age : {age} [{i+1}/{len(ages)}] | compensation : {compensation} [{j+1}/{len(compensations)}]")
             self.current_age = age
             self.monthly_compensation_original = compensation
           
@@ -475,7 +476,7 @@ def optimizer(self):
                     
                     break
 
-    
+    placeholder.empty()
     print(age_list)
     print(compensation_list)
     print(result_list)
