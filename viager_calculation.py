@@ -176,6 +176,7 @@ class PensionCalculator:
        
     def show_output(self,calc_results):
         #print (calc_results)
+        
         if sum(calc_results["saldo_at_death_values"]) > 0:
             st.info(f'Average saldo at the death of  {self.num_simulations} persons ({self.sexe}) : {round(sum(calc_results["saldo_at_death_values"])/len(calc_results["saldo_at_death_values"]))}. Total Profit for viager buyer : {round(sum(calc_results["saldo_at_death_values"]))}')# - SD {round(np.std(saldo_at_death_values),1)}")
         else:
