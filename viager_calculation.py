@@ -438,11 +438,6 @@ def optimizer(self):
     compensations = list(range(self.start_compensation, self.max_compensation + 1, self.compensation_step))
 
     age_list, compensation_list, result_list = [],[],[]
-    # Create a list of ages and compensations
-  
- 
-    # Create a DataFrame to store results
-   
    
     # Loop through each combination of age and compensation
     for age in ages:
