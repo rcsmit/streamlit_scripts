@@ -37,7 +37,7 @@ class PensionCalculator:
         self.monthly_contribution_original_how = "with inflation"
         
         self.current_age = current_age
-        self.max_age= 120
+       
         self.sex = "male"
         self.annual_return_rate =2.0
         self.annual_return_rate_sd = 0.0
@@ -72,8 +72,7 @@ class PensionCalculator:
         st.sidebar.subheader("--- The person ---")
         self.sex = st.sidebar.selectbox("sex", ["male", "female"],0)
         self.current_age = st.sidebar.number_input("Current Age:", value=self.current_age)
-        self.max_age = st.sidebar.number_input("Maximum Age:", value=self.max_age)
-        
+      
         st.sidebar.subheader("--- Rates ---") 
         self.annual_return_rate = st.sidebar.number_input("Annual increase value house (%):", value=self.annual_return_rate)
         self.inflation = st.sidebar.number_input("Average Annual Inflation Rate (%):", value=self.inflation)
@@ -91,8 +90,12 @@ class PensionCalculator:
         self.compensation_step = st.sidebar.number_input("Compensation step",0,10000,self.compensation_step)
 
         self.start_age = st.sidebar.number_input("Start age",0,10000,self.start_age)
-        self.max_age = st.sidebar.number_input("Max age",0,10000,self.max_age)
+        self.max_age_ = st.sidebar.number_input("Max age",0,10000,self.max_age)
+        if self.current_age >= self.max_age :
+            st.error(f"Max age has to be at least {self.current_age}.")
+            st.stop()
         self.age_step = st.sidebar.number_input("age step",0,10000,self.age_step)
+        self.max_age = self.max_age_ +self.age_step #include the last values in the graphs
     def load_life_table(self):
         base_url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/"
         file_name = f"AG2024DefinitiefGevalideerd_{self.sex}.csv"
@@ -134,15 +137,16 @@ class PensionCalculator:
                 #print(f"Progress: {int(completion_percentage)}% complete [{_+1}/{self.num_simulations}] [Round : {s2x-s2y} seconds | Cummulative : {s2x-s1} seconds]")
                 s2y = s2x
             
-            sim_result = self.run_single_simulation()
-            
-
-            results.append(sim_result['annual_data'])
-            deceased_ages.append(sim_result['age_at_death'])
-            saldo_at_death_values.append(sim_result['saldo_at_death'])
-            paid_out_values.append(sim_result['total_paid_out'])
-            value_house_values.append(sim_result['final_house_value'])
-            costs_house_values.append(sim_result['total_house_costs'])
+            single_sim_result = self.run_single_simulation()
+            #print (single_sim_result)
+            #if single_sim_result is not None:
+            if 1==1:
+                results.append(single_sim_result['annual_data'])
+                deceased_ages.append(single_sim_result['age_at_death'])
+                saldo_at_death_values.append(single_sim_result['saldo_at_death'])
+                paid_out_values.append(single_sim_result['total_paid_out'])
+                value_house_values.append(single_sim_result['final_house_value'])
+                costs_house_values.append(single_sim_result['total_house_costs'])
         s2 = int(time.time())
         #print(f"Time needed: {s2-s1} seconds")
         if mode == "simulate":
@@ -208,6 +212,8 @@ class PensionCalculator:
 
             person.age_up()
             year_simulation += 1
+        st.error(f"Person dead or too old  {person.age=}  {self.max_age=} ")
+        st.stop()
             
 
     def get_probability_to_die(self, age, year_simulation):
@@ -377,7 +383,7 @@ def complete_graph(self):
         This to make the break even point visible
     """
     # Define parameters
-    ages = list(range(self.start_age, self.max_age+1,self.age_step))
+    ages = list(range(self.start_age, self.max_age,self.age_step))
     compensations = list(range(self.start_compensation, self.max_compensation + 1, self.compensation_step))
 
 
@@ -388,6 +394,9 @@ def complete_graph(self):
     for age in ages:
         print (age)
         for compensation in compensations:
+            self.current_age = age
+            self.monthly_compensation_original = compensation
+          
             #calculator = PensionCalculator(age, compensation)
             result = self.calculate_pension("simulate")
             pension_results.loc[compensation, age] = result  # Fill in the result
@@ -425,7 +434,7 @@ def optimizer(self):
     # Define parameters
 
     # Create a list of ages and compensations
-    ages = list(range(self.start_age, self.max_age+1,self.age_step))
+    ages = list(range(self.start_age, self.max_age,self.age_step))
     compensations = list(range(self.start_compensation, self.max_compensation + 1, self.compensation_step))
 
     age_list, compensation_list, result_list = [],[],[]
@@ -441,7 +450,10 @@ def optimizer(self):
         if age %10 ==0:
             print (age)
         for compensation in compensations:
-            #calculator = PensionCalculator(age, compensation)
+            self.current_age = age
+            self.monthly_compensation_original = compensation
+          
+            
             result = self.calculate_pension("simulate")
                        
             if result <0:
