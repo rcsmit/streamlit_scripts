@@ -177,9 +177,9 @@ class PensionCalculator:
     def show_output(self,calc_results):
         #print (calc_results)
         if sum(calc_results["saldo_at_death_values"]) > 0:
-            st.info(f"Average saldo at the death of  {self.num_simulations} persons ({self.sexe}) : {round(sum(calc_results["saldo_at_death_values"])/len(calc_results["saldo_at_death_values"]))}. Total Profit for viager buyer : {round(sum(calc_results["saldo_at_death_values"]))}")# - SD {round(np.std(saldo_at_death_values),1)}")
+            st.info(f'Average saldo at the death of  {self.num_simulations} persons ({self.sexe}) : {round(sum(calc_results["saldo_at_death_values"])/len(calc_results["saldo_at_death_values"]))}. Total Profit for viager buyer : {round(sum(calc_results["saldo_at_death_values"]))}')# - SD {round(np.std(saldo_at_death_values),1)}")
         else:
-            st.info(f"Average saldo at the death of  {self.num_simulations} persons ({self.sexe}) : {round(sum(calc_results["saldo_at_death_values"])/len(calc_results["saldo_at_death_values"]))}. Total Loss for viager buyer : {round(sum(calc_results["saldo_at_death_values"]))}")
+            st.info(f'Average saldo at the death of  {self.num_simulations} persons ({self.sexe}) : {round(sum(calc_results["saldo_at_death_values"])/len(calc_results["saldo_at_death_values"]))}. Total Loss for viager buyer : {round(sum(calc_results["saldo_at_death_values"]))}')
         col1,col2= st.columns([4,6])
         with col1:
             self.show_ages_at_death(self.num_simulations, self.sexe, calc_results["deceased_ages"],self.current_age)
