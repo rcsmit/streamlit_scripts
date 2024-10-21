@@ -516,8 +516,9 @@ def main():
             complete_graph(calculator)
 
     st.info("Inspired by : A 90-year-old woman signed a deal with a 47-year-old lawyer to give him her apartment upon her death in exchange for monthly payments. She outlived him, and his widow continued the payments. She received more than double the apartment's value \n https://www.threads.net/@unbfacts/post/DBTbibYuzYy")
+    st.info("https://rene-smit.com/the-gamble-of-a-lifetime-viager-real-estate-in-the-age-of-ai/")
     st.info("Not a serious financial advice. Use with care.\nBased on mortality chances in the Netherlands, 2024 (https://www.actuarieelgenootschap.nl/kennisbank/prognosetafel-ag2024-2)")
-    st.info("https://www.bbc.com/news/magazine-33326787")
+  
     s2 = int(time.time())
     st.write(f"Used time : {s2-s1} sec.")
 if __name__ == "__main__":
