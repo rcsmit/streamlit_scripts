@@ -439,6 +439,7 @@ def optimizer(self):
 
     age_list, compensation_list, result_list = [],[],[]
    
+   
     # Loop through each combination of age and compensation
     for age in ages:
         temp_saldo = 1000000000
