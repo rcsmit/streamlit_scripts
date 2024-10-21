@@ -383,7 +383,7 @@ def complete_graph(self):
         This to make the break even point visible
     """
     # Define parameters
-    ages = list(range(self.start_age, self.max_age,self.age_step))
+    ages = list(range(self.start_age, self.max_age-self.age_step,self.age_step))
     compensations = list(range(self.start_compensation, self.max_compensation + 1, self.compensation_step))
 
     placeholder=st.empty()
@@ -434,7 +434,7 @@ def optimizer(self):
     # Define parameters
 
     # Create a list of ages and compensations
-    ages = list(range(self.start_age, self.max_age,self.age_step))
+    ages = list(range(self.start_age, self.max_age-self.age_step,self.age_step))
     compensations = list(range(self.start_compensation, self.max_compensation + 1, self.compensation_step))
 
     age_list, compensation_list, result_list = [],[],[]
