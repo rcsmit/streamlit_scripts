@@ -14,6 +14,7 @@ def get_data():
         df: df
     """    
     data = pd.DataFrame(cbsodata.get_data('37360ned'))
+
     return data
 
 
@@ -31,7 +32,7 @@ def calculate_average_year(period):
         start, end = period.split(" tot ")
         start_year = int(start.strip())
         end_year = int(end.strip())
-        if end_year <= 1950:
+        if end_year <= 1951:
             return int((start_year + end_year) / 2)
         else:
             return 9999  # We'll handle years beyond 1950 separately
@@ -39,7 +40,7 @@ def calculate_average_year(period):
         return None
 
 
-def make_graph(data_combined):
+def make_graph(data_combined, what, log,window):
     """make the graphs
 
     Args:
@@ -48,24 +49,28 @@ def make_graph(data_combined):
     Result:
         three graphs
     """    
+    
     # Function to add traces for each figure
     def add_trace(fig, data, x_col, y_col, label,i):
+        y_values = data[y_col].rolling(window=window).mean()
         fig.add_trace(go.Scatter(
             x=data[x_col],
-            y=data[y_col],
+            y=y_values,
             mode='lines',
             name=label,
             line=dict(color=rainbow_colors[i % len(rainbow_colors)])
         ))
 
     # Function to update layout for each figure
-    def update_layout(fig, title):
+    def update_layout(fig, title, log):
         fig.update_layout(
             title=title,
             xaxis_title="Year",
-            yaxis_title="Levensverwachting"
+            yaxis_title=what
         )
 
+        if log==True:
+            fig.update_yaxes(type="log")
     rainbow_colors = [
         
             "#000000",  # Black
@@ -107,17 +112,18 @@ def make_graph(data_combined):
         min = int(data_combined["average_year_x"].min())
         max = int(data_combined["average_year_x"].max())
         # Loop through the target ages and add traces
+        
         for i,leeftijd in enumerate(leeftijden_):
             data_combined_ = data_combined[data_combined["LeeftijdOp31December"] == leeftijd].copy(deep=True)
-            
-            add_trace(fig_totaal, data_combined_, "average_year_x", "Te_bereiken_leeftijd_totaal", leeftijd,i)
-            add_trace(fig_mannen, data_combined_, "average_year_x", "Te_bereiken_leeftijd_mannen", leeftijd,i)
-            add_trace(fig_vrouwen, data_combined_, "average_year_x", "Te_bereiken_leeftijd_vrouwen", leeftijd,i)
+            data_combined_=data_combined_.sort_values(by=['average_year_x'])
+            add_trace(fig_totaal, data_combined_, "average_year_x", f"{what}_totaal", leeftijd,i)
+            add_trace(fig_mannen, data_combined_, "average_year_x", f"{what}_mannen", leeftijd,i)
+            add_trace(fig_vrouwen, data_combined_, "average_year_x", f"{what}_vrouwen", leeftijd,i)
 
         # Update layout for all figures
-        update_layout(fig_totaal, f"Levensverwachting door de tijd - mannen en vrouwen ({min}-{max})")
-        update_layout(fig_mannen, f"Levensverwachting door de tijd - mannen ({min}-{max})")
-        update_layout(fig_vrouwen, f"Levensverwachting door de tijd - vrouwen ({min}-{max})")
+        update_layout(fig_totaal, f"{what} door de tijd - mannen en vrouwen ({min}-{max})",log)
+        update_layout(fig_mannen, f"{what} door de tijd - mannen ({min}-{max})",log)
+        update_layout(fig_vrouwen, f"{what} door de tijd - vrouwen ({min}-{max})",log)
 
         # Display the plots
         st.plotly_chart(fig_totaal)
@@ -125,22 +131,22 @@ def make_graph(data_combined):
         st.plotly_chart(fig_vrouwen)
 
 
-def process_genders(data):
+def process_genders(data, what):
     """ Make a pivot-ish table with seperate columns for each gender. 
         Calculate the expected age for totals in the period before 1950
      
     """    
     # Create a mapping of gender to the new column names
     gender_mapping = {
-        'Mannen': 'Te_bereiken_leeftijd_mannen',
-        'Vrouwen': 'Te_bereiken_leeftijd_vrouwen',
-        'Totaal mannen en vrouwen': 'Te_bereiken_leeftijd_totaal'
+        'Mannen': f'{what}_mannen',
+        'Vrouwen': f'{what}_vrouwen',
+        'Totaal mannen en vrouwen': f'{what}_totaal'
     }
 
     # Function to filter data by gender and rename the column
     def filter_and_rename(data, gender, new_col_name):
         df_filtered = data[data["Geslacht"] == gender].copy()
-        df_filtered[new_col_name] = df_filtered["Te_bereiken_leeftijd"]
+        df_filtered[new_col_name] = df_filtered[what]
         return df_filtered
 
     # Apply the function to each gender
@@ -151,10 +157,11 @@ def process_genders(data):
     # Merge the dataframes
     data_combined = pd.merge(data_mannen, data_vrouwen, on=["LeeftijdOp31December", "Perioden"])
     data_combined = pd.merge(data_combined, data_totaal, on=["LeeftijdOp31December", "Perioden"])
-
+   
     # Calculate average and fill missing values
-    data_combined['Te_bereiken_leeftijd_totaal_'] = (data_combined["Te_bereiken_leeftijd_vrouwen"] + data_combined["Te_bereiken_leeftijd_mannen"]) / 2
-    data_combined['Te_bereiken_leeftijd_totaal'] = data_combined['Te_bereiken_leeftijd_totaal'].fillna(data_combined['Te_bereiken_leeftijd_totaal_'])
+    if what=="Te_bereiken_leeftijd":
+        data_combined[f'{what}_totaal_'] = (data_combined[f'{what}_vrouwen'] + data_combined[f'{what}_mannen']) / 2
+        data_combined[f'{what}_totaal'] = data_combined[f'{what}_totaal'].fillna(data_combined[f'{what}_totaal_'])
     return data_combined
    
 def process_data(data):
@@ -166,6 +173,7 @@ def process_data(data):
     Returns:
         _type_: _description_
     """    
+    
     data['LeeftijdOp31December'] = data['LeeftijdOp31December'].str.replace(' jaar of ouder', '')
     data['LeeftijdOp31December'] = data['LeeftijdOp31December'].str.replace(' jaar', '')
     data["Te_bereiken_leeftijd"] = data["LeeftijdOp31December"].astype(float) + data["Levensverwachting_4"]
@@ -178,14 +186,29 @@ def process_data(data):
 
 def main():
     
+    
+    what = st.selectbox("What", ["Te_bereiken_leeftijd","Sterftekans_1",
+                                 "LevendenTafelbevolking_2",
+                                 "OverledenenTafelbevolking_3",
+                                 "Levensverwachting_4"])
+    if what=="Sterftekans_1":
+        log = st.checkbox("Log at Y axis", False)
+    else:
+        log = False
+    window = st.number_input("SMA", 0,30,1)
+    
+
     data = get_data()
+    
     data = process_data(data)
-    data = process_genders(data)
+    data = process_genders(data,what)
     data_1950 = data[data["average_year"]>=1950]
-    make_graph(data)
+    make_graph(data, what, log,window)
+    
     st.header("Na 1950")
-    make_graph(data_1950)
-    st.info("Source: CBS (tabel 37360ned). Inspired by https://x.com/ActuaryByDay/status/1845129341362905148")
+    make_graph(data_1950, what,log,window)
+    st.info("Source: CBS (tabel 37360ned https://opendata.cbs.nl/statline/#/CBS/nl/dataset/37360ned/table?fromstatweb).")
+    st.info("Inspired by https://x.com/ActuaryByDay/status/1845129341362905148")
 
 if __name__ == "__main__":
     main()
