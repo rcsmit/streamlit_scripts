@@ -148,20 +148,20 @@ def process_genders(data, what):
         df_filtered = data[data["Geslacht"] == gender].copy()
         df_filtered[new_col_name] = df_filtered[what]
         return df_filtered
-
+    
     # Apply the function to each gender
     data_mannen = filter_and_rename(data, 'Mannen', gender_mapping['Mannen'])
     data_vrouwen = filter_and_rename(data, 'Vrouwen', gender_mapping['Vrouwen'])
     data_totaal = filter_and_rename(data, 'Totaal mannen en vrouwen', gender_mapping['Totaal mannen en vrouwen'])
-
+    
     # Merge the dataframes
     data_combined = pd.merge(data_mannen, data_vrouwen, on=["LeeftijdOp31December", "Perioden"])
     data_combined = pd.merge(data_combined, data_totaal, on=["LeeftijdOp31December", "Perioden"])
    
     # Calculate average and fill missing values
-    if what=="Te_bereiken_leeftijd":
-        data_combined[f'{what}_totaal_'] = (data_combined[f'{what}_vrouwen'] + data_combined[f'{what}_mannen']) / 2
-        data_combined[f'{what}_totaal'] = data_combined[f'{what}_totaal'].fillna(data_combined[f'{what}_totaal_'])
+    #@if what=="Te_bereiken_leeftijd":
+    data_combined[f'{what}_totaal_'] = (data_combined[f'{what}_vrouwen'] + data_combined[f'{what}_mannen']) / 2
+    data_combined[f'{what}_totaal'] = data_combined[f'{what}_totaal'].fillna(data_combined[f'{what}_totaal_'])
     return data_combined
    
 def process_data(data):
