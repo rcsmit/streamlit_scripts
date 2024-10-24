@@ -3,7 +3,7 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 import numpy as np
-
+import life_expectancy_nl 
 # https://chatgpt.com/share/670b0590-e6f0-8004-9d7c-aed0e63214b4
 
 @st.cache_data
@@ -40,7 +40,7 @@ def calculate_average_year(period):
         return None
 
 
-def make_graph(data_combined, what, log,window):
+def make_graph(data_combined, what, log,window, sex, complete):
     """make the graphs
 
     Args:
@@ -100,35 +100,41 @@ def make_graph(data_combined, what, log,window):
             '#A52A2A'   # Brown
         ]
     # Initialize the figures
-    fig_totaal = go.Figure()
-    fig_mannen = go.Figure()
-    fig_vrouwen = go.Figure()
+    
+    fig = go.Figure()
+    
 
     # List of target ages
-    leeftijden1 = [0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-    leeftijden2 = range(0,101)
-    for leeftijden_,header in zip([leeftijden1,leeftijden2],["Tien jaars bins", "alle leeftijden"]):
-        st.subheader(header)
-        min = int(data_combined["average_year_x"].min())
-        max = int(data_combined["average_year_x"].max())
-        # Loop through the target ages and add traces
-        
-        for i,leeftijd in enumerate(leeftijden_):
-            data_combined_ = data_combined[data_combined["LeeftijdOp31December"] == leeftijd].copy(deep=True)
-            data_combined_=data_combined_.sort_values(by=['average_year_x'])
-            add_trace(fig_totaal, data_combined_, "average_year_x", f"{what}_totaal", leeftijd,i)
-            add_trace(fig_mannen, data_combined_, "average_year_x", f"{what}_mannen", leeftijd,i)
-            add_trace(fig_vrouwen, data_combined_, "average_year_x", f"{what}_vrouwen", leeftijd,i)
+    if complete:
+        leeftijden = range(0,101)
+        header = "alle leeftijden"
+    else:
+        leeftijden = [0, 5, 10, 20, 30, 40,47, 50, 60, 70, 80, 90, 100]
+        header = "Tien jaars bins"
+    st.subheader(header)
+    min = int(data_combined["average_year_x"].min())
+    max = int(data_combined["average_year_x"].max())
+    # Loop through the target ages and add traces
+    
+    for i,leeftijd in enumerate(leeftijden):
+        data_combined_ = data_combined[data_combined["LeeftijdOp31December"] == leeftijd].copy(deep=True)
+        data_combined_=data_combined_.sort_values(by=['average_year_x'])
+        if sex=="T":
+            add_trace(fig, data_combined_, "average_year_x", f"{what}_totaal", leeftijd,i)
+        elif sex=="M":
+            add_trace(fig, data_combined_, "average_year_x", f"{what}_mannen", leeftijd,i)
+        elif sex=="V":    
+            add_trace(fig, data_combined_, "average_year_x", f"{what}_vrouwen", leeftijd,i)
+        else:
+            st.write("error")      
+            st.stop()
+    # Update layout for all figures
+    update_layout(fig, f"{what} door de tijd - {sex} ({min}-{max})",log)
+    
 
-        # Update layout for all figures
-        update_layout(fig_totaal, f"{what} door de tijd - mannen en vrouwen ({min}-{max})",log)
-        update_layout(fig_mannen, f"{what} door de tijd - mannen ({min}-{max})",log)
-        update_layout(fig_vrouwen, f"{what} door de tijd - vrouwen ({min}-{max})",log)
-
-        # Display the plots
-        st.plotly_chart(fig_totaal)
-        st.plotly_chart(fig_mannen)
-        st.plotly_chart(fig_vrouwen)
+    # Display the plots
+    st.plotly_chart(fig)
+    
 
 
 def process_genders(data, what):
@@ -187,28 +193,32 @@ def process_data(data):
 def main():
     
     
-    what = st.selectbox("What", ["Te_bereiken_leeftijd","Sterftekans_1",
+    what = st.sidebar.selectbox("What", ["Te_bereiken_leeftijd","Sterftekans_1",
                                  "LevendenTafelbevolking_2",
                                  "OverledenenTafelbevolking_3",
                                  "Levensverwachting_4"])
+
+    complete = st.sidebar.checkbox("All ages")
+    after_1950 = st.sidebar.checkbox("After 1950")
+    sex = st.sidebar.selectbox("Sexe", ["T","F","M"] )
     if what=="Sterftekans_1":
-        log = st.checkbox("Log at Y axis", False)
+        log = st.sidebar.checkbox("Log at Y axis", False)
     else:
         log = False
-    window = st.number_input("SMA", 0,30,1)
+    window = st.sidebar.number_input("SMA", 0,30,1)
     
 
     data = get_data()
     
     data = process_data(data)
     data = process_genders(data,what)
-    data_1950 = data[data["average_year"]>=1950]
-    make_graph(data, what, log,window)
+    if after_1950:
+        data= data[data["average_year"]>=1950]
+    make_graph(data, what, log,window,sex,complete)
     
-    st.header("Na 1950")
-    make_graph(data_1950, what,log,window)
     st.info("Source: CBS (tabel 37360ned https://opendata.cbs.nl/statline/#/CBS/nl/dataset/37360ned/table?fromstatweb).")
     st.info("Inspired by https://x.com/ActuaryByDay/status/1845129341362905148")
+    life_expectancy_nl.main()
 
 if __name__ == "__main__":
     main()
