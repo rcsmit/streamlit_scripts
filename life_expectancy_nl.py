@@ -42,9 +42,10 @@ class LifeExpectancyCalculator:
             df_prob_die = pd.read_csv(f"https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/AG{self.ag_jaar}DefinitiefGevalideerd_female.csv")
 
     
-       
-        for _ in range(self.num_simulations):
-           
+        placeholder=st.empty()
+        for a in range(self.num_simulations):
+            if a%10==0:
+                placeholder.info(f"{a+1}/{self.num_simulations}")
             person_alive = True
             for i,j in enumerate(range(0, (10*self.max_age - self.current_age) + 1)):
                 if person_alive:
@@ -65,7 +66,7 @@ class LifeExpectancyCalculator:
             #     print (f" person {_} is still alive")
   
         # Store all results in the instance variable
-        
+        placeholder.empty()
         self.deceased_ages = deceased_ages
         self.median_age_at_death = round(statistics.median(deceased_ages),1)
   
