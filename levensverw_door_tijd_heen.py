@@ -193,6 +193,7 @@ def process_data(data):
 def main():
     
     
+    
     what = st.sidebar.selectbox("What", ["Te_bereiken_leeftijd","Sterftekans_1",
                                  "LevendenTafelbevolking_2",
                                  "OverledenenTafelbevolking_3",

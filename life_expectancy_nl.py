@@ -7,6 +7,7 @@ import streamlit as st
 import pandas as pd
 import datetime
 
+
 class LifeExpectancyCalculator:
     def __init__(self):
         # Initialize default values
