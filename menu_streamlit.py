@@ -100,7 +100,11 @@ def main():
         choice = 0                                             
     menuchoicelist = [options[n][0] for n, l in enumerate(options)]
 
-    with st.sidebar.expander('MENU: Choose a script | scroll down for options/parameters', expanded=True):
+    if choice !=0: 
+        expanded = False
+    else:
+        expanded = True
+    with st.sidebar.expander('MENU: Choose a script | scroll down for options/parameters',  expanded=expanded):
         try:
             menu_choice = st.radio(".",menuchoicelist, index=choice,  label_visibility='hidden')
         except:
