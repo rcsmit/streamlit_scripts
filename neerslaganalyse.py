@@ -777,47 +777,49 @@ def main():
     
     st.header("Trends in Extreme precipitation in the Netherlands: A Data-Driven Analysis")
     first_info()
-    df_neerslag_data_pl = load_and_combine_data()
-    col1,col2=st.columns(2)
-    # st.info("")
-    # with col1:
-    st.subheader("100 mm precipitation per day")
+    with st.button("GO - process intensive script"):
+        df_neerslag_data_pl = load_and_combine_data()
+        col1,col2=st.columns(2)
+        # st.info("")
+        # with col1:
+        st.subheader("100 mm precipitation per day")
 
-    extreme_claude_ai(df_neerslag_data_pl, "mm", 1000)
-    extreme_claude_ai_seasonal(df_neerslag_data_pl,"mm", 1000)
-    # with col2:
-    st.subheader("QUANTILE")
-    extreme_claude_ai(df_neerslag_data_pl, "quantile", .995)
-    extreme_claude_ai_seasonal(df_neerslag_data_pl,"quantile", .995)
-    
-    if 1==1:
-        #date_range(df) #very slow even with polars
+        extreme_claude_ai(df_neerslag_data_pl, "mm", 1000)
+        extreme_claude_ai_seasonal(df_neerslag_data_pl,"mm", 1000)
+        # with col2:
+        st.subheader("QUANTILE")
+        extreme_claude_ai(df_neerslag_data_pl, "quantile", .995)
+        extreme_claude_ai_seasonal(df_neerslag_data_pl,"quantile", .995)
         
-        st.info("The used stations with start, end date and number of days")
-        df_station_info_pl = show_station_data()
-        st.info("The number of measurements per day. The data has been corrected for this")
-        
-        plot_number_of_measurements_per_day(df_neerslag_data_pl)
-        
-        
-        df_avg_month, df_avg_year = calculate_average_per_day_year(df_neerslag_data_pl)
-        
-        st.info("precipitation over time - grouped by month, sma 365")
-        plot_grouped_by_month(df_avg_month)
-        st.info("Plot a graph with loess average, eq. to 30 years SMA See https://rene-smit.com/loess-is-more/")
-        plot_graph_with_loess(df_avg_year)
-        st.info("Plot a graph with horizontal lines for every era of 20 years")
-        plot_met_horizontale_lijnen(df_avg_year)
-    col1,col2=st.columns(2)
-    with col1:
-        plot_heavy_rain(df_neerslag_data_pl, 500)
-    with col2:
-        plot_heavy_rain(df_neerslag_data_pl, 1000)
-    st.info("Script: https://github.com/rcsmit/streamlit_scripts/blob/main/neerslaganalyse.py")
+        if 1==1:
+            #date_range(df) #very slow even with polars
+            
+            st.info("The used stations with start, end date and number of days")
+            df_station_info_pl = show_station_data()
+            st.info("The number of measurements per day. The data has been corrected for this")
+            
+            plot_number_of_measurements_per_day(df_neerslag_data_pl)
+            
+            
+            df_avg_month, df_avg_year = calculate_average_per_day_year(df_neerslag_data_pl)
+            
+            st.info("precipitation over time - grouped by month, sma 365")
+            plot_grouped_by_month(df_avg_month)
+            st.info("Plot a graph with loess average, eq. to 30 years SMA See https://rene-smit.com/loess-is-more/")
+            plot_graph_with_loess(df_avg_year)
+            st.info("Plot a graph with horizontal lines for every era of 20 years")
+            plot_met_horizontale_lijnen(df_avg_year)
+        col1,col2=st.columns(2)
+        with col1:
+            plot_heavy_rain(df_neerslag_data_pl, 500)
+        with col2:
+            plot_heavy_rain(df_neerslag_data_pl, 1000)
+        st.info("Script: https://github.com/rcsmit/streamlit_scripts/blob/main/neerslaganalyse.py")
     
 if __name__ == "__main__":
     #os.system('cls')
     import time
+
     s1 = int(time.time())
     print(f"--------------{datetime.datetime.now()}-------------------------")
     main()
