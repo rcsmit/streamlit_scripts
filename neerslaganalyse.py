@@ -13,7 +13,7 @@ from scipy import stats
 from pymannkendall import original_test,  seasonal_test
 import numpy as np
 
-
+@st.cache()
 def get_data_regen():
     """read the data with Polars, all in one file.
 
@@ -113,6 +113,7 @@ def load_and_combine_data():
     df_combined = pl.concat(dataframes)
     return df_combined
 
+@st.cache_data()
 def date_range(df):
     # Assuming your Polars dataframe is named df
     #
@@ -129,7 +130,7 @@ def date_range(df):
     #df_summary_pd.to_csv("daterages_neerslagstations.csv")
     print ("done")
 
-
+@st.cache_data()
 def show_station_data():
     """Show a table with the information about the measurement stations
     """
@@ -201,7 +202,7 @@ def plot_number_of_measurements_per_day(df):
     
     st.plotly_chart(fig)
 
-
+@st.cache_data()
 def calculate_average_per_day_year(df):
     """Calculating average per day and per year 
 
@@ -474,7 +475,8 @@ def plot_heavy_rain(df, cut_off=500):
     )
 
     st.plotly_chart(fig)
-    
+
+@st.cache_data()  
 def extreme_claude_ai(df, how, treshold):
 
     """_summary_
@@ -611,6 +613,7 @@ def plot_yearly_extremes(yearly_extremes, x, y,slope, intercept, mk_result,  r_v
     )
     st.plotly_chart(fig)
 
+@st.cache_data()
 def extreme_claude_ai_seasonal(df, how, treshold):
     st.subheader(f"Seasonal {treshold}")
     df = df.with_columns([
@@ -810,7 +813,8 @@ def main():
         plot_heavy_rain(df_neerslag_data_pl, 500)
     with col2:
         plot_heavy_rain(df_neerslag_data_pl, 1000)
-
+    st.info("Script: https://github.com/rcsmit/streamlit_scripts/blob/main/neerslaganalyse.py")
+    
 if __name__ == "__main__":
     #os.system('cls')
     import time
@@ -820,5 +824,5 @@ if __name__ == "__main__":
     s2 = int(time.time())
     s2x = s2 - s1
     print(" ")  # to compensate the  sys.stdout.flush()
-
+    st.info("Script: https://github.com/rcsmit/streamlit_scripts/blob/main/neerslaganalyse.py")
     print(f"Processing  took {str(s2x)} seconds ....)")
