@@ -26,8 +26,8 @@ def show_aantal_keren(df_, gekozen_weerstation, what_to_show_):
     df_.set_index("YYYYMMDD")
     (month_min,month_max) = st.sidebar.slider("Maanden (van/tot en met)", 1, 12, (1,12))
 
-    value_min = st.sidebar.number_input("Waarde vanaf", -99, 99, 0)
-    value_max = st.sidebar.number_input("Waarde tot en met", -99, 99, 99)
+    value_min = st.sidebar.number_input("Waarde vanaf", -99999, 99999, 0)
+    value_max = st.sidebar.number_input("Waarde tot en met", -99999, 99999, 99)
 
     #jaren = df["YYYY"].tolist()
     for what_to_show in what_to_show_:
