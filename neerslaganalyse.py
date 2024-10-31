@@ -793,7 +793,7 @@ def main():
         
         if 1==1:
             #date_range(df) #very slow even with polars
-            
+        
             st.info("The used stations with start, end date and number of days")
             df_station_info_pl = show_station_data()
             st.info("The number of measurements per day. The data has been corrected for this")
