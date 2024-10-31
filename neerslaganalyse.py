@@ -495,7 +495,7 @@ def extreme_claude_ai(df, how, treshold):
         pl.col('RD').quantile(treshold).alias('threshold')
     )
 
-        # 2. Extreme regenval definiëren (> 500 mm)
+        # 2. Extreme regenval definiëren (> {treshold} mm)
     def count_extreme_events_mm(df):
         """Count extreme events, based on quantile
 
@@ -690,37 +690,120 @@ def plot_yearly_extremes_seasonal(yearly_seasonal_extremes):
         fig.add_trace(go.Scatter(x=x, y=y, mode='markers', name=f'Season {season}'), row=row, col=col)
         
         # Trendlijn
-        slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
-        fig.add_trace(go.Scatter(x=x, y=slope*x + intercept, mode='lines', name=f'Trend S{season}'), row=row, col=col)
+        try:
+            slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
+            fig.add_trace(go.Scatter(x=x, y=slope*x + intercept, mode='lines', name=f'Trend S{season}'), row=row, col=col)
 
+        except:
+            st.info(f"No extreme precipitation in {season}")
+        
     fig.update_layout(height=800, title_text="Seizoensgebonden trends in extreme regenval")
     st.plotly_chart(fig)
-    
 
+def first_info():
+    st.subheader("Abstract")
+    st.write("""
+This study investigates trends in extreme precipitation events in the Netherlands using historical 
+data from the Royal Netherlands Meteorological Institute (KNMI). We analyze precipitation 
+measurements from multiple stations across the country, spanning several decades. 
+Our research aims to identify patterns in the frequency and intensity of extreme 
+precipitation events and their potential links to climate change.
+    """)
+    st.subheader("Introduction")
+    st.write("""
+Climate change is expected to influence precipitation patterns worldwide, 
+potentially leading to more frequent and intense precipitation events. 
+Understanding these changes is crucial for water management, urban planning, 
+and climate adaptation strategies. The Netherlands, with its low-lying terrain 
+and high population density, is particularly vulnerable to changes in precipitation patterns.
+
+This study uses extensive precipitation data from the KNMI to examine trends in extreme 
+precipitation events over time. We define extreme events using both fixed 
+thresholds and percentile-based approaches to capture different aspects of precipitation intensity.
+    """)
+    st.subheader("Methods")
+
+    st.write("""
+We used daily precipitation data from multiple weather stations across the Netherlands, provided by the KNMI. [<a href=https://www.knmi.nl/nederland-nu/klimatologie/monv/reeksen>*</a>]
+The dataset includes measurements from as early as the 19th century up to recent years. 
+We preprocessed the data to ensure consistency, remove any apparent anomalies and correct for changing the number of stations in time .
+    """, unsafe_allow_html=True)
+
+    st.subheader("Extreme precipitation")
+    st.write("""
+We defined extreme precipitation events using two approaches:
+
+* Fixed Threshold: Days with precipitation exceeding 100mm classified as extreme events. [<a href=https://www.knmi.nl/kennis-en-datacentrum/uitleg/extreme-neerslag>*</a>]
+
+* Percentile-Based: We used the 99.5th percentile of daily precipitation at each station to define station-specific extreme events.
+            
+    """, unsafe_allow_html=True)
+
+    
+    st.subheader("Analysis Techniques")
+    st.write("""
+Our analysis employed several statistical methods:
+
+* Trend Analysis: We used the Mann-Kendall test to detect monotonic trends in the frequency of extreme precipitation events over time.
+The Mann-Kendall test is a non-parametric method used to detect trends in time-series data, 
+commonly applied in environmental studies to assess changes in factors like temperature, 
+rainfall, or pollution over time. It examines whether data exhibits a 
+consistent upward or downward trend without assuming any specific data 
+distribution, making it ideal for data that may not be normally distributed. 
+The test operates by calculating Kendall’s tau, comparing each data point with 
+all subsequent ones to count positive or negative pairs and generate a Mann-Kendall statistic. 
+A positive result suggests an increasing trend, while a negative result indicates a decreasing one. 
+The Mann-Kendall test is robust for independent data points, 
+though autocorrelation can affect results, sometimes requiring adjustments. 
+It is widely valued for its versatility, particularly in detecting trends in environmental data, 
+where it can also be extended to handle seasonal patterns.
+* Linear Regression: To quantify the rate of change in extreme event frequency, we applied linear regression analysis.
+
+* LOESS Smoothing: We used Locally Estimated Scatterplot Smoothing (LOESS) to visualize non-linear trends in the data. 
+This is the same smoothing method as the KNMI uses [<a href=https://rene-smit.com/loess-is-more/>*</a>]
+
+* Seasonal Analysis: We examined seasonal variations in extreme precipitation trends using the Seasonal Mann-Kendall test.
+    """, unsafe_allow_html=True)
+
+def conclusions():
+    st.subheader("Conclusions")
+    st.info("""
+
+    """, unsafe_allow_html=True)
 def main():
+    
+    st.header("Trends in Extreme precipitation in the Netherlands: A Data-Driven Analysis")
+    first_info()
     df_neerslag_data_pl = load_and_combine_data()
     col1,col2=st.columns(2)
-    with col1:
-        st.subheader("MM RAIN")
-        extreme_claude_ai(df_neerslag_data_pl, "mm", 500)
-        extreme_claude_ai_seasonal(df_neerslag_data_pl,"mm", 500)
-    with col2:
-        st.subheader("QUANTILE")
-        extreme_claude_ai(df_neerslag_data_pl, "quantile", .995)
-        extreme_claude_ai_seasonal(df_neerslag_data_pl,"quantile", .995)
+    # st.info("")
+    # with col1:
+    st.subheader("100 mm precipitation per day")
+
+    extreme_claude_ai(df_neerslag_data_pl, "mm", 1000)
+    extreme_claude_ai_seasonal(df_neerslag_data_pl,"mm", 1000)
+    # with col2:
+    st.subheader("QUANTILE")
+    extreme_claude_ai(df_neerslag_data_pl, "quantile", .995)
+    extreme_claude_ai_seasonal(df_neerslag_data_pl,"quantile", .995)
     
     if 1==1:
         #date_range(df) #very slow even with polars
         
+        st.info("The used stations with start, end date and number of days")
         df_station_info_pl = show_station_data()
+        st.info("The number of measurements per day. The data has been corrected for this")
         
         plot_number_of_measurements_per_day(df_neerslag_data_pl)
         
+        
         df_avg_month, df_avg_year = calculate_average_per_day_year(df_neerslag_data_pl)
         
-        
+        st.info("precipitation over time - grouped by month, sma 365")
         plot_grouped_by_month(df_avg_month)
+        st.info("Plot a graph with loess average, eq. to 30 years SMA See https://rene-smit.com/loess-is-more/")
         plot_graph_with_loess(df_avg_year)
+        st.info("Plot a graph with horizontal lines for every era of 20 years")
         plot_met_horizontale_lijnen(df_avg_year)
     col1,col2=st.columns(2)
     with col1:
