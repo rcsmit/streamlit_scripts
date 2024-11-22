@@ -12,17 +12,16 @@ import traceback
 from collections import defaultdict
 import calendar
 import streamlit as st
-import datetime
 
 import plotly.express as px
 import plotly.graph_objects as go
 
 from plotly.subplots import make_subplots
 
-debug = False
-streamlit = True
+DEBUG = False
+STREAMLIT = True
 def print_x(string):
-    if streamlit:
+    if STREAMLIT:
         st.write(string)
     else:
         print(string)
@@ -44,7 +43,16 @@ def read():
                             header=0,
                             usecols= "a,b,g,h, k,l,m,n",
                             
-                            names=["id","source","datum","bedrag", "description","income_expenses","main_category","category"],)
+                            names=[
+                                "id",
+                                "source",
+                                "datum",
+                                "bedrag",
+        print_x("Error loading file")
+                                "income_expenses",
+                                "main_category",
+                                "category"
+                            ],)
         
         df.datum=pd.to_datetime(df.datum,errors='coerce', dayfirst=True)
         
@@ -62,7 +70,7 @@ def read():
     
     # df = df[(df['jaar'] == "2023")| (df['jaar'] == "2022") | (df['description'] == "starting balance_2022")]
     
-    # de grootboeken kloppen niet als je 2021 toevoegt
+    # The ledgers are incorrect if you add 2021
     df = df[(df['jaar'] == "2024")|(df['jaar'] == "2023")| (df['jaar'] == "2022") | (df['description'] == "starting balance_2022")]
     #df = df[(df['jaar'] == "2023")| (df['jaar'] == "2022") |(df['jaar'] == "2021")| (df['description'] != "STARTING_BALANCE_2022")]
     # Convert all text data in the DataFrame to uppercase
@@ -85,25 +93,61 @@ def read():
     return df, df_cat
 
 class Account:
-    """Handle the various accounts
-    """    
+    """
+    Handle the various accounts in the double-entry accounting system.
+
+    Attributes:
+        name (str): The name of the account.
+        balance (float): The current balance of the account.
+        transactions (list): A list of transactions associated with the account.
+
+    Methods:
+        debit(amount): Adds the specified amount to the account balance.
+        credit(amount): Subtracts the specified amount from the account balance.
+        add_transaction(transaction): Adds a transaction to the account's transaction list.
+        __str__(): Returns a string representation of the account.
+    """
     def __init__(self, name):
         self.name = name
         self.balance = 0
         self.transactions = []
 
     def debit(self, amount):
+        """
+        Adds the specified amount to the account balance.
+
+        Args:
+            amount (float): The amount to be added to the balance.
+        """
         self.balance += amount
 
         
 
     def credit(self, amount):
+        """
+        Subtracts the specified amount from the account balance.
+
+        Args:
+            amount (float): The amount to be subtracted from the balance.
+        """
         self.balance -= amount
 
     def add_transaction(self, transaction):
+        """
+        Adds a transaction to the account's transaction list.
+
+        Args:
+            transaction (Transaction): The transaction to be added.
+        """
         self.transactions.append(transaction)
 
     def __str__(self):
+        """
+        Returns a string representation of the account.
+
+        Returns:
+            str: A string representing the account name and balance.
+        """
         return f"{self.name} - Balance: {round(self.balance,2)}"
 
 
@@ -162,7 +206,7 @@ class Ledger:
         Used to make a monthly pivot table
 
         Args:
-            asked_acount (str): the asked account
+            asked_account (str): the asked account
             date_given (date): date
 
         Returns:
@@ -213,7 +257,7 @@ def get_monthly_pivot_table(ledger, period):
     """make the montly totals
 
     Args:
-        ledger (_type_): _description_
+        ledger (Ledger): The ledger containing accounts and transactions.
 
     Returns:
         df: dataframe with the montly totals
@@ -241,7 +285,10 @@ def get_monthly_pivot_table(ledger, period):
 
 
 def make_pivot_period_trial_balance(ledger, accounts_source, period):
-    """Make a pivot table with a montly trial balance
+    """Make a pivot table with a monthly trial balance
+
+    Args:
+        ledger (Ledger): The ledger containing accounts and transactions.
 
     Args:
         ledger (_type_): _description_
@@ -266,7 +313,7 @@ def make_pivot_period_trial_balance(ledger, accounts_source, period):
     for my_date in date_list:
         # Loop through each account and retrieve the trial balance on the first day of the month
         for a in accounts_source:
-            balance = round(ledger.ask_trial_balance_date(a, my_date),2)
+            balance = round(ledger.ask_trial_balance_date(a, my_date), 2)
             trial_balance_df=trial_balance_df.fillna(0)
             # Append the trial balance to the DataFrame
             trial_balance_df = pd.concat([trial_balance_df, pd.DataFrame({'Date': [my_date], 'Account': [a], 'Balance': [balance]})], ignore_index=True)
@@ -381,7 +428,7 @@ def show_sunburst_annotated(df, year, divide_factor):
     ddd = "TOTAL_x_inv_divided"
     # df = df[df["income_expenses"] != "IN"]
     # df =df[df["income_expenses"] != "STARTING_BALANCE" ]
-    if debug:
+    if DEBUG:
         st.write("df 374 xxx")
         st.write(df)
     df = df[(df["index"] != "IN") & (df["index"] != "STARTING_BALANCE")]

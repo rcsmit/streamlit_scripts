@@ -7,6 +7,8 @@ import streamlit as st
 import pandas as pd
 import datetime
 
+# THIS USES AG DATA
+
 
 class LifeExpectancyCalculator:
     def __init__(self):
@@ -28,6 +30,7 @@ class LifeExpectancyCalculator:
         self.new_method =  True # st.sidebar.selectbox("Use AG table", [True, False],0)
         self.print_individual =  st.sidebar.selectbox("Print individual runs", [True, False],1)
         self.ag_jaar =  st.sidebar.selectbox("Year AG table", ["2022","2024"],1)
+        self.startjaar =  st.sidebar.number_input("startjaar",2022,2100,2024)
     def calculate_life_expectancy(self):
         """Calculate life expectancy
 
@@ -35,35 +38,85 @@ class LifeExpectancyCalculator:
             num_simulations (int, optional): num simulations. Defaults to 1000.
             ag_jaar (str): year as string
         """
+        
+
+        self.berekening_laning()
+        
+    
+        self.monte_carlo_simulation()
+
+    def berekening_laning(self):
+
+        if self.sexe== "male":
+            df_prob_die = pd.read_csv(f"https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/AG{self.ag_jaar}DefinitiefGevalideerd_male.csv", index_col=0)
+        else:
+            df_prob_die = pd.read_csv(f"https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/AG{self.ag_jaar}DefinitiefGevalideerd_female.csv", index_col=0)
+
+        df_prob_die.columns = df_prob_die.columns.astype(int)
+        # Cumulatieve overlevingskansen berekenen vanaf de startleeftijd (bijvoorbeeld 45)
+        start_age = self.current_age
+      
+        
+        # Cumulatieve overlevingskansen berekenen vanaf de startleeftijd (bijvoorbeeld 45)
+        
+        survival_prob = pd.DataFrame(index=df_prob_die.index, columns=df_prob_die.columns)
+        survival_prob.loc[start_age] = 1  # Start bij 100% overleving op de startleeftijd
+        startkans =  df_prob_die.at[self.current_age, self.startjaar]
+        for year in df_prob_die.columns:
+            for age in df_prob_die.index[df_prob_die.index > start_age]:
+                survival_prob.at[age, year] = survival_prob.at[age - 1, year] * (1 - df_prob_die.at[age-1, year])
+        survival_prob.columns = survival_prob.columns.astype(int)
+       
+        # Bereken de periodelevensverwachting voor een specifiek jaar vanaf leeftijd 45
+        period_life_expectancy = round( survival_prob[self.startjaar][start_age:].sum() - 0.5,2)
+
+        # Bereken de cohortlevensverwachting vanaf leeftijd 45
+        cohort_life_expectancy = 0
+        cohort_survival = 1  # Start bij 100% overleving vanaf leeftijd 45
+        for i, year in enumerate(range(self.startjaar, self.startjaar + len(df_prob_die.index))):
+            current_age = start_age + i
+            # print (current_age)
+            if current_age in df_prob_die.index and year in df_prob_die.columns:
+                cohort_survival *= (1 - df_prob_die.at[current_age, year])
+                # print (cohort_survival)
+                cohort_life_expectancy += cohort_survival
+                # print (cohort_life_expectancy)
+
+        cohort_life_expectancy -= 0.5  # Halvering van het laatste jaar
+        cohort_life_expectancy=round(cohort_life_expectancy,2)
+        
+        # Print resultaten
+        st.success(f"Periodelevensverwachting vanaf leeftijd {start_age} voor {self.startjaar}: {period_life_expectancy} -> eindleeftijd: {start_age+period_life_expectancy}")
+        st.success(f"Cohortlevensverwachting vanaf leeftijd {start_age} vanaf {self.startjaar}: {cohort_life_expectancy} -> eindleeftijd: {start_age+cohort_life_expectancy}") # 34,93 
+       
+    def monte_carlo_simulation(self):
+        st.subheader("Monte carlo simulation")
         deceased_ages= []
+       
         if self.sexe== "male":
             df_prob_die = pd.read_csv(f"https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/AG{self.ag_jaar}DefinitiefGevalideerd_male.csv")
         else:
             df_prob_die = pd.read_csv(f"https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/AG{self.ag_jaar}DefinitiefGevalideerd_female.csv")
-
-    
+        df_prob_die.set_index('age', inplace=True)
+        
+        df_prob_die.columns = df_prob_die.columns.astype(int)
+        # Stel de eerste kolom in als index
         placeholder=st.empty()
         for a in range(self.num_simulations):
-            if a%10==0:
+            if a % 10==0:
                 placeholder.info(f"{a+1}/{self.num_simulations}")
-            person_alive = True
-            for i,j in enumerate(range(0, (10*self.max_age - self.current_age) + 1)):
-                if person_alive:
-                    age_ = (10*self.current_age) +j
-                    # use of the AG2022 table. 
-                    if age_>1000:
-                        # values not given in the table. Rounded to 0.6
-                        probability_to_die = 0.6
-                    else:
-                        probability_to_die = (df_prob_die[str(int(self.current_year+(i/10)))].to_numpy()[df_prob_die['age'].to_numpy() == int(age_/10)].item())/10
-                    age= age_/10
+            
+            year = self.startjaar
+            for age in df_prob_die.index[df_prob_die.index >=  self.current_age]:
+
+                    probability_to_die =  df_prob_die.at[age, year]
+                                        
                     if random.random() <= probability_to_die:
                         deceased_ages.append(age)
-                        # print (f"Person {_} died at {age} years")
-                        person_alive = False
-                    # use of the AG2022 table
-            # if person_alive:
-            #     print (f" person {_} is still alive")
+                       
+                        break
+                    year+=1
+           
   
         # Store all results in the instance variable
         placeholder.empty()
@@ -78,20 +131,23 @@ class LifeExpectancyCalculator:
         self.percentile_75 = np.percentile(sorted_ages, 75)
         self.percentile_97_5 = np.percentile(sorted_ages, 97.5)
 
-        self.plot_probability_over_time(df_prob_die)
         end_table = self.calculate_age_distribution()
          
+        self.show_end_info(end_table)
+        self.plot_probability_over_time(df_prob_die)
         
-
         self.plot_age_freq_bar_graph(end_table)
 
                 
     
     
         self.plot_cdf_survival_function(end_table)
+        
+        return end_table
 
-        self.show_end_info(end_table)
-    
+
+
+
     def calculate_age_distribution(self):
         """_summary_
 
@@ -132,7 +188,7 @@ class LifeExpectancyCalculator:
     
     def plot_probability_over_time(self, df_prob_die):        
         # Filter data for age x
-        age_x_data = df_prob_die[df_prob_die['age'] == self.current_age]
+        age_x_data = df_prob_die[df_prob_die.index == self.current_age]
         trace = go.Scatter(x=age_x_data.columns[1:],
                         y=age_x_data.iloc[0, 1:],
                         mode='lines',
@@ -151,8 +207,8 @@ class LifeExpectancyCalculator:
         # Show plot
         st.plotly_chart(fig)  
     def show_end_info(self, end_table):
-        st.write(f"Average age at death of {self.num_simulations} individuals ({self.sexe}): {round(sum(self.deceased_ages)/len(self.deceased_ages),1)} - SD {round(np.std(self.deceased_ages),1)}")
-        st.write(f"Median age at death: {round(statistics.median(self.deceased_ages),1)}")
+        st.write(f"Average age at death of {self.num_simulations} individuals ({self.sexe}): {round(sum(self.deceased_ages)/len(self.deceased_ages),2)} [{round(sum(self.deceased_ages)/len(self.deceased_ages)-self.current_age,2)}] - SD {round(np.std(self.deceased_ages),2)}")
+        st.write(f"Median age at death: {round(statistics.median(self.deceased_ages),2)} [{round(statistics.median(self.deceased_ages)-self.current_age,2)}]")
         st.write (f"2.5% Percentile: {self.percentile_2_5:.2f} / 95% Percentile: {self.percentile_95:.2f} / 97.5% Percentile: {self.percentile_97_5:.2f}")
         st.write(f"Sum of persons {end_table['frequency'].sum()}")
         st.info(f"Projections Life Table AG{self.ag_jaar} https://www.actuarieelgenootschap.nl/kennisbank/prognosetafel-ag{self.ag_jaar}-2")

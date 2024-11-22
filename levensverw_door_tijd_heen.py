@@ -6,6 +6,10 @@ import numpy as np
 import life_expectancy_nl 
 # https://chatgpt.com/share/670b0590-e6f0-8004-9d7c-aed0e63214b4
 
+
+# THIS USES CBS DATA
+
+
 @st.cache_data
 def get_data():
     """Gets the data from Statistics Netherlands

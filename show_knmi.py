@@ -3,7 +3,9 @@ import streamlit as st
 from datetime import datetime
 import platform
 
-    
+import polars as pl
+
+
 from show_knmi_functions.utils import show_weerstations, help,  list_to_text,check_from_until, find_date_for_title, download_button,get_weerstations, get_data
 from show_knmi_functions.does_rain_predict_rain import does_rain_predict_rain
 from show_knmi_functions.polar_plot import polar_plot, polar_debug
@@ -16,7 +18,9 @@ from show_knmi_functions.spaghetti_plot import spaghetti_plot
 from show_knmi_functions.show_year_histogram_animation import show_year_histogram_animation
 from show_knmi_functions.last_day import last_day
 from show_knmi_functions.anomaly import anomaly
+from show_knmi_functions.show_extremen import show_extremen
 from show_knmi_functions.neerslagtekort import neerslagtekort, neerslagtekort_meerdere_stations
+
 # except:
 #     from utils import show_weerstations, help,  list_to_text,check_from_until, find_date_for_title, download_button,get_weerstations, get_data
 #     from does_rain_predict_rain import does_rain_predict_rain
@@ -65,7 +69,7 @@ def interface():
                                         "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", "per week in div jaren", 
                                         "per maand in div jaren",  "spaghetti plot","anomaly", "percentiles", 
                                         "polar plot/radar chart", "show year histogram animation",
-                                        "does rain predict rain","neerslagtekort","neerslagtekort_meerdere", "warmingstripes",
+                                        "does rain predict rain","neerslagtekort","neerslagtekort_meerdere", "warmingstripes","extremen",
                                         "show weerstations", "help", "polar_debug"], index=19
     )
     if mode !=  "neerslagtekort_meerdere":
@@ -113,7 +117,7 @@ def interface():
 
         what_to_show = st.sidebar.multiselect("Wat weer te geven", show_options, "temp_max")
        
-        if (mode != "anomaly") & (mode!= "warmingstripes") & (mode!= "last day"):
+        if (mode != "anomaly")& (mode != "extremen") & (mode!= "warmingstripes") & (mode!= "last day"):
             graph_type = st.sidebar.selectbox("Graph type (plotly=interactive)", ["pyplot", "plotly"], index=1)
 
 
@@ -191,7 +195,11 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
         show_weerstations()
     elif mode == "neerslagtekort":
         neerslagtekort(df)
+    elif mode == "extremen":
+        show_extremen(df, what_to_show)
+
     elif mode == "neerslagtekort_meerdere":
+    
         st.subheader("Neerslagtekort")
         #try:
         neerslagtekort_meerdere_stations(FROM, UNTIL)

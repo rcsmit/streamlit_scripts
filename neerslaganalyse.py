@@ -476,8 +476,8 @@ def plot_heavy_rain(df, cut_off=500):
 
     st.plotly_chart(fig)
 
-@st.cache_data()  
-def extreme_claude_ai(df, how, treshold):
+ 
+def extreme_claude_ai(_df, how,column, treshold):
 
     """_summary_
 
@@ -485,7 +485,7 @@ def extreme_claude_ai(df, how, treshold):
         _type_: _description_
     """    
     st.subheader(f"Yearly  {treshold}")
-    df = df.with_columns([
+    df = _df.with_columns([
      
         pl.col('YYYYMMDD').dt.year().alias('year'),
         pl.col('YYYYMMDD').dt.month().alias('month'),
@@ -494,7 +494,7 @@ def extreme_claude_ai(df, how, treshold):
 
     # 2. Extreme regenval definiëren (bijvoorbeeld: 99e percentiel)
     extreme_thresholds = df.group_by('STN').agg(
-        pl.col('RD').quantile(treshold).alias('threshold')
+        pl.col(column).quantile(treshold).alias('threshold')
     )
 
         # 2. Extreme regenval definiëren (> {treshold} mm)
@@ -507,7 +507,7 @@ def extreme_claude_ai(df, how, treshold):
         Returns:
         _type_: _description_
         """        
-        return df.filter(pl.col('RD') > treshold).group_by(['year', 'STN']).agg(pl.len().alias('extreme_count'))
+        return df.filter(pl.col(column) > treshold).group_by(['year', 'STN']).agg(pl.len().alias('extreme_count'))
     
     # 3. Tijdsreeksen analyseren
     
@@ -523,18 +523,18 @@ def extreme_claude_ai(df, how, treshold):
         return df.join(
             extreme_thresholds, on='STN'
         ).filter(
-            pl.col('RD') > pl.col('threshold')
+            pl.col(column) > pl.col('threshold')
         ).group_by(['year', 'STN']).agg(
             pl.len().alias('extreme_count')
         )
 
 
-    if how == "mm":
+    if how == "value":
         extreme_counts = count_extreme_events_mm(df)
     elif how =="quantile":
         extreme_counts = count_extreme_events_quantile(df)
     else:
-        st.error("Error in how")
+        st.error(f"Error in how {how}")
         st.stop()
     # Gemiddeld aantal extreme gebeurtenissen per jaar (genormaliseerd voor aantal stations)
     yearly_extremes = extreme_counts.group_by('year').agg([
@@ -545,16 +545,18 @@ def extreme_claude_ai(df, how, treshold):
     )
 
     # 4. Statistische test (bijvoorbeeld: Mann-Kendall trend test)
-    
-    mk_result = original_test(yearly_extremes['normalized_extremes'].to_numpy())
-    st.write(f"Mann-Kendall test result: trend = {mk_result.trend}, p-value = {mk_result.p}")
-    
-    # Linear regression
-    x = yearly_extremes['year'].to_numpy()
-    y = yearly_extremes['normalized_extremes'].to_numpy()
-    slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
-    st.write(f"Linear regression: slope = {slope}, p-value = {p_value}, R-squared = {r_value**2}")
-    plot_yearly_extremes(yearly_extremes, x, y, slope, intercept, mk_result,  r_value, p_value)
+    if len(yearly_extremes)==0:
+        st.info("No extremes")
+    else:
+        mk_result = original_test(yearly_extremes['normalized_extremes'].to_numpy())
+        st.write(f"Mann-Kendall test result: trend = {mk_result.trend}, p-value = {mk_result.p}")
+        
+        # Linear regression
+        x = yearly_extremes['year'].to_numpy()
+        y = yearly_extremes['normalized_extremes'].to_numpy()
+        slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
+        st.write(f"Linear regression: slope = {slope}, p-value = {p_value}, R-squared = {r_value**2}")
+        plot_yearly_extremes(yearly_extremes, x, y, slope, intercept, mk_result,  r_value, p_value)
 
 def plot_yearly_extremes(yearly_extremes, x, y,slope, intercept, mk_result,  r_value, p_value):
     # 5. Visualisatie met Plotly
@@ -563,7 +565,7 @@ def plot_yearly_extremes(yearly_extremes, x, y,slope, intercept, mk_result,  r_v
         x='year', 
         y='normalized_extremes',
         trendline='ols',
-        title='Genormaliseerd aantal extreme regenval gebeurtenissen per jaar'
+        title='Aantal extreme gebeurtenissen per jaar'
         )
 
 
@@ -572,7 +574,7 @@ def plot_yearly_extremes(yearly_extremes, x, y,slope, intercept, mk_result,  r_v
         x=yearly_extremes['year'],
         y=slope * x + intercept,
         mode='lines',
-        name='Linear trend',
+        name='OLS trend',
         line=dict(color='red')
     ))
 
@@ -588,9 +590,9 @@ def plot_yearly_extremes(yearly_extremes, x, y,slope, intercept, mk_result,  r_v
     ))
 
     fig.update_layout(
-        title='Genormaliseerd aantal extreme regenval gebeurtenissen per jaar',
+        title='Aantal extreme gebeurtenissen per jaar',
         xaxis_title='Jaar',
-        yaxis_title='Genormaliseerd aantal extreme gebeurtenissen'
+        yaxis_title='Aantal extreme gebeurtenissen'
     )
 
     # Voeg annotaties toe met testresultaten
@@ -609,14 +611,14 @@ def plot_yearly_extremes(yearly_extremes, x, y,slope, intercept, mk_result,  r_v
 
     fig.update_layout(
         xaxis_title='Jaar',
-        yaxis_title='Genormaliseerd aantal extreme gebeurtenissen'
+        yaxis_title='Aantal extreme gebeurtenissen'
     )
     st.plotly_chart(fig)
 
-@st.cache_data()
-def extreme_claude_ai_seasonal(df, how, treshold):
+
+def extreme_claude_ai_seasonal(_df, how,column, treshold):
     st.subheader(f"Seasonal {treshold}")
-    df = df.with_columns([
+    df = _df.with_columns([
      
         pl.col('YYYYMMDD').dt.year().alias('year'),
         pl.col('YYYYMMDD').dt.month().alias('month'),
@@ -624,13 +626,13 @@ def extreme_claude_ai_seasonal(df, how, treshold):
     ])
     # 2. Extreme regenval definiëren (99e percentiel per station en seizoen)
     extreme_thresholds_seasonal = df.group_by(['STN', 'season']).agg(
-        pl.col('RD').quantile(treshold).alias('threshold')
+        pl.col(column).quantile(treshold).alias('threshold')
     )
 
     # 2. Extreme regenval definiëren (> 500 mm)
     def count_extreme_events_seasonal_mm(df):
         return df.filter(
-            pl.col('RD') > treshold
+            pl.col(column) > treshold
         ).group_by(['year', 'season', 'STN']).agg(
             pl.len().alias('extreme_count')
         )
@@ -640,13 +642,13 @@ def extreme_claude_ai_seasonal(df, how, treshold):
         return df.join(
             extreme_thresholds_seasonal, on=['STN', 'season']
         ).filter(
-            pl.col('RD') > pl.col('threshold')
+            pl.col(column) > pl.col('threshold')
         ).group_by(['year', 'season', 'STN']).agg(
             pl.len().alias('extreme_count')
         )
 
     
-    if how == "mm":
+    if how == "value":
         extreme_counts_seasonal = count_extreme_events_seasonal_mm(df)
     elif how =="quantile":
         extreme_counts_seasonal = count_extreme_events_seasonal_quantile(df)
@@ -665,18 +667,23 @@ def extreme_claude_ai_seasonal(df, how, treshold):
         # 4. Statistische tests
         # Seasonal Mann-Kendall test
         data = yearly_seasonal_extremes.pivot(index='year', on='season', values='normalized_extremes').sort('year')
-        smk_result = seasonal_test(data.to_numpy(), period=p)
-        st.write(f"Seasonal Mann-Kendall test result - season {s}: trend = {smk_result.trend}, p-value = {smk_result.p}")
+       
+        # if len(data)==0:
+        #     st.error(f"No extremes in {s}")
+        # else:
+        #     smk_result = seasonal_test(data.to_numpy(), period=p)
+        #     st.write(f"Seasonal Mann-Kendall test result - season {s}: trend = {smk_result.trend}, p-value = {smk_result.p}")
+    if len(data)!=0:
+        plot_yearly_extremes_seasonal(yearly_seasonal_extremes)
+        # Print samenvattende statistieken
+        st.write(yearly_seasonal_extremes.group_by('season').agg([
+            pl.col('normalized_extremes').mean().alias('mean'),
+            pl.col('normalized_extremes').std().alias('std'),
+            pl.col('normalized_extremes').min().alias('min'),
+            pl.col('normalized_extremes').max().alias('max')
+        ]))
 
-    plot_yearly_extremes_seasonal(yearly_seasonal_extremes)
-    # Print samenvattende statistieken
-    st.write(yearly_seasonal_extremes.group_by('season').agg([
-        pl.col('normalized_extremes').mean().alias('mean'),
-        pl.col('normalized_extremes').std().alias('std'),
-        pl.col('normalized_extremes').min().alias('min'),
-        pl.col('normalized_extremes').max().alias('max')
-    ]))
-
+        st.write(yearly_seasonal_extremes)
 def plot_yearly_extremes_seasonal(yearly_seasonal_extremes):
     # 5. Visualisatie
     fig = make_subplots(rows=2, cols=2, subplot_titles=("Winter", "Spring", "Summer", "Autumn"))
@@ -695,12 +702,12 @@ def plot_yearly_extremes_seasonal(yearly_seasonal_extremes):
         # Trendlijn
         try:
             slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
-            fig.add_trace(go.Scatter(x=x, y=slope*x + intercept, mode='lines', name=f'Trend S{season}'), row=row, col=col)
+            fig.add_trace(go.Scatter(x=x, y=slope*x + intercept, mode='lines', name=f'OLS Trend S{season}'), row=row, col=col)
 
         except:
-            st.info(f"No extreme precipitation in {season}")
+            st.info(f"No extreme event in {season}")
         
-    fig.update_layout(height=800, title_text="Seizoensgebonden trends in extreme regenval")
+    fig.update_layout(height=800, title_text="Seizoensgebonden trends in extreme gebeurtenissen")
     st.plotly_chart(fig)
 
 def first_info():
@@ -784,12 +791,12 @@ def main():
         # with col1:
         st.subheader("100 mm precipitation per day")
 
-        extreme_claude_ai(df_neerslag_data_pl, "mm", 1000)
-        extreme_claude_ai_seasonal(df_neerslag_data_pl,"mm", 1000)
+        extreme_claude_ai(df_neerslag_data_pl, "value", "RD", 1000)
+        extreme_claude_ai_seasonal(df_neerslag_data_pl,"value", "RD", 1000)
         # with col2:
         st.subheader("QUANTILE")
-        extreme_claude_ai(df_neerslag_data_pl, "quantile", .995)
-        extreme_claude_ai_seasonal(df_neerslag_data_pl,"quantile", .995)
+        extreme_claude_ai(df_neerslag_data_pl, "quantile","RD",  .995)
+        extreme_claude_ai_seasonal(df_neerslag_data_pl,"quantile","RD",  .995)
         
         if 1==1:
             #date_range(df) #very slow even with polars

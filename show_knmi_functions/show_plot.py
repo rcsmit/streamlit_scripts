@@ -9,6 +9,10 @@ from matplotlib.backends.backend_agg import RendererAgg
 import plotly.graph_objects as go
 import plotly.express as px
 
+def show_scatter(df, x,y):
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=df[x], y=df[y], mode='markers'))
+    st.plotly_chart(fig)
 def show_plot(df, datefield, title, wdw, wdw2, sma2_how, what_to_show_, graph_type, centersmooth, show_ci, show_loess, wdw_ci, show_parts, no_of_parts):
     """_summary_
 

@@ -19,7 +19,8 @@ import plotly.graph_objects as go
 
 from plotly.subplots import make_subplots
 import traceback
-
+from math import sin,cos,pi
+  
 
 def select_period_oud(df, field, show_from, show_until, years):
     """Shows two inputfields (from/until and Select a period in a df.
@@ -166,9 +167,9 @@ def read(sheet_id):
             df = pd.read_excel (file,
                                 sheet_name= sheet,
                                 header=0,
-                                usecols= "a,b,g,h,k,l,m,n",
+                                usecols= "a,b,g,h,k,l,m,n,o",
                                 names=["id","bron","datum","bedrag",
-                       "tegenpartij","in_uit","hoofdrub","rubriek"],)
+                       "tegenpartij","in_uit","hoofdrub","rubriek", "rubriek_azie"],)
             #df["datum"] = pd.to_datetime(df["datum"], format="%Y-%m-%d")
             df.datum=pd.to_datetime(df.datum,errors='coerce', dayfirst=True)
             
@@ -189,9 +190,14 @@ def read(sheet_id):
         st.write("type doesnt exist")
         pass
     df['jaar']=df['datum'].dt.strftime('%Y')
+    # Ensure the 'jaar' column is of integer type
+    df['jaar'] = df['jaar'].fillna(0).astype(int)
+
     df['maand']=df['datum'].dt.strftime('%m')
     df['invbedrag']= df['bedrag']* -1
     df['maand_']=df['datum'].dt.strftime('%Y-%m')
+    df['jaar_']=df['datum'].dt.strftime('%Y')
+    df = df[~((df["rubriek"] == "STARTING_BALANCE") & ((df["jaar"] == "2022") | (df["jaar"] == "2021")))]
     return df
 
 def totalen_per_rub(df):
@@ -283,50 +289,123 @@ def uitgaven_per_period(df, period,modus):
     st.write(table_w_azie)
     save_df(table_w_azie, "Table vanuit masterfinance")
 
+
+
 def sunburst_chart(df, years_to_show):
     st.header("Sunburst diagram")
     df = df.fillna(0)
-    # df = df[df["rubriek"] == "kruis"]
-    # df = df[df["jaar"] == "2019"]
-
-    # st.write(df)
-
-
+    df["jaar"] = df["jaar"].astype(int) 
     df = df.replace("zorgtoeslag", "zorgverzekering")
   
-    df_sunburst = df.groupby(["jaar", "in_uit","hoofdrub", "rubriek"]).sum(numeric_only=True).reset_index()
+    df_sunburst = df.groupby(["jaar", "in_uit","hoofdrub", "rubriek","rubriek_azie"]).sum(numeric_only=True).reset_index()
     df_sunburst = df_sunburst[(df_sunburst["in_uit"] != "IN") & (df_sunburst["bedrag"] <0 ) &(df_sunburst["in_uit"] != "KRUIS") & (df_sunburst["in_uit"] != "STARTING_BALANCE")& (df_sunburst["in_uit"] != "FICTIEVE_W_V")]
+    if (df_sunburst["invbedrag"] < 0).any():
+        st.error("Error: There are negative values in the 'invbedrag' column.")
+        st.stop()
+
+    divide_by = st.sidebar.number_input("Delen door (99 for given)", 0.1,99.0,99.0)
+    if divide_by !=99:
+        df_sunburst["invbedrag_divided"] = df_sunburst["invbedrag"] / divide_by
+    else:
+        print(len(years_to_show)) 
+        # Given data MONTHS IN ASIA PER YEAR
+        if 1==1:
+
+           
+    
+              # year, asia, europe
+            months_asia = 1.5+4.6+1.75+ 1.6+ 1.5+4.33+ 0
+            months_europe = 10.5+(12-(4.6+1.75))+ (12-(1.6+ 1.5))+(12-(4.33+ 1.75))
+
+
+            # Calculate and apply divide_by for each category and year
+            divide_by_values =[
+                [ "UIT", months_europe],
+                    [ "UIT_VL", months_europe+months_asia ],
+                    [ "UIT_AZIE", months_asia],
+                    [ "UIT_AZIE_VL", months_asia],
+                    [ "UIT_AZIE_VOORAF", months_asia],
+
+                    [ "UIT_AZIE_VLIEGTICKETS", months_asia]
+            ]    
+
+            for d in divide_by_values:
+            
+                mask = (df_sunburst["in_uit"] == d[0])
+            
+                df_sunburst.loc[mask, "invbedrag_divided"] = df_sunburst.loc[mask, "invbedrag"] / d[1]
+
     # attention, if there are negative values, the sunburst is not shown
-    show_sunburst(years_to_show, df_sunburst)
+    show_sunburst(years_to_show, df_sunburst, divide_by)
     #show_sunburst_annotated(years_to_show, df_sunburst)
     for y in years_to_show:
         df_sunburst_year = df_sunburst[df_sunburst['jaar'] == y]
         if len(df_sunburst_year) >0 :
-            show_sunburst(y, df_sunburst_year)
-            #show_sunburst_annotated(y, df_sunburst_year)
+             # year, asia, europe
+            years_months = [
+                (2020, 6,6),
+                (2021, 1.5,10.5),
+                (2022, 4.6+1.75, 12-(4.6+1.75)),
+                (2023, 1.6+ 1.5,12-1.6+ 1.5),
+                (2024, 4.33+ 0,12-(4.33+ 1.75))
+            ]
+                    
+            # Calculate and apply divide_by for each category and year
+            for y in years_months:
+                divide_by_values =[
+                    [y[0], "UIT", y[2]],
+                    [y[0], "UIT_VL", 12 ],
+                    [y[0], "UIT_AZIE", y[1]],
+                    [y[0], "UIT_AZIE_VL", y[1]],
+                    [y[0], "UIT_AZIE_VOORAF", y[1]],
+
+                    [y[0], "UIT_AZIE_VLIEGTICKETS", y[1]]
+                ]    
+    
+                for d in divide_by_values:
+                
+                    mask = (df_sunburst_year["jaar"] == y[0]) & (df_sunburst_year["in_uit"] == d[1])
+                    #mask = (df_sunburst["in_uit"] == d[1])
+                
+                
+                    df_sunburst_year.loc[mask, "invbedrag_divided"] = df_sunburst_year.loc[mask, "invbedrag"] / d[2]
+            show_sunburst(y, df_sunburst_year, divide_by)
+            #show_sunburst_annotated(y, df_sunburst_year, divide_by)
         else:
             st.warning(f"No items for year {y}")
 
-def show_sunburst(years_to_show, df_sunburst):
+def show_sunburst(years_to_show, df_sunburst, divide_by):
     st.subheader(f" -- {years_to_show} ---")
+    
     st.write(df_sunburst)
     
     fig = px.sunburst(df_sunburst,
-                  path=["in_uit","hoofdrub", "rubriek"],
-                  values="invbedrag",
-                  title=f"Uitgaven {years_to_show}",width=1000, height=1000,)  
+                  path=["in_uit","hoofdrub", "rubriek","rubriek_azie"],
+                  values="invbedrag_divided",
+                  title=f"Uitgaven {years_to_show}",width=1000, height=1000,) 
+  
+    ## set marker colors whose labels are " " to transparent
+    # https://stackoverflow.com/questions/71442845/how-to-avoid-none-when-plotting-sunburst-chart-using-plotly
+    try:
+        marker_colors = list(fig.data[0].marker['colors'])
+        marker_labels = list(fig.data[0]['labels'])
+        new_marker_colors = ["rgba(0,0,0,0)" if label=="xxx" else color for (color, label) in zip(marker_colors, marker_labels)]
+        marker_colors = new_marker_colors
+
+        fig.data[0].marker['colors'] = marker_colors
+    except Exception as e:
+        print (f"Error {e} {years_to_show}")
     st.plotly_chart(fig)
 
-def show_sunburst_annotated(years_to_show, df):
+def show_sunburst_annotated(years_to_show, df, divide_by):
     # https://stackoverflow.com/questions/70129355/value-annotations-around-plotly-sunburst-diagram
     st.subheader(f" -- {years_to_show} ---")
     st.write (df)
-    from math import sin,cos,pi
-
+    df["invbedrag_divided"] = df["invbedrag"] / divide_by
     aaa = 'in_uit'
     bbb = 'hoofdrub'
     ccc = 'rubriek'
-    ddd = "invbedrag"
+    ddd = "invbedrag_divided"
 
     fig = px.sunburst(df, path=[aaa, bbb, ccc], values=ddd, width=600, height=600, title=f"Uitgaven {years_to_show}",)
     totals_groupby =  df.groupby([aaa, bbb, ccc]).sum()
@@ -445,6 +524,176 @@ def interface_selectperiod():
 
     return FROM, UNTIL
 
+def pivot_tables(df):
+
+    st.subheader("Bedragen per rubriek per maand/jaaar")
+    # Zorg ervoor dat de datumkolom het juiste type heeft
+    df['datum'] = pd.to_datetime(df['datum'])
+    df=df[df['hoofdrub'] !='STARTING_BALANCE']
+    df['bedrag'] = np.where(df['in_uit'] != 'IN', df['bedrag'] * -1, df['bedrag'])
+    in_uit_totalen = df.groupby(['in_uit'])['bedrag'].sum().reset_index()
+    in_uit_totalen.rename(columns={'bedrag': 'Totaal in_uit'}, inplace=True)
+
+
+    # Totaal bedrag per hoofdrub
+    hoofdrub_totalen = df.groupby(['in_uit','hoofdrub'])['bedrag'].sum().reset_index()
+    hoofdrub_totalen.rename(columns={'bedrag': 'Totaal per hoofdrub'}, inplace=True)
+
+    # Totaal bedrag per rubriek
+    rubriek_totalen = df.groupby(['in_uit','hoofdrub','rubriek'])['bedrag'].sum().reset_index()
+    rubriek_totalen.rename(columns={'bedrag': 'Totaal per rubriek'}, inplace=True)
+
+    
+    # Totaalsaldo
+    saldo = df['bedrag'].sum()
+
+    # Resultaten weergeven
+    st.write("Totaal per in/uit:")
+    st.write(in_uit_totalen)
+    st.write("Totaal per rubriek:")
+    st.write(rubriek_totalen)
+    st.write("\nTotaal per hoofdrub:")
+    st.write(hoofdrub_totalen)
+    st.write("\nEindsaldo:")
+    st.write(f"{saldo:.2f}")
+    for tijdsperiode in ["jaar_", "maand_"]:
+            
+        for index in [['in_uit'],['in_uit', 'hoofdrub',],['in_uit', 'hoofdrub', 'rubriek']]:
+
+         
+            # Totaal bedrag per in_uit, hoofdrub, rubriek, en maand_
+            pivot_df = df.pivot_table(
+                values='bedrag',
+                index=index,
+                columns=tijdsperiode,
+                aggfunc='sum',
+                fill_value=0
+            )
+
+            # Sorteren van de kolommen (maanden) op volgorde van links naar rechts
+            pivot_df = pivot_df.sort_index(axis=1)
+
+            # Resultaten weergeven
+            st.write(pivot_df)
+            make_graph_pivot(pivot_df, tijdsperiode, index)
+
+
+
+    df_sorted = df.sort_values(by=['in_uit', 'hoofdrub', 'rubriek','datum'])
+
+
+# Print de gesorteerde dataframe
+    st.write(df_sorted)
+
+def make_graph_pivot(pivot_df, tijdsperiode, index):
+    
+        # Create a new figure
+        fig = go.Figure()
+
+        # Loop over each row in the pivot table and add it as a trace
+        for index, row in pivot_df.iterrows():
+            try:
+                in_uit, hoofdrub, rubriek = index  # Extract index values
+            except:
+                try:
+                    in_uit, hoofdrub = index  # Extract index values
+                    rubriek = ""
+                except:
+                    in_uit = index  # Extract index values
+                    hoofdrub, rubriek = "",""
+
+            trace_name = f"{in_uit} - {hoofdrub} - {rubriek}"  # Name of the trace
+            
+            fig.add_trace(
+                go.Scatter(
+                    x=pivot_df.columns,  # x-axis: months
+                    y=row,               # y-axis: values for this row
+                    mode='lines',
+                    name=trace_name      # Unique name for each line
+                )
+            )
+
+        # Update layout for better readability
+        fig.update_layout(
+            title=f"Line Graph of Bedrag per {tijdsperiode} - {index}",
+            xaxis_title=f"{tijdsperiode}",
+            yaxis_title="Bedrag",
+            legend_title="Categorieën",
+            template="plotly_white"
+        )
+
+        # Show the plot
+        st.plotly_chart(fig)
+
+
+def bereken_balanstotaal_per_maand(df):  
+    st.subheader("Balanstotaal per maand")   
+    # Zorg ervoor dat 'datum' een datetime-type is
+   
+    # Sorteren van de dataframe op 'bron' en 'datum' om het lopend totaal correct te berekenen
+    df = df.sort_values(by=['bron', 'datum'])
+
+    # Bereken het lopend totaal per 'bron'
+    df['lopend_totaal'] = df.groupby('bron')['bedrag'].cumsum()
+    for periode in ["maand","jaar"]:
+        if periode == "maand":
+            # Voeg een kolom toe voor de laatste dag van de maand
+            df['laatste_dag_periode'] = df['datum'] + pd.offsets.MonthEnd(0)
+        else:
+            df['laatste_dag_periode'] = df['datum'] + pd.offsets.YearEnd(0)
+        df['laatste_dag_periode'] = df['laatste_dag_periode'].dt.normalize()
+        
+        pivot_df = df.pivot_table(
+            values='lopend_totaal',
+            index='bron',
+            columns='laatste_dag_periode',
+            aggfunc='last',
+            # margins=True,  # Voeg totalen toe
+            # margins_name='Totaal'  # Naam van de totalenrij
+        )
+
+        # Vul NaN-waarden in met de laatste bekende waarde in de rij
+        pivot_df = pivot_df.ffill(axis=1)
+        
+        
+        # Bereken de totalen per kolom
+        column_totals = pivot_df.sum(axis=0)
+
+        # Voeg de totalen toe als een nieuwe rij
+        pivot_df.loc['Totaal'] = column_totals
+
+        # Formatteer de kolommen naar 'yyyy-mm'
+        pivot_df.columns = pivot_df.columns.strftime('%Y-%m')
+        st.write(pivot_df)
+        # Maak een nieuwe Plotly-figuur
+        fig = go.Figure()
+
+        # Voeg voor elke bron een lijn toe aan de grafiek
+        for bron in pivot_df.index:
+            fig.add_trace(
+                go.Scatter(
+                    x=pivot_df.columns,  # x-waarden: de laatste dagen van de maand
+                    y=pivot_df.loc[bron],  # y-waarden: de lopende totalen voor de bron
+                    mode='lines',
+                    name=bron  # Naam van de lijn
+                )
+            )
+
+
+        # Layout aanpassen voor betere leesbaarheid
+        fig.update_layout(
+            title="Lopend Totaal per Bron",
+            xaxis_title=f"Laatste dag van de {periode}",
+            yaxis_title="Lopend Totaal",
+            legend_title="Bron",
+            template="plotly_white"
+        )
+
+        # Toon de grafiek
+        st.plotly_chart(fig)
+
+
+
 def main():
     st.header("Financial sheet Rene")
     # Use 2 decimal places in output display
@@ -452,42 +701,61 @@ def main():
     # Don't wrap repr(DataFrame) across additional lines
     pd.set_option("display.expand_frame_repr", False)
 
-    # password_ok = st.secrets["finance_password"]
-    # password_ok = "password123"
-    # password_input = st.sidebar.text_input("password", "password123",  type="password")
-    # if password_input == password_ok:
-    #     #sheet_id = st.secrets["finance_sheet_id"]
-    #     df = read(sheet_id)
-
-    # else:
-    #     st.warning ("Enter the right password to enter")
-    #    st.stop()
+  
     sheet_id = "INVOER"
     df = read(sheet_id)
+    # Sidebar menu
+    option = st.sidebar.radio(
+        "Select a function to run:",
+        [
+            "in_and_out_per_period",
+            "sunburst_chart",
+            "uitgaven_per_period",
+            "uitgaves_categorie_per_period",
+            "totalen_per_rub",
+            "pivot_tables",
+            "bereken_balanstotaal_per_maand"
+        ]
+    )
+
     FROM, UNTIL = interface_selectperiod()
-    st.write(df)
+    
     years_possible   =  df['jaar'].drop_duplicates().sort_values().tolist()
     years = st.sidebar.multiselect("Jaren",years_possible, years_possible)
 
-    df = select_period_oud(df, "datum", FROM, UNTIL, years)
+    df = select_period_oud(df, "datum", FROM, UNTIL, years).copy()
+   
     lijst_met_hoofdrubrieken  =  df['hoofdrub'].drop_duplicates().sort_values().tolist()
     lijst_met_rubrieken  =  df['rubriek'].drop_duplicates().sort_values().tolist()
-    period =  st.sidebar.selectbox("Period",["jaar", "maand_"], index=1)
-    modus_ =  st.sidebar.selectbox("Modus",["hoofdrubriek", "rubriek"], index=0)
+    if option in ["in_and_out_per_period","uitgaven_per_period","uitgaves_categorie_per_period"]:
+        period =  st.sidebar.selectbox("Period",["jaar", "maand_"], index=1)
+    if option in ["uitgaven_per_period","uitgaves_categorie_per_period"]:
+        modus_ =  st.sidebar.selectbox("Modus",["hoofdrubriek", "rubriek"], index=0)
 
-    if modus_ == "hoofdrubriek":
-        modus = 'hoofdrub'
-        rubriek =  st.sidebar.selectbox("Hoofdrubriek",lijst_met_hoofdrubrieken, index=3)
-    else:
-        modus = 'rubriek'
-        rubriek =  st.sidebar.selectbox("Rubriek",lijst_met_rubrieken, index=16)
-    in_and_out_per_period(df, period)
-    sunburst_chart(df, years)
-    uitgaven_per_period(df, period, modus)
-    uitgaves_categorie_per_period(df,rubriek,modus, period)
-    totalen_per_rub(df)
+        if modus_ == "hoofdrubriek":
+            modus = 'hoofdrub'
+            rubriek =  st.sidebar.selectbox("Hoofdrubriek",lijst_met_hoofdrubrieken, index=3)
+        else:
+            modus = 'rubriek'
+            rubriek =  st.sidebar.selectbox("Rubriek",lijst_met_rubrieken, index=16)
     
-
+    
+    # Call the selected function
+    if option == "in_and_out_per_period":
+        in_and_out_per_period(df, period)
+    elif option == "uitgaven_per_period":
+        uitgaven_per_period(df, period, modus)
+    elif option == "uitgaves_categorie_per_period":
+        uitgaves_categorie_per_period(df, rubriek, modus, period)
+    elif option == "sunburst_chart":
+        sunburst_chart(df, years)
+    
+    elif option == "totalen_per_rub":
+        totalen_per_rub(df)
+    elif option == "pivot_tables":
+        pivot_tables(df)
+    elif option == "bereken_balanstotaal_per_maand":
+        bereken_balanstotaal_per_maand(df)
 if __name__ == "__main__":
     import os
     import datetime
