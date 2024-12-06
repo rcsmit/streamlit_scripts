@@ -14,7 +14,7 @@ class QuantGaloreData:
     def __init__(self):
         choice= st.sidebar.text_input("Which ticker", "BTC-USD")
         period = st.sidebar.selectbox("Period", ["1d","5d","1mo","3mo","6mo","1y","2y","5y","10y","ytd","max"], 5)
-        interval =st.sidebar.selectbox("Interval", [ "1m","2m","5m","15m","30m","60m","90m","1h","1d","5d","1wk","1mo","3mo"],8)
+        interval =st.sidebar.selectbox("Interval", [ "1d","5d","1wk","1mo","3mo"],0) # "1m","2m","5m","15m","30m","60m","90m","1h",
         self.ticker = yf.Tickers(choice)
 
         self.data = yf.download(tickers=(choice),period=period,interval=interval,group_by='ticker',auto_adjust=True,prepost=False)
@@ -33,8 +33,23 @@ class QuantGaloreData:
             m, b, r_value, p_value, std_err = stats.linregress(x_, y_)
             r_sq = r_value**2
             return m,b,r_sq
+        def interface(self):
+            st.sidebar.markdown("## Bollinger Bands")
+            z1 = st.sidebar.number_input("Z-value 1 (used for strategy)", 0.0,3.0,1.0)
+            z2 = st.sidebar.number_input("Z-value 2", 0.0,3.0,1.96)
+            if z1 >= z2:
+                st.warning("Z1 has to be smaller than Z2")
+                st.stop()
+            wdw = int( st.sidebar.number_input("Window for bollinger",2,60,20))
+            center_boll = st.sidebar.selectbox("Center bollinger", [True, False], index=0)
+            initial_investment = st.sidebar.number_input("Initial investment",0,1000000000,1000)
+            
+            return z1, z2, wdw, center_boll, initial_investment
+        def calculate_various_columns_df(df, z1, z2, wdw, center_boll):
 
-        def calculate_various_columns_df(df):
+            # on streamlit sharing there is (6/12/2024) a multilevel column
+            # and no rownumber.
+
             # Check if multi-index and take last level only if it is
             if isinstance(df.columns, pd.MultiIndex):
                 df.columns = df.columns.get_level_values(-1)
@@ -43,20 +58,13 @@ class QuantGaloreData:
                 df.insert(0, 'rownumber', range(1, len(df) + 1))
             
             df = df.reset_index()
-            st.write(df)
+           
             std = np.std(self.df['Close'])
             mean = df['Close'].mean()
             x = list(range(0,len(df)))
             y = df["Close"].to_list()
             m,b,r_sq = find_slope_scipy(x,y)
-            z1 = st.sidebar.number_input("Z-value 1", 0.0,3.0,1.0)
-            z2 = st.sidebar.number_input("Z-value 2", 0.0,3.0,1.96)
-            wdw = int( st.sidebar.number_input("Window for bollinger",2,60,20))
-            center_boll = st.sidebar.selectbox("Center bollinger", [True, False], index=0)
-
-            if z1 >= z2:
-                st.warning("Z1 has to be smaller than Z2")
-                st.stop()
+           
             df['trendline'] = (df['rownumber'] *m +b)
             df['trendline_low_1'] = (df['rownumber'] *m +b) - z1 * std
             df['trendline_high_1'] = (df['rownumber'] *m +b) + z1 * std
@@ -65,40 +73,12 @@ class QuantGaloreData:
             df['z_from_mean'] = (df['Close'] - mean) / std
             df["z_from_trendline"] =  (df['Close'] - df['trendline']) / std
             df = do_bollinger(df, z1, z2, wdw, center_boll)
-            return df, std, mean, m, b,z1, z2
+            return df, std, mean, m, b
 
-        def do_bollinger_oud(df, z1,z2):
-            # https://medium.com/codex/algorithmic-trading-with-bollinger-bands-in-python-1b0a00c9ef99
-            def create_coll_boll(df, df_temp):
-                std = np.std(df_temp['Close'])
-                df.loc[i, "boll_center"] =  df_temp['Close'].mean()
-                df.loc[i, "boll_high_1"] = df.loc[i, "boll_center"] + z1 * std
-                df.loc[i, "boll_low_1"] = df.loc[i, "boll_center"] - z1* std
-                df.loc[i, "boll_high_2"] = df.loc[i, "boll_center"] + z2 * std
-                df.loc[i, "boll_low_2"] = df.loc[i, "boll_center"] - z2* std
-                return df
-
-            # df["boll_low"],df["boll_center"], df["boll_high"] = None, None, None
-
-
-            if (wdw % 2) != 0:
-                st.error("Please enter an even number for window")
-                st.stop()
-            if center_boll:
-                for i in range(int(wdw/2),int((len(df)-wdw/2))):
-                    df_temp = df.iloc[i-int(wdw/2):i+int(wdw/2), :]
-                    df = create_coll_boll(df, df_temp)
-
-            else:
-                for i in range(20,len(df)):
-                    df_temp = df.iloc[i-20:i, :]
-                    df = create_coll_boll(df, df_temp)
-
-
-            return df
+       
 
         def do_bollinger(df, z1, z2, wdw, center_boll):
-            #    # https://medium.com/codex/algorithmic-trading-with-bollinger-bands-in-python-1b0a00c9ef99
+            #  https://medium.com/codex/algorithmic-trading-with-bollinger-bands-in-python-1b0a00c9ef99
             def sma(data, window):
                 sma = data.rolling(window = window, center=center_boll).mean()
                 return sma
@@ -164,8 +144,8 @@ class QuantGaloreData:
                 elif signal == -1 and shares > 0:  # Sell signal
                     cash = shares * sell
                     shares = 0
-                portfolio_value = cash + shares * close if shares > 0 else cash
-                portfolio_value_sell = cash + shares * sell if shares > 0 else cash
+                portfolio_value = cash + (shares * close) if shares > 0 else cash
+                portfolio_value_sell = cash + (shares * sell) if shares > 0 else cash
                 
                 portfolio_values.append(portfolio_value)
                 portfolio_values_sell.append(portfolio_value_sell)
@@ -379,8 +359,8 @@ class QuantGaloreData:
             fig = go.Figure()
 
             # Add the portfolio value line
-            fig.add_trace(go.Scatter(x=dates, y=portfolio_values, mode='lines', name='Portfolio Value'))
-            fig.add_trace(go.Scatter(x=dates, y=portfolio_values_sell, mode='lines', name='Portfolio Value_sell'))
+            fig.add_trace(go.Scatter(x=dates, y=portfolio_values, mode='lines', name='Portfolio Value Hold'))
+            fig.add_trace(go.Scatter(x=dates, y=portfolio_values_sell, mode='lines', name='Portfolio Value all sold'))
 
             
             # Update layout
@@ -446,25 +426,25 @@ class QuantGaloreData:
 
 
         st.header("Y Finance charts")
-        df, std, mean,m,b, z1,z2 = calculate_various_columns_df(self.df)
+        z1, z2, wdw, center_boll, initial_investment = interface(self)
+
+        df, std, mean,m,b, = calculate_various_columns_df(self.df, z1, z2, wdw, center_boll)
         buy_price, sell_price, bb_signal = implement_bb_strategy(df['Close'], df['boll_low_1'], df['boll_high_1'])
         dates=df["Date"]
         close = df["Close"]
-        # st.write(dates)
-        # st.write(buy_price, sell_price, bb_signal)
         
-        portfolio_values, portfolio_values_sell = calculate_portfolio_value(dates, buy_price, sell_price, bb_signal, close)
+        portfolio_values, portfolio_values_sell = calculate_portfolio_value(dates, buy_price, sell_price, bb_signal, close, initial_investment)
 
         choice = self.choice
-        plot_figure1(df, choice,m,b, std)
-        buy_or_sell(df, std, z1,z2)
         plot_boll(df, choice,  buy_price, sell_price, bb_signal)
         plot_value_portfolio(portfolio_values, portfolio_values_sell)
+        plot_figure1(df, choice,m,b, std)
+        buy_or_sell(df, std, z1,z2)
+        
         plot_figure_z_scores(df, choice,  std, mean, "z_from_trendline")
         plot_figure_z_scores(df, choice,  std, mean, "z_from_mean")
 
-        print (df)
-
+      
 
 
 
@@ -480,13 +460,14 @@ def main():
         "<style> .infobox {  background-color: lightblue; padding: 5px;}</style>"
         "<hr><div class='infobox'>Made by Rene Smit. (<a href='http://www.twitter.com/rcsmit' target=\"_blank\">@rcsmit</a>) <br>"
         "Inspired by : <a href='https://medium.com/the-financial-journal/the-million-dollar-algorithm-straight-from-wall-street-3f88a62e3e0a'>I Needed Money, So I Wrote An Algorithm</a> <br>"
-        "Sourcecode : <a href='https://github.com/rcsmit/COVIDcases/blob/main/covid_dashboard_rcsmit.py' target='_blank'>github.com/rcsmit</a><br>"
+        "Also used : <a href='https://medium.com/codex/algorithmic-trading-with-bollinger-bands-in-python-1b0a00c9ef99'>Algorithmic Trading with Bollinger Bands in Python</a> <br>"
+        "Sourcecode : <a href='https://github.com/rcsmit/streamlit_scripts/blob/main/yfinance_info.py' target='_blank'>github.com/rcsmit</a><br>"
         "How-to tutorial : <a href='https://rcsmit.medium.com/making-interactive-webbased-graphs-with-python-and-streamlit-a9fecf58dd4d/' target='_blank'>rcsmit.medium.com</a><br>"
          "Read <a href=<'https://pypi.org/project/yfinance/'>disclaimer</a> at of Yfinace"
        )
 
 
-    st.sidebar.markdown(tekst, unsafe_allow_html=True)
+    st.markdown(tekst, unsafe_allow_html=True)
 if __name__ == "__main__":
     main()
 
