@@ -75,8 +75,7 @@ class QuantGaloreData:
             df = do_bollinger(df, z1, z2, wdw, center_boll)
             return df, std, mean, m, b
 
-       
-
+   
         def do_bollinger(df, z1, z2, wdw, center_boll):
             #  https://medium.com/codex/algorithmic-trading-with-bollinger-bands-in-python-1b0a00c9ef99
             def sma(data, window):
