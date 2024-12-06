@@ -36,6 +36,7 @@ class QuantGaloreData:
 
         def calculate_various_columns_df(df):
             df = df.reset_index()
+            st.write(df)
             std = np.std(self.df['Close'])
             mean = df['Close'].mean()
             x = list(range(0,len(df)))
