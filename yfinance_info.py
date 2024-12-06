@@ -150,7 +150,27 @@ class QuantGaloreData:
 
             return buy_price, sell_price, bb_signal
 
+        def calculate_portfolio_value(dates, buy_price, sell_price, bb_signal, close,initial_investment=1000):
+            portfolio_value = initial_investment
+            cash = initial_investment
+            shares = 0
+            portfolio_values = []
+            portfolio_values_sell = []
 
+            for date, buy, sell,close, signal in zip(dates, buy_price, sell_price, close, bb_signal):
+                if signal == 1:  # Buy signal
+                    shares = cash / buy
+                    cash = 0
+                elif signal == -1 and shares > 0:  # Sell signal
+                    cash = shares * sell
+                    shares = 0
+                portfolio_value = cash + shares * close if shares > 0 else cash
+                portfolio_value_sell = cash + shares * sell if shares > 0 else cash
+                
+                portfolio_values.append(portfolio_value)
+                portfolio_values_sell.append(portfolio_value_sell)
+
+            return portfolio_values, portfolio_values_sell
 
 
         def plot_boll(df, choice,  buy_price, sell_price, bb_signal):
@@ -337,7 +357,7 @@ class QuantGaloreData:
                    fill='tonexty'
 
                 )
-
+            
 
 
             data = [high, close, low,trendline_high_2,trendline_high_1, trendline, trendline_low_1,trendline_low_2 ]
@@ -353,7 +373,26 @@ class QuantGaloreData:
 
             #fig.show()
             st.plotly_chart(fig1, use_container_width=True)
+        def plot_value_portfolio(portfolio_values,portfolio_values_sell):
+            
+            # Create a Plotly figure
+            fig = go.Figure()
 
+            # Add the portfolio value line
+            fig.add_trace(go.Scatter(x=dates, y=portfolio_values, mode='lines', name='Portfolio Value'))
+            fig.add_trace(go.Scatter(x=dates, y=portfolio_values_sell, mode='lines', name='Portfolio Value_sell'))
+
+            
+            # Update layout
+            fig.update_layout(
+                title='Portfolio Value Over Time',
+                xaxis_title='Date',
+                yaxis_title='Portfolio Value (€)',
+                template='plotly_white'
+            )
+
+            # Show the figure in Streamlit
+            st.plotly_chart(fig)
         def plot_figure_z_scores(df,choice,  std, mean, from_what):
             z_score = go.Scatter(
                 name="Close",
@@ -389,7 +428,7 @@ class QuantGaloreData:
             elif (z_from_trendline > -1*z1) and (z_from_trendline <= 1*z1):
                 st.write ("HOLD !")
             elif (z_from_trendline > 1*z1) and (z_from_trendline <= 2*z2):
-                st.write ("Maybe SEL !")
+                st.write ("Maybe SELL !")
             elif z_from_trendline > z2:
                 st.write ("REALLY BUY !")
             st.write("This advice is just a joke ofcourse. Just use your own knowledge and insights.")
@@ -409,11 +448,18 @@ class QuantGaloreData:
         st.header("Y Finance charts")
         df, std, mean,m,b, z1,z2 = calculate_various_columns_df(self.df)
         buy_price, sell_price, bb_signal = implement_bb_strategy(df['Close'], df['boll_low_1'], df['boll_high_1'])
+        dates=df["Date"]
+        close = df["Close"]
+        # st.write(dates)
+        # st.write(buy_price, sell_price, bb_signal)
+        
+        portfolio_values, portfolio_values_sell = calculate_portfolio_value(dates, buy_price, sell_price, bb_signal, close)
 
         choice = self.choice
         plot_figure1(df, choice,m,b, std)
         buy_or_sell(df, std, z1,z2)
         plot_boll(df, choice,  buy_price, sell_price, bb_signal)
+        plot_value_portfolio(portfolio_values, portfolio_values_sell)
         plot_figure_z_scores(df, choice,  std, mean, "z_from_trendline")
         plot_figure_z_scores(df, choice,  std, mean, "z_from_mean")
 
