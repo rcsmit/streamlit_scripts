@@ -43,8 +43,8 @@ class QuantGaloreData:
             wdw = int( st.sidebar.number_input("Window for bollinger",2,60,20))
             center_boll = st.sidebar.selectbox("Center bollinger", [True, False], index=0)
             initial_investment = st.sidebar.number_input("Initial investment",0,1000000000,1000)
-            
-            return z1, z2, wdw, center_boll, initial_investment
+            transaction_fee = st.sidebar.number_input("Transaction fee",0.0,100.0,1.0)/100
+            return z1, z2, wdw, center_boll, initial_investment, transaction_fee
         def calculate_various_columns_df(df, z1, z2, wdw, center_boll):
 
             # on streamlit sharing there is (6/12/2024) a multilevel column
@@ -129,7 +129,7 @@ class QuantGaloreData:
 
             return buy_price, sell_price, bb_signal
 
-        def calculate_portfolio_value(dates, buy_price, sell_price, bb_signal, close,initial_investment=1000):
+        def calculate_portfolio_value(dates, buy_price, sell_price, bb_signal, close,initial_investment,transaction_fee):
             portfolio_value = initial_investment
             cash = initial_investment
             shares = 0
@@ -138,10 +138,10 @@ class QuantGaloreData:
 
             for date, buy, sell,close, signal in zip(dates, buy_price, sell_price, close, bb_signal):
                 if signal == 1:  # Buy signal
-                    shares = cash / buy
+                    shares = (cash * (1 - transaction_fee)) / buy
                     cash = 0
                 elif signal == -1 and shares > 0:  # Sell signal
-                    cash = shares * sell
+                    cash = shares * sell * (1 - transaction_fee)
                     shares = 0
                 portfolio_value = cash + (shares * close) if shares > 0 else cash
                 portfolio_value_sell = cash + (shares * sell) if shares > 0 else cash
@@ -425,14 +425,14 @@ class QuantGaloreData:
 
 
         st.header("Y Finance charts")
-        z1, z2, wdw, center_boll, initial_investment = interface(self)
+        z1, z2, wdw, center_boll, initial_investment, transaction_fee = interface(self)
 
         df, std, mean,m,b, = calculate_various_columns_df(self.df, z1, z2, wdw, center_boll)
         buy_price, sell_price, bb_signal = implement_bb_strategy(df['Close'], df['boll_low_1'], df['boll_high_1'])
         dates=df["Date"]
         close = df["Close"]
         
-        portfolio_values, portfolio_values_sell = calculate_portfolio_value(dates, buy_price, sell_price, bb_signal, close, initial_investment)
+        portfolio_values, portfolio_values_sell = calculate_portfolio_value(dates, buy_price, sell_price, bb_signal, close, initial_investment, transaction_fee)
 
         choice = self.choice
         plot_boll(df, choice,  buy_price, sell_price, bb_signal)
