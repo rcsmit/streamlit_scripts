@@ -38,7 +38,10 @@ class QuantGaloreData:
             # Check if multi-index and take last level only if it is
             if isinstance(df.columns, pd.MultiIndex):
                 df.columns = df.columns.get_level_values(-1)
-        
+             # Add row numbers starting from 1 if 'Row' column doesn't exist
+            if 'rownumber' not in df.columns:
+                df.insert(0, 'rownumber', range(1, len(df) + 1))
+            
             df = df.reset_index()
             st.write(df)
             std = np.std(self.df['Close'])
