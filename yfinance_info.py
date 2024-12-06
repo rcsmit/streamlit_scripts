@@ -35,8 +35,10 @@ class QuantGaloreData:
             return m,b,r_sq
 
         def calculate_various_columns_df(df):
-            df.columns = [''.join(col).strip() for col in df.columns.values]
-       
+            # Check if multi-index and take last level only if it is
+            if isinstance(df.columns, pd.MultiIndex):
+                df.columns = df.columns.get_level_values(-1)
+        
             df = df.reset_index()
             st.write(df)
             std = np.std(self.df['Close'])
