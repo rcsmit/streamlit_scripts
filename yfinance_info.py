@@ -348,7 +348,7 @@ def main() -> None:
     """
     Main function to run the Streamlit application.
     """
-    st.header("Y Finance charts")
+    st.header("Y Finance charts / strategy using Bollinger bands")
     choice, period, interval, z1, z2, wdw, center_boll, initial_investment, transaction_fee = interface()
 
     ticker = yf.Tickers(choice)
