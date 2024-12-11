@@ -235,14 +235,6 @@ def show_month(df, to_show, day_min, day_max, month, month_names, where):
     st.plotly_chart(fig)
 
 
-
-    # Frequency line graph
-    frequency_table_melted = frequency_table.melt(id_vars='Temp_Bin', var_name='Year', value_name='Frequency')
-    fig = px.line(frequency_table_melted, x='Temp_Bin', y='Frequency', color='Year',
-                  labels={'Temp_Bin': 'Temperature (°C)', 'Frequency': 'Frequency'},
-                  title=f'Frequency of {to_show} for {month_names[month-1]} in {where}')
-    st.plotly_chart(fig)
-
     #show_warmingstripes(df_month, to_show, where)
 
 def cross_table_montly_avg(df, to_show, where, y_axis_zero):  
