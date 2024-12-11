@@ -102,13 +102,12 @@ def do_bollinger(df: pd.DataFrame, z1: float, z2: float, wdw: int, center_boll: 
         l.model.degree = 1
         l.control.iterations = 1
         l.control.surface = "direct"
-        l.control.statistics = "approximate"
+        l.control.statistics = "exact"
         l.fit()
         pred = l.predict(x, stderror=True)
         return pred.values
-    
 
-    def calculate_bollinger_bands(data: pd.Series, sma: pd.Series, window: int) -> Tuple[pd.Series, pd.Series, pd.Series, pd.Series]:
+    def bb(data: pd.Series, sma: pd.Series, window: int) -> Tuple[pd.Series, pd.Series, pd.Series, pd.Series]:
         """
         Calculate the Bollinger Bands for a given data series.
 
@@ -120,8 +119,7 @@ def do_bollinger(df: pd.DataFrame, z1: float, z2: float, wdw: int, center_boll: 
         Returns:
             Tuple[pd.Series, pd.Series, pd.Series, pd.Series]: The lower and upper Bollinger Bands for z1 and z2.
         """
-        #std = data.rolling(window=window, center=False).std()
-        std = data.ewm(span=window, adjust=False).std()
+        std = data.rolling(window=window, center=False).std()
         upper_bb_1 = sma + std * z1
         lower_bb_1 = sma - std * z1
         upper_bb_2 = sma + std * z2
@@ -129,10 +127,15 @@ def do_bollinger(df: pd.DataFrame, z1: float, z2: float, wdw: int, center_boll: 
         return lower_bb_1, lower_bb_2, upper_bb_1, upper_bb_2
 
     df.loc[:,'boll_center_sma'] = sma(df.loc[:,'Close'], wdw)
-    df.loc[:,'boll_center'] = do_lowess(df)
-     
+    lowess = do_lowess(df)
+    df.loc[:,'boll_center'] = lowess
+    #df['boll_low_1'], df['boll_low_2'], df['boll_high_1'], df['boll_high_2'] = bb(df['Close'], df['boll_center'], wdw)
+    
+    # Calculate Bollinger Bands and assign them to the DataFrame using .loc to avoid SettingWithCopyWarning
+    # df.loc[:, 'boll_low_1'], df.loc[:, 'boll_low_2'], df.loc[:, 'boll_high_1'], df.loc[:, 'boll_high_2'] = bb(df.loc[:,'Close'], df.loc[:,'boll_center'], wdw)
+    
     # Calculate all bands at once
-    low1, low2, high1, high2 = calculate_bollinger_bands(df['Close'], df['boll_center'], wdw)
+    low1, low2, high1, high2 = bb(df['Close'], df['boll_center'], wdw)
 
     # Assign directly to original DataFrame using .loc
     df.loc[:, 'boll_low_1'] = low1
@@ -366,8 +369,8 @@ def plot_value_portfolio(dates: pd.Series, portfolio_values: List[float], portfo
         template='plotly_white'
     )
 
-    #st.plotly_chart(fig)
-    return fig
+    st.plotly_chart(fig)
+
 def main() -> None:
     """
     Main function to run the Streamlit application.
@@ -394,7 +397,6 @@ def main() -> None:
     status_= 0
     
     placehholder=st.empty()
-    placeholder_value = st.empty()
     df['Date'] = pd.to_datetime(df['Date'])
     start_date = df['Date'].iloc[0]
     end_date = df['Date'].iloc[-1]
@@ -424,9 +426,6 @@ def main() -> None:
     close = df_["Close"]
 
     portfolio_values, portfolio_values_sell = calculate_portfolio_value(dates, buy_price, sell_price, bb_signal, close, initial_investment, transaction_fee)
-    fig_values = plot_value_portfolio(dates, portfolio_values, portfolio_values_sell)
-    placeholder_value.plotly_chart(fig_values, use_container_width=True)
-
     rendement = portfolio_values[-1] / portfolio_values[0] * 100
 
     rendement_coin = df["Close"].iloc[-1] / df["Close"].iloc[0] * 100
@@ -443,7 +442,8 @@ def main() -> None:
     st.info(f"Value coin: {round(rendement_coin, 2)}% in {number_of_years} year(s). Compound ROI coin: {cagr_coin}%")
 
  
-   
+    plot_value_portfolio(dates, portfolio_values, portfolio_values_sell)
+
     tekst = (
         "<style> .infobox {  background-color: lightblue; padding: 5px;}</style>"
         "<hr><div class='infobox'>Made by Rene Smit. (<a href='http://www.twitter.com/rcsmit' target=\"_blank\">@rcsmit</a>) <br>"

@@ -20,6 +20,7 @@ from show_knmi_functions.last_day import last_day
 from show_knmi_functions.anomaly import anomaly
 from show_knmi_functions.show_extremen import show_extremen
 from show_knmi_functions.neerslagtekort import neerslagtekort, neerslagtekort_meerdere_stations
+from show_knmi_functions.show_calender_heatmap import show_calender_heatmap
 
 # except:
 #     from utils import show_weerstations, help,  list_to_text,check_from_until, find_date_for_title, download_button,get_weerstations, get_data
@@ -68,9 +69,9 @@ def interface():
         "Modus (kies HELP voor hulp)", ["doorlopend per dag", "aantal keren", "specifieke dag","last day",
                                         "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", "per week in div jaren", 
                                         "per maand in div jaren",  "spaghetti plot","anomaly", "percentiles", 
-                                        "polar plot/radar chart", "show year histogram animation",
+                                        "polar plot/radar chart", "show year histogram animation", "calender heatmap", 
                                         "does rain predict rain","neerslagtekort","neerslagtekort_meerdere", "warmingstripes","extremen",
-                                        "show weerstations", "help", "polar_debug"], index=19
+                                        "show weerstations", "help", "polar_debug"], index=20
     )
     if mode !=  "neerslagtekort_meerdere":
         weer_stations = get_weerstations()
@@ -89,7 +90,7 @@ def interface():
         stn = None
 
     DATE_FORMAT = "%m/%d/%Y"
-    start_ = "2019-01-01"
+    start_ = "2023-01-01"
     today = datetime.today().strftime("%Y-%m-%d")
     from_ = st.sidebar.text_input("startdatum (yyyy-mm-dd) from 1-1-1900", start_)
     until_ = st.sidebar.text_input("enddatum (yyyy-mm-dd)", today)
@@ -193,6 +194,8 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
         last_day(df, gekozen_weerstation, what_to_show)
     elif mode == "show weerstations":
         show_weerstations()
+    elif mode == "calender heatmap":
+        show_calender_heatmap(df, "YYYYMMDD", what_to_show)
     elif mode == "neerslagtekort":
         neerslagtekort(df)
     elif mode == "extremen":

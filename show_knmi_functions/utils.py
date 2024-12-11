@@ -26,7 +26,7 @@ class LoessAccessor:
         return loess_values
 
 
-#@st.cache_data
+@st.cache_data (ttl=60 * 60 * 24)
 def get_data(url):
     header = None
     print (url)
@@ -147,14 +147,16 @@ def get_data(url):
         ]
         df["glob_straling"] = pd.to_numeric(df["glob_straling"], errors='coerce')
         df['neerslag_etmaalsom'].replace(" ", 0)
-        st.write(df)
+       
         for d in to_divide_by_10:
-            
-            df[d] = pd.to_numeric(df[d], errors='coerce')
-            try:   
-                df[d] = df[d] / 10
+            try:
+                df[d] = pd.to_numeric(df[d], errors='coerce')
+                try:   
+                    df[d] = df[d] / 10
+                except:
+                    df[d] = df[d]
             except:
-                df[d] = df[d]
+                print(f"[{d}] doesnt exist in this dataframe")
 
     df["spec_humidity_knmi_derived"] = df.apply(lambda x: rh2q(x['RH_min'],x['temp_max'], 1020),axis=1)
     df["abs_humidity_knmi_derived"] =df.apply(lambda x: rh2ah(x['RH_min'],x['temp_max']),axis=1)
@@ -403,7 +405,7 @@ def find_date_for_title(day, month):
     # ["January", "February",  "March", "April", "May", "June", "July", "August", "September", "Oktober", "November", "December"]
     return str(day) + " " + months[month - 1]
 
-@st.cache_data 
+@st.cache_data (ttl=60 * 60 * 24)
 def convert_df(df):
      # IMPORTANT: Cache the conversion to prevent computation on every rerun
      return df.to_csv().encode('utf-8')

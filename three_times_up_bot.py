@@ -11,6 +11,11 @@ from typing import Tuple, List
 
 pd.options.mode.chained_assignment = None
 
+@st.cache_data()
+def get_data(choice, period, interval):
+    data = yf.download(tickers=(choice), period=period, interval=interval, group_by='ticker', auto_adjust=True, prepost=False)
+    return data
+
 def interface() -> Tuple[str, str, str, float, float, int, bool, int, float]:
     """
     Create the Streamlit sidebar interface for user input.
@@ -28,17 +33,16 @@ def interface() -> Tuple[str, str, str, float, float, int, bool, int, float]:
     interval = st.sidebar.selectbox("Interval", ["1d", "5d", "1wk", "1mo", "3mo"], 0)
 
     st.sidebar.markdown("## Bollinger Bands")
-    z1 = st.sidebar.number_input("Z-value 1 (used for strategy)", 0.0, 3.0, 1.0)
-    z2 = z1
-    if z1 > z2:
-        st.warning("Z1 has to be smaller than Z2")
-        st.stop()
+    treshold = st.sidebar.number_input("Treshold (used for strategy)", 0, 30, 3)
+   
     wdw = 20#  int(st.sidebar.number_input("Window for bollinger", 2, 60, 20))
     center_boll =  True # st.sidebar.selectbox("Center bollinger", [True, False], index=0)
     initial_investment = st.sidebar.number_input("Initial investment", 0, 1000000000, 1000)
     transaction_fee = st.sidebar.number_input("Transaction fee", 0.0, 100.0, 0.25) / 100
-    return choice, period, interval, z1, z2, wdw, center_boll, initial_investment, transaction_fee
-
+    breakpoint = st.sidebar.number_input("Breakpoin (nr of days)", 0, 100000000, 999)
+   
+    return choice, period, interval,treshold,wdw, center_boll, initial_investment, transaction_fee, breakpoint
+        
 def calculate_various_columns_df(df: pd.DataFrame) -> pd.DataFrame:
     """
     Calculate various columns for the DataFrame.
@@ -57,98 +61,71 @@ def calculate_various_columns_df(df: pd.DataFrame) -> pd.DataFrame:
     df = df.reset_index()
     return df
 
-def do_bollinger(df: pd.DataFrame, z1: float, z2: float, wdw: int, center_boll: bool) -> pd.DataFrame:
+def sma(data: pd.Series, window: int) -> pd.Series:
     """
-    Calculate Bollinger Bands for the DataFrame.
+    Calculate the Simple Moving Average (SMA) for a given data series.
 
     Args:
-        df (pd.DataFrame): Input DataFrame.
-        z1 (float): Z-value for the first Bollinger Band.
-        z2 (float): Z-value for the second Bollinger Band.
-        wdw (int): Window size for the Bollinger Bands.
-        center_boll (bool): Whether to center the Bollinger Bands.
+        data (pd.Series): The input data series.
+        window (int): The window size for calculating the SMA.
 
     Returns:
-        pd.DataFrame: Modified DataFrame with Bollinger Bands columns.
+        pd.Series: The SMA of the input data series.
     """
-    def sma(data: pd.Series, window: int) -> pd.Series:
-        """
-        Calculate the Simple Moving Average (SMA) for a given data series.
+    return data.rolling(window=window, center=center_boll).mean()
 
-        Args:
-            data (pd.Series): The input data series.
-            window (int): The window size for calculating the SMA.
+def do_lowess(df: pd.DataFrame) -> np.ndarray:
+    """
+    Perform LOWESS (Locally Weighted Scatterplot Smoothing) on the 'Close' column of the DataFrame.
 
-        Returns:
-            pd.Series: The SMA of the input data series.
-        """
-        return data.rolling(window=window, center=center_boll).mean()
-    
-    def do_lowess(df: pd.DataFrame) -> np.ndarray:
-        """
-        Perform LOWESS (Locally Weighted Scatterplot Smoothing) on the 'Close' column of the DataFrame.
+    Args:
+        df (pd.DataFrame): The input DataFrame containing the 'Close' column.
 
-        Args:
-            df (pd.DataFrame): The input DataFrame containing the 'Close' column.
+    Returns:
+        np.ndarray: The smoothed values from the LOWESS algorithm.
+    """
+    x = np.asarray(df['rownumber'], dtype=np.float64)
+    y = np.asarray(df['Close'], dtype=np.float64)
+    span = 32 / len(y)  # 32 corresponds to a window of 20 when using SMA
+    l = loess(x, y)
+    l.model.span = span
+    l.model.degree = 1
+    l.control.iterations = 1
+    l.control.surface = "direct"
+    l.control.statistics = "approximate"
+    l.fit()
+    pred = l.predict(x, stderror=True)
+    return pred.values
+from typing import List, Tuple
 
-        Returns:
-            np.ndarray: The smoothed values from the LOWESS algorithm.
-        """
-        x = np.asarray(df['rownumber'], dtype=np.float64)
-        y = np.asarray(df['Close'], dtype=np.float64)
-        span = 32 / len(y)  # 32 corresponds to a window of 20 when using SMA
-        l = loess(x, y)
-        l.model.span = span
-        l.model.degree = 1
-        l.control.iterations = 1
-        l.control.surface = "direct"
-        l.control.statistics = "approximate"
-        l.fit()
-        pred = l.predict(x, stderror=True)
-        return pred.values
-    
+def check_consecutive_trend(values: List[float], x: int) -> Tuple[bool, bool]:
+    """
+    Check if the last x values in the list are consecutively increasing or decreasing.
 
-    def calculate_bollinger_bands(data: pd.Series, sma: pd.Series, window: int) -> Tuple[pd.Series, pd.Series, pd.Series, pd.Series]:
-        """
-        Calculate the Bollinger Bands for a given data series.
+    Args:
+        values (List[float]): The list of values.
+        x (int): The number of consecutive values to check.
 
-        Args:
-            data (pd.Series): The input data series.
-            sma (pd.Series): The Simple Moving Average (SMA) of the data series.
-            window (int): The window size for calculating the Bollinger Bands.
+    Returns:
+        Tuple[bool, bool]: A tuple containing two booleans: (increasing, decreasing).
+    """
+    if len(values) < x:
+        raise ValueError("The list is shorter than the number of values to check.")
 
-        Returns:
-            Tuple[pd.Series, pd.Series, pd.Series, pd.Series]: The lower and upper Bollinger Bands for z1 and z2.
-        """
-        #std = data.rolling(window=window, center=False).std()
-        std = data.ewm(span=window, adjust=False).std()
-        upper_bb_1 = sma + std * z1
-        lower_bb_1 = sma - std * z1
-        upper_bb_2 = sma + std * z2
-        lower_bb_2 = sma - std * z2
-        return lower_bb_1, lower_bb_2, upper_bb_1, upper_bb_2
+    increasing = all(values[i] < values[i + 1] for i in range(-x, -1))
+    decreasing = all(values[i] > values[i + 1] for i in range(-x, -1))
 
-    df.loc[:,'boll_center_sma'] = sma(df.loc[:,'Close'], wdw)
-    df.loc[:,'boll_center'] = do_lowess(df)
-     
-    # Calculate all bands at once
-    low1, low2, high1, high2 = calculate_bollinger_bands(df['Close'], df['boll_center'], wdw)
+    return increasing, decreasing
 
-    # Assign directly to original DataFrame using .loc
-    df.loc[:, 'boll_low_1'] = low1
-    df.loc[:, 'boll_low_2'] = low2
-    df.loc[:, 'boll_high_1'] = high1
-    df.loc[:, 'boll_high_2'] = high2
-    return df
 
-def implement_bb_strategy(close: pd.Series, bol_low_1: pd.Series, bol_high_1: pd.Series, buy_price: pd.Series,buy_price_history:list, sell_price: pd.Series,status: pd.Series, bb_signal: pd.Series) -> Tuple[float,float,int]:
+
+def implement_strategy(close: pd.Series,  buy_price: pd.Series,buy_price_history:list, sell_price: pd.Series,status: pd.Series, bb_signal: pd.Series, treshold:int) -> Tuple[float,float,int]:
     """
     Imp lement Bollinger Bands strategy.
 
     Args:
         close (pd.Series): Input series of closing prices.
-        bol_low_1 (pd.Series): Lower Bollinger Band.
-        bol_high_1 (pd.Series): Upper Bollinger Band.
+        
         status : list in possession (1) or not (0)
         bb_signal : list moments of which you buy or sell
     Returns:
@@ -158,12 +135,12 @@ def implement_bb_strategy(close: pd.Series, bol_low_1: pd.Series, bol_high_1: pd
     
     buy_price_history_=buy_price_old
 
-
-    i=len(close)-1
-    if close[i-1] > bol_low_1[i-1] and close[i] < bol_low_1[i]:
+    increasing, decreasing = check_consecutive_trend(close, treshold)
+   
+    if increasing:
         if (status[-1] ==0) :
-            buy_price_=close[i]
-            buy_price_history_=close[i]
+            buy_price_=close[-1]
+            buy_price_history_=close[-1]
             
             sell_price_=np.nan
             status_ = 1
@@ -174,12 +151,12 @@ def implement_bb_strategy(close: pd.Series, bol_low_1: pd.Series, bol_high_1: pd
             status_ = status[-1]
             bb_signal_=0
            
-    elif close[i-1] < bol_high_1[i-1] and close[i] > bol_high_1[i]:
+    elif decreasing:
     
-        if (status[-1]== 1) and (close[i]>buy_price_old) :
+        if (status[-1]== 1) and (close[-1]>buy_price_old) :
 
             buy_price_=np.nan
-            sell_price_=close[i]
+            sell_price_=close[-1]
             status_ = 0
             bb_signal_=-1
         else:
@@ -272,47 +249,20 @@ def plot_boll(df: pd.DataFrame, choice: str, buy_price: List[float], sell_price:
         marker_line_width=0, marker_size=11,
     )
 
-   
 
-    boll_low_1 = go.Scatter(
-        name='boll low 1',
-        x=df["Date"],
-        y=df['boll_low_1'],
-        mode='lines',
-        line=dict(width=0.5, color="rgba(255, 255, 0, 0.0)"),
-        fillcolor='rgba(255,255,0, 0.4)',
-        fill='tonexty'
-    )
+    
 
     boll = go.Scatter(
-        name="boll_loess",
+        name="moving average LOWESS",
         x=df["Date"],
         y=df["boll_center"],
         mode='lines',
-        line=dict(width=0.9, color='rgba(255,165,0,1)'),
-        fillcolor='rgba(255,255,0,0.4)',
-        fill='tonexty'
+        line=dict(width=0.9, color='rgba(0,0,128,1)'),
+        # fillcolor='rgba(255,0,0,0.4)',
+        # fill='tonexty'
     )
 
-    boll_sma = go.Scatter(
-        name="boll_sma",
-        x=df["Date"],
-        y=df["boll_center_sma"],
-        mode='lines',
-        line=dict(width=0.9, color='rgba(255,0,0,1)'),
-        fillcolor='rgba(255,0,0,0.4)',
-        fill='tonexty'
-    )
-
-    boll_high_1 = go.Scatter(
-        name='boll high 1',
-        x=df["Date"],
-        y=df['boll_high_1'],
-        mode='lines',
-        line=dict(width=0.5, color="rgba(255, 255, 0, 0.0)"),
-        fillcolor='rgba(255,255,0, 0.2)',
-        #fill='tonexty'
-    )
+   
 
     
     close = go.Scatter(
@@ -332,11 +282,11 @@ def plot_boll(df: pd.DataFrame, choice: str, buy_price: List[float], sell_price:
         fillcolor='rgba(68, 68, 68, 0.2)',
     )
 
-    data = [boll_high_1, boll, boll_low_1,  close,close_start, buy, sell]
+    data = [ boll,  close,close_start, buy, sell]
 
     layout = go.Layout(
         yaxis=dict(title="USD"),
-        title=f"Bollinger bands - {choice}"
+        title=f"x - {choice}"
     )
 
     fig1 = go.Figure(data=data, layout=layout)
@@ -372,11 +322,11 @@ def main() -> None:
     """
     Main function to run the Streamlit application.
     """
-    st.header("Y Finance charts / strategy using Bollinger bands")
-    choice, period, interval, z1, z2, wdw, center_boll, initial_investment, transaction_fee = interface()
-
+    st.header("Y Finance charts / strategy using Three times up")
+    choice, period, interval,treshold,wdw, center_boll, initial_investment, transaction_fee,breakpoint = interface()
+    
     ticker = yf.Tickers(choice)
-    data = yf.download(tickers=(choice), period=period, interval=interval, group_by='ticker', auto_adjust=True, prepost=False)
+    data = get_data(choice, period, interval)
     df = pd.DataFrame(data)
     if len(df) == 0:
         st.error("No data or wrong input")
@@ -401,12 +351,14 @@ def main() -> None:
 
     # Create a complete date range from the start to the end date
     full_date_range = pd.date_range(start=df['Date'].iloc[0], end=df['Date'].iloc[-1])
-
+    
     for i in range(base,len(df)):
         df_ = df[:i].copy()
+        # df_.loc[:,'boll_center_sma'] = sma(df.loc[:,'Close'], wdw)
+        df_.loc[:,'boll_center'] = do_lowess(df_)
         
-        df_ = do_bollinger(df_, z1, z2, wdw, center_boll)
-        buy_price, buy_price_history,sell_price, status, bb_signal = implement_bb_strategy(df_['Close'].to_list(), df_['boll_low_1'], df_['boll_high_1'],buy_price,buy_price_history, sell_price,status, bb_signal)
+        
+        buy_price, buy_price_history,sell_price, status, bb_signal = implement_strategy(df_['Close'].to_list(),buy_price,buy_price_history, sell_price,status, bb_signal, treshold)
         
         # Reindex the DataFrame to include all dates in the full date range
         df_ = df_.set_index('Date').reindex(full_date_range).rename_axis('Date').reset_index()
@@ -419,7 +371,8 @@ def main() -> None:
 
         fig = plot_boll(df_, choice, buy_price, sell_price, bb_signal, base)
         placehholder.plotly_chart(fig, use_container_width=True)
-
+        if i==breakpoint:
+            break
     dates = df_["Date"]
     close = df_["Close"]
 

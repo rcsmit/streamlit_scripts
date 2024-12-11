@@ -27,3 +27,4 @@ pytesseract
 PyPDF2
 pymannkendall
 polars
+plotly-calplot

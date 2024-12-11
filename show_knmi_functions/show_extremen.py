@@ -4,7 +4,10 @@ import polars as pl
 
 from neerslaganalyse import extreme_claude_ai, extreme_claude_ai_seasonal
 from show_knmi_functions.show_plot import show_scatter
-
+try:
+    from show_knmi_functions.utils import get_data, date_to_daynumber
+except:
+    from utils import get_data, date_to_daynumber
 
 def show_extremen(df,what_to_show_):
     mode = st.sidebar.selectbox("Mode [quantile|values]",["quantile","value"],0)
