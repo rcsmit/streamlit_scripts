@@ -28,6 +28,8 @@ import platform
 import os
 from io import StringIO
 import matplotlib.pyplot as plt
+from show_knmi_functions.show_calender_heatmap import show_calender_heatmap
+
 #from matplotlib.backends.backend_agg import RendererAgg
 from matplotlib.colors import ListedColormap
 #_lock = RendererAgg.lock
@@ -624,6 +626,7 @@ def main():
     st.title(f"Weather info from {where}")
     
     line_graph(to_show, window_size, y_axis_zero, df)
+    show_calender_heatmap(df,"Date", [to_show])
     cross_table_montly_avg(df, to_show, where, y_axis_zero)   
     show_treshold(where, to_show, treshold_value, above_under, df)
     show_warmingstripes(df, to_show, where) 
