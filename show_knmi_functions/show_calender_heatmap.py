@@ -18,6 +18,7 @@ def show_calender_heatmap(df, datefield, what_to_show_):
                 y=what_to_show,
                 years_title=True,
                 name=what_to_show,
+                space_between_plots=0.15
         )
         st.plotly_chart(fig)
 def main():
