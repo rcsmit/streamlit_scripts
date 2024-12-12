@@ -489,13 +489,18 @@ def get_data(where):
     df_ = pd.read_csv(url)
     try:
         df_2 = pd.read_csv(url2)
-        print (df_2)
-        st.stop()
     except:
-        pass
+        df_2 = pd.DataFrame()  # Create an empty DataFrame if the second file is not found
+
+    # Align columns of df_2 to match df_
+    df_2 = df_2[df_.columns]
+
+    # Concatenate the DataFrames
+    df_combined = pd.concat([df_, df_2], ignore_index=True)
 
 
-    return df_
+
+    return df_combined
 
 
 
