@@ -52,11 +52,11 @@ def read_ogimet():
     #station_code,location_str = "485500-99999", "Koh_Samui"  
                                    
     # station_code,location_str = "16242","Rome Fiumicino"
-    # station_code,location_str = "48327","Chiang_mai"
-    station_code,location_str = "16105","Venezia"
+    station_code,location_str = "48327","Chiang_mai"
+    #station_code,location_str = "16105","Venezia"
     
-    #start_date = datetime(2010, 1, 1)
-    start_date = datetime(1900, 1, 1)
+    start_date = datetime(2023, 7, 18)
+    #start_date = datetime(1900, 1, 1)
 
     end_date = datetime(2009, 12, 31)
     end_date = datetime.today()  # You could use the desired end date
@@ -109,7 +109,7 @@ def read_ogimet():
 
     # observations = observations[observations["Date"] <= end_date] # gives an error. I just delete the last rows in the CSV file
     observations = observations.sort_values(by=('Date','Date'))
-    observations.to_csv(f"irbid_weather_{location_str}_2024.csv", index=False)
+    observations.to_csv(f"irbid_weather_{location_str}_2024b.csv", index=False)
     # You have to replace ---- with [nothing]. (Don't use [None], since it will turn the column into a text/object column) 
     print(observations)
 
@@ -459,10 +459,10 @@ def line_graph(to_show, window_size, y_axis_zero, df):
     # fig.show()
     # plotly.offline.plot(fig)
     st.plotly_chart(fig)
-@st.cache_data(ttl=24*60*60)
+#@st.cache_data(ttl=24*60*60)
 def get_data(where):
-    load_local = True if platform.processor() else False
-
+    # load_local = True if platform.processor() else False
+    load_local = False
 
     # Define the base directory where the CSV files are stored
     base_dir = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input"
@@ -470,10 +470,10 @@ def get_data(where):
 
     # Map locations to their respective CSV files
     locations = {
-        "Koh Samui": "weather_ko_samui.csv",
-        "Chiang Mai": "weather_chiang_mai.csv",
-        "Rome Fiumicino": "weather_rome_fiumicino.csv",
-        "Venezia": "weather_venezia.csv"
+        "Koh Samui": "weather_ko_samui",
+        "Chiang Mai": "weather_chiang_mai",
+        "Rome Fiumicino": "weather_rome_fiumicino",
+        "Venezia": "weather_venezia"
     }
 
     # Check if the 'where' value is valid
@@ -482,8 +482,18 @@ def get_data(where):
         st.stop()
 
     # Build the URL based on the location
-    url = os.path.join(base_dir, locations[where]) if load_local else f"{github_base_url}/{locations[where]}"
+    url = os.path.join(base_dir, locations[where]) if load_local else f"{github_base_url}/{locations[where]}.csv"
+    url2=url = os.path.join(base_dir, locations[where]) if load_local else f"{github_base_url}/{locations[where]}_b.csv"
+    
     df_ = pd.read_csv(url)
+    try:
+        df_2 = pd.read_csv(url2)
+        print (df_2)
+        st.stop()
+    except:
+        pass
+
+
     return df_
 
 
@@ -611,7 +621,14 @@ def main():
     df['Month'] = df['Date'].dt.month
     df['Year'] = df['Date'].dt.year
     df = df.sort_values(by='Date')
+
+    
+    # Convert columns to appropriate data types
+    numeric_columns = ['T_Max', 'T_Min', 'T_Mean', 'Hr_Med', 'Windgust', 'Wind_Max', 'Wind_Mean', 'Vis', 'Prec', 'SLP', 'STN']
+    df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric, errors='coerce')
+
     # Apply the feels_like_temperature function to each row in the DataFrame
+    print (df.dtypes)
     df['Feels_Like'] = df.apply(feels_like_temperature, axis=1)
 
     
