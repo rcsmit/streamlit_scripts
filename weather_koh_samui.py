@@ -488,8 +488,10 @@ def get_data(where):
     
     st.write(url)
     df_ = pd.read_csv(url)
+    st.write(df_)
     try:
         df_2 = pd.read_csv(url2)
+        st.write(df_2)
     except:
         df_2 = pd.DataFrame()  # Create an empty DataFrame if the second file is not found
 
@@ -638,7 +640,7 @@ def main():
 
     
     st.title(f"Weather info from {where}")
-    
+    st.write(df)
     line_graph(to_show, window_size, y_axis_zero, df)
     show_calender_heatmap(df,"Date", [to_show])
     cross_table_montly_avg(df, to_show, where, y_axis_zero)   
