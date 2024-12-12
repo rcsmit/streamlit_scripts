@@ -483,8 +483,9 @@ def get_data(where):
 
     # Build the URL based on the location
     url = os.path.join(base_dir, locations[where]) if load_local else f"{github_base_url}/{locations[where]}.csv"
-    url2=url = os.path.join(base_dir, locations[where]) if load_local else f"{github_base_url}/{locations[where]}_b.csv"
+    url2 = os.path.join(base_dir, locations[where]) if load_local else f"{github_base_url}/{locations[where]}_b.csv"
     
+    st.write(url)
     df_ = pd.read_csv(url)
     try:
         df_2 = pd.read_csv(url2)
