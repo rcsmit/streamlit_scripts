@@ -49,13 +49,13 @@ def read_ogimet():
     """
 
     # find station codes here https://www.ogimet.com/indicativos.phtml.en
-    #station_code,location_str = "485500-99999", "Koh_Samui"  
+    station_code,location_str = "485500-99999", "ko_samui"  
                                    
     # station_code,location_str = "16242","Rome Fiumicino"
-    station_code,location_str = "48327","Chiang_mai"
+    #station_code,location_str = "48327","chiang_mai"
     #station_code,location_str = "16105","Venezia"
     
-    start_date = datetime(2023, 7, 18)
+    start_date = datetime(2024, 2, 26)
     #start_date = datetime(1900, 1, 1)
 
     end_date = datetime(2009, 12, 31)
@@ -80,6 +80,7 @@ def read_ogimet():
 
         url = f"https://ogimet.com/cgi-bin/gsodres?lang=en&ind={station_code}&ord=DIR&ano={year}&mes={month}&day={day}&ndays=50" # Global Summary Of the Day (GSOD), is some days behind # soup.find_all("table")[3]
         print (f"Retreiving {url} {counter} / {batches}")
+        st.write(f"Retreiving {url} {counter} / {batches}")
         counter += 1
         response = requests.get(url)
         soup = BeautifulSoup(response.content, "html5lib")
@@ -109,7 +110,7 @@ def read_ogimet():
 
     # observations = observations[observations["Date"] <= end_date] # gives an error. I just delete the last rows in the CSV file
     observations = observations.sort_values(by=('Date','Date'))
-    observations.to_csv(f"irbid_weather_{location_str}_2024b.csv", index=False)
+    observations.to_csv(f"weather_{location_str}_b.csv", index=False)
     # You have to replace ---- with [nothing]. (Don't use [None], since it will turn the column into a text/object column) 
     print(observations)
 
@@ -492,8 +493,8 @@ def get_data(where):
     except:
         df_2 = pd.DataFrame()  # Create an empty DataFrame if the second file is not found
 
-    # Align columns of df_2 to match df_
-    df_2 = df_2[df_.columns]
+    # Align columns of df_2 to match df_, filling missing columns with None
+    df_2 = df_2.reindex(columns=df_.columns, fill_value=None)
 
     # Concatenate the DataFrames
     df_combined = pd.concat([df_, df_2], ignore_index=True)
@@ -629,12 +630,10 @@ def main():
     df = df.sort_values(by='Date')
 
     
-    # Convert columns to appropriate data types
-    numeric_columns = ['T_Max', 'T_Min', 'T_Mean', 'Hr_Med', 'Windgust', 'Wind_Max', 'Wind_Mean', 'Vis', 'Prec', 'SLP', 'STN']
-    df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric, errors='coerce')
-
+    
+    # Convert all columns except 'Date' to appropriate data types
+    df[df.columns.difference(['Date'])] = df[df.columns.difference(['Date'])].apply(pd.to_numeric, errors='coerce')
     # Apply the feels_like_temperature function to each row in the DataFrame
-    print (df.dtypes)
     df['Feels_Like'] = df.apply(feels_like_temperature, axis=1)
 
     
