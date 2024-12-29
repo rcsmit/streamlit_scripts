@@ -29,7 +29,8 @@ def show_calender_heatmap(df, datefield, what_to_show_, percentile_colomap_max=9
             st.write(df_year[what_to_show])
             df_year[what_to_show]=df_year[what_to_show].fillna(0)
             st.write(colomap_max)
-            
+            st.write("blabla")
+
             if log:
                 df_year[what_to_show] = np.log(df_year[what_to_show])
             # # Cap every value above the 95th percentile to the 95th percentile value
