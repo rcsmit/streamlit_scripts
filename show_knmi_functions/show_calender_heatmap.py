@@ -8,7 +8,7 @@ try:
 except:
     from utils import get_data
     
-def show_calender_heatmap(df, datefield, what_to_show_, log=False):
+def show_calender_heatmap(df, datefield, what_to_show_, percentile_colomap_max=95, log=False):
     # https://python.plainenglish.io/interactive-calendar-heatmaps-with-plotly-the-easieast-way-youll-find-5fc322125db7
     # creating the plot
     #colorscales = ["aggrnyl", "agsunset", "blackbody", "bluered", "blues", "blugrn", "bluyl", "brwnyl", "bugn", "bupu", "burg", "burgyl", "cividis", "darkmint", "electric", "emrld", "gnbu", "greens", "greys", "hot", "inferno", "jet", "magenta", "magma", "mint", "orrd", "oranges", "oryel", "peach", "pinkyl", "plasma", "plotly3", "pubu", "pubugn", "purd", "purp", "purples", "purpor", "rainbow", "rdbu", "rdpu", "redor", "reds", "sunset", "sunsetdark", "teal", "tealgrn", "turbo", "viridis", "ylgn", "ylgnbu", "ylorbr", "ylorrd", "algae", "amp", "deep", "dense", "gray", "haline", "ice", "matter", "solar", "speed", "tempo", "thermal", "turbid", "armyrose", "brbg", "earth", "fall", "geyser", "prgn", "piyg", "picnic", "portland", "puor", "rdgy", "rdylbu", "rdylgn", "spectral", "tealrose", "temps", "tropic", "balance", "curl", "delta", "oxy", "edge", "hsv", "icefire", "phase", "twilight", "mrybm", "mygbm"]
@@ -23,7 +23,9 @@ def show_calender_heatmap(df, datefield, what_to_show_, log=False):
             df_year = df[df[datefield].dt.year == year]  
             
             # Assuming df[what_to_show] contains the values you want to process
-            percentile_95 = np.percentile(df_year[what_to_show], 50)
+
+            # colomap_max, defaults to max value of the data
+            colomap_max = np.percentile(df_year[what_to_show], percentile_colomap_max)
             if log:
                 df_year[what_to_show] = np.log(df_year[what_to_show])
             # # Cap every value above the 95th percentile to the 95th percentile value
@@ -36,7 +38,7 @@ def show_calender_heatmap(df, datefield, what_to_show_, log=False):
                     name=what_to_show,
                     colorscale = "purples",
                     gap=2,
-                    cmap_max  = percentile_95,
+                    cmap_max  = colomap_max,
                     month_lines_width=2,
                     month_lines_color="black"
                     #space_between_plots=0.15
