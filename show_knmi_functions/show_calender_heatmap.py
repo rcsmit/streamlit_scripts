@@ -26,6 +26,7 @@ def show_calender_heatmap(df, datefield, what_to_show_, percentile_colomap_max=9
 
             # colomap_max, defaults to max value of the data
             colomap_max = np.percentile(df_year[what_to_show], percentile_colomap_max)
+            st.write(df_year[what_to_show])
             st.write(colomap_max)
             if log:
                 df_year[what_to_show] = np.log(df_year[what_to_show])
