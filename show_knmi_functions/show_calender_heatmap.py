@@ -25,11 +25,11 @@ def show_calender_heatmap(df, datefield, what_to_show_, percentile_colomap_max=9
             # Assuming df[what_to_show] contains the values you want to process
 
             # colomap_max, defaults to max value of the data
-            st.write(df_year[what_to_show])
+            
             df_year[what_to_show]=df_year[what_to_show].fillna(0)
             
             colomap_max = np.percentile(df_year[what_to_show], percentile_colomap_max)
-            st.write(colomap_max)
+           
             # Log transform the data            
             if log:
                 df_year[what_to_show] = np.log(df_year[what_to_show])

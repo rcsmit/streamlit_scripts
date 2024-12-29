@@ -601,7 +601,7 @@ def main():
     multiply_minus_one = st.sidebar.selectbox("Multiply by -1", [True,False],1)
     treshold_value = st.sidebar.number_input("Treshold value (incl.)")
     above_under = st.sidebar.selectbox("Above or below", ["above", "equal", "below"],0)
-    percentile_colomap_max = st.sidebar.number_input("percentile_colomap_max",1,100,95)
+    percentile_colomap_max = st.sidebar.number_input("percentile_colomap_max",1,100,100)
     
     month_names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
     month = month_names.index(st.sidebar.selectbox("Month", month_names, index=0)) + 1
