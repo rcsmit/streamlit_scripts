@@ -55,7 +55,7 @@ def read_ogimet():
     #station_code,location_str = "48327","chiang_mai"
     #station_code,location_str = "16105","Venezia"
     
-    start_date = datetime(2024, 2, 26)
+    start_date = datetime(2024, 12, 7)
     #start_date = datetime(1900, 1, 1)
 
     end_date = datetime(2009, 12, 31)
@@ -488,10 +488,10 @@ def get_data(where):
     
     st.write(url)
     df_ = pd.read_csv(url)
-    st.write(df_)
+   
     try:
         df_2 = pd.read_csv(url2)
-        st.write(df_2)
+        
     except:
         df_2 = pd.DataFrame()  # Create an empty DataFrame if the second file is not found
 
@@ -650,6 +650,6 @@ def main():
     show_info()
 
 if __name__ == "__main__":
-    #read_ogimet()
-    main()
+    read_ogimet()
+    #main()
     

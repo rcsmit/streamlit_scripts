@@ -11,6 +11,8 @@ except:
 def show_calender_heatmap(df, datefield, what_to_show_):
     # https://python.plainenglish.io/interactive-calendar-heatmaps-with-plotly-the-easieast-way-youll-find-5fc322125db7
     # creating the plot
+    #colorscales = ["aggrnyl", "agsunset", "blackbody", "bluered", "blues", "blugrn", "bluyl", "brwnyl", "bugn", "bupu", "burg", "burgyl", "cividis", "darkmint", "electric", "emrld", "gnbu", "greens", "greys", "hot", "inferno", "jet", "magenta", "magma", "mint", "orrd", "oranges", "oryel", "peach", "pinkyl", "plasma", "plotly3", "pubu", "pubugn", "purd", "purp", "purples", "purpor", "rainbow", "rdbu", "rdpu", "redor", "reds", "sunset", "sunsetdark", "teal", "tealgrn", "turbo", "viridis", "ylgn", "ylgnbu", "ylorbr", "ylorrd", "algae", "amp", "deep", "dense", "gray", "haline", "ice", "matter", "solar", "speed", "tempo", "thermal", "turbid", "armyrose", "brbg", "earth", "fall", "geyser", "prgn", "piyg", "picnic", "portland", "puor", "rdgy", "rdylbu", "rdylgn", "spectral", "tealrose", "temps", "tropic", "balance", "curl", "delta", "oxy", "edge", "hsv", "icefire", "phase", "twilight", "mrybm", "mygbm"]
+    # https://plotly.com/python/builtin-colorscales/
     for what_to_show in what_to_show_:
         st.subheader(what_to_show)
         df[datefield] = pd.to_datetime(df[datefield])
@@ -25,6 +27,10 @@ def show_calender_heatmap(df, datefield, what_to_show_):
                     y=what_to_show,
                     years_title=True,
                     name=what_to_show,
+                    colorscale = "purples",
+                    gap=2,
+                    month_lines_width=2,
+                    month_lines_color="black"
                     #space_between_plots=0.15
             )
             st.plotly_chart(fig)
