@@ -23,7 +23,7 @@ def show_calender_heatmap(df, datefield, what_to_show_, log=False):
             df_year = df[df[datefield].dt.year == year]  
             
             # Assuming df[what_to_show] contains the values you want to process
-            percentile_95 = np.percentile(df_year[what_to_show], 95)
+            percentile_95 = np.percentile(df_year[what_to_show], 75)
             if log:
                 df_year[what_to_show] = np.log(df_year[what_to_show])
             # # Cap every value above the 95th percentile to the 95th percentile value
