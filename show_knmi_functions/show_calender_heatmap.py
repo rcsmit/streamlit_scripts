@@ -23,11 +23,10 @@ def show_calender_heatmap(df, datefield, what_to_show_):
             df_year = df[df[datefield].dt.year == year]  
             
             # Assuming df[what_to_show] contains the values you want to process
-            percentile_95 = np.percentile(df_year[what_to_show], 75)
+            # percentile_95 = np.percentile(df_year[what_to_show], 75)
 
-            st.write("blabla75")
-            # Cap every value above the 95th percentile to the 95th percentile value
-            df_year[what_to_show] = np.where(df_year[what_to_show] > percentile_95, percentile_95, df_year[what_to_show])   
+            # # Cap every value above the 95th percentile to the 95th percentile value
+            # df_year[what_to_show] = np.where(df_year[what_to_show] > percentile_95, percentile_95, df_year[what_to_show])   
             fig = calplot(
                     df_year,
                     x=datefield,
