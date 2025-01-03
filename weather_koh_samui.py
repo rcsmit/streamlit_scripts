@@ -29,6 +29,7 @@ import os
 from io import StringIO
 import matplotlib.pyplot as plt
 from show_knmi_functions.show_calender_heatmap import show_calender_heatmap
+from show_knmi_functions.show_year_heatmap import show_year_heatmap
 
 #from matplotlib.backends.backend_agg import RendererAgg
 from matplotlib.colors import ListedColormap
@@ -47,6 +48,7 @@ def read_ogimet():
     """Read the data from Ogimet and save it to a CSV file. Reading the data while running the script every time
        is not encouraged, see above.
     """
+
 
     # find station codes here https://www.ogimet.com/indicativos.phtml.en
     station_code,location_str = "485500-99999", "ko_samui"  
@@ -633,6 +635,10 @@ def main():
     df = df.sort_values(by='Date')
 
     
+    df["Date"] = pd.to_datetime(df["Date"].astype(str))
+    df["YYYY"] = df["Date"].dt.year
+    df["MM"] = df["Date"].dt.month
+    df["DD"] = df["Date"].dt.day
     
     # Convert all columns except 'Date' to appropriate data types
     df[df.columns.difference(['Date'])] = df[df.columns.difference(['Date'])].apply(pd.to_numeric, errors='coerce')
@@ -644,6 +650,8 @@ def main():
     st.write(df)
     line_graph(to_show, window_size, y_axis_zero, df)
     show_calender_heatmap(df,"Date", [to_show], percentile_colomap_max)
+    show_year_heatmap(df,"Date", [to_show])
+    
     cross_table_montly_avg(df, to_show, where, y_axis_zero)   
     show_treshold(where, to_show, treshold_value, above_under, df)
     show_warmingstripes(df, to_show, where) 
@@ -651,6 +659,6 @@ def main():
     show_info()
 
 if __name__ == "__main__":
-    read_ogimet()
-    #main()
+    #read_ogimet()
+    main()
     
