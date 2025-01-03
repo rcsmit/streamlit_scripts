@@ -44,7 +44,7 @@ def show_year_heatmap(df, datefield, what_to_show_):
                 df_month = df[(df['YYYY'] == year) & (df['MM'] == month)]
                 
                 #ValueError: cannot reindex on an axis with duplicate labels
-                #show_duplicate_labels(df_month, "Date")
+                show_duplicate_labels(df_month, "Date")
 
                 # Reindex to ensure all Month_progress values are present
                 
@@ -107,8 +107,8 @@ def show_duplicate_labels(df, column):
     if not duplicates.empty:
         st.write(f"Duplicate labels in column '{column}':")
         st.write(duplicates)
-    else:
-        st.write(f"No duplicate labels found in column '{column}'.")
+    #else:
+        #st.write(f"No duplicate labels found in column '{column}'.")
 
 def main():
     url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/result.csv" 
