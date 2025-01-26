@@ -1,0 +1,113 @@
+import importlib
+import traceback
+import os
+import platform
+import streamlit as st
+
+st.set_page_config(page_title="Streamlit scripts of René Smit")
+
+def dynamic_import(module):
+    """Import a module stored in a variable
+
+    Args:
+        module (string): The module to import
+
+    Returns:
+        the module you want
+    """
+    return importlib.import_module(module)
+
+def main():
+    """_summary_
+    """    
+    if platform.processor() != "":
+        arr = os.listdir("C:\\Users\\rcxsm\\Documents\\python_scripts\\streamlit_scripts")
+    else:
+        arr = os.listdir()
+
+    counter = 1
+    options = [["[0] welcome","welcome"],
+                ["[1] newagebullshitgenerator","newagebullshitgenerator"],
+                ["[2] KNMI grafieken","show_knmi"],
+                ["[3] Text generator","txt_generator_streamlit"],
+                ["[4] YT transcriber","YoutubeTranscriber_streamlit"],
+                ["[5] Schoonmaaktijden", "schoonmaaktijden"],
+                ["[6] Show sportactivities", "show_sportactivities"],
+                ["[7] YFinance info", "yfinance_info"],
+                ["[8] Crypto portfolio", "crypto_portfolio"],
+                ["[9] Yepcharts", "yepcharts"],
+                ["[10] Zonnepanelen", "zonnepanelen"],
+                ["[xx] Occupation Camping", "read_bezetting_test"], #was occupation_camping
+                ["[xx] Whatsapp analyzer", "whatsapp_analyzer"],
+                ["[13] Breezertaal converter", "make_breezer_taal"],
+                ["[14] Fit to data", "fit_to_data_streamlit"],
+                ["[15] Inkomstenbelasting", "inkomstenbelasting"],
+                ["[16] Exchange money", "exchange_money"],
+                ["[17] Conscious communities", "conscious_communities"],
+                ["[18] How Much Month I need to work", "balansprognose"],
+                ["[19] Tarot Symbols", "tarot_symbols"],
+                ["[20] Dollar Cost Average", "dollar_cost_average"],
+                ["[21] Midjourney prompt generator", "midjourney_prompt_generator"],
+                ["[22] Historical weather", "weather_koh_samui"],
+                ["[23] KNMI trendline LOESS", "loess"],
+                ["[24] KNMI trendline LOESS - scikit-misc", "loess_scikitmisc"],
+                ["[25] Yield management", "yield_management"],
+                ["[26] Meat consumption", "meat_consumption"],
+                ["[27] Waiting times", "waiting_times_disney_OO"],
+                ["[28] Extra pension", "extra_pension_OOP"],
+                ["[29] Studyloan", "studyloan"],
+                ["[30] Gasverbruik", "gas_stand_vs_temp"],
+                ["[31] Sterfte vs temp", "sterfte_temperatuur"],
+                ["[32] Tax PvdA GL", "tax_pvda_gl"],
+                ["[33] Momentum currency", "momentum_koersen"],
+                ["[34] Acroyoga groups", "acroyoga_groups"],
+                ["[35] Life Expectancy NL","life_expectancy_nl"],
+                ["[36] Weblogs","weblogs"],
+                ["[37] Yepcheck","yepcheck"], 
+                ["[38] Bollinger Bot","bollinger_bot"],
+                ["[39] No shows","no_shows"],
+                ["[40] Rome infomap","rome"],
+                ["[41] Leisurewords","leisurewords"],
+                ["[42] Feels like temp.","feels_like_temperature"],
+                ["[43] Cleaning simulation","cleaning_simulation"],
+                ["[44] CPI vs loon","cpi_loon"],
+                ["[45] Crypto Dashboard","crypto_dashboard"],
+                ["[46] Transcript Thai","transcript_thai"],
+                ["[47] Levensverw. in tijd ", "levensverw_door_tijd_heen",],
+                ["[48] Images2pdf","images_to_pdf"],
+                ["[49] Viager calculation ","viager_calculation"],
+                ["[50] Neerslaganalyse ","neerslaganalyse"],
+
+                ]
+    
+    
+                                            
+    menuchoicelist = [options[n][1] for n, l in enumerate(options)]
+
+   
+    for m_ in menuchoicelist:
+        st.title(m_)
+        print (f"-----------{m_}----------------")
+        
+       
+        m =  m_.replace(" ","_") 
+       
+        try:
+            module = dynamic_import(m)
+        except Exception as e:
+            st.error(f"Module '{m}' not found or error in the script\n")
+            st.warning(f"{e}")
+            st.warning(traceback.format_exc())
+
+            #st.stop()
+        try:
+            module.main()
+        except Exception as e:
+            st.error(f"Function 'main()' in module '{m}' not found or error in the script")
+            st.warning(f"{e}")
+            st.warning(traceback.format_exc())
+            #st.stop()
+
+if __name__ == "__main__":
+    st.write("TEST")
+    main()

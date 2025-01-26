@@ -14,6 +14,9 @@ def show_year_heatmap(df, datefield, what_to_show_):
     every month has the same width), the y values are the months,
     and the z-values are the value to show 
 
+    https://aqicn.org/city/chiang-mai/
+    https://aqicn.org/historical/#city:chiang-mai
+    
     Args:
         df (_type_): _description_
         datefield (_type_): _description_
