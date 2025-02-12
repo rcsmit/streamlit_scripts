@@ -57,10 +57,11 @@ def get_data(choice, interval):
 
     df['rownumber'] = np.arange(len(df))
     df["close_" + choice] = df["Close"]
+    
     df["Koers"] = df["Close"]
     df.reset_index(inplace=True)
     df["Date"] = pd.to_datetime(df.get("Datetime", df["Date"]))
-    
+    st.write(df)
     return df
 
 def generate_seasonal_data():
