@@ -56,11 +56,13 @@ def get_data(choice, interval):
         return None
     st.write(df)
     
-    df['rownumber'] = np.arange(len(df))
+    
     df.columns = ['_'.join(col) for col in df.columns]
+    st.write(df)
     df["Close"] = df[f"{fieldname}_Close"]  
     st.write(df)
-    
+    st.stop()
+    df['rownumber'] = np.arange(len(df))
     df["Koers"] = df["Close"]
     df.reset_index(inplace=True)
     df["Date"] = pd.to_datetime(df.get("Datetime", df["Date"]))
