@@ -249,6 +249,7 @@ def perform_regression(df, fieldname, what):
     st.write(model.summary())
     st.info("If the coefficients of sin_j and cos_j are significant (p-value < 0.05), this indicates a seasonal pattern. A high R² means that a large part of the exchange rate variation is explained by these cyclical components.")
 
+
 def rescale_yearly(df, fieldname):
     """
     Rescale the data year by year so that the average of each year is 100.
