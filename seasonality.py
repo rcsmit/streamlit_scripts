@@ -55,8 +55,11 @@ def get_data(choice, interval):
         print(f"No data or wrong input - {choice}")
         return None
     st.write(df)
+    
     df['rownumber'] = np.arange(len(df))
-    df["close_" + choice] = df["Close"]
+    df.columns = ['_'.join(col) for col in df.columns]
+    df["Close"] = df[f"{fieldname}_Close"]  
+    st.write(df)
     
     df["Koers"] = df["Close"]
     df.reset_index(inplace=True)
