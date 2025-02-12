@@ -21,8 +21,12 @@ def get_data(choice,  interval):
         df = None
     else:
         df['rownumber'] = np.arange(len(df))
-    column_name = "close_" + choice
-    df[column_name] = df["Close"]
+    # column_name = "close_" + choice
+    # df[column_name] = df["Close"]
+    df.columns = ['_'.join(col) for col in df.columns]
+
+    df["Close"] = df[f"{choice}_Close"]  
+  
     df = df.reset_index()
     print (df)
     try:
