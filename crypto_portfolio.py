@@ -33,7 +33,7 @@ def get_data(choice,  interval):
         df["Date"] = df["Datetime"]
     except:
         pass
-    df = df[["Date", column_name]]
+    df = df[["Date", "Close"]]
 
     return df
 
