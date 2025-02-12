@@ -59,7 +59,7 @@ def get_data(choice, interval):
     
     df.columns = ['_'.join(col) for col in df.columns]
     st.write(df)
-    df["Close"] = df[f"{fieldname}_Close"]  
+    df["Close"] = df[f"{choice}_Close"]  
     st.write(df)
     st.stop()
     df['rownumber'] = np.arange(len(df))
