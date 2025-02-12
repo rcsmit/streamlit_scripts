@@ -77,6 +77,7 @@ def main():
                 ["[48] Images2pdf","images_to_pdf"],
                 ["[49] Viager calculation ","viager_calculation"],
                 ["[50] Neerslaganalyse ","neerslaganalyse"],
+                ["[51] Seasonality ","seasonality"],
 
                 ]
     
