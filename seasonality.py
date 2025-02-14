@@ -13,7 +13,7 @@ from scipy.fftpack import fft
 from statsmodels.stats.diagnostic import acorr_ljungbox 
 import plotly.express as px
 from statsmodels.tsa.seasonal import STL
-
+from utils import get_data_yfinance
 def get_data_knmi():
     """
     Retrieve KNMI weather data from a CSV file and preprocess it.
@@ -36,37 +36,6 @@ def get_data_knmi():
     
     return df
 
-@st.cache_data()
-def get_data(choice, interval):
-    """
-    Retrieve financial data from Yahoo Finance.
-
-    Args:
-        choice (str): Ticker symbol for the financial data.
-        interval (str): Data interval (e.g., '1d', '1wk', '1mo').
-
-    Returns:
-        pd.DataFrame: Preprocessed financial data with 'Date' as the index and 'Month' column added.
-    """
-    data = yf.download(tickers=choice, start="2015-01-01", interval=interval, group_by='ticker', auto_adjust=True, prepost=False)
-    df = pd.DataFrame(data)
-
-    if df.empty:
-        print(f"No data or wrong input - {choice}")
-        return None
-  
-    
-    
-    df.columns = ['_'.join(col) for col in df.columns]
-
-    df["Close"] = df[f"{choice}_Close"]  
-  
-    df['rownumber'] = np.arange(len(df))
-    df["Koers"] = df["Close"]
-    df.reset_index(inplace=True)
-    df["Date"] = pd.to_datetime(df.get("Datetime", df["Date"]))
-    
-    return df
 
 def generate_seasonal_data():
     """
@@ -309,7 +278,8 @@ def main():
     
     
     for choice in ["EURTHB=X", "EURUSD=X"]:
-        df = get_data(choice, "1d")
+        #df = get_data(choice, "1d")
+        df = get_data_yfinance(choice, "1d")
         find_seasonality(df, "Koers", choice)
 
     st.subheader("Max Temperature Data")

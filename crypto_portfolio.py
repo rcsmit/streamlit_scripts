@@ -7,10 +7,10 @@ import streamlit as st
 import datetime as dt
 # from scipy import stats
 # import datetime as dt
+from utils import get_data_yfinance
 
 
-
-def get_data(choice,  interval):
+def get_data_old(choice,  interval):
     """Retreat the data from Yahoo Finance
     """
 
@@ -156,10 +156,10 @@ def make_database(choicelist, interval):
     first = True
     for choice in choicelist:
         if first == True:
-            df_total = get_data(choice,  interval)
+            df_total = get_data_yfinance(choice,  interval, "2021-11-27")
             first = False
         else:
-            df_temp = get_data(choice,  interval)
+            df_temp = get_data_yfinance(choice,  interval, "2021-11-27")
 
             df_total = pd.merge(
                 df_total, df_temp, how="inner", on = "Date"

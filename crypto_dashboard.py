@@ -7,9 +7,10 @@ import numpy as np
 import plotly.graph_objects as go
 import streamlit as st
 from scipy import stats
+from utils import get_data_yfinance
 
 @st.cache_data()
-def get_data(choice, period, interval):
+def get_data_oild(choice, period, interval):
     ticker = yf.Tickers(choice)
 
     data = yf.download(tickers=(choice),period=period,interval=interval,group_by='ticker',auto_adjust=True,prepost=False)
@@ -689,7 +690,7 @@ def show_graph_in_column(time_zone, wdw, center_boll, z1, z2,  choice, period, i
         x_as_label = "Datetime"
     else:
         x_as_label = "Date"
-    df = get_data(choice, period, interval)
+    df = get_data_yfinance(choice, period, interval)
 
     if df is not None:
         df, m,b,std= calculate_various_columns_df(df, wdw, center_boll, z1,z2)

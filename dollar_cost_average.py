@@ -5,6 +5,7 @@ import numpy as np
 import streamlit as st
 import plotly.express as px
 import datetime
+from utils import get_data_yfinance
 
 # Script to calculate Dollar Cost Averageing
 # https://en.wikipedia.org/wiki/Dollar_cost_averaging
@@ -13,7 +14,7 @@ import datetime
 # TODO: Yahoo Finnance BTC rate begins only in 2017.
 
 @st.cache_data()
-def get_data(choice,  interval, date_to_check_from):
+def get_data_old(choice,  interval, date_to_check_from):
     """Retrieves historical data for the specified choice (ticker symbol) from Yahoo Finance.
     
     Args:
@@ -126,7 +127,7 @@ def rendement_various_starting_dates(investment_interval, initial_investment):
     Returns:
         None
     """
-    df = get_data ("BTC-USD","1d", "2017-01-01")
+    df = get_data_yfinance ("BTC-USD","1d", "2017-01-01")
     df['Date'] = pd.to_datetime(df['Date'])
 
     start_date_ = st.sidebar.text_input("Start date", '2017-01-01')
