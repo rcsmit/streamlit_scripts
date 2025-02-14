@@ -3,10 +3,10 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 import numpy as np
-
+from utils import get_data_yfinance
 # https://quantpedia.com/strategies/currency-momentum-factor/
 
-def get_data(choice, period, interval, window):
+def get_data_old(choice, period, interval, window):
     """Retreat the data from Yahoo Finance
     """
     data = yf.download(
@@ -40,8 +40,7 @@ def get_data(choice, period, interval, window):
         df["Date"] = df["index"]
     df = df[["Date", column_name]]
   
-    # Add a new column 'sma' with 3-period SMA
-    df['sma'] = df[column_name].rolling(window=window, center=True).mean()
+   
 
     return df
 
@@ -149,7 +148,11 @@ def main():
     st.info("""Analyzes and displays transition matrices to identify patterns in rate changes.
                This app can be used for momentum analysis of currencies and cryptocurrencies, 
                providing insights into trends and potential market movements.""")
-    df = get_data(choice, period, interval, window)
+    df = get_data_old(choice, period, interval, window)
+    df=get_data_yfinance(choice, interval, period, None)
+     # Add a new column 'sma' with 3-period SMA
+    df['sma'] = df[column_name].rolling(window=window, center=True).mean()
+
     st.write (df)
     rate_column = f'close_{choice}'
     show_plot(df, rate_column)
