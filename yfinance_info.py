@@ -8,7 +8,7 @@ import streamlit as st
 from scipy import stats
 from skmisc.loess import loess
 from typing import Tuple, List
-
+from utils import get_data_yfinance
 def interface() -> Tuple[str, str, str, float, float, int, bool, int, float]:
     """
     Create the Streamlit sidebar interface for user input.
@@ -354,6 +354,7 @@ def main() -> None:
     ticker = yf.Tickers(choice)
     # data = yf.download(tickers=(choice), period=period, interval=interval, group_by='ticker', auto_adjust=True, prepost=False)
     # df = pd.DataFrame(data)
+    df =get_data_yfinance(choice, interval, period, None)
     if len(df) == 0:
         st.error("No data or wrong input")
         st.stop()
