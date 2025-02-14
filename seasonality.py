@@ -279,7 +279,7 @@ def main():
     
     for choice in ["EURTHB=X", "EURUSD=X"]:
         #df = get_data(choice, "1d")
-        df = get_data_yfinance(choice, "1d")
+        df = get_data_yfinance(choice, "1d",None,"2015-01-01")
         find_seasonality(df, "Koers", choice)
 
     st.subheader("Max Temperature Data")

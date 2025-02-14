@@ -690,7 +690,7 @@ def show_graph_in_column(time_zone, wdw, center_boll, z1, z2,  choice, period, i
         x_as_label = "Datetime"
     else:
         x_as_label = "Date"
-    df = get_data_yfinance(choice,  interval, period,)
+    df = get_data_yfinance(choice,  interval, period, None)
 
     if df is not None:
         df, m,b,std= calculate_various_columns_df(df, wdw, center_boll, z1,z2)
