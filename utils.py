@@ -26,8 +26,10 @@ def get_data_yfinance(choice, interval, start="2015-01-01"):
   
     
     if platform.processor() != "":
+        # local
         #df.columns = ['_'.join(col) for col in df.columns]
         df[f"{choice}_Close"]   = df["Close"]
+        
     else:
         df.columns = ['_'.join(col) for col in df.columns]
         
@@ -35,7 +37,7 @@ def get_data_yfinance(choice, interval, start="2015-01-01"):
     #df.columns = ['_'.join(col) for col in df.columns]
     
   
-    
+    st.write(df)
     df[f"close_{choice}"]   = df["Close"]
 
     df['rownumber'] = np.arange(len(df))
