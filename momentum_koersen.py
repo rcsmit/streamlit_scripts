@@ -4,6 +4,7 @@ import plotly.graph_objects as go
 import streamlit as st
 import numpy as np
 from utils import get_data_yfinance
+import platform
 # https://quantpedia.com/strategies/currency-momentum-factor/
 
 def get_data_old(choice, period, interval, window):
@@ -23,7 +24,14 @@ def get_data_old(choice, period, interval, window):
     elif interval in [ "1m","2m","5m","15m","30m","60m","90m","1h"]:
         index_field = "Datetime"
     df = pd.DataFrame(data)
-
+    if platform.processor() != "":
+        # local
+        df[f"{choice}_Close"]   = df["Close"]
+        
+    else:
+        df.columns = ['_'.join(col) for col in df.columns]
+        df["Close"] = df[f"{choice}_Close"]
+        
     if len(df) == 0:
         st.error(f"No data or wrong input - {choice}")
         
@@ -41,7 +49,8 @@ def get_data_old(choice, period, interval, window):
     df = df[["Date", column_name]]
   
    
-
+     # Add a new column 'sma' with 3-period SMA
+    df['sma'] = df[column_name].rolling(window=window, center=True).mean()
     return df
 
 def show_plot(df, rate_column):
@@ -149,9 +158,9 @@ def main():
                This app can be used for momentum analysis of currencies and cryptocurrencies, 
                providing insights into trends and potential market movements.""")
     df = get_data_old(choice, period, interval, window)
-    df=get_data_yfinance(choice, interval, period, None)
+    #df=get_data_yfinance(choice, interval, period, None)
      # Add a new column 'sma' with 3-period SMA
-    df['sma'] = df[column_name].rolling(window=window, center=True).mean()
+    #df['sma'] = df[column_name].rolling(window=window, center=True).mean()
 
     st.write (df)
     rate_column = f'close_{choice}'
