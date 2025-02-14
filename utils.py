@@ -19,7 +19,7 @@ def get_data_yfinance(choice, interval, start="2015-01-01"):
     #data = yf.download(tickers=(choice), period=period, interval=interval, group_by='ticker', auto_adjust=True, prepost=False)
     data = yf.download(tickers=choice, start=start, interval=interval, group_by='ticker', auto_adjust=True, prepost=False)
     df = pd.DataFrame(data)
-    st.write(df)
+  
     if df.empty:
         print(f"No data or wrong input - {choice}")
         return None
@@ -34,10 +34,9 @@ def get_data_yfinance(choice, interval, start="2015-01-01"):
         df.columns = ['_'.join(col) for col in df.columns]
         df["Close"] = df[f"{choice}_Close"]
         
-    #df.columns = ['_'.join(col) for col in df.columns]
     
   
-    st.write(df)
+  
     df[f"close_{choice}"]   = df["Close"]
 
     df['rownumber'] = np.arange(len(df))
