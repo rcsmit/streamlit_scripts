@@ -352,8 +352,8 @@ def main() -> None:
     choice, period, interval, z1, z2, wdw, center_boll, initial_investment, transaction_fee = interface()
 
     ticker = yf.Tickers(choice)
-    data = yf.download(tickers=(choice), period=period, interval=interval, group_by='ticker', auto_adjust=True, prepost=False)
-    df = pd.DataFrame(data)
+    # data = yf.download(tickers=(choice), period=period, interval=interval, group_by='ticker', auto_adjust=True, prepost=False)
+    # df = pd.DataFrame(data)
     if len(df) == 0:
         st.error("No data or wrong input")
         st.stop()

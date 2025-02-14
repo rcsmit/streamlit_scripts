@@ -16,6 +16,7 @@ def get_data_yfinance(choice, interval, start="2015-01-01"):
     Returns:
         pd.DataFrame: Preprocessed financial data with 'Date' as the index and 'Month' column added.
     """
+    #data = yf.download(tickers=(choice), period=period, interval=interval, group_by='ticker', auto_adjust=True, prepost=False)
     data = yf.download(tickers=choice, start=start, interval=interval, group_by='ticker', auto_adjust=True, prepost=False)
     df = pd.DataFrame(data)
 
@@ -25,14 +26,17 @@ def get_data_yfinance(choice, interval, start="2015-01-01"):
   
     
     if platform.processor() != "":
+        #df.columns = ['_'.join(col) for col in df.columns]
         pass
     else:
         df.columns = ['_'.join(col) for col in df.columns]
         
     #df.columns = ['_'.join(col) for col in df.columns]
     
-   
-    df[f"{choice}_Close"]   = df["Close"]
+    try:
+        df[f"{choice}_Close"]   = df["Close"]
+    except:
+    
     df[f"close_{choice}"]   = df["Close"]
 
     df['rownumber'] = np.arange(len(df))
