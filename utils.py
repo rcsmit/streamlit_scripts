@@ -32,7 +32,7 @@ def get_data_yfinance(choice, interval, start="2015-01-01"):
         
     else:
         df.columns = ['_'.join(col) for col in df.columns]
-        
+        df["Close"] = df[f"{choice}_Close"]
         
     #df.columns = ['_'.join(col) for col in df.columns]
     
