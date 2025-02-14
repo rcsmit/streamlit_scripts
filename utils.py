@@ -30,14 +30,14 @@ def get_data_yfinance(choice, interval, start="2015-01-01"):
         df.columns = ['_'.join(col) for col in df.columns]
         
     #df.columns = ['_'.join(col) for col in df.columns]
-    st.write(df)
+    
    
     df[f"{choice}_Close"]   = df["Close"]
     df[f"close_{choice}"]   = df["Close"]
-    st.write(df)
+
     df['rownumber'] = np.arange(len(df))
     df["Koers"] = df["Close"]
     df.reset_index(inplace=True)
     df["Date"] = pd.to_datetime(df.get("Datetime", df["Date"]))
-    st.write(df)
+    
     return df
