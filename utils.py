@@ -27,7 +27,6 @@ def get_data_yfinance(choice, interval, start="2015-01-01"):
     
     if platform.processor() != "":
         # local
-        #df.columns = ['_'.join(col) for col in df.columns]
         df[f"{choice}_Close"]   = df["Close"]
         
     else:
