@@ -135,4 +135,6 @@ def main():
     st.info("Deze tabel bevat cijfers over het prijsverloop van een pakket goederen en diensten dat een gemiddeld Nederlands huishouden aanschaft. Dit wordt de consumentenprijsindex (CPI) genoemd. In de tabel staat ook de afgeleide consumentenprijsindex: dit is de CPI waarin het effect van veranderingen in de tarieven van productgebonden belastingen (bijvoorbeeld btw en accijns op alcohol en tabak) en subsidies en van consumptiegebonden belastingen (bijvoorbeeld motorrijtuigenbelasting) is verwijderd.")
     
     st.info("Bron minimumloon: https://nl.wikipedia.org/wiki/Minimumloon")
-main()
+
+if __name__ == "__main__":
+    main()

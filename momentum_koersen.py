@@ -3,12 +3,14 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 import numpy as np
-from utils import get_data_yfinance
+
 import platform
 # https://quantpedia.com/strategies/currency-momentum-factor/
 
 def get_data_old(choice, period, interval, window):
-    """Retreat the data from Yahoo Finance
+    """Retreat the data from Yahoo Finance.
+
+    Kept this one instead the one in utils.py because both functions are not compatible.
     """
     data = yf.download(
         tickers=(choice),
