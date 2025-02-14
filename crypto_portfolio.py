@@ -156,10 +156,10 @@ def make_database(choicelist, interval):
     first = True
     for choice in choicelist:
         if first == True:
-            df_total = get_data_yfinance(choice,  interval, "2021-11-27")
+            df_total = get_data_yfinance(choice,  interval,None, "2021-11-27")
             first = False
         else:
-            df_temp = get_data_yfinance(choice,  interval, "2021-11-27")
+            df_temp = get_data_yfinance(choice,  interval, None,"2021-11-27")
 
             df_total = pd.merge(
                 df_total, df_temp, how="inner", on = "Date"
