@@ -27,15 +27,14 @@ def get_data_yfinance(choice, interval, start="2015-01-01"):
     
     if platform.processor() != "":
         #df.columns = ['_'.join(col) for col in df.columns]
-        pass
+        df[f"{choice}_Close"]   = df["Close"]
     else:
         df.columns = ['_'.join(col) for col in df.columns]
         
+        
     #df.columns = ['_'.join(col) for col in df.columns]
     
-    try:
-        df[f"{choice}_Close"]   = df["Close"]
-    except:
+  
     
     df[f"close_{choice}"]   = df["Close"]
 
