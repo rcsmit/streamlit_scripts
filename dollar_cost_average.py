@@ -127,7 +127,7 @@ def rendement_various_starting_dates(investment_interval, initial_investment):
     Returns:
         None
     """
-    df = get_data_yfinance ("BTC-USD","1d", "2017-01-01")
+    df = get_data_yfinance ("BTC-USD","1d",None, "2017-01-01")
     df['Date'] = pd.to_datetime(df['Date'])
 
     start_date_ = st.sidebar.text_input("Start date", '2017-01-01')
