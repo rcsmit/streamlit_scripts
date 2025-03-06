@@ -16,7 +16,7 @@ def get_df():
     # Google Sheet details (make it publicly accessible)
     sheet_id = "11bCLM4-lLZ56-XJjBjvXyXJ11P3PiNjV6Yl96x-tEnM"
     sheet_name = "data"
-
+    # https://docs.google.com/spreadsheets/d/11bCLM4-lLZ56-XJjBjvXyXJ11P3PiNjV6Yl96x-tEnM/gviz/tq?tqx=out:csv&sheet=data
     url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
     df=pd.read_csv(url, delimiter=',')
     for col in df.columns[1:]:
