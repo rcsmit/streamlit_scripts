@@ -25,7 +25,7 @@ def get_data_yfinance(choice, interval, period="3m",start="2015-01-01"):
         st.error(f"No data or wrong input - {choice}")
         return None
   
-    st.write(df)
+   
     if platform.processor() != "":
         # local
         # df[f"{choice}_Close"]   = df["Close"]
