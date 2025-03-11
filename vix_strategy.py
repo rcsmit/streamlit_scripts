@@ -560,7 +560,7 @@ def main():
 
 def input_options():
     # https://finance.yahoo.com/lookup?s=-usd&.tsrc=fin-srch
-    choicelist_ = ["BTC-USD", "ETH-USD", "XRP-USD", "LUNA1-USD", "SOL1-USD", "DOT1-USD", "DOGE-USD", "ADA-USD", "SHIB-USD", "LTC-USD", "LRC-USD", "CRO-USD"]
+    choicelist_ = ["%5EVIX",p"BTC-USD", "ETH-USD", "XRP-USD", "LUNA1-USD", "SOL1-USD", "DOT1-USD", "DOGE-USD", "ADA-USD", "SHIB-USD", "LTC-USD", "LRC-USD", "CRO-USD"]
     choicelist = st.sidebar.multiselect("Which coins", choicelist_, ["BTC-USD", "ETH-USD"])
     #choicelist = ["BTC-USD"]
 
