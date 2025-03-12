@@ -218,6 +218,7 @@ def draw_buy_sell_candlestick_close(df, buy_price, sell_price, x_as_label):
     return buy,sell,candlestick,close
 
 def plot_trendline(df, choice,m,b, std, x_as_label,  x_logarithmic,  y_logarithmic):
+  
     if x_logarithmic:
         df['daynumber'] = range(1, len(df) + 1)
         x_as_label = "daynumber"
@@ -226,7 +227,7 @@ def plot_trendline(df, choice,m,b, std, x_as_label,  x_logarithmic,  y_logarithm
         close = go.Scatter(
             name="Close",
             x=df[x_as_label],
-            y=df["Close"],
+            y=df[f"{choice}_Close"],
             mode='lines',
             line=dict(width=0.75,color='rgba(0,0,255, 1)'))
             
@@ -237,7 +238,7 @@ def plot_trendline(df, choice,m,b, std, x_as_label,  x_logarithmic,  y_logarithm
         low = go.Scatter(
             name='Low',
             x=df[x_as_label],
-            y=df['Low'] ,
+            y=df[f'{choice}_Low'] ,
             mode='lines',
             line=dict(width=0.5,
                     color="rgba(0,0,255, 0.5)"),
@@ -247,7 +248,7 @@ def plot_trendline(df, choice,m,b, std, x_as_label,  x_logarithmic,  y_logarithm
         close = go.Scatter(
             name="Close",
             x=df[x_as_label],
-            y=df["Close"],
+            y=df[f"{choice}_Close"],
             mode='lines',
             line=dict(width=0.75,color='rgba(0,0,255, 0.8)'),
             fillcolor='rgba(68, 68, 68, 0.2)',
@@ -256,7 +257,7 @@ def plot_trendline(df, choice,m,b, std, x_as_label,  x_logarithmic,  y_logarithm
         high = go.Scatter(
             name='High',
             x=df[x_as_label],
-            y=df['High'] ,
+            y=df[f'{choice}_High'] ,
             mode='lines',
             line=dict(width=0.5,
                     color="rgba(0,0,255, 0.5)"),

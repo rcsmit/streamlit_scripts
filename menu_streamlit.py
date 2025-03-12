@@ -78,6 +78,7 @@ def main():
                 ["[49] Viager calculation ","viager_calculation"],
                 ["[50] Neerslaganalyse ","neerslaganalyse"],
                 ["[51] Seasonality ","seasonality"],
+                ["[52] Vix Bot ","vix_bot"],
                 ]
     
     
