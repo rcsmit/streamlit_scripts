@@ -176,7 +176,17 @@ def show_map(df, what_to_display_):
     # Add start and end markers
     folium.Marker(route[0], popup="Start", icon=folium.Icon(color="green")).add_to(m)
     folium.Marker(route[-1], popup="End", icon=folium.Icon(color="red")).add_to(m)
-
+    
+ 
+    # Add markers for each kilometer
+    for i in range(1, int(df["distance_cumm"].max() // 1000) + 1):
+        km_marker = df[df["distance_cumm"] >= i * 1000].iloc[0]
+        folium.Marker(
+            location=[km_marker["latitude"], km_marker["longitude"]],
+            popup=f"{i} km",
+            icon=folium.Icon(color="blue")
+            
+        ).add_to(m)
     # Add colormap legend
     colormap.caption = "Route Difficulty (Slope)"
     m.add_child(colormap)
@@ -186,12 +196,22 @@ def show_map(df, what_to_display_):
    
 
 def show_scatterplots(df):
+    df["gradient_sma"] = df["gradient"].rolling(window=10).mean()
+    df["elevation_sma"] = df["elevation"].rolling(window=10).mean() 
     # Create scatter plots
-    fig4 = px.line(df, x="distance_cumm", y="gradient", title="Distance vs Gradient")
-    fig4 = px.line(df, x="distance_cumm", y="elevation", title="Distance vs Elevation")
+    fig4 = px.line(df, x="distance_cumm", y="elevation_sma", title="Distance vs Elevation (sma10)")
     
-    fig5 = px.line(df, x="distance_cumm", y="gradient", title="Distance vs Gradient")
-    
+    fig5 = px.line(df, x="distance_cumm", y="gradient", title="Distance vs Gradient (sma10)")
+   
+    # Add a horizontal line at y=0
+    fig5.add_shape(
+        type="line",
+        x0=df["distance_cumm"].min(),
+        y0=0,
+        x1=df["distance_cumm"].max(),
+        y1=0,
+        line=dict(color="Red", width=2)
+    )
     fig7 = px.line(df, x="delta_time_cumm", y=["distance_cumm", "difficulty_based_distance_cumm"], 
               labels={"value": "Distance", "variable": "Type"}, 
               title="Time vs Cumulative Distance and Cumulative Difficulty-Based Distance")
