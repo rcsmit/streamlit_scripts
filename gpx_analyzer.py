@@ -200,18 +200,12 @@ def show_scatterplots(df):
               labels={"value": "Distance", "variable": "Type"}, 
               title="Time vs  Distance(sma10) and  Difficulty-Based Distance (sma10)")
 
+
     fig9 = px.line(df, x="distance_cumm", y=["distance_sma", "difficulty_based_distance_sma"], 
               labels={"value": "Distance", "variable": "Type"}, 
               title="Distance vs  Distance and  Difficulty-Based Distance")
 
-    # col1,col2,col3=st.columns(3)
-    # # Display scatter plots in Streamlit
-    # with col1:
-    #     st.plotly_chart(fig1)
-    # with col2:
-    #     st.plotly_chart(fig2)
-    # with col3:
-    #     st.plotly_chart(fig3)
+    
     col4,col5,col6=st.columns(3)
     with col4:
         st.plotly_chart(fig4)
