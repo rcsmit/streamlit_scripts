@@ -216,7 +216,7 @@ def show_scatterplots(df):
     st.plotly_chart(fig7)
     st.plotly_chart(fig8)
     st.plotly_chart(fig9)
-    st.info (f"Sum of difficulaty : {df['difficulty"'].sum()}")
+    st.info (f"Sum of difficulaty : {df['difficulty'].sum()}")
     st.info (f"Sum of gradient : {df['gradient'].sum()}")
     percentage_gradient_positive = (df['gradient'] > 0).mean() * 100
     percentage_gradient_negative = (df['gradient'] < 0).mean() * 100
