@@ -133,8 +133,8 @@ def process_df(df):
 
     # Convert cumulative delta_time to time object
     #df["delta_time_cumm"] = df["delta_time_cumm"].apply(lambda x: (pd.Timestamp(0) + x).time())
-    st.write(df)
-   
+    
+    
     return df
 
 def show_map(df, what_to_display_):
@@ -303,6 +303,7 @@ def main():
     - Gradient >= 10%: Steep downhill, effort increases by 0.2% per gradient percentage
     - **Flat terrain**: No additional effort
     """)
+    st.write(df)
 def get_gpx():
     sample_data = False # st.checkbox("Use sample data")
     if sample_data:
