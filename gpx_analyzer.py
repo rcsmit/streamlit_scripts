@@ -180,15 +180,10 @@ def show_map(df, what_to_display_):
 
     # call to render Folium map in Streamlit
     st_data = st_folium(m, width=725)
-    # # Save and display the map
-    # m.save("gpx_difficulty_map.html")
-    # print("Map saved as gpx_difficulty_map.html. Open in a browser to view!")
+   
 
 def show_scatterplots(df):
     # Create scatter plots
-    # fig1 = px.scatter(df, x="slopes", y="gradient", title="Slopes vs Gradient")
-    # fig2 = px.scatter(df, x="slopes", y="difficulty", title="Slopes vs Difficulty")
-    # fig3 = px.scatter(df, x="gradient", y="difficulty", title="Gradient vs Difficulty")
     fig4 = px.line(df, x="distance_cumm", y="gradient", title="Distance vs Gradient")
     fig4 = px.line(df, x="distance_cumm", y="elevation", title="Distance vs Elevation")
     
@@ -227,8 +222,8 @@ def show_scatterplots(df):
     st.plotly_chart(fig7)
     st.plotly_chart(fig8)
     st.plotly_chart(fig9)
-    st.info (f"Sum of difficulaty : {df["difficulty"].sum()}")
-    st.info (f"Sum of gradient : {df["gradient"].sum()}")
+    st.info (f"Sum of difficulaty : {df['difficulty"'].sum()}")
+    st.info (f"Sum of gradient : {df['gradient'].sum()}")
     percentage_gradient_positive = (df['gradient'] > 0).mean() * 100
     percentage_gradient_negative = (df['gradient'] < 0).mean() * 100
 
