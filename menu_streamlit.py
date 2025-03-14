@@ -79,6 +79,7 @@ def main():
                 ["[50] Neerslaganalyse ","neerslaganalyse"],
                 ["[51] Seasonality ","seasonality"],
                 ["[52] Vix Bot ","vix_bot"],
+                ["[53] GPX analyzer ","gpx_analyzer"],
                 ]
     
     

@@ -28,3 +28,6 @@ PyPDF2
 pymannkendall
 polars
 plotly-calplot
+gpxpy
+geopy
+branca
