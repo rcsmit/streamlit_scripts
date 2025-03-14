@@ -205,7 +205,6 @@ def show_scatterplots(df):
               labels={"value": "Distance", "variable": "Type"}, 
               title="Distance vs  Distance and  Difficulty-Based Distance")
 
-    
     col4,col5,col6=st.columns(3)
     with col4:
         st.plotly_chart(fig4)
