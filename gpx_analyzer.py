@@ -221,8 +221,7 @@ def show_scatterplots(df):
     percentage_gradient_positive = (df['gradient'] > 0).mean() * 100
     percentage_gradient_negative = (df['gradient'] < 0).mean() * 100
 
-    st.info (f"Percentage of positive gradient : {round(percentage_gradient_positive,2)}")
-    st.info (f"Percentage of negative gradient : {round(percentage_gradient_negative,2)}")
+    st.info (f"Percentage of positive gradient : {round(percentage_gradient_positive,2)} %\nPercentage of negative gradient : {round(percentage_gradient_negative,2)} % ")
   
     # Compute total values
     total_distance = df["distance_m"].sum() / 1000  # Convert to km
@@ -274,7 +273,8 @@ def get_gpx():
     sample_data = st.checkbox("Use sample data")
     if sample_data:
         #gpx_file_path = r"C:\Users\rcxsm\Downloads\RK_gpx _2025-03-13_1317.gpx"
-        gpx_file_path = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/input/RK_gpx_2025-03-13_1317.gpx"
+        #gpx_file_path = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/input/RK_gpx_2025-03-13_1317.gpx"
+        gpx_file_path = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/RK_gpx_2025-03-13_1317.gpx"
         #gpx_file_path = r"C:\Users\rcxsm\Downloads\test.gpx"
 
         with open(gpx_file_path, "r") as gpx_file:
