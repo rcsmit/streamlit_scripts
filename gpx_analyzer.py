@@ -250,25 +250,25 @@ def main():
     reversed = st.checkbox("Reverse the route")
     if not reversed:
         df = process_df(df)
-        col11,col12=st.columns(2)
-        with col11:
+        # col11,col12=st.columns(2)
+        # with col11:
         
-            show_map(df, "slopes")
-        with col12:
+        show_map(df, "slopes")
+        # with col12:
         
-            show_map(df, "diffulties")
+        #     show_map(df, "diffulties")
         show_scatterplots(df)
     else:
         df_reversed = df.iloc[::-1].reset_index(drop=True)
     
         df_reversed = process_df(df_reversed)
-        col13,col14=st.columns(2)
-        with col13:
+        # col13,col14=st.columns(2)
+        # with col13:
         
-            show_map(df_reversed, "slopes")
-        with col14:
+        show_map(df_reversed, "slopes")
+        # with col14:
         
-            show_map(df_reversed, "diffulties")
+        #     show_map(df_reversed, "diffulties")
         show_scatterplots(df_reversed)
     st.info("""
     Effort Multiplier Calculation:
