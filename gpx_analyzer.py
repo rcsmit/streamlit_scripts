@@ -9,7 +9,10 @@ import streamlit as st
 import branca.colormap as cm
 
 from streamlit_folium import st_folium
-st.set_page_config(layout="wide")
+try:
+    st.set_page_config(layout="wide")
+except:
+    pass
 # https://chatgpt.com/c/67d29ecd-b0e8-8004-beb6-c0e31f3534f3
 
 def gpx_to_df(gpx):
