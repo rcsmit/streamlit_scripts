@@ -200,7 +200,6 @@ def show_scatterplots(df):
               labels={"value": "Distance", "variable": "Type"}, 
               title="Time vs  Distance(sma10) and  Difficulty-Based Distance (sma10)")
 
-
     fig9 = px.line(df, x="distance_cumm", y=["distance_sma", "difficulty_based_distance_sma"], 
               labels={"value": "Distance", "variable": "Type"}, 
               title="Distance vs  Distance and  Difficulty-Based Distance")
