@@ -239,7 +239,7 @@ def show_scatterplots(df):
     
     st.info(f"Average Gradient: {average_gradient:.1f} %")
     st.info(f"Trail Difficulty Score: {difficulty_score:.1f}")
-    st.info(f"Difficulty based distance {round(df["difficulty_based_distance_cumm"].iloc[-1]/1000,2)} km")
+    st.info(f"Difficulty based distance {round(df['difficulty_based_distance_cumm'].iloc[-1]/1000,2)} km")
 def main():
     # Load GPX file
     gpx = get_gpx()
