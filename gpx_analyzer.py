@@ -242,6 +242,8 @@ def show_scatterplots(df):
     # st.info(f"Trail Difficulty Score: {difficulty_score:.1f}")
     st.info(f"Difficulty based distance {round(df['difficulty_based_distance_cumm'].iloc[-1]/1000,2)} km")
 def main():
+    st.title("GPX Analyzer")
+    st.write("This script analyzes the data from a GPX file to provide insights on the route's difficulty, elevation gain, and more.")
     # Load GPX file
     gpx = get_gpx()
     df= gpx_to_df(gpx)
@@ -268,9 +270,21 @@ def main():
         
             show_map(df_reversed, "diffulties")
         show_scatterplots(df_reversed)
-
+    st.info("""
+    Effort Multiplier Calculation:
+    Gradient - Elevation change / Distance * 100
+    - **Uphill**:
+    - Gradient < 5%: +10% effort for slight incline
+    - Gradient < 12%: +20% effort for moderate incline
+    - Gradient < 20%: +40% effort for steep incline
+    - Gradient >= 20%: Doubling effort for very steep uphill
+    - **Downhill**:
+    - Gradient < 10%: Moderate downhill, effort decreases by 0.5% per gradient percentage
+    - Gradient >= 10%: Steep downhill, effort increases by 0.2% per gradient percentage
+    - **Flat terrain**: No additional effort
+    """)
 def get_gpx():
-    sample_data = st.checkbox("Use sample data")
+    sample_data = False # st.checkbox("Use sample data")
     if sample_data:
         #gpx_file_path = r"C:\Users\rcxsm\Downloads\RK_gpx _2025-03-13_1317.gpx"
         #gpx_file_path = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/input/RK_gpx_2025-03-13_1317.gpx"
