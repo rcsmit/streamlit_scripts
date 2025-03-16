@@ -110,8 +110,10 @@ def process_df(df):
         difficulty_based_distances.append(difficulty_based_distance)
         difficulties.append(difficulty)
 
-    df["distance_m"] = distances
+    df["distance_"] = distances
     df["elevation_change_m"] = elevation_changes
+    df["distance_m"] = np.sqrt(df["distance_"]**2 + df["elevation_change_m"]**2)
+
     df["slopes"] = slopes
     df["gradient"] = df["slopes"] *100
     df["elevation_gain"] = elevation_gains
@@ -192,16 +194,16 @@ def show_map(df, what_to_display_):
     m.add_child(colormap)
 
     # call to render Folium map in Streamlit
-    st_data = st_folium(m, width=725)
+    st_data = st_folium(m)
    
 
-def show_scatterplots(df):
-    df["gradient_sma"] = df["gradient"].rolling(window=10).mean()
-    df["elevation_sma"] = df["elevation"].rolling(window=10).mean() 
+def show_plots(df,wdw=10):
+    df["gradient_sma"] = df["gradient"].rolling(window=wdw).mean()
+    df["elevation_sma"] = df["elevation"].rolling(window=wdw).mean() 
     # Create scatter plots
-    fig4 = px.line(df, x="distance_cumm", y="elevation_sma", title="Distance vs Elevation (sma10)")
+    fig4 = px.line(df, x="distance_cumm", y="elevation_sma", title=f"Distance vs Elevation (sma{wdw})")
     
-    fig5 = px.line(df, x="distance_cumm", y="gradient", title="Distance vs Gradient (sma10)")
+    fig5 = px.line(df, x="distance_cumm", y="gradient", title=f"Distance vs Gradient (sma{wdw})")
    
     # Add a horizontal line at y=0
     fig5.add_shape(
@@ -216,16 +218,16 @@ def show_scatterplots(df):
               labels={"value": "Distance", "variable": "Type"}, 
               title="Time vs Cumulative Distance and Cumulative Difficulty-Based Distance")
     
-    df["distance_sma"]= df["distance_m"].rolling(window=10).mean()
-    df["difficulty_based_distance_sma"]= df["difficulty_based_distance"].rolling(window=10).mean()
+    df["distance_sma"]= df["distance_m"].rolling(window=wdw).mean()
+    df["difficulty_based_distance_sma"]= df["difficulty_based_distance"].rolling(window=wdw).mean()
     
     fig8 = px.line(df, x="delta_time_cumm", y=["distance_sma", "difficulty_based_distance_sma"], 
               labels={"value": "Distance", "variable": "Type"}, 
-              title="Time vs  Distance(sma10) and  Difficulty-Based Distance (sma10)")
+              title=f"Time vs  Distance(sma{wdw}) and  Difficulty-Based Distance (sma{wdw})")
 
     fig9 = px.line(df, x="distance_cumm", y=["distance_sma", "difficulty_based_distance_sma"], 
               labels={"value": "Distance", "variable": "Type"}, 
-              title="Distance vs  Distance and  Difficulty-Based Distance")
+              title=f"Distance vs  Distance (sma{wdw}) and  Difficulty-Based Distance(sma{wdw})")
 
     col4,col5=st.columns(2)
     with col4:
@@ -266,37 +268,42 @@ def main():
     st.write("This script analyzes the data from a GPX file to provide insights on the route's difficulty, elevation gain, and more.")
     # Load GPX file
     gpx = get_gpx()
+    st.write("GPX geladen")
     df= gpx_to_df(gpx)
-    reversed = st.checkbox("Reverse the route")
+    cola,colb,colc=st.columns(3)
+    with cola:
+        wdw =st.number_input("Window size for moving average",min_value=1,max_value=100,value=1, help="The higher the number, the smoother the plot")
+    with colb:
+        if len(df) < 10000:
+            filter_factor = 1
+        else: 
+            filter_factor = st.number_input("Filter factor",min_value=1,max_value=10000,value = len(df) // 1000 , help="The higher the number, the more points will be filtered out. Default value keeps 1000 points") 
+
+    with colc:
+        reversed = st.checkbox("Reverse the route")
+    
+    
+    st.write(f"GPX omgezet. Lengte df {len(df)}")
+    # df = df.iloc[1::filter_factor]
+    df = pd.concat([df.iloc[[0]], df.iloc[1::filter_factor], df.iloc[[-1]]]).drop_duplicates()
+    st.write(f"DF gefiltered. Resultaat {len(df)} rijen")
     if not reversed:
         df = process_df(df)
-        # col11,col12=st.columns(2)
-        # with col11:
-        
         show_map(df, "slopes")
-        # with col12:
-        
-        #     show_map(df, "diffulties")
-        show_scatterplots(df)
+        show_plots(df,wdw)
     else:
         df_reversed = df.iloc[::-1].reset_index(drop=True)
     
-        df_reversed = process_df(df_reversed)
-        # col13,col14=st.columns(2)
-        # with col13:
-        
+        df_reversed = process_df(df_reversed)       
         show_map(df_reversed, "slopes")
-        # with col14:
-        
-        #     show_map(df_reversed, "diffulties")
-        show_scatterplots(df_reversed)
+        show_plots(df_reversed,wdw)
     st.info("""
     Effort Multiplier Calculation:
     Gradient - Elevation change / Distance * 100
     - **Uphill**:
     - Gradient < 5%: +10% effort for slight incline
-    - Gradient < 12%: +20% effort for moderate incline
-    - Gradient < 20%: +40% effort for steep incline
+    - Gradient 5 - 12%: +20% effort for moderate incline
+    - Gradient 12 -19%: +40% effort for steep incline
     - Gradient >= 20%: Doubling effort for very steep uphill
     - **Downhill**:
     - Gradient < 10%: Moderate downhill, effort decreases by 0.5% per gradient percentage
@@ -304,6 +311,9 @@ def main():
     - **Flat terrain**: No additional effort
     """)
     st.write(df)
+
+    # 12 beach hike https://www.strava.com/activities/13887499750
+    # 55 km kpg https://www.strava.com/activities/12642202735
 def get_gpx():
     sample_data = False # st.checkbox("Use sample data")
     if sample_data:
