@@ -170,7 +170,7 @@ def show_map(df):
         df (pd.DataFrame): DataFrame containing the processed GPX data.
     """     
 
-    what_to_display = df["slopes"].values
+    what_to_display = df["gradient"].values
 
     # Sort what_to_display to avoid threshold sorting issues
     sorted_values = sorted(what_to_display)
