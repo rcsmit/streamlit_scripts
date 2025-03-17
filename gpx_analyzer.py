@@ -16,7 +16,15 @@ except:
 # https://chatgpt.com/c/67d29ecd-b0e8-8004-beb6-c0e31f3534f3
 
 def gpx_to_df(gpx):
-    
+    """
+    Converts a GPX object to a pandas DataFrame.
+
+    Args:
+        gpx (gpxpy.gpx.GPX): A GPX object containing tracks, segments, and points.
+
+    Returns:
+        pd.DataFrame: A DataFrame with columns for latitude, longitude, elevation, and time.
+    """   
     # Extract latitude, longitude, and elevation
     data = []
     for track in gpx.tracks:
@@ -67,7 +75,7 @@ def effort_based_distance_calculator(gradient):
 
     return effort_multiplier
 
-def process_df(df):
+def process_df(df,wdw):
     """
     Processes a DataFrame to compute distances, slopes, gradients, and effort-based distances using Naismith's Rule.
 
@@ -82,6 +90,7 @@ def process_df(df):
     elevation_changes = [0]
     slopes = [0]
     elevation_gains = [0]
+    elevation_losses = [0]
     difficulty_based_distance_multipliers = [0]
     difficulty_based_distances = [0]
     difficulties = [0]
@@ -97,11 +106,20 @@ def process_df(df):
 
         elevation_gain = max(elevation_diff, 0)
         elevation_gains.append(elevation_gain)
-
+        elevation_loss = max(-elevation_diff, 0)
+        elevation_losses.append(elevation_loss)
         slope = elevation_diff / distance_ if distance_ > 0 else 0
+        if slope >.50:
+            slope = .50
+        if slope < -.50:
+            slope = -.50
         slopes.append(slope)
 
         gradient = (elevation_diff / distance_) * 100 if distance_ > 0 else 0
+        if gradient >50:
+            gradient = 50
+        if gradient < -50:
+            gradient = -50
         difficulty_based_distance_multiplier = effort_based_distance_calculator(gradient)
         difficulty_based_distance = difficulty_based_distance_multiplier * distance_
         difficulty = 0 if gradient <= 0 else abs(gradient) * distance_
@@ -117,6 +135,7 @@ def process_df(df):
     df["slopes"] = slopes
     df["gradient"] = df["slopes"] *100
     df["elevation_gain"] = elevation_gains
+    df["elevation_loss"] = elevation_losses
     df["difficulty_based_distance_multiplier"] = difficulty_based_distance_multipliers
     df["difficulty_based_distance"] = difficulty_based_distances
     df["difficulty"] = difficulties
@@ -135,19 +154,23 @@ def process_df(df):
 
     # Convert cumulative delta_time to time object
     #df["delta_time_cumm"] = df["delta_time_cumm"].apply(lambda x: (pd.Timestamp(0) + x).time())
-    
+    df["gradient_sma"] = df["gradient"].rolling(window=wdw).mean()
+    df["elevation_sma"] = df["elevation"].rolling(window=wdw).mean() 
+    df["distance_sma"]= df["distance_m"].rolling(window=wdw).mean()
+    df["difficulty_based_distance_sma"]= df["difficulty_based_distance"].rolling(window=wdw).mean()
+ 
     
     return df
 
-def show_map(df, what_to_display_):
-    # Normalize what_to_display for coloring (convert steepness to color intensity)
-    if what_to_display_ =="slopes":
-        what_to_display = df["slopes"].values
-    else:
-        what_to_display = df["difficulty"].values
-        
+def show_map(df):
+    """
+    Creates and displays a folium map with the given DataFrame.
 
-    normalized_what_to_display = (np.array(what_to_display) - min(what_to_display)) / (max(what_to_display) - min(what_to_display))
+    Args:
+        df (pd.DataFrame): DataFrame containing the processed GPX data.
+    """     
+
+    what_to_display = df["slopes"].values
 
     # Sort what_to_display to avoid threshold sorting issues
     sorted_values = sorted(what_to_display)
@@ -158,10 +181,7 @@ def show_map(df, what_to_display_):
         vmin=min(sorted_values), 
         vmax=max(sorted_values)
     )
-    # Create a colormap (green = easy, red = hard)
-    
-    #colormap = cm.LinearColormap(["green", "yellow", "red"], vmin=min(what_to_display), vmax=max(what_to_display))
-
+ 
     # Create folium map centered at the start
     start_location = [df.iloc[0]["latitude"], df.iloc[0]["longitude"]]
     m = folium.Map(location=start_location, zoom_start=14, tiles="OpenStreetMap")
@@ -179,7 +199,6 @@ def show_map(df, what_to_display_):
     folium.Marker(route[0], popup="Start", icon=folium.Icon(color="green")).add_to(m)
     folium.Marker(route[-1], popup="End", icon=folium.Icon(color="red")).add_to(m)
     
- 
     # Add markers for each kilometer
     for i in range(1, int(df["distance_cumm"].max() // 1000) + 1):
         km_marker = df[df["distance_cumm"] >= i * 1000].iloc[0]
@@ -194,14 +213,19 @@ def show_map(df, what_to_display_):
     m.add_child(colormap)
 
     # call to render Folium map in Streamlit
-    st_data = st_folium(m)
+    st_folium(m,  use_container_width=True)
    
 
-def show_plots(df,wdw=10):
-    df["gradient_sma"] = df["gradient"].rolling(window=wdw).mean()
-    df["elevation_sma"] = df["elevation"].rolling(window=wdw).mean() 
+def show_plots(df,wdw):
+    """
+    Creates and displays various plots for the given DataFrame.
+
+    Args:
+        df (pd.DataFrame): DataFrame containing the processed GPX data.
+        wdw (int): Window size for smoothing (for the plot titles).
+    """   
     # Create scatter plots
-    fig4 = px.line(df, x="distance_cumm", y="elevation_sma", title=f"Distance vs Elevation (sma{wdw})")
+    fig4 = px.line(df, x="distance_cumm", y="elevation_sma", title=f"Distance vs Elevation (sma{wdw})", labels={"distance_cumm": "Distance (m)", "elevation_sma": "Elevation (m)", "gradient": "Gradient (%)"}, hover_data={"distance_cumm": True, "elevation_sma": True, "gradient": True})
     
     fig5 = px.line(df, x="distance_cumm", y="gradient", title=f"Distance vs Gradient (sma{wdw})")
    
@@ -218,14 +242,12 @@ def show_plots(df,wdw=10):
               labels={"value": "Distance", "variable": "Type"}, 
               title="Time vs Cumulative Distance and Cumulative Difficulty-Based Distance")
     
-    df["distance_sma"]= df["distance_m"].rolling(window=wdw).mean()
-    df["difficulty_based_distance_sma"]= df["difficulty_based_distance"].rolling(window=wdw).mean()
-    
-    fig8 = px.line(df, x="delta_time_cumm", y=["distance_sma", "difficulty_based_distance_sma"], 
+    df_=df.iloc[1:-1]
+    fig8 = px.line(df_, x="delta_time_cumm", y=["distance_sma", "difficulty_based_distance_sma"], 
               labels={"value": "Distance", "variable": "Type"}, 
               title=f"Time vs  Distance(sma{wdw}) and  Difficulty-Based Distance (sma{wdw})")
 
-    fig9 = px.line(df, x="distance_cumm", y=["distance_sma", "difficulty_based_distance_sma"], 
+    fig9 = px.line(df_, x="distance_cumm", y=["distance_sma", "difficulty_based_distance_sma"], 
               labels={"value": "Distance", "variable": "Type"}, 
               title=f"Distance vs  Distance (sma{wdw}) and  Difficulty-Based Distance(sma{wdw})")
 
@@ -238,65 +260,34 @@ def show_plots(df,wdw=10):
     st.plotly_chart(fig7)
     st.plotly_chart(fig8)
     st.plotly_chart(fig9)
-    #st.info (f"Sum of difficulaty : {df['difficulty'].sum()}")
-    st.info (f"Sum of gradient : {df['gradient'].sum()}")
-    percentage_gradient_positive = (df['gradient'] > 0).mean() * 100
-    percentage_gradient_negative = (df['gradient'] < 0).mean() * 100
 
-    st.info (f"Percentage of positive gradient : {round(percentage_gradient_positive,2)} %\nPercentage of negative gradient : {round(percentage_gradient_negative,2)} % ")
-  
+def show_stats(df):
+    """
+    Calculates and displays various stats for the given DataFrame.
+
+    Args:
+        df (pd.DataFrame): DataFrame containing the processed GPX data.
+    """ 
     # Compute total values
     total_distance = df["distance_m"].sum() / 1000  # Convert to km
+    total_distance_m = df["distance_m"].sum() 
     total_elevation_gain = df["elevation_gain"].sum()
+    total_elevation_loss = df["elevation_loss"].sum()
     
-    # Compute average gradient
-    average_gradient = (total_elevation_gain / (total_distance * 1000)) * 100
+    total_distance_with_elevation_gain = df[df["elevation_gain"] != 0]["distance_m"].sum()
+    total_distance_with_elevation_loss = df[df["elevation_loss"] != 0]["distance_m"].sum()
+    total_distance_with_even_elevation = df[df["elevation_change_m"] == 0]["distance_m"].sum()
 
-    # Compute difficulty score (higher = harder)
-    difficulty_score = (total_elevation_gain / total_distance) + average_gradient
+    st.info(f"Distance gain : {total_distance_with_elevation_gain:.1f} m ({total_distance_with_elevation_gain/total_distance_m*100:.1f} %) | Even track : {total_distance_with_even_elevation:.1f} m  ({total_distance_with_even_elevation/total_distance_m*100:.1f} %)|  Distance loss : {total_distance_with_elevation_loss:.1f} m ({total_distance_with_elevation_loss/total_distance_m*100:.1f} %) ")
+    st.info(f"Total Elevation Gain: {total_elevation_gain:.1f} m  (average gradient: {total_elevation_gain/total_distance_with_elevation_gain*100:.1f} %) | Total Elevation Loss: {total_elevation_loss:.1f} m  (average gradient: {total_elevation_loss/total_distance_with_elevation_loss*100:.1f} %)")
+    st.info(f"Total Distance: {total_distance:.2f} km | Difficulty based distance {round(df['difficulty_based_distance_cumm'].iloc[-1]/1000,2)} km")
 
-    # st.info(f"Total Elevation Gain: {total_elevation_gain:.0f} m")
-    
-    # st.info(f"Average Gradient: {average_gradient:.1f} %")
-    
-    # Print results
-    st.info(f"Total Distance: {total_distance:.2f} km")
-    # st.info(f"Trail Difficulty Score: {difficulty_score:.1f}")
-    st.info(f"Difficulty based distance {round(df['difficulty_based_distance_cumm'].iloc[-1]/1000,2)} km")
-def main():
-    st.title("GPX Analyzer")
-    st.write("This script analyzes the data from a GPX file to provide insights on the route's difficulty, elevation gain, and more.")
-    # Load GPX file
-    gpx = get_gpx()
-    st.write("GPX geladen")
-    df= gpx_to_df(gpx)
-    cola,colb,colc=st.columns(3)
-    with cola:
-        wdw =st.number_input("Window size for moving average",min_value=1,max_value=100,value=1, help="The higher the number, the smoother the plot")
-    with colb:
-        if len(df) < 10000:
-            filter_factor = 1
-        else: 
-            filter_factor = st.number_input("Filter factor",min_value=1,max_value=10000,value = len(df) // 1000 , help="The higher the number, the more points will be filtered out. Default value keeps 1000 points") 
 
-    with colc:
-        reversed = st.checkbox("Reverse the route")
-    
-    
-    st.write(f"GPX omgezet. Lengte df {len(df)}")
-    # df = df.iloc[1::filter_factor]
-    df = pd.concat([df.iloc[[0]], df.iloc[1::filter_factor], df.iloc[[-1]]]).drop_duplicates()
-    st.write(f"DF gefiltered. Resultaat {len(df)} rijen")
-    if not reversed:
-        df = process_df(df)
-        show_map(df, "slopes")
-        show_plots(df,wdw)
-    else:
-        df_reversed = df.iloc[::-1].reset_index(drop=True)
-    
-        df_reversed = process_df(df_reversed)       
-        show_map(df_reversed, "slopes")
-        show_plots(df_reversed,wdw)
+def show_info(df):
+    """
+    Displays info how the effeort mutiplier is calculated.
+    """ 
+
     st.info("""
     Effort Multiplier Calculation:
     Gradient - Elevation change / Distance * 100
@@ -315,6 +306,10 @@ def main():
     # 12 beach hike https://www.strava.com/activities/13887499750
     # 55 km kpg https://www.strava.com/activities/12642202735
 def get_gpx():
+    """
+    Loads a GPX file from the user's input.
+    """
+
     sample_data = False # st.checkbox("Use sample data")
     if sample_data:
         #gpx_file_path = r"C:\Users\rcxsm\Downloads\RK_gpx _2025-03-13_1317.gpx"
@@ -327,15 +322,54 @@ def get_gpx():
     else:
         uploaded_file = st.file_uploader("Choose a file")
         if uploaded_file is not None:
+            try:
                 gpx = gpxpy.parse(uploaded_file)
+                if not gpx.tracks:
+                    st.error("The uploaded GPX file doesn't contain any tracks. Please upload a valid GPX file.")
+                    st.stop()
+            except Exception as e:
+                st.error(f"Error loading / parsing the GPX file: {str(e)}")
+                st.stop()
         else:
             st.warning("You need to upload a gpx file. Files are not stored anywhere after the processing of this script")
             st.stop()
     return gpx
 
+def main():
+    st.title("GPX Analyzer")
+    st.write("This script analyzes the data from a GPX file to provide insights on the route's difficulty, elevation gain, and more.")
+
+    gpx = get_gpx()
+    df= gpx_to_df(gpx)
+    if df.empty:
+        st.error("Could not extract data from the GPX file. Please ensure it contains valid track data.")
+        st.stop()
+    cola,colb,colc=st.columns(3)
+    with cola:
+        wdw =st.number_input("Window size for moving average",min_value=1,max_value=100,value=1, help="The higher the number, the smoother the plot")
+    with colb:
+        if len(df) < 10000:
+            default_filter_factor = 1
+        else:
+            default_filter_factor = len(df) // 1000
+        filter_factor = st.number_input("Filter factor",min_value=1,max_value=10000,value = default_filter_factor , help="The higher the number, the more points will be filtered out. Default value keeps 1000 points") 
+    with colc:
+        reversed = st.checkbox("Reverse the route")
+    
+    st.write(f"GPX converted. {len(df)} waypoints")
+    # df = df.iloc[1::filter_factor]
+    if filter_factor > 1:
+        df = pd.concat([df.iloc[[0]], df.iloc[1::filter_factor], df.iloc[[-1]]]).drop_duplicates()
+    st.write(f"Data filtered. Result {len(df)} waypoints")
+
+    if reversed:
+        df = df.iloc[::-1].reset_index(drop=True)
+    df = process_df(df,wdw)
+    show_map(df)
+    show_plots(df,wdw)
+    show_stats(df)
+    show_info(df)
 
     
 if __name__ == "__main__":
-    
-    #19959.6792674
     main()  
