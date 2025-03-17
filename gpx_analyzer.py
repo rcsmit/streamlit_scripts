@@ -209,7 +209,7 @@ def show_map(df):
             
         ).add_to(m)
     # Add colormap legend
-    colormap.caption = "Route Difficulty (Slope)"
+    colormap.caption = "Route gradient (%)"
     m.add_child(colormap)
 
     # call to render Folium map in Streamlit
