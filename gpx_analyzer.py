@@ -215,7 +215,6 @@ def show_map(df):
     # call to render Folium map in Streamlit
     st_folium(m,  use_container_width=True)
    
-
 def show_plots(df,wdw):
     """
     Creates and displays various plots for the given DataFrame.
