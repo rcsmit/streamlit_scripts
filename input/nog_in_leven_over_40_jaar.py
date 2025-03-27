@@ -90,5 +90,6 @@ def main():
     st.info("Bevolking 2024: CBS")
     st.info("Overlevingstabel: https://www.actuarieelgenootschap.nl/kennisbank/prognosetafel-ag2024-2")
 
+
 if __name__ == "__main__":
     main()
