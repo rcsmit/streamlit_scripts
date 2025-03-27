@@ -1,6 +1,6 @@
 import pandas as pd
 import streamlit as st
-import plotly.graph_objects as go
+import plotly.express as px
 
 def main():
      # Load the population data
@@ -69,7 +69,6 @@ def main():
     st.write(f"Total population in 2066 who were alive in 2024: {total_population_2066:.0f}")
     st.write(f"Percentage of the 2024 population still alive in 2066: {percentage_alive_2066:.2f}%")
 
-    import plotly.express as px
 
     # Combine male and female data for plotting
     surviving_population = pd.concat([surviving_population_male, surviving_population_female])
