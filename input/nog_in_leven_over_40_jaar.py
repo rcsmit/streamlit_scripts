@@ -3,11 +3,14 @@ import streamlit as st
 import plotly.graph_objects as go
 
 # Load the population data
-population_data = pd.read_csv(r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\bevolking_leeftijd_NL.csv", sep=';')
+
+"https://raw.githubusercontent.com/rcsmit/streamlit_scripts/input/chiang-mai-air-quality.csv" 
+    
+population_data = pd.read_csv("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/input/bevolking_leeftijd_NL.csv", sep=';')
 
 # Load the mortality tables
-mortality_female = pd.read_csv(r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\AG2024DefinitiefGevalideerd_female.csv")
-mortality_male = pd.read_csv(r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\AG2024DefinitiefGevalideerd_male.csv")
+mortality_female = pd.read_csv("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/input/AG2024DefinitiefGevalideerd_female.csv")
+mortality_male = pd.read_csv("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/input/AG2024DefinitiefGevalideerd_male.csv")
 
 # Filter population data for the year 2024
 population_2024 = population_data[population_data['jaar'] == 2024]
