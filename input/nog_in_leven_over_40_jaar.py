@@ -87,6 +87,7 @@ def main():
     # Show the plot
     st.plotly_chart(fig)
 
+    st.info("BRONNEN:")
     st.info("Bevolking 2024: CBS")
     st.info("Overlevingstabel: https://www.actuarieelgenootschap.nl/kennisbank/prognosetafel-ag2024-2")
 

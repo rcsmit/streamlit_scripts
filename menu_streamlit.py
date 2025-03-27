@@ -82,8 +82,7 @@ def main():
                 ["[53] GPX analyzer ","gpx_analyzer"],
                 ["[54] Nog in leven over 40 jaar ","nog_in_leven_over_40_jaar"],
                 ]
-    
-    
+ 
     # for file in arr:
     #     if file[-2:] =="py" and ( file != "welcome.py" and file !="menu_streamlit.py"):
     #         menutext = f"{counter}. {file}"
