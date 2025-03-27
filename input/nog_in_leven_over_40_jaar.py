@@ -85,3 +85,6 @@ fig = px.line(
 
 # Show the plot
 st.plotly_chart(fig)
+
+st.info("Bevolking 2024: CBS")
+st.info("Overlevingstabel: https://www.actuarieelgenootschap.nl/kennisbank/prognosetafel-ag2024-2")
