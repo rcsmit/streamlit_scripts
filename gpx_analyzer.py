@@ -7,6 +7,11 @@ from geopy import distance
 from geopy.distance import geodesic
 import streamlit as st
 import branca.colormap as cm
+from scipy.interpolate import interp1d
+import requests
+import pandas as pd
+import time  # To avoid hitting rate limits
+
 
 from streamlit_folium import st_folium
 try:
@@ -42,40 +47,67 @@ def gpx_to_df(gpx):
     
     return df
 
+def effort_based_distance_calculator (gradient):
+   
 
-def effort_based_distance_calculator(gradient):
     """
-    Calculates the effort-based distance multiplier using Naismith's Rule, including both uphill and downhill adjustments.
+    Calculate the effort based on gradient using interpolation of the fitted points.
+    Using graph from https://medium.com/strava-engineering/an-improved-gap-model-8b07ae8886c3
+    Points fitted with https://www.graphreader.com/
 
-    Parameters:
-        gradient (float): The gradient percentage (elevation change / distance * 100).
+    Args:
+        gradient (float): The gradient in percent.
 
     Returns:
-        float: Effort multiplier based on gradient.
+        float: The interpolated effort based on the fitted points.
     """
-    if gradient > 0:  # Uphill
-        if gradient < 5:
-            effort_multiplier = 1.10  # +10% effort for slight incline
-        elif gradient < 12:
-            effort_multiplier = 1.20  # +20% effort for moderate incline
-        elif gradient < 20:
-            effort_multiplier = 1.40  # +40% effort for steep incline
-        else:
-            effort_multiplier = 2.00  # Very steep uphill, doubling effort
-    elif gradient < 0:  # Downhill
-        abs_gradient = abs(gradient)
+    fitted_points = [
+        (-32, 1.6), (-31, 1.545), (-30, 1.49), (-29, 1.435), (-28, 1.38), (-27, 1.343), (-26, 1.307), (-25, 1.27),
+        (-24, 1.234), (-23, 1.196), (-22, 1.158), (-21, 1.12), (-20, 1.083), (-19, 1.047), (-18, 1.01), (-17, 0.979),
+        (-16, 0.954), (-15, 0.93), (-14, 0.912), (-13, 0.893), (-12, 0.88), (-11, 0.877), (-10, 0.873), (-9, 0.865),
+        (-8, 0.874), (-7, 0.882), (-6, 0.889), (-5, 0.902), (-4, 0.923), (-3, 0.937), (-2, 0.955), (-1, 0.98),
+        (0, 0.996), (1, 1.012), (2, 1.053), (3, 1.096), (4, 1.14), (5, 1.18), (6, 1.216), (7, 1.281), (8, 1.338),
+        (9, 1.407), (10, 1.484), (11, 1.551), (12, 1.617), (13, 1.693), (14, 1.771), (15, 1.855), (16, 1.946),
+        (17, 2.037), (18, 2.124), (19, 2.21), (20, 2.297), (21, 2.376), (22, 2.455), (23, 2.535), (24, 2.615),
+        (25, 2.712), (26, 2.81), (27, 2.908), (28, 3), (29, 3.085), (30, 3.17), (31, 3.254), (32, 3.339),
+        (33, 3.404), (34, 3.469)
+    ]
 
+    gradients, efforts = zip(*fitted_points)
+    interpolation_function = interp1d(gradients, efforts, kind='linear', fill_value='extrapolate')
+    return interpolation_function(gradient)
 
-        if abs_gradient < 10:  # Moderate downhill (easier)
-            effort_multiplier = 1 - 0.5 * (abs_gradient/100)
-        else:  # Steep downhill (harder)
-            effort_multiplier= 1 + 0.2 * (abs_gradient/100)
+def get_elevation_batch(coords):
+    """Get elevation for multiple latitude/longitude pairs."""
+    google=False
+    if google:
+        API_KEY = "SECRET" 
+        
+        for lat, lon in coords:
+            url = f"https://maps.googleapis.com/maps/api/elevation/json?locations={lat}%2C-{lon}&key={API_KEY}"
+        
+        response = requests.get(url)
+        
     else:
-        effort_multiplier = 1.00  # Flat terrain
+        #url = "https://api.open-elevation.com/api/v1/lookup" #ssl rerror
+        #surl="https://api.opentopodata.org/v1/aster30m"
+        url ="https://api.opentopodata.org/v1/mapzen"
+        locations = "|".join([f"{lat},{lon}" for lat, lon in coords])
+        params = {"locations": locations}
+        try:
+            response = requests.get(url, params=params)
+        except Exception as e:
+            st.info(f"Error {e}")
+            st.stop()
 
-    return effort_multiplier
+    if response.status_code == 200:
+        
+        return [result["elevation"] for result in response.json()["results"]]
+    else:
+        return [None] * len(coords)  # Handle errors gracefully
 
-def process_df(df,wdw):
+#@st.cache_data()
+def process_df(df,wdw_input, wdw_output, lookup_elevations):
     """
     Processes a DataFrame to compute distances, slopes, gradients, and effort-based distances using Naismith's Rule.
 
@@ -85,7 +117,32 @@ def process_df(df,wdw):
     Returns:
         pd.DataFrame: DataFrame with additional computed columns.
     """
+   
     
+    if lookup_elevations:
+        df['elevation_original'] = df['elevation']
+        
+        # Define batch size (adjust based on API limits)
+        batch_size = 50  
+        elevations = []
+
+        # Process DataFrame in batches
+        for i in range(0, len(df), batch_size):
+            batch = df.iloc[i:i + batch_size]
+            coords = list(zip(batch['latitude'], batch['longitude']))
+            elevations.extend(get_elevation_batch(coords))
+            print (f"{i} / {len(df)}")
+            time.sleep(1)  # Pause to prevent hitting rate limits
+
+        # Add elevation data to DataFrame
+        
+        df['elevation'] = elevations
+
+    else:
+        df['elevation_original'] = 0.0
+
+    
+
     distances = [0]
     elevation_changes = [0]
     slopes = [0]
@@ -109,17 +166,17 @@ def process_df(df,wdw):
         elevation_loss = max(-elevation_diff, 0)
         elevation_losses.append(elevation_loss)
         slope = elevation_diff / distance_ if distance_ > 0 else 0
-        if slope >.50:
-            slope = .50
-        if slope < -.50:
-            slope = -.50
+        if slope >.34:
+            slope = .34
+        if slope < -.34:
+            slope = -.34
         slopes.append(slope)
 
         gradient = (elevation_diff / distance_) * 100 if distance_ > 0 else 0
-        if gradient >50:
-            gradient = 50
-        if gradient < -50:
-            gradient = -50
+        if gradient >34:
+            gradient = 34
+        if gradient < -34:
+            gradient = -34
         difficulty_based_distance_multiplier = effort_based_distance_calculator(gradient)
         difficulty_based_distance = difficulty_based_distance_multiplier * distance_
         difficulty = 0 if gradient <= 0 else abs(gradient) * distance_
@@ -130,8 +187,12 @@ def process_df(df,wdw):
 
     df["distance_"] = distances
     df["elevation_change_m"] = elevation_changes
+    
+    df["elevation_change_m"] = df["elevation_change_m"].rolling(window=wdw_input).mean()
+    df["distance_"] = df["distance_"].rolling(window=wdw_input).mean()
+    
     df["distance_m"] = np.sqrt(df["distance_"]**2 + df["elevation_change_m"]**2)
-
+    
     df["slopes"] = slopes
     df["gradient"] = df["slopes"] *100
     df["elevation_gain"] = elevation_gains
@@ -154,10 +215,10 @@ def process_df(df,wdw):
 
     # Convert cumulative delta_time to time object
     #df["delta_time_cumm"] = df["delta_time_cumm"].apply(lambda x: (pd.Timestamp(0) + x).time())
-    df["gradient_sma"] = df["gradient"].rolling(window=wdw).mean()
-    df["elevation_sma"] = df["elevation"].rolling(window=wdw).mean() 
-    df["distance_sma"]= df["distance_m"].rolling(window=wdw).mean()
-    df["difficulty_based_distance_sma"]= df["difficulty_based_distance"].rolling(window=wdw).mean()
+    df["gradient_sma"] = df["gradient"].rolling(window=wdw_output).mean()
+    df["elevation_sma"] = df["elevation"].rolling(window=wdw_output).mean() 
+    df["distance_sma"]= df["distance_m"].rolling(window=wdw_output).mean()
+    df["difficulty_based_distance_sma"]= df["difficulty_based_distance"].rolling(window=wdw_output).mean()
  
     
     return df
@@ -224,7 +285,12 @@ def show_plots(df,wdw):
         wdw (int): Window size for smoothing (for the plot titles).
     """   
     # Create scatter plots
-    fig4 = px.line(df, x="distance_cumm", y="elevation_sma", title=f"Distance vs Elevation (sma{wdw})", labels={"distance_cumm": "Distance (m)", "elevation_sma": "Elevation (m)", "gradient": "Gradient (%)"}, hover_data={"distance_cumm": True, "elevation_sma": True, "gradient": True})
+    
+   
+    fig4 = px.line(df, x="distance_cumm", y=["elevation_sma","elevation_original"], title=f"Distance vs Elevation (sma{wdw})", 
+                    labels={"distance_cumm": "Distance (m)", "elevation_sma": "Elevation (m)", "gradient": "Gradient (%)"}, 
+                    #hover_data={"distance_cumm": True, "elevation_sma": True,"elevation_api": True, "gradient": True}
+                    )
     
     fig5 = px.line(df, x="distance_cumm", y="gradient", title=f"Distance vs Gradient (sma{wdw})")
    
@@ -253,6 +319,7 @@ def show_plots(df,wdw):
     col4,col5=st.columns(2)
     with col4:
         st.plotly_chart(fig4)
+        
     with col5:
         st.plotly_chart(fig5)
    
@@ -343,9 +410,10 @@ def main():
     if df.empty:
         st.error("Could not extract data from the GPX file. Please ensure it contains valid track data.")
         st.stop()
-    cola,colb,colc=st.columns(3)
+    cola,colb,colc,cold=st.columns(4)
     with cola:
-        wdw =st.number_input("Window size for moving average",min_value=1,max_value=100,value=1, help="The higher the number, the smoother the plot")
+        reversed = st.checkbox("Reverse the route")
+        lookup_elevations = st.checkbox("Lookup elevations (may be slow for large files)")
     with colb:
         if len(df) < 10000:
             default_filter_factor = 1
@@ -353,7 +421,25 @@ def main():
             default_filter_factor = len(df) // 1000
         filter_factor = st.number_input("Filter factor",min_value=1,max_value=10000,value = default_filter_factor , help="The higher the number, the more points will be filtered out. Default value keeps 1000 points") 
     with colc:
-        reversed = st.checkbox("Reverse the route")
+        if filter_factor>1:
+            wdw_input_default = 9
+        else:
+            wdw_input_default = 1
+        if filter_factor >1:
+            label_wdw_input ="Window size for moving average of the distance and elevation (before filtering)"
+        else:
+            label_wdw_input ="Window size for moving average of the distance and elevation"
+            
+        wdw_input =st.number_input(label_wdw_input,min_value=1,max_value=100,value=wdw_input_default, help="The higher the number, the smoother the data")
+        
+    with cold:
+        if wdw_input ==1:
+            wdw_output_default =9
+        else:
+            wdw_output_default =1
+        wdw_output =st.number_input("Window size for moving average",min_value=1,max_value=100,value=wdw_output_default, help="The higher the number, the smoother the plot")
+        
+    
     
     st.write(f"GPX converted. {len(df)} waypoints")
     # df = df.iloc[1::filter_factor]
@@ -363,9 +449,9 @@ def main():
 
     if reversed:
         df = df.iloc[::-1].reset_index(drop=True)
-    df = process_df(df,wdw)
+    df = process_df(df,wdw_input,wdw_output, lookup_elevations)
     show_map(df)
-    show_plots(df,wdw)
+    show_plots(df,wdw_output)
     show_stats(df)
     show_info(df)
 
