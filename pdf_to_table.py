@@ -66,8 +66,8 @@ def read_directly_from_pdf():
         all_text +="\n"+text
         # test purposes
             
-        if i>2:
-            break
+        # if i>2:
+        #     break
     # Split text into rows and columns using '#' as a separator
     placeholder.empty()
     rows = [line.split('#') for line in all_text.splitlines()]
@@ -114,7 +114,8 @@ def main():
     st.info("Read PDF files from Dutch governement")
     st.write("This script reads a PDF file and extracts the text from it. It then processes the text to create a DataFrame.")
     st.write("The DataFrame is then saved as a CSV and an Excel file, which can be downloaded.")
-    st.write("It is specifically written for a type of document")
+    st.write("It is specifically written for a type of document (Documentoverzicht inzake WOO verzoeken Covid)")
+    st.write("Contact me for tailor made solutions (@rcsmit on all social media)")
     read_directly_from_pdf()
 
 if __name__ == "__main__":
