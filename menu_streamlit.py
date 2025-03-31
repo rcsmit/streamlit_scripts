@@ -81,6 +81,7 @@ def main():
                 ["[52] Vix Bot ","vix_bot"],
                 ["[53] GPX analyzer ","gpx_analyzer"],
                 ["[54] Nog in leven over 40 jaar ","nog_in_leven_over_40_jaar"],
+                ["[55] WOO PDF to table ","pdf_to_table"],
                 ]
  
     # for file in arr:
