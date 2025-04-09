@@ -3,6 +3,10 @@ import streamlit as st
 
 # Replace 'yourfile.json' with the actual file name
 def main():
+    st.title("Read conversations.json")
+    st.markdown("This script reads the conversations.json file from ChatGPT and displays the content in a user-friendly format.")   
+    
+    expanders = st.checkbox("Use expanders")
     pdf_path = st.file_uploader("Choose a file")
     if pdf_path is not None:
         try:
@@ -15,7 +19,7 @@ def main():
     else:
         st.warning("You need to upload a json file. Files are not stored anywhere after the processing of this script")
         st.stop()
-    expanders = st.checkbox("Use expanders")
+    
     if expanders:
         show_json_expanders(data)
     else:
@@ -60,6 +64,6 @@ def show_json_text(data):
             # st.write each content part
             for part in content:
                 st.write(f"{part}")
-                
+
 if __name__ == "__main__":
     main()   
