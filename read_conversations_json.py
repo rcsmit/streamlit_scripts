@@ -163,8 +163,6 @@ def download_text(data, page_number, total_pages):
             for part in content:
                 if isinstance(part, str):
                     if part and part[0] != "{":
-                 
-                     
                         if role == 'user':
                             complete_text += "---------------------\n"
                             complete_text += f"| {part}\n"
