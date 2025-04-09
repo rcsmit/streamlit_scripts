@@ -109,7 +109,7 @@ def download_text(data, page_number, total_pages):
     the formatted text in the Streamlit app.
 
     show_body and show_part are integrated in this function
-    
+
     Args:
         data (list): A list of conversation entries, where each entry is a dictionary containing:
                      - 'title': The title of the conversation.
@@ -162,15 +162,13 @@ def download_text(data, page_number, total_pages):
                         elif role == 'assistant':
                             complete_text += f"{part}\n"
         
-                        else:
-                            
+                        else:                      
                             complete_text += f"{part}\n"
         complete_text += "\n===================================\n\n"
     filename = f"output_page_{page_number}_of_{total_pages}.txt"    
     st.download_button("Download txt", data=complete_text, file_name=filename, mime="text/plain")
     st.code(complete_text, language='text')
 
-        
 def show_json_text_inline(data):
     """
     Displays the content of a ChatGPT `conversations.json` file in an inline format.
@@ -216,6 +214,8 @@ def show_json_text_inline(data):
 def main():
     """
     Main function to process and display the contents of a ChatGPT `conversations.json` file.
+
+    chat.html in the zip-file does the same thing :)
 
     Features:
     - Allows the user to upload a `conversations.json` file.
