@@ -77,6 +77,7 @@ def main():
         st.stop()
     col1,col2,col3=st.columns([1,1,2])
 
+
     with col1:
         reversed = st.checkbox("Oldest to Newest", True)
     with col2:
