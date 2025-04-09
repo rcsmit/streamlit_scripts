@@ -148,11 +148,23 @@ def download_text(data, page_number, total_pages):
                 continue
             content = message.get('content', {}).get('parts', [])
             role = message.get('author',{}).get('role',{})
-            
+            filenames = message.get('metadata', {}).get('attachments', [])
+            # filenames2=message.get('part',{}).get('asset',{})
+
+
+
+            # print (filenames2)
+            # print("x")
+            for f in filenames:
+                
+                filename = f.get('name', '')
+                complete_text += f"Uploaded file: {filename}\n"
+           
             for part in content:
                 if isinstance(part, str):
                     if part and part[0] != "{":
-                        # st.write(f"{part}")
+                 
+                     
                         if role == 'user':
                             complete_text += "---------------------\n"
                             complete_text += f"| {part}\n"
