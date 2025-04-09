@@ -1,11 +1,17 @@
 import json
 import streamlit as st
 
-def show_part(part):
+def show_part(part, role):
     if isinstance(part, str):
         # st.write(f"{part}")
         if part and part[0] != "{":
-            st.write(f"{part}")
+            # st.write(f"{part}")
+            if role == 'user':
+                st.info(part)
+            elif role == 'assistant':
+                st.write(part)
+            else:
+                st.code(part)
     else:
         pass
         # st.write("Non-string content detected:")
@@ -20,17 +26,20 @@ def show_json_expanders(data):
         title = entry.get('title')
     
         with st.expander(f"Title: {title}", expanded=False):
-                
+              
             mapping = entry.get('mapping', {})
-            for key, message_info in mapping.items():
-                message = message_info.get('message', {})
-                if not message:
-                    continue
-                content = message.get('content', {}).get('parts', [])
+            show_body(mapping)
+            
+            # for key, message_info in mapping.items():
+            #     message = message_info.get('message', {})
+            #     role = message.get('role', 'user')
+            #     if not message:
+            #         continue
+            #     content = message.get('content', {}).get('parts', [])
 
-                # st.write each content part
-                for part in content:
-                    show_part(part)
+            #     # st.write each content part
+            #     for part in content:
+            #         show_part(part, role)
 
     
 def show_json_text(data):
@@ -40,12 +49,18 @@ def show_json_text(data):
         title = entry.get('title')
     
         st.subheader(f"Title: {title}")
-                
         mapping = entry.get('mapping', {})
+        show_body(mapping)
+            
+
+def show_body(mapping):        
+       
         for key, message_info in mapping.items():
             message = message_info.get('message', {})
+           
             if not message:
                 continue
+            role = message.get('author',{}).get('role',{})
             content = message.get('content', {}).get('parts', [])
 
             # st.write each content part
@@ -54,7 +69,7 @@ def show_json_text(data):
   
                 # Check if part is a string or a JSON-like object
             for part in content:
-                show_part(part)
+                show_part(part,role)
 
 
 # Replace 'yourfile.json' with the actual file name
