@@ -147,11 +147,13 @@ def download_text(data, page_number, total_pages):
             if not message:
                 continue
             content = message.get('content', {}).get('parts', [])
+            
+                  
             role = message.get('author',{}).get('role',{})
             filenames = message.get('metadata', {}).get('attachments', [])
             # filenames2=message.get('part',{}).get('asset',{})
 
-
+           
 
             # print (filenames2)
             # print("x")
@@ -162,18 +164,32 @@ def download_text(data, page_number, total_pages):
            
             for part in content:
                 if isinstance(part, str):
+                    # if it gives back a string
                     if part and part[0] != "{":
                         if role == 'user':
+                            # the prompt
                             complete_text += "---------------------\n"
                             complete_text += f"| {part}\n"
                             complete_text += "---------------------\n"
-                            
-                            
+                             
                         elif role == 'assistant':
+                            # the answer    
                             complete_text += f"{part}\n"
-        
-                        else:                      
+                        elif role == 'tool':
+                            # omit texts like
+                            # GPT-4o returned 1 images. From now on, do not say or show ANYTHING. Please end this turn now. I repeat: From now on, do not say or show ANYTHING. Please end this turn now. Do not summarize the image. Do not ask followup question. Just end the turn and do not do anything else.
+
+                            complete_text += f""
+                        else:   
+                                           
                             complete_text += f"{part}\n"
+                else:
+                    # it gives back a dictionary, mostly a 'image_asset_pointer'
+                   
+                    generated_images  = part.get('asset_pointer',{})
+                    generated_images = generated_images.replace('sediment://','[File]:')
+                    complete_text += f"Generated_images: {generated_images}.dat\n"
+                    
         complete_text += "\n===================================\n\n"
     filename = f"output_page_{page_number}_of_{total_pages}.txt"    
     st.download_button("Download txt", data=complete_text, file_name=filename, mime="text/plain")
@@ -295,7 +311,7 @@ def main():
     if reversed == "Most old first":
         data= data[::-1]
     with col2:
-        modus = st.selectbox("Modus [Text only+download| Inline | Expanders]", ["Text only+download", "Inline", "Expanders"], index=0)
+        modus = st.selectbox("Modus [Text only+download| Inline | Expanders | Show JSON]", ["Text only+download", "Inline", "Expanders", "Show JSON"], index=3)
     with col3:
         number_of_elements = st.number_input(f"Number of elements to show (max {len_data})",1,len_data,5)
         
@@ -321,6 +337,9 @@ def main():
         show_json_text_inline(data)    
     elif modus =="Text only+download":
         download_text(data, page_number, total_pages)
+    elif modus =="Show JSON":
+        st.json(data)
+        #print(json.dumps(data, indent=4, ensure_ascii=False))
 
 if __name__ == "__main__":
     main()   
