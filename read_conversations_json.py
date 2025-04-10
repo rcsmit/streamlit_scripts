@@ -2,7 +2,7 @@ import json
 import streamlit as st
 
 
-def show_body(mapping):      
+def show_body(mapping):
     """
     Processes and displays the content of a mapping object from the ChatGPT `conversations.json` file.
 
@@ -20,17 +20,16 @@ def show_body(mapping):
     - Passes each part of the message content to the `show_part` function for further processing and display.
     """
     for key, message_info in mapping.items():
-        message = message_info.get('message', {})
-        
+        message = message_info.get("message", {})
+
         if not message:
             continue
-        role = message.get('author',{}).get('role',{})
-        content = message.get('content', {}).get('parts', [])
+        role = message.get("author", {}).get("role", {})
+        content = message.get("content", {}).get("parts", [])
 
-        
         # Check if part is a string or a JSON-like object
         for part in content:
-            show_part(part,role)
+            show_part(part, role)
 
 
 def show_part(part, role):
@@ -58,21 +57,31 @@ def show_part(part, role):
         role = "assistant"
         show_part(part, role)
     """
+    
     if isinstance(part, str):
         # st.write(f"{part}")
         if part and part[0] != "{":
             # st.write(f"{part}")
-            if role == 'user':
-                st.info(part)
-            elif role == 'assistant':
+            if role == "user":
+                st.info(f"{part}")
+            elif role == "assistant":
                 st.write(part)
+            elif role == "tool":
+                # omit texts like
+                # GPT-4o returned 1 images. From now on, do not say or show
+                # st.warning(part)
+                # and other thinking steps
+                pass
             else:
                 st.code(part)
     else:
-        pass
         # st.write("Non-string content detected:")
         # st.json(part)  # Display the JSON-like object in a readable format
-
+        # it gives back a dictionary, mostly a 'image_asset_pointer'
+        generated_images = part.get("asset_pointer", {})
+        for r in ["file-service://","sediment://"]:
+            generated_images = generated_images.replace(r, "[File] : ")
+        st.success(f"Generated_images: {generated_images}.dat\n")
 
 
 def show_json_expanders(data):
@@ -92,20 +101,21 @@ def show_json_expanders(data):
     - Extracts the 'mapping' field from each entry and processes it using the `show_body` function.
     """
     # Process each entry
-    for i,entry in enumerate(data):
-        title = entry.get('title')
-    
+    for i, entry in enumerate(data):
+        title = entry.get("title")
+
         with st.expander(f"Title: {title}", expanded=False):
-              
-            mapping = entry.get('mapping', {})
+
+            mapping = entry.get("mapping", {})
             show_body(mapping)
-            
+
+
 def download_text(data, page_number, total_pages):
     """
     Generates and allows downloading of conversation data as a plain text file.
 
-    This function processes the provided conversation data, formats it into a plain text structure, 
-    and provides a download button for the user to save the content as a `.txt` file. It also displays 
+    This function processes the provided conversation data, formats it into a plain text structure,
+    and provides a download button for the user to save the content as a `.txt` file. It also displays
     the formatted text in the Streamlit app.
 
     show_body and show_part are integrated in this function
@@ -128,72 +138,72 @@ def download_text(data, page_number, total_pages):
     - Provides a download button for the user to save the formatted text as a `.txt` file.
     - Displays the formatted text in the Streamlit app for preview.
 
-
     Outputs:
     - Displays the formatted text in the Streamlit app.
     - Provides a download button for saving the text as a `.txt` file.
 
-    """  
+    """
     complete_text = ""
-    for i,entry in enumerate(data):
-        title = entry.get('title')
+    for i, entry in enumerate(data):
+        title = entry.get("title")
         complete_text += f"Title: {title}\n"
-        
-        mapping = entry.get('mapping', {})
-        
+
+        mapping = entry.get("mapping", {})
+
         for key, message_info in mapping.items():
-            
-            message = message_info.get('message', {})
+
+            message = message_info.get("message", {})
             if not message:
                 continue
-            content = message.get('content', {}).get('parts', [])
-            
-                  
-            role = message.get('author',{}).get('role',{})
-            filenames = message.get('metadata', {}).get('attachments', [])
-            # filenames2=message.get('part',{}).get('asset',{})
+            content = message.get("content", {}).get("parts", [])
+            role = message.get("author", {}).get("role", {})
+            filenames = message.get("metadata", {}).get("attachments", [])
 
-           
-
-            # print (filenames2)
-            # print("x")
             for f in filenames:
-                
-                filename = f.get('name', '')
+
+                filename = f.get("name", "")
                 complete_text += f"Uploaded file: {filename}\n"
-           
+
             for part in content:
                 if isinstance(part, str):
                     # if it gives back a string
                     if part and part[0] != "{":
-                        if role == 'user':
+                        if role == "user":
                             # the prompt
                             complete_text += "---------------------\n"
                             complete_text += f"| {part}\n"
                             complete_text += "---------------------\n"
-                             
-                        elif role == 'assistant':
-                            # the answer    
+                        elif role == "assistant":
+                            # the answer
                             complete_text += f"{part}\n"
-                        elif role == 'tool':
+                        elif role == "tool":
                             # omit texts like
-                            # GPT-4o returned 1 images. From now on, do not say or show ANYTHING. Please end this turn now. I repeat: From now on, do not say or show ANYTHING. Please end this turn now. Do not summarize the image. Do not ask followup question. Just end the turn and do not do anything else.
-
+                            #
+                            # GPT-4o returned 1 images. From now on, do not say or show
+                            # ANYTHING. Please end this turn now. I repeat: From now on,
+                            # do not say or show ANYTHING. Please end this turn now.
+                            # Do not summarize the image. Do not ask followup question.
+                            # Just end the turn and do not do anything else.
+                            #
+                            # and other thinking steps
                             complete_text += f""
-                        else:   
-                                           
+                        else:
                             complete_text += f"{part}\n"
                 else:
                     # it gives back a dictionary, mostly a 'image_asset_pointer'
-                   
-                    generated_images  = part.get('asset_pointer',{})
-                    generated_images = generated_images.replace('sediment://','[File]:')
+                    generated_images = part.get("asset_pointer", {})
+                    generated_images = generated_images.replace(
+                        "sediment://", "[File]:"
+                    )
                     complete_text += f"Generated_images: {generated_images}.dat\n"
-                    
+
         complete_text += "\n===================================\n\n"
-    filename = f"output_page_{page_number}_of_{total_pages}.txt"    
-    st.download_button("Download txt", data=complete_text, file_name=filename, mime="text/plain")
-    st.code(complete_text, language='text')
+    filename = f"output_page_{page_number}_of_{total_pages}.txt"
+    st.download_button(
+        "Download txt", data=complete_text, file_name=filename, mime="text/plain"
+    )
+    st.code(complete_text, language="text")
+
 
 def show_json_text_inline(data):
     """
@@ -216,27 +226,27 @@ def show_json_text_inline(data):
         - Extracts the message content and displays each part using the `show_part` function.
     """
     # Process each entry
-    for i,entry in enumerate(data):
-        title = entry.get('title')
+    for i, entry in enumerate(data):
+        title = entry.get("title")
         st.subheader(f"Title: {title}")
-        mapping = entry.get('mapping', {})
+        mapping = entry.get("mapping", {})
         show_body(mapping)
-            
+
         for key, message_info in mapping.items():
-            message = message_info.get('message', {})
-            
+            message = message_info.get("message", {})
+
             if not message:
                 continue
             else:
-                role = message.get('author',{}).get('role',{})
-                content = message.get('content', {}).get('parts', [])
+                role = message.get("author", {}).get("role", {})
+                content = message.get("content", {}).get("parts", [])
                 if not content:
                     continue
                 else:
                     for part in content:
-                        show_part(part,role)
+                        show_part(part, role)
 
-# Replace 'yourfile.json' with the actual file name
+
 def main():
     """
     Main function to process and display the contents of a ChatGPT `conversations.json` file.
@@ -284,37 +294,44 @@ def main():
     - Displays an error message if the JSON file cannot be loaded or parsed.
 
     """
-
     st.title("Read conversations.json")
-    st.markdown("This script reads the conversations.json file from ChatGPT and displays the content in a user-friendly format.")   
+    st.markdown(
+        "This script reads the conversations.json file from ChatGPT and displays the content in a user-friendly format."
+    )
     pdf_path = st.file_uploader("Choose a file")
     if pdf_path is not None:
         try:
             # reader = PdfReader(pdf_path)
-            #with open(r"C:\Users\rcxsm\Downloads\chatgpt_archive\conversations.json", 'r', encoding='utf-8') as file:
-            data = json.load(pdf_path )
+            # with open(r"C:\Users\rcxsm\Downloads\chatgpt_archive\conversations.json", 'r', encoding='utf-8') as file:
+            data = json.load(pdf_path)
             len_data = len(data)
 
         except Exception as e:
             st.error(f"Error loading / parsing the json file: {str(e)}")
             st.stop()
     else:
-        st.warning("You need to upload a json file. Files are not stored anywhere after the processing of this script")
+        st.warning(
+            "You need to upload a json file. Files are not stored anywhere after the processing of this script"
+        )
         st.stop()
-    
 
-    
-    reversed = st.selectbox("Order", ["Most old first","Most recent first"])
-    
-    col2,col3=st.columns([1,1])
+    reversed = st.selectbox("Order", ["Most old first", "Most recent first"])
+
+    col2, col3 = st.columns([1, 1])
 
     if reversed == "Most old first":
-        data= data[::-1]
+        data = data[::-1]
     with col2:
-        modus = st.selectbox("Modus [Text only+download| Inline | Expanders | Show JSON]", ["Text only+download", "Inline", "Expanders", "Show JSON"], index=3)
+        modus = st.selectbox(
+            "Modus [Text only+download| Inline | Expanders | Show JSON]",
+            ["Text only+download", "Inline", "Expanders", "Show JSON"],
+            index=3,
+        )
     with col3:
-        number_of_elements = st.number_input(f"Number of elements to show (max {len_data})",1,len_data,5)
-        
+        number_of_elements = st.number_input(
+            f"Number of elements to show (max {len_data})", 1, len_data, 5
+        )
+
     items_per_page = number_of_elements
 
     # Calculate the total number of pages
@@ -330,16 +347,16 @@ def main():
     # Slice the data for the current page
     data = data[start_index:end_index]
 
-
     if modus == "Expanders":
         show_json_expanders(data)
-    elif modus =="Inline":
-        show_json_text_inline(data)    
-    elif modus =="Text only+download":
+    elif modus == "Inline":
+        show_json_text_inline(data)
+    elif modus == "Text only+download":
         download_text(data, page_number, total_pages)
-    elif modus =="Show JSON":
+    elif modus == "Show JSON":
         st.json(data)
-        #print(json.dumps(data, indent=4, ensure_ascii=False))
+        # print(json.dumps(data, indent=4, ensure_ascii=False))
+
 
 if __name__ == "__main__":
-    main()   
+    main()
