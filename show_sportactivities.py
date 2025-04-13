@@ -127,8 +127,7 @@ def get_data(who):
             df['gem_snelh'] = df['Afstand'] / df['Tijd_seconds'] * 3600.0 
 
             df = filter_df(df, "Activiteittype",2).copy(deep=False)
-       
-            
+              
     elif who == "Didier":
         url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/activities_didier.csv"
         #url = "C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\streamlit_scripts\\input\\activities_didier.csv"
