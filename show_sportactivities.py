@@ -19,14 +19,16 @@ def get_data(who):
         url_2022 = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2022.csv"
         url_2023a = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2023a.csv"
         url_2023b = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2023b.csv"
+        url_2025a = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2025a.csv"
         
         df_new = pd.read_csv(url_new, delimiter=';')
         df_2022 = pd.read_csv(url_2022, delimiter=',')
         df_2023a = pd.read_csv(url_2023a, delimiter=',')
         df_2023b = pd.read_csv(url_2023b, delimiter=',')
+        df_2025a = pd.read_csv(url_2025a, delimiter=',')
     
        
-        for idx, d in enumerate([df_new, df_2022,df_2023a,df_2023b]):
+        for idx, d in enumerate([df_new, df_2022,df_2023a,df_2023b, df_2025a]):
             if idx == 0:
                 create_extra_date_time_columns(d,"new")
             else:
@@ -35,6 +37,7 @@ def get_data(who):
         df_2022 = rename_columns(df_2022)
         df_2023a = rename_columns(df_2023a)
         df_2023b = rename_columns(df_2023b)
+        df_2025a = rename_columns(df_2025a)
     
         # supress The behavior of DataFrame concatenation with empty or all-NA entries is deprecated.
         # In a future version, this will no longer exclude empty or all-NA columns when determining 
@@ -44,6 +47,7 @@ def get_data(who):
         df_2022 = df_2022.dropna(axis=1, how='all')
         df_2023a = df_2023a.dropna(axis=1, how='all')
         df_2023b = df_2023b.dropna(axis=1, how='all')
+        df_2025a = df_2025a.dropna(axis=1, how='all')
 
         df_tm_2022 = pd.concat([df_2022, df_new], ignore_index=False)
 
@@ -52,6 +56,7 @@ def get_data(who):
         df_ = pd.concat([df_2023a, df_tm_2022], ignore_index=False)
        
         df = pd.concat([df_2023b, df_], ignore_index=False)
+        df = pd.concat([df_2025a, df_], ignore_index=False)
         # st.write(df["Tijd"])
         # df['Tijd_h'] = pd.to_datetime(df['Tijd'], format='%H:%M:%S').dt.hour
         # df['Tijd_m'] = pd.to_datetime(df['Tijd'], format='%H:%M:%S').dt.minute
