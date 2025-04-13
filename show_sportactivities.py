@@ -15,66 +15,112 @@ import plotly.express as px
 #@st.cache_data()
 def get_data(who):
     if who == "Rene":
-        url_new = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_new.csv"
-        url_2022 = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2022.csv"
-        url_2023a = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2023a.csv"
-        url_2023b = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2023b.csv"
-        url_2025a = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2025a.csv"
+        if 1==1:
+            url_new = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_new.csv"
+            url_2022 = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2022.csv"
+            url_2023a = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2023a.csv"
+            url_2023b = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2023b.csv"
+            url_2025a = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2025a.csv"
+            
+            df_new = pd.read_csv(url_new, delimiter=';')
+            df_2022 = pd.read_csv(url_2022, delimiter=',')
+            df_2023a = pd.read_csv(url_2023a, delimiter=',')
+            df_2023b = pd.read_csv(url_2023b, delimiter=',')
+            df_2025a = pd.read_csv(url_2025a, delimiter=',')
         
-        df_new = pd.read_csv(url_new, delimiter=';')
-        df_2022 = pd.read_csv(url_2022, delimiter=',')
-        df_2023a = pd.read_csv(url_2023a, delimiter=',')
-        df_2023b = pd.read_csv(url_2023b, delimiter=',')
-        df_2025a = pd.read_csv(url_2025a, delimiter=',')
-    
-       
-        for idx, d in enumerate([df_new, df_2022,df_2023a,df_2023b, df_2025a]):
-            if idx == 0:
-                create_extra_date_time_columns(d,"new")
-            else:
-                create_extra_date_time_columns(d,"not_new")
-       
-        df_2022 = rename_columns(df_2022)
-        df_2023a = rename_columns(df_2023a)
-        df_2023b = rename_columns(df_2023b)
-        df_2025a = rename_columns(df_2025a)
-    
-        # supress The behavior of DataFrame concatenation with empty or all-NA entries is deprecated.
-        # In a future version, this will no longer exclude empty or all-NA columns when determining 
-        # the result dtypes. To retain the old behavior, exclude the relevant entries before the 
-        # concat operation.
-        df_new = df_new.dropna(axis=1, how='all')
-        df_2022 = df_2022.dropna(axis=1, how='all')
-        df_2023a = df_2023a.dropna(axis=1, how='all')
-        df_2023b = df_2023b.dropna(axis=1, how='all')
-        df_2025a = df_2025a.dropna(axis=1, how='all')
-
-        df_tm_2022 = pd.concat([df_2022, df_new], ignore_index=False)
-
-
-        #df = df_2023a.append(df_tm_2022, ignore_index=False)
-        df_ = pd.concat([df_2023a, df_tm_2022], ignore_index=False)
-       
-        df = pd.concat([df_2023b, df_], ignore_index=False)
-        df = pd.concat([df_2025a, df_], ignore_index=False)
-        # st.write(df["Tijd"])
-        # df['Tijd_h'] = pd.to_datetime(df['Tijd'], format='%H:%M:%S').dt.hour
-        # df['Tijd_m'] = pd.to_datetime(df['Tijd'], format='%H:%M:%S').dt.minute
-        # df['Tijd_s'] = pd.to_datetime(df['Tijd'], format='%H:%M:%S').dt.second
-
-        #Convert 'Tijd' column to timedelta
-        df['Tijd_timedelta'] = pd.to_timedelta(df['Tijd'])
-
-        # Extract the hour, minute, second, and fractional second from the timedelta column
-        df['Tijd_h'] = df['Tijd_timedelta'].dt.components['hours']
-        df['Tijd_m'] = df['Tijd_timedelta'].dt.components['minutes']
-        df['Tijd_s'] = df['Tijd_timedelta'].dt.components['seconds']
-        df['Tijd_ms'] = df['Tijd_timedelta'].dt.components['milliseconds']
-        df['Tijd_seconds'] = (df['Tijd_h']*3600) + (df['Tijd_m']*60) + df['Tijd_s'] 
-        df['gem_snelh'] = df['Afstand'] / df['Tijd_seconds'] * 3600.0 
-
-        df = filter_df(df, "Activiteittype",2).copy(deep=False)
         
+            for idx, d in enumerate([df_new, df_2022,df_2023a,df_2023b, df_2025a]):
+                if idx == 0:
+                    create_extra_date_time_columns(d,"new")
+                else:
+                    create_extra_date_time_columns(d,"not_new")
+        
+            df_2022 = rename_columns(df_2022)
+            df_2023a = rename_columns(df_2023a)
+            df_2023b = rename_columns(df_2023b)
+            df_2025a = rename_columns(df_2025a)
+        
+            # supress The behavior of DataFrame concatenation with empty or all-NA entries is deprecated.
+            # In a future version, this will no longer exclude empty or all-NA columns when determining 
+            # the result dtypes. To retain the old behavior, exclude the relevant entries before the 
+            # concat operation.
+            df_new = df_new.dropna(axis=1, how='all')
+            df_2022 = df_2022.dropna(axis=1, how='all')
+            df_2023a = df_2023a.dropna(axis=1, how='all')
+            df_2023b = df_2023b.dropna(axis=1, how='all')
+            df_2025a = df_2025a.dropna(axis=1, how='all')
+
+            df_tm_2022 = pd.concat([df_2022, df_new], ignore_index=False)
+
+
+            #df = df_2023a.append(df_tm_2022, ignore_index=False)
+            df_ = pd.concat([df_2023a, df_tm_2022], ignore_index=False)
+        
+            df = pd.concat([df_2023b, df_], ignore_index=False)
+            df = pd.concat([df_2025a, df_], ignore_index=False)
+            # st.write(df["Tijd"])
+            # df['Tijd_h'] = pd.to_datetime(df['Tijd'], format='%H:%M:%S').dt.hour
+            # df['Tijd_m'] = pd.to_datetime(df['Tijd'], format='%H:%M:%S').dt.minute
+            # df['Tijd_s'] = pd.to_datetime(df['Tijd'], format='%H:%M:%S').dt.second
+
+            #Convert 'Tijd' column to timedelta
+            df['Tijd_timedelta'] = pd.to_timedelta(df['Tijd'])
+
+            # Extract the hour, minute, second, and fractional second from the timedelta column
+            df['Tijd_h'] = df['Tijd_timedelta'].dt.components['hours']
+            df['Tijd_m'] = df['Tijd_timedelta'].dt.components['minutes']
+            df['Tijd_s'] = df['Tijd_timedelta'].dt.components['seconds']
+            df['Tijd_ms'] = df['Tijd_timedelta'].dt.components['milliseconds']
+            df['Tijd_seconds'] = (df['Tijd_h']*3600) + (df['Tijd_m']*60) + df['Tijd_s'] 
+            df['gem_snelh'] = df['Afstand'] / df['Tijd_seconds'] * 3600.0 
+
+            df = filter_df(df, "Activiteittype",2).copy(deep=False)
+        else:
+            URLS = {
+                "new": "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_new.csv",
+                "2022": "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2022.csv",
+                "2023a": "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2023a.csv",
+                "2023b": "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2023b.csv",
+                "2025a": "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2025a.csv",
+            }
+
+            # Helper function to load and preprocess data
+            # Load all DataFrames
+            dfs = {
+                name: pd.read_csv(url, delimiter=";" if name == "new" else ",")
+                for name, url in URLS.items()
+            }
+
+            # Add extra date/time columns
+            for name, df in dfs.items():
+                create_extra_date_time_columns(df, "new" if name == "new" else "not_new")
+
+            # Rename columns for consistency
+            for name in ["2022", "2023a", "2023b", "2025a"]:
+                dfs[name] = rename_columns(dfs[name])
+
+            # Drop columns with all NaN values
+            dfs = {name: df.dropna(axis=1, how="all") for name, df in dfs.items()}
+
+            # Concatenate DataFrames
+            df_tm_2022 = pd.concat([dfs["2022"], dfs["new"]], ignore_index=False)
+            df_2023_combined = pd.concat([dfs["2023a"], df_tm_2022], ignore_index=False)
+            df_final = pd.concat([dfs["2023b"], df_2023_combined, dfs["2025a"]], ignore_index=False)
+
+            # Add time-related columns
+            df_final["Tijd_timedelta"] = pd.to_timedelta(df_final["Tijd"])
+            df_final["Tijd_h"] = df_final["Tijd_timedelta"].dt.components["hours"]
+            df_final["Tijd_m"] = df_final["Tijd_timedelta"].dt.components["minutes"]
+            df_final["Tijd_s"] = df_final["Tijd_timedelta"].dt.components["seconds"]
+            df_final["Tijd_seconds"] = (
+                df_final["Tijd_h"] * 3600 + df_final["Tijd_m"] * 60 + df_final["Tijd_s"]
+            )
+            df_final["gem_snelh"] = df_final["Afstand"] / df_final["Tijd_seconds"] * 3600.0
+
+            # Filter activities
+            df_final = filter_df(df_final, "Activiteittype", 2).copy(deep=False)
+
+            return df_final
     elif who == "Didier":
         url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/activities_didier.csv"
         #url = "C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\streamlit_scripts\\input\\activities_didier.csv"
