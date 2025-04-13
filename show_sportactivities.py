@@ -16,6 +16,58 @@ import plotly.express as px
 def get_data(who):
     if who == "Rene":
         if 1==1:
+            # pythonized version of the legacy code
+
+            URLS = {
+                "new": "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_new.csv",
+                "2022": "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2022.csv",
+                "2023a": "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2023a.csv",
+                "2023b": "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2023b.csv",
+                "2025a": "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2025a.csv",
+            }
+
+            # Helper function to load and preprocess data
+            # Load all DataFrames
+            dfs = {
+                name: pd.read_csv(url, delimiter=";" if name == "new" else ",")
+                for name, url in URLS.items()
+            }
+
+            # Add extra date/time columns
+            for name, df in dfs.items():
+                create_extra_date_time_columns(df, "new" if name == "new" else "not_new")
+
+            # Rename columns for consistency
+            for name in ["2022", "2023a", "2023b", "2025a"]:
+                dfs[name] = rename_columns(dfs[name])
+
+            # Drop columns with all NaN values
+            dfs = {name: df.dropna(axis=1, how="all") for name, df in dfs.items()}
+            print(dfs["2023b"])
+            # Concatenate DataFrames
+            # Concatenate DataFrames in one command
+            df_final = pd.concat([dfs["2022"], dfs["new"], dfs["2023a"], dfs["2023b"], dfs["2025a"]], ignore_index=False)
+            # df_tm_2022 = pd.concat([dfs["2022"], dfs["new"]], ignore_index=False)
+            # df_2023_combined = pd.concat([dfs["2023a"], df_tm_2022], ignore_index=False)
+            # df_final = pd.concat([dfs["2023b"], df_2023_combined, dfs["2025a"]], ignore_index=False)
+
+            # Add time-related columns
+            df_final["Tijd_timedelta"] = pd.to_timedelta(df_final["Tijd"])
+            df_final["Tijd_h"] = df_final["Tijd_timedelta"].dt.components["hours"]
+            df_final["Tijd_m"] = df_final["Tijd_timedelta"].dt.components["minutes"]
+            df_final["Tijd_s"] = df_final["Tijd_timedelta"].dt.components["seconds"]
+            df_final["Tijd_seconds"] = (
+                df_final["Tijd_h"] * 3600 + df_final["Tijd_m"] * 60 + df_final["Tijd_s"]
+            )
+            df_final["gem_snelh"] = df_final["Afstand"] / df_final["Tijd_seconds"] * 3600.0
+
+            # Filter activities
+            df_final = filter_df(df_final, "Activiteittype", 1).copy(deep=False)
+            df_final = last_manipulations_df(df_final).copy(deep=False)
+
+            return df_final
+        else:
+            # legacy code, kept for debugging purposes
             url_new = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_new.csv"
             url_2022 = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2022.csv"
             url_2023a = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2023a.csv"
@@ -75,52 +127,8 @@ def get_data(who):
             df['gem_snelh'] = df['Afstand'] / df['Tijd_seconds'] * 3600.0 
 
             df = filter_df(df, "Activiteittype",2).copy(deep=False)
-        else:
-            URLS = {
-                "new": "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_new.csv",
-                "2022": "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2022.csv",
-                "2023a": "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2023a.csv",
-                "2023b": "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2023b.csv",
-                "2025a": "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2025a.csv",
-            }
-
-            # Helper function to load and preprocess data
-            # Load all DataFrames
-            dfs = {
-                name: pd.read_csv(url, delimiter=";" if name == "new" else ",")
-                for name, url in URLS.items()
-            }
-
-            # Add extra date/time columns
-            for name, df in dfs.items():
-                create_extra_date_time_columns(df, "new" if name == "new" else "not_new")
-
-            # Rename columns for consistency
-            for name in ["2022", "2023a", "2023b", "2025a"]:
-                dfs[name] = rename_columns(dfs[name])
-
-            # Drop columns with all NaN values
-            dfs = {name: df.dropna(axis=1, how="all") for name, df in dfs.items()}
-
-            # Concatenate DataFrames
-            df_tm_2022 = pd.concat([dfs["2022"], dfs["new"]], ignore_index=False)
-            df_2023_combined = pd.concat([dfs["2023a"], df_tm_2022], ignore_index=False)
-            df_final = pd.concat([dfs["2023b"], df_2023_combined, dfs["2025a"]], ignore_index=False)
-
-            # Add time-related columns
-            df_final["Tijd_timedelta"] = pd.to_timedelta(df_final["Tijd"])
-            df_final["Tijd_h"] = df_final["Tijd_timedelta"].dt.components["hours"]
-            df_final["Tijd_m"] = df_final["Tijd_timedelta"].dt.components["minutes"]
-            df_final["Tijd_s"] = df_final["Tijd_timedelta"].dt.components["seconds"]
-            df_final["Tijd_seconds"] = (
-                df_final["Tijd_h"] * 3600 + df_final["Tijd_m"] * 60 + df_final["Tijd_s"]
-            )
-            df_final["gem_snelh"] = df_final["Afstand"] / df_final["Tijd_seconds"] * 3600.0
-
-            # Filter activities
-            df_final = filter_df(df_final, "Activiteittype", 2).copy(deep=False)
-
-            return df_final
+       
+            
     elif who == "Didier":
         url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/activities_didier.csv"
         #url = "C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\streamlit_scripts\\input\\activities_didier.csv"
@@ -386,7 +394,7 @@ def find_fastest_per_distance(df_):
 def find_pr_of_year(df, field):
     fields = ["Datum_xy","Titel", "Afstand","Tijd", "gem_snelh", "YYYY"]
     new_table_list = []
-    for y in range (2010,2025):
+    for y in range (2010,2026):
         df_temp = select(df,"YYYY", y, y)
         df_temp = df_temp.sort_values(by=[field],ascending= False).reset_index(drop=True)
         my_dict = {"Datum":None,"Titel":None,"Afstand":None,"Tijd":None,"gem_snelh":None, "YYYY":None};
@@ -469,7 +477,9 @@ def shoe_distances(df):
                 ["14/09/2018", "lunarglide 9", "Zwart wit mesh"],
                 ["14/04/2021", "Zoom 37", "Zart blauw rood"],
                 ["14/02/2023", "Asics GT2000 10", "Blauw"],
-                ["29/06/2024", "Asics Gel pulse 13",  "Zwart neongroengeel"]]
+                ["29/06/2024", "Asics Gel pulse 13",  "Zwart neongroengeel"],
+                ["1/11/2024", "Asics GT2000 10", "Blauw"],
+                ["1/04/2025", "Asics Gel pulse 13",  "Zwart neongroengeel"]]
     shoe_list = add_end_date(shoe_list)
     table = []
     for shoe in shoe_list:
@@ -521,7 +531,7 @@ def show_all(df):
 def find_activities_in_month(df):
     # Activeitein in een bepaalde maand
     month = st.sidebar.slider("Maand", 7,12,1)
-    year = st.sidebar.slider("Jaar", 2010,2024,2021)
+    year = st.sidebar.slider("Jaar", 2010,2026,2021)
 
 
     df_maand_jaar = select_maand(df, month, year)
@@ -553,8 +563,13 @@ def show_various_scatters(df):
     show_scatter(df, "Afstand", "gem_snelh", True, None)
 
 def plot_histogram_distance_year(df):
-    y = st.sidebar.slider("Jaar", 2010,2021,2021)
+    
+        
+    y = st.sidebar.slider("Jaar", 2010,2026,2021)
     df_temp = select(df,"YYYY", y,y)
+    if len(df_temp) == 0:
+        st.warning("No data, select another year")
+        st.stop()
     bins = np.arange(min(df_temp["Afstand"]), max(df_temp["Afstand"])+1 ,1)
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
