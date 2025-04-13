@@ -43,7 +43,7 @@ def get_data(who):
 
             # Drop columns with all NaN values
             dfs = {name: df.dropna(axis=1, how="all") for name, df in dfs.items()}
-            print(dfs["2023b"])
+            
             # Concatenate DataFrames
             # Concatenate DataFrames in one command
             df_final = pd.concat([dfs["2022"], dfs["new"], dfs["2023a"], dfs["2023b"], dfs["2025a"]], ignore_index=False)
