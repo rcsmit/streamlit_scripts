@@ -82,7 +82,8 @@ def main():
                 ["[53] GPX analyzer ","gpx_analyzer"],
                 ["[54] Nog in leven over 40 jaar ","nog_in_leven_over_40_jaar"],
                 ["[55] WOO PDF to table ","pdf_to_table"],
-                ["[55] Read ChatGPT-json ","read_conversations_json"],
+                ["[56] Read ChatGPT-json ","read_conversations_json"],
+                ["[57] Compound ROI ","compound_roi_calculator"],
                 ]
  
     # for file in arr:

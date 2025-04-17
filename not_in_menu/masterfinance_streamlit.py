@@ -167,7 +167,7 @@ def read(sheet_id):
             df = pd.read_excel (file,
                                 sheet_name= sheet,
                                 header=0,
-                                usecols= "a,b,g,h,k,l,m,n,o",
+                                usecols= "a,b,g,h,l,m,n,o,p",
                                 names=["id","bron","datum","bedrag",
                        "tegenpartij","in_uit","hoofdrub","rubriek", "rubriek_azie"],)
             #df["datum"] = pd.to_datetime(df["datum"], format="%Y-%m-%d")
@@ -692,7 +692,51 @@ def bereken_balanstotaal_per_maand(df):
         # Toon de grafiek
         st.plotly_chart(fig)
 
+def give_totals_boodschappen(df):
+  
+    # Assuming 'df' is your DataFrame
+    # First, ensure that the 'Bedrag' column is of numeric data type (e.g., float or int)
+    # If it's not already, you can convert it like this:
+    # df['Bedrag'] = pd.to_numeric(df['Bedrag'], errors='coerce')
 
+    # Filter rows where 'category' is equal to 'boodschappen'
+    st.subheader("Boodschappen")
+    #boodschappen_df = df[df['rubriek'] == 'boodschappen_sevenum']
+    boodschappen_df = df[df['hoofdrub'] == 'BOODSCH']
+    st.write(boodschappen_df)
+    # Extract the month and year from the datetime column (assuming it's named 'date')
+    boodschappen_df['Month'] = boodschappen_df['datum'].dt.strftime('%Y-%m')
+    boodschappen_df['Year'] = boodschappen_df['datum'].dt.strftime('%Y')
+
+    # Group by month and calculate the sum of 'Bedrag'
+    monthly_result = boodschappen_df.groupby('Month')['bedrag'].sum().reset_index()
+    monthly_result.rename(columns={'bedrag': 'Total_Bedrag_Month'}, inplace=True)
+
+    # Group by year and calculate the sum of 'Bedrag'
+    yearly_result = boodschappen_df.groupby('Year')['bedrag'].sum().reset_index()
+    yearly_result.rename(columns={'bedrag': 'Total_Bedrag_Year'}, inplace=True)
+
+    # Print the resulting DataFrames
+    st.write("Monthly Total:")
+    st.write(monthly_result)
+
+    st.write("\nYearly Total:")
+    st.write(yearly_result)
+
+    # Define the number of months for each year
+    months_per_year = {
+        '2021': 6.0,
+        '2022': 3.8,
+        '2023': 7.5,
+        '2024':2.5
+    }
+    yearly_totals = boodschappen_df.groupby('Year')['bedrag'].sum()
+    # Calculate the average monthly spending for each year
+    average_monthly_spending = yearly_totals / pd.Series(months_per_year)
+
+    # Print the result
+    st.write("Average Monthly Spending:")
+    st.write(average_monthly_spending)
 
 def main():
     st.header("Financial sheet Rene")
@@ -714,7 +758,8 @@ def main():
             "uitgaves_categorie_per_period",
             "totalen_per_rub",
             "pivot_tables",
-            "bereken_balanstotaal_per_maand"
+            "bereken_balanstotaal_per_maand",
+            "boodschappen"
         ]
     )
 
@@ -756,6 +801,8 @@ def main():
         pivot_tables(df)
     elif option == "bereken_balanstotaal_per_maand":
         bereken_balanstotaal_per_maand(df)
+    elif option =="boodschappen":
+        give_totals_boodschappen(df)
 if __name__ == "__main__":
     import os
     import datetime

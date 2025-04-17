@@ -3,7 +3,9 @@
 # In a double-entry accounting system, every financial transaction is recorded in at least 
 # two different accounts: one account is credited and the other account is debited. The debited account 
 # is the one that receives the payment, and the credited account is the one that makes the payment.
-
+#
+# NIET MEER INGEBRUIK : 
+# GEBRUIK C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\not_in_menu\masterfinance_streamlit.py
 # """
 
 from datetime import datetime, date,  timedelta
@@ -48,7 +50,7 @@ def read():
                                 "source",
                                 "datum",
                                 "bedrag",
-        print_x("Error loading file")
+        
                                 "income_expenses",
                                 "main_category",
                                 "category"
