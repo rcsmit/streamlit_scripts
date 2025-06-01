@@ -1,7 +1,7 @@
 streamlit
 scipy
 matplotlib
-numpy==1.26.4
+numpy
 pandas
 seaborn
 plotly
@@ -31,3 +31,4 @@ plotly-calplot
 gpxpy
 geopy
 branca
+fitz
