@@ -1,6 +1,5 @@
 import streamlit as st
 import PyMuPDF  # PyMuPDF
-
 import io
 import requests
 
