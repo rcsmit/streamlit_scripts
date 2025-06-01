@@ -52,8 +52,8 @@ def download_and_cache_font(font_url):
         return None
 
 if st.button("Generate PDF"):
-    # try:
-    if 1==1:
+    try:
+    #if 1==1:
         y_dict = eval(position_dict_str)
 
         # Fetch PDF
@@ -140,5 +140,5 @@ if st.button("Generate PDF"):
         st.success(f"✅ Phone number added successfully | {camping_name} | {phone_number}")
         st.download_button("📥 Download updated PDF", buffer.getvalue(), f"updated_{camping_name}_{phone_number}.pdf", mime="application/pdf")
         st.info("Made by Rene Smit. Contact me [rcx dot smit at gmail dot com] for modification of the  templates. Not officially endorsed by the company.")
-    # except Exception as e:
-    #     st.error(f"⚠️ Error: {e}")
+    except Exception as e:
+        st.error(f"⚠️ Error: {e}")
