@@ -98,7 +98,7 @@ def generate_pdf(
                     font_name = "helv"
 
             # Measure text width for centering
-            if font and font_name == "F0":
+            if font and font_name == "AvertaBold":
                 text_width = font.text_length(phone_number, fontsize=font_size)
             else:
                 text_width = pymupdf.get_text_length(
