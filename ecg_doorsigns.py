@@ -83,6 +83,7 @@ def generate_pdf(
                     # Install the font on this page using the correct method
                     font_name = "AvertaBold"  # Standard font reference name
                     page.insert_font(fontname=font_name, fontbuffer=font_data)
+                    
                     if i == 0:  # Only show message once
                         # st.info("✅ Custom font installed on pages!")
                         pass
