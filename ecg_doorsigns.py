@@ -37,7 +37,7 @@ def generate_pdf(
     font_size = 40
     font_size_camping_name = 10
     # Page-specific Y positions
-    y_position_dict_str = "{0: 570, 1: 645, 2: 665, 3: 600, 4: 580, 5: 690, 6: 670}"
+    y_position_dict_str = "{0: 570, 1: 645, 2: 665, 3: 600, 4: 480, 5: 690, 6: 670}"
     x_position_camping_name = 30
 
     y_position_camping_name = 810
