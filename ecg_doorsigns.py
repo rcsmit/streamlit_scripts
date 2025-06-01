@@ -36,6 +36,9 @@ def generate_pdf(
     # Font size
     font_size = 40
     font_size_camping_name = 10
+
+
+    # 1 cm = 28.35 points. Left top = [0,0]
     # Page-specific Y positions
     y_position_dict_str = "{0: 570, 1: 645, 2: 665, 3: 600, 4: 480, 5: 690, 6: 670}"
     x_position_camping_name = 30
@@ -83,7 +86,7 @@ def generate_pdf(
                     # Install the font on this page using the correct method
                     font_name = "AvertaBold"  # Standard font reference name
                     page.insert_font(fontname=font_name, fontbuffer=font_data)
-                    
+
                     if i == 0:  # Only show message once
                         # st.info("✅ Custom font installed on pages!")
                         pass
