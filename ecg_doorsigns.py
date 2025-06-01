@@ -159,7 +159,7 @@ def main():
         with col2:
             camping_name = st.text_input("Camping Name/Code", "IT-123456")
             # Color picker
-            hex_color_camping_name = st.color_picker("Choose text color campingname/code", "#CCCCCC")
+            hex_color_camping_name = st.color_picker("Choose text color campingname/code. Choose White [#FFFFFF] for invisible", "#CCCCCC")
         selected_color = hex_to_rgb01(hex_color)
 
         selected_color_camping_name = hex_to_rgb01(hex_color_camping_name)
@@ -183,6 +183,6 @@ def main():
         st.error("Please select a valid mode: single or multiple.")
         st.stop()
         
-    st.info("Created by Rene Smit. For template modifications, contact [rcx dot smit at gmail dot com]. This tool and its output are not officially endorsed by the company. Use is at your own discretion — I cannot be held responsible for any consequences arising from its use.")
+    st.info("Created by Rene Smit.  This tool and its output are not officially endorsed by the company. Use is at your own discretion — I cannot be held responsible for any consequences arising from its use. For template modifications and/or batch use, contact [rcx dot smit at gmail dot com].")
 if __name__ == "__main__":
     main()
