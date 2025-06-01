@@ -1,30 +1,34 @@
 import streamlit as st
 import fitz  # PyMuPDF
 import io
-import os
+import requests
 
-st.title("📞 Add Phone Number to All PDF Pages (Centered)")
+st.title("📞 Add Phone Number to PDF")
 
-# Upload PDF
-uploaded_file = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/templates_ecg_2025a.pdf"
-# st.file_uploader("Upload your PDF", type="pdf")
-
+# GitHub URLs
+pdf_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/templates_ecg_2025a.pdf"
+ttf_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/Averta-Bold.ttf"
+ttf_url_camping_name = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/Averta-Regular.ttf" #not used
+ 
 # Phone number input
-phone_number = st.text_input("Phone number", "0612345678")
+col1, col2 = st.columns(2)
+with col1:
+    phone_number = st.text_input("Phone number", "0039(0)612345678")
+    hex_color = st.color_picker("Choose text color", "#2E498E")
+
+with col2:
+    camping_name = st.text_input("Camping Name/Code", "IT-123456")
+    # Color picker
+    hex_color_camping_name = st.color_picker("Choose text color campingname/code", "#CCCCCC")
 
 # Font size
-font_size = st.number_input("Font size", value=90)
-
+font_size = 40
+font_size_camping_name = 10
 # Page-specific Y positions
-default_dict = "{0: 700, 1: 690}"  # page number: y-position
-position_dict_str = st.text_area("Y-positions per page (dict)", value=default_dict)
+position_dict_str = "{0: 570, 1: 645, 2: 665, 3: 600, 4: 580, 5: 690, 6: 670}"
+x_position_camping_name = 30
 
-# Font upload or path
-font_file = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/Averta-Bold.ttf" # st.file_uploader("Upload .ttf font (optional)", type=["ttf"])
-font_path_input = None # st.text_input("...or use font from repo (e.g. fonts/MyFont.ttf)", value="")
-# https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/templates_ecg_2025a.pdf
-# Color picker
-hex_color = st.color_picker("Choose text color", "#2E498E")  # default ecg blue
+y_position_camping_name = 810
 
 def hex_to_rgb01(hex_color):
     hex_color = hex_color.lstrip('#')
@@ -32,45 +36,109 @@ def hex_to_rgb01(hex_color):
 
 selected_color = hex_to_rgb01(hex_color)
 
-# Process PDF
-if uploaded_file and st.button("Add Phone Number"):
+selected_color_camping_name = hex_to_rgb01(hex_color_camping_name)
+@st.cache_data
+def download_and_cache_font(font_url):
+    """Download and cache the TTF font file"""
     try:
+        response = requests.get(font_url)
+        if response.status_code == 200:
+            return response.content
+        else:
+            st.warning(f"Could not download font (status: {response.status_code}). Using default font.")
+            return None
+    except Exception as e:
+        st.warning(f"Error downloading font: {e}. Using default font.")
+        return None
+
+if st.button("Generate PDF"):
+    # try:
+    if 1==1:
         y_dict = eval(position_dict_str)
 
-        # Open PDF
-        doc = fitz.open(stream=uploaded_file.read(), filetype="pdf")
+        # Fetch PDF
+        pdf_response = requests.get(pdf_url)
+        if pdf_response.status_code != 200:
+            st.error("Could not load PDF from GitHub.")
+            st.stop()
 
-        # Register font
-        if font_file:
-            font_bytes = font_file.read()
-            fontname = doc.insert_font(stream=font_bytes, fontfiletype="truetype")
-        elif font_path_input and os.path.exists(font_path_input):
-            fontname = doc.insert_font(file=font_path_input, fontfiletype="truetype")
+        doc = fitz.open(stream=pdf_response.content, filetype="pdf")
+
+        # Download and register custom font
+        font_data = download_and_cache_font(ttf_url)
+        font = None
+        font_name = "helv"  # default fallback
+        
+        if font_data:
+            try:
+                # Register the custom font with PyMuPDF
+                font = fitz.Font(fontbuffer=font_data)
+                font_name = None  # Use the font object instead of font name
+                # st.info("✅ Custom font loaded successfully!")
+            except Exception as e:
+                st.warning(f"Could not load custom font: {e}. Using default font.")
+                font = None
+                font_name = "helv"
         else:
-            fontname = "helv"  # default font
+            st.warning("Using default Helvetica font.")
 
+        # Add phone number to all pages
         for i, page in enumerate(doc):
-            page_width = page.rect.width
             y = y_dict.get(i, 700)
-
-            text_width = fitz.get_text_length(phone_number, fontname=fontname, fontsize=font_size)
-            x_centered = (page_width - text_width) / 2
-
+            page_width = page.rect.width
+            
+            # Install custom font on each page if available
+            font_name = "helv"  # default
+            if font_data:
+                try:
+                    # Install the font on this page using the correct method
+                    font_name = "AvertaBold"  # Standard font reference name
+                    page.insert_font(fontname=font_name, fontbuffer=font_data)
+                    if i == 0:  # Only show message once
+                        # st.info("✅ Custom font installed on pages!")
+                        pass
+                except Exception as e:
+                    if i == 0:  # Only show message once
+                        st.warning(f"Error installing custom font: {e}. Using default font.")
+                    font_name = "helv"
+            
+            # Measure text width for centering
+            if font and font_name == "F0":
+                text_width = font.text_length(phone_number, fontsize=font_size)
+            else:
+                text_width = fitz.get_text_length(phone_number, fontsize=font_size, fontname="helv")
+            
+            x = (page_width - text_width) / 2
+            
+            # Insert text
             page.insert_text(
-                fitz.Point(x_centered, y),
+                fitz.Point(x, y),
                 phone_number,
                 fontsize=font_size,
-                fontname=fontname,
-                fill=selected_color
+                fontname=font_name,
+                fill=selected_color,
+                fontfile=ttf_url
             )
+            
+            page.insert_text(
+                fitz.Point(x_position_camping_name, y_position_camping_name),
+                camping_name,
+                fontsize=font_size_camping_name,
+                fontname=font_name,
+                fill=selected_color_camping_name,
+                fontfile=ttf_url
+            ) 
 
-        # Save PDF
+
+            
+        # Save to memory
+
         buffer = io.BytesIO()
         doc.save(buffer)
         doc.close()
 
-        st.success("✅ Done! Phone number added.")
-        st.download_button("📥 Download updated PDF", buffer.getvalue(), "updated.pdf", mime="application/pdf")
-
-    except Exception as e:
-        st.error(f"⚠️ Error: {e}")
+        st.success(f"✅ Phone number added successfully | {camping_name} | {phone_number}")
+        st.download_button("📥 Download updated PDF", buffer.getvalue(), f"updated_{camping_name}_{phone_number}.pdf", mime="application/pdf")
+        st.info("Made by Rene Smit. Contact me [rcx dot smit at gmail dot com] for modification of the  templates. Not officially endorsed by the company.")
+    # except Exception as e:
+    #     st.error(f"⚠️ Error: {e}")
