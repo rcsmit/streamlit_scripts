@@ -32,3 +32,4 @@ gpxpy
 geopy
 branca
 fitz
+PyMuPDF
