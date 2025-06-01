@@ -1,5 +1,5 @@
 import streamlit as st
-import pymupdf  # PyMuPDF
+import pymupdf  # pymupdf
 import io
 import requests
 
@@ -42,7 +42,7 @@ def generate_pdf(camping_name, phone_number, selected_color,selected_color_campi
             st.error("Could not load PDF from GitHub.")
             st.stop()
 
-        doc = PyMuPDF.open(stream=pdf_response.content, filetype="pdf")
+        doc = pymupdf.open(stream=pdf_response.content, filetype="pdf")
 
         # Download and register custom font
         font_data = download_and_cache_font(ttf_url)
@@ -51,8 +51,8 @@ def generate_pdf(camping_name, phone_number, selected_color,selected_color_campi
         
         if font_data:
             try:
-                # Register the custom font with PyMuPDF
-                font = PyMuPDF.Font(fontbuffer=font_data)
+                # Register the custom font with pymupdf
+                font = pymupdf.Font(fontbuffer=font_data)
                 font_name = None  # Use the font object instead of font name
                 # st.info("✅ Custom font loaded successfully!")
             except Exception as e:
@@ -86,13 +86,13 @@ def generate_pdf(camping_name, phone_number, selected_color,selected_color_campi
             if font and font_name == "F0":
                 text_width = font.text_length(phone_number, fontsize=font_size)
             else:
-                text_width = PyMuPDF.get_text_length(phone_number, fontsize=font_size, fontname="helv")
+                text_width = pymupdf.get_text_length(phone_number, fontsize=font_size, fontname="helv")
             
             x = (page_width - text_width) / 2
             
             # Insert text
             page.insert_text(
-                PyMuPDF.Point(x, y),
+                pymupdf.Point(x, y),
                 phone_number,
                 fontsize=font_size,
                 fontname=font_name,
@@ -101,7 +101,7 @@ def generate_pdf(camping_name, phone_number, selected_color,selected_color_campi
             )
             
             page.insert_text(
-                PyMuPDF.Point(x_position_camping_name, y_position_camping_name),
+                pymupdf.Point(x_position_camping_name, y_position_camping_name),
                 camping_name,
                 fontsize=font_size_camping_name,
                 fontname=font_name,
