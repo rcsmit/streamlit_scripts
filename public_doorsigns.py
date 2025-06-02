@@ -30,7 +30,7 @@ def generate_pdf(
 
     # GitHub URLs
     pdf_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/template_public.pdf"
-    ttf_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/Averta-Bold.ttf"
+    ttf_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/JupiteroidBold.ttf"
     
     # Font size
     font_size = 40
