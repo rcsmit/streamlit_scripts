@@ -84,6 +84,7 @@ def main():
                 ["[55] WOO PDF to table ","pdf_to_table"],
                 ["[56] Read ChatGPT-json ","read_conversations_json"],
                 ["[57] Compound ROI ","compound_roi_calculator"],
+                ["[58] Doorsigns ","public_doorsigns"],
                 ]
  
     # for file in arr:
