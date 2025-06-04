@@ -2,6 +2,7 @@ import streamlit as st
 import pymupdf  # pymupdf
 import io
 import requests
+import pandas as pd
 
 @st.cache_data
 def download_and_cache_font(font_url):
@@ -200,17 +201,35 @@ def main():
 
         selected_color = hex_to_rgb01("#2E498E")
         selected_color_camping_name = hex_to_rgb01("#CCCCCC")
+        how = "list"
+        if how =="list":
+            campings = [
+                ["pra", "06123456"],
+                ["pra2", "06123457"],
+                ["pra3", "06123458"],
+                ["pra4", "06123459"],
+                ["pra5", "06123460"],
+            ]
 
-        campings = [
-            ["pra", "06123456"],
-            ["pra2", "06123457"],
-            ["pra3", "06123458"],
-            ["pra4", "06123459"],
-            ["pra5", "06123460"],
-        ]
+            for c in campings:
+                generate_pdf(c[0], c[1], selected_color, selected_color_camping_name, True)
+        elif how =="csv":
+            #not used yet, for later reference
+            
+            uploaded_file = st.file_uploader("Upload CSV", type="csv")
+            st.markdown("CSV must contain columns: `camping_name`, `phone_number`")
 
-        for c in campings:
-            generate_pdf(c[0], c[1], selected_color, selected_color_camping_name, True)
+            if uploaded_file:
+
+                df = pd.read_csv(uploaded_file)
+                for _, row in df.iterrows():
+                    camping = str(row["camping_name"])
+                    phone = str(row["phone_number"])
+                    generate_pdf(camping,phone, selected_color, selected_color_camping_name, True)
+        else:
+            st.error("Please select a valid mode: list or csv.")
+            st.stop()
+
     else:
         st.error("Please select a valid mode: single or multiple.")
         st.stop()
@@ -219,6 +238,6 @@ def main():
         "Created by Rene Smit.  This tool and its output are not officially endorsed by the company. Use is at your own discretion — I cannot be held responsible for any consequences arising from its use. For template modifications and/or batch use, contact [rcx dot smit at gmail dot com]."
     )
 
-
+    st.info("How to: https://rene-smit.com/no-more-handwritten-signs-a-streamlit-tool-for-instant-pdf-door-signs/")
 if __name__ == "__main__":
     main()

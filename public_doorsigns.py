@@ -218,6 +218,7 @@ def main():
         "Created by Rene Smit.  This tool and its output are not officially endorsed by the company. Use is at your own discretion — I cannot be held responsible for any consequences arising from its use. For template modifications and/or batch use, contact [rcx dot smit at gmail dot com]."
     )
 
-
+    st.info("How to: https://rene-smit.com/no-more-handwritten-signs-a-streamlit-tool-for-instant-pdf-door-signs/")
+    
 if __name__ == "__main__":
     main()

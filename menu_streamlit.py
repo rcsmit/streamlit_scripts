@@ -85,6 +85,7 @@ def main():
                 ["[56] Read ChatGPT-json ","read_conversations_json"],
                 ["[57] Compound ROI ","compound_roi_calculator"],
                 ["[58] Doorsigns ","public_doorsigns"],
+                ["[59] Sunset Azimut ","sunset_azimut"],
                 ]
  
     # for file in arr:
