@@ -26,7 +26,11 @@ def generate_house_numbers(
     font_color_rgb01,
     show_download_button=True,
 ):
-    pdf_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/template_parking.pdf"
+    version=1
+    if version ==1:
+        pdf_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/template_parking.pdf"
+    elif version ==2:
+        pdf_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/template_parking_2.pdf"
     font_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/Averta-Bold.ttf"
 
     # Load base template
@@ -47,10 +51,21 @@ def generate_house_numbers(
 
         page_width = page.rect.width
         page_height = page.rect.height
+        if version ==1:
+            x_target = 627-40-10
+        
+            y_target =  ((595.2 - (font_size*0.688))/2)  + font_size*0.688
 
-        x_target = 627-40
-        y_target = font_size +20 #-(font_size/20)
-        y_target =  ((595.2 - (font_size*0.688))/2)  + font_size*0.688
+
+
+        # c:\Users\rcxsm\Downloads\template_parking_2.pdf
+        elif version ==2:
+            x_target = 29.7*28.35/2
+            y_target = font_size +20 #-(font_size/20)
+            #y_target =  ((385.5 - (font_size*0.688))/2)  + font_size*0.688
+            y_target =  385.5 + ((font_size*0.688)/2) #  + font_size*0.688
+
+
         font_name = "helv"  # default
         if font_data:
             try:
