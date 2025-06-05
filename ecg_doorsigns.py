@@ -40,7 +40,10 @@ def generate_house_numbers(pdf_file,
     font_color_rgb01,
     show_download_button=True,
 ):
-    version=1
+    # version=1 # logo on left, number right
+
+    version=2 # logo on top, number below
+
     if version ==1:
         pdf_parking_url = pdf_parking_url_1 
     elif version ==2:
@@ -70,9 +73,14 @@ def generate_house_numbers(pdf_file,
             base_doc = pymupdf.open(stream=pdf_file.read(), filetype="pdf")
         page = base_doc.load_page(0)  # only one page in template
 
-        page_width = page.rect.width
-        page_height = page.rect.height
+        # page_width = page.rect.width
+        # page_height = page.rect.height
+        # st.write(f"Page size: {page_width} x {page_height}")
+        # # Page size: 841.8897705078125 x 595.2755737304688
         if version ==1:
+             # version=1 # logo on left, number right
+
+    
             x_target = 627-40-10
         
             y_target =  ((595.2 - (font_size*0.688))/2)  + font_size*0.688
@@ -81,8 +89,9 @@ def generate_house_numbers(pdf_file,
 
         # c:\Users\rcxsm\Downloads\template_parking_2.pdf
         elif version ==2:
+            # version=2 # logo on top, number below
             x_target = 29.7*28.35/2
-            y_target = font_size +20 #-(font_size/20)
+            # y_target = font_size +20 #-(font_size/20)
             #y_target =  ((385.5 - (font_size*0.688))/2)  + font_size*0.688
             y_target =  385.5 + ((font_size*0.688)/2) #  + font_size*0.688
 
@@ -132,7 +141,7 @@ def generate_house_numbers(pdf_file,
         )
 
 
-def generate_pdf(
+def generate_pdf(pdf_file,
     camping_name,
     phone_number,
     selected_color,
@@ -157,14 +166,22 @@ def generate_pdf(
         # if 1==1:
         y_dict = eval(y_position_dict_str)
 
-        # Fetch PDF
-        pdf_response = requests.get(pdf_url)
-        if pdf_response.status_code != 200:
-            st.error("Could not load PDF from GitHub.")
-            st.stop()
+        if pdf_file is None:
+            pdf_response = requests.get(pdf_url)
+            if pdf_response.status_code != 200:
+                st.error(f"Failed to fetch PDF template. [status {pdf_response.status_code} | {pdf_parking_url}]")
+                return
+        else:
+            pdf_response = pdf_file
 
-        doc = pymupdf.open(stream=pdf_response.content, filetype="pdf")
+        
 
+        if pdf_file is None:
+            doc = pymupdf.open(stream=pdf_response.content, filetype="pdf")
+        else:
+            # base_doc = pymupdf.open(stream=pdf_file.read(), filetype="pdf")
+            pdf_file.seek(0)  # Important: reset file pointer
+            doc = pymupdf.open(stream=pdf_file.read(), filetype="pdf")
         # Download and register custom font
         font_data = download_and_cache_font(font_url)
         font = None
@@ -268,8 +285,8 @@ def generate_pdf(
         st.error(f"⚠️ Error: {e}")
 
 def main():
-    st.title("📞 Add Phone Number to PDF")
-    mode = st.selectbox("Choose mode", ["single", "multiple", "house_numbers"])
+    st.title("Add Phone/Acco Number to PDF")
+    mode = st.selectbox("Choose mode [single |multiple | multiple_csv |house_numbers]", ["single", "multiple","multiple_csv", "house_numbers"])
     # mode = "single"  # "multiple"
 
     def hex_to_rgb01(hex_color):
@@ -293,9 +310,11 @@ def main():
         selected_color = hex_to_rgb01(hex_color)
 
         selected_color_camping_name = hex_to_rgb01(hex_color_camping_name)
-
+        pdf_file = st.file_uploader("Choose a file. (Leave empty for default template)", type="pdf")
+       
         if st.button("Generate PDF"):
             generate_pdf(
+                pdf_file,
                 camping_name,
                 phone_number,
                 selected_color,
@@ -309,34 +328,40 @@ def main():
 
         selected_color = hex_to_rgb01("#2E498E")
         selected_color_camping_name = hex_to_rgb01("#CCCCCC")
-        how = "list"
-        if how =="list":
-            campings = [
-                ["pra", "06123456"],
-                ["pra2", "06123457"],
-                ["pra3", "06123458"],
-                ["pra4", "06123459"],
-                ["pra5", "06123460"],
-            ]
+        pdf_file = st.file_uploader("Choose a file. (Leave empty for default template)", type="pdf")
+       
+        campings = [
+            ["pra", "06123456"],
+            ["pra2", "06123457"],
+            ["pra3", "06123458"],
+            ["pra4", "06123459"],
+            ["pra5", "06123460"],
+        ]
 
-            for c in campings:
-                generate_pdf(c[0], c[1], selected_color, selected_color_camping_name, True)
-        elif how =="csv":
-            #not used yet, for later reference
-            
-            uploaded_file = st.file_uploader("Upload CSV", type="csv")
-            st.markdown("CSV must contain columns: `camping_name`, `phone_number`")
+        for c in campings:
+            generate_pdf(pdf_file,c[0], c[1], selected_color, selected_color_camping_name, True)
+    elif mode =="multiple_csv":
 
-            if uploaded_file:
+        selected_color = hex_to_rgb01("#2E498E")
+        selected_color_camping_name = hex_to_rgb01("#CCCCCC")
 
+        #not used yet, for later reference
+        st.markdown("CSV must contain columns (and headers): `camping_name`, `phone_number`")
+        uploaded_file = st.file_uploader("Upload CSV", type="csv")
+        
+        if uploaded_file:
+            try:
+            # if 1==1:
                 df = pd.read_csv(uploaded_file)
                 for _, row in df.iterrows():
                     camping = str(row["camping_name"])
                     phone = str(row["phone_number"])
                     generate_pdf(camping,phone, selected_color, selected_color_camping_name, True)
-        else:
-            st.error("Please select a valid mode: list or csv.")
-            st.stop()
+    
+            except:
+                st.error("⚠️ Error reading CSV file. Please ensure it uses commas as seperator, has camping_name and phone_number as heading in the 1st line and is formatted correctly.")
+                st.stop()
+               
     elif mode == "house_numbers":
 
         # numbers_str = st.text_input("Enter house numbers (comma-separated)", "1,2,3,4")
@@ -347,7 +372,7 @@ def main():
         hex_color = st.color_picker("Font color", "#000000")
         selected_color = hex_to_rgb01(hex_color)
         
-        pdf_file = st.file_uploader("Choose a file")
+        pdf_file = st.file_uploader("Choose a file. (Leave empty for default template)", type="pdf")
         if st.button("Generate House Number Signs"):
             generate_house_numbers(pdf_file,numbers, font_size, selected_color, True)
     else:
