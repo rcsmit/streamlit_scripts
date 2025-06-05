@@ -48,9 +48,9 @@ def generate_house_numbers(
         page_width = page.rect.width
         page_height = page.rect.height
 
-        x_target = 627
-        y_target = 105
-
+        x_target = 627-40
+        y_target = font_size +20 #-(font_size/20)
+        y_target =  ((595.2 - (font_size*0.688))/2)  + font_size*0.688
         font_name = "helv"  # default
         if font_data:
             try:
@@ -306,11 +306,12 @@ def main():
             st.stop()
     elif mode == "house_numbers":
 
-        numbers_str = st.text_input("Enter house numbers (comma-separated)", "1,2,3,4")
-        numbers = [int(n.strip()) for n in numbers_str.split(",") if n.strip().isdigit()]
-
-        font_size = st.slider("Font size", 10, 200, 120)
-        hex_color = st.color_picker("Font color", "#2E498E")
+        # numbers_str = st.text_input("Enter house numbers (comma-separated)", "1,2,3,4")
+        # numbers = [int(n.strip()) for n in numbers_str.split(",") if n.strip().isdigit()]
+        numbers  = [37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 659, 660, 661, 662, 663, 664, 665, 666, 667]
+        font_size = st.slider("Font size", 10, 2000, 300)
+        # hex_color = st.color_picker("Font color", "#2E498E")
+        hex_color = st.color_picker("Font color", "#000000")
         selected_color = hex_to_rgb01(hex_color)
 
         if st.button("Generate House Number Signs"):
