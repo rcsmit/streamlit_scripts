@@ -33,3 +33,5 @@ geopy
 branca
 fitz
 PyMuPDF
+astral
+pytz

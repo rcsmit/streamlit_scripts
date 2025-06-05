@@ -20,6 +20,81 @@ def download_and_cache_font(font_url):
         st.warning(f"Error downloading font: {e}. Using default font.")
         return None
 
+def generate_house_numbers(
+    numbers,
+    font_size,
+    font_color_rgb01,
+    show_download_button=True,
+):
+    pdf_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/template_parking.pdf"
+    font_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/Averta-Bold.ttf"
+
+    # Load base template
+    pdf_response = requests.get(pdf_url)
+    if pdf_response.status_code != 200:
+        st.error("Failed to fetch PDF template.")
+        return
+
+    font_data = download_and_cache_font(font_url)
+
+    # Start a new empty PDF
+    output_doc = pymupdf.open()
+
+    for number in numbers:
+        number_str = str(number)
+        base_doc = pymupdf.open(stream=pdf_response.content, filetype="pdf")
+        page = base_doc.load_page(0)  # only one page in template
+
+        page_width = page.rect.width
+        page_height = page.rect.height
+
+        x_target = 627
+        y_target = 105
+
+        font_name = "helv"  # default
+        if font_data:
+            try:
+                font_name = "AvertaBold"
+                page.insert_font(fontname=font_name, fontbuffer=font_data)
+                font = pymupdf.Font(fontbuffer=font_data)
+                text_width = font.text_length(number_str, fontsize=font_size)
+            except:
+                font = None
+                text_width = pymupdf.get_text_length(
+                    number_str, fontsize=font_size, fontname="helv"
+                )
+        else:
+            text_width = pymupdf.get_text_length(
+                number_str, fontsize=font_size, fontname="helv"
+            )
+
+        x = x_target - text_width / 2
+        y = y_target
+
+        page.insert_text(
+            pymupdf.Point(x, y),
+            number_str,
+            fontsize=font_size,
+            fontname=font_name,
+            fill=font_color_rgb01,
+            fontfile=font_url,
+        )
+
+        output_doc.insert_pdf(base_doc, from_page=0, to_page=0)
+
+    buffer = io.BytesIO()
+    output_doc.save(buffer)
+    output_doc.close()
+
+    if show_download_button:
+        st.success("✅ House numbers added successfully!")
+        st.download_button(
+            "📥 Download combined PDF with house numbers",
+            buffer.getvalue(),
+            "house_numbers.pdf",
+            mime="application/pdf",
+        )
+
 
 def generate_pdf(
     camping_name,
@@ -161,8 +236,8 @@ def generate_pdf(
 
 def main():
     st.title("📞 Add Phone Number to PDF")
-
-    mode = "single"  # "multiple"
+    mode = st.selectbox("Choose mode", ["single", "multiple", "house_numbers"])
+    # mode = "single"  # "multiple"
 
     def hex_to_rgb01(hex_color):
         hex_color = hex_color.lstrip("#")
@@ -229,7 +304,17 @@ def main():
         else:
             st.error("Please select a valid mode: list or csv.")
             st.stop()
+    elif mode == "house_numbers":
 
+        numbers_str = st.text_input("Enter house numbers (comma-separated)", "1,2,3,4")
+        numbers = [int(n.strip()) for n in numbers_str.split(",") if n.strip().isdigit()]
+
+        font_size = st.slider("Font size", 10, 200, 120)
+        hex_color = st.color_picker("Font color", "#2E498E")
+        selected_color = hex_to_rgb01(hex_color)
+
+        if st.button("Generate House Number Signs"):
+            generate_house_numbers(numbers, font_size, selected_color, True)
     else:
         st.error("Please select a valid mode: single or multiple.")
         st.stop()
