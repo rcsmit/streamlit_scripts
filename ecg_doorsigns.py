@@ -4,6 +4,20 @@ import io
 import requests
 import pandas as pd
 
+
+pdf_parking_url_1 = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/template_parking_1.pdf"
+pdf_parking_url_2 = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/template_parking_2.pdf"
+font_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/Averta-Bold.ttf"
+pdf_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/templates_ecg_2025a.pdf"
+# font_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/Averta-Regular.ttf"  # not used
+
+# public
+# pdf_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/template_public.pdf"
+# pdf_parking_url_1 = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/template_parking_public_1.pdf"
+# pdf_parking_url_2 = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/template_parking_public_2.pdf"
+# font_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/JupiteroidBold.ttf"
+
+
 @st.cache_data
 def download_and_cache_font(font_url):
     """Download and cache the TTF font file"""
@@ -20,7 +34,7 @@ def download_and_cache_font(font_url):
         st.warning(f"Error downloading font: {e}. Using default font.")
         return None
 
-def generate_house_numbers(
+def generate_house_numbers(pdf_file,
     numbers,
     font_size,
     font_color_rgb01,
@@ -28,25 +42,32 @@ def generate_house_numbers(
 ):
     version=1
     if version ==1:
-        pdf_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/template_parking.pdf"
+        pdf_parking_url = pdf_parking_url_1 
     elif version ==2:
-        pdf_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/template_parking_2.pdf"
-    font_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/Averta-Bold.ttf"
-
+        pdf_parking_url = pdf_parking_url_2 
+    
     # Load base template
-    pdf_response = requests.get(pdf_url)
-    if pdf_response.status_code != 200:
-        st.error("Failed to fetch PDF template.")
-        return
+    if pdf_file is None:
+        pdf_response = requests.get(pdf_parking_url)
+        if pdf_response.status_code != 200:
+            st.error(f"Failed to fetch PDF template. [status {pdf_response.status_code} | {pdf_parking_url}]")
+            return
+    else:
+        pdf_response = pdf_file
 
     font_data = download_and_cache_font(font_url)
 
     # Start a new empty PDF
     output_doc = pymupdf.open()
-
+    st.write(pdf_file)
     for number in numbers:
         number_str = str(number)
-        base_doc = pymupdf.open(stream=pdf_response.content, filetype="pdf")
+        if pdf_file is None:
+            base_doc = pymupdf.open(stream=pdf_response.content, filetype="pdf")
+        else:
+            # base_doc = pymupdf.open(stream=pdf_file.read(), filetype="pdf")
+            pdf_file.seek(0)  # Important: reset file pointer
+            base_doc = pymupdf.open(stream=pdf_file.read(), filetype="pdf")
         page = base_doc.load_page(0)  # only one page in template
 
         page_width = page.rect.width
@@ -120,10 +141,7 @@ def generate_pdf(
 ):
 
     # GitHub URLs
-    pdf_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/templates_ecg_2025a.pdf"
-    ttf_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/Averta-Bold.ttf"
-    ttf_url_camping_name = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/Averta-Regular.ttf"  # not used
-
+  
     # Font size
     font_size = 40
     font_size_camping_name = 10
@@ -148,7 +166,7 @@ def generate_pdf(
         doc = pymupdf.open(stream=pdf_response.content, filetype="pdf")
 
         # Download and register custom font
-        font_data = download_and_cache_font(ttf_url)
+        font_data = download_and_cache_font(font_url)
         font = None
         font_name = "helv"  # default fallback
 
@@ -205,7 +223,7 @@ def generate_pdf(
                 fontsize=font_size,
                 fontname=font_name,
                 fill=selected_color,
-                fontfile=ttf_url,
+                fontfile=font_url,
             )
 
             page.insert_text(
@@ -214,7 +232,7 @@ def generate_pdf(
                 fontsize=font_size_camping_name,
                 fontname=font_name,
                 fill=selected_color_camping_name,
-                fontfile=ttf_url,
+                fontfile=font_url,
             )
 
         # Save to memory
@@ -328,9 +346,10 @@ def main():
         # hex_color = st.color_picker("Font color", "#2E498E")
         hex_color = st.color_picker("Font color", "#000000")
         selected_color = hex_to_rgb01(hex_color)
-
+        
+        pdf_file = st.file_uploader("Choose a file")
         if st.button("Generate House Number Signs"):
-            generate_house_numbers(numbers, font_size, selected_color, True)
+            generate_house_numbers(pdf_file,numbers, font_size, selected_color, True)
     else:
         st.error("Please select a valid mode: single or multiple.")
         st.stop()
