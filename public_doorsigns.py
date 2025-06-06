@@ -32,11 +32,10 @@ def generate_house_numbers(pdf_file,
     numbers,
     font_size,
     font_color_rgb01,
+    version,
     show_download_button=True,
 ):
-    # version=1 # logo on left, number right
-
-    version=2 # logo on top, number below
+    
 
     if version ==1:
         pdf_parking_url = pdf_parking_url_1 
@@ -365,10 +364,15 @@ def main():
         # hex_color = st.color_picker("Font color", "#2E498E")
         hex_color = st.color_picker("Font color", "#000000")
         selected_color = hex_to_rgb01(hex_color)
-        
+        version = st.selectbox(
+            "Choose version",
+            [1, 2],
+            help="Version 1: logo on left, number on right. Version 2: logo on top, number below.",
+            key="version",
+        )
         pdf_file = st.file_uploader("Choose a file. (Leave empty for default template)", type="pdf")
         if st.button("Generate House Number Signs"):
-            generate_house_numbers(pdf_file,numbers, font_size, selected_color, True)
+            generate_house_numbers(pdf_file,numbers, font_size, selected_color, version, True)
     else:
         st.error("Please select a valid mode: single or multiple.")
         st.stop()
