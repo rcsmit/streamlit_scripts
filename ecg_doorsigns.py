@@ -76,7 +76,11 @@ def generate_house_numbers(pdf_file,
         # page_width = page.rect.width
         # page_height = page.rect.height
         # print(f"Page size: {page_width} x {page_height}")
-        # # Page size: 841.8897705078125 x 595.2755737304688
+        # # Page size A4 : 841.8897705078125 x 595.2755737304688
+
+       
+        # height of the text in points = 0.688 * font size in pixels 
+         
         if version ==1:
              # version=1 # logo on left, number right
 
@@ -158,8 +162,9 @@ def generate_pdf(pdf_file,
 
 
     # 1 cm = 28.35 points. Left top = [0,0]
-    # Page-specific Y positions
+    # Page-specific Y positions in points
     y_position_dict_str = "{0: 570, 1: 645, 2: 665, 3: 600, 4: 480, 5: 690, 6: 670}"
+    y_position_default = 700 # default values for when there are more pages than defined in the dict
     x_position_camping_name = 30
 
     y_position_camping_name = 810
@@ -170,7 +175,7 @@ def generate_pdf(pdf_file,
         if pdf_file is None:
             pdf_response = requests.get(pdf_url)
             if pdf_response.status_code != 200:
-                st.error(f"Failed to fetch PDF template. [status {pdf_response.status_code} | {pdf_parking_url}]")
+                st.error(f"Failed to fetch PDF template. [status {pdf_response.status_code} | {pdf_url}]")
                 return
         else:
             pdf_response = pdf_file
@@ -203,7 +208,7 @@ def generate_pdf(pdf_file,
 
         # Add phone number to all pages
         for i, page in enumerate(doc):
-            y = y_dict.get(i, 700)
+            y = y_dict.get(i, y_position_default)
             page_width = page.rect.width
 
             # Install custom font on each page if available
@@ -359,8 +364,8 @@ def main():
                     phone = str(row["phone_number"])
                     generate_pdf(camping,phone, selected_color, selected_color_camping_name, True)
     
-            except:
-                st.error("⚠️ Error reading CSV file. Please ensure it uses commas as seperator, has camping_name and phone_number as heading in the 1st line and is formatted correctly.")
+            except Exception as e:
+                st.error(f"⚠️ Error reading CSV file. Please ensure it uses commas as seperator, has camping_name and phone_number as heading in the 1st line and is formatted correctly. Error :{e}")
                 st.stop()
                
     elif mode == "house_numbers":
