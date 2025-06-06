@@ -62,7 +62,7 @@ def generate_house_numbers(pdf_file,
 
     # Start a new empty PDF
     output_doc = pymupdf.open()
-    st.write(pdf_file)
+    #st.write(pdf_file)
     for number in numbers:
         number_str = str(number)
         if pdf_file is None:
@@ -75,7 +75,7 @@ def generate_house_numbers(pdf_file,
 
         # page_width = page.rect.width
         # page_height = page.rect.height
-        # st.write(f"Page size: {page_width} x {page_height}")
+        # print(f"Page size: {page_width} x {page_height}")
         # # Page size: 841.8897705078125 x 595.2755737304688
         if version ==1:
              # version=1 # logo on left, number right
@@ -93,7 +93,8 @@ def generate_house_numbers(pdf_file,
             x_target = 29.7*28.35/2
             # y_target = font_size +20 #-(font_size/20)
             #y_target =  ((385.5 - (font_size*0.688))/2)  + font_size*0.688
-            y_target =  385.5 + ((font_size*0.688)/2) #  + font_size*0.688
+            # y_target =  385.5 + ((font_size*0.688)/2) #  + font_size*0.688
+            y_target = ( ((595.2 - (font_size*0.688))/2)  + font_size*0.688)+14
 
 
         font_name = "helv"  # default
@@ -367,13 +368,13 @@ def main():
         # numbers_str = st.text_input("Enter house numbers (comma-separated)", "1,2,3,4")
         # numbers = [int(n.strip()) for n in numbers_str.split(",") if n.strip().isdigit()]
         numbers  = [37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 659, 660, 661, 662, 663, 664, 665, 666, 667]
-        font_size = st.slider("Font size", 10, 2000, 80)
+        font_size = st.slider("Font size", 10, 2000, 300)
         # hex_color = st.color_picker("Font color", "#2E498E")
         hex_color = st.color_picker("Font color", "#000000")
         selected_color = hex_to_rgb01(hex_color)
         version = st.selectbox(
             "Choose version",
-            [1, 2],2,
+            [1, 2],1,
             help="Version 1: logo on left, number on right. Version 2: logo on top, number below.",
             key="version",
         )

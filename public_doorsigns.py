@@ -5,6 +5,7 @@ import requests
 import pandas as pd
 
 
+
 # public
 pdf_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/template_public.pdf"
 pdf_parking_url_1 = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/template_parking_public_1.pdf"
@@ -35,8 +36,9 @@ def generate_house_numbers(pdf_file,
     version,
     show_download_button=True,
 ):
-    
+    # version=1 # logo on left, number right
 
+    
     if version ==1:
         pdf_parking_url = pdf_parking_url_1 
     elif version ==2:
@@ -55,7 +57,7 @@ def generate_house_numbers(pdf_file,
 
     # Start a new empty PDF
     output_doc = pymupdf.open()
-    st.write(pdf_file)
+    #st.write(pdf_file)
     for number in numbers:
         number_str = str(number)
         if pdf_file is None:
@@ -68,7 +70,7 @@ def generate_house_numbers(pdf_file,
 
         # page_width = page.rect.width
         # page_height = page.rect.height
-        # st.write(f"Page size: {page_width} x {page_height}")
+        # print(f"Page size: {page_width} x {page_height}")
         # # Page size: 841.8897705078125 x 595.2755737304688
         if version ==1:
              # version=1 # logo on left, number right
@@ -86,7 +88,8 @@ def generate_house_numbers(pdf_file,
             x_target = 29.7*28.35/2
             # y_target = font_size +20 #-(font_size/20)
             #y_target =  ((385.5 - (font_size*0.688))/2)  + font_size*0.688
-            y_target =  385.5 + ((font_size*0.688)/2) #  + font_size*0.688
+            # y_target =  385.5 + ((font_size*0.688)/2) #  + font_size*0.688
+            y_target = ( ((595.2 - (font_size*0.688))/2)  + font_size*0.688)+14
 
 
         font_name = "helv"  # default
@@ -129,7 +132,7 @@ def generate_house_numbers(pdf_file,
         st.download_button(
             "📥 Download combined PDF with house numbers",
             buffer.getvalue(),
-            "house_numbers.pdf",
+            f"house_numbers_{version}.pdf",
             mime="application/pdf",
         )
 
@@ -366,13 +369,15 @@ def main():
         selected_color = hex_to_rgb01(hex_color)
         version = st.selectbox(
             "Choose version",
-            [1, 2],
+            [1, 2],1,
             help="Version 1: logo on left, number on right. Version 2: logo on top, number below.",
             key="version",
         )
         pdf_file = st.file_uploader("Choose a file. (Leave empty for default template)", type="pdf")
         if st.button("Generate House Number Signs"):
             generate_house_numbers(pdf_file,numbers, font_size, selected_color, version, True)
+    
+    
     else:
         st.error("Please select a valid mode: single or multiple.")
         st.stop()

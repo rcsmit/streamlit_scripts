@@ -6,6 +6,9 @@ import streamlit as st
 
 st.set_page_config(page_title="Streamlit scripts of René Smit")
 
+import warnings
+warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+
 def dynamic_import(module):
     """Import a module stored in a variable
 
