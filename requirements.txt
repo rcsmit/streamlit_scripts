@@ -2,7 +2,7 @@ streamlit
 scipy
 matplotlib
 numpy==2.2.5
-pandas
+ pandas==1.5.2
 seaborn
 plotly
 lmfit
