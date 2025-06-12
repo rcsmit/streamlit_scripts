@@ -3,8 +3,8 @@ from streamlit.components.v1 import html
 
 def main():
     # Set page layout
-    st.set_page_config(layout="wide")
-    st.title("Strudel Beat Generator (16-Step, 8-Instrument Sequencer)")
+    #st.set_page_config(layout="wide")
+    st.title("Strudel Beat Generator (16-Step, 11-Instrument Sequencer)")
 
     st.markdown("""
     ### Drum Abbreviations

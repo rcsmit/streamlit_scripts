@@ -90,7 +90,7 @@ def main():
                 ["[57] Compound ROI ","compound_roi_calculator"],
                 ["[58] Doorsigns ","public_doorsigns"],
                 ["[59] Sunset Azimut ","sunset_azimut"],
-                 ["[60] Strudel Drumbox ","studel_drumbox"],
+                 ["[60] Strudel Drumsequencer ","studel_drumbox"],
                 ]
  
     # for file in arr:
