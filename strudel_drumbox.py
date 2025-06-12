@@ -88,9 +88,7 @@ def main():
 
             <script src="https://unpkg.com/@strudel/embed@latest"></script>
             <strudel-repl>
-            <!--
-            {strudel_code}
-            -->
+            <!--{strudel_code}-->
             </strudel-repl>
             `"""
 
