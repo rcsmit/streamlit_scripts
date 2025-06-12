@@ -94,8 +94,8 @@ def main():
 
             # Execute your app
             
-            html(my_html, width=1200,height=900)
-            st.write(my_html)
+            html(my_html, width=1200)
+            
         else:
             my_html = f"""<script src="https://unpkg.com/@strudel/repl@latest"></script>
             <strudel-editor>
