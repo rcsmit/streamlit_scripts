@@ -82,21 +82,34 @@ def main():
 
     
 
+        if 1==1:
+            # Wrapt the javascript as html code
+            my_html = f"""
 
-        # Wrapt the javascript as html code
-        my_html = f"""
+            <script src="https://unpkg.com/@strudel/embed@latest"></script>
+            <strudel-repl>
+            <!--
+            {strudel_code}
+            -->
+            </strudel-repl>
+            `"""
 
-        <script src="https://unpkg.com/@strudel/embed@latest"></script>
-        <strudel-repl>
-        <!--
-        {strudel_code}
-        -->
-        </strudel-repl>
-        """
+            # Execute your app
+            
+            html(my_html, width=1200,height=900)
+            st.write(my_html)
+        else:
+            my_html = f"""<script src="https://unpkg.com/@strudel/repl@latest"></script>
+            <strudel-editor>
+            <!--
+            {strudel_code}
+            -->
+            </strudel-editor>
+            """
 
-        # Execute your app
-        
-        html(my_html, width=1200,height=900)
+            # Execute your app
+            
+            html(my_html, width=1200,height=900)
         st.markdown("### Generated Strudel Code:")
         st.code(strudel_code, language="javascript")
 
