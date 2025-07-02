@@ -7,6 +7,7 @@ import pandas as pd
 
 pdf_parking_url_1 = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/template_parking_1.pdf"
 pdf_parking_url_2 = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/template_parking_2.pdf"
+pdf_doorsnign_url_2 = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/template_doorsign.pdf"
 font_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/Averta-Bold.ttf"
 pdf_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/templates_ecg_2025a.pdf"
 # font_url = "https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/Averta-Regular.ttf"  # not used
@@ -41,19 +42,29 @@ def generate_house_numbers(pdf_file,
     version,
     show_download_button=True,
 ):
-    # version=1 # logo on left, number right
+    """Generate a PDF with house numbers added to a template.
 
-    
+    Args:
+        pdf_file (_type_): None or a file-like object containing the PDF template.
+        numbers (list): List of house numbers to add to the PDF.
+        font_size (int): font size in pixels for the house numbers.
+        font_color_rgb01 (tuple): Color of the house numbers, in RGB format (0-1 range).
+        version (int): 1 or 2, where 1 is logo on left, number on right and 2 is logo on top, number below.       
+        show_download_button (bool, optional): _description_. Defaults to True.
+    """
+ 
     if version ==1:
-        pdf_parking_url = pdf_parking_url_1 
+        pdf_url = pdf_parking_url_1 
     elif version ==2:
-        pdf_parking_url = pdf_parking_url_2 
+        pdf_url = pdf_parking_url_2 
+        #pdf_url = pdf_doorsign_url_2 
     
+
     # Load base template
     if pdf_file is None:
-        pdf_response = requests.get(pdf_parking_url)
+        pdf_response = requests.get(pdf_url)
         if pdf_response.status_code != 200:
-            st.error(f"Failed to fetch PDF template. [status {pdf_response.status_code} | {pdf_parking_url}]")
+            st.error(f"Failed to fetch PDF template. [status {pdf_response.status_code} | {pdf_url}]")
             return
     else:
         pdf_response = pdf_file
@@ -98,9 +109,11 @@ def generate_house_numbers(pdf_file,
             # y_target = font_size +20 #-(font_size/20)
             #y_target =  ((385.5 - (font_size*0.688))/2)  + font_size*0.688
             # y_target =  385.5 + ((font_size*0.688)/2) #  + font_size*0.688
-            y_target = ( ((595.2 - (font_size*0.688))/2)  + font_size*0.688)+14
+            
+            # for vertical centered
+            #y_target = ( ((595.2 - (font_size*0.688))/2)  + font_size*0.688)+14
 
-
+            y_target = ( ((595.2 - (font_size*0.688))/2)  + font_size*0.688)+14 + 70
         font_name = "helv"  # default
         if font_data:
             try:
@@ -141,7 +154,7 @@ def generate_house_numbers(pdf_file,
         st.download_button(
             "📥 Download combined PDF with house numbers",
             buffer.getvalue(),
-            f"house_numbers_{version}.pdf",
+            f"house_numbers_{version}_{numbers[0]}_{numbers[-1]}.pdf",
             mime="application/pdf",
         )
 
@@ -153,6 +166,18 @@ def generate_pdf(pdf_file,
     selected_color_camping_name,
     show_download_button,
 ):
+    
+    """Generate a PDF with phone number added to a template.
+    Args:
+        pdf_file (_type_): None or a file-like object containing the PDF template. 
+        camping_name (str): Camping name or code to add to the PDF.
+        phone_number (str): Phone number to add to the PDF.
+        selected_color (tuple): RGB color for the phone number text.
+
+        selected_color_camping_name (tuple): RGB color for the camping name text.
+        show_download_button (bool): Whether to show the download button for the generated PDF.
+    """
+
 
     # GitHub URLs
   
@@ -372,8 +397,19 @@ def main():
 
         # numbers_str = st.text_input("Enter house numbers (comma-separated)", "1,2,3,4")
         # numbers = [int(n.strip()) for n in numbers_str.split(",") if n.strip().isdigit()]
-        numbers  = [37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 659, 660, 661, 662, 663, 664, 665, 666, 667]
-        font_size = st.slider("Font size", 10, 2000, 300)
+        #numbers  = [37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 659, 660, 661, 662, 663, 664, 665, 666, 667]
+        #numbers = ""
+        prefix = st.text_input("Prefix for house numbers", "LA")
+        min_number = st.number_input("Start number", 1, 1000, 1)
+        max_number = st.number_input("End number", 1, 1000, 10)
+        if min_number > max_number:
+            st.error("Start number must be less than or equal to end number.")
+            st.stop()
+        # Generate house numbers with prefix
+        numbers = [f"{prefix}{str(i).zfill(2)}" for i in range(min_number, max_number + 1)]
+        #numbers = [f"LA{str(i).zfill(2)}" for i in range(1, 11)]
+
+        font_size = st.slider("Font size", 10, 2000, 250)
         # hex_color = st.color_picker("Font color", "#2E498E")
         hex_color = st.color_picker("Font color", "#000000")
         selected_color = hex_to_rgb01(hex_color)
