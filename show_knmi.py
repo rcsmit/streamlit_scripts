@@ -3,7 +3,7 @@ import streamlit as st
 from datetime import datetime
 import platform
 
-import polars as pl
+# import polars as pl
 
 
 from show_knmi_functions.utils import show_weerstations, help,  list_to_text,check_from_until, find_date_for_title, download_button,get_weerstations, get_data
@@ -14,11 +14,12 @@ from show_knmi_functions.show_plot import show_plot
 from show_knmi_functions.plot_percentiles import plot_percentiles
 from show_knmi_functions.show_aantal_keren import show_aantal_keren
 from show_knmi_functions.show_per_periode import show_per_periode
+from show_knmi_functions.show_warme_dagen import show_warme_dagen
 from show_knmi_functions.spaghetti_plot import spaghetti_plot
 from show_knmi_functions.show_year_histogram_animation import show_year_histogram_animation
 from show_knmi_functions.last_day import last_day
 from show_knmi_functions.anomaly import anomaly
-from show_knmi_functions.show_extremen import show_extremen
+#from show_knmi_functions.show_extremen import show_extremen
 from show_knmi_functions.neerslagtekort import neerslagtekort, neerslagtekort_meerdere_stations
 from show_knmi_functions.show_calender_heatmap import show_calender_heatmap
 
@@ -70,8 +71,8 @@ def interface():
                                         "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", "per week in div jaren", 
                                         "per maand in div jaren",  "spaghetti plot","anomaly", "percentiles", 
                                         "polar plot/radar chart", "show year histogram animation", "calender heatmap", 
-                                        "does rain predict rain","neerslagtekort","neerslagtekort_meerdere", "warmingstripes","extremen",
-                                        "show weerstations", "help", "polar_debug"], index=20
+                                        "does rain predict rain","warme dagen", "neerslagtekort","neerslagtekort_meerdere", "warmingstripes","extremen",
+                                        "show weerstations", "help", "polar_debug"], index=0
     )
     if mode !=  "neerslagtekort_meerdere":
         weer_stations = get_weerstations()
@@ -189,6 +190,9 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
         help()
     elif mode == "does rain predict rain":
         does_rain_predict_rain(df)
+    elif mode == "warme dagen":
+       
+        show_warme_dagen(df, gekozen_weerstation, what_to_show)
     elif mode == "last day":
        
         last_day(df, gekozen_weerstation, what_to_show)
@@ -199,8 +203,16 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
     elif mode == "neerslagtekort":
         neerslagtekort(df)
     elif mode == "extremen":
-        show_extremen(df, what_to_show)
+        st.info("Temporary disabled. Missing required CPU features.")
+    # uses polars what can't be run on my computer
+    # RuntimeWarning: Missing required CPU features.
 
+    # The following required CPU features were not detected:
+    #     avx, avx2, fma, bmi1, bmi2, lzcnt
+    # Continuing to use this version of Polars on this processor will likely result in a crash.
+    # Install the `polars-lts-cpu` package instead of `polars` to run Polars with better compatibility.
+    #     show_extremen(df, what_to_show)
+    #
     elif mode == "neerslagtekort_meerdere":
     
         st.subheader("Neerslagtekort")
