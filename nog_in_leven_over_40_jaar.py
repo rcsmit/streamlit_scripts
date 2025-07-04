@@ -50,7 +50,6 @@ def calculate_85plus_in_2060(population_data, mortality_female, mortality_male):
     
     return female_85plus, male_85plus, female_85plus + male_85plus
 
-
 def calculate_85plus_in_2060_fixed_2025_rates(population_data, mortality_female, mortality_male):
     """
     Berekent het aantal 85-plussers in 2060 op basis van de 2024 bevolking
