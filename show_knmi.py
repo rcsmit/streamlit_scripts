@@ -39,7 +39,7 @@ from show_knmi_functions.show_calender_heatmap import show_calender_heatmap
 # INSPRIATION : https://weatherspark.com/m/52666/10/Average-Weather-in-October-in-Utrecht-Netherlands
 # https://radumas.info/blog/tutorial/2017/04/17/percentile-test.html
 
-pd.set_option('future.no_silent_downcasting', True) 
+#pd.set_option('future.no_silent_downcasting', True) 
 pd.options.mode.chained_assignment = None  
 try:
     #delete the accessor to avoid warning 
