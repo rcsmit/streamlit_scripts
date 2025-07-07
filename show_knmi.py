@@ -19,6 +19,7 @@ from show_knmi_functions.spaghetti_plot import spaghetti_plot
 from show_knmi_functions.show_year_histogram_animation import show_year_histogram_animation
 from show_knmi_functions.last_day import last_day
 from show_knmi_functions.anomaly import anomaly
+from show_knmi_functions.gamma_distribution import gamma_distribution
 from show_knmi_functions.normaal_verdeeld import normaal_verdeeld
 #from show_knmi_functions.show_extremen import show_extremen
 from show_knmi_functions.neerslagtekort import neerslagtekort, neerslagtekort_meerdere_stations
@@ -70,9 +71,9 @@ def interface():
     mode = st.sidebar.selectbox(
         "Modus (kies HELP voor hulp)", ["doorlopend per dag", "aantal keren", "specifieke dag","last day",
                                         "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", "per week in div jaren", 
-                                        "per maand in div jaren",  "spaghetti plot","anomaly", "percentiles", 
+                                        "per maand in div jaren","maand_per_jaar",  "spaghetti plot","anomaly", "percentiles", 
                                         "polar plot/radar chart", "show year histogram animation", "calender heatmap", 
-                                        "does rain predict rain","warme dagen", "neerslagtekort","neerslagtekort_meerdere", "normaal_verdeeld", "warmingstripes","extremen",
+                                        "does rain predict rain","warme dagen", "neerslagtekort","neerslagtekort_meerdere", "normaal_verdeeld", "gamma_distribution", "warmingstripes","extremen",
                                         "show weerstations", "help", "polar_debug"], index=0
     )
     if mode !=  "neerslagtekort_meerdere":
@@ -262,6 +263,11 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
         show_per_periode(df, gekozen_weerstation, what_to_show, "weekgem", graph_type)
         datefield = None
         title = f"{what_to_show_as_txt} van {from_} - {until_} in {gekozen_weerstation}"
+    elif mode == "maand_per_jaar":
+        show_per_periode(df, gekozen_weerstation, what_to_show, "maand_per_jaar", graph_type)
+        datefield = None
+        title = f"{what_to_show_as_txt} van {from_} - {until_} in {gekozen_weerstation}"
+        
     elif mode == "aantal keren":
         show_aantal_keren(df, gekozen_weerstation, what_to_show)
     elif mode == "anomaly":
@@ -287,6 +293,9 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
     elif mode == "normaal_verdeeld":
        
         normaal_verdeeld(df,what_to_show)
+
+     elif mode == "gamma_distribution":
+        gamma_distribution(df, what_to_show, 1901, 2025)
     elif mode =="show year histogram animation":
         show_year_histogram_animation(df, what_to_show)
         

@@ -5,7 +5,7 @@ import pandas as pd
 from scipy.stats import shapiro
 import streamlit as st
 from scipy.stats import norm
-
+from scipy.stats import norm, gamma, kstest
 
 try:
     from show_knmi_functions.utils import get_data
@@ -92,16 +92,28 @@ def normaal_verdeeld(df,what_to_show):
             if len(temps) < 3:
                 continue
 
-            mu, std = norm.fit(temps)
             fig = plt.figure(figsize=(6, 4))
             plt.hist(temps, bins=15, density=True, alpha=0.6, label='Waarnemingen')
 
             xmin, xmax = plt.xlim()
             x = np.linspace(xmin, xmax, 100)
+            mu, std = norm.fit(temps)
             p = norm.pdf(x, mu, std)
-            plt.plot(x, p, 'k', linewidth=2, label='Normale verdeling')
+            
+            
 
-            plt.title(f'Dag {label}: normaal verdeeld? {is_normal}')
+             # Gamma verdeling fit + test
+            shape, loc, scale = gamma.fit(temps)
+            gamma_y = gamma.pdf(x, shape, loc, scale)
+            _, gamma_p = kstest(temps, 'gamma', args=(shape, loc, scale))
+            if gamma_p < 0.05:
+                is_gamma = "ja"
+            
+            
+            plt.plot(x, p, 'k-', linewidth=2, label='Normale verdeling')
+            plt.plot(x, gamma_y, 'r--', linewidth=2, label='Gamma verdeling')
+
+            plt.title(f'Dag {label}: normaal verdeeld? {is_normal} Gamma verdeeld?{is_gamma}')
             plt.xlabel('Temp max')
             plt.ylabel('Frequentie')
             plt.legend()
