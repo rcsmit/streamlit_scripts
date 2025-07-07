@@ -129,7 +129,6 @@ def plot_anomalie_really (df_anomalie, what,wdw, one_color, min_date, max_date):
             name='Negative Difference'
         ))
     
-
     # Add a horizontal line at y=0
     fig.add_shape(type='line',
                 x0=df_anomalie['YYYYMMDD'].min(),
