@@ -112,7 +112,7 @@ def normaal_verdeeld(df,what_to_show):
 
 
 def main():
-    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/result.csv" 
+    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/result_1901.csv" 
     df = get_data(url)
 
     normaal_verdeeld(df,"temp_max")
