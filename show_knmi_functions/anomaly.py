@@ -21,7 +21,8 @@ def anomaly(df, what_):
     smooth_before_distracting =  st.sidebar.selectbox("Smooth before distracting", ["before", "after", "only avg"], 0)
     for what in what_:
         st.subheader(what)
-        df['date_1900'] = pd.to_datetime(df['YYYYMMDD'].dt.strftime('%m-%d-2000'), format='mixed')
+        # df['date_1900'] = pd.to_datetime(df['YYYYMMDD'].dt.strftime('%m-%d-2000'), format='mixed')
+        df['date_1900'] = pd.to_datetime(df['YYYYMMDD'].dt.strftime('%m-%d-2000'))
         # Identify the most recent date in the dataset
         most_recent_date = df['YYYYMMDD'].max()
         if calculate_last_year_with_avg:
