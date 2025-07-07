@@ -19,6 +19,7 @@ from show_knmi_functions.spaghetti_plot import spaghetti_plot
 from show_knmi_functions.show_year_histogram_animation import show_year_histogram_animation
 from show_knmi_functions.last_day import last_day
 from show_knmi_functions.anomaly import anomaly
+from show_knmi_functions.normaal_verdeeld import normaal_verdeeld
 #from show_knmi_functions.show_extremen import show_extremen
 from show_knmi_functions.neerslagtekort import neerslagtekort, neerslagtekort_meerdere_stations
 from show_knmi_functions.show_calender_heatmap import show_calender_heatmap
@@ -71,7 +72,7 @@ def interface():
                                         "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", "per week in div jaren", 
                                         "per maand in div jaren",  "spaghetti plot","anomaly", "percentiles", 
                                         "polar plot/radar chart", "show year histogram animation", "calender heatmap", 
-                                        "does rain predict rain","warme dagen", "neerslagtekort","neerslagtekort_meerdere", "warmingstripes","extremen",
+                                        "does rain predict rain","warme dagen", "neerslagtekort","neerslagtekort_meerdere", "normaal_verdeeld", "warmingstripes","extremen",
                                         "show weerstations", "help", "polar_debug"], index=0
     )
     if mode !=  "neerslagtekort_meerdere":
@@ -283,6 +284,9 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
     elif mode == "polar_debug":
        
         polar_debug(df)
+    elif mode == "normaal_verdeeld":
+       
+        normaal_verdeeld(df,what_to_show)
     elif mode =="show year histogram animation":
         show_year_histogram_animation(df, what_to_show)
         
