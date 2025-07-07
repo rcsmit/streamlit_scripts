@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 from scipy.stats import shapiro
 import streamlit as st
+from scipy.stats import norm
+
 
 try:
     from show_knmi_functions.utils import get_data
@@ -15,6 +17,8 @@ def normaal_verdeeld(df,what_to_show):
     df['date'] = pd.to_datetime(df['YYYYMMDD'], format='%Y%m%d')
     df['day_of_year'] = df['date'].dt.dayofyear
     df['year'] = df['date'].dt.year
+
+
 
     # Resultaatlijst
     results = []
@@ -41,6 +45,10 @@ def normaal_verdeeld(df,what_to_show):
     normality_df = normality_df.sort_values('day_of_year')
 
 
+    # Voeg dag-maand toe aan dataframe voor labels
+    normality_df['date'] = pd.to_datetime(normality_df['day_of_year'], format='%j')
+    normality_df['dag_maand'] = normality_df['date'].dt.strftime('%d-%m')
+
     # Maak een kolom met 1 = niet normaal, 0 = normaal
     normality_df['not_normal'] = (~normality_df['normal']).astype(int)
 
@@ -55,7 +63,7 @@ def normaal_verdeeld(df,what_to_show):
             heatmap_array[week, weekday] = row['not_normal']
 
     # Plot de heatmap
-    fig = plt.figure(figsize=(12, 6))
+    fig = plt.figure()
     sns.heatmap(heatmap_array, cmap='Reds', cbar=False, linewidths=0.5, linecolor='gray')
 
     plt.title(f'Niet-normale verdeling ({what_to_show}) per dag van het jaar')
@@ -65,9 +73,42 @@ def normaal_verdeeld(df,what_to_show):
     plt.xticks(ticks=np.arange(7)+0.5, labels=['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo'])
 
     plt.tight_layout()
-    st.pyplot (fig)
+    plt.show()
+    st.pyplot(fig)
 
-    st.info("Rood = niet normaal verdeeld | Wit = normaal verdeeld of geen data |Indeling is op weeknummer × weekdag")
+    # Histogram plots voor niet normaal verdeelde dagen
+    # not_normal_days = normality_df[normality_df['not_normal'] == 1]
+    days = normality_df
+
+    #for _, row in not_normal_days.iterrows():
+    for _, row in days.iterrows():
+        day = int(row['day_of_year'])
+        weekday = day % 7
+        if weekday ==0:
+            label = row['dag_maand']
+            is_normal = "ja" if row['normal'] else "nee"
+
+            temps = df[df['day_of_year'] == day][what_to_show].dropna()
+            if len(temps) < 3:
+                continue
+
+            mu, std = norm.fit(temps)
+            fig = plt.figure(figsize=(6, 4))
+            plt.hist(temps, bins=15, density=True, alpha=0.6, label='Waarnemingen')
+
+            xmin, xmax = plt.xlim()
+            x = np.linspace(xmin, xmax, 100)
+            p = norm.pdf(x, mu, std)
+            plt.plot(x, p, 'k', linewidth=2, label='Normale verdeling')
+
+            plt.title(f'Dag {label}: normaal verdeeld? {is_normal}')
+            plt.xlabel('Temp max')
+            plt.ylabel('Frequentie')
+            plt.legend()
+            plt.tight_layout()
+        
+            st.pyplot(fig)
+
 
 
 def main():
