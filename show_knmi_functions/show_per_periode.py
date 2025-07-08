@@ -3,10 +3,14 @@ import numpy as np
 import streamlit as st
 from datetime import datetime
 import plotly.graph_objects as go
+
 try:
-    from show_knmi_functions.utils import get_data
+    from show_knmi_functions.utils import get_data, loess_skmisc
 except:
-    from utils import get_data
+    from utils import get_data, loess_skmisc
+
+
+
 def show_per_periode(df, gekozen_weerstation, what_to_show_, groeperen, graph_type):
     what_to_show_ = what_to_show_ if type(what_to_show_) == list else [what_to_show_]
     df.set_index("YYYYMMDD")
@@ -46,7 +50,7 @@ def show_per_periode(df, gekozen_weerstation, what_to_show_, groeperen, graph_ty
         if graph_type == "plotly":
             fig = go.Figure()
             title = f"{what_to_show} - {gekozen_weerstation}"
-
+            non_sma=None
             if groeperen == "maandgem":
                 sma = [
                     go.Scatter(x=pd.Series(df_pivoted["MM"]), y=df_pivoted[col],
@@ -72,15 +76,32 @@ def show_per_periode(df, gekozen_weerstation, what_to_show_, groeperen, graph_ty
                                        mode='lines', line=dict(width=line_width), name=col)
                     sma.append(trace)
             elif groeperen == "maand_per_jaar":
-                sma = [
-                    go.Scatter(x=df_pivoted["YYYY"], y=df_pivoted[month],
-                               mode="lines", name=f"Maand {month}")
-                    for month in df_pivoted.columns[1:]
-                ]
+
+                non_sma = [
+                        go.Scatter(x=df_pivoted["YYYY"], y=df_pivoted[month],
+                                mode="lines", name=f"Maand {month}")
+                        for month in df_pivoted.columns[1:]
+                    ]
+
+                sma = []
+                
+                df_pivoted = df_pivoted[df_pivoted["YYYY"]!="2025"]  # exclude 2025 if present, gives an error with loess
+                                                                    #smoothening (gives curves until 2003 for months that are
+                                                                    # not there yet)
+             
+                for month in df_pivoted.columns[1:]:
+                    _, y_hat, _, _ = loess_skmisc(df_pivoted["YYYY"], df_pivoted[month])
+            
+                    trace = go.Scatter(x=df_pivoted["YYYY"], y=y_hat, mode="lines", name=f"Maand {month}")
+                    sma.append(trace)
 
             fig = go.Figure(data=sma, layout=go.Layout(yaxis=dict(title=what_to_show), title=title))
             st.plotly_chart(fig, use_container_width=True)
 
+            if non_sma:
+                fig = go.Figure(data=non_sma, layout=go.Layout(yaxis=dict(title=what_to_show), title=title))
+                st.plotly_chart(fig, use_container_width=True)
+            
         else:
             st.warning("Under construction")
 
