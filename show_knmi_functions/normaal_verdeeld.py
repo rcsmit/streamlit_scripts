@@ -18,11 +18,12 @@ def normaal_verdeeld(df, what_to_show):
     df['year'] = df['date'].dt.year
 
     results = []
-
+    placeholder=st.empty()
     # Loop over elke dag van het jaar
     for day, group in df.groupby('day_of_year'):
-        sys.stdout.write(f"Processing day {day}...\r")
-        sys.stdout.flush()
+        placeholder.info(f"Processing day {day}...\r")
+        # sys.stdout.write(f"Processing day {day}...\r")
+        # sys.stdout.flush()
         temps = group[what_to_show].dropna()
         if len(temps) >= 3:
             # Normale verdeling
@@ -42,7 +43,7 @@ def normaal_verdeeld(df, what_to_show):
                 'p_gamma': p_gamma,
                 'gamma_normal': is_gamma
             })
-
+    placeholder.empty()
     # Resultaten naar DataFrame
     normality_df = pd.DataFrame(results)
     normality_df = normality_df.sort_values('day_of_year')
@@ -140,8 +141,13 @@ def normaal_verdeeld(df, what_to_show):
             plt.close()
 
             st.write(f"📅 Dag: {label}  |  Waarnemingen: {len(temps)}")
-            st.write(f"Normaal:  p={row['p_value']:.3f} → {is_normal} | μ={mu:.2f}, σ={std:.2f} | p25={p25_norm:.2f} | p975={p975_norm:.2f}")
-            st.write(f"Gamma:    p={row['p_gamma']:.3f} → {is_gamma} | shape={shape:.2f}, loc={loc:.2f}, scale={scale:.2f} | p25={p25_gamma:.2f} | p975={p975_gamma:.2f}")
+            try:
+                st.write(f"Normaal:  p={row['p_value']:.3f} → {is_normal} | μ={mu:.2f}, σ={std:.2f} | p25={p25_norm:.2f} | p975={p975_norm:.2f}")
+                st.write(f"Gamma:    p={row['p_gamma']:.3f} → {is_gamma} | shape={shape:.2f}, loc={loc:.2f}, scale={scale:.2f} | p25={p25_gamma:.2f} | p975={p975_gamma:.2f}")
+            except:
+                # gives an error on streamlit sharing
+                pass
+
             st.markdown("---")
 
 
