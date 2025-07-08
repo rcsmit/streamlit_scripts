@@ -25,7 +25,7 @@ def gamma_distribution(df, what_to_show_, start_year, special_year):
     if st.button("GO"):
         what_to_show = what_to_show_[0]
         st.title(f"Gamma-verdeling van {what_to_show} per dag van het jaar (start {start_year})")
-
+        placeholder = st.empty()
         df['date'] = pd.to_datetime(df['YYYYMMDD'], format='%Y%m%d')
         df['day_of_year'] = df['date'].dt.dayofyear
         df['year'] = df['date'].dt.year
@@ -35,8 +35,8 @@ def gamma_distribution(df, what_to_show_, start_year, special_year):
         daily_stats = []
 
         for day, group in df.groupby('day_of_year'):
-            sys.stdout.write(f"Processing day {day}...\r")
-            sys.stdout.flush()
+            placeholder.info(f"Processing day {day}...\r")
+            #sys.stdout.flush()
             temps = group[what_to_show]
             if len(temps) < 5:
                 continue
@@ -54,7 +54,7 @@ def gamma_distribution(df, what_to_show_, start_year, special_year):
                 'p16': p16,
                 'p84': p84,
             })
-
+        placeholder.empty()
         stats_df = pd.DataFrame(daily_stats)
         stats_df['date'] = pd.to_datetime(stats_df['day_of_year'], format='%j')
 
@@ -145,8 +145,8 @@ def gamma_distribution(df, what_to_show_, start_year, special_year):
 def main():
     url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/show_knmi_functions/result_1901.csv"
     df = get_data(url)
-    gamma_distribution(df, "temp_max",1900, 2025)
-    gamma_distribution(df, "temp_max",2020, 2025)
+    gamma_distribution(df, ["temp_max"],1900, 2025)
+    #gamma_distribution(df, ["temp_max"],2020, 2025)
 
 if __name__ == "__main__":
     main()
