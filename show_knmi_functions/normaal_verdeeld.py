@@ -113,6 +113,11 @@ def normaal_verdeeld(df, what_to_show):
             p = norm.pdf(x, mu, std)
 
             shape, loc, scale = gamma.fit(temps)
+
+            p25_gamma = gamma.ppf(0.025, shape, loc=loc, scale=scale)
+            p25_norm = norm.ppf(0.025, loc=mu, scale=std)
+
+
             p975_gamma = gamma.ppf(0.975, shape, loc=loc, scale=scale)
             p975_norm = norm.ppf(0.975, loc=mu, scale=std)
             gamma_y = gamma.pdf(x, shape, loc, scale)
@@ -121,6 +126,10 @@ def normaal_verdeeld(df, what_to_show):
             plt.plot(x, gamma_y, 'r--', linewidth=2, label='Gamma verdeling')
             plt.axvline(p975_gamma, color='red', linestyle=':', linewidth=1.5, label='p975 gamma')
             plt.axvline(p975_norm, color='black', linestyle=':', linewidth=1.5, label='p975 normaal')
+
+            plt.axvline(p25_gamma, color='red', linestyle='--', linewidth=1.5, label='p25 gamma')
+            plt.axvline(p25_norm, color='black', linestyle='--', linewidth=1.5, label='p25 normaal')
+
 
             plt.title(f'Dag {label}: normaal? {is_normal} | gamma? {is_gamma}')
             plt.xlabel('Temp max')
@@ -131,8 +140,8 @@ def normaal_verdeeld(df, what_to_show):
             plt.close()
 
             st.write(f"📅 Dag: {label}  |  Waarnemingen: {len(temps)}")
-            st.write(f"Normaal:  p={row['p_value']:.3f} → {is_normal} | μ={mu:.2f}, σ={std:.2f}, p975={p975_norm:.2f}")
-            st.write(f"Gamma:    p={row['p_gamma']:.3f} → {is_gamma} | shape={shape:.2f}, loc={loc:.2f}, scale={scale:.2f}, p975={p975_gamma:.2f}")
+            st.write(f"Normaal:  p={row['p_value']:.3f} → {is_normal} | μ={mu:.2f}, σ={std:.2f} |, p25={p25_norm:.2f} |, p975={p975_norm:.2f}")
+            st.write(f"Gamma:    p={row['p_gamma']:.3f} → {is_gamma} | shape={shape:.2f}, loc={loc:.2f}, scale={scale:.2f}, p25={p25_gamma:.2f}|p975={p975_gamma:.2f}")
             st.markdown("---")
 
 
