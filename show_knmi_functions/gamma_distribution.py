@@ -13,7 +13,7 @@ except:
     from utils import get_data, loess_skmisc
 
 
-def gamma_distribution(df, what_to_show, start_year, special_year):
+def gamma_distribution(df, what_to_show_, start_year, special_year):
     """    Analyseer de temperatuurdata en pas een gamma-verdeling toe per dag van het jaar.
     Args:
         df (pd.DataFrame): DataFrame met de weerdata.   
@@ -21,6 +21,7 @@ def gamma_distribution(df, what_to_show, start_year, special_year):
         start_year (int): Het jaar vanaf wanneer de data geanalyseerd moet worden.
         special_year (int): Het jaar waarvoor de speciale trend getoond moet worden.
     """
+    what_to_show = what_to_show_[0]
     st.title(f"Gamma-verdeling van {what_to_show} per dag van het jaar (start {start_year})")
 
     df['date'] = pd.to_datetime(df['YYYYMMDD'], format='%Y%m%d')
