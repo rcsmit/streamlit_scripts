@@ -91,9 +91,10 @@ def show_per_periode(df, gekozen_weerstation, what_to_show_, groeperen, graph_ty
              
                 for month in df_pivoted.columns[1:]:
                     _, y_hat, _, _ = loess_skmisc(df_pivoted["YYYY"], df_pivoted[month])
-            
+                    trace_scatter = go.Scatter(x=df_pivoted["YYYY"], y=df_pivoted[month], mode="markers", name=f"Maand {month}")
                     trace = go.Scatter(x=df_pivoted["YYYY"], y=y_hat, mode="lines", name=f"Maand {month}")
                     sma.append(trace)
+                    sma.append(trace_scatter)
 
             fig = go.Figure(data=sma, layout=go.Layout(yaxis=dict(title=what_to_show), title=title))
             st.plotly_chart(fig, use_container_width=True)
