@@ -294,7 +294,7 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
        
         normaal_verdeeld(df,what_to_show)
 
-     elif mode == "gamma_distribution":
+    elif mode == "gamma_distribution":
         gamma_distribution(df, what_to_show, 1901, 2025)
     elif mode =="show year histogram animation":
         show_year_histogram_animation(df, what_to_show)
