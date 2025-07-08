@@ -56,6 +56,7 @@ def gamma_distribution(df, what_to_show_, start_year, special_year):
             })
         placeholder.empty()
         stats_df = pd.DataFrame(daily_stats)
+        st.write(stats_df)
         stats_df['date'] = pd.to_datetime(stats_df['day_of_year'], format='%j')
 
         df_special_year = df[df['year'] == special_year][['day_of_year', what_to_show]].dropna()
