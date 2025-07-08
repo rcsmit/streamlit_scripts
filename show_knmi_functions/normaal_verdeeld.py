@@ -142,8 +142,8 @@ def normaal_verdeeld(df, what_to_show):
 
             st.write(f"📅 Dag: {label}  |  Waarnemingen: {len(temps)}")
             try:
-                st.write(f"Normaal:  p={row['p_value']:.3f} → {is_normal} | μ={mu:.2f}, σ={std:.2f} | p25={p25_norm:.2f} | p975={p975_norm:.2f}")
-                st.write(f"Gamma:    p={row['p_gamma']:.3f} → {is_gamma} | shape={shape:.2f}, loc={loc:.2f}, scale={scale:.2f} | p25={p25_gamma:.2f} | p975={p975_gamma:.2f}")
+                st.write(f"Normaal:  p={row['p_value']} → {is_normal} | μ={mu:.2f}, σ={std:.2f} | p25={p25_norm:.2f} | p975={p975_norm:.2f}")
+                st.write(f"Gamma:    p={row['p_gamma']} → {is_gamma} | shape={shape:.2f}, loc={loc:.2f}, scale={scale:.2f} | p25={p25_gamma:.2f} | p975={p975_gamma:.2f}")
             except:
                 # gives an error on streamlit sharing
                 pass
