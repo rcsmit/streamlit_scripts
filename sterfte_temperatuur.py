@@ -334,11 +334,14 @@ def main():
     ages= ['TOTAL_T', 'UNK_T', 'Y10-14_T', 'Y15-19_T', 'Y20-24_T', 'Y25-29_T', 'Y30-34_T','Y35-39_T', 'Y40-44_T', 'Y45-49_T', 'Y5-9_T', 'Y50-54_T', 'Y55-59_T','Y60-64_T', 'Y65-69_T', 'Y70-74_T', 'Y75-79_T', 'Y80-84_T', 'Y85-89_T', 'Y_GE90_T', 'Y_LT5_T']
   
     age_group = st.sidebar.multiselect("Select ages", ages, ["TOTAL_T"], key="age_group")
-
+    min_year,max_year = st.sidebar.slider("Select year range (incl.)", 2000, 2025, (2015, 2020), key="year_range")
+    if min > max:
+        st.error("Error in year range")
+        st.stop()
     df_sterfte = get_sterfte(age_group)
     df_temperature = get_weather_info()
     df = df_sterfte.merge(df_temperature, on=["year_number", "week_number"])
-    df = df[(df["year_number"] >=2015) & (df["year_number"] < 2020)]
+    df = df[(df["year_number"] >=min_year) & (df["year_number"] <= max_year)]
 
     # calculate the average for each week for all 20 years and merge it
     df_avg_week = df_sterfte.groupby("week_number", as_index=False).mean(numeric_only=True)
