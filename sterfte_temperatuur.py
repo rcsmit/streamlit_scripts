@@ -210,7 +210,7 @@ def make_line(x, y, df, title):
     )  # ,  trendline='ols')#  trendline_scope="overall", labels={'datum': 'Date', 'verbruik': 'Verbruik'})
     st.plotly_chart(fig, use_container_width=True)  # Calculate the correlation
 
-def multiple_lineair_regression(df_, x_values, y_value):
+def multiple_lineair_regression(df_, x_values, y_value, afkap):
     """Calculates multiple lineair regression. User can choose the Y value and the X values
 
 
@@ -229,6 +229,7 @@ def multiple_lineair_regression(df_, x_values, y_value):
         df_ (df): df with info
         x_values (list): list with the x values
         y_value (str): the result variable
+        afkap(float) : afkapwaarde
     """
 
     df = df_.dropna(subset=x_values)
@@ -238,7 +239,7 @@ def multiple_lineair_regression(df_, x_values, y_value):
     # with statsmodels
     x = sm.add_constant(x)  # adding a constant
     model = sm.OLS(y, x).fit()
-    st.write("**OUTPUT ORDINARY LEAST SQUARES**")
+    st.write(f"**OUTPUT ORDINARY LEAST SQUARES** afkapwaarde = {afkap}")
     print_model = model.summary()
     st.write(print_model)
 
@@ -274,11 +275,13 @@ def decomposed(merged_df):
     st.write(f"P-value: {p_value:.4f}")
 
 
-def poisson_regression(df):
+def poisson_regression(df,afkap):
     """_summary_
 
     Args:
         df (_type_): _description_
+        afkap(float): afkapwaarde
+
     """
     # used in Huynen, 2001.  The Impact of Heat Waves and Cold Spells on Mortality Rates
     #  in the Dutch Population [uses Poisson loglinear regression analyses]
@@ -297,7 +300,7 @@ def poisson_regression(df):
     st.subheader("Poisson regression")
     df["log_OBS_VALUE"] = np.log(df["OBS_VALUE"])
 
-    optimum_value = 16.5  # Replace with your actual optimum value
+    optimum_value = afkap  # Replace with your actual optimum value
 
     # Create "heat" column
     df["heat"] = df["temp_avg"].apply(lambda x: max(0, x - optimum_value))
@@ -432,13 +435,13 @@ def main():
 
     col1, col2 = st.columns(2)
     with col1:
-        st.subheader("t<=16.5")
-        multiple_lineair_regression(df_lower, ["temp_avg"], "OBS_VALUE")
-        poisson_regression(df_lower)
+        st.subheader(f"t<={afkap}")
+        multiple_lineair_regression(df_lower, ["temp_avg"], "OBS_VALUE", afkap)
+        poisson_regression(df_lower, afkap)
     with col2:
-        st.subheader("t>16.5")
-        multiple_lineair_regression(df_higher, ["temp_avg"], "OBS_VALUE")
-        poisson_regression(df_higher)
+        st.subheader(f"t>{afkap}")
+        multiple_lineair_regression(df_higher, ["temp_avg"], "OBS_VALUE",afkap)
+        poisson_regression(df_higher, afkap)
 
 if __name__ == "__main__":
     main()
