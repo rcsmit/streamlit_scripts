@@ -369,12 +369,15 @@ def main():
     what = st.sidebar.selectbox("what", ["temp_min", "temp_avg", "temp_max"],1)
 
     if what=="temp_avg":
-        afkap = 16.5
+        afkap = 16.5 # https://www.researchgate.net/publication/11937466_The_Impact_of_Heat_Waves_and_Cold_Spells_on_Mortality_Rates_in_the_Dutch_Population
     elif what=="temp_min":
         afkap =  0.84 * 16.5 + -2.60 # based on Linear regression equation for the correlation between  temp_avg - temp_min
     
-    else:
+    elif what=="temp_min":
         afkap = 21.3  #  [ 1.14 * temp_avg + 2.49] Linear regression equation for the correlation between temp_avg and temp_max
+    else:
+        st.error("Error in [what]")
+        st.stop()
     df_lower = df[df[what] <= afkap].copy(deep=True)
     df_higher = df[df[what] > afkap]
     st.write(df)
