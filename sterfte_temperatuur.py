@@ -98,8 +98,11 @@ def get_weather_info():
     return result
 
 @st.cache_data()
-def get_sterfte(age_group="TOTAL_T"):
+def get_sterfte(per_100k, age_group="TOTAL_T"):
     """_summary_
+    Arguments:
+        per_100k (bool): if True, calculate per 100k inhabitants
+        age_group (list): list with age groups, e.g. ['TOTAL_T', 'Y_LT5_T', 'Y_GE90_T']
 
     Returns:
         _type_: _description_
@@ -108,8 +111,8 @@ def get_sterfte(age_group="TOTAL_T"):
     # https://ec.europa.eu/eurostat/databrowser/bookmark/fbd80cd8-7b96-4ad9-98be-1358dd80f191?lang=en
     # https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/dataflow/ESTAT/DEMO_R_MWK_05/1.0?references=descendants&detail=referencepartial&format=sdmx_2.1_generic&compressed=true
     file = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/sterfte_eurostats_weekly__2000_01__2023_41.csv"
-    file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\sterfte_eurostats_weekly__2000_01__2025_14.csv"
-    #file = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/sterfte_eurostats_weekly__2000_01__2025_14.csv"
+    # file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\sterfte_eurostats_weekly__2000_01__2025_14.csv"
+    file = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/sterfte_eurostats_weekly__2000_01__2025_14.csv"
     
     #file = "https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/data/dataflow/ESTAT/demo_r_mwk_05/1.0/*.*.*.*.*?c[freq]=W&c[age]=TOTAL,Y_LT5,Y5-9,Y10-14,Y15-19,Y20-24,Y25-29,Y30-34,Y35-39,Y40-44,Y45-49,Y50-54,Y55-59,Y60-64,Y65-69,Y70-74,Y75-79,Y80-84,Y85-89,Y_GE90,UNK&c[sex]=T,M,F&c[unit]=NR&c[geo]=NL&c[TIME_PERIOD]=ge:2000-W01&compress=false&format=csvdata&formatVersion=1.0&lang=en&labels=both"
     df_ = pd.read_csv(
@@ -117,6 +120,67 @@ def get_sterfte(age_group="TOTAL_T"):
         delimiter=",",
         low_memory=False,
     )
+    file_bevolking = "https://raw.githubusercontent.com/rcsmit/COVIDcases/refs/heads/main/input/bevolking_leeftijd_NL.csv"
+    # file_bevolking = r"C:\Users\rcxsm\Documents\python_scripts\covid19_seir_models\COVIDcases\input\bevolking_leeftijd_NL.csv"
+    df_bevolking = pd.read_csv(
+        file_bevolking,
+        delimiter=";",
+        low_memory=False,
+    )
+
+        
+    # Prepare population data
+    df_bevolking = df_bevolking.rename(columns={"leeftijd": "age", "geslacht": "sex", "jaar": "year_number", "aantal": "population"})
+
+    df_bevolking["sex"] = df_bevolking["sex"].map({"F": "F", "M": "M", "T": "T"})
+    #df_bevolking["age"] = df_bevolking["age"].astype(str)
+    # Convert age to numeric
+    
+    df_bevolking["age"] = pd.to_numeric(df_bevolking["age"], errors="coerce")
+    
+    # Define age binning
+    bins = [-1, 5, 10, 15, 20, 25, 30, 35, 40, 45,
+            50, 55, 60, 65, 70, 75, 80, 85, 90, 120]
+    labels = [
+        "Y_LT5", "Y5-9", "Y10-14", "Y15-19", "Y20-24", "Y25-29", "Y30-34",
+        "Y35-39", "Y40-44", "Y45-49", "Y50-54", "Y55-59", "Y60-64",
+        "Y65-69", "Y70-74", "Y75-79", "Y80-84", "Y85-89", "Y_GE90"
+    ]
+
+    # Assign Eurostat group
+    df_bevolking["age_group"] = pd.cut(df_bevolking["age"], bins=bins, labels=labels, right=False)
+    df_bevolking["age_sex"] = df_bevolking["age_group"].astype(str) + "_" + df_bevolking["sex"]
+    # Sum population by Eurostat group, sex, and year
+    df_bevolking_grouped = (
+        df_bevolking
+        .groupby(["year_number", "sex", "age_group"], as_index=False)
+        .agg({"population": "sum"})
+    )
+
+
+    # Create age_sex column to match df_["age_sex"]
+    df_bevolking_grouped["age_sex"] = df_bevolking_grouped["age_group"].astype(str) + "_" + df_bevolking_grouped["sex"]
+
+    # Create TOTAL rows by summing over all age groups per year and sex
+    total_rows = []
+
+    for sex in ["T", "F", "M"]:
+        df_sex = df_bevolking[df_bevolking["sex"] == sex]
+        total = (
+            df_sex.groupby("year_number", as_index=False)
+            .agg({"population": "sum"})
+            .assign(age_group="TOTAL", sex=sex)
+        )
+        total_rows.append(total)
+
+    # Combine all TOTAL_* rows
+    df_total = pd.concat(total_rows, ignore_index=True)
+    df_total["age_sex"] = df_total["age_group"] + "_" + df_total["sex"]
+
+    # Merge TOTAL rows with main grouped dataframe
+    df_bevolking_grouped = pd.concat([df_bevolking_grouped, df_total], ignore_index=True)
+
+    
     for col in ['freq', 'age', 'sex', 'unit', 'geo']:
         df_[[col, f'{col}_desc']] = df_[col].str.split(':', n=1, expand=True)
  
@@ -124,7 +188,7 @@ def get_sterfte(age_group="TOTAL_T"):
     df_ = df_[df_["sex"] == "T"]
     
 
-    df_ = df_[df_["age_sex"].isin(age_group)]
+    
     # st.write(df_["age_sex"].unique())
     df_["year_number"] = (df_["TIME_PERIOD"].str[:4]).astype(int)
     df_["week_number"] = (df_["TIME_PERIOD"].str[6:]).astype(int)
@@ -134,19 +198,28 @@ def get_sterfte(age_group="TOTAL_T"):
         + df_["week_number"].astype(str).str.zfill(2)
     )
    
-    df_ = df_[["year_number", "year_week", "week_number", "OBS_VALUE"]]
-    df_ = df_.groupby(["year_week", "year_number", "week_number"], as_index=False)["OBS_VALUE"].sum()
+    df_ = df_[["year_number", "year_week", "week_number", "OBS_VALUE", "age_sex"]]
+    df_ = df_[df_["age_sex"].isin(age_group)]
+   
+    # Merge population with mortality
+    df_ = df_.groupby(["year_week", "year_number", "week_number", "age_sex"], as_index=False)["OBS_VALUE"].sum()
+    df_merged = pd.merge(df_, df_bevolking_grouped, how="left", on=["year_number", "age_sex"])
+    
+    # Calculate OBS per 100k
+    if per_100k:
+        df_merged["OBS_VALUE"] = round(df_merged["OBS_VALUE"] / df_merged["population"] * 100_000,3)
 
     
     # We hebben ook de gemiddelde temperatuur tussen week 3 en 10 berekend (te weten 10,85 graad) en de daarbijbehorende verwachte sterfte genomen vanuit grafiek 2 (3042) en deze op 100 gesteld
     # We hebben de gemiddelde sterfte genomen van alle weken tussen week 3 tot en met en 10 (te weten 3055 personen) en dit op 100 gesteld
-    df_["OBS_sma"] = df_["OBS_VALUE"].rolling(window=5).mean()
-    df_week3_10 = df_[(df_["week_number"] >= 3) & (df_["week_number"] <= 10)]
+    df_merged["OBS_sma"] = df_["OBS_VALUE"].rolling(window=5).mean()
+    df_merged_week3_10 = df_merged[(df_["week_number"] >= 3) & (df_merged["week_number"] <= 10)]
 
-    mean_week3_10 = df_week3_10["OBS_VALUE"].mean()
+    mean_week3_10 = df_merged_week3_10["OBS_VALUE"].mean()
     st.write(f"Gemiddelde sterfte week 3-10 : {int(mean_week3_10)}")
-    df_["obs_mean_3_10"] = round(df_["OBS_VALUE"] / mean_week3_10 * 100, 1)
-    return df_
+    df_merged["obs_mean_3_10"] = round(df_merged["OBS_VALUE"] / mean_week3_10 * 100, 1)
+    st.write(df_merged)
+    return df_merged
 
 def make_scatter(x, y, df, title):
     """make a scatter plot, and show correlation and the equation
@@ -343,12 +416,17 @@ def main():
     what = st.sidebar.selectbox("what", ["temp_min", "temp_avg", "temp_max"],1)
 
     (min_year,max_year) = st.sidebar.slider("Select year range (incl.)", 2000, 2025, (2015, 2020), key="year_range")
-    afkap = st.sidebar.number_input("afkapwaarde temp_avg", 16.5) # https://www.researchgate.net/publication/11937466_The_Impact_of_Heat_Waves_and_Cold_Spells_on_Mortality_Rates_in_the_Dutch_Population
+    afkap = round(st.sidebar.number_input("afkapwaarde temp_avg", 16.5),2) # https://www.researchgate.net/publication/11937466_The_Impact_of_Heat_Waves_and_Cold_Spells_on_Mortality_Rates_in_the_Dutch_Population
     lag = st.sidebar.number_input("lag in weeks", 1, 10, 1, 1) # lag in weeks
+    per_100k = st.sidebar.checkbox("per 100k", True, key="per_100k")
+    if per_100k:
+        title_100k = "/ [per 100k]"
+    else:
+        title_100k=""
     if min_year > max_year:
         st.error("Error in year range")
         st.stop()
-    df_sterfte = get_sterfte(age_group)
+    df_sterfte = get_sterfte(per_100k, age_group)
     df_temperature = get_weather_info()
     df = df_sterfte.merge(df_temperature, on=["year_number", "week_number"])
     df = df[(df["year_number"] >=min_year) & (df["year_number"] <= max_year)]
@@ -396,64 +474,64 @@ def main():
     df_lower = df[df[what] <= afkap].copy(deep=True)
     df_higher = df[df[what] > afkap]
     st.write(df)
-    make_scatter(what, "OBS_VALUE", df, "all")
+    make_scatter(what, "OBS_VALUE", df, f"Deaths vs temperature {title_100k}")
     col1, col2 = st.columns(2)
     with col1:
-        slope_x, intercept_x = make_scatter(what, "OBS_VALUE", df_lower, f"{what} <= {afkap}")
+        slope_x, intercept_x = make_scatter(what, "OBS_VALUE", df_lower, f"{what} <= {afkap} {title_100k}")
 
         with st.expander("Lagged values"):
-            _,_ = make_scatter(what, "AVG_OBS_VALUE", df_lower, f"{what} > {afkap} / lag 3 days")
+            _,_ = make_scatter(what, "AVG_OBS_VALUE", df_lower, f"{what} > {afkap} / lag 3 days {title_100k}")
             _,_ = make_scatter(
                 what,
                 f"OBS_VALUE_lag_{lag}_week",
                 df_lower,
-                f"{what} <= {afkap} / lag {lag} week",
+                f"{what} <= {afkap} / lag {lag} week {title_100k}",
             )
         _,_ = make_scatter(
             what,
             "DISTANCE_FROM_AVG",
             df_lower,
-            f"{what} <= {afkap} / distance from yearavg",
+            f"{what} <= {afkap} / distance from yearavg {title_100k}",
         )
         value = int(slope_x * afkap + intercept_x)
         df_lower[f"obs_{value}"] = round(df_lower["OBS_VALUE"] / value * 100, 1)
   
-        _,_ = make_scatter(what, f"obs_{value}", df_lower, f"{what} <= {afkap} /  {value} = 100")
+        _,_ = make_scatter(what, f"obs_{value}", df_lower, f"{what} <= {afkap} /  {value} = 100 {title_100k}")
         _,_ = make_scatter(
             what,
             "obs_mean_3_10",
             df_lower,
-            f"{what} <= {afkap} / mean temp(week 3-10) = 100",
+            f"{what} <= {afkap} / mean temp(week 3-10) = 100 {title_100k}",
         )
 
     with col2:
-        slope_y, intercept_y = make_scatter(what, "OBS_VALUE", df_higher, f"{what} > {afkap}")
+        slope_y, intercept_y = make_scatter(what, "OBS_VALUE", df_higher, f"{what} > {afkap} {title_100k}")
         with st.expander("Lagged values"):
             
 
-            _,_ = make_scatter(what, "AVG_OBS_VALUE", df_higher, f"{what} > {afkap} / lag 3 days")
+            _,_ = make_scatter(what, "AVG_OBS_VALUE", df_higher, f"{what} > {afkap} / lag 3 days {title_100k}")
             _,_ = make_scatter(
                 what,
                 f"OBS_VALUE_lag_{lag}_week",
                 df_higher,
-                f"{what} > {afkap} / lag {lag} week",
+                f"{what} > {afkap} / lag {lag} week {title_100k}",
             )
         _,_ = make_scatter(
             what,
             "DISTANCE_FROM_AVG",
             df_higher,
-            f"{what} > {afkap} / distance from yearavg"
+            f"{what} > {afkap} / distance from yearavg {title_100k}"
         )
         value = int(slope_y * afkap + intercept_y)
         df_higher[f"obs_{value}"] = round(df_higher["OBS_VALUE"] / value * 100, 1)
   
-        _,_ = make_scatter(what, f"obs_{value}", df_higher, f"{what} > {afkap} /  {value} = 100")
+        _,_ = make_scatter(what, f"obs_{value}", df_higher, f"{what} > {afkap} /  {value} = 100 {title_100k}")
   
         _,_ = make_scatter(
             what,
             "obs_mean_3_10",
             df_higher,
-            f"{what} > {afkap} / mean temp(week 3-10) = 100",
+            f"{what} > {afkap} / mean temp(week 3-10) = 100 {title_100k}",
         )
     # decomposed(df) #gives errors
 
@@ -461,15 +539,16 @@ def main():
     with col1:
         make_line("year_week", what, df, "Temperatuur in de tijd")
     with col2:
-        make_line("year_week", "OBS_VALUE", df, "Sterfte in de tijd")
+        make_line("year_week", "OBS_VALUE", df, f"Sterfte in de tijd {title_100k}")
 
     col1, col2 = st.columns(2)
+
     with col1:
-        st.subheader(f"t<={afkap}")
+        st.subheader(f"t<={afkap} {title_100k}")
         multiple_lineair_regression(df_lower, ["temp_avg"], "OBS_VALUE", afkap)
         poisson_regression(df_lower, afkap)
     with col2:
-        st.subheader(f"t>{afkap}")
+        st.subheader(f"t>{afkap} {title_100k}")
         multiple_lineair_regression(df_higher, ["temp_avg"], "OBS_VALUE",afkap)
         poisson_regression(df_higher, afkap)
 
