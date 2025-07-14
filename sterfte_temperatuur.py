@@ -8,7 +8,7 @@ import statsmodels.api as sm
 from statsmodels.tsa.seasonal import seasonal_decompose
 from patsy import dmatrices
 import numpy as np
-
+import random
 # st.set_page_config(layout="wide")
 # WAT IS DE INVLOED VAN DE TEMPERATUUR OP DE STERFTE
 #
@@ -137,8 +137,7 @@ def get_sterfte(age_group="TOTAL_T"):
     df_ = df_[["year_number", "year_week", "week_number", "OBS_VALUE"]]
     df_ = df_.groupby(["year_week", "year_number", "week_number"], as_index=False)["OBS_VALUE"].sum()
 
-    df_["obs_2461"] = round(df_["OBS_VALUE"] / 2461 * 100, 1)
-    df_["obs_3042"] = round(df_["OBS_VALUE"] / 3042 * 100, 1)
+    
     # We hebben ook de gemiddelde temperatuur tussen week 3 en 10 berekend (te weten 10,85 graad) en de daarbijbehorende verwachte sterfte genomen vanuit grafiek 2 (3042) en deze op 100 gesteld
     # We hebben de gemiddelde sterfte genomen van alle weken tussen week 3 tot en met en 10 (te weten 3055 personen) en dit op 100 gesteld
     df_["OBS_sma"] = df_["OBS_VALUE"].rolling(window=5).mean()
@@ -155,6 +154,9 @@ def make_scatter(x, y, df, title):
         x (str): x values-field
         y (str): y values-field
         merged_df (str): df
+    returns:
+        slope, 
+        intercept
     """
     st.subheader(title)
     fig_ = px.scatter(
@@ -176,7 +178,7 @@ def make_scatter(x, y, df, title):
         hover_data=["year_number", "week_number"],
         title=title,
     )  #  trendline_scope="overall", labels={'datum': 'Date', 'verbruik': 'Verbruik'})
-    st.plotly_chart(fig_, use_container_width=True)
+    st.plotly_chart(fig_, use_container_width=True, key=f"scatter_plot_{random.randint(0,1000000)}")  # Plotly scatter plot with trendline
     # Calculate the correlation
     try:
         correlation = df[x].corr(df[y])
@@ -189,6 +191,7 @@ def make_scatter(x, y, df, title):
         st.write(f"Equation of the line: y = {slope:.2f} * x + {intercept:.2f}")
     except:
         pass
+    return slope, intercept
 
 
 def make_line(x, y, df, title):
@@ -334,8 +337,15 @@ def main():
     ages= ['TOTAL_T', 'UNK_T', 'Y10-14_T', 'Y15-19_T', 'Y20-24_T', 'Y25-29_T', 'Y30-34_T','Y35-39_T', 'Y40-44_T', 'Y45-49_T', 'Y5-9_T', 'Y50-54_T', 'Y55-59_T','Y60-64_T', 'Y65-69_T', 'Y70-74_T', 'Y75-79_T', 'Y80-84_T', 'Y85-89_T', 'Y_GE90_T', 'Y_LT5_T']
   
     age_group = st.sidebar.multiselect("Select ages", ages, ["TOTAL_T"], key="age_group")
-    min_year,max_year = st.sidebar.slider("Select year range (incl.)", 2000, 2025, (2015, 2020), key="year_range")
-    if min > max:
+    if not age_group:
+        st.error("Select agegroup(s)")
+        st.stop()
+    what = st.sidebar.selectbox("what", ["temp_min", "temp_avg", "temp_max"],1)
+
+    (min_year,max_year) = st.sidebar.slider("Select year range (incl.)", 2000, 2025, (2015, 2020), key="year_range")
+    afkap = st.sidebar.number_input("afkapwaarde temp_avg", 16.5) # https://www.researchgate.net/publication/11937466_The_Impact_of_Heat_Waves_and_Cold_Spells_on_Mortality_Rates_in_the_Dutch_Population
+    lag = st.sidebar.number_input("lag in weeks", 1, 10, 1, 1) # lag in weeks
+    if min_year > max_year:
         st.error("Error in year range")
         st.stop()
     df_sterfte = get_sterfte(age_group)
@@ -355,7 +365,7 @@ def main():
 
     # Create a new column 'AVG_OBS_VALUE' with the average of OBS_VALUE in row n and row n-1
     df["AVG_OBS_VALUE"] = (df["OBS_VALUE"] + df["OBS_VALUE"].shift(1)) / 2
-    lag = 1
+    
     df[f"OBS_VALUE_lag_{lag}_week"] = df["OBS_VALUE"].shift(lag)
 
     # Fill the NaN value in the last row of 'AVG_OBS_VALUE' with the corresponding value
@@ -368,19 +378,18 @@ def main():
     df["DISTANCE_FROM_AVG"] = df["OBS_VALUE"] - df["AVG_OBS_VALUE_YEAR"]
     col1, col2 = st.columns(2)
     with col1:
-        make_scatter("temp_avg", "temp_max", df, "temp_max vs temp_avg")
+        slope_max,intercept_max = make_scatter("temp_avg", "temp_max", df, "temp_max vs temp_avg")
     with col2:
-        make_scatter("temp_avg", "temp_min", df, "temp_min vs temp_avg")
+        slope_min,intercept_min = make_scatter("temp_avg", "temp_min", df, "temp_min vs temp_avg")
   
-    what = st.sidebar.selectbox("what", ["temp_min", "temp_avg", "temp_max"],1)
-
-    if what=="temp_avg":
-        afkap = 16.5 # https://www.researchgate.net/publication/11937466_The_Impact_of_Heat_Waves_and_Cold_Spells_on_Mortality_Rates_in_the_Dutch_Population
-    elif what=="temp_min":
-        afkap =  0.84 * 16.5 + -2.60 # based on Linear regression equation for the correlation between  temp_avg - temp_min
     
+    if what=="temp_avg":
+        afkap = afkap 
     elif what=="temp_min":
-        afkap = 21.3  #  [ 1.14 * temp_avg + 2.49] Linear regression equation for the correlation between temp_avg and temp_max
+        afkap =  round(slope_min * 16.5,1) + intercept_min # based on Linear regression equation for the correlation between  temp_avg - temp_min
+    
+    elif what=="temp_max":
+        afkap = round(slope_max * 16.5 + intercept_max,1)  #  [ 1.14 * temp_avg + 2.49] Linear regression equation for the correlation between temp_avg and temp_max
     else:
         st.error("Error in [what]")
         st.stop()
@@ -390,22 +399,27 @@ def main():
     make_scatter(what, "OBS_VALUE", df, "all")
     col1, col2 = st.columns(2)
     with col1:
-        make_scatter(what, "OBS_VALUE", df_lower, f"{what} <= {afkap}")
-        make_scatter(what, "AVG_OBS_VALUE", df_lower, f"{what} > {afkap} / lag 3 days")
-        make_scatter(
-            what,
-            f"OBS_VALUE_lag_{lag}_week",
-            df_lower,
-            f"{what} <= {afkap} / lag {lag} week",
-        )
-        make_scatter(
+        slope_x, intercept_x = make_scatter(what, "OBS_VALUE", df_lower, f"{what} <= {afkap}")
+
+        with st.expander("Lagged values"):
+            _,_ = make_scatter(what, "AVG_OBS_VALUE", df_lower, f"{what} > {afkap} / lag 3 days")
+            _,_ = make_scatter(
+                what,
+                f"OBS_VALUE_lag_{lag}_week",
+                df_lower,
+                f"{what} <= {afkap} / lag {lag} week",
+            )
+        _,_ = make_scatter(
             what,
             "DISTANCE_FROM_AVG",
             df_lower,
             f"{what} <= {afkap} / distance from yearavg",
         )
-        make_scatter(what, "obs_3042", df_lower, f"{what} <= {afkap} /  3042 = 100")
-        make_scatter(
+        value = int(slope_x * afkap + intercept_x)
+        df_lower[f"obs_{value}"] = round(df_lower["OBS_VALUE"] / value * 100, 1)
+  
+        _,_ = make_scatter(what, f"obs_{value}", df_lower, f"{what} <= {afkap} /  {value} = 100")
+        _,_ = make_scatter(
             what,
             "obs_mean_3_10",
             df_lower,
@@ -413,21 +427,34 @@ def main():
         )
 
     with col2:
-        make_scatter(what, "OBS_VALUE", df_higher, f"{what} > {afkap}")
-        make_scatter(what, "AVG_OBS_VALUE", df_higher, f"{what} > {afkap} / lag 3 days")
-        make_scatter(
-            what,
-            f"OBS_VALUE_lag_{lag}_week",
-            df_higher,
-            f"{what} > {afkap} / lag {lag} week",
-        )
-        make_scatter(
+        slope_y, intercept_y = make_scatter(what, "OBS_VALUE", df_higher, f"{what} > {afkap}")
+        with st.expander("Lagged values"):
+            
+
+            _,_ = make_scatter(what, "AVG_OBS_VALUE", df_higher, f"{what} > {afkap} / lag 3 days")
+            _,_ = make_scatter(
+                what,
+                f"OBS_VALUE_lag_{lag}_week",
+                df_higher,
+                f"{what} > {afkap} / lag {lag} week",
+            )
+        _,_ = make_scatter(
             what,
             "DISTANCE_FROM_AVG",
             df_higher,
-            f"{what} > {afkap} / distance from yearavg",
+            f"{what} > {afkap} / distance from yearavg"
         )
-        make_scatter(what, "obs_2461", df_higher, f"{what} > {afkap} / 2461=100")
+        value = int(slope_y * afkap + intercept_y)
+        df_higher[f"obs_{value}"] = round(df_higher["OBS_VALUE"] / value * 100, 1)
+  
+        _,_ = make_scatter(what, f"obs_{value}", df_higher, f"{what} > {afkap} /  {value} = 100")
+  
+        _,_ = make_scatter(
+            what,
+            "obs_mean_3_10",
+            df_higher,
+            f"{what} > {afkap} / mean temp(week 3-10) = 100",
+        )
     # decomposed(df) #gives errors
 
     col1, col2 = st.columns(2)
