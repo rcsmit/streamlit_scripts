@@ -98,7 +98,7 @@ def get_weather_info():
     return result
 
 @st.cache_data()
-def get_sterfte():
+def get_sterfte(age_group="TOTAL_T"):
     """_summary_
 
     Returns:
@@ -108,12 +108,12 @@ def get_sterfte():
     # https://ec.europa.eu/eurostat/databrowser/bookmark/fbd80cd8-7b96-4ad9-98be-1358dd80f191?lang=en
     # https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/dataflow/ESTAT/DEMO_R_MWK_05/1.0?references=descendants&detail=referencepartial&format=sdmx_2.1_generic&compressed=true
     file = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/sterfte_eurostats_weekly__2000_01__2023_41.csv"
-    #file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\sterfte_eurostats_weekly__2000_01__2025_14.csv"
-    file = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/sterfte_eurostats_weekly__2000_01__2025_14.csv"
+    file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\sterfte_eurostats_weekly__2000_01__2025_14.csv"
+    #file = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/sterfte_eurostats_weekly__2000_01__2025_14.csv"
     
-    api_link = "https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/data/dataflow/ESTAT/demo_r_mwk_05/1.0/*.*.*.*.*?c[freq]=W&c[age]=TOTAL,Y_LT5,Y5-9,Y10-14,Y15-19,Y20-24,Y25-29,Y30-34,Y35-39,Y40-44,Y45-49,Y50-54,Y55-59,Y60-64,Y65-69,Y70-74,Y75-79,Y80-84,Y85-89,Y_GE90,UNK&c[sex]=T,M,F&c[unit]=NR&c[geo]=NL&c[TIME_PERIOD]=ge:2000-W01&compress=false&format=csvdata&formatVersion=1.0&lang=en&labels=both"
+    #file = "https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/data/dataflow/ESTAT/demo_r_mwk_05/1.0/*.*.*.*.*?c[freq]=W&c[age]=TOTAL,Y_LT5,Y5-9,Y10-14,Y15-19,Y20-24,Y25-29,Y30-34,Y35-39,Y40-44,Y45-49,Y50-54,Y55-59,Y60-64,Y65-69,Y70-74,Y75-79,Y80-84,Y85-89,Y_GE90,UNK&c[sex]=T,M,F&c[unit]=NR&c[geo]=NL&c[TIME_PERIOD]=ge:2000-W01&compress=false&format=csvdata&formatVersion=1.0&lang=en&labels=both"
     df_ = pd.read_csv(
-        api_link,
+        file,
         delimiter=",",
         low_memory=False,
     )
@@ -121,7 +121,10 @@ def get_sterfte():
         df_[[col, f'{col}_desc']] = df_[col].str.split(':', n=1, expand=True)
  
     df_["age_sex"] = df_["age"] + "_" + df_["sex"]
-    df_ = df_[df_["age_sex"] == "TOTAL_T"]
+    df_ = df_[df_["sex"] == "T"]
+    
+
+    df_ = df_[df_["age_sex"].isin(age_group)]
     # st.write(df_["age_sex"].unique())
     df_["year_number"] = (df_["TIME_PERIOD"].str[:4]).astype(int)
     df_["week_number"] = (df_["TIME_PERIOD"].str[6:]).astype(int)
@@ -130,7 +133,10 @@ def get_sterfte():
         + "_"
         + df_["week_number"].astype(str).str.zfill(2)
     )
+   
     df_ = df_[["year_number", "year_week", "week_number", "OBS_VALUE"]]
+    df_ = df_.groupby(["year_week", "year_number", "week_number"], as_index=False)["OBS_VALUE"].sum()
+
     df_["obs_2461"] = round(df_["OBS_VALUE"] / 2461 * 100, 1)
     df_["obs_3042"] = round(df_["OBS_VALUE"] / 3042 * 100, 1)
     # We hebben ook de gemiddelde temperatuur tussen week 3 en 10 berekend (te weten 10,85 graad) en de daarbijbehorende verwachte sterfte genomen vanuit grafiek 2 (3042) en deze op 100 gesteld
@@ -158,6 +164,8 @@ def make_scatter(x, y, df, title):
         hover_data=["year_number", "week_number"],
         color="year_number",
         title=title,
+        trendline="ols",
+        trendline_scope="overall",
         
     )  #  trendline_scope="overall", labels={'datum': 'Date', 'verbruik': 'Verbruik'})
     fig = px.scatter(
@@ -320,10 +328,14 @@ def main():
     """_summary_"""
     st.header("Invloed van temperatuur op sterfte")
     st.info("https://rcsmit.medium.com/sterfte-vs-temperatuur-b65770af76d3")
-    df_sterfte = get_sterfte()
+    ages= ['TOTAL_T', 'UNK_T', 'Y10-14_T', 'Y15-19_T', 'Y20-24_T', 'Y25-29_T', 'Y30-34_T','Y35-39_T', 'Y40-44_T', 'Y45-49_T', 'Y5-9_T', 'Y50-54_T', 'Y55-59_T','Y60-64_T', 'Y65-69_T', 'Y70-74_T', 'Y75-79_T', 'Y80-84_T', 'Y85-89_T', 'Y_GE90_T', 'Y_LT5_T']
+  
+    age_group = st.sidebar.multiselect("Select ages", ages, ["TOTAL_T"], key="age_group")
+
+    df_sterfte = get_sterfte(age_group)
     df_temperature = get_weather_info()
     df = df_sterfte.merge(df_temperature, on=["year_number", "week_number"])
-    #df = df[df["year_number"] < 2020]
+    df = df[(df["year_number"] >=2015) & (df["year_number"] < 2020)]
 
     # calculate the average for each week for all 20 years and merge it
     df_avg_week = df_sterfte.groupby("week_number", as_index=False).mean(numeric_only=True)
@@ -359,10 +371,10 @@ def main():
     if what=="temp_avg":
         afkap = 16.5
     elif what=="temp_min":
-        afkap =  0.84 * 16.5 + -2.60
+        afkap =  0.84 * 16.5 + -2.60 # based on Linear regression equation for the correlation between  temp_avg - temp_min
     
     else:
-        afkap = 21.3  #  [ 1.14 * temp_avg + 2.49]
+        afkap = 21.3  #  [ 1.14 * temp_avg + 2.49] Linear regression equation for the correlation between temp_avg and temp_max
     df_lower = df[df[what] <= afkap].copy(deep=True)
     df_higher = df[df[what] > afkap]
     st.write(df)
