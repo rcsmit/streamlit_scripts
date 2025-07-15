@@ -411,16 +411,16 @@ def main_rcsmit():
     st.info("https://rcsmit.medium.com/sterfte-vs-temperatuur-b65770af76d3")
     ages= ['TOTAL_T', 'UNK_T', 'Y10-14_T', 'Y15-19_T', 'Y20-24_T', 'Y25-29_T', 'Y30-34_T','Y35-39_T', 'Y40-44_T', 'Y45-49_T', 'Y5-9_T', 'Y50-54_T', 'Y55-59_T','Y60-64_T', 'Y65-69_T', 'Y70-74_T', 'Y75-79_T', 'Y80-84_T', 'Y85-89_T', 'Y_GE90_T', 'Y_LT5_T']
   
-    age_group = st.sidebar.multiselect("Select ages", ages, ["TOTAL_T"], key="age_group")
+    age_group = st.multiselect("Select ages", ages, ["TOTAL_T"], key="age_group")
     if not age_group:
         st.error("Select agegroup(s)")
         st.stop()
-    what = st.sidebar.selectbox("what", ["temp_min", "temp_avg", "temp_max"],1)
+    what = st.selectbox("what", ["temp_min", "temp_avg", "temp_max"],1)
 
-    (min_year,max_year) = st.sidebar.slider("Select year range (incl.)", 2000, 2025, (2015, 2020), key="year_range")
-    afkap = round(st.sidebar.number_input("afkapwaarde temp_avg", 16.5),2) # https://www.researchgate.net/publication/11937466_The_Impact_of_Heat_Waves_and_Cold_Spells_on_Mortality_Rates_in_the_Dutch_Population
-    lag = st.sidebar.number_input("lag in weeks", 1, 10, 1, 1) # lag in weeks
-    per_100k = st.sidebar.checkbox("per 100k", True, key="per_100k")
+    (min_year,max_year) = st.slider("Select year range (incl.)", 2000, 2025, (2015, 2020), key="year_range")
+    afkap = round(st.number_input("afkapwaarde temp_avg", 16.5),2) # https://www.researchgate.net/publication/11937466_The_Impact_of_Heat_Waves_and_Cold_Spells_on_Mortality_Rates_in_the_Dutch_Population
+    lag = st.number_input("lag in weeks", 1, 10, 1, 1) # lag in weeks
+    per_100k = st.checkbox("per 100k", True, key="per_100k")
     if per_100k:
         title_100k = "/ [per 100k]"
     else:
@@ -555,8 +555,30 @@ def main_rcsmit():
         poisson_regression(df_higher, afkap)
 def main():
 
-    
-    tab1, tab2, tab3 = st.tabs(["rcsmit", "orwell", "Orwell_esp2015"])
+        
+    # if 'active_tab' not in st.session_state:
+    #     st.session_state.active_tab = "Tab 1"
+
+    # with st.sidebar:
+    #     if st.session_state.active_tab == "Tab 1":
+    #         st.write("Sidebar content for Tab 1")
+    #         # Add any widgets or elements specific to Tab 1
+    #     elif st.session_state.active_tab == "Tab 2":
+    #         st.write("Sidebar content for Tab 2")
+    #         # Add any widgets or elements specific to Tab 2
+    #     else:
+    #         st.write("Default sidebar content")
+
+    # tab1, tab2 = st.tabs(["Tab 1", "Tab 2"])
+
+    # with tab1:
+    #     st.session_state.active_tab = "Tab 1"
+    #     st.write("Content of Tab 1")
+
+    # with tab2:
+    #     st.session_state.active_tab = "Tab 2"
+    #     st.write("Content of Tab 2")
+    tab1, tab2, tab3 = st.tabs(["rcsmit", "orwell", "orwell_esp2013"])
 
     with tab1:
         main_rcsmit()

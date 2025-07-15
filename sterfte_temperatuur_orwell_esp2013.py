@@ -591,13 +591,13 @@ def main_orwell_esp2013():
     # ------------------------- CONFIG -------------------------
     country_codes = ["IT", "ES", "NL", "FR", "DE", "BE", "AT", "PT", "CH", "SE", "NO", "DK", "FI"]
 
-    countries_list = st.sidebar.multiselect("Countries", country_codes, ["IT", "ES", "NL", "FR"])
+    countries_list = st.multiselect("Countries", country_codes, ["IT", "ES", "NL", "FR"])
     save_plots = False
-    if countries_list is not None:
+    if len(countries_list)>0:
         main_orwell_esp2013_(countries_list, save_plots)
 
     else:
-        st.errror("Select countires")
+        st.error("Select countries")
         st.stop()
 
 if __name__ == "__main__":
