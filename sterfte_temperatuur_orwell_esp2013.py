@@ -488,7 +488,7 @@ def plot_combined_esp2013(
     st.pyplot(fig)
 
 # ------------------------- MAIN ---------------------------
-def main_orwell_esp2015_(countries: List[str], save_plots: bool = False) -> None:
+def main_orwell_esp203_(countries: List[str], save_plots: bool = False) -> None:
     """Main execution function.
 
     Args:
@@ -540,18 +540,18 @@ def main_orwell_esp2015_(countries: List[str], save_plots: bool = False) -> None
     print(f"\n{'='*50}\nCombined ESP2015 Plot\n{'='*50}")
     plot_combined_esp2013(all_esp_data, save_plots)
     
-def main_orwell_esp2015():  
+def main_orwell_esp2013():  
     # https://x.com/orwell2022/status/1945102023705203154  
     # ------------------------- CONFIG -------------------------
     
     countries_list = ["IT", "ES", "NL", "FR"]
     save_plots = False
-    main_orwell_esp2015_(countries_list, save_plots)
+    main_orwell_esp2013_(countries_list, save_plots)
 
 
 
 if __name__ == "__main__":
-    main_orwell_esp2015()
+    main_orwell_esp2013()
     # Detect if running in Jupyter
     # is_jupyter = False
     # try:
