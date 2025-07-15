@@ -822,46 +822,47 @@ def main_orwell_esp2013_(countries: List[str], save_plots: bool = False) -> None
     all_esp_data: Dict[str, pd.DataFrame] = {}
     all_esp_data_annual: Dict[str, pd.DataFrame] = {}
     for country in countries:
-        st.subheader(f"\n{'='*5}\n{country}\n{'='*5}")
-        try:
-        #if 1==1:
-            age_specific_df, esp_weekly_df, esp_annual_df = prepare_data(country)
-            
-            print(f"\n{country} sample age-specific data:")
-            # try:
-            #     from IPython.display import display
-            #     display(age_specific_df.head())
-            # except ImportError:
-            print(age_specific_df.head())
-            
-            # Plot age-specific mortality
-            plot_age_specific(age_specific_df, country, save_plots)
-            
-            # Plot ESP2013 weekly
-            print(f"\n{country} ESP2013 weekly sample data:")
-            # try:
-            #     display(esp_weekly_df.head())
-            # except ImportError:
-            print(esp_weekly_df.head())
-            
-            # Plot ESP2013 annual
-            print(f"\n{country} ESP2013 annual sample data:")
-            # try:
-            #     display(esp_annual_df.head())
-            # except ImportError:
-            print(esp_annual_df.head())
-            plot_esp2013_adjusted(esp_weekly_df, country, save_plots, "weekly")
-            plot_esp2013_adjusted(esp_annual_df, country, save_plots, "annual")
-            
-            all_esp_data[country] = esp_weekly_df
-            all_esp_data_annual[country] = esp_annual_df
-            
-        except (requests.RequestException, ValueError, KeyError) as e:
-            st.error(f"Error processing {country}: {e}")
-            continue
+        with st.expander(f"{country}", expanded=True):
+            st.subheader(f"{country}")
+            try:
+            #if 1==1:
+                age_specific_df, esp_weekly_df, esp_annual_df = prepare_data(country)
+                
+                print(f"\n{country} sample age-specific data:")
+                # try:
+                #     from IPython.display import display
+                #     display(age_specific_df.head())
+                # except ImportError:
+                print(age_specific_df.head())
+                
+                # Plot age-specific mortality
+                plot_age_specific(age_specific_df, country, save_plots)
+                
+                # Plot ESP2013 weekly
+                print(f"\n{country} ESP2013 weekly sample data:")
+                # try:
+                #     display(esp_weekly_df.head())
+                # except ImportError:
+                print(esp_weekly_df.head())
+                
+                # Plot ESP2013 annual
+                print(f"\n{country} ESP2013 annual sample data:")
+                # try:
+                #     display(esp_annual_df.head())
+                # except ImportError:
+                print(esp_annual_df.head())
+                plot_esp2013_adjusted(esp_weekly_df, country, save_plots, "weekly")
+                plot_esp2013_adjusted(esp_annual_df, country, save_plots, "annual")
+                
+                all_esp_data[country] = esp_weekly_df
+                all_esp_data_annual[country] = esp_annual_df
+                
+            except (requests.RequestException, ValueError, KeyError) as e:
+                st.error(f"Error processing {country}: {e}")
+                continue
     
     # Combined plot
-    st.subheader(f"\n{'='*5}\nCombined ESP2013 Plot\n{'='*5}")
+    st.subheader(f"Combined ESP2013 Plot")
     plot_combined_esp2013(all_esp_data, save_plots)
     plot_combined_esp2013_annual(all_esp_data_annual, save_plots)
     
