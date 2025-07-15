@@ -272,7 +272,7 @@ def create_grid(df, country, what):
     print(f"DEBUG: 3x3 grid for {country} saved as 'mortality_grid_{country}.png'")
     # --- Main execution block (run this in a Jupyter cell) ---
 
-def main():
+def main_orwell():
     print("Fetching and plotting mortality data with local weather (2015-2019)...")
     # Fetch data for IT and ES
     what = st.selectbox("what to show [OBS_VALUE | per_100k]", ["OBS_VALUE",  "per_100k"],0)
@@ -291,4 +291,4 @@ def main():
         st.info("Code based on https://x.com/orwell2022/status/1944806639388778852")
         
 if __name__ == "__main__":
-    main()
+    main_orwell()

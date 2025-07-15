@@ -9,6 +9,8 @@ from statsmodels.tsa.seasonal import seasonal_decompose
 from patsy import dmatrices
 import numpy as np
 import random
+from sterfte_temperatuur_orwell import main_orwell
+from sterfte_temperatuur_orwell_esp2013 import main_orwell_2013
 # st.set_page_config(layout="wide")
 # WAT IS DE INVLOED VAN DE TEMPERATUUR OP DE STERFTE
 #
@@ -403,7 +405,7 @@ def poisson_regression(df,afkap):
     st.write(f"For each change of 1 degrees, the mortality changes {round(change,1)}%")
 
 
-def main():
+def main_rcsmit():
     """_summary_"""
     st.header("Invloed van temperatuur op sterfte")
     st.info("https://rcsmit.medium.com/sterfte-vs-temperatuur-b65770af76d3")
@@ -551,6 +553,16 @@ def main():
         st.subheader(f"t>{afkap} {title_100k}")
         multiple_lineair_regression(df_higher, ["temp_avg"], "OBS_VALUE",afkap)
         poisson_regression(df_higher, afkap)
+def main():
 
+    
+    tab1, tab2, tab3 = st.tabs(["rcsmit", "orwell", "Orwell_esp2015"])
+
+    with tab1:
+        main_rcsmit()
+    with tab2:
+        main_orwell()
+    with tab3:
+        main_orwell_esp2013()
 if __name__ == "__main__":
     main()
