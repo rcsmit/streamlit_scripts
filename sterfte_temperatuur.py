@@ -10,7 +10,7 @@ from patsy import dmatrices
 import numpy as np
 import random
 from sterfte_temperatuur_orwell import main_orwell
-from sterfte_temperatuur_orwell_esp2013 import main_orwell_2013
+from sterfte_temperatuur_orwell_esp2013 import main_orwell_esp2013
 # st.set_page_config(layout="wide")
 # WAT IS DE INVLOED VAN DE TEMPERATUUR OP DE STERFTE
 #
