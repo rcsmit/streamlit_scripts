@@ -488,7 +488,7 @@ def plot_combined_esp2013(
     st.pyplot(fig)
 
 # ------------------------- MAIN ---------------------------
-def main_orwell_esp203_(countries: List[str], save_plots: bool = False) -> None:
+def main_orwell_esp2013_(countries: List[str], save_plots: bool = False) -> None:
     """Main execution function.
 
     Args:
