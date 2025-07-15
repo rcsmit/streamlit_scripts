@@ -298,7 +298,21 @@ def plot_age_specific(
         country (str): Country code.
         save_plots (bool): If True, save as PNG.
     """
-
+    COORD: Dict[str, Dict[str, float | str]] = {
+        "IT": {"lat": 41.9028, "lon": 12.4964, "loc": "Rome"},
+        "ES": {"lat": 40.4168, "lon": -3.7038, "loc": "Madrid"},
+        "NL": {"lat": 52.0976, "lon": 5.1790, "loc": "De Bilt"},
+        "FR": {"lat": 48.8566, "lon": 2.3522, "loc": "Paris"},
+        "DE": {"lat": 52.5200, "lon": 13.4050, "loc": "Berlin"},
+        "BE": {"lat": 50.8503, "lon": 4.3517, "loc": "Brussels"},
+        "AT": {"lat": 48.2082, "lon": 16.3738, "loc": "Vienna"},
+        "PT": {"lat": 38.7223, "lon": -9.1393, "loc": "Lisbon"},
+        "CH": {"lat": 46.9481, "lon": 7.4474, "loc": "Bern"},
+        "SE": {"lat": 59.3293, "lon": 18.0686, "loc": "Stockholm"},
+        "NO": {"lat": 59.9139, "lon": 10.7522, "loc": "Oslo"},
+        "DK": {"lat": 55.6761, "lon": 12.5683, "loc": "Copenhagen"},
+        "FI": {"lat": 60.1699, "lon": 24.9384, "loc": "Helsinki"},
+    }
     AGE_BANDS: List[str] = [
         "Y55-59",
         "Y60-64",
@@ -361,6 +375,22 @@ def plot_esp2013_adjusted(
         country (str): Country code.
         save_plots (bool): If True, save as PNG.
     """
+
+    COORD: Dict[str, Dict[str, float | str]] = {
+        "IT": {"lat": 41.9028, "lon": 12.4964, "loc": "Rome"},
+        "ES": {"lat": 40.4168, "lon": -3.7038, "loc": "Madrid"},
+        "NL": {"lat": 52.0976, "lon": 5.1790, "loc": "De Bilt"},
+        "FR": {"lat": 48.8566, "lon": 2.3522, "loc": "Paris"},
+        "DE": {"lat": 52.5200, "lon": 13.4050, "loc": "Berlin"},
+        "BE": {"lat": 50.8503, "lon": 4.3517, "loc": "Brussels"},
+        "AT": {"lat": 48.2082, "lon": 16.3738, "loc": "Vienna"},
+        "PT": {"lat": 38.7223, "lon": -9.1393, "loc": "Lisbon"},
+        "CH": {"lat": 46.9481, "lon": 7.4474, "loc": "Bern"},
+        "SE": {"lat": 59.3293, "lon": 18.0686, "loc": "Stockholm"},
+        "NO": {"lat": 59.9139, "lon": 10.7522, "loc": "Oslo"},
+        "DK": {"lat": 55.6761, "lon": 12.5683, "loc": "Copenhagen"},
+        "FI": {"lat": 60.1699, "lon": 24.9384, "loc": "Helsinki"},
+    }
     if esp_df.empty:
         logging.warning(f"No ESP2013 data available for {country}")
         return
@@ -406,6 +436,22 @@ def plot_combined_esp2013(
         all_esp_data (Dict[str, pd.DataFrame]): ESP data per country.
         save_plots (bool): If True, save as PNG.
     """
+
+    COORD: Dict[str, Dict[str, float | str]] = {
+        "IT": {"lat": 41.9028, "lon": 12.4964, "loc": "Rome"},
+        "ES": {"lat": 40.4168, "lon": -3.7038, "loc": "Madrid"},
+        "NL": {"lat": 52.0976, "lon": 5.1790, "loc": "De Bilt"},
+        "FR": {"lat": 48.8566, "lon": 2.3522, "loc": "Paris"},
+        "DE": {"lat": 52.5200, "lon": 13.4050, "loc": "Berlin"},
+        "BE": {"lat": 50.8503, "lon": 4.3517, "loc": "Brussels"},
+        "AT": {"lat": 48.2082, "lon": 16.3738, "loc": "Vienna"},
+        "PT": {"lat": 38.7223, "lon": -9.1393, "loc": "Lisbon"},
+        "CH": {"lat": 46.9481, "lon": 7.4474, "loc": "Bern"},
+        "SE": {"lat": 59.3293, "lon": 18.0686, "loc": "Stockholm"},
+        "NO": {"lat": 59.9139, "lon": 10.7522, "loc": "Oslo"},
+        "DK": {"lat": 55.6761, "lon": 12.5683, "loc": "Copenhagen"},
+        "FI": {"lat": 60.1699, "lon": 24.9384, "loc": "Helsinki"},
+    }
     if not all_esp_data:
         logging.warning("No ESP2013 data available for combined plot")
         return
