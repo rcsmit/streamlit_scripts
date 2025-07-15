@@ -581,9 +581,11 @@ def main():
     tab1, tab2, tab3 = st.tabs(["rcsmit", "orwell", "orwell_esp2013"])
 
     with tab1:
-        main_rcsmit()
+        #main_rcsmit()
+        st.info("rcsmit")
     with tab2:
-        main_orwell()
+        # main_orwell()
+        st.info("orwell")
     with tab3:
         main_orwell_esp2013()
 if __name__ == "__main__":
