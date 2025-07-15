@@ -584,7 +584,7 @@ def plot_esp2013_adjusted(
         ax.set_title(f"ESP2013 Age-Adj. (Weekly) – {country}", fontsize=12)
         
     else:  # annual
-        ax.plot(esp_df["year"], esp_df["esp2013_adjusted_rate_per_1000"], 'bo-', linewidth=2, markersize=6)
+        ax.plot(esp_df["year"][:-1], esp_df["esp2013_adjusted_rate_per_1000"][:-1], 'bo-', linewidth=2, markersize=6)
         ax.set_xlabel("Year", fontsize=10)
         ax.set_ylabel("ESP2013 Adj. Deaths/1000", fontsize=10)
         ax.set_title(f"ESP2013 Age-Adj. (Annual) – {country}", fontsize=12)
@@ -747,7 +747,7 @@ def plot_combined_esp2013_annual(
             continue
         
         color = country_colors.get(country, "gray")
-        ax.plot(esp_df["year"], esp_df["esp2013_adjusted_rate_per_1000"], 'bo-', linewidth=1,  c=color, markersize=2)
+        ax.plot(esp_df["year"][:-1], esp_df["esp2013_adjusted_rate_per_1000"][:-1], 'bo-', linewidth=1,  c=color, markersize=2)
         
         # # Scatter plot with low alpha
         # ax.scatter(
