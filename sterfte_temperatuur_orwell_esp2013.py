@@ -543,7 +543,7 @@ def main_orwell_esp203_(countries: List[str], save_plots: bool = False) -> None:
 def main_orwell_esp2013():  
     # https://x.com/orwell2022/status/1945102023705203154  
     # ------------------------- CONFIG -------------------------
-    
+
     countries_list = ["IT", "ES", "NL", "FR"]
     save_plots = False
     main_orwell_esp2013_(countries_list, save_plots)
