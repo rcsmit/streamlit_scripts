@@ -32,6 +32,7 @@ import statsmodels.api as sm
 from matplotlib.colors import LinearSegmentedColormap
 import streamlit as st
 import numpy as np
+from scipy.stats import f_oneway
 
 # Setup logging
 # logging.basicConfig(level=print, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -934,6 +935,36 @@ def plot_min_y_points(df_best_cut_off_points):
         #plt.show()
         st.pyplot(fig)
         plt.close()
+
+
+        
+        # Maak latitude-bins van 5 graden
+        df_best_cut_off_points["lat_bin"] = pd.cut(df_best_cut_off_points["lat"], bins=range(30, 70, 5))
+
+        # Groepeer y_min per lat_bin
+        groups = [
+            group[what].values 
+            for name, group in df_best_cut_off_points.groupby("lat_bin") 
+            if len(group) > 1  # alleen bins met minstens 2 observaties
+        ]
+
+        # Controleer dat er genoeg groepen zijn
+        if len(groups) >= 2:
+            # ANOVA
+            f_stat, p_value = f_oneway(*groups)
+
+            st.write(f"F-statistic: {f_stat:.4f}")
+            st.write(f"P-value: {p_value:.4f}")
+
+            if p_value < 0.05:
+                st.write("\n🔬 The differences in y_min between latitude groups ARE statistically significant.")
+                st.write("This suggests that minimum mortality rates vary depending on latitude.")
+            else:
+                st.write("\n✅ The differences in y_min between latitude groups are NOT statistically significant.")
+                st.write("This supports the idea that these values could come from the same overall distribution.")
+        else:
+            st.write("⚠️ Not enough latitude groups with at least two observations to perform ANOVA.")
+
 
 # ------------------------- MAIN ---------------------------
 def main_orwell_esp2013_(countries: List[str], save_plots: bool = False) -> None:
