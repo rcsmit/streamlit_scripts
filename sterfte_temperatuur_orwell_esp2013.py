@@ -31,6 +31,7 @@ import statsmodels.api as sm
 # from joblib import Memory
 from matplotlib.colors import LinearSegmentedColormap
 import streamlit as st
+import numpy as np
 
 # Setup logging
 # logging.basicConfig(level=print, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -127,22 +128,24 @@ def get_weather_info(country: str) -> pd.DataFrame:
     if country not in COORD:
         raise ValueError(f"Unsupported country for weather: {country}")
     lat, lon = COORD[country]["lat"], COORD[country]["lon"]
+    m = "mean" # "max"
     url = (
         f"https://archive-api.open-meteo.com/v1/archive"
         f"?latitude={lat}&longitude={lon}"
         f"&start_date={WEATHER_START}&end_date={WEATHER_END}"
-        f"&daily=temperature_2m_max&timezone=Europe/Berlin"
+        f"&daily=temperature_2m_{m}&timezone=Europe/Berlin"
     )
     print(f"Fetching weather for {country}: {url}")
     response = requests.get(url)
     response.raise_for_status()
     data = response.json().get("daily")
-    if not data or "time" not in data or "temperature_2m_max" not in data:
+    if not data or "time" not in data or f"temperature_2m_{m}" not in data:
         raise KeyError("Invalid weather API response structure")
+    
     df = pd.DataFrame(
         {
             "date": pd.to_datetime(data["time"]),
-            "temp_max": data["temperature_2m_max"],
+            "temp_max": data[f"temperature_2m_{m}"],
         }
     )
     df["year"] = df["date"].dt.isocalendar().year
@@ -472,6 +475,43 @@ def prepare_data(country: str) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame
     return merged, esp_weekly_df, esp_annual_df
 
 # ------------------------ PLOTS -------------------------
+
+def find_best_cut_off(df: pd.DataFrame, x: str, y: str) -> Tuple[float, float, sm.regression.linear_model.RegressionResultsWrapper, sm.regression.linear_model.RegressionResultsWrapper]:
+    # doesnt work
+    # Sorteer dataframe op x
+    df_sorted = df.sort_values(by=x).reset_index(drop=True)
+    x_vals = df_sorted[x].values
+    y_vals = df_sorted[y].values
+
+    # Unieke cutoff-punten (vermijd te kleine subsets)
+    unique_cutoffs = np.unique(x_vals)[50:-50]
+    r2_scores = []
+
+    # Bepaal R² voor elk mogelijk cutoff-punt
+    for cutoff in unique_cutoffs:
+        df1 = df_sorted[df_sorted[x] <= cutoff]
+        df2 = df_sorted[df_sorted[x] > cutoff]
+
+        if len(df1) < 5 or len(df2) < 5:
+            continue
+
+        X1 = sm.add_constant(df1[x])
+        X2 = sm.add_constant(df2[x])
+        
+        model1 = sm.OLS(df1[y], X1).fit()
+        model2 = sm.OLS(df2[y], X2).fit()
+        
+        #avg_r2 = (model1.rsquared + model2.rsquared) / 2
+        avg_r2 = model1.rsquared 
+        
+        r2_scores.append((cutoff, avg_r2, model1, model2))
+    
+    # Beste split
+    best_cutoff, best_avg_r2, best_model1, best_model2 = max(r2_scores, key=lambda x: x[1])
+    st.write(best_cutoff, best_avg_r2, best_model1, best_model2 )
+   
+    
+    return best_cutoff, best_avg_r2, best_model1, best_model2
 def plot_age_specific(
     df: pd.DataFrame, country: str, save_plots: bool = False
 ) -> None:
@@ -499,6 +539,7 @@ def plot_age_specific(
             norm = [0.5] * len(sub)
         ax.scatter(sub["temp_max"], sub["annual_equiv_rate_per_1000"], c=norm, cmap=cmap, s=20, alpha=0.7)
         
+
         # Add LOWESS trend
         if len(sub) > 10:  # Need sufficient data for LOWESS
             try:
@@ -535,7 +576,7 @@ def plot_age_specific(
     # plt.show()
     st.pyplot(fig)
     plt.close()
-
+   
 def plot_esp2013_adjusted(
     esp_df: pd.DataFrame, country: str, save_plots: bool = False, plot_type: str = "weekly"
 ) -> None:
@@ -555,6 +596,14 @@ def plot_esp2013_adjusted(
     cmap = LinearSegmentedColormap.from_list("blues", ["lightblue", "darkblue"])
     
     if plot_type == "weekly":
+        df_best_cut_off_points = pd.DataFrame(columns=[
+            "country", 
+            "lat", 
+            "age", 
+            "x_at_min_y",
+            "y_min"
+        ])
+        lat = COORD[country]["lat"]
         # Color by year for weekly data
         if len(esp_df) > 1:
             norm = (esp_df["year"] - esp_df["year"].min()) / max(1, (esp_df["year"].max() - esp_df["year"].min()))
@@ -569,6 +618,9 @@ def plot_esp2013_adjusted(
             alpha=0.7,
         )
         
+
+       
+           
         # Add LOWESS trend
         if len(esp_df) > 10:
             try:
@@ -576,13 +628,46 @@ def plot_esp2013_adjusted(
                     esp_df["esp2013_adjusted_rate_per_1000"], esp_df["temp_max"], frac=LOWESS_FRAC
                 )
                 ax.plot(trend[:, 0], trend[:, 1], "r-", linewidth=1.5)
+            
+                
+                # Extract x and y from the trend
+                x_vals = trend[:, 0]
+                y_vals = trend[:, 1]
+
+                # Find index of minimum y
+                min_idx = y_vals.argmin()
+
+                # Corresponding x
+                x_at_min_y = x_vals[min_idx]
+                y_min = y_vals[min_idx]
+            
+                #best_cutoff, best_avg_r2, best_model1, best_model2 = find_best_cut_off(esp_df, "temp_max", "esp2013_adjusted_rate_per_1000")
+                new_row = pd.DataFrame([{
+                    "country": country,
+                    "lat": lat,
+                    "age": "all_esp2013",
+                    "x_at_min_y":x_at_min_y,
+                    "y_min": y_min,
+                }])
+
+                df_best_cut_off_points = pd.concat([df_best_cut_off_points, new_row], ignore_index=True)
+                
+                # Plot cutoff
+                ax.axvline(x_at_min_y, color="red", linestyle="--", linewidth=1.2, label=f"Best cutoff: {x_at_min_y:.2f}")
+
+            
+            
+            
+            
             except Exception as e:
                 print(f"LOWESS failed for ESP2013 weekly {country}: {e}")
+        
+
         
         ax.set_xlabel("Temp max (°C)", fontsize=10)
         ax.set_ylabel("ESP2013 Adj. Deaths/1000", fontsize=10)
         ax.set_title(f"ESP2013 Age-Adj. (Weekly) – {country}", fontsize=12)
-        
+
     else:  # annual
         ax.plot(esp_df["year"][:-1], esp_df["esp2013_adjusted_rate_per_1000"][:-1], 'bo-', linewidth=2, markersize=6)
         ax.set_xlabel("Year", fontsize=10)
@@ -605,6 +690,10 @@ def plot_esp2013_adjusted(
     # plt.show()
     st.pyplot(fig)
     plt.close()
+    if plot_type == "weekly":
+        return df_best_cut_off_points
+    else:
+        return
 def plot_combined_esp2013(
     all_esp_data: Dict[str, pd.DataFrame], save_plots: bool = False
 ) -> None:
@@ -786,6 +875,7 @@ def plot_combined_esp2013_annual(
     ax.set_xlabel("Year", fontsize=10)
     ax.set_ylabel("ESP2013 Adj. Deaths/1000", fontsize=10)
     ax.set_title(f"ESP2013 Age-Adj. (Annual) – all countries", fontsize=12)
+   
     ax.grid(True, alpha=0.3)
     ax.legend(handles=legend_handles, fontsize=10, loc="upper right")
    
@@ -807,6 +897,44 @@ def plot_combined_esp2013_annual(
     # plt.show()
     st.pyplot(fig)
     plt.close()
+
+def plot_min_y_points(df_best_cut_off_points):
+    """Plot the minimum y points from the best cut-off points DataFrame."""
+    
+    fig, ax = plt.subplots(1, 1, figsize=(5, 4))
+    for what in ["y_min", "x_at_min_y"]:
+        # Scatterpunten
+        ax.scatter(
+            df_best_cut_off_points["lat"], 
+            df_best_cut_off_points[what],
+            color="blue", 
+            s=40
+        )
+
+        # Voeg labels toe aan elk punt
+        for _, row in df_best_cut_off_points.iterrows():
+            label = f"{row['country']}"# ({row['age']})"
+            ax.text(row["lat"], row[what], label, fontsize=8, ha="left", va="bottom")
+
+        # Labels en titel
+        ax.set_xlabel("Latitude")
+        ax.set_ylabel(f"Min Mortality ({what})")
+        if what =="y_min":
+            ax.set_title("Lowest Mortality rate vs Latitude")
+        else:
+            ax.set_title("Temperature at Lowest Mortality vs Latitude")
+        footnotes = (
+            f"Code / Plot:@orwell2022 & @rcsmit"
+        )
+        fig.text(0.5, -0.04, footnotes, ha="center", fontsize=8)
+        plt.tight_layout()
+        
+        ax.grid(True)
+        plt.tight_layout()
+        #plt.show()
+        st.pyplot(fig)
+        plt.close()
+
 # ------------------------- MAIN ---------------------------
 def main_orwell_esp2013_(countries: List[str], save_plots: bool = False) -> None:
     """Main execution function.
@@ -821,11 +949,12 @@ def main_orwell_esp2013_(countries: List[str], save_plots: bool = False) -> None
     
     all_esp_data: Dict[str, pd.DataFrame] = {}
     all_esp_data_annual: Dict[str, pd.DataFrame] = {}
+    df_best_cut_off_points = pd.DataFrame(columns=["country", "age", "best_cutoff", "best_avg_r2", "best_model1", "best_model2"])
     for country in countries:
         with st.expander(f"{country}", expanded=True):
             st.subheader(f"{country}")
-            try:
-            #if 1==1:
+            #try:
+            if 1==1:
                 age_specific_df, esp_weekly_df, esp_annual_df = prepare_data(country)
                 
                 print(f"\n{country} sample age-specific data:")
@@ -837,7 +966,6 @@ def main_orwell_esp2013_(countries: List[str], save_plots: bool = False) -> None
                 
                 # Plot age-specific mortality
                 plot_age_specific(age_specific_df, country, save_plots)
-                
                 # Plot ESP2013 weekly
                 print(f"\n{country} ESP2013 weekly sample data:")
                 # try:
@@ -851,21 +979,25 @@ def main_orwell_esp2013_(countries: List[str], save_plots: bool = False) -> None
                 #     display(esp_annual_df.head())
                 # except ImportError:
                 print(esp_annual_df.head())
-                plot_esp2013_adjusted(esp_weekly_df, country, save_plots, "weekly")
+                df_best_cut_off_points_temp =  plot_esp2013_adjusted(esp_weekly_df, country, save_plots, "weekly")
+                df_best_cut_off_points = pd.concat([df_best_cut_off_points, df_best_cut_off_points_temp], ignore_index=True)
+                
                 plot_esp2013_adjusted(esp_annual_df, country, save_plots, "annual")
                 
                 all_esp_data[country] = esp_weekly_df
                 all_esp_data_annual[country] = esp_annual_df
                 
-            except (requests.RequestException, ValueError, KeyError) as e:
-                st.error(f"Error processing {country}: {e}")
-                continue
+            # except (requests.RequestException, ValueError, KeyError) as e:
+            #     st.error(f"Error processing {country}: {e}")
+            #     continue
     
     # Combined plot
     st.subheader(f"Combined ESP2013 Plot")
     plot_combined_esp2013(all_esp_data, save_plots)
     plot_combined_esp2013_annual(all_esp_data_annual, save_plots)
-    
+    plot_min_y_points(df_best_cut_off_points)
+
+
 def main_orwell_esp2013():
     countries_list = ["IT", "ES", "NL", "FR"]  # RESTORED
     save_plots = True
@@ -877,6 +1009,9 @@ def main_orwell_esp2013():
     countries_list = st.multiselect("Countries", country_codes, ["IT", "ES", "NL", "FR"])
     save_plots = False
     if len(countries_list)>0:
+        if "DE" in countries_list:
+            st.warning("Germany (DE)  doesn’t upload bins below age 40, so result is not right")
+            
         main_orwell_esp2013_(countries_list, save_plots)
 
     else:
