@@ -1,19 +1,9 @@
-# Scrapping Weather Data from Ogimet
+# Scrapping Weather Data from open-meteo
 #
-# Based on this R-script
-# https://www.kaggle.com/code/ahmadabuhamour/scrapping-weather-data-from-ogimet
-# converted to python by chatGPT
-# adapted by Rene Smit @rcsmit
+# Based on code of @orwel2022
 
 # To install the needed packages : 
 # pip install pandas requests beautifulsoup4 html5lib
-
-# "Ogimet is a simple website and doesn't have great processing capabilities,
-# such scrapping algorithim could take up to 15 mins to run if requesting 20+ years of data.
-# Hence, in order not to overwhelm Ogimet's servers, I encourage you to use it only as a
-# last resort for large amounts of data.""
-#
-# THIS IS THE REASON THAT THE SCRAPING FUNCTION IS NOT INTEGRATED IN THE SHOW-FUNCTION
 
 
 import pandas as pd
@@ -42,79 +32,86 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 import numpy as np
 import datetime as dt
+import requests
 
-
-def read_ogimet():
-    """Read the data from Ogimet and save it to a CSV file. Reading the data while running the script every time
-       is not encouraged, see above.
+def get_data(location_name,locations, start_date, end_date):
+    """Get the weather data for a specific location and date range from Open Meteo archive API.
+    https://open-meteo.com/en/docs/historical-weather-api?daily=rain_sum,temperature_2m_mean,temperature_2m_max,temperature_2m_min,precipitation_hours,precipitation_sum,visibility_mean,visibility_min,visibility_max,relative_humidity_2m_mean,relative_humidity_2m_max,relative_humidity_2m_min,&latitude=9.755106899960907&longitude=99.9609068&start_date=2025-01-01&end_date=2025-07-15&hourly=&timezone=Asia%2FBangkok
+    Args:
+        location_name(str):Location
+        start_date(str): start date yyyy-mm-dd
+        end_date(str): end date yyyy-mm-dd
+    returns:
+        pd.DataFrame: DataFrame with weather data including date, temperature, rain, humidity, visibility, etc.
     """
+    
+
+    # start_date = "2025-01-01"
+    # end_date = "2025-07-15"
+    daily_vars = ",".join([
+        "rain_sum",
+        "temperature_2m_mean",
+        "temperature_2m_max",
+        "temperature_2m_min",
+        "precipitation_hours",
+        "precipitation_sum",
+        "visibility_mean",
+        "visibility_min",
+        "visibility_max",
+        "relative_humidity_2m_mean",
+        "relative_humidity_2m_max",
+        "relative_humidity_2m_min",
+        "wind_speed_10m_max"
+    ])
+
+    # Find the matching location
+    loc = next((l for l in locations if l["name"] == location_name), None)
+    if loc is None:
+        raise ValueError(f"Location '{location_name}' not found.")
+
+    url = (
+        f"https://archive-api.open-meteo.com/v1/archive"
+        f"?latitude={loc['lat']}"
+        f"&longitude={loc['lon']}"
+        f"&start_date={start_date}"
+        f"&end_date={end_date}"
+        f"&daily={daily_vars}"
+        f"&timezone={loc['timezone'].replace('/', '%2F')}"
+    )
 
 
-    # find station codes here https://www.ogimet.com/indicativos.phtml.en
-    station_code,location_str = "485500-99999", "ko_samui"  
-                                   
-    # station_code,location_str = "16242","Rome Fiumicino"
-    #station_code,location_str = "48327","chiang_mai"
-    #station_code,location_str = "16105","Venezia"
-    station_code,location_str = "72202","Miami"
-    start_date = datetime(2015, 1,1 )
-    #start_date = datetime(1900, 1, 1)
+    print(f"Fetching weather for {location_name}: {url}")
+    response = requests.get(url)
+    response.raise_for_status()
+    data = response.json().get("daily")
+    if not data or "time" not in data:
+        raise KeyError("Invalid weather API response structure")
+    
+    df = pd.DataFrame({
+        "date": pd.to_datetime(data["time"]),
+        "Date": pd.to_datetime(data["time"]), #some external scripts use Date
+        "temp_max": data["temperature_2m_max"],
+        "temp_min": data["temperature_2m_min"],
+        "temp_mean": data["temperature_2m_mean"],
+        "rain_sum": data["rain_sum"],
+        "precipitation_hours": data["precipitation_hours"],
+        "precipitation_sum": data["precipitation_sum"],
+        "visibility_mean": data["visibility_mean"],
+        "visibility_min": data["visibility_min"],
+        "visibility_max": data["visibility_max"],
+        "rel_humidity_mean": data["relative_humidity_2m_mean"],
+        "rel_humidity_max": data["relative_humidity_2m_max"],
+        "rel_humidity_min": data["relative_humidity_2m_min"],
+        "wind_max": data["wind_speed_10m_max"]
+    })
 
-    end_date = datetime(2019, 12, 31)
-    end_date = datetime.today()  # You could use the desired end date
-    number_of_days = (end_date - start_date).days 
-    batches = int(number_of_days / 50)+1 # number of batches
-    counter = 1
-    request_date = start_date
-
-    observations = pd.DataFrame() 
-
-    while request_date < end_date:
-        request_date += timedelta(days=50)
-
-        year = request_date.year
-        month = request_date.month
-        day = request_date.day
-
-        #url = f"https://www.ogimet.com/cgi-bin/gsynres?lang=en&ind={station_code}&ndays=50&ano={year}&mes={month}&day={day}&hora=06&ord=REV&Send=Send"
-        # https://www.ogimet.com/cgi-bin/gsynres?lang=en&ord=REV&ndays=30&ano=2023&mes=07&day=24&hora=06&ind=48550 seems to work # Daily summary at 12:00 UTC
-        # url = f"https://www.ogimet.com/cgi-bin/gsynres?lang=en&ord=REV&ndays=50&ano={year}&mes={month}&day={day}&hora=12&ind={station_code}" soup.find_all("table")[2]
-
-        url = f"https://ogimet.com/cgi-bin/gsodres?lang=en&ind={station_code}&ord=DIR&ano={year}&mes={month}&day={day}&ndays=50" # Global Summary Of the Day (GSOD), is some days behind # soup.find_all("table")[3]
-        print (f"Retreiving {url} {counter} / {batches}")
-        st.write(f"Retreiving {url} {counter} / {batches}")
-        counter += 1
-        response = requests.get(url)
-        soup = BeautifulSoup(response.content, "html5lib")
-        #temp_table = pd.read_html(str(soup.find_all("table")[3]), encoding="utf-8")[0]
+    df["year"] = df["date"].dt.isocalendar().year
+    df["week"] = df["date"].dt.isocalendar().week
+    df = df.dropna(subset=["year", "week"])
+    
+    return df
 
 
-        # Assuming soup is already defined and contains your parsed HTML
-        html_string = str(soup.find_all("table")[3])
-        html_io = StringIO(html_string)
-
-        # Now pass the StringIO object to read_html
-        temp_table = pd.read_html(html_io, encoding="utf-8")[0]
-
-        
-        if temp_table.empty:
-            
-            continue
-        else:
-            print(temp_table)
-
-        #temp_table = temp_table.iloc[1:]  # Remove the first two rows, which usually contains units
-
-        date_vec = pd.date_range(end=request_date - timedelta(days=1), periods=len(temp_table), freq="1D")
-        temp_table["Date"] = date_vec
-        observations = pd.concat([temp_table, observations])
-        
-
-    # observations = observations[observations["Date"] <= end_date] # gives an error. I just delete the last rows in the CSV file
-    observations = observations.sort_values(by=('Date','Date'))
-    observations.to_csv(f"weather_{location_str}_b.csv", index=False)
-    # You have to replace ---- with [nothing]. (Don't use [None], since it will turn the column into a text/object column) 
-    print(observations)
 
 def show_warmingstripes(df_, to_show, where):
     """_summary_
@@ -175,8 +172,9 @@ def show_warmingstripes(df_, to_show, where):
     plt.gca().yaxis.set_major_locator(plt.NullLocator())
     # plt.show()
     # st.pyplot(fig) - gives an error
-    #st.set_option("deprecation.showPyplotGlobalUse", False)
-    st.pyplot()
+    st.set_option("deprecation.showPyplotGlobalUse", False)
+    st.pyplot(fig)
+    plt.close()
 def show_month(df, to_show, day_min, day_max, month, month_names, where):
     """Show graph with to_show in different lines for each years for a certain (period of) a month
        Show a frequency table of this data
@@ -325,24 +323,18 @@ def cross_table_montly_avg(df, to_show, where, y_axis_zero):
     # Display the plot using Streamlit
     st.plotly_chart(fig_x)
 def show_info():
-    st.info("Source weather info: https://ogimet.com/")
+    st.info("Source weather info: https://open-meteo.com/en/docs/historical-weather-api/")
 
-    ''''
-    Data until mid july 2023, not automaticall updated
-    T_max = Max. temperature taken from explicit Tmax. report (°C)
-    T_Min = Min. temperature taken from explicit Tmax. report (°C)
-    T_Mean = Mean temperature derived from 8 observations (°C)
-    Hr_Med = Mean relative humidity derived from 8 dew point observations (%)
-    Wind_Max = Max wind speed computed from 8 observations (km/h)
-    Wind_Mean =Mean wind speed computed from 8 observations (km/h) 
-    SLP = Mean sea level pressure computed from 8 observations (mb)
-    STN = Mean pressure at station level computed from 8 observations (mb)
-    Vis = Mean visibility computed from 8 observations (km)
-    Prec = Prec. computed from 1 report of 24-hour precipitation amount (mm)
-    Diary = (images, not in use)
-    Source https://ogimet.com/cgi-bin/gsodres?lang=en&ind=485500-99999&ord=DIR&ano=2000&mes=01&day=1&ndays=500
     '''
+Zippenfenig, P. (2023). Open-Meteo.com Weather API [Computer software]. Zenodo. https://doi.org/10.5281/ZENODO.7970649
 
+Hersbach, H., Bell, B., Berrisford, P., Biavati, G., Horányi, A., Muñoz Sabater, J., Nicolas, J., Peubey, C., Radu, R., Rozum, I., Schepers, D., Simmons, A., Soci, C., Dee, D., Thépaut, J-N. (2023). ERA5 hourly data on single levels from 1940 to present [Data set]. ECMWF. https://doi.org/10.24381/cds.adbb2d47
+
+Muñoz Sabater, J. (2019). ERA5-Land hourly data from 2001 to present [Data set]. ECMWF. https://doi.org/10.24381/CDS.E2161BAC
+
+Schimanke S., Ridal M., Le Moigne P., Berggren L., Undén P., Randriamampianina R., Andrea U., Bazile E., Bertelsen A., Brousseau P., Dahlgren P., Edvinsson L., El Said A., Glinton M., Hopsch S., Isaksson L., Mladek R., Olsson E., Verrelle A., Wang Z.Q. (2021). CERRA sub-daily regional reanalysis data for Europe on single levels from 1984 to present [Data set]. ECMWF. https://doi.org/10.24381/CDS.622A565A
+    '''
+    st.info("Data retrieval script based on code of @orwell2022")
 def show_treshold(where, to_show, treshold_value, above_under, df):
     """_summary_
 
@@ -451,7 +443,7 @@ def line_graph(to_show, window_size, y_axis_zero, df):
     """    
     df[f'{to_show}_SMA'] = df[to_show].rolling(window=window_size).mean()
 
-    fig = px.line(df, x='Date', y=[to_show, f'{to_show}_SMA'],
+    fig = px.line(df, x='date', y=[to_show, f'{to_show}_SMA'],
                 title=f'{to_show} over Time with SMA',
                 labels={'value':to_show},
                 line_shape='linear')
@@ -463,7 +455,7 @@ def line_graph(to_show, window_size, y_axis_zero, df):
     # plotly.offline.plot(fig)
     st.plotly_chart(fig)
 #@st.cache_data(ttl=24*60*60)
-def get_data(where):
+def get_data_old(where):
     # load_local = True if platform.processor() else False
     load_local = False
 
@@ -534,9 +526,9 @@ def calculate_wind_chill(T, V):
 
 # Function to determine the feels-like temperature
 def feels_like_temperature(row):
-    T_C = row['T_Mean']
-    RH = row['Hr_Med']
-    V_mph = float(row['Wind_Max']) * 0.621371  # Converting km/h to mph
+    T_C = row['temp_mean']
+    RH = row['rel_humidity_mean']
+    V_mph = float(row['wind_max']) * 0.621371  # Converting km/h to mph
     
     T_F = celsius_to_fahrenheit(T_C)
     
@@ -550,6 +542,7 @@ def feels_like_temperature(row):
         feels_like_F = T_F  # No adjustment
     
     feels_like_C = fahrenheit_to_celsius(feels_like_F)
+
     return feels_like_C
 
 
@@ -582,22 +575,105 @@ def check_from_until(from_, until_):
         st.stop()
 
     return FROM, UNTIL
+def show_locations(locations):
 
-def main():
+    # Convert to DataFrame
+    df_map = pd.DataFrame(locations)
+
+    # Plot map
+    st.title("🌍 World Locations Map")
+    #st.map(df_map.rename(columns={"lat": "latitude", "lon": "longitude"}))
+
+    MAPBOX = "pk.eyJ1IjoicmNzbWl0IiwiYSI6Ii1IeExqOGcifQ.EB6Xcz9f-ZCzd5eQMwSKLQ"
+    # original_Name
+    df_map = df_map.rename(columns={"name": "original_Name", "lat": "lat", "lon": "lon"})
+    # Ensure the DataFrame has the correct columns for pydeck
+    if "original_Name" not in df_map.columns or "lat" not in df_map.columns or "lon" not in df_map.columns:
+        st.error("DataFrame must contain 'original_Name', 'lat', and 'lon' columns.")
+        return
+    
+    df_map = df_map[["original_Name", "lat", "lon"]]
+
+    # Adding code so we can have map default to the center of the data
+    midpoint = (np.average(df_map['lat']), np.average(df_map['lon']))
+    import pydeck as pdk
+    tooltip = {
+            "html":
+                "{original_Name} <br/>"
+            }
+        
+    layer1= pdk.Layer(
+            'ScatterplotLayer',     # Change the `type` positional argument here
+                df_map,
+                get_position=['lon', 'lat'],
+                auto_highlight=True,
+                get_radius=4000,          # Radius is given in meters
+                get_fill_color=[180, 0, 200, 140],  # Set an RGBA value for fill
+                pickable=True)
+    layer2 =  pdk.Layer(
+                    type="TextLayer",
+                    data=df_map,
+                    pickable=False,
+                    get_position=["lon", "lat"],
+                    get_text="original_Name",
+                    get_color=[0, 0, 0],
+                    get_angle=0,
+                    sizeScale= 0.75,
+                    # Note that string constants in pydeck are explicitly passed as strings
+                    # This distinguishes them from columns in a data set
+                    getTextAnchor= '"middle"',
+                    get_alignment_baseline='"bottom"'
+                )
+
+    st.pydeck_chart(pdk.Deck(
+        map_style='mapbox://styles/mapbox/light-v9',
+        initial_view_state=pdk.ViewState(
+             longitude=midpoint[1],
+            latitude=midpoint[0],
+            pitch=0,
+            zoom=3,
+        ),
+        layers=[layer1, layer2
+            
+        ],tooltip = tooltip
+    ))
+
+  
+def main_(locations):
     """Show the data from Ogimet in a graph, and average values per month per year
     """    
-                         
 
+    
+    location_names = [loc["name"] for loc in locations]
+    
     start_ = "2019-01-01"
     today = datetime.today().strftime("%Y-%m-%d")
     from_ = st.sidebar.text_input("startdatum (yyyy-mm-dd) from 1-1-1900", start_)
     until_ = st.sidebar.text_input("enddatum (yyyy-mm-dd)", today)
     FROM, UNTIL = check_from_until(from_, until_)
     # Convert FROM and UNTIL to datetime
-    FROM = pd.to_datetime(FROM)
-    UNTIL = pd.to_datetime(UNTIL)
-    where = st.sidebar.selectbox("Location to show", ["Koh Samui", "Chiang Mai", "Rome Fiumicino","Venezia"])
-    to_show = st.sidebar.selectbox("What to show x", ["T_Max","T_Min","T_Mean","Hr_Med","Wind_Max","Wind_Mean","SLP","STN","Vis","Prec","Diary", "Feels_Like"],0)
+    FROM_ = pd.to_datetime(FROM)
+    UNTIL_ = pd.to_datetime(UNTIL)
+
+    where = st.sidebar.selectbox("Location to show", location_names, index=0)
+    #to_show = st.sidebar.selectbox("What to show x", ["T_Max","T_Min","T_Mean","Hr_Med","Wind_Max","Wind_Mean","SLP","STN","Vis","Prec","Diary", "Feels_Like"],0)
+    to_show = st.sidebar.selectbox("What to show x", ["rain_sum",
+        "temp_mean",
+        "temp_max",
+        "temp_min",
+        "rain_sum",
+        "precipitation_hours",
+        "precipitation_sum",
+         "visibility_mean",
+        "visibility_min",
+        "visibility_max",
+        "rel_humidity_mean",
+        "rel_humidity_max",
+        "rel_humidity_min",
+        "wind_max",
+        "Feels_Like"], index=0)
+
+
     window_size =  st.sidebar.slider("Window for SMA",1,365,7) 
     y_axis_zero = st.sidebar.selectbox("Y axis start at zero", [True,False],1)
     multiply_minus_one = st.sidebar.selectbox("Multiply by -1", [True,False],1)
@@ -608,55 +684,155 @@ def main():
     month_names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
     month = month_names.index(st.sidebar.selectbox("Month", month_names, index=0)) + 1
     day_min, day_max  = st.sidebar.slider("days",1,31,(1,31))
-    df_ = get_data(where)
+    
+    
+    df_ = get_data(where,locations, FROM, UNTIL)
    
     if multiply_minus_one:
         # needed for for ex. visability 
-        # Make a copy of the DataFrame without the "Date" column
-        df_copy = df_.drop(columns=['Date']).copy()
+        # Make a copy of the DataFrame without the "date" column
+        df_copy = df_.drop(columns=['date']).copy()
 
         # Multiply all values by -1
         df_copy = df_copy * -1
 
-        # Combine the "Date" column back with the modified values
-        df = pd.concat([df_['Date'], df_copy], axis=1)
+        # Combine the "date" column back with the modified values
+        df = pd.concat([df_['date'], df_copy], axis=1)
     else:
         df = df_
-    df['Date'] = pd.to_datetime(df['Date'])
+    df['date'] = pd.to_datetime(df['date'])
 
-    # Filter the DataFrame based on the start and end dates
-    df = df[(df['Date'] >= FROM) & (df['Date'] <= UNTIL)]
+    # # Filter the DataFrame based on the start and end dates
+    # df = df[(df['date'] >= FROM) & (df['date'] <= UNTIL)]
 
 
 
-    df['Day'] = df['Date'].dt.day
-    df['Month'] = df['Date'].dt.month
-    df['Year'] = df['Date'].dt.year
-    df = df.sort_values(by='Date')
+    df['Day'] = df['date'].dt.day
+    df['Month'] = df['date'].dt.month
+    df['Year'] = df['date'].dt.year
+    df = df.sort_values(by='date')
 
     
-    df["Date"] = pd.to_datetime(df["Date"].astype(str))
-    df["YYYY"] = df["Date"].dt.year
-    df["MM"] = df["Date"].dt.month
-    df["DD"] = df["Date"].dt.day
+    df["date"] = pd.to_datetime(df["date"].astype(str))
+    df["YYYY"] = df["date"].dt.year
+    df["MM"] = df["date"].dt.month
+    df["DD"] = df["date"].dt.day
     
-    # Convert all columns except 'Date' to appropriate data types
-    df[df.columns.difference(['Date'])] = df[df.columns.difference(['Date'])].apply(pd.to_numeric, errors='coerce')
+    # Convert all columns except 'date' to appropriate data types
+    df[df.columns.difference(['date'])] = df[df.columns.difference(['date'])].apply(pd.to_numeric, errors='coerce')
     # Apply the feels_like_temperature function to each row in the DataFrame
     df['Feels_Like'] = df.apply(feels_like_temperature, axis=1)
 
     
     st.title(f"Weather info from {where}")
-    st.write(df)
+ 
     line_graph(to_show, window_size, y_axis_zero, df)
-    show_calender_heatmap(df,"Date", [to_show], percentile_colomap_max)
-    show_year_heatmap(df,"Date", [to_show])
+    show_calender_heatmap(df,"date", [to_show], percentile_colomap_max)
+    show_year_heatmap(df,"date", [to_show])
     
     cross_table_montly_avg(df, to_show, where, y_axis_zero)   
     show_treshold(where, to_show, treshold_value, above_under, df)
-    show_warmingstripes(df, to_show, where) 
+    #show_warmingstripes(df, to_show, where) 
     show_month(df, to_show, day_min, day_max,month, month_names,where)
     show_info()
+def legenda():
+    # https://open-meteo.com/en/docs/historical-weather-api
+    # Define the data for hourly and daily parameters
+    hourly_data = [
+        ("temperature_2m", "Instant", "°C (°F)", "Air temperature at 2 meters above ground"),
+        ("relative_humidity_2m", "Instant", "%", "Relative humidity at 2 meters above ground"),
+        ("dew_point_2m", "Instant", "°C (°F)", "Dew point temperature at 2 meters above ground"),
+        ("apparent_temperature", "Instant", "°C (°F)", "Perceived feels-like temperature combining wind chill, humidity, and solar radiation"),
+        ("surface_pressure", "Instant", "hPa", "Air pressure at surface or mean sea level"),
+        ("precipitation", "Preceding hour sum", "mm (inch)", "Total precipitation of the preceding hour"),
+        ("rain", "Preceding hour sum", "mm (inch)", "Only liquid precipitation of the preceding hour"),
+        ("snowfall", "Preceding hour sum", "cm (inch)", "Snowfall amount of the preceding hour"),
+        ("cloud_cover", "Instant", "%", "Total cloud cover as area fraction"),
+        ("cloud_cover_low", "Instant", "%", "Low level clouds up to 2 km"),
+        ("cloud_cover_mid", "Instant", "%", "Mid level clouds 2–6 km"),
+        ("cloud_cover_high", "Instant", "%", "High level clouds from 6 km"),
+        ("shortwave_radiation", "Preceding hour mean", "W/m²", "Average shortwave solar radiation"),
+        ("direct_normal_irradiance", "Preceding hour mean", "W/m²", "Direct solar radiation on normal plane"),
+        ("diffuse_radiation", "Preceding hour mean", "W/m²", "Diffuse solar radiation average"),
+        ("global_tilted_irradiance", "Preceding hour mean", "W/m²", "Total radiation on tilted pane"),
+        ("sunshine_duration", "Preceding hour sum", "Seconds", "Seconds of sunshine per hour"),
+        ("wind_speed_10m", "Instant", "km/h (mph, m/s, knots)", "Wind speed at 10 meters"),
+        ("wind_speed_100m", "Instant", "km/h (mph, m/s, knots)", "Wind speed at 100 meters"),
+        ("wind_direction_10m", "Instant", "°", "Wind direction at 10 meters"),
+        ("wind_direction_100m", "Instant", "°", "Wind direction at 100 meters"),
+        ("wind_gusts_10m", "Instant", "km/h (mph, m/s, knots)", "Wind gusts at 10 meters"),
+        ("et0_fao_evapotranspiration", "Preceding hour sum", "mm (inch)", "Reference Evapotranspiration FAO-56"),
+        ("weather_code", "Instant", "WMO code", "Weather condition as numeric WMO code"),
+        ("snow_depth", "Instant", "meters", "Snow depth on the ground"),
+        ("vapour_pressure_deficit", "Instant", "kPa", "Vapor Pressure Deficit"),
+        ("soil_temperature_0_to_7cm", "Instant", "°C (°F)", "Soil temperature at 0–7 cm depth"),
+        ("soil_temperature_7_to_28cm", "Instant", "°C (°F)", "Soil temperature at 7–28 cm depth"),
+        ("soil_temperature_28_to_100cm", "Instant", "°C (°F)", "Soil temperature at 28–100 cm depth"),
+        ("soil_temperature_100_to_255cm", "Instant", "°C (°F)", "Soil temperature at 100–255 cm depth"),
+        ("soil_moisture_0_to_7cm", "Instant", "m³/m³", "Soil moisture at 0–7 cm depth"),
+        ("soil_moisture_7_to_28cm", "Instant", "m³/m³", "Soil moisture at 7–28 cm depth"),
+        ("soil_moisture_28_to_100cm", "Instant", "m³/m³", "Soil moisture at 28–100 cm depth"),
+        ("soil_moisture_100_to_255cm", "Instant", "m³/m³", "Soil moisture at 100–255 cm depth")
+    ]
+
+    daily_data = [
+        ("weather_code", "", "WMO code", "Most severe weather condition on a given day"),
+        ("temperature_2m_max", "", "°C (°F)", "Maximum daily air temperature at 2 meters"),
+        ("temperature_2m_min", "", "°C (°F)", "Minimum daily air temperature at 2 meters"),
+        ("apparent_temperature_max", "", "°C (°F)", "Maximum daily apparent temperature"),
+        ("apparent_temperature_min", "", "°C (°F)", "Minimum daily apparent temperature"),
+        ("precipitation_sum", "", "mm", "Sum of daily precipitation"),
+        ("rain_sum", "", "mm", "Sum of daily rain"),
+        ("snowfall_sum", "", "cm", "Sum of daily snowfall"),
+        ("precipitation_hours", "", "hours", "Number of hours with rain"),
+        ("sunrise", "", "iso8601", "Sunrise time"),
+        ("sunset", "", "iso8601", "Sunset time"),
+        ("sunshine_duration", "", "seconds", "Total sunshine duration per day"),
+        ("daylight_duration", "", "seconds", "Total daylight duration per day"),
+        ("wind_speed_10m_max", "", "km/h (mph, m/s, knots)", "Max wind speed on a day"),
+        ("wind_gusts_10m_max", "", "km/h (mph, m/s, knots)", "Max wind gusts on a day"),
+        ("wind_direction_10m_dominant", "", "°", "Dominant wind direction"),
+        ("shortwave_radiation_sum", "", "MJ/m²", "Daily solar radiation sum"),
+        ("et0_fao_evapotranspiration", "", "mm", "Daily evapotranspiration (ET₀)")
+    ]
+
+    # Create DataFrames
+    df_hourly = pd.DataFrame(hourly_data, columns=["Variable", "Valid time", "Unit", "Description"])
+    df_daily = pd.DataFrame(daily_data, columns=["Variable", "Valid time", "Unit", "Description"])
+
+    st.dataframe(df_daily)
+def main():
+
+    locations = [
+        {"name": "Koh Phangan", "lat": 9.755106899960907, "lon": 99.9609068, "timezone": "Asia/Bangkok"},
+        {"name": "Chiang Mai", "lat": 18.7931784, "lon": 98.9774429, "timezone": "Asia/Bangkok"},
+        {"name": "Amsterdam", "lat": 52.3676, "lon": 4.9041, "timezone": "Europe/Amsterdam"},
+        {"name": "Lisbon", "lat": 38.7169, "lon": -9.1399, "timezone": "Europe/Lisbon"},
+        {"name": "Rome", "lat": 41.9102088, "lon": 12.371185, "timezone": "Europe/Rome"},
+        {"name": "Venezia", "lat": 45.4408, "lon": 12.3155, "timezone": "Europe/Rome"},
+        {"name": "Hoi An", "lat": 15.8801, "lon": 108.3380, "timezone": "Asia/Ho_Chi_Minh"},
+        {"name": "Ho Chi Minh City", "lat": 10.7769, "lon": 106.7009, "timezone": "Asia/Ho_Chi_Minh"},
+        {"name": "Hanoi", "lat": 21.0285, "lon": 105.8542, "timezone": "Asia/Bangkok"},
+        {"name": "Manila", "lat": 14.5995, "lon": 120.9842, "timezone": "Asia/Manila"},
+        {"name": "Taipei", "lat": 25.0330, "lon": 121.5654, "timezone": "Asia/Taipei"},
+        {"name": "Kathmandu", "lat": 27.7172, "lon": 85.3240, "timezone": "Asia/Kathmandu"},
+        {"name": "Colombo", "lat": 6.9271, "lon": 79.8612, "timezone": "Asia/Colombo"},
+        {"name": "London", "lat": 51.5072, "lon": -0.1276, "timezone": "Europe/London"},
+        {"name": "New York", "lat": 40.7128, "lon": -74.0060, "timezone": "America/New_York"},
+        {"name": "Tokyo", "lat": 35.6762, "lon": 139.6503, "timezone": "Asia/Tokyo"},
+        {"name": "Sydney", "lat": -33.8688, "lon": 151.2093, "timezone": "Australia/Sydney"},
+        {"name": "Cape Town", "lat": -33.9249, "lon": 18.4241, "timezone": "Africa/Johannesburg"},
+        {"name": "São Paulo", "lat": -23.5505, "lon": -46.6333, "timezone": "America/Sao_Paulo"},
+        {"name": "Istanbul", "lat": 41.0082, "lon": 28.9784, "timezone": "Europe/Istanbul"},
+    ]
+    tab1,tab2, tab3 = st.tabs(["Data", "Locations", "Legenda"])
+    with tab1:
+        main_(locations)
+    with tab2:
+        show_locations(locations)
+    with tab3:
+        legenda()
+    
 
 if __name__ == "__main__":
     #read_ogimet()

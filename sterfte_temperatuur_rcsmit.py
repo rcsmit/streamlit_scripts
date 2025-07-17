@@ -240,17 +240,17 @@ def make_scatter(x, y, df, title):
     """
     st.subheader(title)
    
-    # Bepaal je x- en y-kolommen
-    x_vals = df[x]
-    y_vals = df[y]
+    # # Bepaal je x- en y-kolommen
+    # x_vals = df[x]
+    # y_vals = df[y]
 
-    # Pas een tweedegraads polynoom
-    coeffs = np.polyfit(x_vals, y_vals, deg=2)
-    a, b, c = coeffs
+    # # Pas een tweedegraads polynoom
+    # coeffs = np.polyfit(x_vals, y_vals, deg=2)
+    # a, b, c = coeffs
 
-    # Genereer een gladde lijn over het bereik van x
-    x_fit = np.linspace(x_vals.min(), x_vals.max(), 200)
-    y_fit = a * x_fit**2 + b * x_fit + c
+    # # Genereer een gladde lijn over het bereik van x
+    # x_fit = np.linspace(x_vals.min(), x_vals.max(), 200)
+    # y_fit = a * x_fit**2 + b * x_fit + c
 
     # Plot de scatter
     fig_ = px.scatter(
@@ -259,31 +259,33 @@ def make_scatter(x, y, df, title):
         y=y,
         hover_data=["year_number", "week_number"],
         color="year_number",
-        title=title
+        title=title,
+        trendline='ols',
+        trendline_scope="overall"
     )
 
-    # Voeg de parabool toe
-    fig_.add_trace(go.Scatter(
-        x=x_fit,
-        y=y_fit,
-        mode="lines",
-        name="2e graads fit",
-        line=dict(dash="dash")
-    ))
+    # # Voeg de parabool toe
+    # fig_.add_trace(go.Scatter(
+    #     x=x_fit,
+    #     y=y_fit,
+    #     mode="lines",
+    #     name="2e graads fit",
+    #     line=dict(dash="dash")
+    # ))
 
-    # Optioneel: markeer het minimum
-    x_min = -b / (2 * a)
-    y_min = a * x_min**2 + b * x_min + c
+    # # Optioneel: markeer het minimum
+    # x_min = -b / (2 * a)
+    # y_min = a * x_min**2 + b * x_min + c
 
-    fig_.add_trace(go.Scatter(
-        x=[x_min],
-        y=[y_min],
-        mode="markers+text",
-        name="Minimum",
-        marker=dict(size=10, color="red"),
-        text=[f"Min: x={x_min:.2f}"],
-        textposition="top center"
-    ))
+    # fig_.add_trace(go.Scatter(
+    #     x=[x_min],
+    #     y=[y_min],
+    #     mode="markers+text",
+    #     name="Minimum",
+    #     marker=dict(size=10, color="red"),
+    #     text=[f"Min: x={x_min:.2f}"],
+    #     textposition="top center"
+    # ))
 
    
  #  trendline_scope="overall", labels={'datum': 'Date', 'verbruik': 'Verbruik'})

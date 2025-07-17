@@ -129,7 +129,7 @@ def get_weather_info(country: str) -> pd.DataFrame:
     if country not in COORD:
         raise ValueError(f"Unsupported country for weather: {country}")
     lat, lon = COORD[country]["lat"], COORD[country]["lon"]
-    m = "mean" # "max"
+    m = "max" # "mean" # "max"
     url = (
         f"https://archive-api.open-meteo.com/v1/archive"
         f"?latitude={lat}&longitude={lon}"
