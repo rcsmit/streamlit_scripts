@@ -11,9 +11,12 @@ from scipy.interpolate import interp1d
 import requests
 import pandas as pd
 import time  # To avoid hitting rate limits
-
-
+import plotly.graph_objects as go
+import ast
 from streamlit_folium import st_folium
+import folium
+from streamlit_folium import folium_static
+import re
 try:
     st.set_page_config(layout="wide")
 except:
@@ -107,12 +110,16 @@ def get_elevation_batch(coords):
         return [None] * len(coords)  # Handle errors gracefully
 
 #@st.cache_data()
-def process_df(df,wdw_input, wdw_output, lookup_elevations):
+def process_df(df,wdw_input, wdw_output, lookup_elevations, total_right_distance):
     """
     Processes a DataFrame to compute distances, slopes, gradients, and effort-based distances using Naismith's Rule.
 
     Parameters:
         df (pd.DataFrame): DataFrame with 'latitude', 'longitude', and 'elevation' columns.
+        wdw_input (int): Window size for moving average of distance and elevation.
+        wdw_output (int): Window size for moving average of the output data.
+        lookup_elevations (bool): Whether to look up elevations using an API.
+        total_right_distance (float): The total distance to normalize the computed distances.
 
     Returns:
         pd.DataFrame: DataFrame with additional computed columns.
@@ -192,7 +199,10 @@ def process_df(df,wdw_input, wdw_output, lookup_elevations):
     df["distance_"] = df["distance_"].rolling(window=wdw_input).mean()
     
     df["distance_m"] = np.sqrt(df["distance_"]**2 + df["elevation_change_m"]**2)
+    total_measured_distance=df["distance_m"].sum()
     
+    correction_distance = total_right_distance / total_measured_distance if total_right_distance > 0 else 1.0
+    df["distance_m"] = df["distance_m"]*correction_distance
     df["slopes"] = slopes
     df["gradient"] = df["slopes"] *100
     df["elevation_gain"] = elevation_gains
@@ -202,17 +212,26 @@ def process_df(df,wdw_input, wdw_output, lookup_elevations):
     df["difficulty"] = difficulties
 
     df["distance_cumm"] = df["distance_m"].cumsum()
+
     df["difficulty_based_distance_cumm"] = df["difficulty_based_distance"].cumsum()
     #df["delta_time_cumm"] = df["delta_time"].cumsum()
     # df["delta_time"] = pd.to_timedelta(df["delta_time"])
     df["delta_time"] = pd.to_timedelta(df["delta_time"])
     df["delta_time_cumm"] = df["delta_time"].cumsum()
 
+    df["delta_time_s"] = df["delta_time"].dt.total_seconds()
+    df['speed_kmh'] = (df['distance_m'] / df['delta_time_s']) * 3.6
+    
     # Convert cumulative delta_time to datetime object
     start_time = df["time"].iloc[0]
     df["delta_time_cumm"] = start_time + df["delta_time_cumm"]
     #df["delta_time_cumm"] = df["delta_time"].cumsum()
+   
+    #Calculate total elapsed seconds since start
+    df["delta_time_cumm_s"] = (df["delta_time_cumm"] - start_time).dt.total_seconds()
 
+    # Now compute cumulative speed
+    df['speed_kmh_cumm'] = (df['distance_cumm'] / df['delta_time_cumm_s']) * 3.6
     # Convert cumulative delta_time to time object
     #df["delta_time_cumm"] = df["delta_time_cumm"].apply(lambda x: (pd.Timestamp(0) + x).time())
     df["gradient_sma"] = df["gradient"].rolling(window=wdw_output).mean()
@@ -220,22 +239,29 @@ def process_df(df,wdw_input, wdw_output, lookup_elevations):
     df["distance_sma"]= df["distance_m"].rolling(window=wdw_output).mean()
     df["difficulty_based_distance_sma"]= df["difficulty_based_distance"].rolling(window=wdw_output).mean()
  
-    
+    #df= df[df["distance_cumm"] <=5000]
     return df
 
-def show_map(df):
+def show_map(df,what_to_show_colors):
     """
     Creates and displays a folium map with the given DataFrame.
 
     Args:
         df (pd.DataFrame): DataFrame containing the processed GPX data.
-    """     
 
-    what_to_display = df["gradient"].values
+        what_to_show_colors (str): "gradient", "speed_kmh", "elevation_sma", "elevation_original"
+    """     
+    
+    # what_to_display = df["gradient"].values
+    what_to_display = df[what_to_show_colors].fillna(0).values
 
     # Sort what_to_display to avoid threshold sorting issues
     sorted_values = sorted(what_to_display)
+    if what_to_show_colors =="speed_kmh":
+        #take away the 10% slowest values to prevent that the scale starts at 0
 
+        sorted_values = sorted_values[int(len(sorted_values)/10):]
+   
     # Create a colormap (green = easy, red = hard)
     colormap = cm.LinearColormap(
         ["green", "yellow", "red"], 
@@ -270,12 +296,72 @@ def show_map(df):
             
         ).add_to(m)
     # Add colormap legend
-    colormap.caption = "Route gradient (%)"
+    
+    colormap.caption = what_to_show_colors
+
+    
     m.add_child(colormap)
 
     # call to render Folium map in Streamlit
-    st_folium(m,  use_container_width=True)
-   
+    #st_folium(m,  use_container_width=True)
+    st_data = folium_static(m, width=500, height=500)
+
+
+def speed_by_interval(df, mode='distance', interval=100):
+    """
+    Calculate and plot speed per fixed interval.
+    
+    Parameters:
+    - df: DataFrame with 'distance_cumm', 'distance_m', and 'delta_time'
+    - mode: 'distance' or 'time'
+    - interval: size of each segment in meters or seconds
+    """
+
+    if mode == 'distance':
+        st.subheader(f"Speed per {interval} meter segment")
+        df['bin'] = ((df['distance_cumm'] // interval) + 1) * interval
+
+    elif mode == 'time':
+        st.subheader(f"Speed per {interval} second segment")
+        # Ensure delta_time is timedelta and create a cumulative time in seconds
+        df['delta_time'] = pd.to_timedelta(df['delta_time'])
+        df['time_cumm'] = df['delta_time'].cumsum().dt.total_seconds()
+        df['bin'] = ((df['time_cumm'] // interval) + 1) * interval
+
+    else:
+        st.error("Mode must be 'distance' or 'time'")
+        return
+
+    # Group and calculate speed
+    grouped = df.groupby('bin').agg(
+        total_distance_m=('distance_m', 'sum'),
+        total_time_s=('delta_time', lambda x: x.dt.total_seconds().sum())
+    ).reset_index()
+
+    grouped['speed_kmh'] = (grouped['total_distance_m'] / grouped['total_time_s']) * 3.6
+    grouped['group'] = ((grouped['bin'] - 1) // (1000 if mode == 'distance' else 60)).astype(int)
+
+    st.dataframe(grouped[['bin', 'speed_kmh']])
+
+    fig = px.bar(
+        grouped,
+        x='bin',
+        y='speed_kmh',
+        color='group',
+        text=grouped['speed_kmh'].round(1),
+        labels={
+            'bin': f"End {'Distance (m)' if mode == 'distance' else 'Time (s)'}",
+            'speed_kmh': 'Speed (km/h)',
+            'group': 'Group'
+        },
+        title=f"Speed per {interval} {'meters' if mode == 'distance' else 'seconds'}"
+    )
+
+    fig.update_traces(textposition='outside', textangle=-90)
+    fig.update_layout(uniformtext_minsize=8, uniformtext_mode='show')
+
+    st.plotly_chart(fig)
+
 def show_plots(df,wdw):
     """
     Creates and displays various plots for the given DataFrame.
@@ -367,10 +453,91 @@ def show_info(df):
     - Gradient >= 10%: Steep downhill, effort increases by 0.2% per gradient percentage
     - **Flat terrain**: No additional effort
     """)
-    st.write(df)
-
+   
+    
     # 12 beach hike https://www.strava.com/activities/13887499750
     # 55 km kpg https://www.strava.com/activities/12642202735
+
+import pandas as pd
+import plotly.graph_objects as go
+import streamlit as st
+
+def interval_analyse(df, segments, mode):
+    """
+    Analyseer snelheid per segment op basis van afstands- of tijdsintervallen.
+
+    Parameters:
+    - df: DataFrame met kolommen distance_cumm, delta_time, distance_m
+    - segments: lijst van [snel, langzaam] intervallen
+    - mode: 'distance' of 'time'
+    """
+
+    # Zorg dat tijdskolom bruikbaar is
+    df['delta_time'] = pd.to_timedelta(df['delta_time'])
+
+    if mode == 'time':
+        df['time_cumm'] = df['delta_time'].cumsum().dt.total_seconds()
+        position_col = 'time_cumm'
+        x_label = 'Tijd (s)'
+    else:
+        position_col = 'distance_cumm'
+        x_label = f'Afstand (m)'
+
+    # Genereer segmentgrenzen
+    boundaries = []
+    start = 0
+    for fast, slow in segments:
+        if fast > 0:
+            boundaries.append((start, start + fast, 'snel'))
+            start += fast
+        if slow > 0:
+            boundaries.append((start, start + slow, 'langzaam'))
+            start += slow
+
+    # Bereken snelheid per segment
+    result = []
+    for start_p, end_p, type_ in boundaries:
+        segment_df = df[(df[position_col] >= start_p) & (df[position_col] < end_p)]
+        if not segment_df.empty:
+            total_distance = segment_df['distance_m'].sum()
+            total_time = segment_df['delta_time'].dt.total_seconds().sum()
+            speed_kmh = (total_distance / total_time) * 3.6 if total_time > 0 else 0
+            result.append({
+                'segment': f'{start_p}-{end_p}',
+                'start': start_p,
+                'end': end_p,
+                'mid': (start_p + end_p) / 2,
+                'width': end_p - start_p,
+                'speed_kmh': speed_kmh,
+                'type': type_
+            })
+
+    df_segments = pd.DataFrame(result)
+    # st.write(df_segments)
+
+    # Plot
+    fig = go.Figure()
+    fig.add_trace(go.Bar(
+        x=df_segments['mid'],
+        y=df_segments['speed_kmh'],
+        width=df_segments['width'],
+        text=df_segments['width'].astype(str) + ("s" if mode == 'time' else "m") +
+             " | " + df_segments['speed_kmh'].round(1).astype(str) + " km/h",
+        textposition='outside',
+        marker_color=df_segments['type'].map({'snel': 'blue', 'langzaam': 'lightblue'}),
+        hovertext=df_segments['segment'],
+    ))
+
+    fig.update_layout(
+        title=f'Gemiddelde snelheid per segment ({x_label.lower()})',
+        xaxis_title=x_label,
+        yaxis_title='Snelheid (km/h)',
+        bargap=0.0,
+        showlegend=False
+    )
+
+    st.plotly_chart(fig)
+
 def get_gpx():
     """
     Loads a GPX file from the user's input.
@@ -401,19 +568,109 @@ def get_gpx():
             st.stop()
     return gpx
 
+def parse_segments(input_str,total_time_gpx):
+    """
+    Parse input like:
+    "[[0,60], 10x[30,30], [40,20]]"
+    → [[0,60], [30,30], ..., [30,30], [40,20]]
+    """
+    pattern = r'(\d+)x\[(\d+),\s*(\d+)\]'
+    expanded = input_str
+
+    for match in re.finditer(pattern, input_str):
+        count, a, b = match.groups()
+        repeated = ', '.join([f'[{a},{b}]'] * int(count))
+        expanded = expanded.replace(match.group(0), repeated)
+    segments = ast.literal_eval(expanded)
+    total_time_segments = sum(f + s for f, s in segments)
+
+    
+    # Rest time
+    rest_time = total_time_gpx - total_time_segments
+    st.write(f"rest time {rest_time}")
+    if rest_time > 0:
+        segments.append([0, rest_time])  # Add rest as final "slow" segment
+
+    return segments,total_time_segments
+def format_seconds_to_mmss(seconds):
+    minutes = int(seconds // 60)
+    sec = int(seconds % 60)
+    return f"{minutes:02d}:{sec:02d}"
+def find_fastest_5k(df,distance):
+    df = df.copy()
+    df['delta_time'] = pd.to_timedelta(df['delta_time'])
+    df['time_seconds'] = df['delta_time'].dt.total_seconds()
+    df['cum_time'] = df['time_seconds'].cumsum()
+    #df['distance_cumm']=round(df['distance_cumm'])
+    best_time = float('inf')
+    best_start = best_end = None
+
+    start_idx = 0
+    for end_idx in range(len(df)):
+        # Move start_idx until the distance is >= 5km
+        while df.loc[end_idx, 'distance_cumm'] - df.loc[start_idx, 'distance_cumm'] >= distance:
+            time_taken = df.loc[end_idx, 'cum_time'] - df.loc[start_idx, 'cum_time']
+            if time_taken < best_time:
+                best_time = time_taken
+                best_start = start_idx
+                best_end = end_idx
+            start_idx += 1
+
+    if best_start is not None:
+        fastest_segment = df.loc[best_start:best_end].copy()
+        duration_min = best_time / 60
+        pace_per_km = (best_time / 5) / 60  # minutes per km
+                
+        distance_start = df.loc[best_start, 'distance_cumm']
+        distance_end = df.loc[best_end, 'distance_cumm']
+        total_distance_km = (distance_end - distance_start) / 1000
+        speed_kmh = total_distance_km / (best_time / 3600)
+
+        result= {
+            'segment': df.loc[best_start:best_end].copy(),
+            'duration_sec': best_time,
+            'duration_min': best_time / 60,
+            'pace_min_per_km': (best_time / 5) / 60,
+            'distance_start': distance_start,
+            'distance_end': distance_end,
+            'speed_kmh': speed_kmh
+        }
+
+        if result:
+            st.write(f"📍 **Startafstand:** {result['distance_start']:.1f} m")
+            st.write(f"🏁 **Eindafstand:** {result['distance_end']:.1f} m")
+            st.write(f"🏁 **Afstand:** {round(result['distance_end']-result['distance_start'],2)} m")
+            
+            st.write(f"⏱️ **Tijd:** {format_seconds_to_mmss(result['duration_sec'])}")
+            st.write(f"⚡ **Gemiddelde snelheid:** {result['speed_kmh']:.2f} km/h")
+            st.write(f"🦶 **Tempo:** {result['pace_min_per_km']:.2f} min/km")
+            
+        else:
+            st.warning("Geen segment gevonden.")
+                
+        return 
+    else:
+        st.info("No fast segment found")
+        return None, None, None, None
+
 def main():
     st.title("GPX Analyzer")
     st.write("This script analyzes the data from a GPX file to provide insights on the route's difficulty, elevation gain, and more.")
 
     gpx = get_gpx()
     df= gpx_to_df(gpx)
+    
     if df.empty:
         st.error("Could not extract data from the GPX file. Please ensure it contains valid track data.")
         st.stop()
+    
+    reversed = st.checkbox("Reverse the route")
+    lookup_elevations = st.checkbox("Lookup elevations (may be slow for large files)")
+    
     cola,colb,colc,cold=st.columns(4)
     with cola:
-        reversed = st.checkbox("Reverse the route")
-        lookup_elevations = st.checkbox("Lookup elevations (may be slow for large files)")
+        what_to_show_colors = st.selectbox("What to show on the map", ["gradient", "speed_kmh", "elevation_sma", "elevation_original"])
+    
     with colb:
         if len(df) < 10000:
             default_filter_factor = 1
@@ -438,7 +695,6 @@ def main():
         else:
             wdw_output_default =1
         wdw_output =st.number_input("Window size for moving average",min_value=1,max_value=100,value=wdw_output_default, help="The higher the number, the smoother the plot")
-        
     
     
     st.write(f"GPX converted. {len(df)} waypoints")
@@ -449,12 +705,59 @@ def main():
 
     if reversed:
         df = df.iloc[::-1].reset_index(drop=True)
-    df = process_df(df,wdw_input,wdw_output, lookup_elevations)
-    show_map(df)
+    
+    
+
+    cola,colb,colc,cold=st.columns(4)
+    with cola:    
+        right_distance = st.number_input("Distance (m)",min_value=0.0,max_value=10_000_000.0,value=5000.0,  help=".")
+                
+        # Default input
+    df = process_df(df,wdw_input,wdw_output, lookup_elevations,right_distance)
+        
+    with colb:
+        mode = st.selectbox("Select mode", ['distance', 'time'])
+        unit = "m" if mode=="distance" else "s"
+        
+    with colc:
+        
+        interval = st.number_input(f"Interval ({unit})", min_value=10, max_value=1000, step=10, value=100)
+
+    with cold:
+        if unit =="m":
+            default_segments = "[[0,1000],[500,500],[600,400],[700,300],[500,500]]"
+        else:
+            default_segments = "[[0,60], 10x[30,30], [40,20], [50,10], [30,30]]"
+        # User input via text area
+        segment_input = st.text_area("Voer segmenten in (zoals [[snel,langzaam],[...]]):", default_segments)
+       
+        if unit =="m":
+            # Try to parse
+            try:
+                segments = ast.literal_eval(segment_input)
+                #st.success(f"Segments geladen: {segments}")
+            except Exception as e:
+                st.error(f"Fout bij het laden van segmenten: {e}")
+                st.stop()
+        else:
+            try:
+            # if 1==1:
+                total_time_gpx = df["delta_time_cumm_s"].max()
+                segments,total_time_segments = parse_segments(segment_input, total_time_gpx)
+                st.write(f"Total time segments:{total_time_segments}")
+                st.write(f"Total time training {df["delta_time_cumm_s"].max()}")
+            except Exception as e:
+                st.error(f"Fout bij het laden van segmenten: {e}")
+                st.stop()
+    show_map(df, what_to_show_colors)
+    find_fastest_5k(df,5000)
+    speed_by_interval(df, mode=mode, interval=interval)
+
+    interval_analyse(df, segments, mode)
     show_plots(df,wdw_output)
     show_stats(df)
     show_info(df)
-
+    st.write(df)
     
 if __name__ == "__main__":
     main()  

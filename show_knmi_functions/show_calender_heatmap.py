@@ -20,6 +20,11 @@ def show_calender_heatmap(df, datefield, what_to_show_, percentile_colomap_max=9
 
         # Loop through each year and each what_to_show value
         for year in years:
+            if year=years[-1]:
+                showscale=True
+            else:
+
+                showscale=False
             df_year = df[df[datefield].dt.year == year]  
             
             # Assuming df[what_to_show] contains the values you want to process
@@ -43,6 +48,7 @@ def show_calender_heatmap(df, datefield, what_to_show_, percentile_colomap_max=9
                     name=what_to_show,
                     colorscale = "purples",
                     gap=2,
+                    showscale=schowscale,
                     cmap_max  = colomap_max,
                     month_lines_width=2,
                     month_lines_color="black"

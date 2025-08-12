@@ -4,19 +4,34 @@ import plotly.graph_objects as go
 import plotly.express as px  # For easy colormap generation
 import numpy as np  # For linspace to distribute sampling
 import math
-from datetime import datetime
-from scipy.stats import linregress
+# from datetime import datetime
 
+import datetime as dt
 from scipy.stats import linregress, t
 import statsmodels.api as sm
 from scipy import stats
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
 
+from statsmodels.nonparametric.smoothers_lowess import lowess
+
+
+def smooth_line(x, y, frac=0.1):
+    # LOWESS vereist getallen, dus zet datetime om naar float (nanos)
+    # x_numeric = x.values.astype(np.int64)  # nanoseconden sinds epoch
+    # smoothed = lowess(y, x_numeric, frac=frac, return_sorted=True)
+    # # Zet terug naar datetime
+    # x_smooth = pd.to_datetime(smoothed[:, 0])
+    # y_smooth = smoothed[:, 1]
+
+    _,y_smooth,_,_ = loess_skmisc(x,y)
+    return y_smooth
 try:
     from show_knmi_functions.spaghetti_plot import spaghetti_plot
-    from show_knmi_functions.utils import get_data
+    from show_knmi_functions.utils import get_data, getdata_wrapper, loess_skmisc
 except:
     from spaghetti_plot import spaghetti_plot
-    from utils import get_data
+    from utils import get_data, getdata_wrapper, loess_skmisc
 # https://www.knmi.nl/nederland-nu/klimatologie/geografische-overzichten/historisch-neerslagtekort
 # http://grondwaterformules.nl/index.php/vuistregels/neerslag-en-verdamping/langjarige-grondwateraanvulling
 
@@ -152,14 +167,118 @@ def plot_neerslagtekort(df):
     df['date_1900'] = pd.to_datetime(df['YYYYMMDD'].dt.strftime('%d-%m-1900'), format='%d-%m-%Y')
 
     # Create spaghetti plot with Plotly
+    
+    #replicating https://x.com/mr_Smith_Econ/status/1949394256474349929
+    line_1976 =  dict(width=2,
+                        color='rgba(255, 0, 0, 1)'
+                        )
+
+    line = dict(width=.5,
+                        color='rgba(0, 0, 0, 0.5)'
+                        )
+
+    line_2025 = dict(width=4,  color='black')
+
+
+    line_2018 = dict(width=2, color='grey')
+    like_knmi = True
+
     fig = go.Figure()
 
     for year, data in df.groupby('year'):
-        #fig.add_trace(go.Scatter(x=data['date_1900'], y=data['cumulative_neerslagtekort'], mode='lines', name=str(year)))
-        fig.add_trace(go.Scatter(x=data['date_1900'], y=data['cumulative_neerslagtekort_off'], mode='lines', name=f"{str(year)}"))
+        if like_knmi == True:
+            if year ==2025:
+                fig.add_trace(go.Scatter(x=data['date_1900'], y=data['cumulative_neerslagtekort_off'], mode='lines', line = line_2025, name=f"{str(year)}"))
 
+            elif year == 2018:
+                fig.add_trace(go.Scatter(x=data['date_1900'], y=data['cumulative_neerslagtekort_off'], mode='lines', line = line_2018, name=f"{str(year)}"))
+
+            elif year == 1976:
+                fig.add_trace(go.Scatter(x=data['date_1900'], y=data['cumulative_neerslagtekort_off'], mode='lines', line = line_1976, name=f"{str(year)}"))
+
+            else:
+                #fig.add_trace(go.Scatter(x=data['date_1900'], y=data['cumulative_neerslagtekort'], mode='lines', name=str(year)))
+                fig.add_trace(go.Scatter(x=data['date_1900'], y=data['cumulative_neerslagtekort_off'], mode='lines', line = line, showlegend=False, name=f"{str(year)}"))
+
+        else:
+            fig.add_trace(go.Scatter(x=data['date_1900'], y=data['cumulative_neerslagtekort_off'], mode='lines', name=f"{str(year)}"))
+
+    # Groeperen op datum (alle jaren samengenomen)
+    grouped = df.groupby('date_1900')['cumulative_neerslagtekort_off']
+
+    df_stats = pd.DataFrame({
+        'date_1900': grouped.mean().index,
+        'median': grouped.median(),
+        'p05': grouped.quantile(0.05),
+        'p95': grouped.quantile(0.95)
+    })
+
+    
+    # LOWESS smoothing
+    median_smooth = smooth_line(df_stats['date_1900'].dt.dayofyear, df_stats['median'])
+    p05_smooth = smooth_line(df_stats['date_1900'].dt.dayofyear, df_stats['p05'])
+    p95_smooth = smooth_line(df_stats['date_1900'].dt.dayofyear, df_stats['p95'])
+    
+    # Mediaanlijn
+    fig.add_trace(go.Scatter(
+        x=df_stats['date_1900'],
+        y=median_smooth,
+        mode='lines',
+        name='Mediaan',
+        line=dict(width=3, color='blue')
+    ))
+
+    # 5e percentiel
+    fig.add_trace(go.Scatter(
+        x=df_stats['date_1900'],
+        y=p05_smooth,
+        mode='lines',
+        name='5e percentiel',
+        line=dict(width=2, color='orange')
+    ))
+
+    # 95e percentiel
+    fig.add_trace(go.Scatter(
+        x=df_stats['date_1900'],
+        y=p95_smooth,
+        mode='lines',
+        name='95e percentiel',
+        line=dict(width=3, color='green')
+    ))
+
+    # fig.add_trace(go.Scatter(
+    #     x=df_stats['date_1900'],
+    #     y=df_stats['median'],
+    #     mode='lines',
+    #     name='median',
+    #     line=dict(width=2, color='orange')
+    # ))
+
+    # # 5e percentiel
+    # fig.add_trace(go.Scatter(
+    #     x=df_stats['date_1900'],
+    #     y=df_stats['p05'],
+    #     mode='lines',
+    #     name='5e percentiel',
+    #     line=dict(width=2, color='orange')
+    # ))
+
+    # # 95e percentiel
+    # fig.add_trace(go.Scatter(
+    #     x=df_stats['date_1900'],
+    #     y=df_stats['p95'],
+    #     mode='lines',
+    #     name='95e percentiel',
+    #     line=dict(width=2, color='green')
+    # ))
+
+    # Start- en eindjaar
+    start_year = df['year'].min()
+    end_year = df['year'].max()
+
+    # Layout
     fig.update_layout(
-        title='Cumulative Precipitation Deficit (Neerslagtekort) from April to September - Spaghetti Plot',
+        title=f'Cumulative Precipitation Deficit (Neerslagtekort) from April to September ({start_year}–{end_year}',
         xaxis_title='Date',
         yaxis_title='Cumulative Precipitation Deficit'
     )
@@ -168,8 +287,56 @@ def plot_neerslagtekort(df):
             xaxis=dict(title="date",tickformat="%d-%m"),
             yaxis=dict(title="Neerslagtekort"),
             title=f"Neerslagtekort" ,)
+
+   
+
     fig.update_xaxes(showgrid=True)
     fig.update_yaxes(showgrid=True)
+
+    st.plotly_chart(fig)
+
+def plot_neerslagtekort_on_certain_day(df, daynumber):
+    # Voeg dayofyear toe
+    df["dayofyear"] = df["date_1900"].dt.dayofyear
+    df_day = df[df["dayofyear"] == daynumber]
+
+    # X en Y
+    X = df_day["year"].values.reshape(-1, 1)
+    y = df_day["cumulative_neerslagtekort_off"].values
+
+    # OLS regressie
+    model = LinearRegression()
+    model.fit(X, y)
+    y_pred = model.predict(X)
+
+    # R²
+    r2 = r2_score(y, y_pred)
+
+    # Plot
+    fig = go.Figure()
+
+    # Punten
+    fig.add_trace(go.Scatter(
+        x=df_day["year"],
+        y=df_day["cumulative_neerslagtekort_off"],
+        mode='markers',
+        name="Neerslagtekort"
+    ))
+
+    # OLS lijn
+    fig.add_trace(go.Scatter(
+        x=df_day["year"],
+        y=y_pred,
+        mode='lines',
+        name="OLS-regressie",
+        line=dict(dash="dash", color="red")
+    ))
+
+    fig.update_layout(
+        title=f"Neerslagtekort op dag {daynumber} – R² = {r2:.3f}",
+        xaxis_title="Jaar",
+        yaxis_title="Cumulatief neerslagtekort"
+    )
 
     st.plotly_chart(fig)
 
@@ -178,8 +345,13 @@ def neerslagtekort(df):
 
     """    
     df = neerslagtekort_(df)
-    
+    df["day_of_year"] = df['YYYYMMDD'].dt.dayofyear
+    df["year"] = df['YYYYMMDD'].dt.year
+ 
     plot_neerslagtekort(df)
+    plot_neerslagtekort_on_certain_day(df, 196)  # 196= 15 juli
+    plot_neerslagtekort_on_certain_day(df, 227)  # 227= 15 augustus
+    st.stop()
     spaghetti_plot(df, ['neerslag_etmaalsom'], 3, 3, False, False, True, False, True, False, "Pubu", False)
     spaghetti_plot(df, ['neerslag_etmaalsom'], 3, 3, False, False, True, False, True, False, "Pubu", True)
     spaghetti_plot(df, ['temp_avg'], 3, 3, False, False, True, False, True, False, "Pubu", False)
@@ -234,8 +406,10 @@ def main():
     
     df = get_data(url)   
     df = neerslagtekort_(df)
-    st.write (df)
+    
     plot_neerslagtekort(df)
+    st.write (df)
+    
     spaghetti_plot(df, ['neerslag_etmaalsom'], 7, 7, False, False, True, False, True, False, "Pubu")
     # fromx = datetime.strptime("2000-01-01", "%Y-%m-%d").date()
     # until = datetime.strptime("2023-12-31", "%Y-%m-%d").date()
@@ -753,7 +927,15 @@ def multiple_lineair_regression(df):
 
 if __name__ == "__main__":
     #main()
-    fromx = datetime.strptime("2000-01-01", "%Y-%m-%d").date()
-    until = datetime.strptime("2023-12-31", "%Y-%m-%d").date()
-    neerslagtekort_meerdere_stations(fromx, until)
+    
+    FROM = dt.datetime.strptime("1957-01-01", "%Y-%m-%d").date()
+    UNTIL = dt.datetime.strptime("2025-12-31", "%Y-%m-%d").date()
+    df_getdata, url = getdata_wrapper(260, FROM.strftime("%Y%m%d"), UNTIL.strftime("%Y%m%d"))
+    df = df_getdata.copy(deep=False)
+    neerslagtekort(df)
+
+    # fromx = dt.datetime.strptime("2000-01-01", "%Y-%m-%d").date()
+    # until = dt.datetime.strptime("2025-12-31", "%Y-%m-%d").date()
+    # neerslagtekort_meerdere_stations(fromx, until)
+    
     

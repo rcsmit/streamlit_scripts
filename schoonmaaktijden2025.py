@@ -158,6 +158,9 @@ def read():
     #df = df[:-1]  #remove last row which appears to be a Nan
 
     df["Datum"] = pd.to_datetime(df["Datum"], format="%d-%m-%Y")
+
+    # df["Datum"] = pd.to_datetime(df["Datum"], format='mixed')
+    
     return df
 
 def lineplot(data, acco_name):

@@ -3,6 +3,7 @@ import numpy as np
 import streamlit as st
 import datetime as dt
 from skmisc.loess import loess
+import platform
 
 # C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\show_knmi_functions\utils.py:8: UserWarning: registration of accessor <class 'show_knmi_functions.utils.LoessAccessor'> under name 'loess' for type <class 'pandas.core.series.Series'> is overriding a preexisting attribute with the same name.
  # @pd.api.extensions.register_series_accessor("loess")
@@ -25,6 +26,17 @@ class LoessAccessor:
         _, loess_values, ll, ul = loess_skmisc(t, y, ybounds, it)
         return loess_values
 
+
+
+@st.cache_data (ttl=60 * 60 * 24)
+def getdata_wrapper(stn, fromx, until):
+    url = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns={stn}&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX:EV24:FHX&start={fromx}&end={until}"
+    
+    df = get_data(url)
+     
+    if platform.processor():
+        df = df[(df["YYYYMMDD"] >= fromx) & (df["YYYYMMDD"] <= until)]
+    return df, url
 
 @st.cache_data (ttl=60 * 60 * 24)
 def get_data(url):
@@ -168,6 +180,13 @@ def get_data(url):
 
     df['gevoelstemperatuur_avg'] = df.apply(feels_like_temperature, axis=1, temp_type="temp_avg")
     df['gevoelstemperatuur_max'] = df.apply(feels_like_temperature, axis=1, temp_type="temp_max")
+    df['date'] = pd.to_datetime(df['YYYYMMDD'], format='%Y%m%d')
+    df['day_of_year'] = df['date'].dt.dayofyear
+    # df['weekday'] = df['date'].dt.weekday #monday = 0
+    df['year'] = df['date'].dt.year
+
+   
+    
     return df
 
 
