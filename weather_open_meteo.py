@@ -34,6 +34,16 @@ import numpy as np
 import datetime as dt
 import requests
 
+from scipy.stats import linregress
+import statsmodels.api as sm
+import pandas as pd
+from scipy.stats import kendalltau
+
+try:
+    st.set_page_config(layout='wide')
+except:
+    pass
+@st.cache_data()
 def get_data(location_name,locations, start_date, end_date):
     """Get the weather data for a specific location and date range from Open Meteo archive API.
     https://open-meteo.com/en/docs/historical-weather-api?daily=rain_sum,temperature_2m_mean,temperature_2m_max,temperature_2m_min,precipitation_hours,precipitation_sum,visibility_mean,visibility_min,visibility_max,relative_humidity_2m_mean,relative_humidity_2m_max,relative_humidity_2m_min,&latitude=9.755106899960907&longitude=99.9609068&start_date=2025-01-01&end_date=2025-07-15&hourly=&timezone=Asia%2FBangkok
@@ -208,10 +218,7 @@ def show_month(df, to_show, day_min, day_max, month, month_names, where):
     # Display the frequency table
     st.write(frequency_table)
 
-    # Histogram using Plotly Express
-    fig = px.histogram(df_month, x=to_show, title=f'Histogram of {to_show}', labels={to_show: f'{to_show}', 'count': 'Frequency'})
-    st.plotly_chart(fig)
-
+    
     # Frequency table
     df_month['Temp_Bin'] = pd.cut(df_month[to_show], bins=range(int(df_month[to_show].min()), int(df_month[to_show].max()) + 2))
     frequency_table = df_month.pivot_table(index='Temp_Bin', columns='Year', aggfunc='size', fill_value=0)
@@ -231,7 +238,7 @@ def show_month(df, to_show, day_min, day_max, month, month_names, where):
     st.plotly_chart(fig)
     nbins = len(range(int(df_month[to_show].min()), int(df_month[to_show].max()) + 2))
     # Histogram of the to_show variable
-    fig = px.histogram(df_month, x=to_show, nbins=nbins, title=f'Histogram of {to_show}', 
+    fig = px.histogram(df_month, x=to_show, nbins=nbins, title=f'Histogram of of {to_show} for {month_names[month-1]} in {where}', 
                        labels={to_show: f'{to_show}', 'count': 'Frequency'})
     st.plotly_chart(fig)
 
@@ -366,8 +373,86 @@ def show_treshold(where, to_show, treshold_value, above_under, df):
     # all_years = df['Year'].unique()
     # table = table.reindex(index=all_months, columns=all_years, fill_value=0)
     # st.write(table)
+    # Create a pivot table to count the occurrences of temperatures above the threshold per month and year
+    # Generate the subheader
+    st.subheader(f"Numbers of days per year that {to_show} was {au_txt} {treshold_value} - {where}")
+
+    # aantal hete dagen per jaar
+    table_year = pd.pivot_table(
+        df_above_30, values=to_show, index='Year', aggfunc='count', fill_value=0
+    ).sort_index()
+
+    st.write(table_year)
 
 
+
+
+    # Zorg dat data schoon is
+    table_year = table_year.sort_index()
+    x = table_year.index.to_numpy()
+    y = table_year[to_show].to_numpy()
+
+    # 1) Parametrisch: lineaire regressie
+    lin = linregress(x, y)
+    slope = lin.slope
+    p_lin = lin.pvalue
+    r2 = lin.rvalue ** 2
+
+    richting = "stijgend" if slope > 0 else "dalend" if slope < 0 else "vlak"
+    significant = p_lin < 0.05
+
+    st.write(
+        f"**Lineair** trend: slope={slope:.3f}, R²={r2:.3f}, p={p_lin:.4f} → "
+        f"**{richting}** en **{'significant' if significant else 'niet significant'}**"
+    )
+
+    # # 95% CI voor de slope met statsmodels
+    # import statsmodels.api as sm
+    # X = sm.add_constant(x)
+    # ols = sm.OLS(y, X).fit()
+    # ci_low, ci_high = ols.conf_int(alpha=0.05).iloc[1]
+    # st.write(f"95% CI slope [{ci_low:.3f}, {ci_high:.3f}]")
+
+    # 2) Niet-parametrisch: Kendall tau
+    tau, p_kendall = kendalltau(x, y)
+    richting_np = "stijgend" if tau > 0 else "dalend" if tau < 0 else "vlak"
+    significant_np = p_kendall < 0.05
+    st.write(
+        f"**Kendall tau**: tau={tau:.3f}, p={p_kendall:.4f} → "
+        f"**{richting_np}** en **{'significant' if significant_np else 'niet significant'}**"
+    )
+
+   
+    # X moet 2D zijn, y 1D
+    X = table_year.index.to_numpy().reshape(-1, 1)
+    y = table_year[to_show].to_numpy()
+
+    # fit lineair model
+    model = LinearRegression()
+    model.fit(X, y)
+    trendline = model.predict(X)
+
+    # metrics
+    slope = float(model.coef_[0])
+    intercept = float(model.intercept_)
+    r_squared = float(r2_score(y, trendline))
+
+    # plot
+    fig_year = go.Figure()
+    fig_year.add_trace(go.Bar(x=table_year.index, y=table_year[to_show], name="Number of days"))
+    fig_year.add_trace(go.Scatter(x=table_year.index, y=trendline, mode='lines', name="Trendline"))
+
+    fig_year.update_layout(
+        title=f'Numbers of days per year that {to_show} was {au_txt} {treshold_value} - {where}',
+        xaxis_title='Years',
+        yaxis_title=f'Number of days {to_show} was {au_txt} {treshold_value}'
+    )
+     # Optioneel label in de grafiek
+    label = f"trend {richting}, p={p_lin:.3f}"
+    fig_year.add_annotation(x=x[-1], y=float(np.max(y)), text=label, showarrow=False)
+    st.plotly_chart(fig_year)
+
+    
     # Generate the subheader
     st.subheader(f"Numbers of days per month that {to_show} was {au_txt} {treshold_value} - {where}")
 
@@ -378,6 +463,24 @@ def show_treshold(where, to_show, treshold_value, above_under, df):
     table = table.reindex(index=all_months, columns=all_years, fill_value=0)
     st.write(table)
 
+    st.subheader(f"Effect van jaar op het {to_show}")
+    df_counts = table.stack().reset_index()
+    df_counts.columns = ['Month', 'Year', 'Count']
+
+
+    X = sm.add_constant(df_counts['Year'])
+    y = df_counts['Count']
+    model = sm.OLS(y, X).fit()
+    st.write(model.summary())
+    st.write ("Als p < 0.05 → significant stijgende of dalende trend.")
+    tau, p_value = kendalltau(df_counts['Year'], df_counts['Count'])
+    if p_value  < 0.05:
+        trend = "significant"
+    else:
+        trend = "not significant"
+
+    st.write(f"If there is no normal distribution : Kendall tau={tau:.3f}, p={p_value:.3f} [{trend}]")
+
     # Transpose the table for easier plotting
     transposed_table = table.T
 
@@ -386,6 +489,19 @@ def show_treshold(where, to_show, treshold_value, above_under, df):
 
     # Create a scatter plot with a trendline for each month
     for month in transposed_table.columns:
+
+        y_ = transposed_table[month].values
+        x_ = transposed_table.index.values
+        mask = ~np.isnan(y_)
+        slope, intercept, r_value, p_value, std_err = linregress(x_[mask], y_[mask])
+        
+        if p_value  < 0.05:
+            trend = "significant"
+        else:
+            trend = "not significant"
+
+        st.write(f"Maand {month}: slope={slope:.3f}, R²={r_value**2:.2f}, p={p_value:.3f} [{trend}]")
+        
         # Extract the data for the current month and filter out NaN values
         x = transposed_table.index.values
         y = transposed_table[month].values
@@ -412,8 +528,8 @@ def show_treshold(where, to_show, treshold_value, above_under, df):
             fig_x.add_trace(go.Scatter(x=x_filtered.flatten(), y=trendline, mode='lines', name=f'Month {month} Trendline'))
 
             # Add annotations for the equation and R² value
-            equation_text = f'y = {slope:.2f}x + {intercept:.2f} | R² = {r_squared:.2f}'
-            st.write(f"{month} - {equation_text}")
+            # equation_text = f'y = {slope:.2f}x + {intercept:.2f} | R² = {r_squared:.2f}'
+            # st.write(f"{month} - {equation_text}")
             
             # fig_x.add_annotation(x=x_filtered.flatten()[-1], y=trendline[-1], text=equation_text, showarrow=True, arrowhead=1)
 
@@ -684,7 +800,7 @@ def main_(locations):
     month_names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
     month = month_names.index(st.sidebar.selectbox("Month", month_names, index=0)) + 1
     day_min, day_max  = st.sidebar.slider("days",1,31,(1,31))
-    
+    number_of_columns = st.sidebar.number_input("Number of columns", 1,10,2)
     
     df_ = get_data(where,locations, FROM, UNTIL)
    
@@ -717,19 +833,27 @@ def main_(locations):
     df["YYYY"] = df["date"].dt.year
     df["MM"] = df["date"].dt.month
     df["DD"] = df["date"].dt.day
-    
+    n_years = df['Year'].nunique()
+
     # Convert all columns except 'date' to appropriate data types
     df[df.columns.difference(['date'])] = df[df.columns.difference(['date'])].apply(pd.to_numeric, errors='coerce')
     # Apply the feels_like_temperature function to each row in the DataFrame
     df['Feels_Like'] = df.apply(feels_like_temperature, axis=1)
 
-    
     st.title(f"Weather info from {where}")
  
     line_graph(to_show, window_size, y_axis_zero, df)
-    show_calender_heatmap(df,"date", [to_show], percentile_colomap_max)
-    show_year_heatmap(df,"date", [to_show])
-    
+    if n_years>10:
+        st.info("Too much years to show heatmaps")
+    elif n_years>5:
+
+        with st.expander ("Year heatmaps", expanded = False):
+            show_calender_heatmap(df,"date", [to_show], where, percentile_colomap_max,number_of_columns)
+            show_year_heatmap(df,"date", [to_show])
+    else:
+        show_calender_heatmap(df,"date", [to_show], where, percentile_colomap_max,number_of_columns)
+        show_year_heatmap(df,"date", [to_show])
+
     cross_table_montly_avg(df, to_show, where, y_axis_zero)   
     show_treshold(where, to_show, treshold_value, above_under, df)
     #show_warmingstripes(df, to_show, where) 
