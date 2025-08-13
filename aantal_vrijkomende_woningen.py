@@ -213,7 +213,7 @@ def main():
     
     
     
-    st.write("* CBS bevolking per leeftijd 2024")
+    st.write("* CBS bevolking per leeftijd 2024 : https://opendata.cbs.nl/#/CBS/nl/dataset/03759ned/table?dl=39E0B")
     st.write("* https://www.cbs.nl/nl-nl/nieuws/2025/05/lagere-bevolkingsgroei-in-2024")
     st.write("*  AG2024 prognosetafel - https://www.actuarieelgenootschap.nl/kennisbank/prognosetafel-ag2024-2")
 
