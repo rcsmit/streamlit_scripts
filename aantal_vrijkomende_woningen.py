@@ -17,7 +17,7 @@ def simuleer_overlijden_70_120(population_data, mort_f, mort_m, jaren=15):
     Retourneert per jaar de overlijdens in dit cohort
     """
     pop24 = population_data[population_data["jaar"] == 2024].copy()
-
+    st.write(pop24)
     cohort_f = pop24[(pop24["geslacht"] == "F") & (pop24["leeftijd"].between(70, 120))][["leeftijd", "aantal"]].copy()
     cohort_m = pop24[(pop24["geslacht"] == "M") & (pop24["leeftijd"].between(70, 120))][["leeftijd", "aantal"]].copy()
     cohort_f["survivors"] = cohort_f["aantal"]
@@ -209,7 +209,14 @@ def main():
     st.caption("18-jarigen geteld na verouderen en voor sterfte. Geboortes constant op 1-jarigen 2024 per geslacht. Migratie als vaste jaarstroom met factor.")
 
     st.divider()
-    st.write("Bronnen  CBS bevolking per leeftijd 2024  AG2024 prognosetafel")
+    st.write("**Bronnen **")
+    
+    
+    
+    st.write("* CBS bevolking per leeftijd 2024")
+    st.write("* https://www.cbs.nl/nl-nl/nieuws/2025/05/lagere-bevolkingsgroei-in-2024")
+    st.write("*  AG2024 prognosetafel - https://www.actuarieelgenootschap.nl/kennisbank/prognosetafel-ag2024-2")
 
 if __name__ == "__main__":
+
     main()
