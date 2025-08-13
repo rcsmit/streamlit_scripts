@@ -2,164 +2,211 @@ import pandas as pd
 import streamlit as st
 import plotly.express as px
 
-# ------------------------------------------------------------
-# Kernfuncties
-# ------------------------------------------------------------
-def constante_geboortes(population_data, startjaar=2024, jaren=40):
-    """Constante geboortes per jaar gelijk aan aantal 1-jarigen in 2024."""
-    pop_2024 = population_data[population_data['jaar'] == 2024]
-    geboortes_const = int(pop_2024.loc[pop_2024['leeftijd'] == 1, 'aantal'].sum())
-    return {startjaar + i: geboortes_const for i in range(jaren + 1)}
+# ---------------------------- Helpers ----------------------------
+def prepare_mortality(df):
+    df = df.copy()
+    df["age"] = df["age"].astype(int)
+    for c in df.columns:
+        if str(c).isdigit():
+            df[c] = pd.to_numeric(df[c], errors="coerce")
+    return df
 
-def simuleer_overleving_70_120(population_data, mort_f, mort_m, jaren=15):
+def simuleer_overlijden_70_120(population_data, mort_f, mort_m, jaren=15):
     """
-    Simuleer 70..120 cohort vanaf 2024 met jaar-specifieke sterftekansen uit AG2024.
-    Retourneert df met per leeftijd en geslacht: start, survivors, deaths, en per jaar deaths.
+    Simuleer cohort 70..120 vanaf 2024 met jaar-specifieke sterftekansen
+    Retourneert per jaar de overlijdens in dit cohort
     """
-    # Startcohort 2024
-    pop24 = population_data[population_data['jaar'] == 2024].copy()
-    cohort_f = pop24[(pop24['geslacht'] == 'F') & (pop24['leeftijd'].between(70, 120))][['leeftijd', 'aantal']].copy()
-    cohort_m = pop24[(pop24['geslacht'] == 'M') & (pop24['leeftijd'].between(70, 120))][['leeftijd', 'aantal']].copy()
-    cohort_f['geslacht'] = 'F'
-    cohort_m['geslacht'] = 'M'
-    st.write(mort_f)
-    st.write(mort_m)
-    
-    
-    # Zorg dat age integer is
-    mort_f = mort_f.copy()
-    mort_m = mort_m.copy()
-    mort_f['age'] = mort_f['age'].astype(int)
-    mort_m['age'] = mort_m['age'].astype(int)
+    pop24 = population_data[population_data["jaar"] == 2024].copy()
 
-    # We simuleren van 2025 t m 2024+jaren
+    cohort_f = pop24[(pop24["geslacht"] == "F") & (pop24["leeftijd"].between(70, 120))][["leeftijd", "aantal"]].copy()
+    cohort_m = pop24[(pop24["geslacht"] == "M") & (pop24["leeftijd"].between(70, 120))][["leeftijd", "aantal"]].copy()
+    cohort_f["survivors"] = cohort_f["aantal"]
+    cohort_m["survivors"] = cohort_m["aantal"]
+
     years = [str(y) for y in range(2025, 2024 + jaren + 1)]
-
-    # Voeg helpers toe
-    for dfc in (cohort_f, cohort_m):
-        dfc['aantal_start'] = dfc['aantal']
-        dfc['aantal_survivors'] = dfc['aantal']
-        for y in years:
-            dfc[f'deaths_{y}'] = 0.0
-
-    # Stap per jaar
+    rows = []
     for y in years:
-        # verouder 1 jaar
-        cohort_f['leeftijd'] += 1
-        cohort_m['leeftijd'] += 1
+        cohort_f["leeftijd"] += 1
+        cohort_m["leeftijd"] += 1
 
-        # merge met sterftekans q_x(year)
-        f = cohort_f.merge(mort_f[['age', y]], left_on='leeftijd', right_on='age', how='left')
-        m = cohort_m.merge(mort_m[['age', y]], left_on='leeftijd', right_on='age', how='left')
-
+        f = cohort_f.merge(mort_f[["age", y]], left_on="leeftijd", right_on="age", how="left")
+        m = cohort_m.merge(mort_m[["age", y]], left_on="leeftijd", right_on="age", how="left")
         f[y] = f[y].fillna(0.0)
         m[y] = m[y].fillna(0.0)
 
-        # bereken deaths en survivors voor dit jaar
-        f_deaths = f['aantal_survivors'] * f[y]
-        m_deaths = m['aantal_survivors'] * m[y]
+        deaths_f = f["survivors"] * f[y]
+        deaths_m = m["survivors"] * m[y]
 
-        # schrijf terug
-        cohort_f = f.drop(columns=['age'])
-        cohort_m = m.drop(columns=['age'])
+        cohort_f = f.drop(columns=["age", y])
+        cohort_m = m.drop(columns=["age", y])
 
-        cohort_f[f'deaths_{y}'] = f_deaths
-        cohort_m[f'deaths_{y}'] = m_deaths
+        cohort_f["survivors"] -= deaths_f
+        cohort_m["survivors"] -= deaths_m
 
-        cohort_f['aantal_survivors'] = cohort_f['aantal_survivors'] - f_deaths
-        cohort_m['aantal_survivors'] = cohort_m['aantal_survivors'] - m_deaths
+        rows.append({"jaar": int(y), "deaths_total": float(deaths_f.sum() + deaths_m.sum())})
 
-        # kolom met kans weg
-        cohort_f = cohort_f.drop(columns=[y])
-        cohort_m = cohort_m.drop(columns=[y])
+    return pd.DataFrame(rows)
 
-    # eindresultaat
-    cohort = pd.concat([cohort_f, cohort_m], ignore_index=True)
-    death_cols = [c for c in cohort.columns if c.startswith('deaths_')]
-    cohort['deaths_15y'] = cohort[death_cols].sum(axis=1)
+def simuleer_populatie_0_120_met_geboortes(population_data, mort_f, mort_m, jaren=15):
+    """
+    Simuleer totale populatie met constante geboortes = aantal 1-jarigen in 2024 per geslacht
+    Tel per jaar wie 18 is NA veroudering en VOOR sterfte
+    """
+    pop24 = population_data[population_data["jaar"] == 2024].copy()
 
-    # samenvatting per geslacht
-    summary = cohort.groupby('geslacht', as_index=False).agg(
-        start=('aantal_start', 'sum'),
-        survivors=('aantal_survivors', 'sum'),
-        deaths_15y=('deaths_15y', 'sum')
-    )
-    summary['survival_perc'] = summary['survivors'] / summary['start'] * 100
+    base_f = pop24[pop24["geslacht"] == "F"][["leeftijd", "aantal"]].rename(columns={"leeftijd": "age", "aantal": "pop"}).copy()
+    base_m = pop24[pop24["geslacht"] == "M"][["leeftijd", "aantal"]].rename(columns={"leeftijd": "age", "aantal": "pop"}).copy()
+    base_f["age"] = base_f["age"].astype(int)
+    base_m["age"] = base_m["age"].astype(int)
 
-    total = {
-        'start': summary['start'].sum(),
-        'survivors': summary['survivors'].sum(),
-        'deaths_15y': summary['deaths_15y'].sum()
-    }
+    births_f_const = float(pop24[(pop24["geslacht"] == "F") & (pop24["leeftijd"] == 1)]["aantal"].sum())
+    births_m_const = float(pop24[(pop24["geslacht"] == "M") & (pop24["leeftijd"] == 1)]["aantal"].sum())
 
-    return cohort, summary, total
+    years = [str(y) for y in range(2025, 2024 + jaren + 1)]
+    rows = []
+    pop_f = base_f.copy()
+    pop_m = base_m.copy()
 
-def woningen_vrij_van_deaths(total_deaths_15y, woningfactor):
-    """Zet overlijdens om naar woningen vrij met woningfactor."""
-    return total_deaths_15y * woningfactor
+    for y in years:
+        year_int = int(y)
+        pop_f["age"] += 1
+        pop_m["age"] += 1
+        pop_f.loc[pop_f["age"] > 120, "age"] = 120
+        pop_m.loc[pop_m["age"] > 120, "age"] = 120
 
-# ------------------------------------------------------------
-# Streamlit app
-# ------------------------------------------------------------
+        n18 = pop_f.loc[pop_f["age"] == 18, "pop"].sum() + pop_m.loc[pop_m["age"] == 18, "pop"].sum()
+        rows.append({"jaar": year_int, "n18": float(n18)})
+
+        f = pop_f.merge(mort_f[["age", y]], on="age", how="left")
+        m = pop_m.merge(mort_m[["age", y]], on="age", how="left")
+        f[y] = f[y].fillna(0.0)
+        m[y] = m[y].fillna(0.0)
+        f["pop"] = f["pop"] * (1.0 - f[y])
+        m["pop"] = m["pop"] * (1.0 - m[y])
+        pop_f = f.drop(columns=[y])
+        pop_m = m.drop(columns=[y])
+
+        pop_f = pd.concat([pop_f, pd.DataFrame({"age": [0], "pop": [births_f_const]})], ignore_index=True)
+        pop_m = pd.concat([pop_m, pd.DataFrame({"age": [0], "pop": [births_m_const]})], ignore_index=True)
+        pop_f = pop_f.groupby("age", as_index=False)["pop"].sum()
+        pop_m = pop_m.groupby("age", as_index=False)["pop"].sum()
+
+    return pd.DataFrame(rows)
+
+def format_int(x):
+    return f"{int(round(x)):,}".replace(",", ".")
+
+# ---------------------------- App ----------------------------
 def main():
-    st.title("Woningvrijval 70–120 binnen 15 jaar met AG2024-sterftekansen")
+    st.title("Woningstromen 70–120 overlijdens, 18-jarigen, immigratie en emigratie")
 
-    # Data laden
+    # Data
     population_data = pd.read_csv(
         "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/bevolking_leeftijd_NL.csv",
-        sep=';'
+        sep=";"
     )
-    mort_f = pd.read_csv(
+    mort_f = prepare_mortality(pd.read_csv(
         "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/AG2024DefinitiefGevalideerd_female.csv"
-    )
-    mort_m = pd.read_csv(
+    ))
+    mort_m = prepare_mortality(pd.read_csv(
         "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/AG2024DefinitiefGevalideerd_male.csv"
+    ))
+
+    # Instellingen
+    cA, cB, cC = st.columns(3)
+    with cA:
+        jaren = st.slider("Aantal jaren vooruit", 5, 30, 15, 1)
+    with cB:
+        woningfactor_overlijden = st.slider("Woningen per overlijden", 0.20, 1.00, 0.60, 0.05)
+    with cC:
+        factor_18 = st.slider("Factor 18-jarigen", 0.20, 1.00, 0.80, 0.05)
+
+    # Nieuwe schuiven immigratie en emigratie
+    # https://www.cbs.nl/nl-nl/nieuws/2025/05/lagere-bevolkingsgroei-in-2024
+    st.subheader("Immigratie en emigratie per jaar")
+    d1, d2, d3, d4 = st.columns(4)
+    with d1:
+        immigranten_per_jaar = st.number_input("Immigranten per jaar", min_value=0, max_value=1_000_000, value=300_000, step=5_000)
+    with d2:
+        factor_immigratie = st.slider("Factor woningvraag immigratie", 0.20, 1.00, 0.50, 0.05)
+    with d3:
+        emigranten_per_jaar = st.number_input("Emigranten per jaar", min_value=0, max_value=1_000_000, value=200_000, step=5_000)
+    with d4:
+        factor_emigratie = st.slider("Factor woningen vrij emigratie", 0.20, 1.00, 0.50, 0.05)
+
+    # Overlijdens 70–120 en woningen vrij
+    with st.spinner("Simuleer overlijdens 70–120"):
+        df_deaths = simuleer_overlijden_70_120(population_data, mort_f, mort_m, jaren=jaren)
+    df_deaths["woningen_vrij_overlijden"] = df_deaths["deaths_total"] * woningfactor_overlijden
+
+    # 18-jarigen en woningvraag
+    with st.spinner("Simuleer 18-jarigen"):
+        df_18 = simuleer_populatie_0_120_met_geboortes(population_data, mort_f, mort_m, jaren=jaren)
+    df_18["woningen_vraag_18"] = df_18["n18"] * factor_18
+
+    # Immigratie en emigratie per jaar
+    jaren_lijst = list(range(2025, 2024 + jaren + 1))
+    df_migr = pd.DataFrame({
+        "jaar": jaren_lijst,
+        "woningen_vraag_immigratie": [immigranten_per_jaar * factor_immigratie] * len(jaren_lijst),
+        "woningen_vrij_emigratie": [emigranten_per_jaar * factor_emigratie] * len(jaren_lijst),
+    })
+
+    # Merge alle stromen
+    df = df_deaths.merge(df_18, on="jaar", how="outer").merge(df_migr, on="jaar", how="outer").sort_values("jaar")
+
+    # Bereken saldo per jaar
+    df["woningen_vrij_totaal"] = df["woningen_vrij_overlijden"].fillna(0) + df["woningen_vrij_emigratie"].fillna(0)
+    df["woningen_vraag_totaal"] = df["woningen_vraag_18"].fillna(0) + df["woningen_vraag_immigratie"].fillna(0)
+    df["saldo_woningen"] = df["woningen_vrij_totaal"] - df["woningen_vraag_totaal"]
+
+    st.subheader("Per jaar")
+    st.dataframe(
+        df[[
+            "jaar",
+            "woningen_vrij_overlijden",
+            "woningen_vrij_emigratie",
+            "woningen_vrij_totaal",
+            "woningen_vraag_18",
+            "woningen_vraag_immigratie",
+            "woningen_vraag_totaal",
+            "saldo_woningen"
+        ]].round(0).rename(columns={
+            "woningen_vrij_overlijden": "vrij_overlijden",
+            "woningen_vrij_emigratie": "vrij_emigratie",
+            "woningen_vrij_totaal": "vrij_totaal",
+            "woningen_vraag_18": "vraag_18",
+            "woningen_vraag_immigratie": "vraag_immigratie",
+            "woningen_vraag_totaal": "vraag_totaal",
+            "saldo_woningen": "saldo"
+        }).style.format("{:,.0f}")
     )
 
-    # UI
-    colA, colB = st.columns(2)
-    with colA:
-        jaren = st.slider("Aantal jaren vooruit", 5, 30, 15, 1)
-    with colB:
-        woningfactor = st.slider("Woningen per overlijden", 0.20, 1.00, 0.60, 0.05)
-
-    # Simulatie
-    with st.spinner("Simuleren met jaar-specifieke sterftekansen"):
-        cohort, summary, total = simuleer_overleving_70_120(population_data, mort_f, mort_m, jaren=jaren)
-
-    # Kerncijfers
-    st.subheader("Kerncijfers cohort 70–120 in 2024")
-    k1, k2, k3, k4 = st.columns(4)
-    with k1:
-        st.metric("Start cohort", f"{int(total['start']):,}".replace(",", "."))
-    with k2:
-        st.metric(f"Overlijdens binnen {jaren} jaar", f"{int(total['deaths_15y']):,}".replace(",", "."))
-    with k3:
-        st.metric("Survivors eindjaar", f"{int(total['survivors']):,}".replace(",", "."))
-    with k4:
-        st.metric("Woningen vrij", f"{int(round(woningen_vrij_van_deaths(total['deaths_15y'], woningfactor))):,}".replace(",", "."))
-
-    st.caption(f"**Woningfactor** {woningfactor:.2f} per overlijden")
-
-    # Verdeling naar geslacht
-    st.subheader("Samenvatting per geslacht")
-    st.dataframe(summary)
-
-    # Visualisatie overlijdens per leeftijd
-    st.subheader(f"Overlijdens binnen {jaren} jaar per leeftijd en geslacht")
-    plotdf = cohort[['leeftijd', 'geslacht', 'deaths_15y']].groupby(['leeftijd', 'geslacht'], as_index=False).sum()
-    fig = px.bar(plotdf, x='leeftijd', y='deaths_15y', color='geslacht',
-                 labels={'leeftijd': 'Leeftijd in eindjaar', 'deaths_15y': 'Overlijdens binnen periode'},
-                 title='Cumulatieve overlijdens binnen de periode')
+    st.subheader("Grafiek")
+    melt = df.melt(
+        id_vars="jaar",
+        value_vars=["woningen_vrij_totaal", "woningen_vraag_totaal", "saldo_woningen"],
+        var_name="type", value_name="woningen"
+    )
+    fig = px.line(melt, x="jaar", y="woningen", color="type",
+                  title="Woningen vrij totaal vs woningvraag totaal en saldo")
     st.plotly_chart(fig, use_container_width=True)
 
-    # Constante geboortes
-    st.subheader("Constante geboortes op basis van 1-jarigen in 2024")
-    years_birth = st.number_input("Toon jaren", 5, 100, 40)
-    geboortedict = constante_geboortes(population_data, startjaar=2024, jaren=int(years_birth))
-    st.metric("Geboortes per jaar", f"{list(geboortedict.values())[0]:,}".replace(",", "."))
-    with st.expander("Reeks per jaar"):
-        st.json(geboortedict, expanded=False)
+    # Totalen
+    totaal_vrij = df["woningen_vrij_totaal"].sum()
+    totaal_vraag = df["woningen_vraag_totaal"].sum()
+    saldo_tot = df["saldo_woningen"].sum()
+
+    st.subheader(f"Totaal {jaren} jaar")
+    t1, t2, t3 = st.columns(3)
+    with t1:
+        st.metric("Woningen vrij totaal", format_int(totaal_vrij))
+    with t2:
+        st.metric("Woningen vraag totaal", format_int(totaal_vraag))
+    with t3:
+        st.metric("Saldo", format_int(saldo_tot))
+
+    st.caption("18-jarigen geteld na verouderen en voor sterfte. Geboortes constant op 1-jarigen 2024 per geslacht. Migratie als vaste jaarstroom met factor.")
 
     st.divider()
     st.write("Bronnen  CBS bevolking per leeftijd 2024  AG2024 prognosetafel")

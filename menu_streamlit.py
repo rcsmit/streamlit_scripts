@@ -90,7 +90,8 @@ def main():
                 ["[57] Compound ROI ","compound_roi_calculator"],
                 ["[58] Doorsigns ","public_doorsigns"],
                 ["[59] Sunset Azimut ","sunset_azimut"],
-                 ["[60] Strudel Drumsequencer ","strudel_drumbox"],
+                ["[60] Strudel Drumsequencer ","strudel_drumbox"],
+                ["[61] Vrijkomende woningen ","aantal_vrijkomende_woningen"],
                 ]
  
     # for file in arr:
