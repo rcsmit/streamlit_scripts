@@ -112,28 +112,31 @@ def main():
         "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/AG2024DefinitiefGevalideerd_male.csv"
     ))
 
+    jaren = st.slider("Aantal jaren vooruit", 5, 30, 15, 1)
     # Instellingen
-    cA, cB, cC = st.columns(3)
-    with cA:
-        jaren = st.slider("Aantal jaren vooruit", 5, 30, 15, 1)
+    cB, cC = st.columns(2)
+    
+    
+    
     with cB:
         woningfactor_overlijden = st.slider("Woningen per overlijden", 0.20, 1.00, 0.60, 0.05)
     with cC:
-        factor_24 = st.slider("Woningen voor elke nieuwe 24-jarige", 0.20, 1.00, 0.80, 0.05)
+        factor_24 = st.slider("Woningen voor elke nieuwe 24-jarige", 0.20, 1.00, 0.50, 0.05)
 
     # Nieuwe schuiven immigratie en emigratie
     # https://www.cbs.nl/nl-nl/nieuws/2025/05/lagere-bevolkingsgroei-in-2024
     st.subheader("Immigratie en emigratie per jaar")
     d1, d2, d3, d4 = st.columns(4)
     with d1:
-        immigranten_per_jaar = st.number_input("Immigranten per jaar", min_value=0, max_value=1_000_000, value=300_000, step=5_000)
-    with d2:
-        factor_immigratie = st.slider("Factor woningvraag immigratie", 0.20, 1.00, 0.50, 0.05)
-    with d3:
         emigranten_per_jaar = st.number_input("Emigranten per jaar", min_value=0, max_value=1_000_000, value=200_000, step=5_000)
-    with d4:
-        factor_emigratie = st.slider("Factor woningen vrij emigratie", 0.20, 1.00, 0.50, 0.05)
+    with d2:
+        factor_emigratie = st.slider("Factor woningen vrij emigratie", 0.00, 1.00, 0.50, 0.05)
 
+    with d3:
+        immigranten_per_jaar = st.number_input("Immigranten per jaar", min_value=0, max_value=1_000_000, value=300_000, step=5_000)
+    with d4:
+        factor_immigratie = st.slider("Factor woningvraag immigratie", 0.00, 1.00, 0.50, 0.05)
+    
     # Overlijdens 70–120 en woningen vrij
     with st.spinner("Simuleer overlijdens 70–120"):
         df_deaths = simuleer_overlijden_70_120(population_data, mort_f, mort_m, jaren=jaren)
