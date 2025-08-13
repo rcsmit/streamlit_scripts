@@ -17,7 +17,7 @@ def simuleer_overlijden_70_120(population_data, mort_f, mort_m, jaren=15):
     Retourneert per jaar de overlijdens in dit cohort
     """
     pop24 = population_data[population_data["jaar"] == 2024].copy()
-    st.write(pop24)
+    
     cohort_f = pop24[(pop24["geslacht"] == "F") & (pop24["leeftijd"].between(70, 120))][["leeftijd", "aantal"]].copy()
     cohort_m = pop24[(pop24["geslacht"] == "M") & (pop24["leeftijd"].between(70, 120))][["leeftijd", "aantal"]].copy()
     cohort_f["survivors"] = cohort_f["aantal"]
@@ -50,7 +50,7 @@ def simuleer_overlijden_70_120(population_data, mort_f, mort_m, jaren=15):
 def simuleer_populatie_0_120_met_geboortes(population_data, mort_f, mort_m, jaren=15):
     """
     Simuleer totale populatie met constante geboortes = aantal 1-jarigen in 2024 per geslacht
-    Tel per jaar wie 18 is NA veroudering en VOOR sterfte
+    Tel per jaar wie 24 is NA veroudering en VOOR sterfte
     """
     pop24 = population_data[population_data["jaar"] == 2024].copy()
 
@@ -74,8 +74,8 @@ def simuleer_populatie_0_120_met_geboortes(population_data, mort_f, mort_m, jare
         pop_f.loc[pop_f["age"] > 120, "age"] = 120
         pop_m.loc[pop_m["age"] > 120, "age"] = 120
 
-        n18 = pop_f.loc[pop_f["age"] == 18, "pop"].sum() + pop_m.loc[pop_m["age"] == 18, "pop"].sum()
-        rows.append({"jaar": year_int, "n18": float(n18)})
+        n24 = pop_f.loc[pop_f["age"] == 24, "pop"].sum() + pop_m.loc[pop_m["age"] == 24, "pop"].sum()
+        rows.append({"jaar": year_int, "n24": float(n24)})
 
         f = pop_f.merge(mort_f[["age", y]], on="age", how="left")
         m = pop_m.merge(mort_m[["age", y]], on="age", how="left")
@@ -98,7 +98,7 @@ def format_int(x):
 
 # ---------------------------- App ----------------------------
 def main():
-    st.title("Woningstromen 70–120 overlijdens, 18-jarigen, immigratie en emigratie")
+    st.title("Woningstromen 70–120 overlijdens, 24-jarigen, immigratie en emigratie")
 
     # Data
     population_data = pd.read_csv(
@@ -119,7 +119,7 @@ def main():
     with cB:
         woningfactor_overlijden = st.slider("Woningen per overlijden", 0.20, 1.00, 0.60, 0.05)
     with cC:
-        factor_18 = st.slider("Factor 18-jarigen", 0.20, 1.00, 0.80, 0.05)
+        factor_24 = st.slider("Woningen voor elke nieuwe 24-jarige", 0.20, 1.00, 0.80, 0.05)
 
     # Nieuwe schuiven immigratie en emigratie
     # https://www.cbs.nl/nl-nl/nieuws/2025/05/lagere-bevolkingsgroei-in-2024
@@ -139,10 +139,10 @@ def main():
         df_deaths = simuleer_overlijden_70_120(population_data, mort_f, mort_m, jaren=jaren)
     df_deaths["woningen_vrij_overlijden"] = df_deaths["deaths_total"] * woningfactor_overlijden
 
-    # 18-jarigen en woningvraag
-    with st.spinner("Simuleer 18-jarigen"):
-        df_18 = simuleer_populatie_0_120_met_geboortes(population_data, mort_f, mort_m, jaren=jaren)
-    df_18["woningen_vraag_18"] = df_18["n18"] * factor_18
+    # 24-jarigen en woningvraag
+    with st.spinner("Simuleer 24-jarigen"):
+        df_24 = simuleer_populatie_0_120_met_geboortes(population_data, mort_f, mort_m, jaren=jaren)
+    df_24["woningen_vraag_24"] = df_24["n24"] * factor_24
 
     # Immigratie en emigratie per jaar
     jaren_lijst = list(range(2025, 2024 + jaren + 1))
@@ -153,11 +153,11 @@ def main():
     })
 
     # Merge alle stromen
-    df = df_deaths.merge(df_18, on="jaar", how="outer").merge(df_migr, on="jaar", how="outer").sort_values("jaar")
+    df = df_deaths.merge(df_24, on="jaar", how="outer").merge(df_migr, on="jaar", how="outer").sort_values("jaar")
 
     # Bereken saldo per jaar
     df["woningen_vrij_totaal"] = df["woningen_vrij_overlijden"].fillna(0) + df["woningen_vrij_emigratie"].fillna(0)
-    df["woningen_vraag_totaal"] = df["woningen_vraag_18"].fillna(0) + df["woningen_vraag_immigratie"].fillna(0)
+    df["woningen_vraag_totaal"] = df["woningen_vraag_24"].fillna(0) + df["woningen_vraag_immigratie"].fillna(0)
     df["saldo_woningen"] = df["woningen_vrij_totaal"] - df["woningen_vraag_totaal"]
 
     st.subheader("Per jaar")
@@ -167,7 +167,7 @@ def main():
             "woningen_vrij_overlijden",
             "woningen_vrij_emigratie",
             "woningen_vrij_totaal",
-            "woningen_vraag_18",
+            "woningen_vraag_24",
             "woningen_vraag_immigratie",
             "woningen_vraag_totaal",
             "saldo_woningen"
@@ -175,7 +175,7 @@ def main():
             "woningen_vrij_overlijden": "vrij_overlijden",
             "woningen_vrij_emigratie": "vrij_emigratie",
             "woningen_vrij_totaal": "vrij_totaal",
-            "woningen_vraag_18": "vraag_18",
+            "woningen_vraag_24": "vraag_24",
             "woningen_vraag_immigratie": "vraag_immigratie",
             "woningen_vraag_totaal": "vraag_totaal",
             "saldo_woningen": "saldo"
@@ -192,6 +192,37 @@ def main():
                   title="Woningen vrij totaal vs woningvraag totaal en saldo")
     st.plotly_chart(fig, use_container_width=True)
 
+
+
+    # Totalen
+    overlijden_vrij = df["woningen_vrij_overlijden"].sum()
+    in_vraag = df["woningen_vraag_24"].sum()
+    saldo_tot =  df["woningen_vrij_overlijden"].sum() - df["woningen_vraag_24"].sum()
+
+    st.subheader(f"Natuurlijk verloop {jaren} jaar")
+    t1, t2, t3 = st.columns(3)
+    with t1:
+        st.metric("Woningen vrij overlijden", format_int(overlijden_vrij))
+    with t2:
+        st.metric("Woningen vraag 24 jarigen", format_int(in_vraag))
+    with t3:
+        st.metric("Saldo", format_int(saldo_tot))
+
+
+    # Totalen Migratie
+    m_vrij = df["woningen_vrij_emigratie"].sum()
+    m_vraag = df["woningen_vraag_immigratie"].sum()
+    m_saldo_tot = df["woningen_vrij_emigratie"].sum() - df["woningen_vraag_immigratie"].sum() 
+
+    st.subheader(f"Migratie {jaren} jaar")
+    t1, t2, t3 = st.columns(3)
+    with t1:
+        st.metric("Woningen vrij emigratie", format_int(m_vrij))
+    with t2:
+        st.metric("Woningen vraag immigratie", format_int(m_vraag))
+    with t3:
+        st.metric("Saldo", format_int(m_saldo_tot))
+
     # Totalen
     totaal_vrij = df["woningen_vrij_totaal"].sum()
     totaal_vraag = df["woningen_vraag_totaal"].sum()
@@ -206,7 +237,7 @@ def main():
     with t3:
         st.metric("Saldo", format_int(saldo_tot))
 
-    st.caption("18-jarigen geteld na verouderen en voor sterfte. Geboortes constant op 1-jarigen 2024 per geslacht. Migratie als vaste jaarstroom met factor.")
+    st.caption("24-jarigen geteld na verouderen en voor sterfte. Geboortes constant op 1-jarigen 2024 per geslacht. Migratie als vaste jaarstroom met factor.")
 
     st.divider()
     st.write("**Bronnen **")
