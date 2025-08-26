@@ -63,7 +63,7 @@ def generate_random_data():
     df = pd.DataFrame({'Date': date_range, 'Koers': koers_values})
    
     return df
-def plot_plotly_chart(df, fieldname, what):
+def plot_plotly_chart(df, fieldname, what, what2):
     """
     Plot a Plotly chart for the given fieldname.
 
@@ -71,8 +71,9 @@ def plot_plotly_chart(df, fieldname, what):
         df (pd.DataFrame): DataFrame containing the data to plot.
         fieldname (str): The column name to plot.
         what (str): Description of the data being plotted.
+	what2 (str): Description of the data being plotted. (per day | month average)
     """
-    st.subheader(f"Plotly Chart - {what}")
+    st.subheader(f"Plotly Chart - {what} ({what2})")
     fig = px.line(df, x=df.index, y=fieldname, title=f'{what} over Time')
     try:
         for year in df.index.year.unique():
@@ -256,8 +257,8 @@ def find_seasonality(df, fieldname, what):
     df_grouped = df.groupby(['Year', 'Month'])[fieldname].mean().reset_index()
     #df_grouped.set_index(['Year', 'Month'], inplace=True)
     
-    plot_plotly_chart(df, fieldname, what)
-    plot_plotly_chart(df_grouped, fieldname, what)
+    plot_plotly_chart(df, fieldname, what,"day value")
+    plot_plotly_chart(df_grouped, fieldname, what, "average per month")
     plot_boxplot(df, fieldname, what)
     plot_seasonal_decomposition(df_grouped, fieldname, what)
     plot_autocorrelation(df_grouped, fieldname, what)
@@ -275,25 +276,28 @@ def main():
     st.header("Seasonal patterns")
     st.info("This script is designed to perform several analyses to detect seasonal patterns in time series data using various statistical and visualization techniques. It retrieves financial data from Yahoo Finance (EURO/Thai Baht). It is compared with weather data from KNMI (very seasonal), a random number generator (no seasonality), and a sinus curve (perfect seasonal).")
 
+    tab1,tab2,tab3,tab4,tab5=st.tabs(["EUR-THB","EUR-USD","Max Temperature Data","Random Data","Seasonal Data"])
+    with tab1:
+        st.subheader("EURTHB=X")
+        df = get_data_yfinance("EURTHB=X", "1d",None,"2015-01-01")
+        find_seasonality(df, "Koers", "EURTHB=X")
+    with tab2:
+        st.subheader("EURUSD=X")
+        df = get_data_yfinance("EURUSD=X", "1d",None,"2015-01-01")
+        find_seasonality(df, "Koers", "EURUSD=X")
     
-    
-    for choice in ["EURTHB=X", "EURUSD=X"]:
-        #df = get_data(choice, "1d")
-        df = get_data_yfinance(choice, "1d",None,"2015-01-01")
-        find_seasonality(df, "Koers", choice)
-
-    st.subheader("Max Temperature Data")
-    
-    df = get_data_knmi()
-    find_seasonality(df, "temp_max", "Max Temperature")
-
-    st.subheader("Random Data")
-    random_df = generate_random_data()
-    find_seasonality(random_df, "Koers", "Random")
-
-    st.subheader("Seasonal Data")
-    seasonal_df = generate_seasonal_data()
-    find_seasonality(seasonal_df, "Value", "Seasonal Pattern")
+    with tab3:
+        st.subheader("Max Temperature Data")
+        df = get_data_knmi()
+        find_seasonality(df, "temp_max", "Max Temperature")
+    with tab4:
+        st.subheader("Random Data")
+        random_df = generate_random_data()
+        find_seasonality(random_df, "Koers", "Random")
+    with tab5:
+        st.subheader("Seasonal Data")
+        seasonal_df = generate_seasonal_data()
+        find_seasonality(seasonal_df, "Value", "Seasonal Pattern")
 
 if __name__ == "__main__":
     main()

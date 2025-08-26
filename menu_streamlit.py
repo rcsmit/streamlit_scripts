@@ -92,6 +92,7 @@ def main():
                 ["[59] Sunset Azimut ","sunset_azimut"],
                 ["[60] Strudel Drumsequencer ","strudel_drumbox"],
                 ["[61] Vrijkomende woningen ","aantal_vrijkomende_woningen"],
+                ["[62] Tabs2notes ","tabs2notes"],
                 ]
  
     # for file in arr:
