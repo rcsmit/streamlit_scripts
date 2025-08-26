@@ -222,7 +222,7 @@ def perform_regression(df, fieldname, what):
 
     model = sm.OLS(y, X).fit()
     st.write(model.summary())
-    st.info("If the coefficients of sin_j and cos_j are significant (p-value < 0.05), this indicates a seasonal pattern. A high R² means that a large part of the exchange rate variation is explained by these cyclical components.")
+    st.info("If the coefficients of sin_j and cos_j are significant (p-value < 0.05), this indicates a seasonal pattern. A high R² means that a large part of the variation is explained by these cyclical components.")
 
 
 def rescale_yearly(df, fieldname):
@@ -251,21 +251,25 @@ def find_seasonality(df, fieldname, what):
     Displays:
         Various plots and statistical test results to analyze seasonality.
     """
-    df.set_index('Date', inplace=True) 
-    df['Month'] = df.index.month
-    df['Year'] = df.index.year
-    df_grouped = df.groupby(['Year', 'Month'])[fieldname].mean().reset_index()
-    #df_grouped.set_index(['Year', 'Month'], inplace=True)
-    
-    plot_plotly_chart(df, fieldname, what,"day value")
-    plot_plotly_chart(df_grouped, fieldname, what, "average per month")
-    plot_boxplot(df, fieldname, what)
-    plot_seasonal_decomposition(df_grouped, fieldname, what)
-    plot_autocorrelation(df_grouped, fieldname, what)
-    perform_anova(df, fieldname, what)
-    perform_kruskal_wallis(df, fieldname, what)
-    perform_ljung_box(df_grouped, fieldname, what)
-    perform_regression(df, fieldname, what)
+    if df is None or df.empty:
+        st.error("No data")
+        return
+    else:
+        df.set_index('Date', inplace=True) 
+        df['Month'] = df.index.month
+        df['Year'] = df.index.year
+        df_grouped = df.groupby(['Year', 'Month'])[fieldname].mean().reset_index()
+        #df_grouped.set_index(['Year', 'Month'], inplace=True)
+        
+        plot_plotly_chart(df, fieldname, what,"day value")
+        plot_plotly_chart(df_grouped, fieldname, what, "average per month")
+        plot_boxplot(df, fieldname, what)
+        plot_seasonal_decomposition(df_grouped, fieldname, what)
+        plot_autocorrelation(df_grouped, fieldname, what)
+        perform_anova(df, fieldname, what)
+        perform_kruskal_wallis(df, fieldname, what)
+        perform_ljung_box(df_grouped, fieldname, what)
+        perform_regression(df, fieldname, what)
 
 
 

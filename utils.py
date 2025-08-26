@@ -17,10 +17,10 @@ def get_data_yfinance(choice, interval, period="3m",start="2015-01-01"):
         pd.DataFrame: Preprocessed financial data with 'Date' as the index and 'Month' column added.
     """
     #data = yf.download(tickers=(choice), period=period, interval=interval, group_by='ticker', auto_adjust=True, prepost=False)
-    data = yf.download(tickers=choice, period=period, start=start, interval=interval, group_by='ticker', auto_adjust=True, prepost=False, ignore_tz=True)
-    
+    data = yf.download(tickers=choice, start=start, interval=interval)# group_by='ticker', auto_adjust=True, prepost=False, ignore_tz=True)
+   
     df = pd.DataFrame(data)
-  
+
     if df.empty:
         st.error(f"No data or wrong input - {choice}")
         return None
