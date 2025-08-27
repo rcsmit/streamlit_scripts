@@ -430,5 +430,8 @@ def main_chatgpt2():
     elif run:
         st.warning("Please paste TAB.")
 
-if __name__ == "__main__":
+def main():
     main_chatgpt()
+    
+if __name__ == "__main__":
+    main()
