@@ -18,12 +18,13 @@ if local:
     #excel_file = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\dummy_occupation.xlsx"
     # excel_file = r"https://github.com/rcsmit/streamlit_scripts/blob/main/input/dummy_occupation.xlsx?raw=true"
     excel_file=st.file_uploader("Upload your planning sheet here (xlsx)", type=["xlsx"])
-    # )=r"https://github.com/rcsmit/streamlit_scripts/raw/refs/heads/main/input/dummy_occupation.xlsx"
-    if excel_file not None:
-        wb = load_workbook(excel_file, data_only=True)
-    else:
+    if excel_file== None:
+        
         st.error("No file")
         st.stop()
+    else:
+        wb = load_workbook(excel_file, data_only=True)
+
 else:
     excel_file = r"https://github.com/rcsmit/streamlit_scripts/blob/main/input/dummy_occupation.xlsx?raw=true"
     urllib.request.urlretrieve(excel_file, "test.xlsx")

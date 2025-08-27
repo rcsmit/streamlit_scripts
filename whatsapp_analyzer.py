@@ -66,7 +66,8 @@ def get_data_from_url():
     #conversationPath = 'C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\in\\WhatsApp-chat met Go ABCDE Joost.txt' # chat file
     #conversationPath = 'C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\in\\WhatsApp-chat met Go ABCDE Joost - kopie.txt'
     #conversationPath = 'C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\in\\WhatsApp-chat met NYE supercrew.txt'
-    conversationPath = r"C:\Users\rcxsm\Documents\python_scripts\in\WhatsApp-chat met Go ABCDE Joost.txt"
+    #conversationPath = r"C:\Users\rcxsm\Documents\python_scripts\in\WhatsApp-chat met Go ABCDE Joost.txt"
+    conversationPath = r"C:\Users\rcxsm\Downloads\WhatsApp-chat met Go ABCDE Joost.txt"
     #conversationPath = 'C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\in\\WhatsApp-chat met Acro Lovers Phangan.txt'
     with open(conversationPath, encoding="utf-8") as fp:
 
@@ -651,8 +652,8 @@ def mostly_active_author(df):
 
 
 def main():
-    #df = get_data_from_file()
-    df = get_data_from_url()
+    df = get_data_from_file()
+    #df = get_data_from_url()
     
     df, links, media = manipulate_df(df)
 
