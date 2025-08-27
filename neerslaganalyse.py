@@ -13,7 +13,7 @@ from scipy import stats
 from pymannkendall import original_test,  seasonal_test
 import numpy as np
 
-@st.cache()
+@st.cache_data()
 def get_data_regen():
     """read the data with Polars, all in one file.
 
@@ -784,7 +784,7 @@ def main():
     
     st.header("Trends in Extreme precipitation in the Netherlands: A Data-Driven Analysis")
     first_info()
-    with st.button("GO - process intensive script"):
+    if st.button("GO - process intensive script"):
         df_neerslag_data_pl = load_and_combine_data()
         col1,col2=st.columns(2)
         # st.info("")
