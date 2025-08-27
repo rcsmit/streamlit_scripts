@@ -9,34 +9,6 @@ import datetime as dt
 # import datetime as dt
 from utils import get_data_yfinance
 
-
-def get_data_old(choice,  interval):
-    """Retreat the data from Yahoo Finance
-    """
-
-    data = yf.download(tickers=(choice), start="2021-11-27",interval=interval,group_by='ticker',auto_adjust=True,prepost=False)
-    df = pd.DataFrame(data)
-    if len(df) == 0:
-        st.error(f"No data or wrong input - {choice}")
-        df = None
-    else:
-        df['rownumber'] = np.arange(len(df))
-    # column_name = "close_" + choice
-    # df[column_name] = df["Close"]
-    df.columns = ['_'.join(col) for col in df.columns]
-
-    df["Close"] = df[f"{choice}_Close"]  
-  
-    df = df.reset_index()
-    print (df)
-    try:
-        df["Date"] = df["Datetime"]
-    except:
-        pass
-    df = df[["Date", "Close"]]
-
-    return df
-
 def calculate_assets(df, choice, transactions):
     """Calculate the worth of the portfolio
     Args:

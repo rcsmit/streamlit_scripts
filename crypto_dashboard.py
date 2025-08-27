@@ -179,7 +179,7 @@ def implement_bb_strategy(close, bol_low_1, bol_high_1):
     return buy_price, sell_price, bb_signal, signal
 
 
-def draw_buy_sell_candlestick_close(df, buy_price, sell_price, x_as_label):
+def draw_buy_sell_candlestick_close(df, buy_price, sell_price, x_as_label, choice):
 
     buy = go.Scatter(
         name='BUY',
@@ -201,15 +201,15 @@ def draw_buy_sell_candlestick_close(df, buy_price, sell_price, x_as_label):
 
     candlestick = go.Candlestick(x=df[x_as_label],
                         name = "candlestick",
-                                   open=df['Open'],
-                        high=df['High'],
-                        low=df['Low'],
-                        close=df['Close'], opacity=0.2)
+                                   open=df[f'{choice}_Open'],
+                        high=df[f'{choice}_High'],
+                        low=df[f'{choice}_Low'],
+                        close=df[f'{choice}_Close'], opacity=0.2)
 
     close = go.Scatter(
         name="Close",
         x=df[x_as_label],
-        y=df["Close"],
+        y=df[f"{choice}_Close"],
         mode='lines',
         line=dict(width=1,color='rgba(0,0,0, 0.3)'),
         fillcolor='rgba(68, 68, 68, 0.2)',
@@ -339,7 +339,7 @@ def plot_trendline(df, choice,m,b, std, x_as_label,  x_logarithmic,  y_logarithm
     st.plotly_chart(fig1, use_container_width=True)
 def plot_boll(df, choice,  buy_price, sell_price, bb_signal, x_as_label):
 
-    buy, sell, candlestick, close = draw_buy_sell_candlestick_close(df, buy_price, sell_price, x_as_label)
+    buy, sell, candlestick, close = draw_buy_sell_candlestick_close(df, buy_price, sell_price, x_as_label, choice)
     boll_low_2 = go.Scatter(
         name='boll low 2',
         x=df[x_as_label],
@@ -412,7 +412,7 @@ def plot_boll(df, choice,  buy_price, sell_price, bb_signal, x_as_label):
     st.plotly_chart(fig1, use_container_width=True)
 def plot_macd(df, choice,  buy_price, sell_price, macd_signal, x_as_label):
 
-    buy, sell, candlestick, close = draw_buy_sell_candlestick_close(df, buy_price, sell_price, x_as_label)
+    buy, sell, candlestick, close = draw_buy_sell_candlestick_close(df, buy_price, sell_price, x_as_label, choice)
 
     ma_long = go.Scatter(
         name='ema_long',
@@ -454,7 +454,7 @@ def plot_macd(df, choice,  buy_price, sell_price, macd_signal, x_as_label):
 
 def plot_macd_2(df, choice,  buy_price, sell_price, macd_signal, x_as_label):
 
-    buy, sell, candlestick, close = draw_buy_sell_candlestick_close(df, buy_price, sell_price, x_as_label)
+    buy, sell, candlestick, close = draw_buy_sell_candlestick_close(df, buy_price, sell_price, x_as_label, choice)
 
     from plotly.subplots import make_subplots
 
