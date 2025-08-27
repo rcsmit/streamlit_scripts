@@ -675,5 +675,5 @@ def main():
 
     st.write("Based on the work of https://www.analyticsvidhya.com/blog/2021/04/whatsapp-group-chat-analyzer-using-python/")
 
-
-main()
+if __name__ == "__main__":
+    main()
