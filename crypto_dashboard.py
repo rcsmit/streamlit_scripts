@@ -1,6 +1,6 @@
 #https://medium.com/the-financial-journal/the-million-dollar-algorithm-straight-from-wall-street-3f88a62e3e0a
 
-import yfinance as yf
+
 import pandas as pd
 
 import numpy as np
@@ -680,7 +680,7 @@ def show_graph_in_column(time_zone, wdw, center_boll, z1, z2,  choice, period, i
         x_as_label = "Date"
     #df =      get_data_yfinance(choice,  interval, period, None)
     df = get_data_yfinance(choice,  interval,None, "2021-11-27")
-            
+    st.write(df)      
     if df is not None:
         df, m,b,std= calculate_various_columns_df(df, wdw, center_boll, z1,z2)
 

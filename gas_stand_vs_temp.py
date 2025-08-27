@@ -8,6 +8,7 @@ from datetime import datetime
 import scipy.stats as stats
 import numpy as np
 from skmisc.loess import loess
+import time
 
 
 def interface():
@@ -236,7 +237,8 @@ def make_scatter(x,y, df):
     fig.update_yaxes(title_text='Verbruik')
 
     # Show the plot
-    st.plotly_chart(fig)
+    
+    st.plotly_chart(fig, key=str(time.time()))
 
 
 

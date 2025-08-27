@@ -1,8 +1,8 @@
 streamlit
-scipy==1.15.3
+scipy
 matplotlib
-numpy==1.24.4
-pandas==1.5.3
+numpy
+pandas
 seaborn
 plotly
 lmfit

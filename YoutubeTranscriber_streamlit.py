@@ -29,7 +29,7 @@ def transcribe_video(video_id, translate, language_from, translate_to):
         '<br><br><a href="https://beta.openai.com/playground/" target="_blank">Or go to Open AI playground to punctuate the text</a>',
         unsafe_allow_html=True)
 
-def transcribe_really(video_id, translate, language_from, translate_to):
+def transcribe_really(video_id, translate, language_from, translate_to,list_languages):
     if translate == True:
         transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
         transcript = transcript_list.find_transcript([language_from])
