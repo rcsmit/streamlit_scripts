@@ -280,7 +280,7 @@ def main():
     st.header("Seasonal patterns")
     st.info("This script is designed to perform several analyses to detect seasonal patterns in time series data using various statistical and visualization techniques. It retrieves financial data from Yahoo Finance (EURO/Thai Baht). It is compared with weather data from KNMI (very seasonal), a random number generator (no seasonality), and a sinus curve (perfect seasonal).")
 
-    tab1,tab2,tab3,tab4,tab5=st.tabs(["EUR-THB","EUR-USD","Max Temperature Data","Random Data","Seasonal Data"])
+    tab1,tab2,tab3,tab4,tab5=st.tabs(["EUR-THB","EUR-USD","Max Temperature Data","Random Data","Sinus curve"])
     with tab1:
         st.subheader("EURTHB=X")
         df = get_data_yfinance("EURTHB=X", "1d","10y","2015-01-01")

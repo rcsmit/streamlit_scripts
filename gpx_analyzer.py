@@ -745,7 +745,7 @@ def main():
                 total_time_gpx = df["delta_time_cumm_s"].max()
                 segments,total_time_segments = parse_segments(segment_input, total_time_gpx)
                 st.write(f"Total time segments:{total_time_segments}")
-                st.write(f"Total time training {df["delta_time_cumm_s"].max()}")
+                st.write(f"Total time training {df['delta_time_cumm_s'].max()}")
             except Exception as e:
                 st.error(f"Fout bij het laden van segmenten: {e}")
                 st.stop()
