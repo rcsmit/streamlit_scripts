@@ -35,7 +35,7 @@ def get_data_yfinance(choice, interval, period="3m",start="2015-01-01", window=7
     # else:
     df.columns = ['_'.join(col) for col in df.columns]
     df["Close"] = df[f"{choice}_Close"]
-    df["Koers"] = df[f"{choice}_Close"]
+    df["Koers"] = df[f"{choice}_Close"] #seasonality.py
    
     if len(df) == 0:
         st.error(f"No data or wrong input - {choice}")

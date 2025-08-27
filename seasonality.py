@@ -283,11 +283,11 @@ def main():
     tab1,tab2,tab3,tab4,tab5=st.tabs(["EUR-THB","EUR-USD","Max Temperature Data","Random Data","Seasonal Data"])
     with tab1:
         st.subheader("EURTHB=X")
-        df = get_data_yfinance("EURTHB=X", "1d",None,"2015-01-01")
+        df = get_data_yfinance("EURTHB=X", "1d","10y","2015-01-01")
         find_seasonality(df, "Koers", "EURTHB=X")
     with tab2:
         st.subheader("EURUSD=X")
-        df = get_data_yfinance("EURUSD=X", "1d",None,"2015-01-01")
+        df = get_data_yfinance("EURUSD=X", "1d","10y","2015-01-01")
         find_seasonality(df, "Koers", "EURUSD=X")
     
     with tab3:
