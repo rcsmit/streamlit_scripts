@@ -93,6 +93,7 @@ def main():
                 ["[60] Strudel Drumsequencer ","strudel_drumbox"],
                 ["[61] Vrijkomende woningen ","aantal_vrijkomende_woningen"],
                 ["[62] Tabs2notes ","tabs2notes"],
+                ["[63] Streamlit layouts ","streamlit_layouts"],
                 ]
  
     # for file in arr:
