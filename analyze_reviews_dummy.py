@@ -389,7 +389,7 @@ def plot_nps_per_branche(result: pd.DataFrame):
         fig.add_annotation(
             x=r["branche"],
             y=107,
-            text=f"n={int(r['review_count'])}<br>mean={r['mean_nps']:.1f}<br>NPS={r["NPS_calc"]:.1f}",
+            text=f"n={int(r['review_count'])}<br>mean={r['mean_nps']:.1f}<br>NPS={r['NPS_calc']:.1f}",
             showarrow=False,
             font=dict(size=10),
         )
