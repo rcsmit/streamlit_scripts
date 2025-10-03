@@ -255,7 +255,7 @@ def make_plot(df_totaal,teller,noemer):
         st.plotly_chart(fig, use_container_width=True)
 
     with col2:
-        fig = px.line(dfp, x="jaar", y="breuk", markers=True, template="plotly_white",
+        fig = px.line(dfp, x="jaar", y="ratio", markers=True, template="plotly_white",
                     title=f"Verhouding {teller} / {noemer} * 100")
         
         
@@ -281,14 +281,15 @@ def info():
     st.info("Cao-lonen, contractuele loonkosten en arbeidsduur; indexcijfers (2020=100) Gewijzigd op: 2 oktober 2025 - https://opendata.cbs.nl/?dl=9CB37#/CBS/nl/dataset/85663NED/table")
 
     st.info("Consumentenprijzen; prijsindex 2015=100. Gewijzigd op: 1 oktober 2025 - https://opendata.cbs.nl/statline/?dl=3F0E#/CBS/nl/dataset/83131NED/table")
+    st.info("Minimumloon (bruto) per maand voor 36, 38 en 40 uur per week. Bron: Rijksoverheid - https://www.rijksoverheid.nl/onderwerpen/minimumloon/bedragen-minimumloon")
 def main_():
     kol = ["CaoLonenPerMaandExclBijzBeloningen_1","CPI_1","loon_40","loon_38","loon_36"]
     col1,col2,col3,col4=st.columns(4)
-    with col1:
-        teller = st.selectbox("Teller", kol, index=0)
-    with col2:
-        noemer = st.selectbox("Noemer", kol, index=1)
     with col3:
+        teller = st.selectbox("Teller", kol, index=0)
+    with col4:
+        noemer = st.selectbox("Noemer", kol, index=1)
+    with col2:
         basisjaar=st.number_input("Basisjaar voor indexcijfers", min_value=2005, max_value=2025, value=2015, step=1)
     
     df_cao_lonen = get_cao_lonen(basisjaar)
@@ -300,15 +301,16 @@ def main_():
     df_merge = df_cao_lonen.merge(df_cpi, on="jaar", how="inner")
     df_totaal = df_merge.merge(df_minimumloon, on="jaar", how="outer")
     
-    with col4:
+    with col1:
         min,max = st.slider("Selecteer jaartal bereik", int(df_totaal["jaar"].min()), int(df_totaal["jaar"].max()), (2010, 2025), 1)
     df_totaal = df_totaal[(df_totaal["jaar"]>=min ) & (df_totaal["jaar"]<=max)]
     
     
-    df_totaal["breuk"] = df_totaal[teller] / df_totaal[noemer] * 100
+    df_totaal["ratio"] = df_totaal[teller] / df_totaal[noemer] * 100
     make_plot(df_totaal,teller,noemer)
+    st.info("Loon_36,loon_38,loon_40 zijn respectievelijk het minimumloon voor 36, 38 en 40 uur per week.")
 def main():
-    tab1,tab2=st.tabs(["Plot","Informatie"])
+    tab1,tab2=st.tabs(["Plot","Bronnen"])
     with tab1:
         main_()
     with tab2:
