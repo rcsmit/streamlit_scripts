@@ -95,6 +95,7 @@ def main():
                 ["[62] Tabs2notes ","tabs2notes"],
                 ["[63] Streamlit layouts ","streamlit_layouts"],
                 ["[64] Analyze reviews ","analyze_reviews_dummy"],
+                ["[65] Lonen vs inflatie ","lonen_inflatie"],
                 
                 ]
  
