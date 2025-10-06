@@ -136,11 +136,13 @@ def main():
     st.caption("One input per unique value. All placeholders that share it update together.")
 
     # Global fields
-    col_g1, col_g2 = st.columns(2)
+    col_g1, col_g2,col3 = st.columns(3)
     with col_g1:
         currency_symbol = st.text_input("Currency symbol", "€")
     with col_g2:
         price_text = st.text_input("Price text", "PRIJS")
+    with col3:
+        only_streets = st.checkbox("Only streets", True)
 
     edited_values = {}
 
@@ -157,9 +159,12 @@ def main():
                 if val and val[0] == "#":
                     edited_values[val] = st.text_input(label, value=val, help=help_txt, key=f"val::{i}")
                 else:
-                    # Keep value as is, but show small context
-                    # st.caption(label)
-                    edited_values[val] = val
+                    if only_streets == False:
+                        edited_values[val] = st.text_input(label, value=val, help=help_txt, key=f"val::{i}")
+                    else:
+                        # Keep value as is, but show small context
+                        # st.caption(label)
+                        edited_values[val] = val
 
     st.divider()
 
