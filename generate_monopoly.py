@@ -212,7 +212,7 @@ def input_with_default(json_original, svg_updated): # placeholders, new_svg_cont
         
 
         if merge_btn:
-            active_map = st.session_state["new_map_holder"] if use_generated and st.session_state["new_map_holder"] else data
+            active_map = new_map # st.session_state["new_map_holder"] if use_generated and st.session_state["new_map_holder"] else data
             merged_svg, missing_keys, unused_keys = merge_svg(svg_template, active_map)
             merged_svg = merged_svg.replace("{CURRENCY_SYMBOL}",CURRENCY_SYMBOL_CHOSEN)
             merged_svg = merged_svg.replace("{PRICE}",PRICE_TXT_CHOSEN)
