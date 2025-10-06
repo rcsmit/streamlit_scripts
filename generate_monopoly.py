@@ -31,7 +31,7 @@ def prepare_monopoly(json_original, svg_original, svg_updated):
     
     # with open(file_path, "r", encoding="utf-8") as f:
     #     svg_content = f.read()
-    SVG_URL  = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/Seminopoly_placeholders_edited.svg"
+    SVG_URL  = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/Seminopoly_placeholders.svg"
     svg_content = fetch_text(SVG_URL)
     # Find all text elements in SVG (between > and </text>, or inside <text ...>...</text>)
     texts = re.findall(r'>([^<>]+)<', svg_content)
