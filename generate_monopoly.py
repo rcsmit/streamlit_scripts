@@ -129,6 +129,7 @@ def input_with_default(json_original, svg_updated): # placeholders, new_svg_cont
     #         edited_values[val] = val
 
     edited_values = {}
+    new_map = {}
     per_row = 5
 
     for start in range(0, len(unique_values), per_row):
@@ -162,7 +163,7 @@ def input_with_default(json_original, svg_updated): # placeholders, new_svg_cont
     with colA:
         st.subheader("Generate new JSON")
         if st.button("Generate JSON and make board"):
-            new_map = {}
+            
             for k, v in data.items():
                 v_str = "" if v is None else str(v)
                 new_map[k] = edited_values.get(v_str, v_str)
@@ -212,8 +213,8 @@ def input_with_default(json_original, svg_updated): # placeholders, new_svg_cont
 
         # if merge_btn:
         if 1==1:
-            active_map = new_map # st.session_state["new_map_holder"] if use_generated and st.session_state["new_map_holder"] else data
-            merged_svg, missing_keys, unused_keys = merge_svg(svg_template, active_map)
+            #active_map = new_map # st.session_state["new_map_holder"] if use_generated and st.session_state["new_map_holder"] else data
+            merged_svg, missing_keys, unused_keys = merge_svg(svg_template, new_map)
             merged_svg = merged_svg.replace("{CURRENCY_SYMBOL}",CURRENCY_SYMBOL_CHOSEN)
             merged_svg = merged_svg.replace("{PRICE}",PRICE_TXT_CHOSEN)
             if missing_keys:
