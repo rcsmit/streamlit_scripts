@@ -190,8 +190,12 @@ def input_with_default(json_original, svg_updated): # placeholders, new_svg_cont
         
         # Load SVG template
         try:
-            with open(svg_updated, "r", encoding="utf-8") as f:
-                svg_template = f.read()
+            # with open(svg_updated, "r", encoding="utf-8") as f:
+            #     svg_template = f.read()
+            # url =   # make sure this is the full URL string
+            response = requests.get(svg_updated)
+            response.raise_for_status()  # will error if not found
+            svg_template = response.text
         except Exception as e:
             st.error(f"Could not read SVG template. {e}")
             st.stop()
