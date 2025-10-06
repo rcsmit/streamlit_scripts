@@ -157,8 +157,8 @@ def input_with_default(json_original, svg_updated): # placeholders, new_svg_cont
     colA, colB,colC,colD = st.columns([1, 1,1,1])
 
     # Cache original -> edited mapping to reuse for SVG merge
-    new_map_holder = st.session_state.setdefault("new_map_holder", None)
-    generated = False
+    #new_map_holder = st.session_state.setdefault("new_map_holder", None)
+    #generated = False
     with colA:
         st.subheader("Generate new JSON")
         if st.button("Generate JSON"):
@@ -167,9 +167,9 @@ def input_with_default(json_original, svg_updated): # placeholders, new_svg_cont
                 v_str = "" if v is None else str(v)
                 new_map[k] = edited_values.get(v_str, v_str)
 
-            st.session_state["new_map_holder"] = new_map
+            #st.session_state["new_map_holder"] = new_map
             st.success("Generated updated JSON")
-            #st.json(new_map)
+            st.json(new_map)
 
             buf = io.BytesIO(json.dumps(new_map, ensure_ascii=False, indent=2).encode("utf-8"))
             st.download_button(
@@ -178,7 +178,7 @@ def input_with_default(json_original, svg_updated): # placeholders, new_svg_cont
                 file_name="placeholders_updated.json",
                 mime="application/json",
             )
-            generated= True
+            
 
     
         st.info(
