@@ -200,8 +200,11 @@ def main():
                 st.info("No new input")
 
             merged_svg, missing_keys, unused_keys = merge_svg(new_svg_content, active_map)
-            merged_svg = merged_svg.replace("{CURRENCY_SYMBOL}", currency_symbol)
-            merged_svg = merged_svg.replace("{PRICE}", price_text)
+            # merged_svg = merged_svg.replace("{CURRENCY_SYMBOL}", currency_symbol)
+            # merged_svg = merged_svg.replace("{PRICE}", price_text)
+            merged_svg = merged_svg.replace("$", currency_symbol)
+            merged_svg = merged_svg.replace("PRICE", price_text)
+            
 
             if missing_keys:
                 st.warning(f"Missing placeholders in JSON: {sorted(missing_keys)}")
