@@ -96,6 +96,7 @@ def main():
                 ["[63] Streamlit layouts ","streamlit_layouts"],
                 ["[64] Analyze reviews ","analyze_reviews_dummy"],
                 ["[65] Lonen vs inflatie ","lonen_inflatie"],
+                ["[66] Generate monopoply ","generate_monopoly"],
                 
                 ]
  
