@@ -145,9 +145,8 @@ def get_cao_lonen(basisjaar, get_from_cbs):
             basisjaar (int): Het jaar dat als basisjaar moet worden gebruikt.
         Returns:    
             pd.DataFrame: De aangepaste dataframe met de kolommen omgerekend naar indexcijfers.
-    """    
-    if get_from_cbs:   
-        kolommen = [
+    """ 
+    kolommen = [
             "CaoLonenPerMaandExclBijzBeloningen_1",
             "CaoLonenPerMaandInclBijzBeloningen_2",
             "CaoLonenPerUurExclBijzBeloningen_3",
@@ -163,8 +162,11 @@ def get_cao_lonen(basisjaar, get_from_cbs):
             "ContractueleLoonkostenPerUur_13",
             "ContractueleArbeidsduur_14",
             "PercentageAfgeslotenCaoS_15"
-        ]
-        groep = "BedrijfstakkenBranchesSBI2008"
+        ]   
+    groep = "BedrijfstakkenBranchesSBI2008"
+    if get_from_cbs:   
+        
+        
         df_1 = get_data_caolonen("82838NED") # 2010 = 100 
         df_1 = verleg_basisjaar(df_1, 2020, kolommen, groep)
         df_1=df_1[df_1["jaar"]<=2020]
@@ -188,16 +190,17 @@ def get_cpi_from_cbs():
 
 @st.cache_data()
 def get_cpi(basisjaar, get_from_cbs):
+    kolommen = ["CPI_1","CPIAfgeleid_2","MaandmutatieCPI_3", "MaandmutatieCPIAfgeleid_4","JaarmutatieCPI_5","JaarmutatieCPIAfgeleid_6"] 
+        
     if get_from_cbs:
         df = get_cpi_from_cbs()
-        kolommen = ["CPI_1","CPIAfgeleid_2","MaandmutatieCPI_3", "MaandmutatieCPIAfgeleid_4","JaarmutatieCPI_5","JaarmutatieCPIAfgeleid_6"] 
         df[["jaar", "kwartaal", "maand", "maandnr"]] = df["Perioden"].apply(parse_period)
         df = manipuleer_laatste_jaar(df)
         df = df[(df["kwartaal"].isnull()) & (df["maand"].isnull())]
         df = df[df["Bestedingscategorieen"] == "000000 Alle bestedingen"]
         #df.to_csv("cpi.csv")
     else:
-        df = get_df("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/")
+        df = get_df("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/cpi.csv")
     df = verleg_basisjaar(df, basisjaar, kolommen, "Bestedingscategorieen")
   
     return df
@@ -301,7 +304,7 @@ def main_():
     with col4:
         noemer = st.selectbox("Noemer", kol, index=1)
     with col2:
-        basisjaar=st.number_input("Basisjaar voor indexcijfers", min_value=2005, max_value=2025, value=2015, step=1)
+        basisjaar=st.number_input("Basisjaar voor indexcijfers", min_value=1996, max_value=2025, value=2015, step=1)
     
     df_cao_lonen = get_cao_lonen(basisjaar, False)
     df_cpi = get_cpi(basisjaar, False)
