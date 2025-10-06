@@ -106,11 +106,11 @@ def main():
     PER_ROW = 5
 
     # -------------------- LOAD ----------------------
-    try:
-        data = fetch_json(JSON_URL)  # {placeholder: text}
-    except Exception as e:
-        st.error(f"Could not read JSON. {e}")
-        st.stop()
+    # try:
+    #     data = fetch_json(JSON_URL)  # {placeholder: text}
+    # except Exception as e:
+    #     st.error(f"Could not read JSON. {e}")
+    #     st.stop()
 
     if not isinstance(data, dict):
         st.error("JSON must be an object like {placeholder: text}")
@@ -191,7 +191,8 @@ def main():
         if st.button("Merge into SVG"):
             active_map = None
             if use_generated and "new_map" in st.session_state:
-                st.write(st.session_state["new_map"])
+                #st.write(st.session_state["new_map"])
+                st.info("New map used")
                 active_map = st.session_state["new_map"]
             else:
                 # build a pass-through map from current JSON
