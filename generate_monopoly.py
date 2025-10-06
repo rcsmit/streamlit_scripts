@@ -41,6 +41,22 @@ def merge_svg(svg_text: str, mapping: dict) -> tuple[str, set, set]:
     merged = re.sub(r"\{([A-Za-z0-9_:-]+)\}", repl, svg_text)
     return merged, missing, unused
 
+def merge_svg(svg_text: str, mapping: dict) -> tuple[str, set, set]: 
+    """ Replace placeholders {key} with mapping[key]. Returns: merged_svg, missing_keys, unused_keys """ 
+    # Collect all placeholders present in the SVG 
+    #template 
+    # 
+    svg_keys = set(re.findall(r"\{([A-Za-z0-9_:-]+)\}", svg_text)) 
+    map_keys = set(mapping.keys()) 
+    missing = svg_keys - map_keys 
+    unused = map_keys - svg_keys 
+    # Replace using a safe function so we only touch {key} patterns 
+    def repl(match): 
+        k = match.group(1) 
+        return str(mapping.get(k, match.group(0))) # keep {key} if missing 
+    merged = re.sub(r"\{([A-Za-z0-9_:-]+)\}", repl, svg_text) 
+    return merged, missing, unused
+
 def data_uri_svg(svg: str) -> str:
     return "data:image/svg+xml;utf8," + quote(svg)
 
@@ -48,7 +64,7 @@ def main():
     
     # -------------------- CONFIG --------------------
     JSON_URL = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/Seminopoly_placeholders.json"
-    SVG_URL  = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/Seminopoly_placeholders.svg"
+    SVG_URL  = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/Seminopoly_placeholders_edited.svg"
     PER_ROW = 5
 
     # -------------------- LOAD ----------------------
