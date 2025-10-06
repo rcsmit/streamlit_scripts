@@ -156,7 +156,7 @@ def main():
             label = f"Value {i}: “{val}”"
             help_txt = f"Shared by keys: {keys_sample}{more}"
             with cols[j]:
-                
+
                 if val and val[0] == "#":
                     edited_values[val] = st.text_input(label, value=val, help=help_txt, key=f"val::{i}")
                 else:
@@ -242,5 +242,7 @@ def main():
                 mime="image/svg+xml",
             )
 
+    st.info("Board design by jeffgeerling.com, 2007.  CC BY-SA 3.0 US")
+    st.info(f"SVG Template - {SVG_URL}")
 if __name__ == "__main__":
     main()  
