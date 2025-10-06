@@ -112,9 +112,9 @@ def main():
     #     st.error(f"Could not read JSON. {e}")
     #     st.stop()
 
-    if not isinstance(data, dict):
-        st.error("JSON must be an object like {placeholder: text}")
-        st.stop()
+    # if not isinstance(data, dict):
+    #     st.error("JSON must be an object like {placeholder: text}")
+    #     st.stop()
 
     # try:
     #     svg_template = fetch_text(SVG_URL)  # SVG with {placeholders}
