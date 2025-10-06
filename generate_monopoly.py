@@ -5,6 +5,7 @@ import io
 import re
 from collections import defaultdict
 import streamlit as st
+import requests
 
 try:
     st.set_page_config(page_title="SVG + JSON Merger", layout="wide")
@@ -92,8 +93,8 @@ def input_with_default(json_original, svg_updated): # placeholders, new_svg_cont
     #data = placeholders
     # --- Load JSON from filename ---
     try:
-        with open(json_original, "r", encoding="utf-8") as f:
-            data = json.load(f)
+        response = requests.get(url)
+        data = response.json()  # directly parses JSON
     except Exception as e:
         st.error(f"Could not read JSON from filename. {e}")
         st.stop()
