@@ -17,6 +17,45 @@ except:
 st.title("SVG Placeholder Editor and Merger")
 
 # -------------------- HELPERS -------------------
+def prepare_monopoly(json_original, svg_original, svg_updated): 
+    """ Read SVG, find all text elements, replace with placeholders {text_i}. Save new SVG and JSON mapping. 
+        Args: 
+            json_original: filename to save JSON mapping 
+            svg_original: filename of original 
+            SVG svg_updated: filename to save updated SVG with placeholders 
+        Returns: 
+            placeholders dict : {text_i: original_text, ...} 
+            new_svg_content : str with SVG content with placeholders """
+
+    # Load the SVG file
+    
+    # with open(file_path, "r", encoding="utf-8") as f:
+    #     svg_content = f.read()
+    SVG_URL  = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/Seminopoly_placeholders_edited.svg"
+    svg_content = fetch_text(SVG_URL)
+    # Find all text elements in SVG (between > and </text>, or inside <text ...>...</text>)
+    texts = re.findall(r'>([^<>]+)<', svg_content)
+
+    # Create placeholder mapping
+    placeholders = {f"text_{i+1}": text.strip() for i, text in enumerate(texts) if text.strip()}
+
+    # Replace text in SVG with placeholders {text_i}
+    new_svg_content = svg_content
+    for i, (key, value) in enumerate(placeholders.items(), start=1):
+        new_svg_content = new_svg_content.replace(value, f"{{{key}}}")
+
+    # # Save new SVG with placeholders
+    # placeholder_svg_path = "/mnt/data/Seminopoly_placeholders.svg"
+    # with open(placeholder_svg_path, "w", encoding="utf-8") as f:
+    #     f.write(new_svg_content)
+
+    # # Save JSON mapping
+    # json_path = "/mnt/data/Seminopoly_placeholders.json"
+    # with open(json_path, "w", encoding="utf-8") as f:
+    #     json.dump(placeholders, f, indent=4, ensure_ascii=False)
+
+    return new_svg_content, placeholders
+
 @st.cache_data
 def fetch_json(url: str) -> dict:
     r = requests.get(url, timeout=20)
@@ -83,7 +122,7 @@ def main():
     except Exception as e:
         st.error(f"Could not read SVG. {e}")
         st.stop()
-
+    new_svg_content, data = prepare_monopoly(svg_template)
     # -------------------- GROUP VALUES ----------------
     rev = defaultdict(list)
     for k, v in data.items():
@@ -160,7 +199,7 @@ def main():
                 active_map = data
                 st.info("No new input")
 
-            merged_svg, missing_keys, unused_keys = merge_svg(svg_template, active_map)
+            merged_svg, missing_keys, unused_keys = merge_svg(new_svg_content, active_map)
             merged_svg = merged_svg.replace("{CURRENCY_SYMBOL}", currency_symbol)
             merged_svg = merged_svg.replace("{PRICE}", price_text)
 
