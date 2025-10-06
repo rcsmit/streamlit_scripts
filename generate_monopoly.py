@@ -187,61 +187,61 @@ def input_with_default(json_original, svg_updated): # placeholders, new_svg_cont
             f"Total placeholders: {len(data)}"
         )
 
+
+    # if generated:
+    with colB:
+        st.subheader("Merge into SVG")
         
-    if generated:
-        with colB:
-            st.subheader("Merge into SVG")
-            
-            # Load SVG template
+        # Load SVG template
+        try:
+            # with open(svg_updated, "r", encoding="utf-8") as f:
+            #     svg_template = f.read()
+            # url =   # make sure this is the full URL string
+            response = requests.get(svg_updated)
+            response.raise_for_status()  # will error if not found
+            svg_template = response.text
+        except Exception as e:
+            st.error(f"Could not read SVG template. {e}")
+            st.stop()
+        # svg_template=new_svg_content
+        st.caption(f"Template: {svg_updated}")
+
+        # Choose which JSON to merge
+        use_generated = st.checkbox("Use the updated JSON from this session", value=True)
+        if not use_generated:
+            st.caption("Using the original JSON loaded from file")
+    
+        merge_btn = st.button("Merge into SVG")
+
+        
+
+        if merge_btn:
+            active_map = new_map # st.session_state["new_map_holder"] if use_generated and st.session_state["new_map_holder"] else data
+            merged_svg, missing_keys, unused_keys = merge_svg(svg_template, active_map)
+            merged_svg = merged_svg.replace("{CURRENCY_SYMBOL}",CURRENCY_SYMBOL_CHOSEN)
+            merged_svg = merged_svg.replace("{PRICE}",PRICE_TXT_CHOSEN)
+            if missing_keys:
+                st.warning(f"Missing placeholders in JSON: {sorted(missing_keys)}")
+            if unused_keys:
+                st.info(f"JSON keys not used in template: {sorted(list(unused_keys))[:10]}{' …' if len(unused_keys) > 10 else ''}")
+
+            # Preview and download
+            st.success("Merged SVG created")
+            st.code(merged_svg[:2000] + ("\n...\n" if len(merged_svg) > 2000 else ""), language="xml")
+
+            # Try to render inline
             try:
-                # with open(svg_updated, "r", encoding="utf-8") as f:
-                #     svg_template = f.read()
-                # url =   # make sure this is the full URL string
-                response = requests.get(svg_updated)
-                response.raise_for_status()  # will error if not found
-                svg_template = response.text
-            except Exception as e:
-                st.error(f"Could not read SVG template. {e}")
-                st.stop()
-            # svg_template=new_svg_content
-            st.caption(f"Template: {svg_updated}")
+                st.image(merged_svg.encode("utf-8"), caption="SVG Preview", output_format="SVG")
+            except Exception:
+                st.caption("Preview not available. Download to view.")
 
-            # Choose which JSON to merge
-            use_generated = st.checkbox("Use the updated JSON from this session", value=True)
-            if not use_generated:
-                st.caption("Using the original JSON loaded from file")
-        
-            merge_btn = st.button("Merge into SVG")
-
-            
-
-            if merge_btn:
-                active_map = new_map # st.session_state["new_map_holder"] if use_generated and st.session_state["new_map_holder"] else data
-                merged_svg, missing_keys, unused_keys = merge_svg(svg_template, active_map)
-                merged_svg = merged_svg.replace("{CURRENCY_SYMBOL}",CURRENCY_SYMBOL_CHOSEN)
-                merged_svg = merged_svg.replace("{PRICE}",PRICE_TXT_CHOSEN)
-                if missing_keys:
-                    st.warning(f"Missing placeholders in JSON: {sorted(missing_keys)}")
-                if unused_keys:
-                    st.info(f"JSON keys not used in template: {sorted(list(unused_keys))[:10]}{' …' if len(unused_keys) > 10 else ''}")
-
-                # Preview and download
-                st.success("Merged SVG created")
-                st.code(merged_svg[:2000] + ("\n...\n" if len(merged_svg) > 2000 else ""), language="xml")
-
-                # Try to render inline
-                try:
-                    st.image(merged_svg.encode("utf-8"), caption="SVG Preview", output_format="SVG")
-                except Exception:
-                    st.caption("Preview not available. Download to view.")
-
-                svg_buf = io.BytesIO(merged_svg.encode("utf-8"))
-                st.download_button(
-                    "Download merged SVG",
-                    data=svg_buf,
-                    file_name="merged.svg",
-                    mime="image/svg+xml",
-                )
+            svg_buf = io.BytesIO(merged_svg.encode("utf-8"))
+            st.download_button(
+                "Download merged SVG",
+                data=svg_buf,
+                file_name="merged.svg",
+                mime="image/svg+xml",
+            )
 def main():
      # Assume you already set this variable elsewhere in your code
     # json_original = r"C:\Users\rcxsm\Downloads\Seminopoly_placeholders.json"
