@@ -161,7 +161,7 @@ def input_with_default(json_original, svg_updated): # placeholders, new_svg_cont
     #generated = False
     with colA:
         st.subheader("Generate new JSON")
-        if st.button("Generate JSON"):
+        if st.button("Generate JSON and make board"):
             new_map = {}
             for k, v in data.items():
                 v_str = "" if v is None else str(v)
@@ -172,12 +172,7 @@ def input_with_default(json_original, svg_updated): # placeholders, new_svg_cont
             st.json(new_map)
 
             buf = io.BytesIO(json.dumps(new_map, ensure_ascii=False, indent=2).encode("utf-8"))
-            st.download_button(
-                "Download updated JSON",
-                data=buf,
-                file_name="placeholders_updated.json",
-                mime="application/json",
-            )
+            
             
 
     
@@ -211,11 +206,12 @@ def input_with_default(json_original, svg_updated): # placeholders, new_svg_cont
         if not use_generated:
             st.caption("Using the original JSON loaded from file")
     
-        merge_btn = st.button("Merge into SVG")
+        # merge_btn = st.button("Merge into SVG")
 
         
 
-        if merge_btn:
+        # if merge_btn:
+        if 1==1:
             active_map = new_map # st.session_state["new_map_holder"] if use_generated and st.session_state["new_map_holder"] else data
             merged_svg, missing_keys, unused_keys = merge_svg(svg_template, active_map)
             merged_svg = merged_svg.replace("{CURRENCY_SYMBOL}",CURRENCY_SYMBOL_CHOSEN)
@@ -234,7 +230,13 @@ def input_with_default(json_original, svg_updated): # placeholders, new_svg_cont
                 st.image(merged_svg.encode("utf-8"), caption="SVG Preview", output_format="SVG")
             except Exception:
                 st.caption("Preview not available. Download to view.")
-
+            
+            st.download_button(
+                "Download updated JSON",
+                data=buf,
+                file_name="placeholders_updated.json",
+                mime="application/json",
+            )
             svg_buf = io.BytesIO(merged_svg.encode("utf-8"))
             st.download_button(
                 "Download merged SVG",
