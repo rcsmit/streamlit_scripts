@@ -102,7 +102,7 @@ def main():
                     edited_values[val] = st.text_input(label, value=val, help=help_txt, key=f"val::{i}")
                 else:
                     # Keep value as is, but show small context
-                    st.caption(label)
+                    # st.caption(label)
                     edited_values[val] = val
 
     st.divider()
@@ -141,6 +141,7 @@ def main():
             else:
                 # build a pass-through map from current JSON
                 active_map = data
+                st.info("No new input")
 
             merged_svg, missing_keys, unused_keys = merge_svg(svg_template, active_map)
             merged_svg = merged_svg.replace("{CURRENCY_SYMBOL}", currency_symbol)
