@@ -40,7 +40,8 @@ def prepare_monopoly(svg_original):
     new_svg_content = svg_content
     for i, (key, value) in enumerate(placeholders.items(), start=1):
         new_svg_content = new_svg_content.replace(value, f"{{{key}}}")
-
+    new_svg_content = new_svg_content.replace("$", "{CURRENCY_SYMBOL}")  # Example replacement
+    new_svg_content = new_svg_content.replace("PRICE", "{PRICE}")  #
     # # Save new SVG with placeholders
     # placeholder_svg_path = "/mnt/data/Seminopoly_placeholders.svg"
     # with open(placeholder_svg_path, "w", encoding="utf-8") as f:
@@ -93,6 +94,7 @@ def merge_svg(svg_text: str, mapping: dict) -> tuple[str, set, set]:
         k = match.group(1) 
         return str(mapping.get(k, match.group(0))) # keep {key} if missing 
     merged = re.sub(r"\{([A-Za-z0-9_:-]+)\}", repl, svg_text) 
+    
     return merged, missing, unused
 
 def data_uri_svg(svg: str) -> str:
@@ -198,13 +200,13 @@ def main():
                 # build a pass-through map from current JSON
                 active_map = data
                 st.info("No new input")
-
+            
             merged_svg, missing_keys, unused_keys = merge_svg(new_svg_content, active_map)
-            # merged_svg = merged_svg.replace("{CURRENCY_SYMBOL}", currency_symbol)
-            # merged_svg = merged_svg.replace("{PRICE}", price_text)
+            merged_svg = merged_svg.replace("{CURRENCY_SYMBOL}", currency_symbol)
+            merged_svg = merged_svg.replace("{PRICE}", price_text)
             merged_svg = merged_svg.replace("$", currency_symbol)
             merged_svg = merged_svg.replace("PRICE", price_text)
-            
+
 
             if missing_keys:
                 st.warning(f"Missing placeholders in JSON: {sorted(missing_keys)}")
