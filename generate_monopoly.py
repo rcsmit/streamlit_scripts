@@ -137,6 +137,7 @@ def main():
         if st.button("Merge into SVG"):
             active_map = None
             if use_generated and "new_map" in st.session_state:
+                st.write(st.session_state["new_map"])
                 active_map = st.session_state["new_map"]
             else:
                 # build a pass-through map from current JSON
