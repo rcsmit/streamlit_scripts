@@ -62,7 +62,9 @@ def fetch_json(url: str) -> dict:
 @st.cache_data
 def fetch_text(url: str) -> str:
     r = requests.get(url, timeout=20)
+
     r.raise_for_status()
+ 
     return r.text
 
 def merge_svg(svg_text: str, mapping: dict) -> tuple[str, set, set]:
@@ -114,12 +116,12 @@ def main():
         st.error("JSON must be an object like {placeholder: text}")
         st.stop()
 
-    try:
-        svg_template = fetch_text(SVG_URL)  # SVG with {placeholders}
-    except Exception as e:
-        st.error(f"Could not read SVG. {e}")
-        st.stop()
-    new_svg_content, data = prepare_monopoly(svg_template)
+    # try:
+    #     svg_template = fetch_text(SVG_URL)  # SVG with {placeholders}
+    # except Exception as e:
+    #     st.error(f"Could not read SVG. {e}")
+    #     st.stop()
+    new_svg_content, data = prepare_monopoly(SVG_URL)
     # -------------------- GROUP VALUES ----------------
     rev = defaultdict(list)
     for k, v in data.items():
