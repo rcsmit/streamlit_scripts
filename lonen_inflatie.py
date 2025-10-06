@@ -130,44 +130,52 @@ def get_data_caolonen(tabel):
             (df["BedrijfstakkenBranchesSBI2008"]=="A-U Alle economische activiteiten") & 
             (df["kwartaal"].isnull()) &
             (df["maand"].isnull())]
+    
+    return df
+
+def get_df(file):
+    df = pd.read_csv(file, delimiter=",",  decimal="." )
     return df
 
 # Downloaden van selectie van data
 @st.cache_data()
-def get_cao_lonen(basisjaar):
+def get_cao_lonen(basisjaar, get_from_cbs):
     """ Haalt de cao lonen data op en verlegt het basisjaar naar het opgegeven basisjaar.
         Args:   
             basisjaar (int): Het jaar dat als basisjaar moet worden gebruikt.
         Returns:    
             pd.DataFrame: De aangepaste dataframe met de kolommen omgerekend naar indexcijfers.
-    """       
-    kolommen = [
-        "CaoLonenPerMaandExclBijzBeloningen_1",
-        "CaoLonenPerMaandInclBijzBeloningen_2",
-        "CaoLonenPerUurExclBijzBeloningen_3",
-        "CaoLonenPerUurInclBijzBeloningen_4",
-        "ContractueleLoonkostenPerMaand_5",
-        "ContractueleLoonkostenPerUur_6",
-        "ContractueleArbeidsduur_7",
-        "CaoLonenPerMaandExclBijzBeloningen_8",
-        "CaoLonenPerMaandInclBijzBeloningen_9",
-        "CaoLonenPerUurExclBijzBeloningen_10",
-        "CaoLonenPerUurInclBijzBeloningen_11",
-        "ContractueleLoonkostenPerMaand_12",
-        "ContractueleLoonkostenPerUur_13",
-        "ContractueleArbeidsduur_14",
-        "PercentageAfgeslotenCaoS_15"
-    ]
-    groep = "BedrijfstakkenBranchesSBI2008"
-    df_1 = get_data_caolonen("82838NED") # 2010 = 100 
-    df_1 = verleg_basisjaar(df_1, 2020, kolommen, groep)
-    df_1=df_1[df_1["jaar"]<=2020]
+    """    
+    if get_from_cbs:   
+        kolommen = [
+            "CaoLonenPerMaandExclBijzBeloningen_1",
+            "CaoLonenPerMaandInclBijzBeloningen_2",
+            "CaoLonenPerUurExclBijzBeloningen_3",
+            "CaoLonenPerUurInclBijzBeloningen_4",
+            "ContractueleLoonkostenPerMaand_5",
+            "ContractueleLoonkostenPerUur_6",
+            "ContractueleArbeidsduur_7",
+            "CaoLonenPerMaandExclBijzBeloningen_8",
+            "CaoLonenPerMaandInclBijzBeloningen_9",
+            "CaoLonenPerUurExclBijzBeloningen_10",
+            "CaoLonenPerUurInclBijzBeloningen_11",
+            "ContractueleLoonkostenPerMaand_12",
+            "ContractueleLoonkostenPerUur_13",
+            "ContractueleArbeidsduur_14",
+            "PercentageAfgeslotenCaoS_15"
+        ]
+        groep = "BedrijfstakkenBranchesSBI2008"
+        df_1 = get_data_caolonen("82838NED") # 2010 = 100 
+        df_1 = verleg_basisjaar(df_1, 2020, kolommen, groep)
+        df_1=df_1[df_1["jaar"]<=2020]
 
-    df_2 = get_data_caolonen("85663NED") # 2020 = 100 
-    df_2=df_2[df_2["jaar"]> 2020]
-    
-    df_cao_lonen = pd.concat([df_1, df_2], ignore_index=True)
-    
+        df_2 = get_data_caolonen("85663NED") # 2020 = 100 
+        df_2=df_2[df_2["jaar"]> 2020]
+        
+        df_cao_lonen = pd.concat([df_1, df_2], ignore_index=True)
+        # df_cao_lonen.to_csv("caolonen.csv")
+    else:
+        df_cao_lonen = get_df("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/caolonen.csv")
     df_cao_lonen= verleg_basisjaar(df_cao_lonen, basisjaar,kolommen, groep)
    
     return df_cao_lonen
@@ -179,14 +187,17 @@ def get_cpi_from_cbs():
     return df
 
 @st.cache_data()
-def get_cpi(basisjaar):
-    df = get_cpi_from_cbs()
-    kolommen = ["CPI_1","CPIAfgeleid_2","MaandmutatieCPI_3", "MaandmutatieCPIAfgeleid_4","JaarmutatieCPI_5","JaarmutatieCPIAfgeleid_6"] 
-    df[["jaar", "kwartaal", "maand", "maandnr"]] = df["Perioden"].apply(parse_period)
-    df = manipuleer_laatste_jaar(df)
-    df = df[(df["kwartaal"].isnull()) & (df["maand"].isnull())]
-    df = df[df["Bestedingscategorieen"] == "000000 Alle bestedingen"]
-    
+def get_cpi(basisjaar, get_from_cbs):
+    if get_from_cbs:
+        df = get_cpi_from_cbs()
+        kolommen = ["CPI_1","CPIAfgeleid_2","MaandmutatieCPI_3", "MaandmutatieCPIAfgeleid_4","JaarmutatieCPI_5","JaarmutatieCPIAfgeleid_6"] 
+        df[["jaar", "kwartaal", "maand", "maandnr"]] = df["Perioden"].apply(parse_period)
+        df = manipuleer_laatste_jaar(df)
+        df = df[(df["kwartaal"].isnull()) & (df["maand"].isnull())]
+        df = df[df["Bestedingscategorieen"] == "000000 Alle bestedingen"]
+        #df.to_csv("cpi.csv")
+    else:
+        df = get_df("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/")
     df = verleg_basisjaar(df, basisjaar, kolommen, "Bestedingscategorieen")
   
     return df
@@ -292,8 +303,8 @@ def main_():
     with col2:
         basisjaar=st.number_input("Basisjaar voor indexcijfers", min_value=2005, max_value=2025, value=2015, step=1)
     
-    df_cao_lonen = get_cao_lonen(basisjaar)
-    df_cpi = get_cpi(basisjaar)
+    df_cao_lonen = get_cao_lonen(basisjaar, False)
+    df_cpi = get_cpi(basisjaar, False)
     df_minimumloon = get_minimumloon(basisjaar)
 
     
