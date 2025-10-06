@@ -93,7 +93,7 @@ def input_with_default(json_original, svg_updated): # placeholders, new_svg_cont
     #data = placeholders
     # --- Load JSON from filename ---
     try:
-        response = requests.get(url)
+        response = requests.get(json_original)
         data = response.json()  # directly parses JSON
     except Exception as e:
         st.error(f"Could not read JSON from filename. {e}")
