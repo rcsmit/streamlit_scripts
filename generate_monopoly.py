@@ -17,12 +17,10 @@ except:
 st.title("SVG Placeholder Editor and Merger")
 
 # -------------------- HELPERS -------------------
-def prepare_monopoly(json_original, svg_original, svg_updated): 
+def prepare_monopoly(svg_original): 
     """ Read SVG, find all text elements, replace with placeholders {text_i}. Save new SVG and JSON mapping. 
         Args: 
-            json_original: filename to save JSON mapping 
             svg_original: filename of original 
-            SVG svg_updated: filename to save updated SVG with placeholders 
         Returns: 
             placeholders dict : {text_i: original_text, ...} 
             new_svg_content : str with SVG content with placeholders """
@@ -31,8 +29,7 @@ def prepare_monopoly(json_original, svg_original, svg_updated):
     
     # with open(file_path, "r", encoding="utf-8") as f:
     #     svg_content = f.read()
-    SVG_URL  = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/Seminopoly_placeholders.svg"
-    svg_content = fetch_text(SVG_URL)
+    svg_content = fetch_text(svg_original)
     # Find all text elements in SVG (between > and </text>, or inside <text ...>...</text>)
     texts = re.findall(r'>([^<>]+)<', svg_content)
 
@@ -103,7 +100,7 @@ def main():
     
     # -------------------- CONFIG --------------------
     JSON_URL = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/Seminopoly_placeholders.json"
-    SVG_URL  = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/Seminopoly_placeholders_edited.svg"
+    SVG_URL  = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/Seminopoly_placeholders.svg"
     PER_ROW = 5
 
     # -------------------- LOAD ----------------------
