@@ -156,6 +156,7 @@ def main():
             label = f"Value {i}: “{val}”"
             help_txt = f"Shared by keys: {keys_sample}{more}"
             with cols[j]:
+                
                 if val and val[0] == "#":
                     edited_values[val] = st.text_input(label, value=val, help=help_txt, key=f"val::{i}")
                 else:
