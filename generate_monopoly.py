@@ -239,10 +239,8 @@ def main():
     # svg_original = r"C:\Users\rcxsm\Downloads\Seminopoly_placeholders.svg"
     # json_updated = r"C:\Users\rcxsm\Downloads\Seminopoly_placeholders.json"
     # svg_updated = r"C:\Users\rcxsm\Downloads\Seminopoly_placeholders_edited.svg"
-
-    json_original = r"https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/Seminopoly_placeholders.json"
-    svg_original = r"https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/Seminopoly_placeholders.svg"
-    svg_updated = r"Seminopoly_placeholders_edited.svg"
+    json_original ="https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/Seminopoly_placeholders.json"
+    svg_updated = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/Seminopoly_placeholders.svg"
 
     #placeholders, new_svg_content = prepare_monopoly(json_original, svg_original, json_updated, svg_updated)
     input_with_default(json_original,  svg_updated) #placeholders, new_svg_content)
