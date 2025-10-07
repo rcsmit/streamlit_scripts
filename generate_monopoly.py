@@ -103,7 +103,6 @@ def data_uri_svg(svg: str) -> str:
 def main():
     
     # -------------------- CONFIG --------------------
-    JSON_URL = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/Seminopoly_placeholders.json"
     SVG_URL  = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/Seminopoly_placeholders.svg"
     PER_ROW = 5
 
@@ -123,7 +122,32 @@ def main():
     # except Exception as e:
     #     st.error(f"Could not read SVG. {e}")
     #     st.stop()
-    new_svg_content, data = prepare_monopoly(SVG_URL)
+
+    # new_svg_content, data = prepare_monopoly(SVG_URL)
+
+    # -------------------- LOAD ----------------------
+    # Build SVG-derived defaults
+    new_svg_content, auto_map = prepare_monopoly(SVG_URL)
+
+    st.subheader("Load a previous mapping")
+    uploaded_json = st.file_uploader("Upload JSON mapping file", type=["json"])
+
+    data = None
+    if uploaded_json is not None:
+        try:
+            # Read the uploaded JSON as mapping {placeholder: value}
+            data = json.load(uploaded_json)
+            if not isinstance(data, dict):
+                st.error("Uploaded JSON must be an object like {placeholder: text}")
+                st.stop()
+            st.success("Uploaded JSON loaded")
+        except Exception as e:
+            st.error(f"Could not parse uploaded JSON. {e}")
+            st.stop()
+    else:
+        # Fallback to the mapping auto-extracted from the SVG
+        data = auto_map
+        st.info("No JSON uploaded. Using mapping auto-extracted from SVG.")
     # -------------------- GROUP VALUES ----------------
     rev = defaultdict(list)
     for k, v in data.items():
