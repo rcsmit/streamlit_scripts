@@ -132,14 +132,22 @@ def get_data_caolonen(tabel):
             (df["maand"].isnull())]
     
     return df
+
 def get_inkomstenheffingen():
-   
+
     file = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/inkomensheffingen.csv"
     df = pd.read_csv(file, delimiter=";",  decimal="." )
 
     # nieuwe kolom met de som (behalve jaar)
     print (df.dtypes)
-    df["belastingdruk"] = df.drop(columns=["Group", "jaar"]).sum(axis=1)
+    # som van alle numerieke kolommen behalve Jaar
+    for col in df.columns:
+        if col not in ["Group"]:
+            df[col] = pd.to_numeric(df[col], errors="coerce").astype(float)
+
+    df["all"] = "all"
+    cols_to_sum = df.columns.difference(["Group","jaar", "all"])
+    df["belastingdruk"] = df[cols_to_sum].sum(axis=1)
     return df
 def get_df(file):
     df = pd.read_csv(file, delimiter=",",  decimal="." )
@@ -250,7 +258,9 @@ def make_plot(df_totaal,teller,noemer):
         "CPI_1",
         "loon_40",
         "loon_38",
-        "loon_36"
+        "loon_36",
+        "netto_loon_index",
+        "belastingdruk"
     ]
 
     # def make_plot(df_totaal):
@@ -304,8 +314,9 @@ def info():
 
     st.info("Consumentenprijzen; prijsindex 2015=100. Gewijzigd op: 1 oktober 2025 - https://opendata.cbs.nl/statline/?dl=3F0E#/CBS/nl/dataset/83131NED/table")
     st.info("Minimumloon (bruto) per maand voor 36, 38 en 40 uur per week. Bron: Rijksoverheid - https://www.rijksoverheid.nl/onderwerpen/minimumloon/bedragen-minimumloon")
+    st.info("Belastingdruk : https://www.cbs.nl/nl-nl/longread/diversen/2021/inkomens-verdeeld-40-jaar-in-vogelvlucht/4-belastingen?utm_source=chatgpt.com")
 def main_():
-    kol = ["CaoLonenPerMaandExclBijzBeloningen_1","CPI_1","loon_40","loon_38","loon_36"]
+    kol = ["CaoLonenPerMaandExclBijzBeloningen_1","CPI_1","loon_40","loon_38","loon_36","netto_loon_index"]
     col1,col2,col3,col4=st.columns(4)
     with col3:
         teller = st.selectbox("Teller", kol, index=0)
@@ -324,10 +335,14 @@ def main_():
     df_merge = df_merge.merge(df_belastingdruk, on="jaar", how="inner")
     df_totaal = df_merge.merge(df_minimumloon, on="jaar", how="outer")
     df_totaal["netto_lonen"] = df_totaal["CaoLonenPerMaandExclBijzBeloningen_1"] * (1-df_totaal["belastingdruk"]/100)
-    df_totaal["all"] = "all"
-    df_totaal = verleg_basisjaar(df_totaal, basisjaar, "belastingdruk", "all")
 
-    st.write(df_totaal)
+    basiswaarde_nettoloon = df_totaal.loc[df_totaal["jaar"] == basisjaar, "netto_lonen"].iloc[0]
+    df_totaal["netto_loon_index"] = df_totaal["netto_lonen"] / basiswaarde_nettoloon * 100
+
+
+    #df_totaal = verleg_basisjaar(df_totaal, basisjaar, "belastingdruk", "all")
+
+
     with col1:
         min,max = st.slider("Selecteer jaartal bereik", int(df_totaal["jaar"].min()), int(df_totaal["jaar"].max()), (2010, 2025), 1)
     df_totaal = df_totaal[(df_totaal["jaar"]>=min ) & (df_totaal["jaar"]<=max)]
