@@ -134,11 +134,12 @@ def get_data_caolonen(tabel):
     return df
 def get_inkomstenheffingen():
    
-    file = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/inkomstenheffingen.csv"
+    file = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/inkomensheffingen.csv"
     df = pd.read_csv(file, delimiter=";",  decimal="." )
 
     # nieuwe kolom met de som (behalve jaar)
-    df["belastingdruk"] = df.drop(columns=["Group", "Jaar"]).sum(axis=1)
+    print (df.dtypes)
+    df["belastingdruk"] = df.drop(columns=["Group", "jaar"]).sum(axis=1)
     return df
 def get_df(file):
     df = pd.read_csv(file, delimiter=",",  decimal="." )
@@ -322,7 +323,11 @@ def main_():
     df_merge = df_cao_lonen.merge(df_cpi, on="jaar", how="inner")
     df_merge = df_merge.merge(df_belastingdruk, on="jaar", how="inner")
     df_totaal = df_merge.merge(df_minimumloon, on="jaar", how="outer")
-    
+    df_totaal["netto_lonen"] = df_totaal["CaoLonenPerMaandExclBijzBeloningen_1"] * (1-df_totaal["belastingdruk"]/100)
+    df_totaal["all"] = "all"
+    df_totaal = verleg_basisjaar(df_totaal, basisjaar, "belastingdruk", "all")
+
+    st.write(df_totaal)
     with col1:
         min,max = st.slider("Selecteer jaartal bereik", int(df_totaal["jaar"].min()), int(df_totaal["jaar"].max()), (2010, 2025), 1)
     df_totaal = df_totaal[(df_totaal["jaar"]>=min ) & (df_totaal["jaar"]<=max)]
