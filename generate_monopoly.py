@@ -4,7 +4,7 @@ import io
 import re
 from collections import defaultdict
 from urllib.parse import quote
-
+from html import unescape
 import requests
 import streamlit as st
 
@@ -34,12 +34,41 @@ def prepare_monopoly(svg_original):
     texts = re.findall(r'>([^<>]+)<', svg_content)
 
     # Create placeholder mapping
-    placeholders = {f"text_{i+1}": text.strip() for i, text in enumerate(texts) if text.strip()}
+    placeholders = {}
+    n = 1  # counter for non-skipped items
 
+    for s in texts:
+        t = s.strip()
+        if not t:
+            continue
+
+        # Skip CSS selectors or hex colors
+        if t.startswith("#"):
+            placeholders[f"{t}"] = t
+        else:
+            placeholders[f"text_{n:03}"] = t
+            n += 1
+
+
+   
     # Replace text in SVG with placeholders {text_i}
     new_svg_content = svg_content
-    for i, (key, value) in enumerate(placeholders.items(), start=1):
-        new_svg_content = new_svg_content.replace(value, f"{{{key}}}")
+    # for i, (key, value) in enumerate(placeholders.items(), start=1):
+    #     new_svg_content = new_svg_content.replace(value, f"{{{key}}}")
+
+
+        # Replace text in SVG with placeholders {key}
+    # 1) sort by length (desc) to avoid prefix collisions
+    items = sorted(placeholders.items(), key=lambda kv: len(kv[1]), reverse=True)
+
+    for key, value in items:
+        # 2) replace only when value is the *whole* text node content
+        pattern = r'>' + re.escape(value) + r'<'
+        replacement = f'>{{{key}}}<'
+        new_svg_content = re.sub(pattern, replacement, new_svg_content)
+
+
+        #st.write(f"Replaced '{value}' with '{{{key}}}'")
     new_svg_content = new_svg_content.replace("$", "{CURRENCY_SYMBOL}")  # Example replacement
     new_svg_content = new_svg_content.replace("PRICE", "{PRICE}")  #
     # # Save new SVG with placeholders
@@ -68,8 +97,33 @@ def fetch_text(url: str) -> str:
  
     return r.text
 
+def merge_svg_(svg_text: str, mapping: dict) -> tuple[str, set, set]:
+
+    # Matches {anything_without_spaces_or_braces}
+    PLACEHOLDER_RE = re.compile(r"\{([^{}\s]+)\}")
+    #PLACEHOLDER_RE = re.compile(r"\{([#A-Za-z0-9_:-]+)\}")
+    # If your SVG has &#123;key&#125; this makes them real braces
+    svg_text = unescape(svg_text)
+
+    # Normalize mapping keys and values
+    mapping = {str(k).strip(): str(v) for k, v in mapping.items()}
+
+    svg_keys = set(PLACEHOLDER_RE.findall(svg_text))
+    map_keys = set(mapping.keys())
+    missing = svg_keys - map_keys
+    unused = map_keys - svg_keys
+
+    def repl(m: re.Match) -> str:
+        k = m.group(1)
+        return mapping.get(k, m.group(0))  # keep as-is if not mapped
+
+    merged = PLACEHOLDER_RE.sub(repl, svg_text)
+    return merged, missing, unused
+
 def merge_svg(svg_text: str, mapping: dict) -> tuple[str, set, set]:
-    svg_keys = set(re.findall(r"\{([A-Za-z0-9_:-]+)\}", svg_text))
+    #svg_keys = set(re.findall(r"\{([A-Za-z0-9_:-]+)\}", svg_text))
+    svg_keys = set(re.findall(r"\{([#A-Za-z0-9_:-]+)\}", svg_text))
+
     map_keys = set(mapping.keys())
     missing = svg_keys - map_keys
     unused = map_keys - svg_keys
@@ -77,25 +131,9 @@ def merge_svg(svg_text: str, mapping: dict) -> tuple[str, set, set]:
     def repl(m):
         k = m.group(1)
         return str(mapping.get(k, m.group(0)))
-    merged = re.sub(r"\{([A-Za-z0-9_:-]+)\}", repl, svg_text)
+    merged = re.sub(r"\{([#A-Za-z0-9_:-]+)\}", repl, svg_text)
     return merged, missing, unused
 
-def merge_svg(svg_text: str, mapping: dict) -> tuple[str, set, set]: 
-    """ Replace placeholders {key} with mapping[key]. Returns: merged_svg, missing_keys, unused_keys """ 
-    # Collect all placeholders present in the SVG 
-    #template 
-    # 
-    svg_keys = set(re.findall(r"\{([A-Za-z0-9_:-]+)\}", svg_text)) 
-    map_keys = set(mapping.keys()) 
-    missing = svg_keys - map_keys 
-    unused = map_keys - svg_keys 
-    # Replace using a safe function so we only touch {key} patterns 
-    def repl(match): 
-        k = match.group(1) 
-        return str(mapping.get(k, match.group(0))) # keep {key} if missing 
-    merged = re.sub(r"\{([A-Za-z0-9_:-]+)\}", repl, svg_text) 
-    
-    return merged, missing, unused
 
 def data_uri_svg(svg: str) -> str:
     return "data:image/svg+xml;utf8," + quote(svg)
@@ -194,77 +232,90 @@ def main():
     st.divider()
 
     # -------------------- GENERATE UPDATED JSON ----------------
-    left, mid, right = st.columns([1,1,2])
-
-    with left:
-        if st.button("Generate JSON"):
+    #left, mid, right = st.columns([1,1,2])
+    buf = None
+    if 1==1:
+        if st.button("Generate JSON + SVG"):
             new_map = {}
             for k, v in data.items():
                 v_str = "" if v is None else str(v)
                 new_map[k] = edited_values.get(v_str, v_str)
 
             st.session_state["new_map"] = new_map
-            st.success("Updated JSON ready")
-            st.json(new_map)
+            # st.success("Updated JSON ready")
+            
 
             buf = io.BytesIO(json.dumps(new_map, ensure_ascii=False, indent=2).encode("utf-8"))
             st.session_state["json_buf"] = buf
+            
 
-    with mid:
-        st.info(
-            f"Unique value groups: {len(unique_values)}\n"
-            f"Total placeholders: {len(data)}"
-        )
+   
+            st.info(
+                f"Unique value groups: {len(unique_values)}\n"
+                f"Total placeholders: {len(data)}"
+            )
+            
 
-    with right:
-        # Allow fallback to original map if user did not click Generate yet
-        use_generated = st.checkbox("Use updated JSON from this session", value=True)
+            # Allow fallback to original map if user did not click Generate yet
+            use_generated = True # st.checkbox("Use updated JSON from this session", value=True)
 
-        if st.button("Merge into SVG"):
+        
             active_map = None
             if use_generated and "new_map" in st.session_state:
                 #st.write(st.session_state["new_map"])
-                st.info("New map used")
+                # st.info("New map used")
                 active_map = st.session_state["new_map"]
             else:
                 # build a pass-through map from current JSON
                 active_map = data
-                st.info("No new input")
+                # st.info("No new input")
             
             merged_svg, missing_keys, unused_keys = merge_svg(new_svg_content, active_map)
             merged_svg = merged_svg.replace("{CURRENCY_SYMBOL}", currency_symbol)
             merged_svg = merged_svg.replace("{PRICE}", price_text)
             merged_svg = merged_svg.replace("$", currency_symbol)
             merged_svg = merged_svg.replace("PRICE", price_text)
-
-
-            if missing_keys:
-                st.warning(f"Missing placeholders in JSON: {sorted(missing_keys)}")
-            if unused_keys:
-                st.info(f"JSON keys not used in template: {sorted(list(unused_keys))[:10]}{' …' if len(unused_keys) > 10 else ''}")
-
-            st.success("Merged SVG created")
-            st.code(merged_svg[:2000] + ("\n...\n" if len(merged_svg) > 2000 else ""), language="xml")
-
-            # Inline preview
-            st.markdown(f'<img src="{data_uri_svg(merged_svg)}" style="max-width:100%;">', unsafe_allow_html=True)
-
-            # Downloads
-            if "json_buf" in st.session_state:
+            merged_svg = merged_svg.replace("XXX", "")
+            
+            @st.fragment
+            def fragment_function_download_json():
                 st.download_button(
-                    "Download updated JSON",
+                    "Download updated JSON to reuse later",
                     data=st.session_state["json_buf"],
                     file_name="placeholders_updated.json",
                     mime="application/json",
                 )
 
-            svg_buf = io.BytesIO(merged_svg.encode("utf-8"))
-            st.download_button(
-                "Download merged SVG",
-                data=svg_buf,
-                file_name="merged.svg",
-                mime="image/svg+xml",
-            )
+            fragment_function_download_json()
+            
+            # Downloads
+            #if "json_buf" in st.session_state:
+            @st.fragment
+            def fragment_function_download_svg():
+                svg_buf = io.BytesIO(merged_svg.encode("utf-8"))
+                st.download_button(
+                    "Download merged SVG",
+                    data=svg_buf,
+                    file_name="merged.svg",
+                    mime="image/svg+xml",
+                )
+            fragment_function_download_svg()
+            if 1==2:
+                if missing_keys:
+                    st.warning(f"Missing placeholders in JSON: {sorted(missing_keys)}")
+                if unused_keys:
+                    st.info(f"JSON keys not used in template: {sorted(list(unused_keys))}")
+                    for l in sorted(unused_keys):
+                        st.write(f"- `{l}` : `{data[l]}`")
+
+                
+                st.json(new_map)
+            st.success("Merged SVG created")
+            
+            # Inline preview
+            st.markdown(f'<img src="{data_uri_svg(merged_svg)}">', unsafe_allow_html=True)
+            st.code(merged_svg[:2000] + ("\n...\n" if len(merged_svg) > 2000 else ""), language="xml")
+
 
     st.info("Board design by jeffgeerling.com, 2007.  CC BY-SA 3.0 US")
     st.info(f"SVG Template - {SVG_URL}")
