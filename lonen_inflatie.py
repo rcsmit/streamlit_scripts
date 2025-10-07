@@ -320,6 +320,7 @@ def main_():
     
     # merge stap voor stap
     df_merge = df_cao_lonen.merge(df_cpi, on="jaar", how="inner")
+    df_merge = df_merge.merge(df_belastingdruk, on="jaar", how="inner")
     df_totaal = df_merge.merge(df_minimumloon, on="jaar", how="outer")
     
     with col1:
