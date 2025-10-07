@@ -132,7 +132,14 @@ def get_data_caolonen(tabel):
             (df["maand"].isnull())]
     
     return df
+def get_inkomstenheffingen():
+   
+    file = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/inkomstenheffingen.csv"
+    df = pd.read_csv(file, delimiter=";",  decimal="." )
 
+    # nieuwe kolom met de som (behalve jaar)
+    df["belastingdruk"] = df.drop(columns=["Group", "Jaar"]).sum(axis=1)
+    return df
 def get_df(file):
     df = pd.read_csv(file, delimiter=",",  decimal="." )
     return df
@@ -309,7 +316,7 @@ def main_():
     df_cao_lonen = get_cao_lonen(basisjaar, False)
     df_cpi = get_cpi(basisjaar, False)
     df_minimumloon = get_minimumloon(basisjaar)
-
+    df_belastingdruk= get_inkomstenheffingen()
     
     # merge stap voor stap
     df_merge = df_cao_lonen.merge(df_cpi, on="jaar", how="inner")
