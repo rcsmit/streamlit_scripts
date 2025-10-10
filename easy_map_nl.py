@@ -53,6 +53,7 @@ def get_data():
     df = pl.read_csv(file )
     return df
 
+
 def main():
     data = get_data()
     

@@ -77,7 +77,7 @@ def main():
                 ["[44] CPI vs loon","cpi_loon",""],
                 ["[45] Crypto Dashboard","crypto_dashboard",""],
                 ["[46] Transcript Thai","transcript_thai",""],
-                ["[47] Levensverw. in tijd ", "levensverw_door_tijd_heen",],
+                ["[47] Levensverw. in tijd ", "levensverw_door_tijd_heen",""],
                 ["[48] Images2pdf","images_to_pdf",""],
                 ["[49] Viager calculation ","viager_calculation",""],
                 ["[50] Neerslaganalyse ","neerslaganalyse",""],
@@ -113,6 +113,7 @@ def main():
 
     # query_params = st.experimental_get_query_params()
     # choice = int(query_params["choice"][0]) if "choice" in query_params else 0 
+    
     try:
         choice = int(st.query_params["choice"]) 
     except:
@@ -125,11 +126,12 @@ def main():
     else:
         expanded = True
     with st.sidebar.expander('MENU: Choose a script | scroll down for options/parameters',  expanded=expanded):
-        try:
-            menu_choice = st.radio(".",menuchoicelist, index=choice, help=menuhelplist, label_visibility='hidden')
-        except:
-            st.error("ERROR. Choice not in menulist")
-            st.stop()
+        # try:
+        if 1==1:
+            menu_choice = st.radio(".",menuchoicelist, index=choice, captions=menuhelplist, label_visibility='hidden')
+        # except:
+        #     st.error("ERROR. Choice not in menulist")
+        #     st.stop()
     st.sidebar.markdown("- - - - - - - - - - - - - - - - - - ", unsafe_allow_html=True)
     #st.experimental_set_query_params(choice=menuchoicelist.index(menu_choice))
     st.query_params.choice = menuchoicelist.index(menu_choice)
