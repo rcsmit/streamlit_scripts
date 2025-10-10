@@ -172,10 +172,10 @@ def main():
     st.pydeck_chart(deck)
 
 
-    if st.button("Opslaan als HTML"):
+    # if st.button("Opslaan als HTML"):
         
-        # Opslaan als HTML
-        deck.to_html("map.html", notebook_display=False)
+    #     # Opslaan als HTML
+    #     deck.to_html("map.html", notebook_display=False)
 
     st.info("Gebruik [WIN]-[Shift]-[S] om een gebied te selecteren en naar het klembord te kopieeren")
     st.info("Bron coördinaten: https://github.com/LJPc-solutions/Nederlandse-adressen-en-postcodes")
