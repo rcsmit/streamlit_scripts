@@ -4,6 +4,7 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 
+# nieuwe versie lonen_inflatie.py
 
 def get_df():
     """Get the DF with the possibilities.

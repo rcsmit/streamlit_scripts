@@ -74,7 +74,7 @@ def main():
                 ["[41] Leisurewords","leisurewords",""],
                 ["[42] Feels like temp.","feels_like_temperature",""],
                 ["[43] Cleaning simulation","cleaning_simulation",""],
-                ["[44] CPI vs loon","cpi_loon",""],
+                ["[44] CPI vs loon","lonen_inflatie",""], #was cpi_loon
                 ["[45] Crypto Dashboard","crypto_dashboard",""],
                 ["[46] Transcript Thai","transcript_thai",""],
                 ["[47] Levensverw. in tijd ", "levensverw_door_tijd_heen",""],
