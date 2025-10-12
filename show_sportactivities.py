@@ -47,7 +47,7 @@ def get_data(who):
             
             # Concatenate DataFrames
             # Concatenate DataFrames in one command
-            df_final = pd.concat([dfs["2022"], dfs["new"], dfs["2023a"], dfs["2023b"], dfs["2025a"]], ignore_index=False)
+            df_final = pd.concat([dfs["2022"], dfs["new"], dfs["2023a"], dfs["2023b"], dfs["2025a"], dfs["2025b"]], ignore_index=False)
             # df_tm_2022 = pd.concat([dfs["2022"], dfs["new"]], ignore_index=False)
             # df_2023_combined = pd.concat([dfs["2023a"], df_tm_2022], ignore_index=False)
             # df_final = pd.concat([dfs["2023b"], df_2023_combined, dfs["2025a"]], ignore_index=False)
@@ -128,7 +128,7 @@ def get_data(who):
             df['gem_snelh'] = df['Afstand'] / df['Tijd_seconds'] * 3600.0 
 
             df = filter_df(df, "Activiteittype",2).copy(deep=False)
-              
+             
     elif who == "Didier":
         url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/activities_didier.csv"
         #url = "C:\\Users\\rcxsm\\Documents\\pyhton_scripts\\streamlit_scripts\\input\\activities_didier.csv"
@@ -140,7 +140,7 @@ def get_data(who):
         st.error("Error in who")
         st.stop()
     df = last_manipulations_df(df).copy(deep=False)
-
+    st.write(df) 
     return df
 
 def create_extra_date_time_columns(df, what):
@@ -602,6 +602,7 @@ def plot_histogram_distance_year_animated(df):
 def main():
     who  = st.sidebar.selectbox("Wie",["Didier", "Rene"], index=1)
     df = get_data(who).copy(deep=False)
+  
     lijst = ["find km per year",
             "find fastest per distance",
             "find fastest per year for a distance",

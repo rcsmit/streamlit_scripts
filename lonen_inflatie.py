@@ -331,8 +331,8 @@ def main_():
     df_belastingdruk= get_inkomstenheffingen()
     
     # merge stap voor stap
-    df_merge = df_cao_lonen.merge(df_cpi, on="jaar", how="inner")
-    df_merge = df_merge.merge(df_belastingdruk, on="jaar", how="inner")
+    df_merge = df_cao_lonen.merge(df_cpi, on="jaar", how="outer")
+    df_merge = df_merge.merge(df_belastingdruk, on="jaar", how="outer")
     df_totaal = df_merge.merge(df_minimumloon, on="jaar", how="outer")
     df_totaal["netto_lonen"] = df_totaal["CaoLonenPerMaandExclBijzBeloningen_1"] * (1-df_totaal["belastingdruk"]/100)
 
