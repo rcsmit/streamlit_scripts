@@ -46,7 +46,7 @@ def manipuleer_laatste_jaar(df):
     df.loc[mask, ["maandnr", "maand"]] = [pd.NA, pd.NA]
    
     return df
-def verleg_basisjaar(df, basisjaar, kolommen, groep):
+def verleg_basisjaar(df, basisjaar, kolommen, groep, tabelnaam):
     """ Verlegt het basisjaar van de opgegeven kolommen in de dataframe naar het opgegeven basisjaar.
         De waarden in de opgegeven kolommen worden omgerekend naar indexcijfers met het basisjaar als 100.
         
@@ -55,7 +55,7 @@ def verleg_basisjaar(df, basisjaar, kolommen, groep):
             basisjaar (int): Het jaar dat als basisjaar moet worden gebruikt.
             kolommen (list): Lijst van kolomnamen die moeten worden aangepast.
             groep (str): De kolomnaam die de groepen aangeeft waarop de basiswaarden moeten worden bepaald.
-        
+            tabelnaam(str): Naam van de tabel, nodig voor de foutmelding
         Returns:
             pd.DataFrame: De aangepaste dataframe met de kolommen omgerekend naar indexcijfers.
     """
@@ -67,11 +67,15 @@ def verleg_basisjaar(df, basisjaar, kolommen, groep):
           .add_suffix("_basis")
     )
     basis = basis.rename(columns={f"{groep}_basis": groep})
+    
+
+    if len(basis)==0:
+        st.error(f"Geen cijfer gevonden voor {basisjaar} in {tabelnaam}")
     out = df.merge(basis, on=groep, how="left")
     # vectorized: deel alles in één keer
     out[kolommen] = out[kolommen].values / out[[c+"_basis" for c in kolommen]].values * 100.0
     out.drop(columns=[c+"_basis" for c in kolommen], inplace=True)
-
+ 
     return out
 
 # functie om waarden te ontleden
@@ -119,7 +123,7 @@ def get_data_caolonen_cached(tabel: str) -> pd.DataFrame:
     print (f"getting data {tabel}")
     return pd.DataFrame(cbsodata.get_data(tabel))
 
-@st.cache_data()
+#@st.cache_data()
 def get_data_caolonen(tabel):
     
     df = get_data_caolonen_cached(tabel)
@@ -184,7 +188,7 @@ def get_cao_lonen(basisjaar, get_from_cbs):
         
         
         df_1 = get_data_caolonen("82838NED") # 2010 = 100 
-        df_1 = verleg_basisjaar(df_1, 2020, kolommen, groep)
+        df_1 = verleg_basisjaar(df_1, 2020, kolommen, groep, "CAO lonen")
         df_1=df_1[df_1["jaar"]<=2020]
 
         df_2 = get_data_caolonen("85663NED") # 2020 = 100 
@@ -194,8 +198,10 @@ def get_cao_lonen(basisjaar, get_from_cbs):
         # df_cao_lonen.to_csv("caolonen.csv")
     else:
         df_cao_lonen = get_df("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/caolonen.csv")
-    df_cao_lonen= verleg_basisjaar(df_cao_lonen, basisjaar,kolommen, groep)
-   
+    
+    print (df_cao_lonen.dtypes)
+    df_cao_lonen= verleg_basisjaar(df_cao_lonen, basisjaar,kolommen, groep,"CAO lonen")
+    
     return df_cao_lonen
 
 @st.cache_data()
@@ -217,16 +223,44 @@ def get_cpi(basisjaar, get_from_cbs):
         #df.to_csv("cpi.csv")
     else:
         df = get_df("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/cpi.csv")
-    df = verleg_basisjaar(df, basisjaar, kolommen, "Bestedingscategorieen")
+
+
+        
+        kolommen = ["CPI_1"]
+        sheet_id_cpi_googlesheets = "11bCLM4-lLZ56-XJjBjvXyXJ11P3PiNjV6Yl96x-tEnM"
+        sheet_name_cpi_googlesheets = "data"
+        # https://docs.google.com/spreadsheets/d/11bCLM4-lLZ56-XJjBjvXyXJ11P3PiNjV6Yl96x-tEnM/gviz/tq?tqx=out:csv&sheet=data
+        # https://docs.google.com/spreadsheets/d/11bCLM4-lLZ56-XJjBjvXyXJ11P3PiNjV6Yl96x-tEnM/edit?usp=sharing
+        url_cpi_googlesheets = f"https://docs.google.com/spreadsheets/d/{sheet_id_cpi_googlesheets}/gviz/tq?tqx=out:csv&sheet={sheet_name_cpi_googlesheets}"
+        df = pd.read_csv(url_cpi_googlesheets, delimiter=",",  decimal="," )
+        df=df[["datum","dummy", "CPI_1"]]
+        # omzetten naar datetime
+        df["datum"] = pd.to_datetime(df["datum"], errors="coerce")
+
+        # nieuwe kolommen
+        df["jaar"] = df["datum"].dt.year
+        df["maand"] = df["datum"].dt.month
+        df["dag"] = df["datum"].dt.day
+       
+        # filter: alleen maand 7 (juli) Om de een of andere reden wordt de datum als mm-dd-jjjj gelezen
+        df = df[df["dag"] == 7]
+        
+        for col in kolommen:
+            df[col] = pd.to_numeric(df[col])
   
+    df = verleg_basisjaar(df, basisjaar, kolommen, "dummy", "CPI")
+    
     return df
 @st.cache_data()
 def get_minimumloon(basisjaar):
     kolommen = ["loon_40",	"loon_38",	"loon_36"]
     sheet_id_minimumloon = "11bCLM4-lLZ56-XJjBjvXyXJ11P3PiNjV6Yl96x-tEnM"
     sheet_name_minimumloon = "data"
-
+    # https://docs.google.com/spreadsheets/d/11bCLM4-lLZ56-XJjBjvXyXJ11P3PiNjV6Yl96x-tEnM/gviz/tq?tqx=out:csv&sheet=data
+    
+    # https://docs.google.com/spreadsheets/d/11bCLM4-lLZ56-XJjBjvXyXJ11P3PiNjV6Yl96x-tEnM/edit?usp=sharing
     url_minimumloon = f"https://docs.google.com/spreadsheets/d/{sheet_id_minimumloon}/gviz/tq?tqx=out:csv&sheet={sheet_name_minimumloon}"
+    print(url_minimumloon)
     #url_minimumloon = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/minimumloon_dummy.csv"
     df_minimumloon = pd.read_csv(url_minimumloon, delimiter=",",  decimal="," )
     # omzetten naar datetime
@@ -237,17 +271,18 @@ def get_minimumloon(basisjaar):
     df_minimumloon["maand"] = df_minimumloon["datum"].dt.month
     df_minimumloon["dag"] = df_minimumloon["datum"].dt.day
 
-    # filter: alleen maand 7 (juli)
-    df_minimumloon = df_minimumloon[df_minimumloon["maand"] == 7]
+    # filter: alleen maand 7 (juli). Om de een of andere reden wordt de datum als mm-dd-jjjj gelezen
+    df_minimumloon = df_minimumloon[df_minimumloon["dag"] == 7]
    
     for col in kolommen:
         df_minimumloon[col] = pd.to_numeric(df_minimumloon[col])
 
-    df_minimumloon = verleg_basisjaar(df_minimumloon, basisjaar, kolommen, "dummy")
-
+    df_minimumloon = verleg_basisjaar(df_minimumloon, basisjaar, kolommen, "dummy", "minimumloon")
+    df_minimumloon=df_minimumloon[["datum", "jaar", "loon_40", "loon_38", "loon_36"]]
+   
     return df_minimumloon
 
-def make_plot(df_totaal,teller,noemer):
+def make_plot(df_totaal,teller,noemer, basisjaar):
     """ Maakt een plot van de opgegeven dataframe met de opgegeven kolommen.
         Args:
             df_totaal (pd.DataFrame): De dataframe met de gegevens.
@@ -263,7 +298,7 @@ def make_plot(df_totaal,teller,noemer):
         "netto_loon_index",
         "belastingdruk"
     ]
-    
+
     kolommen = st.multiselect("Lijnen", kolommen_, kolommen_)
     # def make_plot(df_totaal):
     
@@ -272,7 +307,7 @@ def make_plot(df_totaal,teller,noemer):
     with col1:
         dfp = df_totaal.sort_values("jaar")
         fig = px.line(dfp, x="jaar", y=kolommen, markers=True, template="plotly_white",
-                    title="CAO-lonen, CPI en minimumloon")
+                    title=f"CAO-lonen, CPI en minimumloon ({basisjaar} = 100)")
         
         # legenda onder
         fig.update_layout(
@@ -290,7 +325,7 @@ def make_plot(df_totaal,teller,noemer):
 
     with col2:
         fig = px.line(dfp, x="jaar", y="ratio", markers=True, template="plotly_white",
-                    title=f"Verhouding {teller} / {noemer} * 100")
+                    title=f"Verhouding {teller} / {noemer} * 100 ({basisjaar} = 100)")
         
         
         # legenda onder
@@ -314,9 +349,10 @@ def info():
     st.info("Cao-lonen, contractuele loonkosten en arbeidsduur; (2010=100), 1972-2023. Gewijzigd op: 2 november 2023 - https://opendata.cbs.nl/#/CBS/nl/dataset/82838NED/table?ts=1759502982850")
     st.info("Cao-lonen, contractuele loonkosten en arbeidsduur; indexcijfers (2020=100) Gewijzigd op: 2 oktober 2025 - https://opendata.cbs.nl/?dl=9CB37#/CBS/nl/dataset/85663NED/table")
 
-    st.info("Consumentenprijzen; prijsindex 2015=100. Gewijzigd op: 1 oktober 2025 - https://opendata.cbs.nl/statline/?dl=3F0E#/CBS/nl/dataset/83131NED/table")
-    st.info("Minimumloon (bruto) per maand voor 36, 38 en 40 uur per week. Bron: Rijksoverheid - https://www.rijksoverheid.nl/onderwerpen/minimumloon/bedragen-minimumloon")
+    st.info("Consumentenprijzen; prijsindex 2015=100. Gewijzigd op: 1 oktober 2025 - https://opendata.cbs.nl/statline/?dl=3F0E#/CBS/nl/dataset/83131NED/table - cijfers tot en met 2012: https://opendata.cbs.nl/#/CBS/nl/dataset/71905ned/table")
+    st.info("Minimumloon (bruto) per maand voor 36, 38 en 40 uur per week. Bron: Rijksoverheid - https://www.rijksoverheid.nl/onderwerpen/minimumloon/bedragen-minimumloon - https://www.internetconsultatie.nl/weteerlijkerinkomen/document/6198 - https://docs.google.com/spreadsheets/d/11bCLM4-lLZ56-XJjBjvXyXJ11P3PiNjV6Yl96x-tEnM/edit?usp=sharing")
     st.info("Belastingdruk : https://www.cbs.nl/nl-nl/longread/diversen/2021/inkomens-verdeeld-40-jaar-in-vogelvlucht/4-belastingen?utm_source=chatgpt.com")
+    st.info("Door het combineren van databronnen en het verleggen van basisjaren kunnen er minimale afwijkingen ontstaan.")
 def main_():
     kol = ["CaoLonenPerMaandExclBijzBeloningen_1","CPI_1","loon_40","loon_38","loon_36","netto_loon_index"]
     col1,col2,col3,col4=st.columns(4)
@@ -325,9 +361,10 @@ def main_():
     with col4:
         noemer = st.selectbox("Noemer", kol, index=1)
     with col2:
-        basisjaar=st.number_input("Basisjaar voor indexcijfers", min_value=1996, max_value=2025, value=2015, step=1)
+        basisjaar=st.number_input("Basisjaar voor indexcijfers", min_value=1969, max_value=2025, value=2015, step=1)
     
     df_cao_lonen = get_cao_lonen(basisjaar, False)
+    
     df_cpi = get_cpi(basisjaar, False)
     df_minimumloon = get_minimumloon(basisjaar)
     df_belastingdruk= get_inkomstenheffingen()
@@ -341,8 +378,7 @@ def main_():
     basiswaarde_nettoloon = df_totaal.loc[df_totaal["jaar"] == basisjaar, "netto_lonen"].iloc[0]
     df_totaal["netto_loon_index"] = df_totaal["netto_lonen"] / basiswaarde_nettoloon * 100
 
-
-    #df_totaal = verleg_basisjaar(df_totaal, basisjaar, "belastingdruk", "all")
+    #df_totaal = verleg_basisjaar(df_totaal, basisjaar, "belastingdruk", "all", "df_totaal")
 
 
     with col1:
@@ -351,7 +387,7 @@ def main_():
     
     
     df_totaal["ratio"] = df_totaal[teller] / df_totaal[noemer] * 100
-    make_plot(df_totaal,teller,noemer)
+    make_plot(df_totaal,teller,noemer, basisjaar)
     st.info("Loon_36,loon_38,loon_40 zijn respectievelijk het minimumloon voor 36, 38 en 40 uur per week.")
 def main():
     tab1,tab2=st.tabs(["Plot","Bronnen"])
