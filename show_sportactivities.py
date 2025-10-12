@@ -50,7 +50,7 @@ def get_data(who):
             # df_tm_2022 = pd.concat([dfs["2022"], dfs["new"]], ignore_index=False)
             # df_2023_combined = pd.concat([dfs["2023a"], df_tm_2022], ignore_index=False)
             # df_final = pd.concat([dfs["2023b"], df_2023_combined, dfs["2025a"]], ignore_index=False)
-
+            st.write(df_final)
             # Add time-related columns
             df_final["Tijd_timedelta"] = pd.to_timedelta(df_final["Tijd"])
             df_final["Tijd_h"] = df_final["Tijd_timedelta"].dt.components["hours"]
