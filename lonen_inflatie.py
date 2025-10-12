@@ -252,6 +252,7 @@ def make_plot(df_totaal,teller,noemer):
         Args:
             df_totaal (pd.DataFrame): De dataframe met de gegevens.
     """
+    st.write(df_totaal)
     # lijst met kolommen die je wilt plotten
     kolommen = [
         "CaoLonenPerMaandExclBijzBeloningen_1",
