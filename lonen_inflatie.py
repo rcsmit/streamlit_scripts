@@ -363,6 +363,7 @@ def main_():
     with col2:
         basisjaar=st.number_input("Basisjaar voor indexcijfers", min_value=1969, max_value=2025, value=2015, step=1)
     
+    
     df_cao_lonen = get_cao_lonen(basisjaar, False)
     
     df_cpi = get_cpi(basisjaar, False)
