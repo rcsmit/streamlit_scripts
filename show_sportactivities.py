@@ -24,6 +24,7 @@ def get_data(who):
                 "2023a": "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2023a.csv",
                 "2023b": "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2023b.csv",
                 "2025a": "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2025a.csv",
+                "2025b": "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/garminactivities_2025b.csv",
             }
 
             # Helper function to load and preprocess data
@@ -38,7 +39,7 @@ def get_data(who):
                 create_extra_date_time_columns(df, "new" if name == "new" else "not_new")
 
             # Rename columns for consistency
-            for name in ["2022", "2023a", "2023b", "2025a"]:
+            for name in ["2022", "2023a", "2023b", "2025a", "2025b"]:
                 dfs[name] = rename_columns(dfs[name])
 
             # Drop columns with all NaN values
@@ -50,7 +51,7 @@ def get_data(who):
             # df_tm_2022 = pd.concat([dfs["2022"], dfs["new"]], ignore_index=False)
             # df_2023_combined = pd.concat([dfs["2023a"], df_tm_2022], ignore_index=False)
             # df_final = pd.concat([dfs["2023b"], df_2023_combined, dfs["2025a"]], ignore_index=False)
-            st.write(df_final)
+          
             # Add time-related columns
             df_final["Tijd_timedelta"] = pd.to_timedelta(df_final["Tijd"])
             df_final["Tijd_h"] = df_final["Tijd_timedelta"].dt.components["hours"]
@@ -62,7 +63,7 @@ def get_data(who):
             df_final["gem_snelh"] = df_final["Afstand"] / df_final["Tijd_seconds"] * 3600.0
 
             # Filter activities
-            df_final = filter_df(df_final, "Activiteittype", 1).copy(deep=False)
+            df_final = filter_df(df_final, "Activiteittype", 2).copy(deep=False)
             df_final = last_manipulations_df(df_final).copy(deep=False)
 
             return df_final
