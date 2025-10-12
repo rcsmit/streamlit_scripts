@@ -252,9 +252,9 @@ def make_plot(df_totaal,teller,noemer):
         Args:
             df_totaal (pd.DataFrame): De dataframe met de gegevens.
     """
-    st.write(df_totaal)
+    
     # lijst met kolommen die je wilt plotten
-    kolommen = [
+    kolommen_ = [
         "CaoLonenPerMaandExclBijzBeloningen_1",
         "CPI_1",
         "loon_40",
@@ -263,7 +263,8 @@ def make_plot(df_totaal,teller,noemer):
         "netto_loon_index",
         "belastingdruk"
     ]
-
+    
+    kolommen = st.multiselect("Lijnen", kolommen_, kolommen_)
     # def make_plot(df_totaal):
     
     
