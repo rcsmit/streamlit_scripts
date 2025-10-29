@@ -1,3 +1,5 @@
+# OLD USE WEATHER_OPEN_METEO.PY
+
 # Scrapping Weather Data from Ogimet
 #
 # Based on this R-script

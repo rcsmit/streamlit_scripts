@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 import pydeck as pdk
 import numpy as np
+import polars as pl
 
 try:
     st.set_page_config(
@@ -34,6 +35,28 @@ def generate_data():
     # Wegschrijven naar CSV
     df_grouped.write_csv("woonplaats_lat_lon.csv")
 
+    print(df_grouped)
+
+def find_center_of_NL():
+    """
+    take the average of the lat and lon
+    https://github.com/LJPc-solutions/Nederlandse-adressen-en-postcodes
+
+    returns
+        df  : df with the data
+    """
+    # CSV inladen
+    df = pl.read_csv(r"C:\Users\rcxsm\Downloads\adressen.csv")
+
+    # Groeperen op woonplaats en gemiddelde latitude/longitude nemen
+    df_grouped = (
+        df.select([
+            pl.col("latitude").mean().alias("avg_latitude"),
+            pl.col("longitude").mean().alias("avg_longitude")
+        ])
+    )
+
+   
     print(df_grouped)
 
 def hex_to_rgba(hex_code: str, alpha: int = 255) -> list[int]:
@@ -181,4 +204,5 @@ def main():
     st.info("Bron coördinaten: https://github.com/LJPc-solutions/Nederlandse-adressen-en-postcodes")
 
 if __name__ == "__main__":
-    main()
+    # main()
+    find_center_of_NL()

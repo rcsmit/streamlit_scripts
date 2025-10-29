@@ -862,6 +862,9 @@ def main_(locations):
 def legenda():
     # https://open-meteo.com/en/docs/historical-weather-api
     # Define the data for hourly and daily parameters
+
+    st.info("Source: https://open-meteo.com/en/docs/historical-weather-api")
+    st.info("Example: https://open-meteo.com/en/docs/historical-weather-api?daily=rain_sum,temperature_2m_mean,temperature_2m_max,temperature_2m_min,precipitation_hours,precipitation_sum,visibility_mean,visibility_min,visibility_max,relative_humidity_2m_mean,relative_humidity_2m_max,relative_humidity_2m_min,&latitude=9.755106899960907&longitude=99.9609068&start_date=2025-01-01&end_date=2025-07-15&hourly=&timezone=Asia%2FBangko")
     hourly_data = [
         ("temperature_2m", "Instant", "°C (°F)", "Air temperature at 2 meters above ground"),
         ("relative_humidity_2m", "Instant", "%", "Relative humidity at 2 meters above ground"),
@@ -949,7 +952,7 @@ def main():
         {"name": "São Paulo", "lat": -23.5505, "lon": -46.6333, "timezone": "America/Sao_Paulo"},
         {"name": "Istanbul", "lat": 41.0082, "lon": 28.9784, "timezone": "Europe/Istanbul"},
     ]
-    tab1,tab2, tab3 = st.tabs(["Data", "Locations", "Legenda"])
+    tab1,tab2, tab3 = st.tabs(["Data", "Locations", "Source and Legenda"])
     with tab1:
         main_(locations)
     with tab2:
