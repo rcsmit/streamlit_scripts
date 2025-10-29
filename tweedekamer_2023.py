@@ -96,7 +96,7 @@ def calculate_results_gemeente(df):
     kol_partij = "LijstNaam"
     kol_stemmen = "Waarde"
     gemeentes = sorted(df[kol_regio].unique().tolist())
-    index_leiden = gemeentes.index("Leiden")  # geeft positie van 'Leiden'
+    index_leiden = gemeentes.index("Apeldoorn")  # geeft positie van 'Leiden'
     uitgelichte_gemeente = st.selectbox("Gemeente", gemeentes, index=index_leiden)
 
 
@@ -124,8 +124,8 @@ def calculate_results_gemeente(df):
     m = pd.merge(landelijk, apel, on=kol_partij, how="inner").set_index(kol_partij)
 
     # Bereken percentages
-    m["% Nederland"] =  m["Nederland"] / m["Nederland"].sum()
-    m[f"% {uitgelichte_gemeente}"] =  m[uitgelichte_gemeente] / m[uitgelichte_gemeente].sum()
+    m["% Nederland"] =  100* m["Nederland"] / m["Nederland"].sum()
+    m[f"% {uitgelichte_gemeente}"] = 100* m[uitgelichte_gemeente] / m[uitgelichte_gemeente].sum()
     m["Verschil (pp)"] = m[f"% {uitgelichte_gemeente}"] - m["% Nederland"]
 
     # Chi-kwadraattoets
@@ -161,7 +161,7 @@ def calculate_results_landelijk(df):
     landelijk.columns = [kol_partij, "Nederland"]
 
     # Landelijke verdeling in fracties
-    landelijk["p_landelijk"] = landelijk["Nederland"] / landelijk["Nederland"].sum()
+    landelijk["p_landelijk"] = 100* landelijk["Nederland"] / landelijk["Nederland"].sum()
 
     resultaten = []
     gemeenten = agg[kol_regio].unique()
@@ -169,7 +169,7 @@ def calculate_results_landelijk(df):
     for g in gemeenten:
         lokaal = agg.query(f"{kol_regio} == @g")[[kol_partij, kol_stemmen]].rename(columns={kol_stemmen: g})
         m = pd.merge(landelijk, lokaal, on=kol_partij, how="inner").fillna(0)
-        m["p_gemeente"] = m[g] / m[g].sum()
+        m["p_gemeente"] = 100* m[g] / m[g].sum()
 
 
         # Chi-kwadraattoets
@@ -183,7 +183,7 @@ def calculate_results_landelijk(df):
         resultaten.append({"Gemeente": g, "Chi2_prop": chi2_prop,"Chi2_rtl": chi2_rtl})
 
 
-    df_res = pd.DataFrame(resultaten).sort_values("Chi2_rtl", ascending=False)
+    df_res = pd.DataFrame(resultaten).sort_values("Chi2_rtl", ascending=True)
     for fieldname in ["Chi2_rtl","Chi2_prop"]:
     # Rangorde op basis van Chi2_prop, hoogste eerst
         df_res[f"Rank_{fieldname}"] = df_res[fieldname].rank(method="dense", ascending=True).astype(int)
