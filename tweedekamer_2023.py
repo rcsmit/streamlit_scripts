@@ -99,7 +99,8 @@ def calculate_results_gemeente(df):
 
 
     u_df = df[df[kol_regio] == uitgelichte_gemeente]
-    st.write(f"Totaal aantal geldige stemmen in {uitgelichte_gemeente} = {u_df["Waarde"].sum()}")
+    st.write(f"Totaal aantal geldige stemmen in {uitgelichte_gemeente} = {u_df['Waarde'].sum()}")
+
 
     # Som stemmen per partij per regio
     agg = (
