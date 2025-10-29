@@ -195,7 +195,7 @@ def make_plot(df_res):
     columns_metrics = ['Chi2_prop', 'Chi2_rtl', 'Rank_Chi2_rtl', 'Percentiel_Chi2_rtl', 'Rank_Chi2_prop', 'Percentiel_Chi2_prop']
 
     GEO_PATH = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gemeente_2023.geojson"  # zorg dat GM_NAAM in properties staat
-    GEO_PATH="https://https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/gemeente_2023.geojson"
+    GEO_PATH="https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/gemeente_2023.geojson"
     with open(GEO_PATH, "r", encoding="utf-8") as f:
         gjson = json.load(f)
 
