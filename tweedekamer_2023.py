@@ -7,6 +7,8 @@ import streamlit as st
 import folium
 from streamlit_folium import st_folium
 import branca.colormap as cm
+import requests
+
 
 
 def show_info():
@@ -149,7 +151,6 @@ def calculate_results_gemeente(df):
     
     """)
 
-
 def calculate_results_landelijk(df):
     # Pas deze kolomnamen aan als ze anders zijn
     kol_regio = "Regio"
@@ -196,9 +197,15 @@ def make_plot(df_res):
 
     GEO_PATH = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gemeente_2023.geojson"  # zorg dat GM_NAAM in properties staat
     GEO_PATH="https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/gemeente_2023.geojson"
-    with open(GEO_PATH, "r", encoding="utf-8") as f:
-        gjson = json.load(f)
+    # with open(GEO_PATH, "r", encoding="utf-8") as f:
+    #     gjson = json.load(f)
 
+    
+    GEO_PATH = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_2023.geojson"
+
+    r = requests.get(GEO_PATH, timeout=30)
+    r.raise_for_status()
+    gjson = r.json()
     fix = {
         "s-Hertogenbosch": "'s-Hertogenbosch",
         "Nuenen, Gerwen en Nederwetten": "Nuenen, Gerwen en Nederwetten",  # voorbeeld
