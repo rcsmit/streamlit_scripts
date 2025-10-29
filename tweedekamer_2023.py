@@ -78,7 +78,7 @@ Wil je een **neutrale afstand** zonder p-waardes: **chi2_rtl**.
     # Dat vraagt om een vergelijking van percentages (proporties), niet absolute aantallen.
 def get_df():
     #url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\TK2023_uitslag_gemeente.csv"
-    url = "https://https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/TK2023_uitslag_gemeente.csv"
+    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/TK2023_uitslag_gemeente.csv"
     df = pd.read_csv(url, sep=";")
 
     
