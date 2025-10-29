@@ -99,9 +99,10 @@ def main():
                 ["[66] Generate monopoply ","generate_monopoly",""],
                 ["[67] EasyMapNL ","easy_map_nl","Make a custom map of the Netherlands"],
                 ["[68] 2e kamer 2023 ","tweedekamer_2023","Verschil gemeente resultaten vs. landelijke "],
-                
+    
                 ]
  
+
     # for file in arr:
     #     if file[-2:] =="py" and ( file != "welcome.py" and file !="menu_streamlit.py"):
     #         menutext = f"{counter}. {file}"
