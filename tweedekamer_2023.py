@@ -15,6 +15,7 @@ try:
 except:
     pass
 
+@st.cache_data(show_spinner=False)
 def load_votes(jaar):
     if jaar ==2023:
         return load_votes_2023()
@@ -24,6 +25,7 @@ def load_votes(jaar):
         st.error("Fout in jaar")
         st.stop()
 
+@st.cache_data(show_spinner=False)
 def load_votes_2025():
     # C:\Users\rcxsm\Documents\python_scripts\python_scripts_rcsmit\fetch_combine_anp_tk2025.py
 
@@ -153,6 +155,8 @@ Wil je een **neutrale afstand** zonder p-waardes: **chi2_rtl**.
 
     # Dat vraagt om een vergelijking van percentages (proporties), niet absolute aantallen.
 
+
+@st.cache_data(show_spinner=False)
 def calculate_results_gemeente(df, kol_regio,kol_partij,kol_stemmen):
     """Bereken de resultaten van een bepaalde gemeente
 
