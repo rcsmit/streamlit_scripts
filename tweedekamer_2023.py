@@ -1,15 +1,32 @@
-import pandas as pd
-from scipy.stats import chi2_contingency
-import streamlit as st
 import json
+import requests
 import pandas as pd
 import streamlit as st
 import folium
 from streamlit_folium import st_folium
 import branca.colormap as cm
-import requests
+from scipy.stats import chi2_contingency
+try:
+    st.set_page_config(layout="wide", page_title="Stemafwijkingen 2023")
+except:
+    pass
 
 
+@st.cache_data(show_spinner=False)
+def load_votes():
+    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/TK2023_uitslag_gemeente.csv"
+    df = pd.read_csv(url, sep=";")
+    df = df[df["LijstNaam"].notna()]  # ipv != None
+    df = df[df["RegioCode"].str.startswith("G", na=False)]
+    df = df[df["VeldType"] == "LijstAantalStemmen"]
+    return df
+
+@st.cache_data(show_spinner=False)
+def load_geojson():
+    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_2023.geojson"
+    r = requests.get(url, timeout=30)
+    r.raise_for_status()
+    return r.json()
 
 def show_info():
     st.info("Reproductie van https://www.rtl.nl/nieuws/politiek/artikel/5535930/apeldoorn-nederland-het-klein-zo-gemiddeld-stemt-jouw-gemeente")
@@ -49,6 +66,8 @@ Gebruik **chi2_prop** als je ook **p-waardes** wilt en een maat die rekening hou
 Wil je **significantie** en nadruk op **relatieve afwijkingen**: **chi2_prop**.
 Wil je een **neutrale afstand** zonder p-waardes: **chi2_rtl**.
     """)
+
+    st.info("Het bestand bevat gemeente NBSB;G9010;K12;P28;, wat niet voorkomt in de RTL data en ook niet op het internet")
     
     # st.markdown(f"""
     # **Chi-kwadraattoets**
@@ -78,17 +97,17 @@ Wil je een **neutrale afstand** zonder p-waardes: **chi2_rtl**.
     # maar of de verdeling van stemmen per partij in uitgelicht proportioneel afwijkt van de landelijke verdeling.
 
     # Dat vraagt om een vergelijking van percentages (proporties), niet absolute aantallen.
-def get_df():
-    #url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\TK2023_uitslag_gemeente.csv"
-    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/TK2023_uitslag_gemeente.csv"
-    df = pd.read_csv(url, sep=";")
+# def get_df():
+#     #url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\TK2023_uitslag_gemeente.csv"
+#     url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/TK2023_uitslag_gemeente.csv"
+#     df = pd.read_csv(url, sep=";")
 
     
     
-    df=df[df["LijstNaam"] != None] 
-    df = df[df["RegioCode"].str.startswith("G", na=False)]
-    df=df[df["VeldType"] == "LijstAantalStemmen"] 
-    return df
+#     df=df[df["LijstNaam"] != None] 
+#     df = df[df["RegioCode"].str.startswith("G", na=False)]
+#     df=df[df["VeldType"] == "LijstAantalStemmen"] 
+#     return df
 
 def calculate_results_gemeente(df):
     # Pas deze kolomnamen aan als ze anders zijn
@@ -98,7 +117,6 @@ def calculate_results_gemeente(df):
     gemeentes = sorted(df[kol_regio].unique().tolist())
     index_leiden = gemeentes.index("Apeldoorn")  # geeft positie van 'Leiden'
     uitgelichte_gemeente = st.selectbox("Gemeente", gemeentes, index=index_leiden)
-
 
     u_df = df[df[kol_regio] == uitgelichte_gemeente]
     st.write(f"Totaal aantal geldige stemmen in {uitgelichte_gemeente} = {u_df['Waarde'].sum()}")
@@ -127,10 +145,11 @@ def calculate_results_gemeente(df):
     m["% Nederland"] =  100* m["Nederland"] / m["Nederland"].sum()
     m[f"% {uitgelichte_gemeente}"] = 100* m[uitgelichte_gemeente] / m[uitgelichte_gemeente].sum()
     m["Verschil (pp)"] = m[f"% {uitgelichte_gemeente}"] - m["% Nederland"]
+    m["Verschil (%))"] = (m[f"% {uitgelichte_gemeente}"] - m["% Nederland"])/ m["% Nederland"] *100
 
     # Chi-kwadraattoets
-    obs = m[[uitgelichte_gemeente, "Nederland"]].T.values
-    chi2, p, dof, expected = chi2_contingency(obs)
+    # obs = m[[uitgelichte_gemeente, "Nederland"]].T.values
+    # chi2, p, dof, expected = chi2_contingency(obs)
 
     # Chi2 op basis van proporties
     chi2_prop = ((m[f"% {uitgelichte_gemeente}"] - m["% Nederland"])**2 / m["% Nederland"]).sum()
@@ -140,8 +159,6 @@ def calculate_results_gemeente(df):
     # Resultaat tonen
     st.subheader(f"{uitgelichte_gemeente} vs Nederland – Tweede Kamer 2023")
     st.dataframe(m.sort_values("% Nederland", ascending=False).round(2))
-
-
 
     st.markdown(f"""
     **Chi-kwadraattoets**
@@ -174,38 +191,40 @@ def calculate_results_landelijk(df):
 
         # Chi-kwadraattoets
         obs = m[[g, "Nederland"]].T.values
-        chi2, p, dof, expected = chi2_contingency(obs)
+        chi2_test, p, dof, expected = chi2_contingency(obs)
         # Chi2 op basis van proporties
         chi2_prop = ((m["p_gemeente"] - m["p_landelijk"])**2 / m["p_landelijk"]).sum()
         chi2_rtl = (   abs ( m["p_gemeente"] - m["p_landelijk"]) ).sum()
 
         #resultaten.append({"Gemeente": g, "Chi2": chi2, "Chi2_prop": chi2_prop})
-        resultaten.append({"Gemeente": g, "Chi2_prop": chi2_prop,"Chi2_rtl": chi2_rtl})
+        resultaten.append({"Gemeente": g, "Chi2_rtl": chi2_rtl,"Chi2_prop": chi2_prop, "Chi2_test": chi2_test, "p":p, })
+
 
 
     df_res = pd.DataFrame(resultaten).sort_values("Chi2_rtl", ascending=True)
-    for fieldname in ["Chi2_rtl","Chi2_prop"]:
+    for fieldname in [ "Chi2_rtl","Chi2_prop", "Chi2_test"]:
     # Rangorde op basis van Chi2_prop, hoogste eerst
         df_res[f"Rank_{fieldname}"] = df_res[fieldname].rank(method="dense", ascending=True).astype(int)
         df_res[f"Percentiel_{fieldname}"] = df_res[fieldname].rank(pct=True, ascending=True) * 100
-    # df_res_chosen = df_res.query(f"Gemeente == '{uitgelichte_gemeente}'").iloc[0]
-    # st.write(df_res_chosen)
+    
     
     return df_res
 def make_plot(df_res):
-    columns_metrics = ['Chi2_prop', 'Chi2_rtl', 'Rank_Chi2_rtl', 'Percentiel_Chi2_rtl', 'Rank_Chi2_prop', 'Percentiel_Chi2_prop']
-
-    GEO_PATH = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gemeente_2023.geojson"  # zorg dat GM_NAAM in properties staat
-    GEO_PATH="https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/gemeente_2023.geojson"
-    # with open(GEO_PATH, "r", encoding="utf-8") as f:
-    #     gjson = json.load(f)
+    
+    # GEO_PATH = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gemeente_2023.geojson"  # zorg dat GM_NAAM in properties staat
+    # GEO_PATH="https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/gemeente_2023.geojson"
+    # # with open(GEO_PATH, "r", encoding="utf-8") as f:
+    # #     gjson = json.load(f)
 
     
-    GEO_PATH = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_2023.geojson"
+    # GEO_PATH = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_2023.geojson"
 
-    r = requests.get(GEO_PATH, timeout=30)
-    r.raise_for_status()
-    gjson = r.json()
+    # r = requests.get(GEO_PATH, timeout=30)
+    # r.raise_for_status()
+    # gjson = r.json()
+
+
+    gjson = load_geojson()
     fix = {
         "s-Hertogenbosch": "'s-Hertogenbosch",
         "Nuenen, Gerwen en Nederwetten": "Nuenen, Gerwen en Nederwetten",  # voorbeeld
@@ -213,19 +232,14 @@ def make_plot(df_res):
     df_res["Gemeente_fix"] = df_res["Gemeente"].replace(fix)
 
 
+    columns_metrics = ['Chi2_prop', 'Chi2_rtl', 'Rank_Chi2_rtl', 'Percentiel_Chi2_rtl', 'Rank_Chi2_prop', 'Percentiel_Chi2_prop']
 
         
-
+   
     # 2) Keuze metriek
     metric = st.radio("Kleur op", columns_metrics,2, horizontal=True)
-    title = "Waar wordt het meest gemiddeld gestemd?" if metric=="Chi2_prop" else "Afwijking t.o.v. Nederland"
-
-    # 3) Harmoniseer naamvelden
-    # Zorg dat namen exact matchen: df_res.Gemeente <-> feature.properties.GM_NAAM
-    # Eventueel kleine fixes:
-
-    
-    # 4) Range en colormap
+      
+    # 3) Range en colormap
     vmin = float(df_res[metric].min())
     vmax = float(df_res[metric].max())
     cmap = cm.LinearColormap(
@@ -234,10 +248,8 @@ def make_plot(df_res):
     ).to_step(7)
     cmap.caption = "gemiddeld            zeer afwijkend" if metric=="Chi2_prop" else "laag             hoog"
 
-    # 5) Map
-    m = folium.Map(location=[52.2, 5.3], zoom_start=7, tiles="cartodbpositron", control_scale=True)
-
-    # 1) Map DataFrame-data naar GeoJSON
+    
+    # 4) Map DataFrame-data naar GeoJSON
     # Voeg jouw df_res-data toe aan de GeoJSON via 'statnaam'
     data_dict = df_res.set_index("Gemeente_fix").to_dict(orient="index")
 
@@ -246,21 +258,14 @@ def make_plot(df_res):
         if name in data_dict:
             feature["properties"].update(data_dict[name])
 
-    # 2) Range en colormap
-    vmin, vmax = float(df_res[metric].min()), float(df_res[metric].max())
-    cmap = cm.LinearColormap(
-        colors=["#e8f3ec", "#a9d0c3", "#6fb0a1", "#3e7e80", "#214b5a"],
-        vmin=vmin, vmax=vmax
-    ).to_step(7)
-    cmap.caption = "gemiddeld → zeer afwijkend" if metric == "Chi2_prop" else "laag → hoog"
-
-    # 3) Kaart en stijl
+   
+    # 5) Kaart en stijl
     def style_function(feature):
         val = feature["properties"].get(metric)
         color = "#cccccc" if val is None else cmap(val)
         return {"fillColor": color, "color": "#ffffff", "weight": 0.6, "fillOpacity": 0.85}
 
-    # 4) Tooltip met ALLE velden uit df_res + statnaam
+    # 6) Tooltip met ALLE velden uit df_res + statnaam
     tooltip_fields = ["statnaam"] + [c for c in df_res.columns if c != "Gemeente_fix"]
     tooltip_aliases = tooltip_fields
 
@@ -293,10 +298,10 @@ def main():
     with tab3:
         show_info()
     with tab1:
-        df = get_df()
+        df = load_votes()
         df_res = calculate_results_landelijk(df)
 
-       
+        st.write(f"Aantal gemeentes : {len(df_res)}")
         make_plot(df_res)
     with tab2:
         calculate_results_gemeente(df)
