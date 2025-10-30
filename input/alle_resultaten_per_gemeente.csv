@@ -1,4 +1,4 @@
-municipality_cbs,Regio,municipality_key,party_key,prev_votes,prev_percentage,Waarde,cur_percentage,diff_votes,diff_percentage,turnout_current,turnout_previous,voters_current,voters_previous,invalid_current,invalid_previous,blank_current,blank_previous,updated_utc,source_key_in_file,status
+Municipality_cbs,Regio,municipality_key,party_key,prev_votes,prev_percentage,Waarde,cur_percentage,diff_votes,diff_percentage,turnout_current,turnout_previous,voters_current,voters_previous,invalid_current,invalid_previous,blank_current,blank_previous,updated_utc,source_key_in_file,status
 0034,Almere,066,3502be6,27773,26.5,20326,19.2,-7447.0,-7.3,67.5,67.5,158693,156188,437,379,658,291,2025-10-30 13:43:47,066,4
 0034,Almere,066,d2081fb,15703,15.0,14922,14.1,-781.0,-0.9,67.5,67.5,158693,156188,437,379,658,291,2025-10-30 13:43:47,066,4
 0034,Almere,066,192ea5b,16578,15.8,15083,14.2,-1495.0,-1.6,67.5,67.5,158693,156188,437,379,658,291,2025-10-30 13:43:47,066,4

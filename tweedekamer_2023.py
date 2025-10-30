@@ -23,6 +23,7 @@ def load_votes(jaar):
     else:
         st.error("Fout in jaar")
         st.stop()
+
 def load_votes_2025():
     # C:\Users\rcxsm\Documents\python_scripts\python_scripts_rcsmit\fetch_combine_anp_tk2025.py
 
@@ -32,14 +33,13 @@ def load_votes_2025():
     url_results= "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/alle_resultaten_per_gemeente.csv"
     url_partynames =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/party_names.csv"
 
-
     df_results = pd.read_csv(url_results, dtype={"cbs_code":str})
     df_partynames = pd.read_csv(url_partynames)
     df_partynames =df_partynames[["party_key","LijstNaam"]]
 
     df_results_new=df_results.merge(df_partynames, on="party_key", how="left")
     df_results_new=df_results_new.fillna("UNKNOWN_X")
-    st.write(df_results_new)
+  
     df_results_new=df_results_new[["Regio","Waarde", "LijstNaam"]]
     df_results_new=df_results_new[df_results_new["Regio"] !="Venray"]  # Venray moet nog worden geteld
     print (df_results_new)
