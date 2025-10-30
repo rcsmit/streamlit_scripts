@@ -39,6 +39,7 @@ def load_votes_2025():
 
     df_results_new=df_results.merge(df_partynames, on="party_key", how="left")
     df_results_new=df_results_new.fillna("UNKNOWN_X")
+    st.write(df_results_new)
     df_results_new=df_results_new[["Regio","Waarde", "LijstNaam"]]
     df_results_new=df_results_new[df_results_new["Regio"] !="Venray"]  # Venray moet nog worden geteld
     print (df_results_new)
@@ -386,13 +387,18 @@ def plot_scatter(df_res_all,xaxis,yaxis):
     # Voorbeeld dataframe
     # df_res_all bevat o.a. kolommen: Gemeente, Rank_Chi2_rtl_2023, Rank_Chi2_rtl_2025
     # df_res_all = pd.DataFrame(...)
+    show_text = st.checkbox("Toon tekstlabels", value=True)
+    if show_text:
+        mode_="markers+text"
+    else:
+        mode_="markers"
 
     fig = go.Figure(
         data=[
             go.Scatter(
                 x=df_res_all[xaxis],
                 y=df_res_all[yaxis],
-                mode="markers+text",
+                mode=mode_,
                 #mode="markers",
                 text=df_res_all["Gemeente"],           # mouseover
                 hovertemplate=(
