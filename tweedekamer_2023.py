@@ -289,7 +289,6 @@ def make_plot(df_res):
 
     st.markdown(f"## Kaart: {metric}")
     st_folium(m, height=700)
-
     st.dataframe(df_res.style.format({"Chi2": "{:.4f}"}))
 
 def main():
