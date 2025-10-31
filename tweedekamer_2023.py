@@ -395,7 +395,7 @@ def plot_scatter(df_res_all,xaxis,yaxis):
     # Voorbeeld dataframe
     # df_res_all bevat o.a. kolommen: Gemeente, Rank_Chi2_rtl_2023, Rank_Chi2_rtl_2025
     # df_res_all = pd.DataFrame(...)
-    show_text = st.checkbox("Toon tekstlabels", value=True)
+    show_text = st.checkbox("Toon tekstlabels", key ="show_text299r", value=True)
     if show_text:
         mode_="markers+text"
     else:
@@ -559,8 +559,8 @@ def obesitas_inkomen():
     with col2:
         indicator_ = st.selectbox("Indicator", sorted(df_merge["Indicator"].unique().tolist()), key="aresf", index=0)
     with col3:
-        show_text = st.checkbox("Toon tekstlabels", value=True)
-        log_inkomen =  st.checkbox("Log inkomen", value=False)
+        show_text = st.checkbox("Toon tekstlabels", key="affadsf4", value=True)
+        log_inkomen =  st.checkbox("Log inkomen", key="affadsf3",  value=False)
     if show_text:
         mode_="markers+text"
     else:
