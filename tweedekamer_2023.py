@@ -7,6 +7,7 @@ from streamlit_folium import st_folium
 import branca.colormap as cm
 from scipy.stats import chi2_contingency
 import datetime
+import numpy as np
 
 import plotly.graph_objects as go
 
@@ -458,6 +459,99 @@ def plot_scatter(df_res_all,xaxis,yaxis):
     st.plotly_chart(fig, width=True)
     st.write(df_res_all)
 
+ 
+def plot_scatter_correlation(df, x_axis, y_axis, partij, indicator):
+    # Bereken lineaire regressie
+    x = df[x_axis].astype(float)
+    y = df[y_axis].astype(float)
+    coeffs = np.polyfit(x, y, 1)
+    slope, intercept = coeffs
+    y_pred = slope * x + intercept
+
+    # R²
+    ss_res = np.sum((y - y_pred) ** 2)
+    ss_tot = np.sum((y - np.mean(y)) ** 2)
+    r2 = 1 - ss_res / ss_tot
+
+    # Maak plot
+    fig = go.Figure()
+
+    # Scatterpunten
+    fig.add_trace(
+        go.Scatter(
+            x=x,
+            y=y,
+            mode="markers+text",
+            name="Gemeenten",
+            text=df["Naam"],
+            textposition="top center",
+            marker=dict(size=8, color="teal", opacity=0.7, line=dict(width=0.5, color="white")),
+            hovertemplate="<b>%{text}</b><br>"
+                          f"{x_axis}: "+"%{x}<br>"
+                          f"{y_axis}: "+"%{y}<extra></extra>",
+        )
+    )
+
+    # Trendline
+    fig.add_trace(
+        go.Scatter(
+            x=x,
+            y=y_pred,
+            mode="lines",
+            name="Trendline",
+            line=dict(color="gray", width=2, dash="dash"),
+            hoverinfo="skip"
+        )
+    )
+
+    # Layout
+    fig.update_layout(
+        title=f"{y_axis} vs {x_axis} | {partij} {indicator} | (R² = {r2:.3f})",
+        xaxis_title=x_axis,
+        yaxis_title=y_axis,
+        template="plotly_white",
+        height=600
+    )
+
+   
+    st.plotly_chart(fig, width=True)
+       
+def obesitas_inkomen():
+    kol_regio = "Regio"
+    kol_partij = "LijstNaam"
+    kol_stemmen = "Waarde"  
+    # https://www.vzinfo.nl/overgewicht/regionaal/obesitas#obesitas-volwassenen
+    # https://www.cbs.nl/nl-nl/maatwerk/2023/35/inkomen-per-gemeente-en-wijk-2020
+    #url_obesitas = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gemeente_overgewicht.csv"
+    url_obesitas = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_overgewicht.csv"
+  
+  
+    df_obesitas = pd.read_csv(url_obesitas)
+    #url_inkomen = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gemeente_inkomen.csv"
+    url_inkomen = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_inkomen.csv"
+    df_inkomen = pd.read_csv(url_inkomen)
+
+    df_votes=  load_votes(2025)
+    den = df_votes.groupby(kol_regio)[kol_stemmen].transform("sum")
+    df_votes["percentage_votes"] = (100 * df_votes[kol_stemmen] / den).fillna(0).round(2)
+    
+    df_merge = df_obesitas.merge(df_votes, left_on="Naam", right_on="Regio", how="inner")
+    df_merge = df_merge.merge(df_inkomen, left_on="Naam", right_on="Regio", how="inner")
+
+    col1,col2=st.columns(2)
+    with col1:
+        partij = st.selectbox("Partij", sorted(df_merge[kol_partij].unique().tolist()), key="afdadsf", index=0)
+    with col2:
+        indicator_ = st.selectbox("Indicator", sorted(df_merge["Indicator"].unique().tolist()), key="aresf", index=0)
+    
+    df_res=df_merge[(df_merge["Indicator"]==indicator_)& (df_merge["LijstNaam"]==partij)]
+    )
+    col1,col2=st.columns(2)
+    with col1:
+        plot_scatter_correlation(df_res,"percentage_votes","Percentage", partij, indicator_)
+    with col2:
+        plot_scatter_correlation(df_res,"percentage_votes","ink_inw", partij, "")
+    st.write(df_res
 def main():
     """Main functie
     """  
@@ -466,10 +560,12 @@ def main():
     kol_regio = "Regio"
     kol_partij = "LijstNaam"
     kol_stemmen = "Waarde"  
-    tab1, tab2, tab3,tab4 = st.tabs(["Resultaten", "Enkele gemeente","Partij", "Info"])
+    tab1, tab2, tab3,tab4,tab5 = st.tabs(["Resultaten", "Enkele gemeente","Partij","obesitas/inkomen", "Info"])
 
-    with tab4:
+    with tab5:
         show_info()
+    with tab4:
+         obesitas_inkomen()
     with tab1:
         df_res_all = pd.DataFrame()
         jaren = [2023, 2025]

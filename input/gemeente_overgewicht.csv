@@ -1,0 +1,1696 @@
+id,Naam,Indicator,Percentage,Betrouwbaarheidsinterval (95%),GGD percentage
+GM0518,Den Haag,Overgewicht,47.5,45.5 - 49.6,47.5
+GM0518,Den Haag,Ernstig overgewicht,14.5,13.1 - 16.0,14.2
+GM0518,Den Haag,Ondergewicht,1.3,0.8 - 1.7,1.7
+GM0518,Den Haag,Gezond gewicht,51.2,49.2 - 53.2,50.8
+GM0518,Den Haag,Matig overgewicht,33.0,31.1 - 34.9,33.3
+GM0796,'s-Hertogenbosch,Overgewicht,46.8,44.4 - 49.1,51.7
+GM0796,'s-Hertogenbosch,Ernstig overgewicht,13.7,12.1 - 15.3,15.8
+GM0796,'s-Hertogenbosch,Ondergewicht,1.8,1.0 - 2.6,1.7
+GM0796,'s-Hertogenbosch,Gezond gewicht,51.4,49.0 - 53.8,46.6
+GM0796,'s-Hertogenbosch,Matig overgewicht,33.1,30.9 - 35.3,35.9
+GM1680,Aa en Hunze,Overgewicht,52.7,48.5 - 56.9,55.9
+GM1680,Aa en Hunze,Ernstig overgewicht,15.1,12.1 - 18.0,19.2
+GM1680,Aa en Hunze,Ondergewicht,1.1,0.3 - 1.9,1.5
+GM1680,Aa en Hunze,Gezond gewicht,46.2,42.0 - 50.4,42.6
+GM1680,Aa en Hunze,Matig overgewicht,37.6,33.6 - 41.6,36.7
+GM0358,Aalsmeer,Overgewicht,47.6,44.2 - 50.9,41.0
+GM0358,Aalsmeer,Ernstig overgewicht,13.5,11.2 - 15.9,11.6
+GM0358,Aalsmeer,Ondergewicht,1.3,0.5 - 2.1,2.2
+GM0358,Aalsmeer,Gezond gewicht,51.1,47.7 - 54.5,56.8
+GM0358,Aalsmeer,Matig overgewicht,34.0,30.8 - 37.2,29.4
+GM0197,Aalten,Overgewicht,52.5,48.5 - 56.6,52.2
+GM0197,Aalten,Ernstig overgewicht,17.0,14.0 - 20.1,16.3
+GM0197,Aalten,Ondergewicht,0.5,-0.1 - 1.1,1.3
+GM0197,Aalten,Gezond gewicht,47.0,42.9 - 51.0,46.5
+GM0197,Aalten,Matig overgewicht,35.5,31.7 - 39.3,36.0
+GM0059,Achtkarspelen,Overgewicht,59.3,55.1 - 63.4,51.6
+GM0059,Achtkarspelen,Ernstig overgewicht,20.5,17.1 - 23.9,16.1
+GM0059,Achtkarspelen,Ondergewicht,0.7,0.0 - 1.4,1.6
+GM0059,Achtkarspelen,Gezond gewicht,40.0,35.9 - 44.1,46.7
+GM0059,Achtkarspelen,Matig overgewicht,38.8,34.7 - 42.9,35.5
+GM0482,Alblasserdam,Overgewicht,53.0,48.5 - 57.4,54.6
+GM0482,Alblasserdam,Ernstig overgewicht,17.8,14.5 - 21.2,17.9
+GM0482,Alblasserdam,Ondergewicht,1.6,0.4 - 2.7,2.0
+GM0482,Alblasserdam,Gezond gewicht,45.5,41.0 - 49.9,43.4
+GM0482,Alblasserdam,Matig overgewicht,35.2,31.0 - 39.3,36.7
+GM0613,Albrandswaard,Overgewicht,55.9,51.9 - 59.8,53.3
+GM0613,Albrandswaard,Ernstig overgewicht,15.5,12.5 - 18.5,18.1
+GM0613,Albrandswaard,Ondergewicht,1.9,0.8 - 3.0,1.6
+GM0613,Albrandswaard,Gezond gewicht,42.2,38.3 - 46.2,45.2
+GM0613,Albrandswaard,Matig overgewicht,40.4,36.4 - 44.4,35.2
+GM0361,Alkmaar,Overgewicht,45.8,41.8 - 49.8,50.1
+GM0361,Alkmaar,Ernstig overgewicht,11.9,9.5 - 14.3,15.0
+GM0361,Alkmaar,Ondergewicht,1.6,0.5 - 2.8,1.5
+GM0361,Alkmaar,Gezond gewicht,52.6,48.6 - 56.6,48.4
+GM0361,Alkmaar,Matig overgewicht,33.9,30.2 - 37.6,35.1
+GM0141,Almelo,Overgewicht,52.6,48.6 - 56.5,51.9
+GM0141,Almelo,Ernstig overgewicht,17.9,14.9 - 20.8,16.6
+GM0141,Almelo,Ondergewicht,2.5,1.1 - 3.9,1.8
+GM0141,Almelo,Gezond gewicht,44.9,41.0 - 48.9,46.3
+GM0141,Almelo,Matig overgewicht,34.7,31.0 - 38.4,35.3
+GM0034,Almere,Overgewicht,58.4,54.6 - 62.2,56.0
+GM0034,Almere,Ernstig overgewicht,20.0,17.0 - 23.0,18.6
+GM0034,Almere,Ondergewicht,1.4,0.5 - 2.3,1.5
+GM0034,Almere,Gezond gewicht,40.2,36.5 - 44.0,42.5
+GM0034,Almere,Matig overgewicht,38.4,34.7 - 42.1,37.4
+GM0484,Alphen aan den Rijn,Overgewicht,51.0,48.4 - 53.5,48.6
+GM0484,Alphen aan den Rijn,Ernstig overgewicht,16.1,14.4 - 17.9,14.4
+GM0484,Alphen aan den Rijn,Ondergewicht,1.7,0.9 - 2.4,1.7
+GM0484,Alphen aan den Rijn,Gezond gewicht,47.4,44.8 - 49.9,49.8
+GM0484,Alphen aan den Rijn,Matig overgewicht,34.8,32.4 - 37.2,34.2
+GM1723,Alphen-Chaam,Overgewicht,47.9,43.5 - 52.3,52.9
+GM1723,Alphen-Chaam,Ernstig overgewicht,13.9,11.0 - 16.9,16.8
+GM1723,Alphen-Chaam,Ondergewicht,1.1,0.3 - 2.0,1.8
+GM1723,Alphen-Chaam,Gezond gewicht,51.0,46.6 - 55.3,45.4
+GM1723,Alphen-Chaam,Matig overgewicht,34.0,29.9 - 38.0,36.0
+GM1959,Altena,Overgewicht,54.8,51.3 - 58.3,52.9
+GM1959,Altena,Ernstig overgewicht,17.0,14.5 - 19.5,16.8
+GM1959,Altena,Ondergewicht,0.9,0.3 - 1.5,1.8
+GM1959,Altena,Gezond gewicht,44.3,40.8 - 47.8,45.4
+GM1959,Altena,Matig overgewicht,37.8,34.4 - 41.1,36.0
+GM0307,Amersfoort,Overgewicht,45.1,42.8 - 47.4,44.2
+GM0307,Amersfoort,Ernstig overgewicht,13.5,11.9 - 15.0,12.9
+GM0307,Amersfoort,Ondergewicht,1.8,1.1 - 2.6,1.8
+GM0307,Amersfoort,Gezond gewicht,53.1,50.7 - 55.4,54.0
+GM0307,Amersfoort,Matig overgewicht,31.6,29.5 - 33.8,31.2
+GM0362,Amstelveen,Overgewicht,41.3,38.8 - 43.8,41.0
+GM0362,Amstelveen,Ernstig overgewicht,10.6,9.1 - 12.2,11.6
+GM0362,Amstelveen,Ondergewicht,2.8,1.9 - 3.7,2.2
+GM0362,Amstelveen,Gezond gewicht,55.9,53.4 - 58.5,56.8
+GM0362,Amstelveen,Matig overgewicht,30.6,28.3 - 33.0,29.4
+GM0363,Amsterdam,Overgewicht,40.3,39.0 - 41.6,41.0
+GM0363,Amsterdam,Ernstig overgewicht,11.6,10.7 - 12.4,11.6
+GM0363,Amsterdam,Ondergewicht,2.2,1.7 - 2.6,2.2
+GM0363,Amsterdam,Gezond gewicht,57.5,56.2 - 58.9,56.8
+GM0363,Amsterdam,Matig overgewicht,28.8,27.5 - 30.0,29.4
+GM0200,Apeldoorn,Overgewicht,51.6,47.7 - 55.5,52.2
+GM0200,Apeldoorn,Ernstig overgewicht,17.5,14.6 - 20.4,16.3
+GM0200,Apeldoorn,Ondergewicht,1.6,0.6 - 2.6,1.3
+GM0200,Apeldoorn,Gezond gewicht,46.8,42.9 - 50.7,46.5
+GM0200,Apeldoorn,Matig overgewicht,34.1,30.4 - 37.7,36.0
+GM0202,Arnhem,Overgewicht,47.7,45.2 - 50.2,49.5
+GM0202,Arnhem,Ernstig overgewicht,15.4,13.7 - 17.2,15.1
+GM0202,Arnhem,Ondergewicht,1.6,1.0 - 2.3,1.8
+GM0202,Arnhem,Gezond gewicht,50.7,48.2 - 53.2,48.8
+GM0202,Arnhem,Matig overgewicht,32.2,29.9 - 34.6,34.3
+GM0106,Assen,Overgewicht,53.4,48.7 - 58.1,55.9
+GM0106,Assen,Ernstig overgewicht,20.5,16.6 - 24.3,19.2
+GM0106,Assen,Ondergewicht,1.9,0.7 - 3.2,1.5
+GM0106,Assen,Gezond gewicht,44.6,39.9 - 49.4,42.6
+GM0106,Assen,Matig overgewicht,32.9,28.6 - 37.2,36.7
+GM0743,Asten,Overgewicht,49.3,44.1 - 54.5,49.5
+GM0743,Asten,Ernstig overgewicht,12.1,9.1 - 15.1,14.8
+GM0743,Asten,Ondergewicht,0.8,0.1 - 1.5,1.9
+GM0743,Asten,Gezond gewicht,49.9,44.7 - 55.1,48.6
+GM0743,Asten,Matig overgewicht,37.2,32.2 - 42.2,34.7
+GM0744,Baarle-Nassau,Overgewicht,54.0,49.6 - 58.4,52.9
+GM0744,Baarle-Nassau,Ernstig overgewicht,14.3,11.4 - 17.1,16.8
+GM0744,Baarle-Nassau,Ondergewicht,1.4,0.2 - 2.6,1.8
+GM0744,Baarle-Nassau,Gezond gewicht,44.6,40.2 - 49.0,45.4
+GM0744,Baarle-Nassau,Matig overgewicht,39.8,35.4 - 44.1,36.0
+GM0308,Baarn,Overgewicht,44.2,40.6 - 47.9,44.2
+GM0308,Baarn,Ernstig overgewicht,10.0,7.9 - 12.1,12.9
+GM0308,Baarn,Ondergewicht,2.3,1.2 - 3.4,1.8
+GM0308,Baarn,Gezond gewicht,53.5,49.8 - 57.1,54.0
+GM0308,Baarn,Matig overgewicht,34.2,30.7 - 37.7,31.2
+GM0489,Barendrecht,Overgewicht,53.2,50.1 - 56.3,53.3
+GM0489,Barendrecht,Ernstig overgewicht,18.1,15.6 - 20.5,18.1
+GM0489,Barendrecht,Ondergewicht,0.9,0.4 - 1.4,1.6
+GM0489,Barendrecht,Gezond gewicht,45.9,42.7 - 49.0,45.2
+GM0489,Barendrecht,Matig overgewicht,35.1,32.2 - 38.1,35.2
+GM0203,Barneveld,Overgewicht,51.4,48.2 - 54.6,49.5
+GM0203,Barneveld,Ernstig overgewicht,16.0,13.7 - 18.3,15.1
+GM0203,Barneveld,Ondergewicht,1.9,1.0 - 2.9,1.8
+GM0203,Barneveld,Gezond gewicht,46.6,43.4 - 49.9,48.8
+GM0203,Barneveld,Matig overgewicht,35.4,32.3 - 38.5,34.3
+GM0888,Beek (L.),Overgewicht,49.9,46.6 - 53.2,54.3
+GM0888,Beek (L.),Ernstig overgewicht,14.1,11.9 - 16.4,17.7
+GM0888,Beek (L.),Ondergewicht,1.4,0.6 - 2.3,1.7
+GM0888,Beek (L.),Gezond gewicht,48.7,45.4 - 52.0,44.0
+GM0888,Beek (L.),Matig overgewicht,35.7,32.6 - 38.8,36.7
+GM1954,Beekdaelen,Overgewicht,55.6,53.1 - 58.2,54.3
+GM1954,Beekdaelen,Ernstig overgewicht,17.5,15.6 - 19.3,17.7
+GM1954,Beekdaelen,Ondergewicht,1.2,0.6 - 1.8,1.7
+GM1954,Beekdaelen,Gezond gewicht,43.2,40.6 - 45.8,44.0
+GM1954,Beekdaelen,Matig overgewicht,38.2,35.7 - 40.6,36.7
+GM0889,Beesel,Overgewicht,54.6,49.8 - 59.4,53.1
+GM0889,Beesel,Ernstig overgewicht,18.2,14.7 - 21.8,16.6
+GM0889,Beesel,Ondergewicht,0.9,-0.1 - 1.9,1.2
+GM0889,Beesel,Gezond gewicht,44.5,39.7 - 49.3,45.7
+GM0889,Beesel,Matig overgewicht,36.3,31.7 - 41.0,36.4
+GM1945,Berg en Dal,Overgewicht,55.3,52.5 - 58.0,49.7
+GM1945,Berg en Dal,Ernstig overgewicht,16.4,14.3 - 18.4,15.3
+GM1945,Berg en Dal,Ondergewicht,1.0,0.5 - 1.5,1.9
+GM1945,Berg en Dal,Gezond gewicht,43.8,41.0 - 46.5,48.4
+GM1945,Berg en Dal,Matig overgewicht,38.9,36.1 - 41.7,34.4
+GM1724,Bergeijk,Overgewicht,55.0,50.4 - 59.6,49.5
+GM1724,Bergeijk,Ernstig overgewicht,15.0,11.9 - 18.2,14.8
+GM1724,Bergeijk,Ondergewicht,1.1,0.3 - 1.8,1.9
+GM1724,Bergeijk,Gezond gewicht,43.9,39.4 - 48.5,48.6
+GM1724,Bergeijk,Matig overgewicht,40.0,35.5 - 44.4,34.7
+GM0893,Bergen (L.),Overgewicht,58.3,53.8 - 62.8,53.1
+GM0893,Bergen (L.),Ernstig overgewicht,20.0,16.3 - 23.7,16.6
+GM0893,Bergen (L.),Ondergewicht,1.3,-0.1 - 2.6,1.2
+GM0893,Bergen (L.),Gezond gewicht,40.5,36.0 - 44.9,45.7
+GM0893,Bergen (L.),Matig overgewicht,38.3,33.9 - 42.6,36.4
+GM0373,Bergen (NH.),Overgewicht,43.5,39.7 - 47.3,50.1
+GM0373,Bergen (NH.),Ernstig overgewicht,9.5,7.3 - 11.8,15.0
+GM0373,Bergen (NH.),Ondergewicht,1.1,0.1 - 2.0,1.5
+GM0373,Bergen (NH.),Gezond gewicht,55.4,51.6 - 59.3,48.4
+GM0373,Bergen (NH.),Matig overgewicht,34.0,30.3 - 37.6,35.1
+GM0748,Bergen op Zoom,Overgewicht,55.6,52.2 - 59.0,52.9
+GM0748,Bergen op Zoom,Ernstig overgewicht,17.7,15.0 - 20.4,16.8
+GM0748,Bergen op Zoom,Ondergewicht,1.3,0.5 - 2.1,1.8
+GM0748,Bergen op Zoom,Gezond gewicht,43.1,39.7 - 46.5,45.4
+GM0748,Bergen op Zoom,Matig overgewicht,37.9,34.8 - 41.1,36.0
+GM1859,Berkelland,Overgewicht,56.4,52.6 - 60.2,52.2
+GM1859,Berkelland,Ernstig overgewicht,14.6,11.9 - 17.3,16.3
+GM1859,Berkelland,Ondergewicht,1.3,0.4 - 2.2,1.3
+GM1859,Berkelland,Gezond gewicht,42.3,38.6 - 46.1,46.5
+GM1859,Berkelland,Matig overgewicht,41.8,38.1 - 45.6,36.0
+GM1721,Bernheze,Overgewicht,49.2,44.9 - 53.5,51.7
+GM1721,Bernheze,Ernstig overgewicht,14.1,11.2 - 17.1,15.8
+GM1721,Bernheze,Ondergewicht,1.0,0.1 - 1.9,1.7
+GM1721,Bernheze,Gezond gewicht,49.8,45.5 - 54.1,46.6
+GM1721,Bernheze,Matig overgewicht,35.1,31.0 - 39.1,35.9
+GM0753,Best,Overgewicht,48.1,43.5 - 52.7,49.5
+GM0753,Best,Ernstig overgewicht,14.4,11.4 - 17.5,14.8
+GM0753,Best,Ondergewicht,1.1,0.1 - 2.0,1.9
+GM0753,Best,Gezond gewicht,50.8,46.2 - 55.4,48.6
+GM0753,Best,Matig overgewicht,33.7,29.4 - 38.0,34.7
+GM0209,Beuningen,Overgewicht,52.5,47.3 - 57.8,49.7
+GM0209,Beuningen,Ernstig overgewicht,17.7,13.8 - 21.7,15.3
+GM0209,Beuningen,Ondergewicht,1.5,0.0 - 3.1,1.9
+GM0209,Beuningen,Gezond gewicht,45.9,40.7 - 51.2,48.4
+GM0209,Beuningen,Matig overgewicht,34.8,30.0 - 39.6,34.4
+GM0375,Beverwijk,Overgewicht,53.5,50.7 - 56.3,47.2
+GM0375,Beverwijk,Ernstig overgewicht,17.3,15.2 - 19.4,15.0
+GM0375,Beverwijk,Ondergewicht,2.1,1.1 - 3.0,1.6
+GM0375,Beverwijk,Gezond gewicht,44.4,41.6 - 47.2,51.2
+GM0375,Beverwijk,Matig overgewicht,36.3,33.6 - 38.9,32.2
+GM1728,Bladel,Overgewicht,51.4,46.5 - 56.3,49.5
+GM1728,Bladel,Ernstig overgewicht,15.4,12.0 - 18.8,14.8
+GM1728,Bladel,Ondergewicht,1.1,-0.1 - 2.3,1.9
+GM1728,Bladel,Gezond gewicht,47.4,42.6 - 52.3,48.6
+GM1728,Bladel,Matig overgewicht,36.0,31.5 - 40.6,34.7
+GM0376,Blaricum,Overgewicht,42.9,38.4 - 47.4,45.0
+GM0376,Blaricum,Ernstig overgewicht,9.1,6.6 - 11.7,12.0
+GM0376,Blaricum,Ondergewicht,1.4,0.4 - 2.3,1.8
+GM0376,Blaricum,Gezond gewicht,55.7,51.2 - 60.2,53.2
+GM0376,Blaricum,Matig overgewicht,33.8,29.5 - 38.0,32.9
+GM0377,Bloemendaal,Overgewicht,35.5,31.9 - 39.1,47.2
+GM0377,Bloemendaal,Ernstig overgewicht,7.9,5.9 - 9.9,15.0
+GM0377,Bloemendaal,Ondergewicht,2.6,1.3 - 4.0,1.6
+GM0377,Bloemendaal,Gezond gewicht,61.8,58.2 - 65.5,51.2
+GM0377,Bloemendaal,Matig overgewicht,27.6,24.3 - 30.9,32.2
+GM1901,Bodegraven-Reeuwijk,Overgewicht,51.0,47.1 - 54.9,48.6
+GM1901,Bodegraven-Reeuwijk,Ernstig overgewicht,16.9,13.9 - 19.9,14.4
+GM1901,Bodegraven-Reeuwijk,Ondergewicht,1.2,0.4 - 1.9,1.7
+GM1901,Bodegraven-Reeuwijk,Gezond gewicht,47.9,44.0 - 51.7,49.8
+GM1901,Bodegraven-Reeuwijk,Matig overgewicht,34.0,30.5 - 37.6,34.2
+GM0755,Boekel,Overgewicht,49.9,45.7 - 54.1,51.7
+GM0755,Boekel,Ernstig overgewicht,13.3,10.6 - 16.0,15.8
+GM0755,Boekel,Ondergewicht,0.6,-0.2 - 1.5,1.7
+GM0755,Boekel,Gezond gewicht,49.5,45.3 - 53.7,46.6
+GM0755,Boekel,Matig overgewicht,36.6,32.6 - 40.6,35.9
+GM1681,Borger-Odoorn,Overgewicht,55.9,51.3 - 60.6,55.9
+GM1681,Borger-Odoorn,Ernstig overgewicht,19.2,15.4 - 23.0,19.2
+GM1681,Borger-Odoorn,Ondergewicht,1.7,0.6 - 2.9,1.5
+GM1681,Borger-Odoorn,Gezond gewicht,42.3,37.7 - 47.0,42.6
+GM1681,Borger-Odoorn,Matig overgewicht,36.8,32.4 - 41.1,36.7
+GM0147,Borne,Overgewicht,53.3,50.0 - 56.6,51.9
+GM0147,Borne,Ernstig overgewicht,15.2,13.0 - 17.4,16.6
+GM0147,Borne,Ondergewicht,2.1,1.1 - 3.0,1.8
+GM0147,Borne,Gezond gewicht,44.6,41.3 - 47.9,46.3
+GM0147,Borne,Matig overgewicht,38.1,34.9 - 41.3,35.3
+GM0654,Borsele,Overgewicht,52.3,48.1 - 56.5,51.5
+GM0654,Borsele,Ernstig overgewicht,14.9,11.9 - 17.9,16.6
+GM0654,Borsele,Ondergewicht,1.2,0.2 - 2.1,1.5
+GM0654,Borsele,Gezond gewicht,46.6,42.4 - 50.7,47.0
+GM0654,Borsele,Matig overgewicht,37.4,33.3 - 41.4,35.0
+GM0757,Boxtel,Overgewicht,52.2,48.1 - 56.2,51.7
+GM0757,Boxtel,Ernstig overgewicht,17.3,14.2 - 20.3,15.8
+GM0757,Boxtel,Ondergewicht,1.6,0.2 - 3.0,1.7
+GM0757,Boxtel,Gezond gewicht,46.2,42.2 - 50.3,46.6
+GM0757,Boxtel,Matig overgewicht,34.9,31.2 - 38.6,35.9
+GM0758,Breda,Overgewicht,45.4,43.0 - 47.8,52.9
+GM0758,Breda,Ernstig overgewicht,13.7,12.1 - 15.3,16.8
+GM0758,Breda,Ondergewicht,2.2,1.4 - 3.1,1.8
+GM0758,Breda,Gezond gewicht,52.4,50.0 - 54.7,45.4
+GM0758,Breda,Matig overgewicht,31.7,29.5 - 33.9,36.0
+GM1876,Bronckhorst,Overgewicht,53.7,49.8 - 57.7,52.2
+GM1876,Bronckhorst,Ernstig overgewicht,15.4,12.6 - 18.2,16.3
+GM1876,Bronckhorst,Ondergewicht,0.3,-0.1 - 0.7,1.3
+GM1876,Bronckhorst,Gezond gewicht,45.9,42.0 - 49.8,46.5
+GM1876,Bronckhorst,Matig overgewicht,38.3,34.6 - 42.1,36.0
+GM0213,Brummen,Overgewicht,52.1,48.2 - 55.9,52.2
+GM0213,Brummen,Ernstig overgewicht,14.5,11.8 - 17.2,16.3
+GM0213,Brummen,Ondergewicht,0.8,0.0 - 1.6,1.3
+GM0213,Brummen,Gezond gewicht,47.1,43.3 - 51.0,46.5
+GM0213,Brummen,Matig overgewicht,37.6,33.9 - 41.3,36.0
+GM0899,Brunssum,Overgewicht,60.9,57.9 - 63.9,54.3
+GM0899,Brunssum,Ernstig overgewicht,21.8,19.3 - 24.2,17.7
+GM0899,Brunssum,Ondergewicht,1.5,0.7 - 2.2,1.7
+GM0899,Brunssum,Gezond gewicht,37.6,34.6 - 40.7,44.0
+GM0899,Brunssum,Matig overgewicht,39.1,36.2 - 42.0,36.7
+GM0312,Bunnik,Overgewicht,38.1,35.0 - 41.1,44.2
+GM0312,Bunnik,Ernstig overgewicht,11.0,9.1 - 13.0,12.9
+GM0312,Bunnik,Ondergewicht,2.2,1.1 - 3.3,1.8
+GM0312,Bunnik,Gezond gewicht,59.8,56.7 - 62.8,54.0
+GM0312,Bunnik,Matig overgewicht,27.0,24.3 - 29.8,31.2
+GM0313,Bunschoten,Overgewicht,52.7,48.7 - 56.7,44.2
+GM0313,Bunschoten,Ernstig overgewicht,16.7,13.8 - 19.7,12.9
+GM0313,Bunschoten,Ondergewicht,2.2,0.8 - 3.6,1.8
+GM0313,Bunschoten,Gezond gewicht,45.2,41.1 - 49.2,54.0
+GM0313,Bunschoten,Matig overgewicht,35.9,32.2 - 39.7,31.2
+GM0214,Buren,Overgewicht,55.1,51.5 - 58.8,49.7
+GM0214,Buren,Ernstig overgewicht,18.2,15.3 - 21.0,15.3
+GM0214,Buren,Ondergewicht,1.1,0.0 - 2.1,1.9
+GM0214,Buren,Gezond gewicht,43.8,40.1 - 47.5,48.4
+GM0214,Buren,Matig overgewicht,37.0,33.5 - 40.4,34.4
+GM0502,Capelle aan den IJssel,Overgewicht,55.7,52.9 - 58.6,53.3
+GM0502,Capelle aan den IJssel,Ernstig overgewicht,18.8,16.6 - 21.0,18.1
+GM0502,Capelle aan den IJssel,Ondergewicht,1.0,0.5 - 1.5,1.6
+GM0502,Capelle aan den IJssel,Gezond gewicht,43.3,40.4 - 46.1,45.2
+GM0502,Capelle aan den IJssel,Matig overgewicht,36.9,34.1 - 39.7,35.2
+GM0383,Castricum,Overgewicht,45.4,41.6 - 49.3,50.1
+GM0383,Castricum,Ernstig overgewicht,12.0,9.4 - 14.5,15.0
+GM0383,Castricum,Ondergewicht,1.4,0.2 - 2.6,1.5
+GM0383,Castricum,Gezond gewicht,53.2,49.3 - 57.1,48.4
+GM0383,Castricum,Matig overgewicht,33.5,29.8 - 37.1,35.1
+GM0109,Coevorden,Overgewicht,59.3,54.9 - 63.6,55.9
+GM0109,Coevorden,Ernstig overgewicht,18.2,14.6 - 21.9,19.2
+GM0109,Coevorden,Ondergewicht,1.6,0.2 - 3.1,1.5
+GM0109,Coevorden,Gezond gewicht,39.1,34.8 - 43.4,42.6
+GM0109,Coevorden,Matig overgewicht,41.0,36.7 - 45.4,36.7
+GM1706,Cranendonck,Overgewicht,48.1,43.4 - 52.8,49.5
+GM1706,Cranendonck,Ernstig overgewicht,13.7,10.6 - 16.8,14.8
+GM1706,Cranendonck,Ondergewicht,2.3,0.5 - 4.2,1.9
+GM1706,Cranendonck,Gezond gewicht,49.6,44.8 - 54.3,48.6
+GM1706,Cranendonck,Matig overgewicht,34.4,30.1 - 38.7,34.7
+GM0216,Culemborg,Overgewicht,52.2,48.2 - 56.3,49.7
+GM0216,Culemborg,Ernstig overgewicht,14.4,11.7 - 17.1,15.3
+GM0216,Culemborg,Ondergewicht,2.1,0.6 - 3.6,1.9
+GM0216,Culemborg,Gezond gewicht,45.7,41.7 - 49.7,48.4
+GM0216,Culemborg,Matig overgewicht,37.8,33.9 - 41.7,34.4
+GM0148,Dalfsen,Overgewicht,49.0,45.0 - 52.9,50.3
+GM0148,Dalfsen,Ernstig overgewicht,14.4,11.7 - 17.1,15.8
+GM0148,Dalfsen,Ondergewicht,2.3,0.8 - 3.9,1.5
+GM0148,Dalfsen,Gezond gewicht,48.7,44.7 - 52.7,48.2
+GM0148,Dalfsen,Matig overgewicht,34.6,30.9 - 38.3,34.4
+GM1891,Dantumadiel,Overgewicht,53.9,49.4 - 58.5,51.6
+GM1891,Dantumadiel,Ernstig overgewicht,14.7,11.6 - 17.8,16.1
+GM1891,Dantumadiel,Ondergewicht,1.1,0.1 - 2.0,1.6
+GM1891,Dantumadiel,Gezond gewicht,45.0,40.5 - 49.6,46.7
+GM1891,Dantumadiel,Matig overgewicht,39.2,34.9 - 43.6,35.5
+GM0310,De Bilt,Overgewicht,41.5,39.2 - 43.8,44.2
+GM0310,De Bilt,Ernstig overgewicht,12.5,10.9 - 14.1,12.9
+GM0310,De Bilt,Ondergewicht,2.0,1.2 - 2.8,1.8
+GM0310,De Bilt,Gezond gewicht,56.5,54.2 - 58.8,54.0
+GM0310,De Bilt,Matig overgewicht,29.0,26.9 - 31.1,31.2
+GM1940,De Fryske Marren,Overgewicht,51.9,47.7 - 56.1,51.6
+GM1940,De Fryske Marren,Ernstig overgewicht,15.2,12.2 - 18.1,16.1
+GM1940,De Fryske Marren,Ondergewicht,2.3,0.9 - 3.8,1.6
+GM1940,De Fryske Marren,Gezond gewicht,45.7,41.6 - 49.9,46.7
+GM1940,De Fryske Marren,Matig overgewicht,36.8,32.8 - 40.8,35.5
+GM0736,De Ronde Venen,Overgewicht,48.9,46.7 - 51.2,44.2
+GM0736,De Ronde Venen,Ernstig overgewicht,13.9,12.3 - 15.5,12.9
+GM0736,De Ronde Venen,Ondergewicht,1.0,0.5 - 1.4,1.8
+GM0736,De Ronde Venen,Gezond gewicht,50.1,47.8 - 52.4,54.0
+GM0736,De Ronde Venen,Matig overgewicht,35.1,33.0 - 37.2,31.2
+GM1690,De Wolden,Overgewicht,54.5,50.0 - 59.1,55.9
+GM1690,De Wolden,Ernstig overgewicht,16.1,12.8 - 19.4,19.2
+GM1690,De Wolden,Ondergewicht,1.7,0.1 - 3.2,1.5
+GM1690,De Wolden,Gezond gewicht,43.8,39.3 - 48.3,42.6
+GM1690,De Wolden,Matig overgewicht,38.4,34.1 - 42.7,36.7
+GM0503,Delft,Overgewicht,40.0,37.3 - 42.7,47.5
+GM0503,Delft,Ernstig overgewicht,11.0,9.4 - 12.5,14.2
+GM0503,Delft,Ondergewicht,3.4,2.2 - 4.5,1.7
+GM0503,Delft,Gezond gewicht,56.6,53.8 - 59.4,50.8
+GM0503,Delft,Matig overgewicht,29.1,26.6 - 31.6,33.3
+GM0400,Den Helder,Overgewicht,58.5,54.8 - 62.1,50.1
+GM0400,Den Helder,Ernstig overgewicht,22.4,19.4 - 25.3,15.0
+GM0400,Den Helder,Ondergewicht,1.7,0.5 - 2.9,1.5
+GM0400,Den Helder,Gezond gewicht,39.8,36.2 - 43.5,48.4
+GM0400,Den Helder,Matig overgewicht,36.1,32.6 - 39.6,35.1
+GM0762,Deurne,Overgewicht,51.4,46.9 - 55.9,49.5
+GM0762,Deurne,Ernstig overgewicht,13.3,10.4 - 16.1,14.8
+GM0762,Deurne,Ondergewicht,2.6,1.0 - 4.2,1.9
+GM0762,Deurne,Gezond gewicht,46.0,41.5 - 50.5,48.6
+GM0762,Deurne,Matig overgewicht,38.1,33.7 - 42.5,34.7
+GM0150,Deventer,Overgewicht,50.8,48.0 - 53.6,50.3
+GM0150,Deventer,Ernstig overgewicht,16.7,14.7 - 18.7,15.8
+GM0150,Deventer,Ondergewicht,2.0,1.0 - 3.0,1.5
+GM0150,Deventer,Gezond gewicht,47.2,44.4 - 50.0,48.2
+GM0150,Deventer,Matig overgewicht,34.1,31.5 - 36.7,34.4
+GM0384,Diemen,Overgewicht,44.5,40.9 - 48.0,41.0
+GM0384,Diemen,Ernstig overgewicht,11.9,9.6 - 14.1,11.6
+GM0384,Diemen,Ondergewicht,2.8,1.4 - 4.2,2.2
+GM0384,Diemen,Gezond gewicht,52.8,49.1 - 56.4,56.8
+GM0384,Diemen,Matig overgewicht,32.6,29.3 - 35.9,29.4
+GM1980,Dijk en Waard,Overgewicht,53.6,49.6 - 57.7,50.1
+GM1980,Dijk en Waard,Ernstig overgewicht,17.8,14.6 - 20.9,15.0
+GM1980,Dijk en Waard,Ondergewicht,1.6,0.6 - 2.7,1.5
+GM1980,Dijk en Waard,Gezond gewicht,44.7,40.6 - 48.8,48.4
+GM1980,Dijk en Waard,Matig overgewicht,35.9,32.0 - 39.7,35.1
+GM1774,Dinkelland,Overgewicht,53.1,50.1 - 56.1,51.9
+GM1774,Dinkelland,Ernstig overgewicht,13.7,11.7 - 15.7,16.6
+GM1774,Dinkelland,Ondergewicht,1.3,0.4 - 2.3,1.8
+GM1774,Dinkelland,Gezond gewicht,45.6,42.6 - 48.6,46.3
+GM1774,Dinkelland,Matig overgewicht,39.4,36.4 - 42.3,35.3
+GM0221,Doesburg,Overgewicht,58.6,54.6 - 62.6,49.5
+GM0221,Doesburg,Ernstig overgewicht,18.4,15.2 - 21.7,15.1
+GM0221,Doesburg,Ondergewicht,1.1,0.3 - 2.0,1.8
+GM0221,Doesburg,Gezond gewicht,40.3,36.3 - 44.3,48.8
+GM0221,Doesburg,Matig overgewicht,40.2,36.2 - 44.1,34.3
+GM0222,Doetinchem,Overgewicht,50.6,46.7 - 54.5,52.2
+GM0222,Doetinchem,Ernstig overgewicht,17.2,14.3 - 20.2,16.3
+GM0222,Doetinchem,Ondergewicht,1.6,0.4 - 2.7,1.3
+GM0222,Doetinchem,Gezond gewicht,47.8,43.9 - 51.7,46.5
+GM0222,Doetinchem,Matig overgewicht,33.4,29.8 - 37.0,36.0
+GM0766,Dongen,Overgewicht,54.7,51.0 - 58.3,51.7
+GM0766,Dongen,Ernstig overgewicht,19.6,16.7 - 22.5,15.8
+GM0766,Dongen,Ondergewicht,1.8,0.8 - 2.8,1.7
+GM0766,Dongen,Gezond gewicht,43.5,39.9 - 47.2,46.6
+GM0766,Dongen,Matig overgewicht,35.1,31.8 - 38.3,35.9
+GM0505,Dordrecht,Overgewicht,52.6,49.7 - 55.5,54.6
+GM0505,Dordrecht,Ernstig overgewicht,16.9,14.8 - 19.0,17.9
+GM0505,Dordrecht,Ondergewicht,2.9,1.6 - 4.1,2.0
+GM0505,Dordrecht,Gezond gewicht,44.5,41.7 - 47.4,43.4
+GM0505,Dordrecht,Matig overgewicht,35.7,32.9 - 38.5,36.7
+GM0498,Drechterland,Overgewicht,48.5,44.2 - 52.8,50.1
+GM0498,Drechterland,Ernstig overgewicht,13.4,10.6 - 16.3,15.0
+GM0498,Drechterland,Ondergewicht,3.6,1.4 - 5.7,1.5
+GM0498,Drechterland,Gezond gewicht,47.9,43.6 - 52.2,48.4
+GM0498,Drechterland,Matig overgewicht,35.1,31.0 - 39.2,35.1
+GM1719,Drimmelen,Overgewicht,56.7,51.3 - 62.0,52.9
+GM1719,Drimmelen,Ernstig overgewicht,16.1,12.5 - 19.7,16.8
+GM1719,Drimmelen,Ondergewicht,0.7,-0.3 - 1.6,1.8
+GM1719,Drimmelen,Gezond gewicht,42.7,37.4 - 48.0,45.4
+GM1719,Drimmelen,Matig overgewicht,40.6,35.5 - 45.6,36.0
+GM0303,Dronten,Overgewicht,52.3,49.1 - 55.5,56.0
+GM0303,Dronten,Ernstig overgewicht,15.9,13.7 - 18.1,18.6
+GM0303,Dronten,Ondergewicht,2.1,1.1 - 3.1,1.5
+GM0303,Dronten,Gezond gewicht,45.6,42.4 - 48.8,42.5
+GM0303,Dronten,Matig overgewicht,36.4,33.3 - 39.4,37.4
+GM0225,Druten,Overgewicht,51.5,47.7 - 55.2,49.7
+GM0225,Druten,Ernstig overgewicht,16.2,13.5 - 19.0,15.3
+GM0225,Druten,Ondergewicht,0.8,0.0 - 1.5,1.9
+GM0225,Druten,Gezond gewicht,47.7,44.0 - 51.5,48.4
+GM0225,Druten,Matig overgewicht,35.2,31.8 - 38.7,34.4
+GM0226,Duiven,Overgewicht,56.0,52.1 - 60.0,49.5
+GM0226,Duiven,Ernstig overgewicht,19.3,16.2 - 22.5,15.1
+GM0226,Duiven,Ondergewicht,2.4,1.0 - 3.8,1.8
+GM0226,Duiven,Gezond gewicht,41.5,37.6 - 45.5,48.8
+GM0226,Duiven,Matig overgewicht,36.7,32.9 - 40.5,34.3
+GM1711,Echt-Susteren,Overgewicht,55.0,51.4 - 58.7,53.1
+GM1711,Echt-Susteren,Ernstig overgewicht,17.6,14.9 - 20.2,16.6
+GM1711,Echt-Susteren,Ondergewicht,1.3,0.5 - 2.0,1.2
+GM1711,Echt-Susteren,Gezond gewicht,43.7,40.0 - 47.4,45.7
+GM1711,Echt-Susteren,Matig overgewicht,37.5,34.1 - 40.9,36.4
+GM0385,Edam-Volendam,Overgewicht,47.4,44.0 - 50.9,51.6
+GM0385,Edam-Volendam,Ernstig overgewicht,13.1,10.9 - 15.3,16.3
+GM0385,Edam-Volendam,Ondergewicht,1.2,0.3 - 2.1,1.5
+GM0385,Edam-Volendam,Gezond gewicht,51.4,47.9 - 54.8,46.8
+GM0385,Edam-Volendam,Matig overgewicht,34.3,31.1 - 37.5,35.4
+GM0228,Ede,Overgewicht,46.4,44.0 - 48.8,49.5
+GM0228,Ede,Ernstig overgewicht,12.8,11.3 - 14.3,15.1
+GM0228,Ede,Ondergewicht,1.8,1.1 - 2.5,1.8
+GM0228,Ede,Gezond gewicht,51.8,49.4 - 54.2,48.8
+GM0228,Ede,Matig overgewicht,33.6,31.3 - 35.8,34.3
+GM0317,Eemnes,Overgewicht,50.2,46.2 - 54.2,44.2
+GM0317,Eemnes,Ernstig overgewicht,13.3,10.7 - 15.9,12.9
+GM0317,Eemnes,Ondergewicht,1.4,0.4 - 2.5,1.8
+GM0317,Eemnes,Gezond gewicht,48.4,44.4 - 52.4,54.0
+GM0317,Eemnes,Matig overgewicht,36.8,33.0 - 40.6,31.2
+GM1979,Eemsdelta,Overgewicht,59.4,54.8 - 64.0,49.7
+GM1979,Eemsdelta,Ernstig overgewicht,24.8,20.8 - 28.8,16.9
+GM1979,Eemsdelta,Ondergewicht,2.6,0.7 - 4.5,1.7
+GM1979,Eemsdelta,Gezond gewicht,38.0,33.5 - 42.5,48.6
+GM1979,Eemsdelta,Matig overgewicht,34.7,30.3 - 39.0,32.8
+GM0770,Eersel,Overgewicht,54.6,50.1 - 59.2,49.5
+GM0770,Eersel,Ernstig overgewicht,15.7,12.4 - 18.9,14.8
+GM0770,Eersel,Ondergewicht,0.8,0.2 - 1.4,1.9
+GM0770,Eersel,Gezond gewicht,44.6,40.0 - 49.1,48.6
+GM0770,Eersel,Matig overgewicht,39.0,34.4 - 43.5,34.7
+GM1903,Eijsden-Margraten,Overgewicht,54.6,51.7 - 57.5,54.3
+GM1903,Eijsden-Margraten,Ernstig overgewicht,14.0,12.0 - 15.9,17.7
+GM1903,Eijsden-Margraten,Ondergewicht,1.1,0.4 - 1.8,1.7
+GM1903,Eijsden-Margraten,Gezond gewicht,44.3,41.4 - 47.2,44.0
+GM1903,Eijsden-Margraten,Matig overgewicht,40.6,37.8 - 43.5,36.7
+GM0772,Eindhoven,Overgewicht,44.5,42.4 - 46.6,49.5
+GM0772,Eindhoven,Ernstig overgewicht,13.0,11.6 - 14.3,14.8
+GM0772,Eindhoven,Ondergewicht,3.1,2.3 - 3.9,1.9
+GM0772,Eindhoven,Gezond gewicht,52.4,50.3 - 54.6,48.6
+GM0772,Eindhoven,Matig overgewicht,31.5,29.6 - 33.5,34.7
+GM0230,Elburg,Overgewicht,53.4,49.3 - 57.4,52.2
+GM0230,Elburg,Ernstig overgewicht,14.5,11.8 - 17.3,16.3
+GM0230,Elburg,Ondergewicht,1.7,0.3 - 3.0,1.3
+GM0230,Elburg,Gezond gewicht,45.0,40.9 - 49.0,46.5
+GM0230,Elburg,Matig overgewicht,38.8,34.9 - 42.7,36.0
+GM0114,Emmen,Overgewicht,64.2,59.8 - 68.6,55.9
+GM0114,Emmen,Ernstig overgewicht,26.4,22.3 - 30.5,19.2
+GM0114,Emmen,Ondergewicht,1.6,0.3 - 2.9,1.5
+GM0114,Emmen,Gezond gewicht,34.2,29.8 - 38.6,42.6
+GM0114,Emmen,Matig overgewicht,37.8,33.5 - 42.1,36.7
+GM0388,Enkhuizen,Overgewicht,49.1,44.6 - 53.5,50.1
+GM0388,Enkhuizen,Ernstig overgewicht,13.5,10.4 - 16.5,15.0
+GM0388,Enkhuizen,Ondergewicht,1.8,0.4 - 3.1,1.5
+GM0388,Enkhuizen,Gezond gewicht,49.2,44.7 - 53.7,48.4
+GM0388,Enkhuizen,Matig overgewicht,35.6,31.4 - 39.8,35.1
+GM0153,Enschede,Overgewicht,50.1,47.1 - 53.0,51.9
+GM0153,Enschede,Ernstig overgewicht,17.0,14.8 - 19.1,16.6
+GM0153,Enschede,Ondergewicht,2.1,1.0 - 3.3,1.8
+GM0153,Enschede,Gezond gewicht,47.8,44.8 - 50.8,46.3
+GM0153,Enschede,Matig overgewicht,33.1,30.3 - 35.9,35.3
+GM0232,Epe,Overgewicht,54.7,50.8 - 58.6,52.2
+GM0232,Epe,Ernstig overgewicht,15.4,12.7 - 18.2,16.3
+GM0232,Epe,Ondergewicht,1.5,0.4 - 2.7,1.3
+GM0232,Epe,Gezond gewicht,43.8,39.9 - 47.6,46.5
+GM0232,Epe,Matig overgewicht,39.3,35.5 - 43.0,36.0
+GM0233,Ermelo,Overgewicht,50.2,46.2 - 54.1,52.2
+GM0233,Ermelo,Ernstig overgewicht,13.3,10.7 - 16.0,16.3
+GM0233,Ermelo,Ondergewicht,1.6,0.3 - 2.9,1.3
+GM0233,Ermelo,Gezond gewicht,48.2,44.2 - 52.2,46.5
+GM0233,Ermelo,Matig overgewicht,36.8,33.0 - 40.6,36.0
+GM0777,Etten-Leur,Overgewicht,54.3,51.0 - 57.5,52.9
+GM0777,Etten-Leur,Ernstig overgewicht,19.1,16.5 - 21.6,16.8
+GM0777,Etten-Leur,Ondergewicht,2.5,1.2 - 3.8,1.8
+GM0777,Etten-Leur,Gezond gewicht,43.2,40.0 - 46.5,45.4
+GM0777,Etten-Leur,Matig overgewicht,35.2,32.2 - 38.2,36.0
+GM9004,Friese Waddeneilanden,Overgewicht,55.0,49.8 - 60.2,51.6
+GM9004,Friese Waddeneilanden,Ernstig overgewicht,16.3,12.6 - 20.1,16.1
+GM9004,Friese Waddeneilanden,Ondergewicht,1.8,0.6 - 3.1,1.6
+GM9004,Friese Waddeneilanden,Gezond gewicht,43.2,38.0 - 48.3,46.7
+GM9004,Friese Waddeneilanden,Matig overgewicht,38.7,33.7 - 43.7,35.5
+GM0779,Geertruidenberg,Overgewicht,54.4,50.0 - 58.9,52.9
+GM0779,Geertruidenberg,Ernstig overgewicht,20.9,17.3 - 24.5,16.8
+GM0779,Geertruidenberg,Ondergewicht,2.3,0.8 - 3.9,1.8
+GM0779,Geertruidenberg,Gezond gewicht,43.2,38.8 - 47.7,45.4
+GM0779,Geertruidenberg,Matig overgewicht,33.5,29.5 - 37.6,36.0
+GM1771,Geldrop-Mierlo,Overgewicht,53.1,48.9 - 57.3,49.5
+GM1771,Geldrop-Mierlo,Ernstig overgewicht,15.7,12.7 - 18.7,14.8
+GM1771,Geldrop-Mierlo,Ondergewicht,0.5,0.0 - 1.0,1.9
+GM1771,Geldrop-Mierlo,Gezond gewicht,46.4,42.2 - 50.6,48.6
+GM1771,Geldrop-Mierlo,Matig overgewicht,37.4,33.4 - 41.5,34.7
+GM1652,Gemert-Bakel,Overgewicht,52.8,49.3 - 56.3,49.5
+GM1652,Gemert-Bakel,Ernstig overgewicht,15.5,13.1 - 17.9,14.8
+GM1652,Gemert-Bakel,Ondergewicht,1.1,0.3 - 1.8,1.9
+GM1652,Gemert-Bakel,Gezond gewicht,46.1,42.7 - 49.6,48.6
+GM1652,Gemert-Bakel,Matig overgewicht,37.3,34.0 - 40.6,34.7
+GM0907,Gennep,Overgewicht,50.9,46.8 - 55.0,53.1
+GM0907,Gennep,Ernstig overgewicht,17.2,14.1 - 20.2,16.6
+GM0907,Gennep,Ondergewicht,1.5,0.6 - 2.4,1.2
+GM0907,Gennep,Gezond gewicht,47.6,43.5 - 51.7,45.7
+GM0907,Gennep,Matig overgewicht,33.7,29.9 - 37.6,36.4
+GM0784,Gilze en Rijen,Overgewicht,56.5,53.0 - 60.1,51.7
+GM0784,Gilze en Rijen,Ernstig overgewicht,17.5,14.7 - 20.2,15.8
+GM0784,Gilze en Rijen,Ondergewicht,1.4,0.4 - 2.4,1.7
+GM0784,Gilze en Rijen,Gezond gewicht,42.1,38.5 - 45.6,46.6
+GM0784,Gilze en Rijen,Matig overgewicht,39.1,35.6 - 42.5,35.9
+GM1924,Goeree-Overflakkee,Overgewicht,57.4,54.4 - 60.3,53.3
+GM1924,Goeree-Overflakkee,Ernstig overgewicht,16.9,14.7 - 19.2,18.1
+GM1924,Goeree-Overflakkee,Ondergewicht,1.5,0.7 - 2.3,1.6
+GM1924,Goeree-Overflakkee,Gezond gewicht,41.1,38.1 - 44.0,45.2
+GM1924,Goeree-Overflakkee,Matig overgewicht,40.4,37.5 - 43.4,35.2
+GM0664,Goes,Overgewicht,51.7,47.6 - 55.8,51.5
+GM0664,Goes,Ernstig overgewicht,17.0,14.0 - 20.0,16.6
+GM0664,Goes,Ondergewicht,1.3,0.2 - 2.4,1.5
+GM0664,Goes,Gezond gewicht,47.0,42.9 - 51.1,47.0
+GM0664,Goes,Matig overgewicht,34.7,30.9 - 38.6,35.0
+GM0785,Goirle,Overgewicht,53.0,48.6 - 57.4,51.7
+GM0785,Goirle,Ernstig overgewicht,17.4,14.3 - 20.6,15.8
+GM0785,Goirle,Ondergewicht,2.4,0.7 - 4.1,1.7
+GM0785,Goirle,Gezond gewicht,44.6,40.2 - 49.0,46.6
+GM0785,Goirle,Matig overgewicht,35.5,31.5 - 39.6,35.9
+GM1942,Gooise Meren,Overgewicht,42.8,40.4 - 45.3,45.0
+GM1942,Gooise Meren,Ernstig overgewicht,10.8,9.3 - 12.3,12.0
+GM1942,Gooise Meren,Ondergewicht,1.7,1.0 - 2.5,1.8
+GM1942,Gooise Meren,Gezond gewicht,55.4,53.0 - 57.9,53.2
+GM1942,Gooise Meren,Matig overgewicht,32.0,29.8 - 34.3,32.9
+GM0512,Gorinchem,Overgewicht,52.3,47.8 - 56.8,54.6
+GM0512,Gorinchem,Ernstig overgewicht,20.0,16.4 - 23.6,17.9
+GM0512,Gorinchem,Ondergewicht,1.8,0.6 - 3.1,2.0
+GM0512,Gorinchem,Gezond gewicht,45.9,41.3 - 50.4,43.4
+GM0512,Gorinchem,Matig overgewicht,32.3,28.1 - 36.5,36.7
+GM0513,Gouda,Overgewicht,50.1,47.2 - 53.0,48.6
+GM0513,Gouda,Ernstig overgewicht,14.9,12.9 - 17.0,14.4
+GM0513,Gouda,Ondergewicht,2.0,1.0 - 2.9,1.7
+GM0513,Gouda,Gezond gewicht,47.9,45.0 - 50.8,49.8
+GM0513,Gouda,Matig overgewicht,35.2,32.4 - 37.9,34.2
+GM0014,Groningen (gemeente),Overgewicht,38.9,35.2 - 42.6,49.7
+GM0014,Groningen (gemeente),Ernstig overgewicht,11.6,9.2 - 13.9,16.9
+GM0014,Groningen (gemeente),Ondergewicht,1.9,0.7 - 3.2,1.7
+GM0014,Groningen (gemeente),Gezond gewicht,59.1,55.4 - 62.9,48.6
+GM0014,Groningen (gemeente),Matig overgewicht,27.4,24.1 - 30.7,32.8
+GM1729,Gulpen-Wittem,Overgewicht,51.2,47.0 - 55.4,54.3
+GM1729,Gulpen-Wittem,Ernstig overgewicht,14.3,11.5 - 17.1,17.7
+GM1729,Gulpen-Wittem,Ondergewicht,2.4,0.9 - 4.0,1.7
+GM1729,Gulpen-Wittem,Gezond gewicht,46.4,42.1 - 50.6,44.0
+GM1729,Gulpen-Wittem,Matig overgewicht,36.9,32.9 - 41.0,36.7
+GM0158,Haaksbergen,Overgewicht,54.8,51.2 - 58.4,51.9
+GM0158,Haaksbergen,Ernstig overgewicht,16.9,14.3 - 19.6,16.6
+GM0158,Haaksbergen,Ondergewicht,1.0,0.1 - 1.8,1.8
+GM0158,Haaksbergen,Gezond gewicht,44.2,40.6 - 47.9,46.3
+GM0158,Haaksbergen,Matig overgewicht,37.9,34.4 - 41.4,35.3
+GM0392,Haarlem,Overgewicht,42.1,39.9 - 44.3,47.2
+GM0392,Haarlem,Ernstig overgewicht,13.8,12.3 - 15.4,15.0
+GM0392,Haarlem,Ondergewicht,1.7,1.1 - 2.4,1.6
+GM0392,Haarlem,Gezond gewicht,56.2,53.9 - 58.4,51.2
+GM0392,Haarlem,Matig overgewicht,28.2,26.3 - 30.2,32.2
+GM0394,Haarlemmermeer,Overgewicht,50.3,48.2 - 52.5,47.2
+GM0394,Haarlemmermeer,Ernstig overgewicht,16.8,15.2 - 18.4,15.0
+GM0394,Haarlemmermeer,Ondergewicht,1.5,0.8 - 2.2,1.6
+GM0394,Haarlemmermeer,Gezond gewicht,48.2,46.0 - 50.3,51.2
+GM0394,Haarlemmermeer,Matig overgewicht,33.5,31.5 - 35.4,32.2
+GM1655,Halderberge,Overgewicht,54.2,49.5 - 59.0,52.9
+GM1655,Halderberge,Ernstig overgewicht,17.1,13.7 - 20.6,16.8
+GM1655,Halderberge,Ondergewicht,2.9,0.7 - 5.2,1.8
+GM1655,Halderberge,Gezond gewicht,42.8,38.1 - 47.6,45.4
+GM1655,Halderberge,Matig overgewicht,37.1,32.6 - 41.6,36.0
+GM0160,Hardenberg,Overgewicht,57.8,54.2 - 61.5,50.3
+GM0160,Hardenberg,Ernstig overgewicht,16.9,14.3 - 19.5,15.8
+GM0160,Hardenberg,Ondergewicht,1.1,0.4 - 1.8,1.5
+GM0160,Hardenberg,Gezond gewicht,41.1,37.4 - 44.7,48.2
+GM0160,Hardenberg,Matig overgewicht,40.9,37.4 - 44.5,34.4
+GM0243,Harderwijk,Overgewicht,45.7,41.7 - 49.7,52.2
+GM0243,Harderwijk,Ernstig overgewicht,14.0,11.4 - 16.7,16.3
+GM0243,Harderwijk,Ondergewicht,0.6,-0.3 - 1.6,1.3
+GM0243,Harderwijk,Gezond gewicht,53.6,49.6 - 57.6,46.5
+GM0243,Harderwijk,Matig overgewicht,31.7,28.0 - 35.4,36.0
+GM0523,Hardinxveld-Giessendam,Overgewicht,53.9,49.5 - 58.3,54.6
+GM0523,Hardinxveld-Giessendam,Ernstig overgewicht,14.3,11.3 - 17.2,17.9
+GM0523,Hardinxveld-Giessendam,Ondergewicht,1.8,0.5 - 3.1,2.0
+GM0523,Hardinxveld-Giessendam,Gezond gewicht,44.3,39.9 - 48.7,43.4
+GM0523,Hardinxveld-Giessendam,Matig overgewicht,39.6,35.3 - 43.9,36.7
+GM0072,Harlingen,Overgewicht,55.6,51.3 - 59.9,51.6
+GM0072,Harlingen,Ernstig overgewicht,18.1,14.8 - 21.4,16.1
+GM0072,Harlingen,Ondergewicht,1.3,0.1 - 2.5,1.6
+GM0072,Harlingen,Gezond gewicht,43.1,38.8 - 47.4,46.7
+GM0072,Harlingen,Matig overgewicht,37.5,33.3 - 41.6,35.5
+GM0244,Hattem,Overgewicht,49.1,44.4 - 53.8,52.2
+GM0244,Hattem,Ernstig overgewicht,14.3,10.8 - 17.8,16.3
+GM0244,Hattem,Ondergewicht,1.0,0.3 - 1.8,1.3
+GM0244,Hattem,Gezond gewicht,49.8,45.1 - 54.5,46.5
+GM0244,Hattem,Matig overgewicht,34.8,30.4 - 39.2,36.0
+GM0396,Heemskerk,Overgewicht,51.5,47.5 - 55.5,47.2
+GM0396,Heemskerk,Ernstig overgewicht,17.6,14.6 - 20.6,15.0
+GM0396,Heemskerk,Ondergewicht,1.0,0.2 - 1.9,1.6
+GM0396,Heemskerk,Gezond gewicht,47.5,43.5 - 51.5,51.2
+GM0396,Heemskerk,Matig overgewicht,33.9,30.3 - 37.6,32.2
+GM0397,Heemstede,Overgewicht,41.3,37.3 - 45.2,47.2
+GM0397,Heemstede,Ernstig overgewicht,9.2,6.9 - 11.4,15.0
+GM0397,Heemstede,Ondergewicht,1.0,0.3 - 1.7,1.6
+GM0397,Heemstede,Gezond gewicht,57.7,53.8 - 61.7,51.2
+GM0397,Heemstede,Matig overgewicht,32.1,28.4 - 35.8,32.2
+GM0246,Heerde,Overgewicht,53.5,49.3 - 57.6,52.2
+GM0246,Heerde,Ernstig overgewicht,17.4,14.2 - 20.6,16.3
+GM0246,Heerde,Ondergewicht,0.7,0.1 - 1.3,1.3
+GM0246,Heerde,Gezond gewicht,45.8,41.7 - 50.0,46.5
+GM0246,Heerde,Matig overgewicht,36.1,32.2 - 39.9,36.0
+GM0074,Heerenveen,Overgewicht,47.8,44.2 - 51.3,51.6
+GM0074,Heerenveen,Ernstig overgewicht,12.8,10.5 - 15.1,16.1
+GM0074,Heerenveen,Ondergewicht,1.2,0.6 - 1.8,1.6
+GM0074,Heerenveen,Gezond gewicht,51.1,47.5 - 54.6,46.7
+GM0074,Heerenveen,Matig overgewicht,34.9,31.5 - 38.3,35.5
+GM0917,Heerlen,Overgewicht,58.0,55.7 - 60.4,54.3
+GM0917,Heerlen,Ernstig overgewicht,20.0,18.2 - 21.8,17.7
+GM0917,Heerlen,Ondergewicht,1.7,1.0 - 2.4,1.7
+GM0917,Heerlen,Gezond gewicht,40.3,37.9 - 42.6,44.0
+GM0917,Heerlen,Matig overgewicht,38.0,35.7 - 40.3,36.7
+GM1658,Heeze-Leende,Overgewicht,44.2,39.9 - 48.4,49.5
+GM1658,Heeze-Leende,Ernstig overgewicht,11.7,8.9 - 14.4,14.8
+GM1658,Heeze-Leende,Ondergewicht,1.5,0.2 - 2.9,1.9
+GM1658,Heeze-Leende,Gezond gewicht,54.3,50.0 - 58.6,48.6
+GM1658,Heeze-Leende,Matig overgewicht,32.5,28.5 - 36.4,34.7
+GM0399,Heiloo,Overgewicht,39.5,35.7 - 43.3,50.1
+GM0399,Heiloo,Ernstig overgewicht,8.5,6.5 - 10.5,15.0
+GM0399,Heiloo,Ondergewicht,2.4,0.8 - 4.0,1.5
+GM0399,Heiloo,Gezond gewicht,58.1,54.3 - 62.0,48.4
+GM0399,Heiloo,Matig overgewicht,31.0,27.4 - 34.5,35.1
+GM0163,Hellendoorn,Overgewicht,52.0,48.3 - 55.6,51.9
+GM0163,Hellendoorn,Ernstig overgewicht,14.8,12.3 - 17.3,16.6
+GM0163,Hellendoorn,Ondergewicht,1.4,0.4 - 2.4,1.8
+GM0163,Hellendoorn,Gezond gewicht,46.6,43.0 - 50.3,46.3
+GM0163,Hellendoorn,Matig overgewicht,37.2,33.7 - 40.7,35.3
+GM0794,Helmond,Overgewicht,54.8,51.8 - 57.7,49.5
+GM0794,Helmond,Ernstig overgewicht,18.4,16.1 - 20.8,14.8
+GM0794,Helmond,Ondergewicht,2.0,1.1 - 2.9,1.9
+GM0794,Helmond,Gezond gewicht,43.2,40.3 - 46.2,48.6
+GM0794,Helmond,Matig overgewicht,36.4,33.6 - 39.1,34.7
+GM0531,Hendrik-Ido-Ambacht,Overgewicht,53.7,49.8 - 57.5,54.6
+GM0531,Hendrik-Ido-Ambacht,Ernstig overgewicht,16.6,13.8 - 19.5,17.9
+GM0531,Hendrik-Ido-Ambacht,Ondergewicht,0.9,0.0 - 1.8,2.0
+GM0531,Hendrik-Ido-Ambacht,Gezond gewicht,45.4,41.5 - 49.3,43.4
+GM0531,Hendrik-Ido-Ambacht,Matig overgewicht,37.0,33.4 - 40.7,36.7
+GM0164,Hengelo (O.),Overgewicht,49.4,46.8 - 52.0,51.9
+GM0164,Hengelo (O.),Ernstig overgewicht,17.0,15.1 - 19.0,16.6
+GM0164,Hengelo (O.),Ondergewicht,2.0,1.2 - 2.7,1.8
+GM0164,Hengelo (O.),Gezond gewicht,48.6,46.0 - 51.2,46.3
+GM0164,Hengelo (O.),Matig overgewicht,32.4,30.0 - 34.7,35.3
+GM1966,Het Hogeland,Overgewicht,53.3,48.8 - 57.8,49.7
+GM1966,Het Hogeland,Ernstig overgewicht,18.0,14.6 - 21.5,16.9
+GM1966,Het Hogeland,Ondergewicht,0.5,0.1 - 1.0,1.7
+GM1966,Het Hogeland,Gezond gewicht,46.2,41.6 - 50.7,48.6
+GM1966,Het Hogeland,Matig overgewicht,35.3,31.0 - 39.5,32.8
+GM0252,Heumen,Overgewicht,48.7,44.7 - 52.8,49.7
+GM0252,Heumen,Ernstig overgewicht,12.6,9.9 - 15.2,15.3
+GM0252,Heumen,Ondergewicht,1.9,0.6 - 3.2,1.9
+GM0252,Heumen,Gezond gewicht,49.4,45.4 - 53.5,48.4
+GM0252,Heumen,Matig overgewicht,36.2,32.3 - 40.0,34.4
+GM0797,Heusden,Overgewicht,54.2,49.8 - 58.7,51.7
+GM0797,Heusden,Ernstig overgewicht,18.1,14.7 - 21.5,15.8
+GM0797,Heusden,Ondergewicht,2.1,0.6 - 3.7,1.7
+GM0797,Heusden,Gezond gewicht,43.6,39.2 - 48.0,46.6
+GM0797,Heusden,Matig overgewicht,36.1,31.9 - 40.4,35.9
+GM0534,Hillegom,Overgewicht,50.0,46.0 - 53.9,48.6
+GM0534,Hillegom,Ernstig overgewicht,15.6,12.6 - 18.6,14.4
+GM0534,Hillegom,Ondergewicht,2.3,1.1 - 3.6,1.7
+GM0534,Hillegom,Gezond gewicht,47.7,43.7 - 51.6,49.8
+GM0534,Hillegom,Matig overgewicht,34.4,30.7 - 38.1,34.2
+GM0798,Hilvarenbeek,Overgewicht,51.6,47.7 - 55.5,51.7
+GM0798,Hilvarenbeek,Ernstig overgewicht,14.2,11.6 - 16.8,15.8
+GM0798,Hilvarenbeek,Ondergewicht,1.9,0.9 - 2.9,1.7
+GM0798,Hilvarenbeek,Gezond gewicht,46.5,42.6 - 50.4,46.6
+GM0798,Hilvarenbeek,Matig overgewicht,37.4,33.7 - 41.1,35.9
+GM0402,Hilversum,Overgewicht,44.1,41.5 - 46.7,45.0
+GM0402,Hilversum,Ernstig overgewicht,12.1,10.3 - 13.9,12.0
+GM0402,Hilversum,Ondergewicht,2.0,1.3 - 2.6,1.8
+GM0402,Hilversum,Gezond gewicht,53.9,51.3 - 56.6,53.2
+GM0402,Hilversum,Matig overgewicht,32.0,29.6 - 34.4,32.9
+GM1963,Hoeksche Waard,Overgewicht,56.3,52.4 - 60.2,54.6
+GM1963,Hoeksche Waard,Ernstig overgewicht,18.0,15.1 - 20.9,17.9
+GM1963,Hoeksche Waard,Ondergewicht,1.2,0.1 - 2.3,2.0
+GM1963,Hoeksche Waard,Gezond gewicht,42.5,38.5 - 46.4,43.4
+GM1963,Hoeksche Waard,Matig overgewicht,38.3,34.4 - 42.1,36.7
+GM1735,Hof van Twente,Overgewicht,52.9,49.2 - 56.6,51.9
+GM1735,Hof van Twente,Ernstig overgewicht,16.4,13.6 - 19.1,16.6
+GM1735,Hof van Twente,Ondergewicht,0.9,0.2 - 1.5,1.8
+GM1735,Hof van Twente,Gezond gewicht,46.2,42.6 - 49.9,46.3
+GM1735,Hof van Twente,Matig overgewicht,36.5,33.1 - 40.0,35.3
+GM1911,Hollands Kroon,Overgewicht,55.5,51.4 - 59.6,50.1
+GM1911,Hollands Kroon,Ernstig overgewicht,17.4,14.4 - 20.4,15.0
+GM1911,Hollands Kroon,Ondergewicht,0.5,-0.2 - 1.2,1.5
+GM1911,Hollands Kroon,Gezond gewicht,44.0,39.9 - 48.1,48.4
+GM1911,Hollands Kroon,Matig overgewicht,38.1,34.2 - 42.0,35.1
+GM0118,Hoogeveen,Overgewicht,54.0,49.5 - 58.4,55.9
+GM0118,Hoogeveen,Ernstig overgewicht,18.7,15.2 - 22.2,19.2
+GM0118,Hoogeveen,Ondergewicht,1.3,0.3 - 2.2,1.5
+GM0118,Hoogeveen,Gezond gewicht,44.8,40.3 - 49.2,42.6
+GM0118,Hoogeveen,Matig overgewicht,35.3,31.1 - 39.5,36.7
+GM0405,Hoorn,Overgewicht,48.9,44.9 - 53.0,50.1
+GM0405,Hoorn,Ernstig overgewicht,17.6,14.5 - 20.8,15.0
+GM0405,Hoorn,Ondergewicht,1.4,0.3 - 2.5,1.5
+GM0405,Hoorn,Gezond gewicht,49.7,45.6 - 53.7,48.4
+GM0405,Hoorn,Matig overgewicht,31.3,27.7 - 34.9,35.1
+GM1507,Horst aan de Maas,Overgewicht,52.8,49.1 - 56.5,53.1
+GM1507,Horst aan de Maas,Ernstig overgewicht,13.7,11.3 - 16.1,16.6
+GM1507,Horst aan de Maas,Ondergewicht,0.9,0.3 - 1.4,1.2
+GM1507,Horst aan de Maas,Gezond gewicht,46.3,42.6 - 50.1,45.7
+GM1507,Horst aan de Maas,Matig overgewicht,39.1,35.6 - 42.7,36.4
+GM0321,Houten,Overgewicht,43.5,40.1 - 46.9,44.2
+GM0321,Houten,Ernstig overgewicht,12.6,10.5 - 14.7,12.9
+GM0321,Houten,Ondergewicht,1.7,0.8 - 2.6,1.8
+GM0321,Houten,Gezond gewicht,54.8,51.4 - 58.2,54.0
+GM0321,Houten,Matig overgewicht,30.9,27.8 - 34.0,31.2
+GM0406,Huizen,Overgewicht,49.1,46.2 - 52.0,45.0
+GM0406,Huizen,Ernstig overgewicht,14.6,12.5 - 16.7,12.0
+GM0406,Huizen,Ondergewicht,1.9,0.9 - 2.8,1.8
+GM0406,Huizen,Gezond gewicht,49.0,46.1 - 52.0,53.2
+GM0406,Huizen,Matig overgewicht,34.4,31.7 - 37.2,32.9
+GM0677,Hulst,Overgewicht,54.1,50.1 - 58.2,51.5
+GM0677,Hulst,Ernstig overgewicht,18.0,15.0 - 21.1,16.6
+GM0677,Hulst,Ondergewicht,1.5,0.3 - 2.6,1.5
+GM0677,Hulst,Gezond gewicht,44.4,40.3 - 48.5,47.0
+GM0677,Hulst,Matig overgewicht,36.1,32.3 - 39.9,35.0
+GM0353,IJsselstein,Overgewicht,47.3,43.1 - 51.4,44.2
+GM0353,IJsselstein,Ernstig overgewicht,14.7,11.8 - 17.6,12.9
+GM0353,IJsselstein,Ondergewicht,2.5,0.9 - 4.2,1.8
+GM0353,IJsselstein,Gezond gewicht,50.2,46.0 - 54.4,54.0
+GM0353,IJsselstein,Matig overgewicht,32.6,28.8 - 36.4,31.2
+GM1884,Kaag en Braassem,Overgewicht,52.6,49.3 - 56.0,48.6
+GM1884,Kaag en Braassem,Ernstig overgewicht,14.9,12.5 - 17.3,14.4
+GM1884,Kaag en Braassem,Ondergewicht,0.7,0.1 - 1.3,1.7
+GM1884,Kaag en Braassem,Gezond gewicht,46.7,43.3 - 50.0,49.8
+GM1884,Kaag en Braassem,Matig overgewicht,37.8,34.6 - 40.9,34.2
+GM0166,Kampen,Overgewicht,49.6,44.6 - 54.5,50.3
+GM0166,Kampen,Ernstig overgewicht,20.2,16.0 - 24.4,15.8
+GM0166,Kampen,Ondergewicht,3.0,1.1 - 4.9,1.5
+GM0166,Kampen,Gezond gewicht,47.5,42.5 - 52.4,48.2
+GM0166,Kampen,Matig overgewicht,29.4,25.2 - 33.6,34.4
+GM0678,Kapelle,Overgewicht,46.7,42.8 - 50.7,51.5
+GM0678,Kapelle,Ernstig overgewicht,12.3,9.9 - 14.7,16.6
+GM0678,Kapelle,Ondergewicht,1.7,0.4 - 2.9,1.5
+GM0678,Kapelle,Gezond gewicht,51.6,47.6 - 55.6,47.0
+GM0678,Kapelle,Matig overgewicht,34.4,30.7 - 38.1,35.0
+GM0537,Katwijk,Overgewicht,55.9,52.1 - 59.6,48.6
+GM0537,Katwijk,Ernstig overgewicht,18.9,16.1 - 21.7,14.4
+GM0537,Katwijk,Ondergewicht,1.9,0.5 - 3.3,1.7
+GM0537,Katwijk,Gezond gewicht,42.2,38.5 - 46.0,49.8
+GM0537,Katwijk,Matig overgewicht,37.0,33.4 - 40.6,34.2
+GM0928,Kerkrade,Overgewicht,61.2,58.2 - 64.2,54.3
+GM0928,Kerkrade,Ernstig overgewicht,21.7,19.2 - 24.2,17.7
+GM0928,Kerkrade,Ondergewicht,1.3,0.5 - 2.1,1.7
+GM0928,Kerkrade,Gezond gewicht,37.5,34.5 - 40.5,44.0
+GM0928,Kerkrade,Matig overgewicht,39.5,36.6 - 42.4,36.7
+GM1598,Koggenland,Overgewicht,49.6,45.5 - 53.8,50.1
+GM1598,Koggenland,Ernstig overgewicht,11.2,8.7 - 13.8,15.0
+GM1598,Koggenland,Ondergewicht,1.3,0.3 - 2.3,1.5
+GM1598,Koggenland,Gezond gewicht,49.1,44.9 - 53.2,48.4
+GM1598,Koggenland,Matig overgewicht,38.4,34.4 - 42.4,35.1
+GM0542,Krimpen aan den IJssel,Overgewicht,59.4,55.6 - 63.2,53.3
+GM0542,Krimpen aan den IJssel,Ernstig overgewicht,18.3,15.3 - 21.4,18.1
+GM0542,Krimpen aan den IJssel,Ondergewicht,1.4,0.6 - 2.2,1.6
+GM0542,Krimpen aan den IJssel,Gezond gewicht,39.2,35.4 - 43.0,45.2
+GM0542,Krimpen aan den IJssel,Matig overgewicht,41.1,37.2 - 44.9,35.2
+GM1931,Krimpenerwaard,Overgewicht,52.6,49.8 - 55.4,48.6
+GM1931,Krimpenerwaard,Ernstig overgewicht,15.4,13.4 - 17.4,14.4
+GM1931,Krimpenerwaard,Ondergewicht,1.2,0.7 - 1.8,1.7
+GM1931,Krimpenerwaard,Gezond gewicht,46.1,43.3 - 49.0,49.8
+GM1931,Krimpenerwaard,Matig overgewicht,37.2,34.5 - 39.9,34.2
+GM1659,Laarbeek,Overgewicht,56.5,51.9 - 61.1,49.5
+GM1659,Laarbeek,Ernstig overgewicht,17.6,14.1 - 21.1,14.8
+GM1659,Laarbeek,Ondergewicht,2.1,0.2 - 4.0,1.9
+GM1659,Laarbeek,Gezond gewicht,41.5,36.9 - 46.0,48.6
+GM1659,Laarbeek,Matig overgewicht,38.9,34.4 - 43.4,34.7
+GM1982,Land van Cuijk,Overgewicht,53.2,50.8 - 55.6,51.7
+GM1982,Land van Cuijk,Ernstig overgewicht,14.9,13.2 - 16.6,15.8
+GM1982,Land van Cuijk,Ondergewicht,1.3,0.7 - 1.9,1.7
+GM1982,Land van Cuijk,Gezond gewicht,45.5,43.1 - 47.9,46.6
+GM1982,Land van Cuijk,Matig overgewicht,38.3,36.0 - 40.7,35.9
+GM0882,Landgraaf,Overgewicht,60.6,57.7 - 63.5,54.3
+GM0882,Landgraaf,Ernstig overgewicht,20.3,18.0 - 22.6,17.7
+GM0882,Landgraaf,Ondergewicht,2.2,1.2 - 3.3,1.7
+GM0882,Landgraaf,Gezond gewicht,37.1,34.3 - 40.0,44.0
+GM0882,Landgraaf,Matig overgewicht,40.4,37.5 - 43.2,36.7
+GM0415,Landsmeer,Overgewicht,42.8,39.0 - 46.6,51.6
+GM0415,Landsmeer,Ernstig overgewicht,10.9,8.6 - 13.3,16.3
+GM0415,Landsmeer,Ondergewicht,1.7,0.6 - 2.9,1.5
+GM0415,Landsmeer,Gezond gewicht,55.5,51.6 - 59.3,46.8
+GM0415,Landsmeer,Matig overgewicht,31.9,28.3 - 35.4,35.4
+GM1621,Lansingerland,Overgewicht,49.9,47.3 - 52.5,53.3
+GM1621,Lansingerland,Ernstig overgewicht,13.4,11.6 - 15.3,18.1
+GM1621,Lansingerland,Ondergewicht,1.0,0.5 - 1.4,1.6
+GM1621,Lansingerland,Gezond gewicht,49.1,46.5 - 51.7,45.2
+GM1621,Lansingerland,Matig overgewicht,36.5,34.0 - 39.0,35.2
+GM0417,Laren (NH.),Overgewicht,41.3,37.2 - 45.4,45.0
+GM0417,Laren (NH.),Ernstig overgewicht,9.6,7.0 - 12.2,12.0
+GM0417,Laren (NH.),Ondergewicht,1.1,0.4 - 1.9,1.8
+GM0417,Laren (NH.),Gezond gewicht,57.6,53.4 - 61.7,53.2
+GM0417,Laren (NH.),Matig overgewicht,31.7,27.9 - 35.5,32.9
+GM0080,Leeuwarden,Overgewicht,47.9,44.7 - 51.2,51.6
+GM0080,Leeuwarden,Ernstig overgewicht,16.5,14.1 - 19.0,16.1
+GM0080,Leeuwarden,Ondergewicht,2.4,1.2 - 3.5,1.6
+GM0080,Leeuwarden,Gezond gewicht,49.7,46.5 - 52.9,46.7
+GM0080,Leeuwarden,Matig overgewicht,31.4,28.5 - 34.3,35.5
+GM0546,Leiden,Overgewicht,39.3,37.0 - 41.7,48.6
+GM0546,Leiden,Ernstig overgewicht,10.7,9.2 - 12.2,14.4
+GM0546,Leiden,Ondergewicht,2.2,1.4 - 2.9,1.7
+GM0546,Leiden,Gezond gewicht,58.5,56.1 - 60.9,49.8
+GM0546,Leiden,Matig overgewicht,28.6,26.4 - 30.8,34.2
+GM0547,Leiderdorp,Overgewicht,53.2,49.3 - 57.2,48.6
+GM0547,Leiderdorp,Ernstig overgewicht,15.7,12.8 - 18.6,14.4
+GM0547,Leiderdorp,Ondergewicht,1.4,0.4 - 2.3,1.7
+GM0547,Leiderdorp,Gezond gewicht,45.4,41.5 - 49.3,49.8
+GM0547,Leiderdorp,Matig overgewicht,37.5,33.7 - 41.3,34.2
+GM1916,Leidschendam-Voorburg,Overgewicht,47.5,44.8 - 50.2,47.5
+GM1916,Leidschendam-Voorburg,Ernstig overgewicht,12.2,10.4 - 13.9,14.2
+GM1916,Leidschendam-Voorburg,Ondergewicht,2.2,1.3 - 3.1,1.7
+GM1916,Leidschendam-Voorburg,Gezond gewicht,50.3,47.6 - 53.0,50.8
+GM1916,Leidschendam-Voorburg,Matig overgewicht,35.3,32.8 - 37.9,33.3
+GM0995,Lelystad,Overgewicht,55.4,51.6 - 59.2,56.0
+GM0995,Lelystad,Ernstig overgewicht,18.4,15.6 - 21.2,18.6
+GM0995,Lelystad,Ondergewicht,1.5,0.5 - 2.4,1.5
+GM0995,Lelystad,Gezond gewicht,43.2,39.4 - 47.0,42.5
+GM0995,Lelystad,Matig overgewicht,37.0,33.3 - 40.6,37.4
+GM1640,Leudal,Overgewicht,50.6,47.0 - 54.2,53.1
+GM1640,Leudal,Ernstig overgewicht,17.2,14.6 - 19.9,16.6
+GM1640,Leudal,Ondergewicht,1.3,0.5 - 2.1,1.2
+GM1640,Leudal,Gezond gewicht,48.1,44.5 - 51.7,45.7
+GM1640,Leudal,Matig overgewicht,33.4,30.1 - 36.7,36.4
+GM0327,Leusden,Overgewicht,45.9,42.6 - 49.3,44.2
+GM0327,Leusden,Ernstig overgewicht,12.7,10.5 - 14.9,12.9
+GM0327,Leusden,Ondergewicht,1.3,0.6 - 2.1,1.8
+GM0327,Leusden,Gezond gewicht,52.7,49.4 - 56.1,54.0
+GM0327,Leusden,Matig overgewicht,33.2,30.1 - 36.4,31.2
+GM1705,Lingewaard,Overgewicht,50.7,46.8 - 54.6,49.5
+GM1705,Lingewaard,Ernstig overgewicht,14.5,11.9 - 17.2,15.1
+GM1705,Lingewaard,Ondergewicht,1.2,0.3 - 2.2,1.8
+GM1705,Lingewaard,Gezond gewicht,48.1,44.2 - 52.0,48.8
+GM1705,Lingewaard,Matig overgewicht,36.1,32.5 - 39.8,34.3
+GM0553,Lisse,Overgewicht,48.7,44.5 - 52.8,48.6
+GM0553,Lisse,Ernstig overgewicht,15.1,12.1 - 18.1,14.4
+GM0553,Lisse,Ondergewicht,2.2,0.8 - 3.5,1.7
+GM0553,Lisse,Gezond gewicht,49.2,45.0 - 53.3,49.8
+GM0553,Lisse,Matig overgewicht,33.5,29.7 - 37.3,34.2
+GM0262,Lochem,Overgewicht,50.8,47.0 - 54.7,52.2
+GM0262,Lochem,Ernstig overgewicht,11.5,9.1 - 14.0,16.3
+GM0262,Lochem,Ondergewicht,0.9,0.3 - 1.5,1.3
+GM0262,Lochem,Gezond gewicht,48.3,44.5 - 52.2,46.5
+GM0262,Lochem,Matig overgewicht,39.3,35.5 - 43.0,36.0
+GM0809,Loon op Zand,Overgewicht,59.2,55.0 - 63.4,51.7
+GM0809,Loon op Zand,Ernstig overgewicht,21.8,18.5 - 25.2,15.8
+GM0809,Loon op Zand,Ondergewicht,2.3,0.9 - 3.7,1.7
+GM0809,Loon op Zand,Gezond gewicht,38.5,34.4 - 42.7,46.6
+GM0809,Loon op Zand,Matig overgewicht,37.4,33.3 - 41.4,35.9
+GM0331,Lopik,Overgewicht,52.8,48.9 - 56.8,44.2
+GM0331,Lopik,Ernstig overgewicht,16.5,13.7 - 19.4,12.9
+GM0331,Lopik,Ondergewicht,1.3,0.4 - 2.2,1.8
+GM0331,Lopik,Gezond gewicht,45.9,41.9 - 49.8,54.0
+GM0331,Lopik,Matig overgewicht,36.3,32.6 - 40.1,31.2
+GM0168,Losser,Overgewicht,59.9,56.2 - 63.6,51.9
+GM0168,Losser,Ernstig overgewicht,20.4,17.4 - 23.4,16.6
+GM0168,Losser,Ondergewicht,1.3,0.3 - 2.3,1.8
+GM0168,Losser,Gezond gewicht,38.8,35.1 - 42.5,46.3
+GM0168,Losser,Matig overgewicht,39.5,35.8 - 43.2,35.3
+GM0263,Maasdriel,Overgewicht,52.8,49.3 - 56.3,49.7
+GM0263,Maasdriel,Ernstig overgewicht,16.8,14.3 - 19.4,15.3
+GM0263,Maasdriel,Ondergewicht,1.8,0.7 - 2.9,1.9
+GM0263,Maasdriel,Gezond gewicht,45.4,41.9 - 48.9,48.4
+GM0263,Maasdriel,Matig overgewicht,36.0,32.7 - 39.2,34.4
+GM1641,Maasgouw,Overgewicht,52.6,49.1 - 56.2,53.1
+GM1641,Maasgouw,Ernstig overgewicht,16.8,14.3 - 19.3,16.6
+GM1641,Maasgouw,Ondergewicht,2.1,0.9 - 3.4,1.2
+GM1641,Maasgouw,Gezond gewicht,45.2,41.7 - 48.8,45.7
+GM1641,Maasgouw,Matig overgewicht,35.8,32.4 - 39.2,36.4
+GM1991,Maashorst,Overgewicht,52.4,49.8 - 54.9,51.7
+GM1991,Maashorst,Ernstig overgewicht,14.0,12.3 - 15.7,15.8
+GM1991,Maashorst,Ondergewicht,1.6,0.8 - 2.3,1.7
+GM1991,Maashorst,Gezond gewicht,46.1,43.5 - 48.6,46.6
+GM1991,Maashorst,Matig overgewicht,38.4,35.9 - 40.8,35.9
+GM0556,Maassluis,Overgewicht,55.5,52.2 - 58.8,53.3
+GM0556,Maassluis,Ernstig overgewicht,16.0,13.4 - 18.5,18.1
+GM0556,Maassluis,Ondergewicht,1.8,0.9 - 2.7,1.6
+GM0556,Maassluis,Gezond gewicht,42.7,39.4 - 46.0,45.2
+GM0556,Maassluis,Matig overgewicht,39.6,36.2 - 42.9,35.2
+GM0935,Maastricht,Overgewicht,44.8,42.7 - 46.8,54.3
+GM0935,Maastricht,Ernstig overgewicht,14.0,12.8 - 15.3,17.7
+GM0935,Maastricht,Ondergewicht,2.6,1.8 - 3.4,1.7
+GM0935,Maastricht,Gezond gewicht,52.6,50.6 - 54.7,44.0
+GM0935,Maastricht,Matig overgewicht,30.7,28.9 - 32.6,36.7
+GM0420,Medemblik,Overgewicht,54.4,50.3 - 58.4,50.1
+GM0420,Medemblik,Ernstig overgewicht,16.3,13.3 - 19.3,15.0
+GM0420,Medemblik,Ondergewicht,1.4,0.4 - 2.4,1.5
+GM0420,Medemblik,Gezond gewicht,44.2,40.2 - 48.3,48.4
+GM0420,Medemblik,Matig overgewicht,38.1,34.2 - 41.9,35.1
+GM0938,Meerssen,Overgewicht,53.2,49.9 - 56.4,54.3
+GM0938,Meerssen,Ernstig overgewicht,16.4,14.0 - 18.7,17.7
+GM0938,Meerssen,Ondergewicht,1.4,0.6 - 2.3,1.7
+GM0938,Meerssen,Gezond gewicht,45.4,42.1 - 48.6,44.0
+GM0938,Meerssen,Matig overgewicht,36.8,33.7 - 39.9,36.7
+GM1948,Meierijstad,Overgewicht,51.6,49.0 - 54.2,51.7
+GM1948,Meierijstad,Ernstig overgewicht,14.8,13.1 - 16.5,15.8
+GM1948,Meierijstad,Ondergewicht,0.9,0.5 - 1.4,1.7
+GM1948,Meierijstad,Gezond gewicht,47.5,44.9 - 50.1,46.6
+GM1948,Meierijstad,Matig overgewicht,36.8,34.3 - 39.2,35.9
+GM0119,Meppel,Overgewicht,52.5,47.4 - 57.6,55.9
+GM0119,Meppel,Ernstig overgewicht,16.1,12.5 - 19.8,19.2
+GM0119,Meppel,Ondergewicht,0.7,-0.3 - 1.6,1.5
+GM0119,Meppel,Gezond gewicht,46.8,41.7 - 51.9,42.6
+GM0119,Meppel,Matig overgewicht,36.4,31.5 - 41.2,36.7
+GM0687,Middelburg (Z.),Overgewicht,47.0,42.8 - 51.2,51.5
+GM0687,Middelburg (Z.),Ernstig overgewicht,12.8,10.1 - 15.6,16.6
+GM0687,Middelburg (Z.),Ondergewicht,2.1,0.8 - 3.4,1.5
+GM0687,Middelburg (Z.),Gezond gewicht,50.9,46.6 - 55.1,47.0
+GM0687,Middelburg (Z.),Matig overgewicht,34.2,30.2 - 38.1,35.0
+GM1842,Midden-Delfland,Overgewicht,46.1,42.2 - 50.1,47.5
+GM1842,Midden-Delfland,Ernstig overgewicht,11.2,8.8 - 13.6,14.2
+GM1842,Midden-Delfland,Ondergewicht,0.9,0.2 - 1.5,1.7
+GM1842,Midden-Delfland,Gezond gewicht,53.0,49.0 - 56.9,50.8
+GM1842,Midden-Delfland,Matig overgewicht,35.0,31.2 - 38.7,33.3
+GM1731,Midden-Drenthe,Overgewicht,58.8,54.3 - 63.3,55.9
+GM1731,Midden-Drenthe,Ernstig overgewicht,18.1,14.6 - 21.7,19.2
+GM1731,Midden-Drenthe,Ondergewicht,1.1,0.0 - 2.2,1.5
+GM1731,Midden-Drenthe,Gezond gewicht,40.1,35.7 - 44.6,42.6
+GM1731,Midden-Drenthe,Matig overgewicht,40.7,36.3 - 45.1,36.7
+GM1952,Midden-Groningen,Overgewicht,55.5,50.8 - 60.1,49.7
+GM1952,Midden-Groningen,Ernstig overgewicht,19.4,15.8 - 23.0,16.9
+GM1952,Midden-Groningen,Ondergewicht,1.9,0.2 - 3.5,1.7
+GM1952,Midden-Groningen,Gezond gewicht,42.7,38.0 - 47.3,48.6
+GM1952,Midden-Groningen,Matig overgewicht,36.1,31.7 - 40.5,32.8
+GM1709,Moerdijk,Overgewicht,59.5,54.3 - 64.7,52.9
+GM1709,Moerdijk,Ernstig overgewicht,19.4,15.5 - 23.3,16.8
+GM1709,Moerdijk,Ondergewicht,0.8,-0.2 - 1.8,1.8
+GM1709,Moerdijk,Gezond gewicht,39.7,34.5 - 44.9,45.4
+GM1709,Moerdijk,Matig overgewicht,40.1,35.1 - 45.1,36.0
+GM1978,Molenlanden,Overgewicht,52.0,47.6 - 56.3,54.6
+GM1978,Molenlanden,Ernstig overgewicht,16.8,13.7 - 20.0,17.9
+GM1978,Molenlanden,Ondergewicht,2.3,0.6 - 3.9,2.0
+GM1978,Molenlanden,Gezond gewicht,45.8,41.5 - 50.1,43.4
+GM1978,Molenlanden,Matig overgewicht,35.1,31.1 - 39.2,36.7
+GM1955,Montferland,Overgewicht,57.0,53.1 - 60.8,52.2
+GM1955,Montferland,Ernstig overgewicht,22.6,19.4 - 25.9,16.3
+GM1955,Montferland,Ondergewicht,1.4,0.3 - 2.4,1.3
+GM1955,Montferland,Gezond gewicht,41.6,37.8 - 45.5,46.5
+GM1955,Montferland,Matig overgewicht,34.4,30.7 - 38.1,36.0
+GM0335,Montfoort,Overgewicht,49.6,45.7 - 53.6,44.2
+GM0335,Montfoort,Ernstig overgewicht,14.6,11.7 - 17.5,12.9
+GM0335,Montfoort,Ondergewicht,1.2,0.3 - 2.0,1.8
+GM0335,Montfoort,Gezond gewicht,49.2,45.3 - 53.2,54.0
+GM0335,Montfoort,Matig overgewicht,35.1,31.4 - 38.7,31.2
+GM0944,Mook en Middelaar,Overgewicht,44.5,40.4 - 48.7,53.1
+GM0944,Mook en Middelaar,Ernstig overgewicht,10.8,8.3 - 13.4,16.6
+GM0944,Mook en Middelaar,Ondergewicht,1.2,0.4 - 2.1,1.2
+GM0944,Mook en Middelaar,Gezond gewicht,54.2,50.1 - 58.4,45.7
+GM0944,Mook en Middelaar,Matig overgewicht,33.7,29.8 - 37.6,36.4
+GM1740,Neder-Betuwe,Overgewicht,57.4,53.7 - 61.0,49.7
+GM1740,Neder-Betuwe,Ernstig overgewicht,22.8,19.8 - 25.8,15.3
+GM1740,Neder-Betuwe,Ondergewicht,1.3,0.4 - 2.2,1.9
+GM1740,Neder-Betuwe,Gezond gewicht,41.3,37.7 - 44.9,48.4
+GM1740,Neder-Betuwe,Matig overgewicht,34.5,31.2 - 37.9,34.4
+GM0946,Nederweert,Overgewicht,52.2,47.2 - 57.3,53.1
+GM0946,Nederweert,Ernstig overgewicht,13.1,9.9 - 16.3,16.6
+GM0946,Nederweert,Ondergewicht,0.7,0.0 - 1.5,1.2
+GM0946,Nederweert,Gezond gewicht,47.0,42.0 - 52.1,45.7
+GM0946,Nederweert,Matig overgewicht,39.1,34.2 - 44.1,36.4
+GM0356,Nieuwegein,Overgewicht,52.0,49.6 - 54.5,44.2
+GM0356,Nieuwegein,Ernstig overgewicht,16.3,14.6 - 18.1,12.9
+GM0356,Nieuwegein,Ondergewicht,1.5,0.9 - 2.0,1.8
+GM0356,Nieuwegein,Gezond gewicht,46.5,44.1 - 49.0,54.0
+GM0356,Nieuwegein,Matig overgewicht,35.7,33.4 - 38.0,31.2
+GM0569,Nieuwkoop,Overgewicht,49.2,45.4 - 53.0,48.6
+GM0569,Nieuwkoop,Ernstig overgewicht,13.9,11.3 - 16.4,14.4
+GM0569,Nieuwkoop,Ondergewicht,1.5,0.4 - 2.6,1.7
+GM0569,Nieuwkoop,Gezond gewicht,49.2,45.5 - 53.0,49.8
+GM0569,Nieuwkoop,Matig overgewicht,35.4,31.7 - 39.0,34.2
+GM0267,Nijkerk,Overgewicht,51.3,47.0 - 55.5,49.5
+GM0267,Nijkerk,Ernstig overgewicht,15.4,12.4 - 18.4,15.1
+GM0267,Nijkerk,Ondergewicht,0.9,-0.2 - 1.9,1.8
+GM0267,Nijkerk,Gezond gewicht,47.9,43.6 - 52.2,48.8
+GM0267,Nijkerk,Matig overgewicht,35.9,31.8 - 39.9,34.3
+GM0268,Nijmegen,Overgewicht,40.3,37.8 - 42.8,49.7
+GM0268,Nijmegen,Ernstig overgewicht,11.0,9.4 - 12.6,15.3
+GM0268,Nijmegen,Ondergewicht,2.7,1.7 - 3.6,1.9
+GM0268,Nijmegen,Gezond gewicht,57.0,54.5 - 59.6,48.4
+GM0268,Nijmegen,Matig overgewicht,29.3,26.9 - 31.6,34.4
+GM1930,Nissewaard,Overgewicht,60.2,57.7 - 62.7,53.3
+GM1930,Nissewaard,Ernstig overgewicht,24.5,22.3 - 26.6,18.1
+GM1930,Nissewaard,Ondergewicht,1.1,0.6 - 1.7,1.6
+GM1930,Nissewaard,Gezond gewicht,38.7,36.2 - 41.1,45.2
+GM1930,Nissewaard,Matig overgewicht,35.7,33.3 - 38.2,35.2
+GM1970,Noardeast-Fryslân,Overgewicht,53.3,49.4 - 57.1,51.6
+GM1970,Noardeast-Fryslân,Ernstig overgewicht,14.9,12.2 - 17.6,16.1
+GM1970,Noardeast-Fryslân,Ondergewicht,1.5,0.4 - 2.7,1.6
+GM1970,Noardeast-Fryslân,Gezond gewicht,45.2,41.3 - 49.1,46.7
+GM1970,Noardeast-Fryslân,Matig overgewicht,38.4,34.6 - 42.2,35.5
+GM1695,Noord-Beveland,Overgewicht,53.7,49.2 - 58.2,51.5
+GM1695,Noord-Beveland,Ernstig overgewicht,15.8,12.4 - 19.2,16.6
+GM1695,Noord-Beveland,Ondergewicht,1.1,0.0 - 2.1,1.5
+GM1695,Noord-Beveland,Gezond gewicht,45.2,40.7 - 49.7,47.0
+GM1695,Noord-Beveland,Matig overgewicht,37.9,33.6 - 42.3,35.0
+GM1699,Noordenveld,Overgewicht,51.3,47.3 - 55.3,55.9
+GM1699,Noordenveld,Ernstig overgewicht,13.7,11.0 - 16.3,19.2
+GM1699,Noordenveld,Ondergewicht,1.7,0.6 - 2.9,1.5
+GM1699,Noordenveld,Gezond gewicht,47.0,43.0 - 51.0,42.6
+GM1699,Noordenveld,Matig overgewicht,37.6,33.7 - 41.5,36.7
+GM0171,Noordoostpolder,Overgewicht,52.4,49.2 - 55.7,56.0
+GM0171,Noordoostpolder,Ernstig overgewicht,16.0,13.7 - 18.4,18.6
+GM0171,Noordoostpolder,Ondergewicht,1.7,0.5 - 2.9,1.5
+GM0171,Noordoostpolder,Gezond gewicht,45.9,42.6 - 49.1,42.5
+GM0171,Noordoostpolder,Matig overgewicht,36.4,33.3 - 39.5,37.4
+GM0575,Noordwijk,Overgewicht,46.4,41.9 - 50.8,48.6
+GM0575,Noordwijk,Ernstig overgewicht,11.5,8.8 - 14.2,14.4
+GM0575,Noordwijk,Ondergewicht,1.3,0.3 - 2.4,1.7
+GM0575,Noordwijk,Gezond gewicht,52.3,47.8 - 56.8,49.8
+GM0575,Noordwijk,Matig overgewicht,34.9,30.6 - 39.1,34.2
+GM0820,"Nuenen, Gerwen en Nederwetten",Overgewicht,45.4,40.5 - 50.2,49.5
+GM0820,"Nuenen, Gerwen en Nederwetten",Ernstig overgewicht,12.4,9.2 - 15.6,14.8
+GM0820,"Nuenen, Gerwen en Nederwetten",Ondergewicht,0.8,0.1 - 1.5,1.9
+GM0820,"Nuenen, Gerwen en Nederwetten",Gezond gewicht,53.9,49.0 - 58.7,48.6
+GM0820,"Nuenen, Gerwen en Nederwetten",Matig overgewicht,33.0,28.5 - 37.5,34.7
+GM0302,Nunspeet,Overgewicht,50.2,46.3 - 54.0,52.2
+GM0302,Nunspeet,Ernstig overgewicht,15.9,13.2 - 18.6,16.3
+GM0302,Nunspeet,Ondergewicht,1.5,0.4 - 2.6,1.3
+GM0302,Nunspeet,Gezond gewicht,48.4,44.5 - 52.2,46.5
+GM0302,Nunspeet,Matig overgewicht,34.3,30.8 - 37.7,36.0
+GM0579,Oegstgeest,Overgewicht,41.4,38.1 - 44.6,48.6
+GM0579,Oegstgeest,Ernstig overgewicht,9.2,7.2 - 11.1,14.4
+GM0579,Oegstgeest,Ondergewicht,2.3,1.2 - 3.3,1.7
+GM0579,Oegstgeest,Gezond gewicht,56.4,53.1 - 59.7,49.8
+GM0579,Oegstgeest,Matig overgewicht,32.2,29.1 - 35.3,34.2
+GM0823,Oirschot,Overgewicht,49.2,44.9 - 53.5,49.5
+GM0823,Oirschot,Ernstig overgewicht,13.9,11.0 - 16.8,14.8
+GM0823,Oirschot,Ondergewicht,2.7,1.2 - 4.2,1.9
+GM0823,Oirschot,Gezond gewicht,48.1,43.8 - 52.4,48.6
+GM0823,Oirschot,Matig overgewicht,35.3,31.2 - 39.4,34.7
+GM0824,Oisterwijk,Overgewicht,49.5,45.6 - 53.5,51.7
+GM0824,Oisterwijk,Ernstig overgewicht,14.6,12.0 - 17.3,15.8
+GM0824,Oisterwijk,Ondergewicht,1.1,0.3 - 1.9,1.7
+GM0824,Oisterwijk,Gezond gewicht,49.4,45.4 - 53.3,46.6
+GM0824,Oisterwijk,Matig overgewicht,34.9,31.2 - 38.7,35.9
+GM1895,Oldambt,Overgewicht,62.5,58.2 - 66.7,49.7
+GM1895,Oldambt,Ernstig overgewicht,20.3,16.9 - 23.8,16.9
+GM1895,Oldambt,Ondergewicht,1.8,0.6 - 3.1,1.7
+GM1895,Oldambt,Gezond gewicht,35.7,31.5 - 39.9,48.6
+GM1895,Oldambt,Matig overgewicht,42.1,37.9 - 46.4,32.8
+GM0269,Oldebroek,Overgewicht,53.8,50.0 - 57.6,52.2
+GM0269,Oldebroek,Ernstig overgewicht,15.5,12.9 - 18.1,16.3
+GM0269,Oldebroek,Ondergewicht,1.5,0.4 - 2.7,1.3
+GM0269,Oldebroek,Gezond gewicht,44.7,40.9 - 48.5,46.5
+GM0269,Oldebroek,Matig overgewicht,38.3,34.6 - 42.0,36.0
+GM0173,Oldenzaal,Overgewicht,52.6,49.1 - 56.1,51.9
+GM0173,Oldenzaal,Ernstig overgewicht,16.7,14.2 - 19.3,16.6
+GM0173,Oldenzaal,Ondergewicht,1.8,0.7 - 2.9,1.8
+GM0173,Oldenzaal,Gezond gewicht,45.6,42.1 - 49.1,46.3
+GM0173,Oldenzaal,Matig overgewicht,35.9,32.5 - 39.2,35.3
+GM1773,Olst-Wijhe,Overgewicht,54.3,50.1 - 58.6,50.3
+GM1773,Olst-Wijhe,Ernstig overgewicht,17.4,14.2 - 20.6,15.8
+GM1773,Olst-Wijhe,Ondergewicht,0.7,0.1 - 1.3,1.5
+GM1773,Olst-Wijhe,Gezond gewicht,44.9,40.7 - 49.2,48.2
+GM1773,Olst-Wijhe,Matig overgewicht,36.9,32.8 - 41.0,34.4
+GM0175,Ommen,Overgewicht,50.5,47.0 - 54.0,50.3
+GM0175,Ommen,Ernstig overgewicht,14.3,11.9 - 16.7,15.8
+GM0175,Ommen,Ondergewicht,0.6,0.1 - 1.1,1.5
+GM0175,Ommen,Gezond gewicht,48.9,45.4 - 52.4,48.2
+GM0175,Ommen,Matig overgewicht,36.2,32.9 - 39.5,34.4
+GM1586,Oost Gelre,Overgewicht,51.5,47.5 - 55.5,52.2
+GM1586,Oost Gelre,Ernstig overgewicht,14.3,11.5 - 17.0,16.3
+GM1586,Oost Gelre,Ondergewicht,1.3,0.2 - 2.4,1.3
+GM1586,Oost Gelre,Gezond gewicht,47.2,43.2 - 51.2,46.5
+GM1586,Oost Gelre,Matig overgewicht,37.2,33.4 - 41.0,36.0
+GM0826,Oosterhout,Overgewicht,54.5,50.9 - 58.0,52.9
+GM0826,Oosterhout,Ernstig overgewicht,14.0,11.6 - 16.4,16.8
+GM0826,Oosterhout,Ondergewicht,1.4,0.6 - 2.3,1.8
+GM0826,Oosterhout,Gezond gewicht,44.1,40.6 - 47.6,45.4
+GM0826,Oosterhout,Matig overgewicht,40.5,37.1 - 43.8,36.0
+GM0085,Ooststellingwerf,Overgewicht,55.4,51.0 - 59.8,51.6
+GM0085,Ooststellingwerf,Ernstig overgewicht,18.5,15.0 - 22.0,16.1
+GM0085,Ooststellingwerf,Ondergewicht,1.6,0.3 - 2.8,1.6
+GM0085,Ooststellingwerf,Gezond gewicht,43.0,38.7 - 47.4,46.7
+GM0085,Ooststellingwerf,Matig overgewicht,36.9,32.7 - 41.2,35.5
+GM0431,Oostzaan,Overgewicht,50.2,46.4 - 54.0,51.6
+GM0431,Oostzaan,Ernstig overgewicht,12.5,10.1 - 14.9,16.3
+GM0431,Oostzaan,Ondergewicht,0.9,0.1 - 1.8,1.5
+GM0431,Oostzaan,Gezond gewicht,48.8,45.0 - 52.7,46.8
+GM0431,Oostzaan,Matig overgewicht,37.7,34.1 - 41.4,35.4
+GM0432,Opmeer,Overgewicht,50.1,45.7 - 54.6,50.1
+GM0432,Opmeer,Ernstig overgewicht,10.7,8.1 - 13.3,15.0
+GM0432,Opmeer,Ondergewicht,1.5,0.1 - 2.8,1.5
+GM0432,Opmeer,Gezond gewicht,48.4,43.9 - 52.9,48.4
+GM0432,Opmeer,Matig overgewicht,39.5,35.1 - 43.9,35.1
+GM0086,Opsterland,Overgewicht,48.9,44.6 - 53.2,51.6
+GM0086,Opsterland,Ernstig overgewicht,15.3,12.2 - 18.3,16.1
+GM0086,Opsterland,Ondergewicht,1.4,0.3 - 2.6,1.6
+GM0086,Opsterland,Gezond gewicht,49.7,45.4 - 54.0,46.7
+GM0086,Opsterland,Matig overgewicht,33.6,29.6 - 37.6,35.5
+GM0828,Oss,Overgewicht,53.7,50.8 - 56.6,51.7
+GM0828,Oss,Ernstig overgewicht,17.4,15.3 - 19.4,15.8
+GM0828,Oss,Ondergewicht,2.0,1.0 - 2.9,1.7
+GM0828,Oss,Gezond gewicht,44.3,41.4 - 47.2,46.6
+GM0828,Oss,Matig overgewicht,36.3,33.6 - 39.0,35.9
+GM1509,Oude IJsselstreek,Overgewicht,58.2,54.8 - 61.5,52.2
+GM1509,Oude IJsselstreek,Ernstig overgewicht,20.2,17.6 - 22.8,16.3
+GM1509,Oude IJsselstreek,Ondergewicht,1.0,0.1 - 1.8,1.3
+GM1509,Oude IJsselstreek,Gezond gewicht,40.9,37.5 - 44.2,46.5
+GM1509,Oude IJsselstreek,Matig overgewicht,38.0,34.8 - 41.2,36.0
+GM0437,Ouder-Amstel,Overgewicht,41.8,38.4 - 45.2,41.0
+GM0437,Ouder-Amstel,Ernstig overgewicht,9.7,7.7 - 11.7,11.6
+GM0437,Ouder-Amstel,Ondergewicht,1.5,0.7 - 2.4,2.2
+GM0437,Ouder-Amstel,Gezond gewicht,56.6,53.2 - 60.1,56.8
+GM0437,Ouder-Amstel,Matig overgewicht,32.1,28.8 - 35.4,29.4
+GM0589,Oudewater,Overgewicht,47.4,43.6 - 51.3,44.2
+GM0589,Oudewater,Ernstig overgewicht,12.7,10.2 - 15.2,12.9
+GM0589,Oudewater,Ondergewicht,1.0,0.1 - 2.0,1.8
+GM0589,Oudewater,Gezond gewicht,51.5,47.7 - 55.4,54.0
+GM0589,Oudewater,Matig overgewicht,34.7,31.1 - 38.3,31.2
+GM1734,Overbetuwe,Overgewicht,53.0,49.2 - 56.8,49.5
+GM1734,Overbetuwe,Ernstig overgewicht,15.7,13.0 - 18.4,15.1
+GM1734,Overbetuwe,Ondergewicht,2.3,1.0 - 3.6,1.8
+GM1734,Overbetuwe,Gezond gewicht,44.7,40.9 - 48.5,48.8
+GM1734,Overbetuwe,Matig overgewicht,37.3,33.7 - 40.9,34.3
+GM0590,Papendrecht,Overgewicht,60.6,57.1 - 64.1,54.6
+GM0590,Papendrecht,Ernstig overgewicht,22.6,19.5 - 25.7,17.9
+GM0590,Papendrecht,Ondergewicht,1.1,0.4 - 1.8,2.0
+GM0590,Papendrecht,Gezond gewicht,38.3,34.8 - 41.8,43.4
+GM0590,Papendrecht,Matig overgewicht,38.0,34.5 - 41.5,36.7
+GM1894,Peel en Maas,Overgewicht,51.6,48.3 - 54.9,53.1
+GM1894,Peel en Maas,Ernstig overgewicht,15.7,13.4 - 18.0,16.6
+GM1894,Peel en Maas,Ondergewicht,1.3,0.5 - 2.2,1.2
+GM1894,Peel en Maas,Gezond gewicht,47.1,43.8 - 50.4,45.7
+GM1894,Peel en Maas,Matig overgewicht,35.9,32.8 - 39.0,36.4
+GM0765,Pekela,Overgewicht,69.4,64.2 - 74.6,49.7
+GM0765,Pekela,Ernstig overgewicht,29.2,24.3 - 34.2,16.9
+GM0765,Pekela,Ondergewicht,1.8,-0.1 - 3.7,1.7
+GM0765,Pekela,Gezond gewicht,28.8,23.7 - 33.8,48.6
+GM0765,Pekela,Matig overgewicht,40.2,34.9 - 45.5,32.8
+GM1926,Pijnacker-Nootdorp,Overgewicht,45.2,41.3 - 49.2,47.5
+GM1926,Pijnacker-Nootdorp,Ernstig overgewicht,13.0,10.4 - 15.6,14.2
+GM1926,Pijnacker-Nootdorp,Ondergewicht,2.3,1.0 - 3.6,1.7
+GM1926,Pijnacker-Nootdorp,Gezond gewicht,52.5,48.5 - 56.4,50.8
+GM1926,Pijnacker-Nootdorp,Matig overgewicht,32.2,28.6 - 35.9,33.3
+GM0439,Purmerend,Overgewicht,54.2,51.1 - 57.4,51.6
+GM0439,Purmerend,Ernstig overgewicht,18.0,15.6 - 20.4,16.3
+GM0439,Purmerend,Ondergewicht,1.3,0.5 - 2.2,1.5
+GM0439,Purmerend,Gezond gewicht,44.4,41.2 - 47.6,46.8
+GM0439,Purmerend,Matig overgewicht,36.2,33.2 - 39.3,35.4
+GM0273,Putten,Overgewicht,52.0,48.2 - 55.9,52.2
+GM0273,Putten,Ernstig overgewicht,15.5,12.7 - 18.2,16.3
+GM0273,Putten,Ondergewicht,1.6,0.5 - 2.6,1.3
+GM0273,Putten,Gezond gewicht,46.4,42.6 - 50.3,46.5
+GM0273,Putten,Matig overgewicht,36.5,32.8 - 40.3,36.0
+GM0177,Raalte,Overgewicht,47.9,43.9 - 52.0,50.3
+GM0177,Raalte,Ernstig overgewicht,12.4,9.6 - 15.1,15.8
+GM0177,Raalte,Ondergewicht,0.9,0.2 - 1.7,1.5
+GM0177,Raalte,Gezond gewicht,51.1,47.1 - 55.2,48.2
+GM0177,Raalte,Matig overgewicht,35.6,31.8 - 39.3,34.4
+GM0703,Reimerswaal,Overgewicht,56.1,51.2 - 61.0,51.5
+GM0703,Reimerswaal,Ernstig overgewicht,16.9,13.3 - 20.5,16.6
+GM0703,Reimerswaal,Ondergewicht,1.5,0.3 - 2.7,1.5
+GM0703,Reimerswaal,Gezond gewicht,42.4,37.6 - 47.3,47.0
+GM0703,Reimerswaal,Matig overgewicht,39.2,34.5 - 43.8,35.0
+GM0274,Renkum,Overgewicht,45.9,43.2 - 48.6,49.5
+GM0274,Renkum,Ernstig overgewicht,12.2,10.5 - 14.0,15.1
+GM0274,Renkum,Ondergewicht,1.3,0.7 - 1.9,1.8
+GM0274,Renkum,Gezond gewicht,52.8,50.0 - 55.5,48.8
+GM0274,Renkum,Matig overgewicht,33.7,31.1 - 36.3,34.3
+GM0339,Renswoude,Overgewicht,55.1,50.7 - 59.5,44.2
+GM0339,Renswoude,Ernstig overgewicht,18.6,15.2 - 22.1,12.9
+GM0339,Renswoude,Ondergewicht,2.5,0.9 - 4.1,1.8
+GM0339,Renswoude,Gezond gewicht,42.4,38.0 - 46.7,54.0
+GM0339,Renswoude,Matig overgewicht,36.5,32.2 - 40.7,31.2
+GM1667,Reusel-De Mierden,Overgewicht,53.4,48.0 - 58.8,49.5
+GM1667,Reusel-De Mierden,Ernstig overgewicht,16.5,12.3 - 20.6,14.8
+GM1667,Reusel-De Mierden,Ondergewicht,0.3,0.0 - 0.6,1.9
+GM1667,Reusel-De Mierden,Gezond gewicht,46.3,40.9 - 51.7,48.6
+GM1667,Reusel-De Mierden,Matig overgewicht,36.9,31.9 - 41.9,34.7
+GM0275,Rheden,Overgewicht,51.4,48.5 - 54.4,49.5
+GM0275,Rheden,Ernstig overgewicht,17.2,14.9 - 19.4,15.1
+GM0275,Rheden,Ondergewicht,1.7,0.9 - 2.6,1.8
+GM0275,Rheden,Gezond gewicht,46.8,43.9 - 49.7,48.8
+GM0275,Rheden,Matig overgewicht,34.3,31.5 - 37.1,34.3
+GM0340,Rhenen,Overgewicht,49.0,45.9 - 52.2,44.2
+GM0340,Rhenen,Ernstig overgewicht,14.8,12.6 - 17.0,12.9
+GM0340,Rhenen,Ondergewicht,1.8,0.7 - 2.8,1.8
+GM0340,Rhenen,Gezond gewicht,49.2,46.0 - 52.3,54.0
+GM0340,Rhenen,Matig overgewicht,34.2,31.3 - 37.1,31.2
+GM0597,Ridderkerk,Overgewicht,57.8,54.8 - 60.7,53.3
+GM0597,Ridderkerk,Ernstig overgewicht,18.6,16.2 - 20.9,18.1
+GM0597,Ridderkerk,Ondergewicht,1.3,0.6 - 2.0,1.6
+GM0597,Ridderkerk,Gezond gewicht,40.9,38.0 - 43.9,45.2
+GM0597,Ridderkerk,Matig overgewicht,39.2,36.3 - 42.1,35.2
+GM1742,Rijssen-Holten,Overgewicht,51.6,48.2 - 55.0,51.9
+GM1742,Rijssen-Holten,Ernstig overgewicht,15.2,12.8 - 17.5,16.6
+GM1742,Rijssen-Holten,Ondergewicht,1.1,0.4 - 1.7,1.8
+GM1742,Rijssen-Holten,Gezond gewicht,47.3,43.9 - 50.7,46.3
+GM1742,Rijssen-Holten,Matig overgewicht,36.4,33.2 - 39.6,35.3
+GM0603,Rijswijk (ZH.),Overgewicht,45.8,42.1 - 49.5,47.5
+GM0603,Rijswijk (ZH.),Ernstig overgewicht,13.6,11.1 - 16.0,14.2
+GM0603,Rijswijk (ZH.),Ondergewicht,2.3,1.1 - 3.4,1.7
+GM0603,Rijswijk (ZH.),Gezond gewicht,51.9,48.2 - 55.6,50.8
+GM0603,Rijswijk (ZH.),Matig overgewicht,32.3,28.8 - 35.7,33.3
+GM1669,Roerdalen,Overgewicht,55.6,52.0 - 59.1,53.1
+GM1669,Roerdalen,Ernstig overgewicht,17.6,14.8 - 20.4,16.6
+GM1669,Roerdalen,Ondergewicht,1.0,0.3 - 1.7,1.2
+GM1669,Roerdalen,Gezond gewicht,43.4,39.8 - 47.0,45.7
+GM1669,Roerdalen,Matig overgewicht,38.0,34.5 - 41.4,36.4
+GM0957,Roermond,Overgewicht,51.5,48.1 - 55.0,53.1
+GM0957,Roermond,Ernstig overgewicht,14.1,12.0 - 16.3,16.6
+GM0957,Roermond,Ondergewicht,1.2,0.5 - 1.9,1.2
+GM0957,Roermond,Gezond gewicht,47.2,43.8 - 50.7,45.7
+GM0957,Roermond,Matig overgewicht,37.4,34.1 - 40.7,36.4
+GM1674,Roosendaal,Overgewicht,54.9,51.4 - 58.4,52.9
+GM1674,Roosendaal,Ernstig overgewicht,19.1,16.4 - 21.9,16.8
+GM1674,Roosendaal,Ondergewicht,1.4,0.4 - 2.4,1.8
+GM1674,Roosendaal,Gezond gewicht,43.7,40.2 - 47.2,45.4
+GM1674,Roosendaal,Matig overgewicht,35.8,32.5 - 39.0,36.0
+GM0599,Rotterdam,Overgewicht,50.1,49.2 - 51.1,53.3
+GM0599,Rotterdam,Ernstig overgewicht,17.4,16.6 - 18.1,18.1
+GM0599,Rotterdam,Ondergewicht,1.9,1.6 - 2.2,1.6
+GM0599,Rotterdam,Gezond gewicht,48.0,47.0 - 48.9,45.2
+GM0599,Rotterdam,Matig overgewicht,32.8,31.8 - 33.7,35.2
+GM0277,Rozendaal,Overgewicht,46.7,39.2 - 54.3,49.5
+GM0277,Rozendaal,Ernstig overgewicht,10.4,5.7 - 15.1,15.1
+GM0277,Rozendaal,Ondergewicht,1.7,-0.6 - 4.1,1.8
+GM0277,Rozendaal,Gezond gewicht,51.6,44.0 - 59.1,48.8
+GM0277,Rozendaal,Matig overgewicht,36.3,29.1 - 43.5,34.3
+GM0840,Rucphen,Overgewicht,56.4,51.2 - 61.6,52.9
+GM0840,Rucphen,Ernstig overgewicht,19.6,15.6 - 23.5,16.8
+GM0840,Rucphen,Ondergewicht,2.6,-0.1 - 5.3,1.8
+GM0840,Rucphen,Gezond gewicht,41.0,35.9 - 46.2,45.4
+GM0840,Rucphen,Matig overgewicht,36.8,31.9 - 41.8,36.0
+GM0441,Schagen,Overgewicht,51.0,47.2 - 54.8,50.1
+GM0441,Schagen,Ernstig overgewicht,15.0,12.2 - 17.8,15.0
+GM0441,Schagen,Ondergewicht,1.8,0.8 - 2.9,1.5
+GM0441,Schagen,Gezond gewicht,47.2,43.3 - 51.0,48.4
+GM0441,Schagen,Matig overgewicht,36.0,32.4 - 39.6,35.1
+GM0279,Scherpenzeel,Overgewicht,53.9,49.4 - 58.4,49.5
+GM0279,Scherpenzeel,Ernstig overgewicht,16.4,13.1 - 19.8,15.1
+GM0279,Scherpenzeel,Ondergewicht,0.6,-0.1 - 1.3,1.8
+GM0279,Scherpenzeel,Gezond gewicht,45.5,41.0 - 50.0,48.8
+GM0279,Scherpenzeel,Matig overgewicht,37.5,33.2 - 41.7,34.3
+GM0606,Schiedam,Overgewicht,56.2,53.4 - 59.0,53.3
+GM0606,Schiedam,Ernstig overgewicht,18.7,16.5 - 20.8,18.1
+GM0606,Schiedam,Ondergewicht,0.9,0.5 - 1.3,1.6
+GM0606,Schiedam,Gezond gewicht,42.9,40.1 - 45.7,45.2
+GM0606,Schiedam,Matig overgewicht,37.5,34.8 - 40.2,35.2
+GM1676,Schouwen-Duiveland,Overgewicht,48.1,44.2 - 52.0,51.5
+GM1676,Schouwen-Duiveland,Ernstig overgewicht,18.3,15.3 - 21.4,16.6
+GM1676,Schouwen-Duiveland,Ondergewicht,1.8,0.4 - 3.1,1.5
+GM1676,Schouwen-Duiveland,Gezond gewicht,50.2,46.3 - 54.1,47.0
+GM1676,Schouwen-Duiveland,Matig overgewicht,29.7,26.3 - 33.1,35.0
+GM0965,Simpelveld,Overgewicht,53.7,49.0 - 58.3,54.3
+GM0965,Simpelveld,Ernstig overgewicht,18.9,15.3 - 22.5,17.7
+GM0965,Simpelveld,Ondergewicht,0.4,-0.1 - 0.9,1.7
+GM0965,Simpelveld,Gezond gewicht,45.9,41.2 - 50.6,44.0
+GM0965,Simpelveld,Matig overgewicht,34.7,30.4 - 39.1,36.7
+GM0845,Sint-Michielsgestel,Overgewicht,52.7,48.3 - 57.0,51.7
+GM0845,Sint-Michielsgestel,Ernstig overgewicht,12.9,10.2 - 15.6,15.8
+GM0845,Sint-Michielsgestel,Ondergewicht,1.7,0.8 - 2.6,1.7
+GM0845,Sint-Michielsgestel,Gezond gewicht,45.6,41.3 - 50.0,46.6
+GM0845,Sint-Michielsgestel,Matig overgewicht,39.8,35.5 - 44.0,35.9
+GM1883,Sittard-Geleen,Overgewicht,57.3,54.8 - 59.8,54.3
+GM1883,Sittard-Geleen,Ernstig overgewicht,19.2,17.2 - 21.1,17.7
+GM1883,Sittard-Geleen,Ondergewicht,1.0,0.5 - 1.4,1.7
+GM1883,Sittard-Geleen,Gezond gewicht,41.7,39.2 - 44.2,44.0
+GM1883,Sittard-Geleen,Matig overgewicht,38.2,35.8 - 40.5,36.7
+GM0610,Sliedrecht,Overgewicht,54.8,50.1 - 59.4,54.6
+GM0610,Sliedrecht,Ernstig overgewicht,17.8,14.3 - 21.4,17.9
+GM0610,Sliedrecht,Ondergewicht,3.8,1.8 - 5.9,2.0
+GM0610,Sliedrecht,Gezond gewicht,41.4,36.8 - 46.0,43.4
+GM0610,Sliedrecht,Matig overgewicht,37.0,32.5 - 41.4,36.7
+GM1714,Sluis,Overgewicht,52.6,48.2 - 57.1,51.5
+GM1714,Sluis,Ernstig overgewicht,16.5,13.5 - 19.6,16.6
+GM1714,Sluis,Ondergewicht,2.0,0.7 - 3.3,1.5
+GM1714,Sluis,Gezond gewicht,45.4,40.9 - 49.9,47.0
+GM1714,Sluis,Matig overgewicht,36.1,31.9 - 40.3,35.0
+GM0090,Smallingerland,Overgewicht,52.6,49.0 - 56.1,51.6
+GM0090,Smallingerland,Ernstig overgewicht,19.6,16.7 - 22.5,16.1
+GM0090,Smallingerland,Ondergewicht,1.8,0.7 - 2.9,1.6
+GM0090,Smallingerland,Gezond gewicht,45.6,42.1 - 49.2,46.7
+GM0090,Smallingerland,Matig overgewicht,32.9,29.7 - 36.2,35.5
+GM0342,Soest,Overgewicht,47.5,43.7 - 51.3,44.2
+GM0342,Soest,Ernstig overgewicht,11.8,9.3 - 14.4,12.9
+GM0342,Soest,Ondergewicht,1.1,0.3 - 1.9,1.8
+GM0342,Soest,Gezond gewicht,51.4,47.6 - 55.2,54.0
+GM0342,Soest,Matig overgewicht,35.6,32.0 - 39.2,31.2
+GM0847,Someren,Overgewicht,50.9,45.5 - 56.3,49.5
+GM0847,Someren,Ernstig overgewicht,14.0,10.4 - 17.6,14.8
+GM0847,Someren,Ondergewicht,1.4,0.4 - 2.4,1.9
+GM0847,Someren,Gezond gewicht,47.7,42.4 - 53.1,48.6
+GM0847,Someren,Matig overgewicht,36.9,31.7 - 42.2,34.7
+GM0848,Son en Breugel,Overgewicht,52.4,48.2 - 56.5,49.5
+GM0848,Son en Breugel,Ernstig overgewicht,15.2,12.2 - 18.2,14.8
+GM0848,Son en Breugel,Ondergewicht,1.2,0.0 - 2.4,1.9
+GM0848,Son en Breugel,Gezond gewicht,46.5,42.3 - 50.6,48.6
+GM0848,Son en Breugel,Matig overgewicht,37.1,33.1 - 41.2,34.7
+GM0037,Stadskanaal,Overgewicht,61.4,56.9 - 66.0,49.7
+GM0037,Stadskanaal,Ernstig overgewicht,22.4,18.6 - 26.2,16.9
+GM0037,Stadskanaal,Ondergewicht,0.5,-0.2 - 1.2,1.7
+GM0037,Stadskanaal,Gezond gewicht,38.1,33.5 - 42.6,48.6
+GM0037,Stadskanaal,Matig overgewicht,39.0,34.6 - 43.5,32.8
+GM0180,Staphorst,Overgewicht,43.8,39.2 - 48.5,50.3
+GM0180,Staphorst,Ernstig overgewicht,12.2,8.9 - 15.4,15.8
+GM0180,Staphorst,Ondergewicht,1.7,0.6 - 2.8,1.5
+GM0180,Staphorst,Gezond gewicht,54.5,49.8 - 59.2,48.2
+GM0180,Staphorst,Matig overgewicht,31.7,27.5 - 35.8,34.4
+GM0532,Stede Broec,Overgewicht,49.8,45.3 - 54.3,50.1
+GM0532,Stede Broec,Ernstig overgewicht,15.0,11.9 - 18.1,15.0
+GM0532,Stede Broec,Ondergewicht,0.7,0.0 - 1.4,1.5
+GM0532,Stede Broec,Gezond gewicht,49.5,45.0 - 54.0,48.4
+GM0532,Stede Broec,Matig overgewicht,34.8,30.6 - 39.0,35.1
+GM0851,Steenbergen,Overgewicht,57.1,51.9 - 62.4,52.9
+GM0851,Steenbergen,Ernstig overgewicht,20.8,16.9 - 24.6,16.8
+GM0851,Steenbergen,Ondergewicht,2.1,0.3 - 3.9,1.8
+GM0851,Steenbergen,Gezond gewicht,40.7,35.5 - 46.0,45.4
+GM0851,Steenbergen,Matig overgewicht,36.4,31.5 - 41.3,36.0
+GM1708,Steenwijkerland,Overgewicht,51.2,47.7 - 54.7,50.3
+GM1708,Steenwijkerland,Ernstig overgewicht,16.4,14.0 - 18.9,15.8
+GM1708,Steenwijkerland,Ondergewicht,1.5,0.4 - 2.7,1.5
+GM1708,Steenwijkerland,Gezond gewicht,47.2,43.7 - 50.8,48.2
+GM1708,Steenwijkerland,Matig overgewicht,34.8,31.5 - 38.1,34.4
+GM0971,Stein (L.),Overgewicht,59.8,56.3 - 63.3,54.3
+GM0971,Stein (L.),Ernstig overgewicht,21.1,18.3 - 24.0,17.7
+GM0971,Stein (L.),Ondergewicht,1.3,0.3 - 2.3,1.7
+GM0971,Stein (L.),Gezond gewicht,38.9,35.4 - 42.3,44.0
+GM0971,Stein (L.),Matig overgewicht,38.7,35.3 - 42.1,36.7
+GM1904,Stichtse Vecht,Overgewicht,49.9,46.7 - 53.1,44.2
+GM1904,Stichtse Vecht,Ernstig overgewicht,14.2,11.9 - 16.6,12.9
+GM1904,Stichtse Vecht,Ondergewicht,1.1,0.5 - 1.6,1.8
+GM1904,Stichtse Vecht,Gezond gewicht,49.0,45.8 - 52.2,54.0
+GM1904,Stichtse Vecht,Matig overgewicht,35.7,32.6 - 38.7,31.2
+GM1900,Súdwest-Fryslân,Overgewicht,50.4,47.3 - 53.5,51.6
+GM1900,Súdwest-Fryslân,Ernstig overgewicht,14.1,12.1 - 16.1,16.1
+GM1900,Súdwest-Fryslân,Ondergewicht,1.1,0.5 - 1.6,1.6
+GM1900,Súdwest-Fryslân,Gezond gewicht,48.6,45.5 - 51.6,46.7
+GM1900,Súdwest-Fryslân,Matig overgewicht,36.3,33.3 - 39.2,35.5
+GM0715,Terneuzen,Overgewicht,55.0,50.5 - 59.5,51.5
+GM0715,Terneuzen,Ernstig overgewicht,19.9,16.3 - 23.5,16.6
+GM0715,Terneuzen,Ondergewicht,2.2,0.8 - 3.5,1.5
+GM0715,Terneuzen,Gezond gewicht,42.8,38.4 - 47.3,47.0
+GM0715,Terneuzen,Matig overgewicht,35.1,30.9 - 39.3,35.0
+GM0448,Texel,Overgewicht,50.3,46.2 - 54.5,50.1
+GM0448,Texel,Ernstig overgewicht,12.0,9.4 - 14.6,15.0
+GM0448,Texel,Ondergewicht,1.0,0.1 - 2.0,1.5
+GM0448,Texel,Gezond gewicht,48.6,44.5 - 52.8,48.4
+GM0448,Texel,Matig overgewicht,38.3,34.3 - 42.3,35.1
+GM1525,Teylingen,Overgewicht,48.1,44.1 - 52.1,48.6
+GM1525,Teylingen,Ernstig overgewicht,15.4,12.5 - 18.3,14.4
+GM1525,Teylingen,Ondergewicht,1.7,0.6 - 2.8,1.7
+GM1525,Teylingen,Gezond gewicht,50.2,46.2 - 54.3,49.8
+GM1525,Teylingen,Matig overgewicht,32.7,28.9 - 36.4,34.2
+GM0716,Tholen,Overgewicht,54.2,49.8 - 58.6,51.5
+GM0716,Tholen,Ernstig overgewicht,19.2,15.9 - 22.6,16.6
+GM0716,Tholen,Ondergewicht,0.7,0.1 - 1.4,1.5
+GM0716,Tholen,Gezond gewicht,45.1,40.7 - 49.5,47.0
+GM0716,Tholen,Matig overgewicht,35.0,30.9 - 39.0,35.0
+GM0281,Tiel,Overgewicht,57.9,54.7 - 61.1,49.7
+GM0281,Tiel,Ernstig overgewicht,20.6,18.1 - 23.0,15.3
+GM0281,Tiel,Ondergewicht,2.1,1.0 - 3.2,1.9
+GM0281,Tiel,Gezond gewicht,40.0,36.8 - 43.2,48.4
+GM0281,Tiel,Matig overgewicht,37.3,34.2 - 40.5,34.4
+GM0855,Tilburg,Overgewicht,51.2,48.7 - 53.8,51.7
+GM0855,Tilburg,Ernstig overgewicht,16.2,14.5 - 17.9,15.8
+GM0855,Tilburg,Ondergewicht,2.2,1.4 - 3.0,1.7
+GM0855,Tilburg,Gezond gewicht,46.5,44.0 - 49.1,46.6
+GM0855,Tilburg,Matig overgewicht,35.1,32.7 - 37.5,35.9
+GM0183,Tubbergen,Overgewicht,50.9,47.7 - 54.1,51.9
+GM0183,Tubbergen,Ernstig overgewicht,13.7,11.7 - 15.8,16.6
+GM0183,Tubbergen,Ondergewicht,1.2,0.6 - 1.8,1.8
+GM0183,Tubbergen,Gezond gewicht,47.9,44.7 - 51.1,46.3
+GM0183,Tubbergen,Matig overgewicht,37.2,34.1 - 40.2,35.3
+GM1700,Twenterand,Overgewicht,55.2,51.6 - 58.9,51.9
+GM1700,Twenterand,Ernstig overgewicht,18.8,16.0 - 21.6,16.6
+GM1700,Twenterand,Ondergewicht,1.5,0.4 - 2.6,1.8
+GM1700,Twenterand,Gezond gewicht,43.2,39.6 - 46.9,46.3
+GM1700,Twenterand,Matig overgewicht,36.5,33.0 - 39.9,35.3
+GM1730,Tynaarlo,Overgewicht,46.8,42.9 - 50.7,55.9
+GM1730,Tynaarlo,Ernstig overgewicht,13.7,11.0 - 16.5,19.2
+GM1730,Tynaarlo,Ondergewicht,1.5,0.6 - 2.3,1.5
+GM1730,Tynaarlo,Gezond gewicht,51.7,47.8 - 55.6,42.6
+GM1730,Tynaarlo,Matig overgewicht,33.1,29.5 - 36.7,36.7
+GM0737,Tytsjerksteradiel,Overgewicht,54.3,50.1 - 58.5,51.6
+GM0737,Tytsjerksteradiel,Ernstig overgewicht,15.9,12.8 - 19.1,16.1
+GM0737,Tytsjerksteradiel,Ondergewicht,2.1,0.8 - 3.4,1.6
+GM0737,Tytsjerksteradiel,Gezond gewicht,43.6,39.5 - 47.8,46.7
+GM0737,Tytsjerksteradiel,Matig overgewicht,38.3,34.3 - 42.4,35.5
+GM0450,Uitgeest,Overgewicht,48.6,44.4 - 52.8,47.2
+GM0450,Uitgeest,Ernstig overgewicht,14.2,11.4 - 17.0,15.0
+GM0450,Uitgeest,Ondergewicht,0.9,0.0 - 1.8,1.6
+GM0450,Uitgeest,Gezond gewicht,50.5,46.3 - 54.7,51.2
+GM0450,Uitgeest,Matig overgewicht,34.4,30.4 - 38.3,32.2
+GM0451,Uithoorn,Overgewicht,49.6,46.6 - 52.6,41.0
+GM0451,Uithoorn,Ernstig overgewicht,14.6,12.6 - 16.7,11.6
+GM0451,Uithoorn,Ondergewicht,1.7,0.9 - 2.5,2.2
+GM0451,Uithoorn,Gezond gewicht,48.7,45.7 - 51.7,56.8
+GM0451,Uithoorn,Matig overgewicht,35.0,32.1 - 37.8,29.4
+GM0184,Urk,Overgewicht,52.2,47.9 - 56.5,56.0
+GM0184,Urk,Ernstig overgewicht,16.5,13.5 - 19.5,18.6
+GM0184,Urk,Ondergewicht,1.3,0.3 - 2.3,1.5
+GM0184,Urk,Gezond gewicht,46.5,42.2 - 50.8,42.5
+GM0184,Urk,Matig overgewicht,35.7,31.8 - 39.7,37.4
+GM0344,Utrecht (gemeente),Overgewicht,35.5,34.3 - 36.8,44.2
+GM0344,Utrecht (gemeente),Ernstig overgewicht,10.2,9.4 - 11.0,12.9
+GM0344,Utrecht (gemeente),Ondergewicht,2.4,1.9 - 2.8,1.8
+GM0344,Utrecht (gemeente),Gezond gewicht,62.1,60.8 - 63.4,54.0
+GM0344,Utrecht (gemeente),Matig overgewicht,25.3,24.2 - 26.5,31.2
+GM1581,Utrechtse Heuvelrug,Overgewicht,42.3,39.9 - 44.7,44.2
+GM1581,Utrechtse Heuvelrug,Ernstig overgewicht,10.8,9.3 - 12.3,12.9
+GM1581,Utrechtse Heuvelrug,Ondergewicht,1.0,0.6 - 1.5,1.8
+GM1581,Utrechtse Heuvelrug,Gezond gewicht,56.7,54.3 - 59.1,54.0
+GM1581,Utrechtse Heuvelrug,Matig overgewicht,31.5,29.2 - 33.7,31.2
+GM0981,Vaals,Overgewicht,53.0,47.9 - 58.2,54.3
+GM0981,Vaals,Ernstig overgewicht,18.1,14.2 - 21.9,17.7
+GM0981,Vaals,Ondergewicht,1.1,-0.3 - 2.6,1.7
+GM0981,Vaals,Gezond gewicht,45.9,40.7 - 51.0,44.0
+GM0981,Vaals,Matig overgewicht,35.0,30.2 - 39.8,36.7
+GM0994,Valkenburg aan de Geul,Overgewicht,52.6,48.8 - 56.3,54.3
+GM0994,Valkenburg aan de Geul,Ernstig overgewicht,14.3,11.8 - 16.8,17.7
+GM0994,Valkenburg aan de Geul,Ondergewicht,2.5,1.1 - 3.8,1.7
+GM0994,Valkenburg aan de Geul,Gezond gewicht,45.0,41.2 - 48.7,44.0
+GM0994,Valkenburg aan de Geul,Matig overgewicht,38.3,34.7 - 41.9,36.7
+GM0858,Valkenswaard,Overgewicht,50.8,45.9 - 55.7,49.5
+GM0858,Valkenswaard,Ernstig overgewicht,17.1,13.4 - 20.8,14.8
+GM0858,Valkenswaard,Ondergewicht,0.9,-0.2 - 2.0,1.9
+GM0858,Valkenswaard,Gezond gewicht,48.3,43.5 - 53.2,48.6
+GM0858,Valkenswaard,Matig overgewicht,33.7,29.3 - 38.2,34.7
+GM0047,Veendam,Overgewicht,63.1,58.6 - 67.6,49.7
+GM0047,Veendam,Ernstig overgewicht,26.2,22.1 - 30.3,16.9
+GM0047,Veendam,Ondergewicht,1.1,0.2 - 2.0,1.7
+GM0047,Veendam,Gezond gewicht,35.8,31.3 - 40.2,48.6
+GM0047,Veendam,Matig overgewicht,36.9,32.5 - 41.4,32.8
+GM0345,Veenendaal,Overgewicht,53.5,51.3 - 55.7,44.2
+GM0345,Veenendaal,Ernstig overgewicht,16.7,15.2 - 18.2,12.9
+GM0345,Veenendaal,Ondergewicht,1.3,0.9 - 1.7,1.8
+GM0345,Veenendaal,Gezond gewicht,45.2,43.0 - 47.4,54.0
+GM0345,Veenendaal,Matig overgewicht,36.8,34.8 - 38.9,31.2
+GM0717,Veere,Overgewicht,46.2,42.4 - 49.9,51.5
+GM0717,Veere,Ernstig overgewicht,10.9,8.7 - 13.2,16.6
+GM0717,Veere,Ondergewicht,0.8,0.0 - 1.5,1.5
+GM0717,Veere,Gezond gewicht,53.1,49.3 - 56.8,47.0
+GM0717,Veere,Matig overgewicht,35.2,31.7 - 38.8,35.0
+GM0861,Veldhoven,Overgewicht,52.9,48.5 - 57.2,49.5
+GM0861,Veldhoven,Ernstig overgewicht,17.4,14.2 - 20.7,14.8
+GM0861,Veldhoven,Ondergewicht,1.0,0.2 - 1.8,1.9
+GM0861,Veldhoven,Gezond gewicht,46.1,41.8 - 50.5,48.6
+GM0861,Veldhoven,Matig overgewicht,35.4,31.3 - 39.6,34.7
+GM0453,Velsen,Overgewicht,51.1,48.7 - 53.5,47.2
+GM0453,Velsen,Ernstig overgewicht,15.5,13.8 - 17.2,15.0
+GM0453,Velsen,Ondergewicht,1.7,0.9 - 2.4,1.6
+GM0453,Velsen,Gezond gewicht,47.2,44.8 - 49.6,51.2
+GM0453,Velsen,Matig overgewicht,35.6,33.4 - 37.9,32.2
+GM0983,Venlo,Overgewicht,56.8,54.3 - 59.3,53.1
+GM0983,Venlo,Ernstig overgewicht,20.5,18.5 - 22.5,16.6
+GM0983,Venlo,Ondergewicht,1.2,0.6 - 1.7,1.2
+GM0983,Venlo,Gezond gewicht,42.0,39.5 - 44.5,45.7
+GM0983,Venlo,Matig overgewicht,36.3,34.0 - 38.7,36.4
+GM0984,Venray,Overgewicht,54.2,51.3 - 57.2,53.1
+GM0984,Venray,Ernstig overgewicht,16.3,14.1 - 18.5,16.6
+GM0984,Venray,Ondergewicht,1.0,0.4 - 1.6,1.2
+GM0984,Venray,Gezond gewicht,44.8,41.8 - 47.8,45.7
+GM0984,Venray,Matig overgewicht,37.9,35.1 - 40.7,36.4
+GM1961,Vijfheerenlanden,Overgewicht,51.8,47.9 - 55.8,44.2
+GM1961,Vijfheerenlanden,Ernstig overgewicht,18.3,15.2 - 21.4,12.9
+GM1961,Vijfheerenlanden,Ondergewicht,1.3,0.4 - 2.2,1.8
+GM1961,Vijfheerenlanden,Gezond gewicht,46.9,43.0 - 50.9,54.0
+GM1961,Vijfheerenlanden,Matig overgewicht,33.5,29.9 - 37.2,31.2
+GM0622,Vlaardingen,Overgewicht,58.0,55.4 - 60.6,53.3
+GM0622,Vlaardingen,Ernstig overgewicht,20.4,18.2 - 22.7,18.1
+GM0622,Vlaardingen,Ondergewicht,0.7,0.3 - 1.1,1.6
+GM0622,Vlaardingen,Gezond gewicht,41.3,38.7 - 43.9,45.2
+GM0622,Vlaardingen,Matig overgewicht,37.5,34.9 - 40.1,35.2
+GM0718,Vlissingen,Overgewicht,52.1,47.6 - 56.5,51.5
+GM0718,Vlissingen,Ernstig overgewicht,17.1,13.9 - 20.3,16.6
+GM0718,Vlissingen,Ondergewicht,0.9,0.0 - 1.9,1.5
+GM0718,Vlissingen,Gezond gewicht,47.0,42.6 - 51.4,47.0
+GM0718,Vlissingen,Matig overgewicht,34.9,30.9 - 39.0,35.0
+GM0986,Voerendaal,Overgewicht,48.1,43.7 - 52.5,54.3
+GM0986,Voerendaal,Ernstig overgewicht,12.9,10.2 - 15.7,17.7
+GM0986,Voerendaal,Ondergewicht,1.1,0.1 - 2.1,1.7
+GM0986,Voerendaal,Gezond gewicht,50.8,46.4 - 55.2,44.0
+GM0986,Voerendaal,Matig overgewicht,35.2,31.1 - 39.3,36.7
+GM1992,Voorne aan Zee,Overgewicht,55.5,52.9 - 58.0,53.3
+GM1992,Voorne aan Zee,Ernstig overgewicht,19.7,17.6 - 21.8,18.1
+GM1992,Voorne aan Zee,Ondergewicht,2.0,1.2 - 2.8,1.6
+GM1992,Voorne aan Zee,Gezond gewicht,42.5,40.0 - 45.1,45.2
+GM1992,Voorne aan Zee,Matig overgewicht,35.8,33.3 - 38.2,35.2
+GM0626,Voorschoten,Overgewicht,45.2,41.0 - 49.5,48.6
+GM0626,Voorschoten,Ernstig overgewicht,11.1,8.4 - 13.9,14.4
+GM0626,Voorschoten,Ondergewicht,0.7,0.0 - 1.3,1.7
+GM0626,Voorschoten,Gezond gewicht,54.1,49.8 - 58.4,49.8
+GM0626,Voorschoten,Matig overgewicht,34.1,30.1 - 38.2,34.2
+GM0285,Voorst,Overgewicht,50.2,46.2 - 54.2,52.2
+GM0285,Voorst,Ernstig overgewicht,14.3,11.5 - 17.1,16.3
+GM0285,Voorst,Ondergewicht,0.9,-0.1 - 1.8,1.3
+GM0285,Voorst,Gezond gewicht,48.9,44.9 - 52.9,46.5
+GM0285,Voorst,Matig overgewicht,35.9,32.1 - 39.7,36.0
+GM0865,Vught,Overgewicht,49.9,45.1 - 54.6,51.7
+GM0865,Vught,Ernstig overgewicht,16.3,12.7 - 19.8,15.8
+GM0865,Vught,Ondergewicht,1.9,0.3 - 3.4,1.7
+GM0865,Vught,Gezond gewicht,48.2,43.5 - 53.0,46.6
+GM0865,Vught,Matig overgewicht,33.6,29.2 - 38.1,35.9
+GM1949,Waadhoeke,Overgewicht,52.9,49.5 - 56.3,51.6
+GM1949,Waadhoeke,Ernstig overgewicht,15.8,13.3 - 18.2,16.1
+GM1949,Waadhoeke,Ondergewicht,1.0,0.4 - 1.6,1.6
+GM1949,Waadhoeke,Gezond gewicht,46.1,42.7 - 49.5,46.7
+GM1949,Waadhoeke,Matig overgewicht,37.2,33.9 - 40.5,35.5
+GM0866,Waalre,Overgewicht,48.8,44.4 - 53.3,49.5
+GM0866,Waalre,Ernstig overgewicht,14.7,11.5 - 17.8,14.8
+GM0866,Waalre,Ondergewicht,1.5,0.0 - 2.9,1.9
+GM0866,Waalre,Gezond gewicht,49.7,45.3 - 54.2,48.6
+GM0866,Waalre,Matig overgewicht,34.1,30.0 - 38.3,34.7
+GM0867,Waalwijk,Overgewicht,56.0,52.2 - 59.9,51.7
+GM0867,Waalwijk,Ernstig overgewicht,18.6,15.7 - 21.5,15.8
+GM0867,Waalwijk,Ondergewicht,0.9,0.2 - 1.6,1.7
+GM0867,Waalwijk,Gezond gewicht,43.1,39.3 - 46.9,46.6
+GM0867,Waalwijk,Matig overgewicht,37.4,33.7 - 41.1,35.9
+GM0627,Waddinxveen,Overgewicht,49.3,44.9 - 53.7,48.6
+GM0627,Waddinxveen,Ernstig overgewicht,14.6,11.7 - 17.5,14.4
+GM0627,Waddinxveen,Ondergewicht,1.8,0.6 - 2.9,1.7
+GM0627,Waddinxveen,Gezond gewicht,48.9,44.5 - 53.3,49.8
+GM0627,Waddinxveen,Matig overgewicht,34.7,30.5 - 38.8,34.2
+GM0289,Wageningen,Overgewicht,35.7,33.1 - 38.4,49.5
+GM0289,Wageningen,Ernstig overgewicht,9.8,8.2 - 11.5,15.1
+GM0289,Wageningen,Ondergewicht,4.0,2.7 - 5.2,1.8
+GM0289,Wageningen,Gezond gewicht,60.3,57.5 - 63.1,48.8
+GM0289,Wageningen,Matig overgewicht,25.9,23.5 - 28.3,34.3
+GM0629,Wassenaar,Overgewicht,45.4,41.7 - 49.0,47.5
+GM0629,Wassenaar,Ernstig overgewicht,14.3,11.7 - 17.0,14.2
+GM0629,Wassenaar,Ondergewicht,1.7,0.6 - 2.8,1.7
+GM0629,Wassenaar,Gezond gewicht,52.9,49.3 - 56.6,50.8
+GM0629,Wassenaar,Matig overgewicht,31.0,27.7 - 34.3,33.3
+GM0852,Waterland,Overgewicht,47.8,44.2 - 51.4,51.6
+GM0852,Waterland,Ernstig overgewicht,13.0,10.6 - 15.5,16.3
+GM0852,Waterland,Ondergewicht,2.2,1.0 - 3.5,1.5
+GM0852,Waterland,Gezond gewicht,49.9,46.3 - 53.6,46.8
+GM0852,Waterland,Matig overgewicht,34.8,31.4 - 38.2,35.4
+GM0988,Weert,Overgewicht,48.1,45.6 - 50.7,53.1
+GM0988,Weert,Ernstig overgewicht,14.8,13.0 - 16.6,16.6
+GM0988,Weert,Ondergewicht,1.7,0.9 - 2.4,1.2
+GM0988,Weert,Gezond gewicht,50.2,47.6 - 52.8,45.7
+GM0988,Weert,Matig overgewicht,33.4,31.0 - 35.8,36.4
+GM1960,West Betuwe,Overgewicht,53.8,50.6 - 57.0,49.7
+GM1960,West Betuwe,Ernstig overgewicht,17.4,15.1 - 19.7,15.3
+GM1960,West Betuwe,Ondergewicht,1.3,0.5 - 2.1,1.9
+GM1960,West Betuwe,Gezond gewicht,44.9,41.7 - 48.1,48.4
+GM1960,West Betuwe,Matig overgewicht,36.4,33.3 - 39.4,34.4
+GM0668,West Maas en Waal,Overgewicht,55.2,51.6 - 58.8,49.7
+GM0668,West Maas en Waal,Ernstig overgewicht,18.5,15.8 - 21.3,15.3
+GM0668,West Maas en Waal,Ondergewicht,1.7,0.7 - 2.6,1.9
+GM0668,West Maas en Waal,Gezond gewicht,43.1,39.5 - 46.7,48.4
+GM0668,West Maas en Waal,Matig overgewicht,36.7,33.2 - 40.1,34.4
+GM1969,Westerkwartier,Overgewicht,50.5,46.2 - 54.8,49.7
+GM1969,Westerkwartier,Ernstig overgewicht,16.8,13.6 - 19.9,16.9
+GM1969,Westerkwartier,Ondergewicht,1.5,0.2 - 2.8,1.7
+GM1969,Westerkwartier,Gezond gewicht,48.0,43.6 - 52.3,48.6
+GM1969,Westerkwartier,Matig overgewicht,33.7,29.8 - 37.7,32.8
+GM1701,Westerveld,Overgewicht,48.9,44.4 - 53.3,55.9
+GM1701,Westerveld,Ernstig overgewicht,13.3,10.2 - 16.3,19.2
+GM1701,Westerveld,Ondergewicht,1.5,0.4 - 2.6,1.5
+GM1701,Westerveld,Gezond gewicht,49.6,45.1 - 54.1,42.6
+GM1701,Westerveld,Matig overgewicht,35.6,31.3 - 39.8,36.7
+GM0293,Westervoort,Overgewicht,57.8,53.7 - 61.9,49.5
+GM0293,Westervoort,Ernstig overgewicht,19.8,16.5 - 23.1,15.1
+GM0293,Westervoort,Ondergewicht,1.8,0.5 - 3.2,1.8
+GM0293,Westervoort,Gezond gewicht,40.3,36.2 - 44.4,48.8
+GM0293,Westervoort,Matig overgewicht,38.0,34.1 - 42.0,34.3
+GM1950,Westerwolde,Overgewicht,60.7,56.5 - 64.8,49.7
+GM1950,Westerwolde,Ernstig overgewicht,21.8,18.3 - 25.2,16.9
+GM1950,Westerwolde,Ondergewicht,0.7,0.0 - 1.4,1.7
+GM1950,Westerwolde,Gezond gewicht,38.6,34.5 - 42.8,48.6
+GM1950,Westerwolde,Matig overgewicht,38.9,34.8 - 43.0,32.8
+GM1783,Westland,Overgewicht,49.8,47.2 - 52.4,47.5
+GM1783,Westland,Ernstig overgewicht,14.9,13.1 - 16.8,14.2
+GM1783,Westland,Ondergewicht,1.6,0.8 - 2.3,1.7
+GM1783,Westland,Gezond gewicht,48.7,46.1 - 51.2,50.8
+GM1783,Westland,Matig overgewicht,34.8,32.4 - 37.3,33.3
+GM0098,Weststellingwerf,Overgewicht,56.4,51.8 - 60.9,51.6
+GM0098,Weststellingwerf,Ernstig overgewicht,17.8,14.4 - 21.3,16.1
+GM0098,Weststellingwerf,Ondergewicht,1.7,0.5 - 3.0,1.6
+GM0098,Weststellingwerf,Gezond gewicht,41.9,37.4 - 46.4,46.7
+GM0098,Weststellingwerf,Matig overgewicht,38.5,34.2 - 42.9,35.5
+GM0189,Wierden,Overgewicht,51.3,47.5 - 55.1,51.9
+GM0189,Wierden,Ernstig overgewicht,14.8,12.2 - 17.4,16.6
+GM0189,Wierden,Ondergewicht,1.4,0.3 - 2.4,1.8
+GM0189,Wierden,Gezond gewicht,47.3,43.5 - 51.2,46.3
+GM0189,Wierden,Matig overgewicht,36.5,32.9 - 40.1,35.3
+GM0296,Wijchen,Overgewicht,54.9,51.6 - 58.1,49.7
+GM0296,Wijchen,Ernstig overgewicht,16.5,14.1 - 19.0,15.3
+GM0296,Wijchen,Ondergewicht,1.3,0.6 - 1.9,1.9
+GM0296,Wijchen,Gezond gewicht,43.8,40.6 - 47.1,48.4
+GM0296,Wijchen,Matig overgewicht,38.3,35.2 - 41.5,34.4
+GM1696,Wijdemeren,Overgewicht,49.1,45.4 - 52.8,45.0
+GM1696,Wijdemeren,Ernstig overgewicht,12.9,10.4 - 15.3,12.0
+GM1696,Wijdemeren,Ondergewicht,1.7,0.8 - 2.6,1.8
+GM1696,Wijdemeren,Gezond gewicht,49.2,45.5 - 53.0,53.2
+GM1696,Wijdemeren,Matig overgewicht,36.2,32.7 - 39.8,32.9
+GM0352,Wijk bij Duurstede,Overgewicht,53.4,49.8 - 56.9,44.2
+GM0352,Wijk bij Duurstede,Ernstig overgewicht,16.8,14.2 - 19.3,12.9
+GM0352,Wijk bij Duurstede,Ondergewicht,1.2,0.3 - 2.0,1.8
+GM0352,Wijk bij Duurstede,Gezond gewicht,45.5,42.0 - 49.0,54.0
+GM0352,Wijk bij Duurstede,Matig overgewicht,36.6,33.3 - 39.9,31.2
+GM0294,Winterswijk,Overgewicht,54.2,50.2 - 58.3,52.2
+GM0294,Winterswijk,Ernstig overgewicht,16.3,13.2 - 19.4,16.3
+GM0294,Winterswijk,Ondergewicht,0.6,0.0 - 1.1,1.3
+GM0294,Winterswijk,Gezond gewicht,45.2,41.2 - 49.3,46.5
+GM0294,Winterswijk,Matig overgewicht,37.9,34.1 - 41.8,36.0
+GM0873,Woensdrecht,Overgewicht,61.8,56.9 - 66.7,52.9
+GM0873,Woensdrecht,Ernstig overgewicht,20.8,16.8 - 24.8,16.8
+GM0873,Woensdrecht,Ondergewicht,2.2,0.9 - 3.6,1.8
+GM0873,Woensdrecht,Gezond gewicht,35.9,31.1 - 40.8,45.4
+GM0873,Woensdrecht,Matig overgewicht,41.1,36.2 - 45.9,36.0
+GM0632,Woerden,Overgewicht,45.6,43.3 - 47.8,44.2
+GM0632,Woerden,Ernstig overgewicht,12.5,11.0 - 13.9,12.9
+GM0632,Woerden,Ondergewicht,1.7,0.9 - 2.4,1.8
+GM0632,Woerden,Gezond gewicht,52.8,50.5 - 55.1,54.0
+GM0632,Woerden,Matig overgewicht,33.1,31.0 - 35.2,31.2
+GM0880,Wormerland,Overgewicht,50.7,46.7 - 54.6,51.6
+GM0880,Wormerland,Ernstig overgewicht,13.2,10.6 - 15.9,16.3
+GM0880,Wormerland,Ondergewicht,0.6,-0.1 - 1.4,1.5
+GM0880,Wormerland,Gezond gewicht,48.7,44.7 - 52.7,46.8
+GM0880,Wormerland,Matig overgewicht,37.4,33.7 - 41.2,35.4
+GM0351,Woudenberg,Overgewicht,46.9,43.1 - 50.7,44.2
+GM0351,Woudenberg,Ernstig overgewicht,13.7,11.0 - 16.4,12.9
+GM0351,Woudenberg,Ondergewicht,1.5,0.4 - 2.6,1.8
+GM0351,Woudenberg,Gezond gewicht,51.6,47.7 - 55.4,54.0
+GM0351,Woudenberg,Matig overgewicht,33.2,29.7 - 36.8,31.2
+GM0479,Zaanstad,Overgewicht,52.3,50.3 - 54.3,51.6
+GM0479,Zaanstad,Ernstig overgewicht,17.3,15.8 - 18.7,16.3
+GM0479,Zaanstad,Ondergewicht,1.8,1.3 - 2.3,1.5
+GM0479,Zaanstad,Gezond gewicht,45.9,43.9 - 47.9,46.8
+GM0479,Zaanstad,Matig overgewicht,35.0,33.1 - 36.9,35.4
+GM0297,Zaltbommel,Overgewicht,54.2,50.3 - 58.0,49.7
+GM0297,Zaltbommel,Ernstig overgewicht,15.5,13.0 - 18.1,15.3
+GM0297,Zaltbommel,Ondergewicht,2.1,1.0 - 3.3,1.9
+GM0297,Zaltbommel,Gezond gewicht,43.7,39.9 - 47.6,48.4
+GM0297,Zaltbommel,Matig overgewicht,38.6,35.0 - 42.3,34.4
+GM0473,Zandvoort,Overgewicht,49.2,44.8 - 53.5,47.2
+GM0473,Zandvoort,Ernstig overgewicht,13.6,10.7 - 16.5,15.0
+GM0473,Zandvoort,Ondergewicht,1.7,0.5 - 2.9,1.6
+GM0473,Zandvoort,Gezond gewicht,49.1,44.7 - 53.5,51.2
+GM0473,Zandvoort,Matig overgewicht,35.6,31.4 - 39.8,32.2
+GM0050,Zeewolde,Overgewicht,52.9,48.8 - 57.1,56.0
+GM0050,Zeewolde,Ernstig overgewicht,19.2,16.0 - 22.5,18.6
+GM0050,Zeewolde,Ondergewicht,2.0,0.7 - 3.2,1.5
+GM0050,Zeewolde,Gezond gewicht,45.1,41.0 - 49.2,42.5
+GM0050,Zeewolde,Matig overgewicht,33.7,29.9 - 37.5,37.4
+GM0355,Zeist,Overgewicht,44.0,40.3 - 47.7,44.2
+GM0355,Zeist,Ernstig overgewicht,12.2,9.8 - 14.6,12.9
+GM0355,Zeist,Ondergewicht,2.4,1.2 - 3.7,1.8
+GM0355,Zeist,Gezond gewicht,53.6,49.8 - 57.3,54.0
+GM0355,Zeist,Matig overgewicht,31.8,28.4 - 35.2,31.2
+GM0299,Zevenaar,Overgewicht,58.9,55.3 - 62.5,49.5
+GM0299,Zevenaar,Ernstig overgewicht,19.2,16.5 - 21.9,15.1
+GM0299,Zevenaar,Ondergewicht,1.1,0.2 - 1.9,1.8
+GM0299,Zevenaar,Gezond gewicht,40.0,36.5 - 43.6,48.8
+GM0299,Zevenaar,Matig overgewicht,39.7,36.2 - 43.2,34.3
+GM0637,Zoetermeer,Overgewicht,54.4,51.7 - 57.2,47.5
+GM0637,Zoetermeer,Ernstig overgewicht,17.8,15.7 - 19.8,14.2
+GM0637,Zoetermeer,Ondergewicht,1.5,0.8 - 2.3,1.7
+GM0637,Zoetermeer,Gezond gewicht,44.0,41.3 - 46.8,50.8
+GM0637,Zoetermeer,Matig overgewicht,36.7,34.1 - 39.3,33.3
+GM0638,Zoeterwoude,Overgewicht,47.5,43.4 - 51.6,48.6
+GM0638,Zoeterwoude,Ernstig overgewicht,13.8,11.0 - 16.6,14.4
+GM0638,Zoeterwoude,Ondergewicht,2.0,0.5 - 3.5,1.7
+GM0638,Zoeterwoude,Gezond gewicht,50.5,46.4 - 54.6,49.8
+GM0638,Zoeterwoude,Matig overgewicht,33.7,30.0 - 37.5,34.2
+GM1892,Zuidplas,Overgewicht,52.2,47.4 - 57.0,48.6
+GM1892,Zuidplas,Ernstig overgewicht,15.6,12.0 - 19.1,14.4
+GM1892,Zuidplas,Ondergewicht,1.2,-0.2 - 2.5,1.7
+GM1892,Zuidplas,Gezond gewicht,46.6,41.9 - 51.4,49.8
+GM1892,Zuidplas,Matig overgewicht,36.6,32.3 - 41.0,34.2
+GM0879,Zundert,Overgewicht,53.2,48.1 - 58.4,52.9
+GM0879,Zundert,Ernstig overgewicht,17.5,13.5 - 21.5,16.8
+GM0879,Zundert,Ondergewicht,1.1,0.1 - 2.0,1.8
+GM0879,Zundert,Gezond gewicht,45.7,40.6 - 50.8,45.4
+GM0879,Zundert,Matig overgewicht,35.7,31.1 - 40.4,36.0
+GM0301,Zutphen,Overgewicht,50.3,46.5 - 54.1,52.2
+GM0301,Zutphen,Ernstig overgewicht,16.9,14.1 - 19.6,16.3
+GM0301,Zutphen,Ondergewicht,1.8,0.6 - 3.1,1.3
+GM0301,Zutphen,Gezond gewicht,47.9,44.1 - 51.7,46.5
+GM0301,Zutphen,Matig overgewicht,33.4,29.9 - 36.9,36.0
+GM1896,Zwartewaterland,Overgewicht,56.0,52.0 - 60.0,50.3
+GM1896,Zwartewaterland,Ernstig overgewicht,19.2,16.2 - 22.2,15.8
+GM1896,Zwartewaterland,Ondergewicht,0.8,0.0 - 1.6,1.5
+GM1896,Zwartewaterland,Gezond gewicht,43.2,39.2 - 47.2,48.2
+GM1896,Zwartewaterland,Matig overgewicht,36.8,33.0 - 40.6,34.4
+GM0642,Zwijndrecht,Overgewicht,58.3,54.2 - 62.5,54.6
+GM0642,Zwijndrecht,Ernstig overgewicht,19.1,15.7 - 22.4,17.9
+GM0642,Zwijndrecht,Ondergewicht,1.5,0.5 - 2.4,2.0
+GM0642,Zwijndrecht,Gezond gewicht,40.2,36.1 - 44.3,43.4
+GM0642,Zwijndrecht,Matig overgewicht,39.3,35.2 - 43.3,36.7
+GM0193,Zwolle,Overgewicht,46.6,43.0 - 50.3,50.3
+GM0193,Zwolle,Ernstig overgewicht,14.0,11.5 - 16.5,15.8
+GM0193,Zwolle,Ondergewicht,0.9,0.3 - 1.6,1.5
+GM0193,Zwolle,Gezond gewicht,52.4,48.7 - 56.1,48.2
+GM0193,Zwolle,Matig overgewicht,32.6,29.2 - 36.1,34.4
