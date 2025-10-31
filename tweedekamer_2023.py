@@ -295,7 +295,7 @@ def calculate_results_landelijk(jaar, df, kol_regio,kol_partij,kol_stemmen):
     return df_res
 
 
-def make_plot(df_res, jaar):
+def make_plot(df_res, jaar, metric):
     """_summary_
 
     Args:
@@ -310,26 +310,20 @@ def make_plot(df_res, jaar):
         fix = {"Hengelo (O)":"Hengelo",
             "Den Bosch": "'s-Hertogenbosch",
             "Bergen (L)": "Bergen (L.)",  # voorbeeld
+            "Bergen (NH)": "Bergen (NH.)",  # voorbeeld
         }
     elif jaar==2023:
         fix = {"Hengelo (O)":"Hengelo",
+         "Bergen (L)": "Bergen (L.)",  # voorbeeld
+            "Bergen (NH)": "Bergen (NH.)",  # voorbeeld
         }
     else:
         st.error("Fout in jaar")
         st.stop()
+   
     df_res["Gemeente_fix"] = df_res["Gemeente"].replace(fix)
 
-    columns_metrics = [
-        f"Chi2_prop_{jaar}",
-        f"Chi2_rtl_{jaar}",
-        f"Rank_Chi2_rtl_{jaar}",
-        f"Percentiel_Chi2_rtl_{jaar}",
-        f"Rank_Chi2_prop_{jaar}",
-        f"Percentiel_Chi2_prop_{jaar}",
-    ]
-
-    # 2) Keuze metriek
-    metric = st.radio("Kleur op", columns_metrics, 2, horizontal=True)
+    
 
     # 3) Range en colormap
     vmin = float(df_res[metric].min())
@@ -472,18 +466,30 @@ def main():
     kol_regio = "Regio"
     kol_partij = "LijstNaam"
     kol_stemmen = "Waarde"  
-    tab1, tab2, tab3 = st.tabs(["Resultaten", "Enkele gemeente", "Info"])
+    tab1, tab2, tab3,tab4 = st.tabs(["Resultaten", "Enkele gemeente","Partij", "Info"])
 
-    with tab3:
+    with tab4:
         show_info()
     with tab1:
         df_res_all = pd.DataFrame()
         jaren = [2023, 2025]
+        columns_metrics = [
+            f"Chi2_prop",
+            f"Chi2_rtl_",
+            f"Rank_Chi2_rtl",
+            f"Percentiel_Chi2_rtl",
+            f"Rank_Chi2_prop",
+            f"Percentiel_Chi2_prop",
+        ]
+
+        # 2) Keuze metriek
+        metric = st.radio("Kleur op", columns_metrics, 2, horizontal=True)
         for jaar in  jaren:
             df = load_votes(jaar)
             df_res = calculate_results_landelijk(jaar, df, kol_regio,kol_partij,kol_stemmen)
             if jaar ==jaren[-1]:
-                make_plot(df_res, jaar)
+                metric_=f"{metric}_{jaar}"
+                make_plot(df_res, jaar, metric_)
                 st.write(f"Aantal gemeentes in {jaar} : {len(df_res)}")
                 st.dataframe(df_res.style.format({"Chi2": "{:.4f}"}))
             if df_res_all.empty:
@@ -496,9 +502,32 @@ def main():
 
         #plot_scatter(df_res_all,xaxis=f"Chi2_rtl_2023", yaxis=f"Chi2_rtl_2025")
     with tab2:
-        jaar = st.radio("Jaar", jaren, index=1, horizontal=True)
+        jaar = st.radio("Jaar", jaren, index=1, horizontal=True, key="gemeente_jaar")
         df_j = load_votes(jaar)
         calculate_results_gemeente(df_j, jaar, kol_regio,kol_partij,kol_stemmen)
-
+    with tab3:
+        jaar = st.radio("Jaar", jaren, index=1, horizontal=True, key="partij_jaar")
+        df_j = load_votes(jaar)
+        
+     
+        den = df_j.groupby(kol_regio)[kol_stemmen].transform("sum")
+        df_j["percentage"] = (100 * df_j[kol_stemmen] / den).fillna(0).round(2)
+    
+        #check = df.groupby(kol_regio)["percentage"].sum().round(2)
+        df_j["Gemeente"]=df_j["Regio"]
+        
+        partij = st.selectbox("Partij", sorted(df_j[kol_partij].unique().tolist()), index=0)
+        df_p=df_j[df_j["LijstNaam"] == partij]
+       
+        if len(df_p)>0:
+        
+            df_p=df_p[["Gemeente","Waarde","percentage"]].sort_values("percentage", ascending=False)
+            df_p["Zetels"] = round(df_p["percentage"]/0.66667,1)
+            df_p[f"Percentage_{partij}"] = df_p["percentage"]
+            make_plot(df_p, jaar, f"Percentage_{partij}")
+            st.write(df_p)
+        else:
+            st.error("Partij heeft geen stemmen")
+            st.stop()
 if __name__ == "__main__":
     main()
