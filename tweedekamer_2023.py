@@ -576,6 +576,7 @@ def obesitas_inkomen():
     with col1:
         plot_scatter_correlation(df_res,f"percentage_votes_{partij}",f"Percentage_{indicator_}", partij, indicator_,mode_,log_inkomen)
     
+    
     with col2:
         plot_scatter_correlation(df_res,"HBO_WO_2024",f"percentage_votes_{partij}", partij,"",mode_,log_inkomen)
     col1,col2, =st.columns(2)
