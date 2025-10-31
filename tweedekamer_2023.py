@@ -455,7 +455,7 @@ def plot_scatter(df_res_all,xaxis,yaxis):
         height=600
     )
 
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width=True)
     st.write(df_res_all)
 
 def main():
@@ -523,8 +523,16 @@ def main():
     
             df_p=df_p[["Gemeente","Waarde","percentage"]].sort_values("percentage", ascending=False)
             df_p["Zetels"] = round(df_p["percentage"]/0.66667,1)
-            df_p[f"Percentage_{partij}"] = df_p["percentage"]
-            make_plot(df_p, jaar, f"Percentage_{partij}")
+            #df_p[f"Percentage_{partij}"] = df_p["percentage"]
+            
+            df_p = df_p.rename(columns={"percentage": f"Percentage_{partij}"})
+            
+          
+            try:
+                make_plot(df_p, jaar, f"Percentage_{partij}")
+            except:
+                #error VRIJVER 2025
+                st.error("Fout bij het maken van de kaart")
             st.write(df_p)
         else:
             st.error("Partij heeft geen stemmen")
