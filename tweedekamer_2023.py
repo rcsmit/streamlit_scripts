@@ -8,7 +8,7 @@ import branca.colormap as cm
 from scipy.stats import chi2_contingency
 import datetime
 import numpy as np
-
+import random
 import plotly.graph_objects as go
 
 try:
@@ -390,17 +390,17 @@ def make_plot(df_res, jaar, metric):
     st.markdown(f"## Kaart: {metric}")
     st_folium(m, returned_objects=[])
     
-def plot_scatter(df_res_all,xaxis,yaxis):
+def plot_scatter(df_res_all,xaxis,yaxis,extra_info=True):
    
     # Voorbeeld dataframe
     # df_res_all bevat o.a. kolommen: Gemeente, Rank_Chi2_rtl_2023, Rank_Chi2_rtl_2025
     # df_res_all = pd.DataFrame(...)
-    show_text = st.checkbox("Toon tekstlabels", key ="show_text299r", value=True)
+    show_text = st.checkbox("Toon tekstlabels", key =f"show_text299r{random.randint(10,1000000) }", value=True)
     if show_text:
         mode_="markers+text"
     else:
         mode_="markers"
-
+  
     fig = go.Figure(
         data=[
             go.Scatter(
@@ -411,8 +411,8 @@ def plot_scatter(df_res_all,xaxis,yaxis):
                 text=df_res_all["Gemeente"],           # mouseover
                 hovertemplate=(
                     "<b>%{text}</b><br>"
-                    "Rank 2023: %{x}<br>"
-                    "Rank 2025: %{y}<extra></extra>"
+                    "X: %{x}<br>"
+                    "Y: %{y}<extra></extra>"
                 ),
                 marker=dict(size=8, color="teal", opacity=0.7, line=dict(width=0.5, color="white"))
             )
@@ -421,8 +421,8 @@ def plot_scatter(df_res_all,xaxis,yaxis):
 
         
     # Referentielijn x=y
-    min_val = min(df_res_all["Rank_Chi2_rtl_2023"].min(), df_res_all["Rank_Chi2_rtl_2025"].min())
-    max_val = max(df_res_all["Rank_Chi2_rtl_2023"].max(), df_res_all["Rank_Chi2_rtl_2025"].max())
+    min_val = min(df_res_all[xaxis].min(), df_res_all[yaxis].min())
+    max_val = max(df_res_all[xaxis].max(), df_res_all[yaxis].max())
 
     fig.add_trace(
         go.Scatter(
@@ -435,31 +435,31 @@ def plot_scatter(df_res_all,xaxis,yaxis):
         )
     )
 
-        
-    # Tekstlabels
-    fig.add_annotation(
-        text="Is meer afwijkend dan vorig jaar",
-        xref="paper", yref="paper",
-        x=0.02, y=0.98, showarrow=False,
-        font=dict(size=24, color="gray")
-    )
-    fig.add_annotation(
-        text="Is minder afwijkend dan vorig jaar",
-        xref="paper", yref="paper",
-        x=0.98, y=0.10, showarrow=False,
-        font=dict(size=24, color="gray"),
-        xanchor="right", yanchor="bottom"
-    )
+    if extra_info:
+        # Tekstlabels
+        fig.add_annotation(
+            text="Is meer afwijkend dan vorig jaar",
+            xref="paper", yref="paper",
+            x=0.02, y=0.98, showarrow=False,
+            font=dict(size=24, color="gray")
+        )
+        fig.add_annotation(
+            text="Is minder afwijkend dan vorig jaar",
+            xref="paper", yref="paper",
+            x=0.98, y=0.10, showarrow=False,
+            font=dict(size=24, color="gray"),
+            xanchor="right", yanchor="bottom"
+        )
     fig.update_layout(
-        title="Vergelijking Rank_Chi2_rtl 2023 vs 2025",
-        xaxis_title="Rank_Chi2_rtl_2023",
-        yaxis_title="Rank_Chi2_rtl_2025",
+        title=f"Vergelijking {xaxis} vs {yaxis}",
+        xaxis_title=xaxis,
+        yaxis_title=yaxis,
         template="plotly_white",
         height=600
     )
 
     st.plotly_chart(fig, width=True)
-    st.write(df_res_all)
+    
 
  
 def plot_scatter_correlation(df_, x_axis, y_axis, partij, indicator,mode_, log_inkomen):
@@ -539,8 +539,11 @@ def obesitas_inkomen():
     # https://www.cbs.nl/nl-nl/maatwerk/2023/35/inkomen-per-gemeente-en-wijk-2020
     #url_obesitas = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gemeente_overgewicht.csv"
     url_obesitas = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_overgewicht.csv"
-  
-  
+    # https://www.clo.nl/indicatoren/nl210016-hbo-en-wo-gediplomeerden-2024
+    # Bevolking 15 tot 75 jaar met als behaalde opleiding hbo of wo per gemeente, 2024
+
+    url_opleiding = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_opleiding.csv"
+    df_opleiding = pd.read_csv(url_opleiding)
     df_obesitas = pd.read_csv(url_obesitas)
     #url_inkomen = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gemeente_inkomen.csv"
     url_inkomen = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_inkomen.csv"
@@ -552,7 +555,7 @@ def obesitas_inkomen():
     
     df_merge = df_obesitas.merge(df_votes, left_on="Naam", right_on="Regio", how="inner")
     df_merge = df_merge.merge(df_inkomen, left_on="Naam", right_on="Regio", how="inner")
-
+    df_merge = df_merge.merge(df_opleiding, left_on="Naam", right_on="Regio", how="inner")
     col1,col2,col3=st.columns(3)
     with col1:
         partij = st.selectbox("Partij", sorted(df_merge[kol_partij].unique().tolist()), key="afdadsf", index=0)
@@ -619,10 +622,12 @@ def main():
                 df_res_all = df_res
             else:
                 df_res_all = df_res_all.merge(df_res, on="Gemeente", how="inner")
-        st.markdown("## Vergelijking 2023 vs 2025")
+        st.markdown("## Vergelijkingen")
         #st.dataframe(df_res_all.style.format({"Chi2": "{:.4f}"}))
         plot_scatter(df_res_all,xaxis=f"Rank_Chi2_rtl_2023", yaxis=f"Rank_Chi2_rtl_2025")
-
+        plot_scatter(df_res_all,f"Rank_Chi2_rtl_2025",f"Rank_Chi2_prop_2025", False)
+        plot_scatter(df_res_all,f"Rank_Chi2_rtl_2023",f"Rank_Chi2_test_2023", False)
+        st.write(df_res_all)
         #plot_scatter(df_res_all,xaxis=f"Chi2_rtl_2023", yaxis=f"Chi2_rtl_2025")
     with tab2:
         jaar = st.radio("Jaar", jaren, index=1, horizontal=True, key="gemeente_jaar")
