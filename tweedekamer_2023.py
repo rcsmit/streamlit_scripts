@@ -33,7 +33,7 @@ def load_votes_2025():
     # url_results=r"C:\Users\rcxsm\Documents\python_scripts\alle_resultaten_per_gemeente.csv"
     # url_partynames = r"C:\Users\rcxsm\Downloads\party_names.csv"
 
-    url_results= "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/alle_resultaten_per_gemeente.csv"
+    url_results= "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/alle_resultaten_per_gemeente_2025.csv"
     url_partynames =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/partij_keys.csv"
 
     df_results = pd.read_csv(url_results, dtype={"cbs_code":str})
@@ -44,7 +44,7 @@ def load_votes_2025():
     df_results_new=df_results_new.fillna("UNKNOWN_X")
   
     df_results_new=df_results_new[["Regio","Waarde", "LijstNaam"]]
-    df_results_new=df_results_new[df_results_new["Regio"] !="Venray"]  # Venray moet nog worden geteld
+    #df_results_new=df_results_new[df_results_new["Regio"] !="Venray"]  # Venray moet nog worden geteld
     print (df_results_new)
     return df_results_new
 
