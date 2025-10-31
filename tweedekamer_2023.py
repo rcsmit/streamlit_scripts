@@ -455,6 +455,7 @@ def plot_scatter(df_res_all,xaxis,yaxis):
     )
 
     st.plotly_chart(fig, use_container_width=True)
+    st.write(df_res_all)
 
 def main():
     """Main functie
