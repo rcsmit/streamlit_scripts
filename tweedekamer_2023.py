@@ -10,7 +10,7 @@ import datetime
 import numpy as np
 import random
 import plotly.graph_objects as go
-
+import statsmodels.api as sm
 try:
     st.set_page_config(layout="wide", page_title="Stemafwijkingen 2023")
 except:
@@ -518,7 +518,7 @@ def plot_scatter_correlation(df_, x_axis, y_axis, partij, indicator,mode_, log_i
 
     # Layout
     fig.update_layout(
-        title=f"{y_axis}<br> vs {x_axis} {partij} | (R² = {r2:.3f})",
+        title=f"{y_axis}<br> vs {x_axis} | (R² = {r2:.3f})",
         xaxis_title=x_label,
         yaxis_title=y_axis,
         template="plotly_white",
@@ -571,21 +571,59 @@ def obesitas_inkomen():
 
     df_res=df_merge[(df_merge["Indicator"]==indicator_)& (df_merge["LijstNaam"]==partij)]
     df_res[f"Percentage_{indicator_}"] = df_res["Percentage"]
-    col1,col2, col3,col4=st.columns(4)
+    df_res[f"percentage_votes_{partij}"] = df_res["percentage_votes"]
+    col1,col2, =st.columns(2)
     with col1:
-        plot_scatter_correlation(df_res,"percentage_votes",f"Percentage_{indicator_}", partij, indicator_,mode_,log_inkomen)
+        plot_scatter_correlation(df_res,f"percentage_votes_{partij}",f"Percentage_{indicator_}", partij, indicator_,mode_,log_inkomen)
     
     with col2:
-        plot_scatter_correlation(df_res,"percentage_votes","HBO_WO_2024", partij,"",mode_,log_inkomen)
-   
-    with col3:
-        plot_scatter_correlation(df_res,"ink_inw","percentage_votes", partij, "",mode_,log_inkomen)
-    with col4:
+        plot_scatter_correlation(df_res,"HBO_WO_2024",f"percentage_votes_{partij}", partij,"",mode_,log_inkomen)
+    col1,col2, =st.columns(2)
+    with col1:
+        plot_scatter_correlation(df_res,"ink_inw",f"percentage_votes_{partij}", partij, "",mode_,log_inkomen)
+    with col2:
         plot_scatter_correlation(df_res,"ink_inw",f"Percentage_{indicator_}", partij, indicator_,mode_,log_inkomen)
 
     # plot_scatter_correlation(df_res,"percentage_votes","Percentage", partij, indicator_)
     # plot_scatter_correlation(df_res,"percentage_votes","ink_inw", partij, "")
+    ols_corr(df_res, partij,indicator_)
     st.write(df_res)
+
+
+def ols_corr(df, partij,indicator_):
+    """Make an multiple lineair regression analyses (OLS)
+    Args:
+        df (dataframe): dataframe with the survey results
+    """
+    # Select predictors and target
+    
+    X = df[[f"Percentage_{indicator_}", "ink_inw", "HBO_WO_2024"]]
+    y = df[f"percentage_votes_{partij}"]
+    # y = df["nps"]
+
+    # Drop rows with missing values
+    data = pd.concat([X, y], axis=1).dropna()
+
+    # Your original switch to predict Instructions from the others kept as-is
+    X = data[[f"Percentage_{indicator_}", "ink_inw", "HBO_WO_2024"]]
+    y = data[f"percentage_votes_{partij}"]
+    # y=data["nps"]
+
+    # Add constant for regression
+    X = sm.add_constant(X)
+
+    # Fit model
+    model = sm.OLS(y, X).fit()
+    st.write(model.summary())
+    st.write(
+        df[
+            [
+                f"percentage_votes_{partij}", f"Percentage_{indicator_}", "ink_inw", "HBO_WO_2024"
+            ]
+        ].corr()
+    )
+
+  
 def main():
     """Main functie
     """  
