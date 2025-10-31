@@ -33,7 +33,7 @@ def load_votes_2025():
     # url_partynames = r"C:\Users\rcxsm\Downloads\party_names.csv"
 
     url_results= "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/alle_resultaten_per_gemeente.csv"
-    url_partynames =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/party_names.csv"
+    url_partynames =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/partij_keys.csv"
 
     df_results = pd.read_csv(url_results, dtype={"cbs_code":str})
     df_partynames = pd.read_csv(url_partynames)
