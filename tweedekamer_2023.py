@@ -548,14 +548,14 @@ def obesitas_inkomen():
     
     df_res=df_merge[(df_merge["Indicator"]==indicator_)& (df_merge["LijstNaam"]==partij)]
     
-    # col1,col2=st.columns(2)
-    # with col1:
-    #     plot_scatter_correlation(df_res,"percentage_votes","Percentage", partij, indicator_)
-    # with col2:
-    #     plot_scatter_correlation(df_res,"percentage_votes","ink_inw", partij, "")
+    col1,col2=st.columns(2)
+    with col1:
+        plot_scatter_correlation(df_res,"percentage_votes","Percentage", partij, indicator_)
+    with col2:
+        plot_scatter_correlation(df_res,"percentage_votes","ink_inw", partij, "")
 
-    plot_scatter_correlation(df_res,"percentage_votes","Percentage", partij, indicator_)
-    plot_scatter_correlation(df_res,"percentage_votes","ink_inw", partij, "")
+    # plot_scatter_correlation(df_res,"percentage_votes","Percentage", partij, indicator_)
+    # plot_scatter_correlation(df_res,"percentage_votes","ink_inw", partij, "")
     st.write(df_res)
 def main():
     """Main functie
