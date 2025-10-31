@@ -560,7 +560,7 @@ def obesitas_inkomen():
     with col1:
         partij = st.selectbox("Partij", sorted(df_merge[kol_partij].unique().tolist()), key="afdadsf", index=0)
     with col2:
-        indicator_ = st.selectbox("Indicator", sorted(df_merge["Indicator"].unique().tolist()), key="aresf", index=0)
+        indicator_ = st.selectbox("Indicator gewicht", sorted(df_merge["Indicator"].unique().tolist()), key="aresf", index=0)
     with col3:
         show_text = st.checkbox("Toon tekstlabels", key="affadsf4", value=True)
         log_inkomen =  st.checkbox("Log inkomen", key="affadsf3",  value=False)
@@ -574,9 +574,9 @@ def obesitas_inkomen():
     df_res[f"percentage_votes_{partij}"] = df_res["percentage_votes"]
     col1,col2, =st.columns(2)
     with col1:
-        plot_scatter_correlation(df_res,f"percentage_votes_{partij}",f"Percentage_{indicator_}", partij, indicator_,mode_,log_inkomen)
+        plot_scatter_correlation(df_res,f"Percentage_{indicator_}",f"percentage_votes_{partij}", partij, indicator_,mode_,log_inkomen)
     
-    
+
     with col2:
         plot_scatter_correlation(df_res,"HBO_WO_2024",f"percentage_votes_{partij}", partij,"",mode_,log_inkomen)
     col1,col2, =st.columns(2)
@@ -633,7 +633,7 @@ def main():
     kol_regio = "Regio"
     kol_partij = "LijstNaam"
     kol_stemmen = "Waarde"  
-    tab1, tab2, tab3,tab4,tab5 = st.tabs(["Resultaten", "Enkele gemeente","Partij","obesitas/inkomen", "Info"])
+    tab1, tab2, tab3,tab4,tab5 = st.tabs(["Resultaten", "Enkele gemeente","Partij","obesitas/inkomen/opleiding", "Info"])
 
     with tab5:
         show_info()
