@@ -89,7 +89,7 @@ def show_info():
     st.info("Gemeentegrenzen : https://cartomap.github.io/nl/")
     st.info("Obesitas:  https://www.vzinfo.nl/overgewicht/regionaal/obesitas#obesitas-volwassenen")
     st.info("Inkomen (2020) : https://www.cbs.nl/nl-nl/maatwerk/2023/35/inkomen-per-gemeente-en-wijk-2020")
- 
+    st.info("Opleiding [%>= HBO/WO] (2024) : https://www.clo.nl/indicatoren/nl210016-hbo-en-wo-gediplomeerden-2024")
     st.info(
         """FORMULES
             
@@ -571,12 +571,16 @@ def obesitas_inkomen():
 
     df_res=df_merge[(df_merge["Indicator"]==indicator_)& (df_merge["LijstNaam"]==partij)]
     df_res[f"Percentage_{indicator_}"] = df_res["Percentage"]
-    col1,col2, col3=st.columns(3)
+    col1,col2, col3,col4=st.columns(4)
     with col1:
         plot_scatter_correlation(df_res,"percentage_votes",f"Percentage_{indicator_}", partij, indicator_,mode_,log_inkomen)
+    
     with col2:
-        plot_scatter_correlation(df_res,"ink_inw","percentage_votes", partij, "",mode_,log_inkomen)
+        plot_scatter_correlation(df_res,"percentage_votes","HBO_WO_2024", partij,"",mode_,log_inkomen)
+   
     with col3:
+        plot_scatter_correlation(df_res,"ink_inw","percentage_votes", partij, "",mode_,log_inkomen)
+    with col4:
         plot_scatter_correlation(df_res,"ink_inw",f"Percentage_{indicator_}", partij, indicator_,mode_,log_inkomen)
 
     # plot_scatter_correlation(df_res,"percentage_votes","Percentage", partij, indicator_)
