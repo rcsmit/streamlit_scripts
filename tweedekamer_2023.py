@@ -86,8 +86,10 @@ def show_info():
     st.info(
         "Data  https://data.overheid.nl/dataset/verkiezingsuitslag-tweede-kamer-2023?utm_source=chatgpt.com#panel-description"
     )
-    st.info("Gemeentegrenzen  https://cartomap.github.io/nl/")
-
+    st.info("Gemeentegrenzen : https://cartomap.github.io/nl/")
+    st.info("Obesitas:  https://www.vzinfo.nl/overgewicht/regionaal/obesitas#obesitas-volwassenen")
+    st.info("Inkomen (2020) : https://www.cbs.nl/nl-nl/maatwerk/2023/35/inkomen-per-gemeente-en-wijk-2020")
+ 
     st.info(
         """FORMULES
             
@@ -545,13 +547,13 @@ def obesitas_inkomen():
         indicator_ = st.selectbox("Indicator", sorted(df_merge["Indicator"].unique().tolist()), key="aresf", index=0)
     
     df_res=df_merge[(df_merge["Indicator"]==indicator_)& (df_merge["LijstNaam"]==partij)]
-    )
+    
     col1,col2=st.columns(2)
     with col1:
         plot_scatter_correlation(df_res,"percentage_votes","Percentage", partij, indicator_)
     with col2:
         plot_scatter_correlation(df_res,"percentage_votes","ink_inw", partij, "")
-    st.write(df_res
+    st.write(df_res)
 def main():
     """Main functie
     """  
