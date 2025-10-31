@@ -462,7 +462,7 @@ def plot_scatter(df_res_all,xaxis,yaxis):
     st.write(df_res_all)
 
  
-def plot_scatter_correlation(df, x_axis, y_axis, partij, indicator):
+def plot_scatter_correlation(df, x_axis, y_axis, partij, indicator,mode_):
     # Bereken lineaire regressie
     x = df[x_axis].astype(float)
     y = df[y_axis].astype(float)
@@ -483,7 +483,7 @@ def plot_scatter_correlation(df, x_axis, y_axis, partij, indicator):
         go.Scatter(
             x=x,
             y=y,
-            mode="markers+text",
+            mode=mode_,
             name="Gemeenten",
             text=df["Naam"],
             textposition="top center",
@@ -508,7 +508,7 @@ def plot_scatter_correlation(df, x_axis, y_axis, partij, indicator):
 
     # Layout
     fig.update_layout(
-        title=f"{y_axis} vs {x_axis} | {partij} {indicator} | (R² = {r2:.3f})",
+        title=f"{y_axis} vs {x_axis}<br> {partij} {indicator} | (R² = {r2:.3f})",
         xaxis_title=x_axis,
         yaxis_title=y_axis,
         template="plotly_white",
@@ -540,21 +540,27 @@ def obesitas_inkomen():
     df_merge = df_obesitas.merge(df_votes, left_on="Naam", right_on="Regio", how="inner")
     df_merge = df_merge.merge(df_inkomen, left_on="Naam", right_on="Regio", how="inner")
 
-    col1,col2=st.columns(2)
+    col1,col2,col3=st.columns(3)
     with col1:
         partij = st.selectbox("Partij", sorted(df_merge[kol_partij].unique().tolist()), key="afdadsf", index=0)
     with col2:
         indicator_ = st.selectbox("Indicator", sorted(df_merge["Indicator"].unique().tolist()), key="aresf", index=0)
-    
+    with col3:
+        show_text = st.checkbox("Toon tekstlabels", value=True)
+    if show_text:
+        mode_="markers+text"
+    else:
+        mode_="markers"
+
     df_res=df_merge[(df_merge["Indicator"]==indicator_)& (df_merge["LijstNaam"]==partij)]
     
     col1,col2, col3=st.columns(3)
     with col1:
-        plot_scatter_correlation(df_res,"percentage_votes","Percentage", partij, indicator_)
+        plot_scatter_correlation(df_res,"percentage_votes","Percentage", partij, indicator_,mode_)
     with col2:
-        plot_scatter_correlation(df_res,"percentage_votes","ink_inw", partij, "")
+        plot_scatter_correlation(df_res,"ink_inw","percentage_votes", partij, "",mode_)
     with col3:
-        plot_scatter_correlation(df_res,"ink_inw","Percentage", partij, indicator_)
+        plot_scatter_correlation(df_res,"ink_inw","Percentage", partij, indicator_,mode_)
 
     # plot_scatter_correlation(df_res,"percentage_votes","Percentage", partij, indicator_)
     # plot_scatter_correlation(df_res,"percentage_votes","ink_inw", partij, "")
