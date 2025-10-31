@@ -156,8 +156,8 @@ Wil je een **neutrale afstand** zonder p-waardes: **chi2_rtl**.
     # Dat vraagt om een vergelijking van percentages (proporties), niet absolute aantallen.
 
 
-@st.cache_data(show_spinner=False)
-def calculate_results_gemeente(df, kol_regio,kol_partij,kol_stemmen):
+
+def calculate_results_gemeente(df,jaar, kol_regio,kol_partij,kol_stemmen):
     """Bereken de resultaten van een bepaalde gemeente
 
     Args:
@@ -212,7 +212,7 @@ def calculate_results_gemeente(df, kol_regio,kol_partij,kol_stemmen):
     chi2_rtl = (abs(m[f"% {uitgelichte_gemeente}"] - m["% Nederland"])).sum()
 
     # Resultaat tonen
-    st.subheader(f"{uitgelichte_gemeente} vs Nederland – Tweede Kamer 2023")
+    st.subheader(f"{uitgelichte_gemeente} vs Nederland – Tweede Kamer {jaar}")
     st.dataframe(m.sort_values("% Nederland", ascending=False).round(2))
 
     st.markdown(
@@ -455,6 +455,7 @@ def plot_scatter(df_res_all,xaxis,yaxis):
     )
 
     st.plotly_chart(fig, use_container_width=True)
+
 def main():
     """Main functie
     """  
@@ -487,7 +488,7 @@ def main():
 
         #plot_scatter(df_res_all,xaxis=f"Chi2_rtl_2023", yaxis=f"Chi2_rtl_2025")
     with tab2:
-        calculate_results_gemeente(df, kol_regio,kol_partij,kol_stemmen)
+        calculate_results_gemeente(df, jaren[-1], kol_regio,kol_partij,kol_stemmen)
 
 if __name__ == "__main__":
     main()
