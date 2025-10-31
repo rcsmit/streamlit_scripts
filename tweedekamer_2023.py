@@ -496,7 +496,9 @@ def main():
 
         #plot_scatter(df_res_all,xaxis=f"Chi2_rtl_2023", yaxis=f"Chi2_rtl_2025")
     with tab2:
-        calculate_results_gemeente(df, jaren[-1], kol_regio,kol_partij,kol_stemmen)
+        jaar = st.radio("Jaar", jaren, index=1, horizontal=True)
+        df_j = load_votes(jaar)
+        calculate_results_gemeente(df_j, jaar, kol_regio,kol_partij,kol_stemmen)
 
 if __name__ == "__main__":
     main()
