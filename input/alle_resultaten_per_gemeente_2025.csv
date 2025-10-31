@@ -1,4 +1,4 @@
-municipality_cbs,Regio,municipality_key,party_key,prev_votes,prev_percentage,Waarde,cur_percentage,diff_votes,diff_percentage,turnout_current,turnout_previous,voters_current,voters_previous,invalid_current,invalid_previous,blank_current,blank_previous,updated_utc,source_key_in_file,status
+Municipality_cbs,Regio,municipality_key,party_key,prev_votes,prev_percentage,Waarde,cur_percentage,diff_votes,diff_percentage,turnout_current,turnout_previous,voters_current,voters_previous,invalid_current,invalid_previous,blank_current,blank_previous,updated_utc,source_key_in_file,status
 0984,Venray,340,3502be6,7270,27.9,5277,20.1,-1993.0,-7.8,77.5,76.7,34069,34101,67,58,130,56,2025-10-31 18:34:42,340,4
 0984,Venray,340,d2081fb,3017,11.6,2240,8.5,-777.0,-3.1,77.5,76.7,34069,34101,67,58,130,56,2025-10-31 18:34:42,340,4
 0984,Venray,340,192ea5b,4241,16.3,4219,16.1,-22.0,-0.2,77.5,76.7,34069,34101,67,58,130,56,2025-10-31 18:34:42,340,4
