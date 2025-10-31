@@ -520,7 +520,7 @@ def main():
         df_p=df_j[df_j["LijstNaam"] == partij]
        
         if len(df_p)>0:
-        
+    
             df_p=df_p[["Gemeente","Waarde","percentage"]].sort_values("percentage", ascending=False)
             df_p["Zetels"] = round(df_p["percentage"]/0.66667,1)
             df_p[f"Percentage_{partij}"] = df_p["percentage"]
