@@ -516,7 +516,7 @@ def plot_scatter_correlation(df, x_axis, y_axis, partij, indicator):
     )
 
    
-    st.plotly_chart(fig, width=True)
+    st.plotly_chart(fig)
        
 def obesitas_inkomen():
     kol_regio = "Regio"
