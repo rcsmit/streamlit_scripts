@@ -42,7 +42,7 @@ def load_votes_2025():
 
     df_results_new=df_results.merge(df_partynames, on="party_key", how="left")
     df_results_new=df_results_new.fillna("UNKNOWN_X")
-    st.write(df_results_new)
+    
     df_results_new=df_results_new[["Regio","Waarde", "LijstNaam"]]
     #df_results_new=df_results_new[df_results_new["Regio"] !="Venray"]  # Venray moet nog worden geteld
     print (df_results_new)
