@@ -306,10 +306,17 @@ def make_plot(df_res, jaar):
     """
     # 1) Laad GeoJSON
     gjson = load_geojson()
-    fix = {"Hengelo (O)":"Hengelo",
-        "s-Hertogenbosch": "'s-Hertogenbosch",
-        "Nuenen, Gerwen en Nederwetten": "Nuenen, Gerwen en Nederwetten",  # voorbeeld
-    }
+    if jaar==2025:
+        fix = {"Hengelo (O)":"Hengelo",
+            "Den Bosch": "'s-Hertogenbosch",
+            "Bergen (L)": "Bergen (L.)",  # voorbeeld
+        }
+    elif jaar==2023:
+        fix = {"Hengelo (O)":"Hengelo",
+        }
+    else:
+        st.error("Fout in jaar")
+        st.stop()
     df_res["Gemeente_fix"] = df_res["Gemeente"].replace(fix)
 
     columns_metrics = [
