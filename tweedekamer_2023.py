@@ -176,7 +176,6 @@ def calculate_results_gemeente(df,jaar):
     Args:
         df (_type_): _description_
     """    
-
     gemeentes = sorted(df["Regio"].unique().tolist())
     index_leiden = gemeentes.index("Apeldoorn")  # geeft positie van 'Leiden'
     uitgelichte_gemeente = st.selectbox("Gemeente", gemeentes, index=index_leiden)
