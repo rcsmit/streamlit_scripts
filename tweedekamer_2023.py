@@ -11,7 +11,9 @@ import numpy as np
 import random
 import plotly.graph_objects as go
 import statsmodels.api as sm
-
+import geopandas as gpd
+from shapely.geometry import shape
+import folium
 
 from statsmodels.formula.api import glm
 #from statsmodels.genmod.families import Beta
@@ -53,7 +55,8 @@ def load_votes_2025():
     #df_results_new=df_results_new[df_results_new["Regio"] !="Venray"]  # Venray moet nog worden geteld
     den = df_results_new.groupby("Regio")["Waarde"].transform("sum")
     df_results_new["percentage_votes"] = (100 * df_results_new["Waarde"] / den).fillna(0).round(2)
-    print (df_results_new)
+    df_results_new["totaal_gemeente"] =  den
+ 
     return df_results_new
 
 
@@ -308,8 +311,10 @@ def make_map(df_res, jaar, metric):
     gjson = load_geojson()
 
     # naamfix per jaar
+
+    # "Den Haag":'s-Gravenhage',
     if jaar == 2025:
-        fix = {"Hengelo (O)": "Hengelo", "Den Bosch": "'s-Hertogenbosch",
+        fix = {"Hengelo (O)": "Hengelo", "Den Bosch": "'s-Hertogenbosch", "Den Haag": 's-Gravenhage',
             "Bergen (L)": "Bergen (L.)", "Bergen (NH)": "Bergen (NH.)"}
     elif jaar == 2023:
         fix = {"Hengelo (O)": "Hengelo", "Bergen (L)": "Bergen (L.)",
@@ -331,7 +336,10 @@ def make_map(df_res, jaar, metric):
 
     if use_categorical:
         # 1 = rood, 2 = paars, 3 = rood (zoals gevraagd)
+
         CAT_COLORS = {1: "#ff0000", 2: "#800080", 3: "#0000ff", 0: "#cccccc", None: "#eeeeee"}
+        #CAT_COLORS = {1: "#eeeeee", 2: "#eeeeee", 3: "#eeeeee", 0: "#eeeeee", None: "#eeeeee"}
+        
         def style_function(feature):
             val = feature["properties"].get("populairste_coalitie")
             color = CAT_COLORS.get(val, "#cccccc")
@@ -376,101 +384,67 @@ def make_map(df_res, jaar, metric):
     else:
         cmap.add_to(m)
 
+    show_circles=False
+    if show_circles:
+
+        # ---- 1) Maak GeoDataFrame met centroid ----
+        # Maak van je bestaande gjson een GeoDataFrame
+        gdf = gpd.GeoDataFrame.from_features(gjson["features"])
+
+        # Zet polygon-centroid
+        gdf["centroid"] = gdf["geometry"].centroid
+        gdf["lon"] = gdf["centroid"].x
+        gdf["lat"] = gdf["centroid"].y
+
+    
+    
+        # # ---- 2) Merge centroid met df_res ----
+        # gdf = gdf.merge(
+        #     df_res,
+        #     left_on="statnaam",
+        #     right_on="Gemeente_fix",
+        #     how="left"
+        # )
+
+        # ---- 3) Voeg cirkels toe aan bestaande map m ----
+        # lineaire schaal: bepaal max straal
+    
+        gdf=gdf.fillna(0)
+        max_votes = gdf["totaal_gemeente"].max()
+        max_radius = 25   # stel in naar smaak
+
+        def scale(v):
+            if pd.isna(v):
+                return 0
+            return max_radius * (v / max_votes)
+
+        for _, row in gdf.iterrows():
+            if pd.isna(row["totaal_gemeente"]):
+                continue
+            if row["populairste_coalitie"]==1:
+                fill_color="ff0000"
+            elif row["populairste_coalitie"]==2:
+                fill_color="#800080"
+            elif row["populairste_coalitie"]==3:
+                fill_color="#0000ff"
+            else:   
+                fill_color="#ffffff"
+            folium.CircleMarker(
+                location=[row["lat"], row["lon"]],
+                radius=scale(row["totaal_gemeente"]),
+                color=fill_color,
+                fill=True,
+                # fill_opacity=0.35,
+                fill_color=fill_color,
+                popup=f"{row['statnaam']}<br>stemmen: {row['totaal_gemeente']:,}"
+            ).add_to(m)
+
+
+
     st.markdown(f"## Kaart: {metric}")
     st_folium(m, returned_objects=[])
 
-def make_map_oud(df_res, jaar, metric):
-    """_summary_
-
-    Args:
-        df_res (_type_): _description_
-
-    Returns:
-        _type_: _description_
-    """
-    # 1) Laad GeoJSON
-    gjson = load_geojson()
-    if jaar==2025:
-        fix = {"Hengelo (O)":"Hengelo",
-            "Den Bosch": "'s-Hertogenbosch",
-            "Bergen (L)": "Bergen (L.)",  # voorbeeld
-            "Bergen (NH)": "Bergen (NH.)",  # voorbeeld
-        }
-    elif jaar==2023:
-        fix = {"Hengelo (O)":"Hengelo",
-         "Bergen (L)": "Bergen (L.)",  # voorbeeld
-            "Bergen (NH)": "Bergen (NH.)",  # voorbeeld
-        }
-    else:
-        st.error("Fout in jaar")
-        st.stop()
-   
-    df_res["Gemeente_fix"] = df_res["Gemeente"].replace(fix)
-
-    
-
-    # 3) Range en colormap
-    vmin = float(df_res[metric].min())
-    vmax = float(df_res[metric].max())
-    cmap = cm.LinearColormap(
-        #colors=["#e8f3ec", "#a9d0c3", "#6fb0a1", "#3e7e80", "#214b5a"],
-        colors=["#ffff00", "#ff0000"],
-        vmin=vmin,
-        vmax=vmax,
-    ).to_step(7)
-    cmap.caption = (
-        "gemiddeld            zeer afwijkend"
-        if metric == "Chi2_prop"
-        else "laag             hoog"
-    )
-
-    # 4) Map DataFrame-data naar GeoJSON
-    # Voeg jouw df_res-data toe aan de GeoJSON via 'statnaam'
-    data_dict = df_res.set_index("Gemeente_fix").to_dict(orient="index")
-
-    for feature in gjson["features"]:
-        name = feature["properties"].get("statnaam")
-        if name in data_dict:
-            feature["properties"].update(data_dict[name])
-
-    # 5) Kaart en stijl
-    def style_function(feature):
-        val = feature["properties"].get(metric)
-        color = "#cccccc" if val is None else cmap(val)
-        return {
-            "fillColor": color,
-            "color": "#ffffff",
-            "weight": 0.6,
-            "fillOpacity": 0.85,
-        }
-
-    # 6) Tooltip met ALLE velden uit df_res + statnaam
-    tooltip_fields = ["statnaam"] + [c for c in df_res.columns if c != "Gemeente_fix"]
-    tooltip_aliases = tooltip_fields
-
-    m = folium.Map(
-        location=[52.2, 5.3], zoom_start=7, tiles="cartodbpositron"
-    )
-
-    gj = folium.GeoJson(
-        gjson,
-        name="Gemeenten",
-        style_function=style_function,
-        highlight_function=lambda f: {"weight": 2, "color": "#222222"},
-        tooltip=folium.GeoJsonTooltip(
-            fields=tooltip_fields,
-            aliases=tooltip_aliases,
-            localize=True,
-            sticky=True,
-            labels=True,
-        ),
-    )
-    gj.add_to(m)
-    cmap.add_to(m)
-
-    st.markdown(f"## Kaart: {metric}")
-    st_folium(m, returned_objects=[])
-    
+  
 def plot_scatter(df_res_all,xaxis,yaxis,extra_info=True):
    
     # Voorbeeld dataframe
@@ -780,13 +754,16 @@ def voorkeurscoalitie_per_gemeente():
     
     df = load_votes(2025)
     print (df)
+
+    df_gemeente_grootte=df[["Regio","totaal_gemeente"]].groupby("Regio", as_index=False).mean()
+
     df_pivot = df.pivot_table(
         index="Regio",
         columns="LijstNaam",
         values="percentage_votes",
         aggfunc="sum"
     ).fillna(0)
-   
+    df_pivot=df_pivot.merge(df_gemeente_grootte, left_on="Regio", right_on="Regio", how="left")
     
     partijen = sorted(df_pivot.columns.tolist())
 
