@@ -584,6 +584,7 @@ def plot_scatter_correlation(df_, x_axis, y_axis, partij, indicator,mode_, log_i
         )
     )
 
+
     # Trendline
     fig.add_trace(
         go.Scatter(
