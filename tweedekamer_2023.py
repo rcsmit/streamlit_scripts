@@ -314,7 +314,7 @@ def make_map(df_res, jaar, metric):
 
     # "Den Haag":'s-Gravenhage',
     if jaar == 2025:
-        fix = {"Hengelo (O)": "Hengelo", "Den Bosch": "'s-Hertogenbosch", "Den Haag": 's-Gravenhage',
+        fix = {"Hengelo (O)": "Hengelo", "Den Bosch": "'s-Hertogenbosch", "Den Haag": "'s-Gravenhage",
             "Bergen (L)": "Bergen (L.)", "Bergen (NH)": "Bergen (NH.)"}
     elif jaar == 2023:
         fix = {"Hengelo (O)": "Hengelo", "Bergen (L)": "Bergen (L.)",
