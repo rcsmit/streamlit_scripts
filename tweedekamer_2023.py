@@ -336,6 +336,7 @@ def make_map(df_res, jaar, metric):
             val = feature["properties"].get("populairste_coalitie")
             color = CAT_COLORS.get(val, "#cccccc")
             return {"fillColor": color, "color": "#ffffff", "weight": 0.6, "fillOpacity": 0.85}
+        tooltip_fields=["statnaam"]
     else:
         # glijdende schaal voor continue metrics
         vmin = float(df_res[metric].min()); vmax = float(df_res[metric].max())
@@ -346,8 +347,8 @@ def make_map(df_res, jaar, metric):
             color = "#cccccc" if val is None else cmap(val)
             return {"fillColor": color, "color": "#ffffff", "weight": 0.6, "fillOpacity": 0.85}
 
-    # -------- map + tooltip --------
-    tooltip_fields = ["statnaam"] + [c for c in df_res.columns if c != "Gemeente_fix"]
+        # -------- map + tooltip --------
+        tooltip_fields = ["statnaam"] + [c for c in df_res.columns if c != "Gemeente_fix"]
     m = folium.Map(location=[52.2, 5.3], zoom_start=7, tiles="cartodbpositron")
 
     gj = folium.GeoJson(
