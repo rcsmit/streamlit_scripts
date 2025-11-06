@@ -11,6 +11,11 @@ import numpy as np
 import random
 import plotly.graph_objects as go
 import statsmodels.api as sm
+
+
+from statsmodels.formula.api import glm
+#from statsmodels.genmod.families import Beta
+
 try:
     st.set_page_config(layout="wide", page_title="Stemafwijkingen 2023")
 except:
@@ -28,6 +33,7 @@ def load_votes(jaar):
 
 @st.cache_data(show_spinner=False)
 def load_votes_2025():
+  
     # C:\Users\rcxsm\Documents\python_scripts\python_scripts_rcsmit\fetch_combine_anp_tk2025.py
 
     # url_results=r"C:\Users\rcxsm\Documents\python_scripts\alle_resultaten_per_gemeente.csv"
@@ -43,8 +49,10 @@ def load_votes_2025():
     df_results_new=df_results.merge(df_partynames, on="party_key", how="left")
     df_results_new=df_results_new.fillna("UNKNOWN_X")
     
-    df_results_new=df_results_new[["Regio","Waarde", "LijstNaam"]]
+    df_results_new=df_results_new[["Regio","Waarde", "LijstNaam","voters_current"]]
     #df_results_new=df_results_new[df_results_new["Regio"] !="Venray"]  # Venray moet nog worden geteld
+    den = df_results_new.groupby("Regio")["Waarde"].transform("sum")
+    df_results_new["percentage_votes"] = (100 * df_results_new["Waarde"] / den).fillna(0).round(2)
     print (df_results_new)
     return df_results_new
 
@@ -53,12 +61,14 @@ def load_votes_2025():
 @st.cache_data(show_spinner=False)
 def load_votes_2023():
     """Load the votes of 2023"""
-
+    
     url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/TK2023_uitslag_gemeente.csv"
     df = pd.read_csv(url, sep=";")
     df = df[df["LijstNaam"].notna()]  # ipv != None
     df = df[df["RegioCode"].str.startswith("G", na=False)]
     df = df[df["VeldType"] == "LijstAantalStemmen"]
+    den = df.groupby("Regio")["Waarde"].transform("sum")
+    df["percentage_votes"] = (100 * df["Waarde"] / den).fillna(0).round(2)
     return df
 
 
@@ -160,39 +170,39 @@ Wil je een **neutrale afstand** zonder p-waardes: **chi2_rtl**.
 
 
 
-def calculate_results_gemeente(df,jaar, kol_regio,kol_partij,kol_stemmen):
+def calculate_results_gemeente(df,jaar):
     """Bereken de resultaten van een bepaalde gemeente
 
     Args:
         df (_type_): _description_
     """    
 
-    gemeentes = sorted(df[kol_regio].unique().tolist())
+    gemeentes = sorted(df["Regio"].unique().tolist())
     index_leiden = gemeentes.index("Apeldoorn")  # geeft positie van 'Leiden'
     uitgelichte_gemeente = st.selectbox("Gemeente", gemeentes, index=index_leiden)
 
-    u_df = df[df[kol_regio] == uitgelichte_gemeente]
+    u_df = df[df["Regio"] == uitgelichte_gemeente]
     st.write(
         f"Totaal aantal geldige stemmen in {uitgelichte_gemeente} = {u_df['Waarde'].sum()}"
     )
 
     # Som stemmen per partij per regio
-    agg = df.groupby([kol_regio, kol_partij], as_index=False)[kol_stemmen].sum()
+    agg = df.groupby(["Regio", "LijstNaam"], as_index=False)["Waarde"].sum()
 
     # Selecteer uitgelicht
-    apel = agg.query(f"{kol_regio} == '{uitgelichte_gemeente}'")[
-        [kol_partij, kol_stemmen]
-    ].rename(columns={kol_stemmen: uitgelichte_gemeente})
+    apel = agg.query(f"{"Regio"} == '{uitgelichte_gemeente}'")[
+        ["LijstNaam", "Waarde"]
+    ].rename(columns={"Waarde": uitgelichte_gemeente})
 
     # Landelijk totaal
     landelijk = (
-        agg.groupby(kol_partij, as_index=False)[kol_stemmen]
+        agg.groupby("LijstNaam", as_index=False)["Waarde"]
         .sum()
-        .rename(columns={kol_stemmen: "Nederland"})
+        .rename(columns={"Waarde": "Nederland"})
     )
 
     # Merge
-    m = pd.merge(landelijk, apel, on=kol_partij, how="inner").set_index(kol_partij)
+    m = pd.merge(landelijk, apel, on="LijstNaam", how="inner").set_index("LijstNaam")
 
     # Bereken percentages
     m["% Nederland"] = 100 * m["Nederland"] / m["Nederland"].sum()
@@ -229,7 +239,7 @@ def calculate_results_gemeente(df,jaar, kol_regio,kol_partij,kol_stemmen):
     )
 
 @st.cache_data(show_spinner=False)
-def calculate_results_landelijk(jaar, df, kol_regio,kol_partij,kol_stemmen):
+def calculate_results_landelijk(jaar, df):
     """Bereken de landelijke afwijkingen van het gemiddelde stemgedrag.
     Bereken tevens de chi2-waardes (verschillende methodes), p-waarde, ranking en percentiel
 
@@ -240,9 +250,9 @@ def calculate_results_landelijk(jaar, df, kol_regio,kol_partij,kol_stemmen):
         df: df met de afwijkingen, chi2-waardes (verschillende methodes), p-waarde, ranking en percentiel
     """    
 
-    agg = df.groupby([kol_regio, kol_partij], as_index=False)[kol_stemmen].sum()
-    landelijk = agg.groupby(kol_partij, as_index=False)[kol_stemmen].sum()
-    landelijk.columns = [kol_partij, "Nederland"]
+    agg = df.groupby(["Regio", "LijstNaam"], as_index=False)["Waarde"].sum()
+    landelijk = agg.groupby("LijstNaam", as_index=False)["Waarde"].sum()
+    landelijk.columns = ["LijstNaam", "Nederland"]
 
     # Landelijke verdeling in fracties
     landelijk["p_landelijk"] = (
@@ -250,13 +260,13 @@ def calculate_results_landelijk(jaar, df, kol_regio,kol_partij,kol_stemmen):
     )
 
     resultaten = []
-    gemeenten = agg[kol_regio].unique()
+    gemeenten = agg["Regio"].unique()
 
     for g in gemeenten:
-        lokaal = agg.query(f"{kol_regio} == @g")[[kol_partij, kol_stemmen]].rename(
-            columns={kol_stemmen: g}
+        lokaal = agg.query(f"{"Regio"} == @g")[["LijstNaam", "Waarde"]].rename(
+            columns={"Waarde": g}
         )
-        m = pd.merge(landelijk, lokaal, on=kol_partij, how="inner").fillna(0)
+        m = pd.merge(landelijk, lokaal, on="LijstNaam", how="inner").fillna(0)
         m["p_gemeente"] = 100 * m[g] / m[g].sum()
 
         # Chi-kwadraattoets
@@ -297,8 +307,81 @@ def calculate_results_landelijk(jaar, df, kol_regio,kol_partij,kol_stemmen):
             
     return df_res
 
+def make_map(df_res, jaar, metric):
+    gjson = load_geojson()
 
-def make_plot(df_res, jaar, metric):
+    # naamfix per jaar
+    if jaar == 2025:
+        fix = {"Hengelo (O)": "Hengelo", "Den Bosch": "'s-Hertogenbosch",
+            "Bergen (L)": "Bergen (L.)", "Bergen (NH)": "Bergen (NH.)"}
+    elif jaar == 2023:
+        fix = {"Hengelo (O)": "Hengelo", "Bergen (L)": "Bergen (L.)",
+            "Bergen (NH)": "Bergen (NH.)"}
+    else:
+        st.error("Fout in jaar"); st.stop()
+
+    df_res["Gemeente_fix"] = df_res["Gemeente"].replace(fix)
+
+    # Data → GeoJSON properties
+    data_dict = df_res.set_index("Gemeente_fix").to_dict(orient="index")
+    for feature in gjson["features"]:
+        name = feature["properties"].get("statnaam")
+        if name in data_dict:
+            feature["properties"].update(data_dict[name])
+
+    # -------- kleurconfig --------
+    use_categorical = (metric == "populairste_coalitie")
+
+    if use_categorical:
+        # 1 = rood, 2 = paars, 3 = rood (zoals gevraagd)
+        CAT_COLORS = {1: "#ff0000", 2: "#800080", 3: "#0000ff", 0: "#cccccc", None: "#eeeeee"}
+        def style_function(feature):
+            val = feature["properties"].get("populairste_coalitie")
+            color = CAT_COLORS.get(val, "#cccccc")
+            return {"fillColor": color, "color": "#ffffff", "weight": 0.6, "fillOpacity": 0.85}
+    else:
+        # glijdende schaal voor continue metrics
+        vmin = float(df_res[metric].min()); vmax = float(df_res[metric].max())
+        cmap = cm.LinearColormap(colors=["#ffff00", "#ff0000"], vmin=vmin, vmax=vmax).to_step(7)
+        cmap.caption = "gemiddeld            zeer afwijkend" if metric == "Chi2_prop" else "laag             hoog"
+        def style_function(feature):
+            val = feature["properties"].get(metric)
+            color = "#cccccc" if val is None else cmap(val)
+            return {"fillColor": color, "color": "#ffffff", "weight": 0.6, "fillOpacity": 0.85}
+
+    # -------- map + tooltip --------
+    tooltip_fields = ["statnaam"] + [c for c in df_res.columns if c != "Gemeente_fix"]
+    m = folium.Map(location=[52.2, 5.3], zoom_start=7, tiles="cartodbpositron")
+
+    gj = folium.GeoJson(
+        gjson,
+        name="Gemeenten",
+        style_function=style_function,
+        highlight_function=lambda f: {"weight": 2, "color": "#222222"},
+        tooltip=folium.GeoJsonTooltip(fields=tooltip_fields, aliases=tooltip_fields,
+                                    localize=True, sticky=True, labels=True),
+    )
+    gj.add_to(m)
+
+    # legenda
+    if use_categorical:
+        legend_html = """
+        <div style="position: fixed; bottom: 20px; left: 20px; z-index: 9999;
+                    background: white; padding: 8px 10px; border: 1px solid #ccc; font-size: 14px;">
+        <b>populairste_coalitie</b><br>
+        <span style="background:#ff0000;display:inline-block;width:12px;height:12px;margin-right:6px;"></span>1 (links)<br>
+        <span style="background:#800080;display:inline-block;width:12px;height:12px;margin-right:6px;"></span>2 (midden)<br>
+        <span style="background:#ff0000;display:inline-block;width:12px;height:12px;margin-right:6px;"></span>3 (rechts)
+        </div>
+        """
+        folium.map.Marker([0,0], icon=folium.DivIcon(html=legend_html)).add_to(m)
+    else:
+        cmap.add_to(m)
+
+    st.markdown(f"## Kaart: {metric}")
+    st_folium(m, returned_objects=[])
+
+def make_map_oud(df_res, jaar, metric):
     """_summary_
 
     Args:
@@ -459,8 +542,6 @@ def plot_scatter(df_res_all,xaxis,yaxis,extra_info=True):
     )
 
     st.plotly_chart(fig, width=True)
-    
-
  
 def plot_scatter_correlation(df_, x_axis, y_axis, partij, indicator,mode_, log_inkomen):
     # kopie zodat df zelf niet verandert
@@ -532,9 +613,7 @@ def plot_scatter_correlation(df_, x_axis, y_axis, partij, indicator,mode_, log_i
     st.plotly_chart(fig)
        
 def obesitas_inkomen():
-    kol_regio = "Regio"
-    kol_partij = "LijstNaam"
-    kol_stemmen = "Waarde"  
+  
     # https://www.vzinfo.nl/overgewicht/regionaal/obesitas#obesitas-volwassenen
     # https://www.cbs.nl/nl-nl/maatwerk/2023/35/inkomen-per-gemeente-en-wijk-2020
     #url_obesitas = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gemeente_overgewicht.csv"
@@ -550,15 +629,14 @@ def obesitas_inkomen():
     df_inkomen = pd.read_csv(url_inkomen)
 
     df_votes=  load_votes(2025)
-    den = df_votes.groupby(kol_regio)[kol_stemmen].transform("sum")
-    df_votes["percentage_votes"] = (100 * df_votes[kol_stemmen] / den).fillna(0).round(2)
     
+    df_votes["aantal_votes"] =  round(df_votes["Waarde"] / df_votes["percentage_votes"],0) *100
     df_merge = df_obesitas.merge(df_votes, left_on="Naam", right_on="Regio", how="inner")
     df_merge = df_merge.merge(df_inkomen, left_on="Naam", right_on="Regio", how="inner")
     df_merge = df_merge.merge(df_opleiding, left_on="Naam", right_on="Regio", how="inner")
     col1,col2,col3=st.columns(3)
     with col1:
-        partij = st.selectbox("Partij", sorted(df_merge[kol_partij].unique().tolist()), key="afdadsf", index=0)
+        partij = st.selectbox("Partij", sorted(df_merge["LijstNaam"].unique().tolist()), key="afdadsf", index=0)
     with col2:
         indicator_ = st.selectbox("Indicator gewicht", sorted(df_merge["Indicator"].unique().tolist()), key="aresf", index=0)
     with col3:
@@ -589,7 +667,6 @@ def obesitas_inkomen():
     # plot_scatter_correlation(df_res,"percentage_votes","ink_inw", partij, "")
     ols_corr(df_res, partij,indicator_)
     st.write(df_res)
-
 
 def ols_corr(df, partij,indicator_):
     """Make an multiple lineair regression analyses (OLS)
@@ -623,90 +700,229 @@ def ols_corr(df, partij,indicator_):
             ]
         ].corr()
     )
+    df["y"] = (df[f"percentage_votes_{partij}"] / 100).clip(1e-6, 1 - 1e-6)
+    for col in [f"Percentage_{indicator_}", "HBO_WO_2024", "ink_inw"]:
+        df[col] = (df[col] - df[col].mean()) / df[col].std()
+    model = sm.GLM(df["y"], X, family=sm.families.Binomial(), var_weights=df["aantal_votes"])
+    res = model.fit()
+    st.write(res.summary())
 
-  
+    
+    beta_=False
+    if beta_ :
+
+        # voorbeeld: percentage stemmen op SP
+        df = df.copy()
+        epsilon = 1e-6
+        df["y"] = (df[ f"percentage_votes_{partij}"] / 100).clip(epsilon, 1 - epsilon)
+
+        # formule notatie zoals bij R
+        formula = f"y ~  Percentage_{indicator_} + ink_inw + HBO_WO_2024"
+
+        model = glm(formula=formula, data=df, family=Beta()).fit()
+        st.write(model.summary())
+
+        df["y_pred"] = model.predict(df)
+
+        # Omrekenen naar procenten
+        df["pred_percentage"] = df["y_pred"] * 100
+
+        # Vergelijk werkelijk vs voorspeld
+        import plotly.express as px
+        fig = px.scatter(
+            df,
+            x=f"percentage_votes_{partij}",
+            y="pred_percentage",
+            hover_name="Regio",
+            title=f"Beta-regressie: werkelijke vs voorspelde {partij}-stemmen",
+        )
+        fig.add_shape(type="line", x0=0, y0=0, x1=100, y1=100, line=dict(color="gray", dash="dash"))
+        st.plotly_chart(fig)
+
+        model_w = glm(formula=formula, data=df, family=Beta(), freq_weights=df["aantal_votes"]).fit()
+        st.write(model_w.summary())
+
+def all_results():
+ 
+    df_res_all = pd.DataFrame()
+    jaren = [2023, 2025]
+    columns_metrics = [
+        f"Chi2_prop",
+        f"Chi2_rtl_",
+        f"Rank_Chi2_rtl",
+        f"Percentiel_Chi2_rtl",
+        f"Rank_Chi2_prop",
+        f"Percentiel_Chi2_prop",
+    ]
+
+    # 2) Keuze metriek
+    metric = st.radio("Kleur op", columns_metrics, 2, horizontal=True)
+    for jaar in  jaren:
+        df = load_votes(jaar)
+        df_res = calculate_results_landelijk(jaar, df)
+        if jaar ==jaren[-1]:
+            metric_=f"{metric}_{jaar}"
+            make_map(df_res, jaar, metric_)
+            st.write(f"Aantal gemeentes in {jaar} : {len(df_res)}")
+            st.dataframe(df_res.style.format({"Chi2": "{:.4f}"}))
+        if df_res_all.empty:
+            df_res_all = df_res
+        else:
+            df_res_all = df_res_all.merge(df_res, on="Gemeente", how="inner")
+    st.markdown("## Vergelijkingen")
+    #st.dataframe(df_res_all.style.format({"Chi2": "{:.4f}"}))
+    plot_scatter(df_res_all,xaxis=f"Rank_Chi2_rtl_2023", yaxis=f"Rank_Chi2_rtl_2025")
+    plot_scatter(df_res_all,f"Rank_Chi2_rtl_2025",f"Rank_Chi2_prop_2025", False)
+    plot_scatter(df_res_all,f"Rank_Chi2_rtl_2023",f"Rank_Chi2_test_2023", False)
+    st.write(df_res_all)
+    #plot_scatter(df_res_all,xaxis=f"Chi2_rtl_2023", yaxis=f"Chi2_rtl_2025")
+
+def voorkeurscoalitie_per_gemeente():
+    """Grootste coalitie per gemeente. Geinspireerd door https://x.com/maanvis81/status/1985848338588049737"""
+    
+    df = load_votes(2025)
+    print (df)
+    df_pivot = df.pivot_table(
+        index="Regio",
+        columns="LijstNaam",
+        values="percentage_votes",
+        aggfunc="sum"
+    ).fillna(0)
+   
+    
+    partijen = sorted(df_pivot.columns.tolist())
+
+    # Standaardsets (filter op bestaande kolommen, "PVVD" wordt automatisch genegeerd als onbestaand)
+    defaults = {
+        "links":  ["GL-PvdA","D66", "VOLT"],   # 'PVVD' bestaat waarschijnlijk niet -> gefilterd
+        "midden": [],
+        "rechts": ["FvD","JA21", "PVV"],
+    }
+ 
+    # defaults = {
+    #     "links":  ["GL-PvdA","D66","SP", "CDA"],   
+    #     "midden": ["D66", "VVD", "CDA","GL-PvdA"],
+    #     "rechts": ["D66", "VVD", "CDA", "JA21"],
+    # }
+
+    defaults = {
+    "links": [
+        "GL-PvdA",
+        "D66",
+        "SP",
+        "PvdD",
+        "BIJ1",
+        "Volt",
+    ],
+    "midden": [
+        "NSC",
+        "CDA",
+        "CU",
+        "BBB",
+    ],
+    "rechts": [
+        "VVD",
+        "PVV",
+        "JA21",
+        "FvD",
+        "SGP",
+    ],
+}
+
+    
+    defaults = {k: [p for p in v if p in partijen] for k, v in defaults.items()}
+
+    col_l, col_m, col_r = st.columns(3)
+    with col_l:
+        sel_links  = st.multiselect("Links",  options=partijen, default=defaults["links"])
+    with col_m:
+        sel_midden = st.multiselect("Midden", options=partijen, default=defaults["midden"])
+    with col_r:
+        sel_rechts = st.multiselect("Rechts", options=partijen, default=defaults["rechts"])
+
+    # Nieuwe kolommen met som per blok
+    def sum_or_zero(df, cols):
+        return df[cols].sum(axis=1) if len(cols) else 0
+
+    df_pivot = df_pivot.copy()
+    df_pivot["centrum_links_total"]  = sum_or_zero(df_pivot, sel_links)
+    df_pivot["centrum_midden_total"] = sum_or_zero(df_pivot, sel_midden)
+    df_pivot["centrum_rechts_total"] = sum_or_zero(df_pivot, sel_rechts)
+
+   
+    
+    # kolommen met sommen uit je vorige stap
+    cols = ["centrum_links_total", "centrum_midden_total", "centrum_rechts_total"]
+
+    mx = df_pivot[cols].max(axis=1)
+    ties = df_pivot[cols].eq(mx, axis=0).sum(axis=1) > 1
+    ix = df_pivot[cols].values.argmax(axis=1)
+    winner = pd.Series(ix, index=df_pivot.index).map({0:1, 1:2, 2:3})
+    df_pivot["populairste_coalitie"] = np.where(ties, 0, winner)
+    df_pivot = df_pivot.reset_index()
+    df_pivot["Gemeente"] =df_pivot["Regio"]
+    make_map(df_pivot,2025,"populairste_coalitie")
+    st.dataframe(df_pivot.round(2))
+    
+
+
+
+def kaart_per_partij():
+    """Maak een kaart per partij"""
+ 
+    jaren=[2023,2025]
+    jaar = st.radio("Jaar", jaren, index=1, horizontal=True, key="partij_jaar")
+    df_j = load_votes(jaar)
+    
+    
+
+    #check = df.groupby("Regio")["percentage"].sum().round(2)
+    df_j["Gemeente"]=df_j["Regio"]
+    
+    partij = st.selectbox("Partij", sorted(df_j["LijstNaam"].unique().tolist()), index=0)
+    df_p=df_j[df_j["LijstNaam"] == partij]
+    
+    if len(df_p)>0:
+      
+
+        df_p=df_p[["Gemeente","Waarde","percentage_votes"]].sort_values("percentage_votes", ascending=False)
+        df_p["Zetels"] = round(df_p["percentage_votes"]/0.66667,1)
+        #df_p[f"Percentage_{partij}"] = df_p["percentage"]
+        
+        df_p = df_p.rename(columns={"percentage_votes": f"Percentage_{partij}"})
+        
+        
+        try:
+            make_map(df_p, jaar, f"Percentage_{partij}")
+        except:
+            #error VRIJVER 2025
+            st.error("Fout bij het maken van de kaart")
+        st.write(df_p)
+    else:
+        st.error("Partij heeft geen stemmen")
+        st.stop()
+
 def main():
     """Main functie
     """  
 
-    # Pas deze kolomnamen aan als ze anders zijn
-    kol_regio = "Regio"
-    kol_partij = "LijstNaam"
-    kol_stemmen = "Waarde"  
-    tab1, tab2, tab3,tab4,tab5 = st.tabs(["Resultaten", "Enkele gemeente","Partij","obesitas/inkomen/opleiding", "Info"])
+    jaren=[2023,2025] 
+    tab1, tab2, tab3,tab4,tab5,tab6 = st.tabs(["Resultaten", "Enkele gemeente","Partij","voorkeurscoalitie","obesitas/inkomen/opleiding", "Info"])
 
-    with tab5:
+    with tab6:
         show_info()
     with tab4:
+        voorkeurscoalitie_per_gemeente()
+    with tab5:
          obesitas_inkomen()
     with tab1:
-        df_res_all = pd.DataFrame()
-        jaren = [2023, 2025]
-        columns_metrics = [
-            f"Chi2_prop",
-            f"Chi2_rtl_",
-            f"Rank_Chi2_rtl",
-            f"Percentiel_Chi2_rtl",
-            f"Rank_Chi2_prop",
-            f"Percentiel_Chi2_prop",
-        ]
-
-        # 2) Keuze metriek
-        metric = st.radio("Kleur op", columns_metrics, 2, horizontal=True)
-        for jaar in  jaren:
-            df = load_votes(jaar)
-            df_res = calculate_results_landelijk(jaar, df, kol_regio,kol_partij,kol_stemmen)
-            if jaar ==jaren[-1]:
-                metric_=f"{metric}_{jaar}"
-                make_plot(df_res, jaar, metric_)
-                st.write(f"Aantal gemeentes in {jaar} : {len(df_res)}")
-                st.dataframe(df_res.style.format({"Chi2": "{:.4f}"}))
-            if df_res_all.empty:
-                df_res_all = df_res
-            else:
-                df_res_all = df_res_all.merge(df_res, on="Gemeente", how="inner")
-        st.markdown("## Vergelijkingen")
-        #st.dataframe(df_res_all.style.format({"Chi2": "{:.4f}"}))
-        plot_scatter(df_res_all,xaxis=f"Rank_Chi2_rtl_2023", yaxis=f"Rank_Chi2_rtl_2025")
-        plot_scatter(df_res_all,f"Rank_Chi2_rtl_2025",f"Rank_Chi2_prop_2025", False)
-        plot_scatter(df_res_all,f"Rank_Chi2_rtl_2023",f"Rank_Chi2_test_2023", False)
-        st.write(df_res_all)
-        #plot_scatter(df_res_all,xaxis=f"Chi2_rtl_2023", yaxis=f"Chi2_rtl_2025")
+        all_results()   
     with tab2:
         jaar = st.radio("Jaar", jaren, index=1, horizontal=True, key="gemeente_jaar")
         df_j = load_votes(jaar)
-        calculate_results_gemeente(df_j, jaar, kol_regio,kol_partij,kol_stemmen)
+        calculate_results_gemeente(df_j, jaar)
     with tab3:
-        jaar = st.radio("Jaar", jaren, index=1, horizontal=True, key="partij_jaar")
-        df_j = load_votes(jaar)
+        kaart_per_partij()
         
-     
-        den = df_j.groupby(kol_regio)[kol_stemmen].transform("sum")
-        df_j["percentage"] = (100 * df_j[kol_stemmen] / den).fillna(0).round(2)
-    
-        #check = df.groupby(kol_regio)["percentage"].sum().round(2)
-        df_j["Gemeente"]=df_j["Regio"]
-        
-        partij = st.selectbox("Partij", sorted(df_j[kol_partij].unique().tolist()), index=0)
-        df_p=df_j[df_j["LijstNaam"] == partij]
-       
-        if len(df_p)>0:
-    
-            df_p=df_p[["Gemeente","Waarde","percentage"]].sort_values("percentage", ascending=False)
-            df_p["Zetels"] = round(df_p["percentage"]/0.66667,1)
-            #df_p[f"Percentage_{partij}"] = df_p["percentage"]
-            
-            df_p = df_p.rename(columns={"percentage": f"Percentage_{partij}"})
-            
-          
-            try:
-                make_plot(df_p, jaar, f"Percentage_{partij}")
-            except:
-                #error VRIJVER 2025
-                st.error("Fout bij het maken van de kaart")
-            st.write(df_p)
-        else:
-            st.error("Partij heeft geen stemmen")
-            st.stop()
 if __name__ == "__main__":
     main()
