@@ -262,7 +262,7 @@ def calculate_results_landelijk(jaar, df):
     gemeenten = agg["Regio"].unique()
 
     for g in gemeenten:
-        lokaal = agg.query(f"{Regio} == @g")[["LijstNaam", "Waarde"]].rename(
+        lokaal = agg.query(f"'Regio' == @g")[["LijstNaam", "Waarde"]].rename(
             columns={"Waarde": g}
         )
         m = pd.merge(landelijk, lokaal, on="LijstNaam", how="inner").fillna(0)
