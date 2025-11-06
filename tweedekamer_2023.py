@@ -190,7 +190,7 @@ def calculate_results_gemeente(df,jaar):
     agg = df.groupby(["Regio", "LijstNaam"], as_index=False)["Waarde"].sum()
 
     # Selecteer uitgelicht
-    apel = agg.query(f"{"Regio"} == '{uitgelichte_gemeente}'")[
+    apel = agg.query(f"{Regio} == '{uitgelichte_gemeente}'")[
         ["LijstNaam", "Waarde"]
     ].rename(columns={"Waarde": uitgelichte_gemeente})
 
