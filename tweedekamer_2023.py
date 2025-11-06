@@ -187,12 +187,11 @@ def calculate_results_gemeente(df,jaar):
 
     # Som stemmen per partij per regio
     agg = df.groupby(["Regio", "LijstNaam"], as_index=False)["Waarde"].sum()
-
+   
     # Selecteer uitgelicht
-    apel = agg.query(f"{Regio} == '{uitgelichte_gemeente}'")[
-        ["LijstNaam", "Waarde"]
-    ].rename(columns={"Waarde": uitgelichte_gemeente})
-
+    apel = agg.query("Regio == @uitgelichte_gemeente")[
+            ["LijstNaam", "Waarde"]
+        ].rename(columns={"Waarde": uitgelichte_gemeente})
     # Landelijk totaal
     landelijk = (
         agg.groupby("LijstNaam", as_index=False)["Waarde"]
@@ -262,9 +261,8 @@ def calculate_results_landelijk(jaar, df):
     gemeenten = agg["Regio"].unique()
 
     for g in gemeenten:
-        lokaal = agg.query(f"'Regio' == @g")[["LijstNaam", "Waarde"]].rename(
-            columns={"Waarde": g}
-        )
+        lokaal = agg.query("Regio == @g")[["LijstNaam", "Waarde"]].rename(columns={"Waarde": g})
+
         m = pd.merge(landelijk, lokaal, on="LijstNaam", how="inner").fillna(0)
         m["p_gemeente"] = 100 * m[g] / m[g].sum()
 
@@ -583,7 +581,6 @@ def plot_scatter_correlation(df_, x_axis, y_axis, partij, indicator,mode_, log_i
                           f"{y_axis}: "+"%{y}<extra></extra>",
         )
     )
-
 
     # Trendline
     fig.add_trace(
