@@ -14,10 +14,10 @@ import statsmodels.api as sm
 import geopandas as gpd
 from shapely.geometry import shape
 import folium
-
+import plotly.express as px
 from statsmodels.formula.api import glm
 #from statsmodels.genmod.families import Beta
-
+import math
 try:
     st.set_page_config(layout="wide", page_title="Stemafwijkingen 2023")
 except:
@@ -307,6 +307,118 @@ def calculate_results_landelijk(jaar, df):
             
     return df_res
 
+
+
+#
+
+def fmt(x, nd=2):
+    x = round(x, nd)
+    return f"{int(x)}" if math.isclose(x, int(x)) else f"{x:.{nd}f}"
+def make_bins_and_labels(value_max, nd=1):
+    pct  = [0, 12.5,25,37.5,50,62.5,75,82.5, 100]
+    edges = [value_max * p / 100 for p in pct]
+    #edges =[0,15,20,25,30,35,40,45,100]
+    # labels = (
+    #     [f"< {fmt(edges[1], nd)}"] +
+    #     [f"{fmt(edges[i], nd)} to {fmt(edges[i+1], nd)}" for i in range(1, len(edges) - 2)] +
+    #     [f"> {fmt(edges[-2], nd)}"]
+    # )
+
+    labels = (
+        [f"< {fmt(edges[1], nd)}"] +
+        [f"{fmt(edges[i], nd)} to {fmt(edges[i+1], nd)}" for i in range(1, len(edges) - 1)] )
+    return edges, labels
+
+def choropleth_binned(df,  value_col, value_max):
+    geojson_path = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_2023.geojson"
+    geojson_gemeenten = gpd.read_file(geojson_path)                        # NL gemeenten
+    
+    geojson_gemeenten["Gemeente"] = geojson_gemeenten["statnaam"]
+    # "Den Haag":'s-Gravenhage',
+   
+    fix = {"Hengelo (O)": "Hengelo", "Den Bosch": "'s-Hertogenbosch", "Den Haag": "'s-Gravenhage",
+        "Bergen (L)": "Bergen (L.)", "Bergen (NH)": "Bergen (NH.)"}
+
+
+    df["Gemeente"] = df["Gemeente"].replace(fix)
+    
+    edges, labels = make_bins_and_labels(value_max)
+   
+    df = df.copy()
+    df["klasse"] = pd.cut(
+        df[value_col],
+        bins=edges,
+        labels=labels,
+        include_lowest=True,
+        right=True,          # includes the top edge
+        ordered=True
+    )
+
+    # 2) discrete legend with a fixed ramp
+    palette = px.colors.sequential.Blues[1:9]  # 8 steps light to dark Blues max is 9.
+
+    # 3) draw
+    fig = px.choropleth_mapbox(
+        df,
+        geojson=geojson_gemeenten,
+        locations="Gemeente",
+        featureidkey="properties.Gemeente",  # adjust to your property name
+        color="klasse",
+        category_orders={"klasse": labels},
+        color_discrete_sequence=palette,
+        hover_data={
+            "Gemeente": True,
+            value_col: ':.2f',
+            "klasse": True
+        },
+        mapbox_style="carto-positron",
+        zoom=6,
+        center={"lat": 52.2, "lon": 5.3},
+        opacity=0.85,
+    )
+    fig.update_layout(
+        margin=dict(l=0, r=0, t=0, b=0),
+        legend_title_text=f"{value_col} (binned)"
+    )
+
+    st.plotly_chart(fig)
+   
+def kaart_per_partij_binned():
+    jaren = [2023, 2025]
+    jaar = st.radio("Jaar", jaren, index=1, horizontal=True, key="partij_jaar")
+    df_j = load_votes(jaar)
+    df_j["Gemeente"] = df_j["Regio"]
+
+    partij = st.selectbox("Partij", sorted(df_j["LijstNaam"].unique().tolist()), index=0)
+    df_p = df_j[df_j["LijstNaam"] == partij]
+
+    if len(df_p) == 0:
+        st.error("Partij heeft geen stemmen")
+        st.stop()
+
+    df_p = df_p[["Gemeente", "Waarde", "percentage_votes"]].sort_values("percentage_votes", ascending=False)
+    df_p["Zetels"] = round(df_p["percentage_votes"] / 0.66667, 1)
+    value_max = round(df_p["percentage_votes"].max(),1)
+    value_col = f"Percentage_{partij}"
+    df_p = df_p.rename(columns={"percentage_votes": value_col})
+    
+  
+
+    
+
+
+    # 2) draw the binned map
+
+    # if your current make_map can use a categorical column, call it here
+    # make_map(df_p, jaar, "klasse")  # and handle discrete colors inside that function
+                # GeoDataFrame with a Gemeente property
+    choropleth_binned(df_p,  value_col=f"Percentage_{partij}", value_max=value_max)
+    
+    # except Exception as e:
+    #     st.error(f"Fout bij het maken van de kaart: {e}")
+
+    st.write(df_p)
+
 def make_map(df_res, jaar, metric):
     gjson = load_geojson()
 
@@ -583,7 +695,39 @@ def plot_scatter_correlation(df_, x_axis, y_axis, partij, indicator,mode_, log_i
 
    
     st.plotly_chart(fig)
-       
+
+
+def r2_per_parties(df_merge, indicator_):
+
+    # predictors -> column names
+    features = {
+        "R2_overgewicht": "Percentage",
+        "R2_inkomen": "ink_inw",
+        "R2_opleiding": "HBO_WO_2024",
+    }
+
+    ycol = "percentage_votes"
+
+    # keep rows with y and at least one predictor
+    need = [ycol] + list(features.values())
+    dm = df_merge.dropna(subset=[ycol]).copy()
+    dm = dm[(dm["Indicator"]==indicator_)]
+    def per_party(g):
+        r2 = g[list(features.values())].corrwith(g[ycol]).pow(2)
+        r2.index = list(features.keys())  # rename to friendly labels
+        r2["n"] = g[ycol].count()
+        return r2
+
+    df_result = (
+        dm.groupby("LijstNaam", sort=True)
+        .apply(per_party)
+        .reset_index()
+        .rename(columns={"LijstNaam": "Partij"})
+    )
+
+    # show
+    st.dataframe(df_result)
+         
 def obesitas_inkomen():
   
     # https://www.vzinfo.nl/overgewicht/regionaal/obesitas#obesitas-volwassenen
@@ -621,7 +765,8 @@ def obesitas_inkomen():
 
     df_res=df_merge[(df_merge["Indicator"]==indicator_)& (df_merge["LijstNaam"]==partij)]
     df_res[f"Percentage_{indicator_}"] = df_res["Percentage"]
-    df_res[f"percentage_votes_{partij}"] = df_res["percentage_votes"]
+    df_res.loc[:,f"percentage_votes_{partij}"] = df_res["percentage_votes"]
+   
     col1,col2, =st.columns(2)
     with col1:
         plot_scatter_correlation(df_res,f"Percentage_{indicator_}",f"percentage_votes_{partij}", partij, indicator_,mode_,log_inkomen)
@@ -635,10 +780,11 @@ def obesitas_inkomen():
     with col2:
         plot_scatter_correlation(df_res,"ink_inw",f"Percentage_{indicator_}", partij, indicator_,mode_,log_inkomen)
 
-    # plot_scatter_correlation(df_res,"percentage_votes","Percentage", partij, indicator_)
-    # plot_scatter_correlation(df_res,"percentage_votes","ink_inw", partij, "")
+   
     ols_corr(df_res, partij,indicator_)
-    st.write(df_res)
+    r2_per_parties(df_merge, indicator_)
+
+                                                
 
 def ols_corr(df, partij,indicator_):
     """Make an multiple lineair regression analyses (OLS)
@@ -672,9 +818,9 @@ def ols_corr(df, partij,indicator_):
             ]
         ].corr()
     )
-    df["y"] = (df[f"percentage_votes_{partij}"] / 100).clip(1e-6, 1 - 1e-6)
+    df.loc[:, "y"] = (df[f"percentage_votes_{partij}"] / 100).clip(1e-6, 1 - 1e-6)
     for col in [f"Percentage_{indicator_}", "HBO_WO_2024", "ink_inw"]:
-        df[col] = (df[col] - df[col].mean()) / df[col].std()
+        df.loc[:, col] = (df[col] - df[col].mean()) / df[col].std()
     model = sm.GLM(df["y"], X, family=sm.families.Binomial(), var_weights=df["aantal_votes"])
     res = model.fit()
     st.write(res.summary())
@@ -837,7 +983,12 @@ def voorkeurscoalitie_per_gemeente():
     df_pivot = df_pivot.reset_index()
     df_pivot["Gemeente"] =df_pivot["Regio"]
     make_map(df_pivot,2025,"populairste_coalitie")
+    
+    for c in cols:
+        st.subheader(c)
+        choropleth_binned(df_pivot, c, df_pivot[c].max())
     st.dataframe(df_pivot.round(2))
+
     
 
 
@@ -869,6 +1020,7 @@ def kaart_per_partij():
         
         try:
             make_map(df_p, jaar, f"Percentage_{partij}")
+            
         except:
             #error VRIJVER 2025
             st.error("Fout bij het maken van de kaart")
@@ -897,7 +1049,8 @@ def main():
         df_j = load_votes(jaar)
         calculate_results_gemeente(df_j, jaar)
     with tab3:
-        kaart_per_partij()
+        #kaart_per_partij()
+        kaart_per_partij_binned()
         
 if __name__ == "__main__":
     main()

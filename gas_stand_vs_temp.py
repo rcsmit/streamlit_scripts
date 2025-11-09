@@ -10,14 +10,27 @@ import numpy as np
 from skmisc.loess import loess
 import time
 
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+import plotly.graph_objects as go
 
 def interface():
     what = st.sidebar.selectbox("What to show",['temp_min','temp_avg','temp_max','graad_dagen',  'T10N', 'zonneschijnduur', 'perc_max_zonneschijnduur', 'glob_straling', 'neerslag_duur', 'neerslag_etmaalsom', 'RH_min', 'RH_max' ],1)
     window_size = st.sidebar.number_input("Window size",1,100,3)
     if what =="graad_dagen":
         afkap_def = 999
+    elif what=="temp_min":
+        afkap_def = 9
+    elif what=="temp_avg":
+        afkap_def = 15
+    elif what=="temp_max":
+        afkap_def = 17
     else:
-        afkap_def = 18
+        st.error("Geen afkapgrens bekend voor deze what")
+        st.stop()
     afkapgrens_scatter = st.sidebar.number_input("Afkapgrens scatter ",1,999,afkap_def)
     return what,window_size,afkapgrens_scatter
 
@@ -49,12 +62,15 @@ def calculate_graad_dagen(df_nw_beerta, what):
     return df_nw_beerta
 
 def get_verbruiks_data():
-    google_sheets = False
+    google_sheets = True
     if google_sheets:
         sheet_id_verbruik = "1j9V-otA53UWaI7-pDS4owU_qtZtjgMK8K5DLaN9kgqk"
         sheet_name_verbruik = "verbruik"
         url_verbruik = f"https://docs.google.com/spreadsheets/d/{sheet_id_verbruik}/gviz/tq?tqx=out:csv&sheet={sheet_name_verbruik}"
+        # https://docs.google.com/spreadsheets/d/1j9V-otA53UWaI7-pDS4owU_qtZtjgMK8K5DLaN9kgqk/gviz/tq?tqx=out:csv&sheet=verbruik
+        # https://docs.google.com/spreadsheets/d/1j9V-otA53UWaI7-pDS4owU_qtZtjgMK8K5DLaN9kgqk/
         
+       
         try:
             # df = pd.read_csv(csv_export_url, delimiter=",", header=0)
             df = pd.read_csv(url_verbruik, delimiter=",")
@@ -71,14 +87,15 @@ def get_verbruiks_data():
     
     df['week_number'] = df['datum'].dt.isocalendar().week
     df['year_number'] = df['datum'].dt.isocalendar().year
+    
     return df
 
 def get_weather_info(what):
     current_datetime = datetime.now()
     formatted_date = current_datetime.strftime("%Y%m%d")
 
-    #url_nw_beerta = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns=260&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start=20190202&end={formatted_date}"
-    url_nw_beerta = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/nw_beerta.csv"
+    url_nw_beerta = f"https://www.daggegevens.knmi.nl/klimatologie/daggegevens?stns=260&vars=TEMP:SQ:SP:Q:DR:RH:UN:UX&start=20190202&end={formatted_date}"
+    #url_nw_beerta = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/nw_beerta.csv"
     df_nw_beerta =  pd.read_csv(
                 url_nw_beerta,
                 delimiter=",",
@@ -126,14 +143,15 @@ def get_weather_info(what):
     df_nw_beerta['year_number'] = df_nw_beerta['YYYYMMDD'].dt.isocalendar().year
 
     df_nw_beerta = calculate_graad_dagen(df_nw_beerta, what)
-
+    fig = px.scatter(df_nw_beerta, x='YYYYMMDD', y=what, hover_data=['YYYYMMDD', what])#  trendline_scope="overall", labels={'datum': 'Date', 'verbruik': 'Verbruik'})
+    st.plotly_chart(fig)
     # Group by 'week_number' and 'year_number' and calculate the average of 'temp_avg'
     if what =="graad_dagen":
-        result = df_nw_beerta.groupby(['week_number', 'year_number'])[what].sum().reset_index()
+        result = df_nw_beerta.groupby(['week_number', 'year_number'], observed=False)[what].sum().reset_index()
 
     else:
 
-        result = df_nw_beerta.groupby(['week_number', 'year_number']).agg({
+        result = df_nw_beerta.groupby(['week_number', 'year_number'], observed=False).agg({
                 'temp_avg': 'mean',
                 'temp_min': 'mean',
                 'temp_max': 'mean',
@@ -149,7 +167,7 @@ def get_weather_info(what):
                 'RH_max': 'mean' 
                   }).reset_index()
     # Display the result
-    print(result)
+  
     return result
 
 
@@ -176,16 +194,34 @@ def make_scatter(x,y, df):
     st.write(f"Equation of the line: y = {slope:.2f} * x + {intercept:.2f}")
 
     st.subheader("Met betrouwbaarheidsintervallen")
-  
+    st.write(df)
     # Create temperature bins (1-degree bins)
     bin_width = 0.5
-    df['temp_bin'] = pd.cut(df['temp_min'], bins=np.arange(df['temp_min'].min(), df['temp_min'].max() + bin_width, bin_width))
+    #df['temp_bin'] = pd.cut(df['temp_min'], bins=np.arange(df['temp_min'].min(), df['temp_min'].max() + bin_width, bin_width))
+    df = df.copy()        # alleen als nodig
+    df.loc[:, 'temp_bin'] = pd.cut(
+        df['temp_min'],
+        bins=np.arange(
+            df['temp_min'].min(),
+            df['temp_min'].max() + bin_width,
+            bin_width
+        )
+    )
+    # # Group by temperature bins and calculate mean and standard deviation
+    # grouped = df.groupby('temp_bin', observed=False)['verbruik'].agg([np.mean, np.std])
 
-    # Group by temperature bins and calculate mean and standard deviation
-    grouped = df.groupby('temp_bin')['verbruik'].agg([np.mean, np.std])
+    # # Calculate the number of data points in each group
+    # grouped['count'] = df.groupby('temp_bin', observed=False)['verbruik'].count()
+    grouped = (
+        df.groupby('temp_bin', observed=False)
+            .agg(
+                mean=('verbruik', 'mean'),
+                std=('verbruik', 'std'),
+                count=('verbruik', 'count')
+            )
+            .reset_index()
+        )
 
-    # Calculate the number of data points in each group
-    grouped['count'] = df.groupby('temp_bin')['verbruik'].count()
 
     # Define the confidence level (e.g., 95%)
     confidence_level = 0.95
@@ -206,13 +242,10 @@ def make_scatter(x,y, df):
     #Calculate the average temperature for each temp_bin and add it as a new column
     grouped['average_temp'] = grouped['temp_bin'].apply(lambda x: (x.left + x.right) / 2)
 
-    # Print the results
-    print(grouped)
-    
+
     # Create a scatter plot using Plotly Express
     df_= df.merge(grouped, left_on = 'temp_min', right_on = 'mean', how='outer')
-    print (df_)
-    print (df_.dtypes)
+    
     import plotly.graph_objects as go
 
     fig = px.scatter(df_, x='temp_min', y='verbruik', hover_data=['year_week'], color='year_number', )
@@ -354,15 +387,217 @@ def multiple_lineair_regression(df_,  x_values, y_value):
     st.write("**OUTPUT ORDINARY LEAST SQUARES**")
     print_model = model.summary()
     st.write(print_model)
-    
+
+
+
+def plot_all(df, what,drempeltemp, split_date="2024-12-14"):
+    # if what=="temp_min":
+    #     drempeltemp = 9
+    # elif what=="temp_avg":
+    #     drempeltemp = 15
+    # elif what=="temp_max":
+    #     drempeltemp = 17.5
+    # else:
+    #     st.error("Geen drempeltemp bekend voor deze what")
+    #     st.stop()
+
+    df = df.copy()
+    df["datum"] = pd.to_datetime(df["datum"], errors="coerce")
+    split = pd.to_datetime(split_date)
+    df["groep"] = np.where(df["datum"] < split, "voor", "na")
+
+    # SCATTER
+    def plot_scatter(df,drempeltemp, what):
+        fig = go.Figure()
+
+        df_voor = df[df["groep"] == "voor"]
+        df_na   = df[df["groep"] == "na"]
+
+        # ----- punten -----
+        for d, name, color in [(df_voor, "voor", "lightblue"),
+                            (df_na,  "na",   "purple")]:
+            fig.add_scatter(
+                x=d[what],
+                y=d["verbruik"],
+                mode="markers",
+                name=name,
+                marker=dict(color=color),
+                customdata=np.stack(
+                    [d["datum"].astype("object"), d[what], d["verbruik"]],
+                    axis=-1
+                ),
+
+            
+                hovertemplate=(
+                    "datum: %{customdata[0]}<br>"       
+                    "verbruik: %{customdata[2]}<extra></extra>"
+                ),
+            )
+
+        # ----- trendlines (verplicht door punt (drempeltemp,0)) -----
+        def add_line(d, drempeltemp, label, color):
+            d = d[[what, "verbruik"]].dropna()
+            d = d[d[what] < drempeltemp]
+
+            X = (d[what] - drempeltemp).to_numpy().reshape(-1, 1)
+            y = d["verbruik"].to_numpy()
+
+            model = LinearRegression(fit_intercept=False).fit(X, y)
+            slope = model.coef_[0]
+
+            xs = np.linspace(d[what].min(), d[what].max(), 200)
+            ys = slope * (xs - drempeltemp)
+
+            fig.add_scatter(
+                x=xs,
+                y=ys,
+                mode="lines",
+                name=f"{label} trend",
+                line=dict(color=color)
+            )
+
+        add_line(df_voor,drempeltemp, "voor", "red")
+        add_line(df_na, drempeltemp,  "na",   "darkblue")
+
+        fig.update_layout(
+            xaxis_title=what,
+            yaxis_title="verbruik"
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
+
+
+        # verwacht verbruik bij 0 °C  (lijn kruist x=drempeltemp → y=0)
+
+        def fit_slope(d,drempeltemp):
+            d = d[[what, "verbruik"]].dropna()
+            d = d[d[what] < drempeltemp]
+            X = (d[what] - drempeltemp).to_numpy().reshape(-1, 1)
+            y = d["verbruik"].to_numpy()
+            m = LinearRegression(fit_intercept=False).fit(X, y)
+            return m.coef_[0]
+
+
+        slope_voor = fit_slope(df_voor,drempeltemp)
+        slope_na   = fit_slope(df_na,drempeltemp)
+
+
+        # dwing: lijn gaat door (drempeltemp,0)
+        # y = m * (x - drempeltemp)   →  y = m*x - drempeltemp*m
+        intercept_voor = -drempeltemp * slope_voor
+        intercept_na   = -drempeltemp * slope_na
+
+        st.write(f"voor:  verbruik = {slope_voor:.3f} * temperatuur + {intercept_voor:.3f}")
+        st.write(f"na:    verbruik = {slope_na:.3f} * temperatuur + {intercept_na:.3f}")
+        for n in [0]:
+            exp_voor_0 = slope_voor * (n - drempeltemp)   # watt / gasverbruik
+            exp_na_0   = slope_na   * (n - drempeltemp)
+
+            bespaar_pct = 100 * (exp_voor_0 - exp_na_0) / exp_voor_0
+
+            st.write(f"verwacht verbruik {n}°C (voor):**{round(exp_voor_0,1)}** \(m^{3}\)")
+            st.write(f"verwacht verbruik {n}°C (na):**{round(exp_na_0,1)}** \(m^{3}\)`")
+            st.write(f"besparing :**{round(bespaar_pct,1)}** %")
+
+            
+
+    # REGRESSIE MET VASTE PUNT (drempeltemp,0)
+    def plot_reg(df, drempeltemp, groep):
+        sub = df[df["groep"] == groep].dropna(subset=[what, "verbruik"])
+        sub = sub[sub[what] < drempeltemp]   # jouw filter
+
+        # >>> FORCE x=drempeltemp, y=0 <<<
+        X = sub[[what]].values
+        y = sub["verbruik"].values
+
+        # Model dat door (drempeltemp,0) moet
+        # Fit slope via lineaire regressie op y + a*x = 0 → verschuiving
+        # Laat:
+        #   y_new = y
+        #   x_new = X - drempeltemp
+        # zodat intercept = 0 door (drempeltemp,0)
+        X_shift = X - drempeltemp
+        model = LinearRegression(fit_intercept=False).fit(X_shift, y)
+        slope = model.coef_[0]
+
+        # Predictlijn
+        x_line = np.linspace(sub[what].min(), sub[what].max(), 200)
+        x_shift_line = x_line - drempeltemp
+        y_line = slope * x_shift_line
+
+        # R2 opnieuw berekenen
+        r2 = model.score(X_shift, y)
+
+        # Plot
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=sub[what],
+            y=sub["verbruik"],
+            mode="markers",
+            name=f"{groep}"
+        ))
+        fig.add_trace(go.Scatter(
+            x=x_line,
+            y=y_line,
+            mode="lines",
+            name=f"fit {groep}"
+        ))
+        fig.update_layout(
+            xaxis_title=what,
+            yaxis_title="verbruik",
+        )
+        st.plotly_chart(fig, use_container_width=True)
+
+        st.write("slope", slope)
+        st.write("r2", r2)
+
+        return slope
+
+    plot_scatter(df, drempeltemp,what)
+    col1, col2 = st.columns(2)
+    with col1:
+        voor = plot_reg(df,drempeltemp, "voor")
+    with col2:
+        na = plot_reg(df,drempeltemp, "na")
+
+    if  voor<na:
+        st.info("In het nieuwe huis wordt minder gas verbruikt")
+    else:
+        st.success("In het nieuwe huis wordt meer gas verbruikt")
+
+# aanroep
+# plot_all(df, what="verbruik")
+def bereken_gemiddeld(df,what):
+
+    df = df.copy()
+    df=df[["datum","verbruik",what]]
+    df["datum"] = pd.to_datetime(df["datum"], errors="coerce")
+    df["jaar"]  = df["datum"].dt.year
+    df["week"]  = df["datum"].dt.isocalendar().week
+
+    out = (
+        df.groupby(["jaar"], observed=False)
+        .mean()
+        .reset_index()
+    )
+    out["per_jaar"] = out["verbruik"] *52
+    st.write(out)
+    fig = px.scatter(out, x=what, y="verbruik", hover_data=['jaar'], color='jaar',  trendline='ols')#  trendline_scope="overall", labels={'datum': 'Date', 'verbruik': 'Verbruik'})
+    st.plotly_chart(fig)
 def main():
     df = get_verbruiks_data()
     what, window_size, afkapgrens_scatter = interface()
     df_nw_beerta = get_weather_info(what)
+   
     merged_df = merge_dataframes(df, what, window_size, df_nw_beerta)
+    bereken_gemiddeld(merged_df,what)
+    plot_all(merged_df, what, afkapgrens_scatter)
     make_plots(what, afkapgrens_scatter, merged_df)
     if what !="graad_dagen":
         multiple_lin_regr(merged_df)
+    # gebruik
+   
 
 if __name__ == "__main__":
+    print ("-------------------------")
     main()
