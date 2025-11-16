@@ -648,7 +648,156 @@ def calculate_r2(df,x_axis,y_axis):
         r2,slope = 0,0
     return r2,slope
 
-def plot_scatter_correlation(df_, x_axis, y_axis, partij, indicator,mode_, log_inkomen):
+
+
+def plot_scatter_correlation(
+    df_,
+    x_axis,
+    y_axis,
+    partij,
+    indicator,
+    mode_,
+    log_inkomen,
+    weight_col=None,          # bv. "Inwoneraantal_2025" of "Land-oppervlakte" of None
+):
+    # kopie zodat df zelf niet verandert
+    df = df_.copy()
+
+    # log-transform als de kolom ink_inw heet
+    if x_axis == "ink_inw" and log_inkomen:
+        df[x_axis] = np.log(df[x_axis].astype(float))
+        x_label = f"log({x_axis})"
+    else:
+        x_label = x_axis
+
+    # basis x en y
+    x = df[x_axis].astype(float)
+    y = df[y_axis].astype(float)
+
+    # weights
+    if weight_col is not None and weight_col in df.columns:
+        w = df[weight_col].astype(float)
+    else:
+        w = None
+
+    # geldige rijen
+    mask = x.notna() & y.notna()
+    if w is not None:
+        mask &= w.notna() & (w > 0)
+
+    df = df[mask].copy()
+    x = x[mask].astype(float)
+    y = y[mask].astype(float)
+    if w is not None:
+        w = w[mask].astype(float)
+
+    # Gewogen of ongewogen regressie
+    if w is None:
+        # gewone OLS
+        slope, intercept = np.polyfit(x, y, 1)
+        y_pred = slope * x + intercept
+
+        ss_res = np.sum((y - y_pred) ** 2)
+        ss_tot = np.sum((y - np.mean(y)) ** 2)
+        r2 = 1 - ss_res / ss_tot
+        title_r2 = f"R² = {r2:.3f}"
+    else:
+        # gewogen gemiddelden
+        w_sum = np.sum(w)
+        x_mean = np.sum(w * x) / w_sum
+        y_mean = np.sum(w * y) / w_sum
+
+        # gewogen variantie en covariantie
+        cov_xy = np.sum(w * (x - x_mean) * (y - y_mean)) / w_sum
+        var_x = np.sum(w * (x - x_mean) ** 2) / w_sum
+
+        slope = cov_xy / var_x
+        intercept = y_mean - slope * x_mean
+        y_pred = slope * x + intercept
+
+        # gewogen R²
+        ss_res = np.sum(w * (y - y_pred) ** 2)
+        ss_tot = np.sum(w * (y - y_mean) ** 2)
+        r2 = 1 - ss_res / ss_tot
+        title_r2 = f"gewogen R² = {r2:.3f}"
+
+    # bubbelgrootte
+    if w is None:
+        sizes = np.full(len(x), 8)
+    else:
+        w_min = w.min()
+        w_max = w.max()
+        if w_max > w_min:
+            w_norm = (w - w_min) / (w_max - w_min)
+        else:
+            w_norm = np.ones_like(w)
+        sizes = 6 + 24 * w_norm   # tussen 6 en 30
+
+    # plot
+    fig = go.Figure()
+
+    # Scatterpunten
+    hovertemplate = (
+        "<b>%{text}</b><br>"
+        f"{x_axis}: " + "%{x}<br>"
+        f"{y_axis}: " + "%{y}"
+    )
+    if weight_col is not None and weight_col in df.columns:
+        customdata = np.stack([df[weight_col].astype(float)], axis=-1)
+        hovertemplate += f"<br>{weight_col}: %{customdata[0]}"
+        
+    else:
+        customdata = None
+
+    hovertemplate += "<extra></extra>"
+
+    fig.add_trace(
+        go.Scatter(
+            x=x,
+            y=y,
+            mode=mode_,
+            name="Gemeenten",
+            text=df["Naam"],
+            textposition="top center",
+            marker=dict(
+                size=sizes,
+                color="teal",
+                opacity=0.7,
+                line=dict(width=0.5, color="white"),
+            ),
+            customdata=customdata,
+            hovertemplate=hovertemplate,
+        )
+    )
+
+    # Trendline
+    fig.add_trace(
+        go.Scatter(
+            x=x,
+            y=y_pred,
+            mode="lines",
+            name="Trendline",
+            line=dict(color="gray", width=2, dash="dash"),
+            hoverinfo="skip",
+        )
+    )
+
+    # Titeltekst met info over weging
+    if weight_col is not None and weight_col in df.columns:
+        weight_txt = f" | gewogen op {weight_col}"
+    else:
+        weight_txt = ""
+
+    fig.update_layout(
+        title=f"{y_axis} vs {x_axis}{weight_txt}<br>({title_r2} | {partij})",
+        xaxis_title=x_label,
+        yaxis_title=y_axis,
+        template="plotly_white",
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+def plot_scatter_correlation_(df_, x_axis, y_axis, partij, indicator,mode_, log_inkomen):
     # kopie zodat df zelf niet verandert
     df = df_.copy()
 
@@ -816,6 +965,62 @@ def obesitas_inkomen():
     # st.write(gemeentes_niet_in_dfj.sort_values().reset_index(drop=True))
     #st.write(df_merge)
     
+    heatmap_partij_sport_r2(df_merge, list_sports)
+
+
+    col1,col2,col3=st.columns(3)
+    with col1:
+        partij = st.selectbox("Partij", sorted(df_merge["LijstNaam"].unique().tolist()), key="afdadsf", index=0)
+    with col2:
+        sport = st.selectbox("Sport", list_sports, key="aasdffdadsf", index=0)
+    with col3:
+        show_text = st.checkbox("Toon tekstlabels", key="affadsf4", value=True)
+        weegfactor = st.selectbox("Weegfactor", [None,"Inwoneraantal_2025","Land-oppervlakte"])
+    
+    if show_text:
+        mode_="markers+text"
+    else:
+        mode_="markers"
+    df_res2=df_merge[df_merge["LijstNaam"]==partij]
+    
+    plot_scatter_correlation(df_res2, "percentage_votes", sport, partij, None,mode_, False, weegfactor)
+
+
+    col1,col2,col3=st.columns(3)
+    with col1:
+        partij = st.selectbox("Partij", sorted(df_merge["LijstNaam"].unique().tolist()), key="afhhdadsf", index=0)
+    with col2:
+        indicator_ = "Ernstig overgewicht" # st.selectbox("Indicator gewicht", sorted(df_merge["Indicator"].unique().tolist()), key="aresf", index=0)
+    with col3:
+        show_text = st.checkbox("Toon tekstlabels", key="affadsf34", value=True)
+        log_inkomen =  st.checkbox("Log inkomen", key="affadsf3",  value=False)
+    if show_text:
+        mode_="markers+text"
+    else:
+        mode_="markers"
+
+    df_res=df_merge[(df_merge["Indicator"]==indicator_)& (df_merge["LijstNaam"]==partij)]
+    df_res[f"Percentage_{indicator_}"] = df_res["Percentage"]
+    df_res.loc[:,f"percentage_votes_{partij}"] = df_res["percentage_votes"]
+   
+    col1,col2, =st.columns(2)
+    with col1:
+        plot_scatter_correlation(df_res,f"Percentage_{indicator_}",f"percentage_votes_{partij}", partij, indicator_,mode_,log_inkomen)
+    
+
+    with col2:
+        plot_scatter_correlation(df_res,"HBO_WO_2024",f"percentage_votes_{partij}", partij,"",mode_,log_inkomen)
+    col1,col2, =st.columns(2)
+    with col1:
+        plot_scatter_correlation(df_res,"ink_inw",f"percentage_votes_{partij}", partij, "",mode_,log_inkomen)
+    with col2:
+        plot_scatter_correlation(df_res,"ink_inw",f"Percentage_{indicator_}", partij, indicator_,mode_,log_inkomen)
+
+   
+    ols_corr(df_res, partij,indicator_)
+    r2_per_parties(df_merge, indicator_)
+
+def heatmap_partij_sport_r2(df_merge, list_sports):
     partijen =  sorted(df_merge["LijstNaam"].unique().tolist())
    
 
@@ -855,56 +1060,6 @@ def obesitas_inkomen():
     )
 
     st.plotly_chart(fig)
-
-
-    col1,col2,col3=st.columns(3)
-    with col1:
-        partij = st.selectbox("Partij", sorted(df_merge["LijstNaam"].unique().tolist()), key="afdadsf", index=0)
-    with col2:
-        sport = st.selectbox("Sport", list_sports, key="aasdffdadsf", index=0)
-    with col3:
-        show_text = st.checkbox("Toon tekstlabels", key="affadsf4", value=True)
-    if show_text:
-        mode_="markers+text"
-    else:
-        mode_="markers"
-    df_res2=df_merge[df_merge["LijstNaam"]==partij]
-    plot_scatter_correlation(df_res2, "percentage_votes", sport, partij, None,mode_, False)
-
-
-    col1,col2,col3=st.columns(3)
-    with col1:
-        partij = st.selectbox("Partij", sorted(df_merge["LijstNaam"].unique().tolist()), key="afhhdadsf", index=0)
-    with col2:
-        indicator_ = "Ernstig overgewicht" # st.selectbox("Indicator gewicht", sorted(df_merge["Indicator"].unique().tolist()), key="aresf", index=0)
-    with col3:
-        show_text = st.checkbox("Toon tekstlabels", key="affadsf34", value=True)
-        log_inkomen =  st.checkbox("Log inkomen", key="affadsf3",  value=False)
-    if show_text:
-        mode_="markers+text"
-    else:
-        mode_="markers"
-
-    df_res=df_merge[(df_merge["Indicator"]==indicator_)& (df_merge["LijstNaam"]==partij)]
-    df_res[f"Percentage_{indicator_}"] = df_res["Percentage"]
-    df_res.loc[:,f"percentage_votes_{partij}"] = df_res["percentage_votes"]
-   
-    col1,col2, =st.columns(2)
-    with col1:
-        plot_scatter_correlation(df_res,f"Percentage_{indicator_}",f"percentage_votes_{partij}", partij, indicator_,mode_,log_inkomen)
-    
-
-    with col2:
-        plot_scatter_correlation(df_res,"HBO_WO_2024",f"percentage_votes_{partij}", partij,"",mode_,log_inkomen)
-    col1,col2, =st.columns(2)
-    with col1:
-        plot_scatter_correlation(df_res,"ink_inw",f"percentage_votes_{partij}", partij, "",mode_,log_inkomen)
-    with col2:
-        plot_scatter_correlation(df_res,"ink_inw",f"Percentage_{indicator_}", partij, indicator_,mode_,log_inkomen)
-
-   
-    ols_corr(df_res, partij,indicator_)
-    r2_per_parties(df_merge, indicator_)
                                            
 
 def ols_corr(df, partij,indicator_):
