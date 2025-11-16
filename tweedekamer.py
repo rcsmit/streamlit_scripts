@@ -43,20 +43,24 @@ def load_votes_2025():
 
     url_results= "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/alle_resultaten_per_gemeente_2025.csv"
     url_partynames =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/partij_keys.csv"
-
     df_results = pd.read_csv(url_results, dtype={"cbs_code":str})
     df_partynames = pd.read_csv(url_partynames)
     df_partynames =df_partynames[["party_key","LijstNaam"]]
-
+    df_results["CBS-code"] = ("GM"
+                                    + df_results["Municipality_cbs"] 
+                                        .astype(int)              # 123.0 -> 123
+                                        .astype(str)              # 123 -> "123"
+                                        .str.zfill(4)             # "0123"
+                                )
     df_results_new=df_results.merge(df_partynames, on="party_key", how="left")
     df_results_new=df_results_new.fillna("UNKNOWN_X")
     
-    df_results_new=df_results_new[["Regio","Waarde", "LijstNaam","voters_current"]]
+    df_results_new=df_results_new[["CBS-code","Regio","Waarde", "LijstNaam","voters_current"]]
     #df_results_new=df_results_new[df_results_new["Regio"] !="Venray"]  # Venray moet nog worden geteld
     den = df_results_new.groupby("Regio")["Waarde"].transform("sum")
     df_results_new["percentage_votes"] = (100 * df_results_new["Waarde"] / den).fillna(0).round(2)
     df_results_new["totaal_gemeente"] =  den
- 
+    
     return df_results_new
 
 
@@ -761,28 +765,55 @@ def obesitas_inkomen():
     df_inkomen = pd.read_csv(url_inkomen)
 
     df_votes=  load_votes(2025)
-    
+    st.write(df_votes)
     df_votes["aantal_votes"] =  round(df_votes["Waarde"] / df_votes["percentage_votes"],0) *100
-    df_merge = df_obesitas.merge(df_votes, left_on="Naam", right_on="Regio", how="inner")
-    df_merge = df_merge.merge(df_inkomen, left_on="Naam", right_on="Regio", how="inner")
-    df_merge = df_merge.merge(df_opleiding, left_on="Naam", right_on="Regio", how="inner")
+    st.write(len(df_votes["Regio"].unique().tolist()))
+    df_merge = df_obesitas.merge(df_votes,  on="Gemeentecode", how="outer")
+   
+    df_merge = df_merge.merge(df_inkomen,  on="Gemeentecode", how="outer")
 
+    df_merge = df_merge.merge(df_opleiding, on="Gemeentecode", how="outer")
+   
      # https://www.sportenbewegenincijfers.nl/kaarten/sportlidmaatschappen
     url_sport =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_sportlidmaatschappen_2024.csv"
     #url_sport = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gemeente_sportlidmaatschappen_2024.csv"
     df_sport = pd.read_csv(url_sport)
+    df_sport["Gemeentecode"] = (
+                                    "GM"
+                                    + df_sport["id"]
+                                        .astype(int)              # 123.0 -> 123
+                                        .astype(str)              # 123 -> "123"
+                                        .str.zfill(4)             # "0123"
+                                )
     df_sport_pivot=df_sport.pivot_table(
-        index="Gemeente", 
+        index="Gemeentecode", 
         columns="Sport", 
         values="Percentage",
         aggfunc="mean"
     ).reset_index()
     
-    df_merge = df_merge.merge(df_sport_pivot, left_on="Regio", right_on="Gemeente", how="inner")
+   
+    df_merge = df_merge.merge(df_sport_pivot, on="Gemeentecode", how="outer")
 
-
+    url_gemeenteinfo=r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gemeente_info2025.csv"
+    # url_gemeenteinfo="https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_info2025.csv"
+    df_gemeenteinfo=pd.read_csv(url_gemeenteinfo)
+    df_gemeenteinfo["Gemeentecode"] = "GM" + df_gemeenteinfo["CBS-code"].fillna(0).astype(int).astype(str).str.zfill(4)
+ 
+    df_merge=df_merge.merge(df_gemeenteinfo, on="Gemeentecode", how="inner")
+    # df_merge=df_merge.merge(df_gemeenteinfo, left_on="id", right_on="CBS-code", how="left")
     
+    
+    # # Gemeentes die wél in df_sport_pivot zitten, maar niet in df_j['Regio']
+    # niet_in_df_merge = df_gemeenteinfo.loc[
+    #     ~df_gemeenteinfo["Gemeente"].isin(df_merge["Regio"]),
+    #     "Gemeente"
+    # ]
 
+
+
+    # st.write(gemeentes_niet_in_dfj.sort_values().reset_index(drop=True))
+    st.write(df_merge)
     sports = sorted(df_sport["Sport"].unique().tolist())
     partijen =  sorted(df_merge["LijstNaam"].unique().tolist())
 

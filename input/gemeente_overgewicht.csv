@@ -1,4 +1,4 @@
-id,Naam,Indicator,Percentage,Betrouwbaarheidsinterval (95%),GGD percentage
+Gemeentecode,Naam,Indicator,Percentage,Betrouwbaarheidsinterval (95%),GGD percentage
 GM0518,Den Haag,Overgewicht,47.5,45.5 - 49.6,47.5
 GM0518,Den Haag,Ernstig overgewicht,14.5,13.1 - 16.0,14.2
 GM0518,Den Haag,Ondergewicht,1.3,0.8 - 1.7,1.7
