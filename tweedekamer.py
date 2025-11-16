@@ -871,6 +871,7 @@ def obesitas_inkomen():
     df_res2=df_merge[df_merge["LijstNaam"]==partij]
     plot_scatter_correlation(df_res2, "percentage_votes", sport, partij, None,mode_, False)
 
+
     col1,col2,col3=st.columns(3)
     with col1:
         partij = st.selectbox("Partij", sorted(df_merge["LijstNaam"].unique().tolist()), key="afhhdadsf", index=0)
