@@ -1069,16 +1069,16 @@ id,Gemeente,Sport,Percentage
 363,Amsterdam,Voetbal,4.1
 363,Amsterdam,Volleybal,0.3
 363,Amsterdam,Zwemmen,0.4
-373,Bergen (NH.),Atletiek,0.7
-373,Bergen (NH.),Golf,5.0
-373,Bergen (NH.),Gymnastiek,1.0
-373,Bergen (NH.),Hockey,1.5
-373,Bergen (NH.),Paardensport,1.2
-373,Bergen (NH.),Sportvissen,2.6
-373,Bergen (NH.),Tennis,6.8
-373,Bergen (NH.),Voetbal,6.5
-373,Bergen (NH.),Volleybal,0.1
-373,Bergen (NH.),Zwemmen,0.2
+373,Bergen (NH),Atletiek,0.7
+373,Bergen (NH),Golf,5.0
+373,Bergen (NH),Gymnastiek,1.0
+373,Bergen (NH),Hockey,1.5
+373,Bergen (NH),Paardensport,1.2
+373,Bergen (NH),Sportvissen,2.6
+373,Bergen (NH),Tennis,6.8
+373,Bergen (NH),Voetbal,6.5
+373,Bergen (NH),Volleybal,0.1
+373,Bergen (NH),Zwemmen,0.2
 375,Beverwijk,Atletiek,0.6
 375,Beverwijk,Golf,2.0
 375,Beverwijk,Gymnastiek,1.1
@@ -2109,16 +2109,16 @@ id,Gemeente,Sport,Percentage
 809,Loon op Zand,Voetbal,8.3
 809,Loon op Zand,Volleybal,0.4
 809,Loon op Zand,Zwemmen,0.2
-820,Nuenen. Gerwen en Nederwetten,Atletiek,0.5
-820,Nuenen. Gerwen en Nederwetten,Golf,5.6
-820,Nuenen. Gerwen en Nederwetten,Gymnastiek,0.6
-820,Nuenen. Gerwen en Nederwetten,Hockey,3.1
-820,Nuenen. Gerwen en Nederwetten,Paardensport,1.1
-820,Nuenen. Gerwen en Nederwetten,Sportvissen,2.1
-820,Nuenen. Gerwen en Nederwetten,Tennis,8.6
-820,Nuenen. Gerwen en Nederwetten,Voetbal,8.2
-820,Nuenen. Gerwen en Nederwetten,Volleybal,0.3
-820,Nuenen. Gerwen en Nederwetten,Zwemmen,1.1
+820,"Nuenen, Gerwen en Nederwetten",Atletiek,0.5
+820,"Nuenen, Gerwen en Nederwetten",Golf,5.6
+820,"Nuenen, Gerwen en Nederwetten",Gymnastiek,0.6
+820,"Nuenen, Gerwen en Nederwetten",Hockey,3.1
+820,"Nuenen, Gerwen en Nederwetten",Paardensport,1.1
+820,"Nuenen, Gerwen en Nederwetten",Sportvissen,2.1
+820,"Nuenen, Gerwen en Nederwetten",Tennis,8.6
+820,"Nuenen, Gerwen en Nederwetten",Voetbal,8.2
+820,"Nuenen, Gerwen en Nederwetten",Volleybal,0.3
+820,"Nuenen, Gerwen en Nederwetten",Zwemmen,1.1
 823,Oirschot,Atletiek,1.6
 823,Oirschot,Golf,2.6
 823,Oirschot,Gymnastiek,0.3
@@ -2339,16 +2339,16 @@ id,Gemeente,Sport,Percentage
 889,Beesel,Voetbal,7.9
 889,Beesel,Volleybal,1.8
 889,Beesel,Zwemmen,1.7
-893,Bergen (L.),Atletiek,0.1
-893,Bergen (L.),Golf,1.2
-893,Bergen (L.),Gymnastiek,0.8
-893,Bergen (L.),Hockey,0.1
-893,Bergen (L.),Paardensport,1.4
-893,Bergen (L.),Sportvissen,2.9
-893,Bergen (L.),Tennis,2.5
-893,Bergen (L.),Voetbal,8.0
-893,Bergen (L.),Volleybal,0.7
-893,Bergen (L.),Zwemmen,0.2
+893,Bergen (L),Atletiek,0.1
+893,Bergen (L),Golf,1.2
+893,Bergen (L),Gymnastiek,0.8
+893,Bergen (L),Hockey,0.1
+893,Bergen (L),Paardensport,1.4
+893,Bergen (L),Sportvissen,2.9
+893,Bergen (L),Tennis,2.5
+893,Bergen (L),Voetbal,8.0
+893,Bergen (L),Volleybal,0.7
+893,Bergen (L),Zwemmen,0.2
 899,Brunssum,Atletiek,0.4
 899,Brunssum,Golf,0.6
 899,Brunssum,Gymnastiek,1.5

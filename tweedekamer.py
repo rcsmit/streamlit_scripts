@@ -626,7 +626,23 @@ def plot_scatter(df_res_all,xaxis,yaxis,extra_info=True):
     )
 
     st.plotly_chart(fig, width=True)
- 
+def calculate_r2(df,x_axis,y_axis):
+    try:
+        # Bereken lineaire regressie
+        x = df[x_axis].astype(float)
+        y = df[y_axis].astype(float)
+        coeffs = np.polyfit(x, y, 1)
+        slope, intercept = coeffs
+        y_pred = slope * x + intercept
+
+        # R²
+        ss_res = np.sum((y - y_pred) ** 2)
+        ss_tot = np.sum((y - np.mean(y)) ** 2)
+        r2 = 1 - ss_res / ss_tot
+    except:
+        r2,slope = 0,0
+    return r2,slope
+
 def plot_scatter_correlation(df_, x_axis, y_axis, partij, indicator,mode_, log_inkomen):
     # kopie zodat df zelf niet verandert
     df = df_.copy()
@@ -683,11 +699,10 @@ def plot_scatter_correlation(df_, x_axis, y_axis, partij, indicator,mode_, log_i
 
     # Layout
     fig.update_layout(
-        title=f"{y_axis}<br> vs {x_axis} | (R² = {r2:.3f})",
+        title=f"{y_axis}<br> vs {x_axis} | (R² = {r2:.3f} | {partij})",
         xaxis_title=x_label,
         yaxis_title=y_axis,
         template="plotly_white",
-        height=600
     )
     # # Log-schaal als x-axis "ink_inw" is
     # if x_axis == "ink_inw":
@@ -750,13 +765,85 @@ def obesitas_inkomen():
     df_merge = df_obesitas.merge(df_votes, left_on="Naam", right_on="Regio", how="inner")
     df_merge = df_merge.merge(df_inkomen, left_on="Naam", right_on="Regio", how="inner")
     df_merge = df_merge.merge(df_opleiding, left_on="Naam", right_on="Regio", how="inner")
+
+     # https://www.sportenbewegenincijfers.nl/kaarten/sportlidmaatschappen
+    url_sport =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_sportlidmaatschappen_2024.csv"
+    #url_sport = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gemeente_sportlidmaatschappen_2024.csv"
+    df_sport = pd.read_csv(url_sport)
+    df_sport_pivot=df_sport.pivot_table(
+        index="Gemeente", 
+        columns="Sport", 
+        values="Percentage",
+        aggfunc="mean"
+    ).reset_index()
+    
+    df_merge = df_merge.merge(df_sport_pivot, left_on="Regio", right_on="Gemeente", how="inner")
+
+
+    
+
+    sports = sorted(df_sport["Sport"].unique().tolist())
+    partijen =  sorted(df_merge["LijstNaam"].unique().tolist())
+
+
+    rows = []
+    for partij in partijen:
+        df_res = df_merge[df_merge["LijstNaam"] == partij]
+        row = {"Partij": partij}
+        for sport in sports:
+            r2, slope = calculate_r2(df_res, "percentage_votes", sport)
+            # signed R²: positive for positive slope, negative for negative slope
+            signed_r2 = r2 * np.sign(slope) if not np.isnan(slope) else np.nan
+            row[sport] = signed_r2
+        rows.append(row)
+
+    df_r2_signed = pd.DataFrame(rows).set_index("Partij")
+
+    fig = px.imshow(
+        df_r2_signed,
+        x=df_r2_signed.columns,
+        y=df_r2_signed.index,
+        labels=dict(x="Sport", y="Partij", color="signed R²"),
+        text_auto=".2f",
+        aspect="auto",
+        color_continuous_scale="RdBu",  # blue = neg, red = pos
+        zmin=-1,
+        zmax=1,
+    )
+        
+    # use explicit string labels for y
+    y_labels = df_r2_signed.index.astype(str)
+
+    # force all row names to be shown
+    fig.update_yaxes(
+        tickmode="array",
+        tickvals=y_labels,
+        ticktext=y_labels
+    )
+
+    st.plotly_chart(fig)
+
+
     col1,col2,col3=st.columns(3)
     with col1:
         partij = st.selectbox("Partij", sorted(df_merge["LijstNaam"].unique().tolist()), key="afdadsf", index=0)
     with col2:
-        indicator_ = st.selectbox("Indicator gewicht", sorted(df_merge["Indicator"].unique().tolist()), key="aresf", index=0)
+        sport = st.selectbox("Sport", sorted(df_sport["Sport"].unique().tolist()), key="aasdffdadsf", index=0)
     with col3:
         show_text = st.checkbox("Toon tekstlabels", key="affadsf4", value=True)
+    if show_text:
+        mode_="markers+text"
+    else:
+        mode_="markers"
+    plot_scatter_correlation(df_res, "percentage_votes", sport, partij, None,mode_, False)
+
+    col1,col2,col3=st.columns(3)
+    with col1:
+        partij = st.selectbox("Partij", sorted(df_merge["LijstNaam"].unique().tolist()), key="afhhdadsf", index=0)
+    with col2:
+        indicator_ = st.selectbox("Indicator gewicht", sorted(df_merge["Indicator"].unique().tolist()), key="aresf", index=0)
+    with col3:
+        show_text = st.checkbox("Toon tekstlabels", key="affadsf34", value=True)
         log_inkomen =  st.checkbox("Log inkomen", key="affadsf3",  value=False)
     if show_text:
         mode_="markers+text"
@@ -1029,41 +1116,23 @@ def kaart_per_partij():
         st.error("Partij heeft geen stemmen")
         st.stop()
 
-def sport_vs_uitslagen():
-    df_j = load_votes(2025)
-   
-    # https://www.sportenbewegenincijfers.nl/kaarten/sportlidmaatschappen
-    url_sport =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_sportlidmaatschappen_2024.csv"
-    df_sport = pd.read_csv(url_sport)
-    df_sport_pivot=df_sport.pivot_table(
-        index="Gemeente", 
-        columns="Sport", 
-        values="Percentage",
-        aggfunc="mean"
-    ).reset_index()
-    
 
-    df_merge = df_j.merge(df_sport_pivot, left_on="Regio", right_on="Gemeente", how="inner")
-    st.write(df_merge)
    
-
 def main():
-    sport_vs_uitslagen()
-    st.stop()
+  
     """Main functie
     """  
 
     jaren=[2023,2025] 
-    tab1, tab2, tab3,tab4,tab5,tab6,tab7 = st.tabs(["Resultaten", "Enkele gemeente","Partij","voorkeurscoalitie","obesitas/inkomen/opleiding", "sport", "Info"])
+    tab1, tab2, tab3,tab4,tab5,tab6= st.tabs(["Resultaten", "Enkele gemeente","Partij","voorkeurscoalitie","obesitas/inkomen/opleiding/sport", "Info"])
 
-    with tab7:
-        show_info()
     with tab6:
-        sport_vs_uitslagen()
+        show_info()
+    with tab5:
+        obesitas_inkomen()
     with tab4:
         voorkeurscoalitie_per_gemeente()
-    with tab5:
-         obesitas_inkomen()
+   
     with tab1:
         all_results()   
     with tab2:
