@@ -46,7 +46,7 @@ def load_votes_2025():
     df_results = pd.read_csv(url_results, dtype={"cbs_code":str})
     df_partynames = pd.read_csv(url_partynames)
     df_partynames =df_partynames[["party_key","LijstNaam"]]
-    df_results["CBS-code"] = ("GM"
+    df_results["Gemeentecode"] = ("GM"
                                     + df_results["Municipality_cbs"] 
                                         .astype(int)              # 123.0 -> 123
                                         .astype(str)              # 123 -> "123"
@@ -55,7 +55,7 @@ def load_votes_2025():
     df_results_new=df_results.merge(df_partynames, on="party_key", how="left")
     df_results_new=df_results_new.fillna("UNKNOWN_X")
     
-    df_results_new=df_results_new[["CBS-code","Regio","Waarde", "LijstNaam","voters_current"]]
+    df_results_new=df_results_new[["Gemeentecode","Regio","Waarde", "LijstNaam","voters_current"]]
     #df_results_new=df_results_new[df_results_new["Regio"] !="Venray"]  # Venray moet nog worden geteld
     den = df_results_new.groupby("Regio")["Waarde"].transform("sum")
     df_results_new["percentage_votes"] = (100 * df_results_new["Waarde"] / den).fillna(0).round(2)
@@ -747,33 +747,31 @@ def r2_per_parties(df_merge, indicator_):
 
     # show
     st.dataframe(df_result)
-         
-def obesitas_inkomen():
-  
+
+
+@st.cache_data(show_spinner=False)
+def get_info_obesitas_inkomen():
+    df_votes=  load_votes(2025)
+   
+    df_votes["aantal_votes"] =  round(df_votes["Waarde"] / df_votes["percentage_votes"],0) *100
+    
+   
     # https://www.vzinfo.nl/overgewicht/regionaal/obesitas#obesitas-volwassenen
-    # https://www.cbs.nl/nl-nl/maatwerk/2023/35/inkomen-per-gemeente-en-wijk-2020
     #url_obesitas = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gemeente_overgewicht.csv"
     url_obesitas = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_overgewicht.csv"
+    df_obesitas = pd.read_csv(url_obesitas)
+   
     # https://www.clo.nl/indicatoren/nl210016-hbo-en-wo-gediplomeerden-2024
     # Bevolking 15 tot 75 jaar met als behaalde opleiding hbo of wo per gemeente, 2024
-
     url_opleiding = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_opleiding.csv"
     df_opleiding = pd.read_csv(url_opleiding)
-    df_obesitas = pd.read_csv(url_obesitas)
+    
+    # https://www.cbs.nl/nl-nl/maatwerk/2023/35/inkomen-per-gemeente-en-wijk-2020
     #url_inkomen = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gemeente_inkomen.csv"
     url_inkomen = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_inkomen.csv"
     df_inkomen = pd.read_csv(url_inkomen)
 
-    df_votes=  load_votes(2025)
-    st.write(df_votes)
-    df_votes["aantal_votes"] =  round(df_votes["Waarde"] / df_votes["percentage_votes"],0) *100
-    st.write(len(df_votes["Regio"].unique().tolist()))
-    df_merge = df_obesitas.merge(df_votes,  on="Gemeentecode", how="outer")
-   
-    df_merge = df_merge.merge(df_inkomen,  on="Gemeentecode", how="outer")
 
-    df_merge = df_merge.merge(df_opleiding, on="Gemeentecode", how="outer")
-   
      # https://www.sportenbewegenincijfers.nl/kaarten/sportlidmaatschappen
     url_sport =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_sportlidmaatschappen_2024.csv"
     #url_sport = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gemeente_sportlidmaatschappen_2024.csv"
@@ -792,37 +790,40 @@ def obesitas_inkomen():
         aggfunc="mean"
     ).reset_index()
     
-   
-    df_merge = df_merge.merge(df_sport_pivot, on="Gemeentecode", how="outer")
 
-    url_gemeenteinfo=r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gemeente_info2025.csv"
-    # url_gemeenteinfo="https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_info2025.csv"
+    #url_gemeenteinfo=r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gemeente_info2025.csv"
+    url_gemeenteinfo="https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_info2025.csv"
     df_gemeenteinfo=pd.read_csv(url_gemeenteinfo)
     df_gemeenteinfo["Gemeentecode"] = "GM" + df_gemeenteinfo["CBS-code"].fillna(0).astype(int).astype(str).str.zfill(4)
  
+    df_merge = df_votes.merge(df_obesitas,  on="Gemeentecode", how="outer")
+    df_merge = df_merge.merge(df_inkomen,  on="Gemeentecode", how="outer")
+    df_merge = df_merge.merge(df_opleiding, on="Gemeentecode", how="outer")
+    df_merge = df_merge.merge(df_sport_pivot, on="Gemeentecode", how="outer")
     df_merge=df_merge.merge(df_gemeenteinfo, on="Gemeentecode", how="inner")
-    # df_merge=df_merge.merge(df_gemeenteinfo, left_on="id", right_on="CBS-code", how="left")
+    list_sports =  sorted(df_sport["Sport"].unique().tolist())
+    return df_merge,list_sports
+
+           
+def obesitas_inkomen():
+  
+    df_merge,list_sports = get_info_obesitas_inkomen()
     
+ 
+
+    df_merge.fillna(0)
     
-    # # Gemeentes die wél in df_sport_pivot zitten, maar niet in df_j['Regio']
-    # niet_in_df_merge = df_gemeenteinfo.loc[
-    #     ~df_gemeenteinfo["Gemeente"].isin(df_merge["Regio"]),
-    #     "Gemeente"
-    # ]
-
-
-
     # st.write(gemeentes_niet_in_dfj.sort_values().reset_index(drop=True))
-    st.write(df_merge)
-    sports = sorted(df_sport["Sport"].unique().tolist())
+    #st.write(df_merge)
+    
     partijen =  sorted(df_merge["LijstNaam"].unique().tolist())
-
+   
 
     rows = []
     for partij in partijen:
         df_res = df_merge[df_merge["LijstNaam"] == partij]
         row = {"Partij": partij}
-        for sport in sports:
+        for sport in list_sports:
             r2, slope = calculate_r2(df_res, "percentage_votes", sport)
             # signed R²: positive for positive slope, negative for negative slope
             signed_r2 = r2 * np.sign(slope) if not np.isnan(slope) else np.nan
@@ -860,7 +861,7 @@ def obesitas_inkomen():
     with col1:
         partij = st.selectbox("Partij", sorted(df_merge["LijstNaam"].unique().tolist()), key="afdadsf", index=0)
     with col2:
-        sport = st.selectbox("Sport", sorted(df_sport["Sport"].unique().tolist()), key="aasdffdadsf", index=0)
+        sport = st.selectbox("Sport", list_sports, key="aasdffdadsf", index=0)
     with col3:
         show_text = st.checkbox("Toon tekstlabels", key="affadsf4", value=True)
     if show_text:
@@ -874,7 +875,7 @@ def obesitas_inkomen():
     with col1:
         partij = st.selectbox("Partij", sorted(df_merge["LijstNaam"].unique().tolist()), key="afhhdadsf", index=0)
     with col2:
-        indicator_ = st.selectbox("Indicator gewicht", sorted(df_merge["Indicator"].unique().tolist()), key="aresf", index=0)
+        indicator_ = "Ernstig overgewicht" # st.selectbox("Indicator gewicht", sorted(df_merge["Indicator"].unique().tolist()), key="aresf", index=0)
     with col3:
         show_text = st.checkbox("Toon tekstlabels", key="affadsf34", value=True)
         log_inkomen =  st.checkbox("Log inkomen", key="affadsf3",  value=False)
@@ -903,8 +904,7 @@ def obesitas_inkomen():
    
     ols_corr(df_res, partij,indicator_)
     r2_per_parties(df_merge, indicator_)
-
-                                                
+                                           
 
 def ols_corr(df, partij,indicator_):
     """Make an multiple lineair regression analyses (OLS)
