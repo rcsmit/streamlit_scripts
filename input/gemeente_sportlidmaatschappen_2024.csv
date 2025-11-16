@@ -1,0 +1,3421 @@
+id;Gemeente;Sport;Percentage
+14;Groningen;Atletiek;0,6
+14;Groningen;Golf;2,0
+14;Groningen;Gymnastiek;0,7
+14;Groningen;Hockey;1,7
+14;Groningen;Paardensport;0,3
+14;Groningen;Sportvissen;2,7
+14;Groningen;Tennis;3,1
+14;Groningen;Voetbal;6,3
+14;Groningen;Volleybal;0,9
+14;Groningen;Zwemmen;0,7
+34;Almere;Atletiek;0,3
+34;Almere;Golf;1,5
+34;Almere;Gymnastiek;0,5
+34;Almere;Hockey;0,8
+34;Almere;Paardensport;0,4
+34;Almere;Sportvissen;2,8
+34;Almere;Tennis;1,3
+34;Almere;Voetbal;4,1
+34;Almere;Volleybal;0,3
+34;Almere;Zwemmen;0,2
+37;Stadskanaal;Atletiek;1,0
+37;Stadskanaal;Golf;0,9
+37;Stadskanaal;Gymnastiek;1,6
+37;Stadskanaal;Hockey;0,4
+37;Stadskanaal;Paardensport;0,6
+37;Stadskanaal;Sportvissen;8,2
+37;Stadskanaal;Tennis;1,6
+37;Stadskanaal;Voetbal;7,4
+37;Stadskanaal;Volleybal;1,1
+37;Stadskanaal;Zwemmen;0,9
+47;Veendam;Atletiek;0,5
+47;Veendam;Golf;1,9
+47;Veendam;Gymnastiek;0,6
+47;Veendam;Hockey;0,6
+47;Veendam;Paardensport;0,9
+47;Veendam;Sportvissen;8,0
+47;Veendam;Tennis;3,0
+47;Veendam;Voetbal;5,7
+47;Veendam;Volleybal;0,8
+47;Veendam;Zwemmen;0,5
+50;Zeewolde;Atletiek;1,5
+50;Zeewolde;Golf;3,7
+50;Zeewolde;Gymnastiek;1,5
+50;Zeewolde;Hockey;1,5
+50;Zeewolde;Paardensport;1,8
+50;Zeewolde;Sportvissen;5,1
+50;Zeewolde;Tennis;1,4
+50;Zeewolde;Voetbal;5,6
+50;Zeewolde;Volleybal;1,2
+50;Zeewolde;Zwemmen;0,2
+59;Achtkarspelen;Atletiek;0,2
+59;Achtkarspelen;Golf;0,3
+59;Achtkarspelen;Gymnastiek;1,7
+59;Achtkarspelen;Hockey;0,0
+59;Achtkarspelen;Paardensport;0,9
+59;Achtkarspelen;Sportvissen;7,5
+59;Achtkarspelen;Tennis;2,6
+59;Achtkarspelen;Voetbal;11,3
+59;Achtkarspelen;Volleybal;0,6
+59;Achtkarspelen;Zwemmen;0,5
+60;Ameland;Atletiek;0,1
+60;Ameland;Golf;2,6
+60;Ameland;Gymnastiek;0,2
+60;Ameland;Hockey;0,0
+60;Ameland;Paardensport;2,4
+60;Ameland;Sportvissen;1,9
+60;Ameland;Tennis;0,0
+60;Ameland;Voetbal;13,4
+60;Ameland;Volleybal;0,0
+60;Ameland;Zwemmen;1,2
+72;Harlingen;Atletiek;0,2
+72;Harlingen;Golf;1,2
+72;Harlingen;Gymnastiek;1,4
+72;Harlingen;Hockey;1,1
+72;Harlingen;Paardensport;0,7
+72;Harlingen;Sportvissen;5,3
+72;Harlingen;Tennis;3,1
+72;Harlingen;Voetbal;6,8
+72;Harlingen;Volleybal;0,4
+72;Harlingen;Zwemmen;0,6
+74;Heerenveen;Atletiek;0,8
+74;Heerenveen;Golf;1,8
+74;Heerenveen;Gymnastiek;1,7
+74;Heerenveen;Hockey;0,6
+74;Heerenveen;Paardensport;0,9
+74;Heerenveen;Sportvissen;6,3
+74;Heerenveen;Tennis;3,0
+74;Heerenveen;Voetbal;7,8
+74;Heerenveen;Volleybal;1,2
+74;Heerenveen;Zwemmen;0,9
+80;Leeuwarden;Atletiek;0,7
+80;Leeuwarden;Golf;0,9
+80;Leeuwarden;Gymnastiek;1,2
+80;Leeuwarden;Hockey;0,5
+80;Leeuwarden;Paardensport;0,4
+80;Leeuwarden;Sportvissen;4,7
+80;Leeuwarden;Tennis;2,2
+80;Leeuwarden;Voetbal;6,6
+80;Leeuwarden;Volleybal;0,5
+80;Leeuwarden;Zwemmen;0,3
+85;Ooststellingwerf;Atletiek;0,7
+85;Ooststellingwerf;Golf;1,3
+85;Ooststellingwerf;Gymnastiek;1,9
+85;Ooststellingwerf;Hockey;0,0
+85;Ooststellingwerf;Paardensport;1,7
+85;Ooststellingwerf;Sportvissen;7,6
+85;Ooststellingwerf;Tennis;2,2
+85;Ooststellingwerf;Voetbal;7,7
+85;Ooststellingwerf;Volleybal;1,4
+85;Ooststellingwerf;Zwemmen;1,2
+86;Opsterland;Atletiek;0,4
+86;Opsterland;Golf;1,3
+86;Opsterland;Gymnastiek;2,0
+86;Opsterland;Hockey;0,2
+86;Opsterland;Paardensport;1,3
+86;Opsterland;Sportvissen;7,8
+86;Opsterland;Tennis;3,0
+86;Opsterland;Voetbal;9,7
+86;Opsterland;Volleybal;1,2
+86;Opsterland;Zwemmen;0,7
+88;Schiermonnikoog;Atletiek;0,0
+88;Schiermonnikoog;Golf;1,1
+88;Schiermonnikoog;Gymnastiek;0,0
+88;Schiermonnikoog;Hockey;0,0
+88;Schiermonnikoog;Paardensport;1,7
+88;Schiermonnikoog;Sportvissen;2,4
+88;Schiermonnikoog;Tennis;0,0
+88;Schiermonnikoog;Voetbal;11,0
+88;Schiermonnikoog;Volleybal;0,0
+88;Schiermonnikoog;Zwemmen;0,0
+90;Smallingerland;Atletiek;0,7
+90;Smallingerland;Golf;1,4
+90;Smallingerland;Gymnastiek;1,1
+90;Smallingerland;Hockey;0,5
+90;Smallingerland;Paardensport;0,5
+90;Smallingerland;Sportvissen;7,3
+90;Smallingerland;Tennis;2,4
+90;Smallingerland;Voetbal;6,4
+90;Smallingerland;Volleybal;0,4
+90;Smallingerland;Zwemmen;0,5
+93;Terschelling;Atletiek;0,1
+93;Terschelling;Golf;1,7
+93;Terschelling;Gymnastiek;0,1
+93;Terschelling;Hockey;0,0
+93;Terschelling;Paardensport;3,2
+93;Terschelling;Sportvissen;1,5
+93;Terschelling;Tennis;0,0
+93;Terschelling;Voetbal;6,6
+93;Terschelling;Volleybal;0,0
+93;Terschelling;Zwemmen;0,0
+96;Vlieland;Atletiek;0,2
+96;Vlieland;Golf;0,6
+96;Vlieland;Gymnastiek;0,0
+96;Vlieland;Hockey;0,0
+96;Vlieland;Paardensport;0,7
+96;Vlieland;Sportvissen;1,1
+96;Vlieland;Tennis;0,2
+96;Vlieland;Voetbal;6,0
+96;Vlieland;Volleybal;0,0
+96;Vlieland;Zwemmen;0,0
+98;Weststellingwerf;Atletiek;0,3
+98;Weststellingwerf;Golf;0,8
+98;Weststellingwerf;Gymnastiek;1,8
+98;Weststellingwerf;Hockey;0,1
+98;Weststellingwerf;Paardensport;1,8
+98;Weststellingwerf;Sportvissen;8,3
+98;Weststellingwerf;Tennis;1,9
+98;Weststellingwerf;Voetbal;8,0
+98;Weststellingwerf;Volleybal;1,0
+98;Weststellingwerf;Zwemmen;0,3
+106;Assen;Atletiek;0,6
+106;Assen;Golf;1,7
+106;Assen;Gymnastiek;1,4
+106;Assen;Hockey;0,6
+106;Assen;Paardensport;0,4
+106;Assen;Sportvissen;4,4
+106;Assen;Tennis;1,8
+106;Assen;Voetbal;7,0
+106;Assen;Volleybal;1,1
+106;Assen;Zwemmen;0,5
+109;Coevorden;Atletiek;0,2
+109;Coevorden;Golf;1,5
+109;Coevorden;Gymnastiek;1,9
+109;Coevorden;Hockey;0,4
+109;Coevorden;Paardensport;1,4
+109;Coevorden;Sportvissen;6,4
+109;Coevorden;Tennis;3,2
+109;Coevorden;Voetbal;10,2
+109;Coevorden;Volleybal;1,2
+109;Coevorden;Zwemmen;0,6
+114;Emmen;Atletiek;0,5
+114;Emmen;Golf;1,1
+114;Emmen;Gymnastiek;1,8
+114;Emmen;Hockey;0,2
+114;Emmen;Paardensport;0,7
+114;Emmen;Sportvissen;6,6
+114;Emmen;Tennis;1,7
+114;Emmen;Voetbal;8,0
+114;Emmen;Volleybal;0,8
+114;Emmen;Zwemmen;0,4
+118;Hoogeveen;Atletiek;0,5
+118;Hoogeveen;Golf;0,8
+118;Hoogeveen;Gymnastiek;2,5
+118;Hoogeveen;Hockey;0,5
+118;Hoogeveen;Paardensport;0,7
+118;Hoogeveen;Sportvissen;7,1
+118;Hoogeveen;Tennis;1,9
+118;Hoogeveen;Voetbal;8,7
+118;Hoogeveen;Volleybal;0,6
+118;Hoogeveen;Zwemmen;0,4
+119;Meppel;Atletiek;0,8
+119;Meppel;Golf;1,7
+119;Meppel;Gymnastiek;2,0
+119;Meppel;Hockey;1,4
+119;Meppel;Paardensport;0,6
+119;Meppel;Sportvissen;5,0
+119;Meppel;Tennis;3,3
+119;Meppel;Voetbal;7,3
+119;Meppel;Volleybal;0,3
+119;Meppel;Zwemmen;0,9
+141;Almelo;Atletiek;0,5
+141;Almelo;Golf;1,8
+141;Almelo;Gymnastiek;1,8
+141;Almelo;Hockey;0,8
+141;Almelo;Paardensport;0,4
+141;Almelo;Sportvissen;4,7
+141;Almelo;Tennis;2,4
+141;Almelo;Voetbal;7,8
+141;Almelo;Volleybal;0,6
+141;Almelo;Zwemmen;0,4
+147;Borne;Atletiek;0,3
+147;Borne;Golf;3,0
+147;Borne;Gymnastiek;1,7
+147;Borne;Hockey;1,0
+147;Borne;Paardensport;0,5
+147;Borne;Sportvissen;4,2
+147;Borne;Tennis;4,0
+147;Borne;Voetbal;9,1
+147;Borne;Volleybal;1,5
+147;Borne;Zwemmen;0,7
+148;Dalfsen;Atletiek;0,2
+148;Dalfsen;Golf;1,3
+148;Dalfsen;Gymnastiek;2,5
+148;Dalfsen;Hockey;0,9
+148;Dalfsen;Paardensport;1,4
+148;Dalfsen;Sportvissen;5,2
+148;Dalfsen;Tennis;2,8
+148;Dalfsen;Voetbal;11,5
+148;Dalfsen;Volleybal;2,3
+148;Dalfsen;Zwemmen;0,2
+150;Deventer;Atletiek;0,8
+150;Deventer;Golf;2,1
+150;Deventer;Gymnastiek;1,8
+150;Deventer;Hockey;0,9
+150;Deventer;Paardensport;0,4
+150;Deventer;Sportvissen;3,0
+150;Deventer;Tennis;3,2
+150;Deventer;Voetbal;7,6
+150;Deventer;Volleybal;0,8
+150;Deventer;Zwemmen;0,5
+153;Enschede;Atletiek;0,6
+153;Enschede;Golf;2,0
+153;Enschede;Gymnastiek;1,7
+153;Enschede;Hockey;1,1
+153;Enschede;Paardensport;0,6
+153;Enschede;Sportvissen;2,6
+153;Enschede;Tennis;2,9
+153;Enschede;Voetbal;7,0
+153;Enschede;Volleybal;0,6
+153;Enschede;Zwemmen;0,5
+158;Haaksbergen;Atletiek;1,4
+158;Haaksbergen;Golf;1,8
+158;Haaksbergen;Gymnastiek;1,3
+158;Haaksbergen;Hockey;1,4
+158;Haaksbergen;Paardensport;0,9
+158;Haaksbergen;Sportvissen;4,2
+158;Haaksbergen;Tennis;5,1
+158;Haaksbergen;Voetbal;10,1
+158;Haaksbergen;Volleybal;2,5
+158;Haaksbergen;Zwemmen;0,7
+160;Hardenberg;Atletiek;1,0
+160;Hardenberg;Golf;0,9
+160;Hardenberg;Gymnastiek;1,9
+160;Hardenberg;Hockey;0,5
+160;Hardenberg;Paardensport;1,2
+160;Hardenberg;Sportvissen;6,9
+160;Hardenberg;Tennis;2,9
+160;Hardenberg;Voetbal;11,2
+160;Hardenberg;Volleybal;1,4
+160;Hardenberg;Zwemmen;1,0
+163;Hellendoorn;Atletiek;1,0
+163;Hellendoorn;Golf;1,1
+163;Hellendoorn;Gymnastiek;3,8
+163;Hellendoorn;Hockey;0,7
+163;Hellendoorn;Paardensport;1,2
+163;Hellendoorn;Sportvissen;5,6
+163;Hellendoorn;Tennis;2,5
+163;Hellendoorn;Voetbal;11,9
+163;Hellendoorn;Volleybal;0,7
+163;Hellendoorn;Zwemmen;0,9
+164;Hengelo;Atletiek;0,6
+164;Hengelo;Golf;2,4
+164;Hengelo;Gymnastiek;1,9
+164;Hengelo;Hockey;0,8
+164;Hengelo;Paardensport;0,5
+164;Hengelo;Sportvissen;3,2
+164;Hengelo;Tennis;3,5
+164;Hengelo;Voetbal;7,4
+164;Hengelo;Volleybal;0,6
+164;Hengelo;Zwemmen;0,5
+166;Kampen;Atletiek;0,8
+166;Kampen;Golf;0,7
+166;Kampen;Gymnastiek;4,1
+166;Kampen;Hockey;0,5
+166;Kampen;Paardensport;0,6
+166;Kampen;Sportvissen;4,9
+166;Kampen;Tennis;1,6
+166;Kampen;Voetbal;7,7
+166;Kampen;Volleybal;0,8
+166;Kampen;Zwemmen;0,9
+168;Losser;Atletiek;1,5
+168;Losser;Golf;2,0
+168;Losser;Gymnastiek;2,0
+168;Losser;Hockey;0,5
+168;Losser;Paardensport;0,9
+168;Losser;Sportvissen;3,9
+168;Losser;Tennis;4,0
+168;Losser;Voetbal;9,4
+168;Losser;Volleybal;1,4
+168;Losser;Zwemmen;1,1
+171;Noordoostpolder;Atletiek;1,1
+171;Noordoostpolder;Golf;1,5
+171;Noordoostpolder;Gymnastiek;1,0
+171;Noordoostpolder;Hockey;0,5
+171;Noordoostpolder;Paardensport;0,8
+171;Noordoostpolder;Sportvissen;5,1
+171;Noordoostpolder;Tennis;1,3
+171;Noordoostpolder;Voetbal;8,4
+171;Noordoostpolder;Volleybal;1,4
+171;Noordoostpolder;Zwemmen;1,0
+173;Oldenzaal;Atletiek;0,6
+173;Oldenzaal;Golf;3,7
+173;Oldenzaal;Gymnastiek;1,0
+173;Oldenzaal;Hockey;2,3
+173;Oldenzaal;Paardensport;0,7
+173;Oldenzaal;Sportvissen;4,1
+173;Oldenzaal;Tennis;7,0
+173;Oldenzaal;Voetbal;10,6
+173;Oldenzaal;Volleybal;0,8
+173;Oldenzaal;Zwemmen;0,8
+175;Ommen;Atletiek;1,2
+175;Ommen;Golf;2,3
+175;Ommen;Gymnastiek;1,5
+175;Ommen;Hockey;1,2
+175;Ommen;Paardensport;1,6
+175;Ommen;Sportvissen;5,3
+175;Ommen;Tennis;2,3
+175;Ommen;Voetbal;9,7
+175;Ommen;Volleybal;1,3
+175;Ommen;Zwemmen;1,8
+177;Raalte;Atletiek;0,5
+177;Raalte;Golf;1,3
+177;Raalte;Gymnastiek;1,2
+177;Raalte;Hockey;0,5
+177;Raalte;Paardensport;1,4
+177;Raalte;Sportvissen;3,7
+177;Raalte;Tennis;2,5
+177;Raalte;Voetbal;11,2
+177;Raalte;Volleybal;1,4
+177;Raalte;Zwemmen;1,1
+180;Staphorst;Atletiek;0,2
+180;Staphorst;Golf;0,5
+180;Staphorst;Gymnastiek;4,6
+180;Staphorst;Hockey;0,1
+180;Staphorst;Paardensport;1,2
+180;Staphorst;Sportvissen;7,5
+180;Staphorst;Tennis;0,6
+180;Staphorst;Voetbal;8,1
+180;Staphorst;Volleybal;0,6
+180;Staphorst;Zwemmen;0,3
+183;Tubbergen;Atletiek;0,2
+183;Tubbergen;Golf;1,0
+183;Tubbergen;Gymnastiek;0,5
+183;Tubbergen;Hockey;0,1
+183;Tubbergen;Paardensport;1,4
+183;Tubbergen;Sportvissen;3,2
+183;Tubbergen;Tennis;4,7
+183;Tubbergen;Voetbal;16,9
+183;Tubbergen;Volleybal;4,4
+183;Tubbergen;Zwemmen;0,4
+184;Urk;Atletiek;0,1
+184;Urk;Golf;0,3
+184;Urk;Gymnastiek;2,2
+184;Urk;Hockey;0,0
+184;Urk;Paardensport;0,5
+184;Urk;Sportvissen;5,6
+184;Urk;Tennis;0,5
+184;Urk;Voetbal;8,3
+184;Urk;Volleybal;0,3
+184;Urk;Zwemmen;1,1
+189;Wierden;Atletiek;0,6
+189;Wierden;Golf;2,5
+189;Wierden;Gymnastiek;4,2
+189;Wierden;Hockey;0,4
+189;Wierden;Paardensport;1,7
+189;Wierden;Sportvissen;4,7
+189;Wierden;Tennis;4,6
+189;Wierden;Voetbal;13,7
+189;Wierden;Volleybal;1,7
+189;Wierden;Zwemmen;0,4
+193;Zwolle;Atletiek;0,7
+193;Zwolle;Golf;2,1
+193;Zwolle;Gymnastiek;1,6
+193;Zwolle;Hockey;1,2
+193;Zwolle;Paardensport;0,5
+193;Zwolle;Sportvissen;3,4
+193;Zwolle;Tennis;3,3
+193;Zwolle;Voetbal;7,4
+193;Zwolle;Volleybal;1,0
+193;Zwolle;Zwemmen;1,0
+197;Aalten;Atletiek;2,3
+197;Aalten;Golf;0,9
+197;Aalten;Gymnastiek;3,7
+197;Aalten;Hockey;0,1
+197;Aalten;Paardensport;1,3
+197;Aalten;Sportvissen;3,4
+197;Aalten;Tennis;3,1
+197;Aalten;Voetbal;10,3
+197;Aalten;Volleybal;1,9
+197;Aalten;Zwemmen;0,7
+200;Apeldoorn;Atletiek;0,8
+200;Apeldoorn;Golf;2,6
+200;Apeldoorn;Gymnastiek;1,6
+200;Apeldoorn;Hockey;1,2
+200;Apeldoorn;Paardensport;0,9
+200;Apeldoorn;Sportvissen;2,9
+200;Apeldoorn;Tennis;2,7
+200;Apeldoorn;Voetbal;6,8
+200;Apeldoorn;Volleybal;1,1
+200;Apeldoorn;Zwemmen;0,4
+202;Arnhem;Atletiek;0,5
+202;Arnhem;Golf;1,7
+202;Arnhem;Gymnastiek;0,5
+202;Arnhem;Hockey;1,3
+202;Arnhem;Paardensport;0,4
+202;Arnhem;Sportvissen;1,8
+202;Arnhem;Tennis;3,1
+202;Arnhem;Voetbal;5,7
+202;Arnhem;Volleybal;0,5
+202;Arnhem;Zwemmen;0,8
+203;Barneveld;Atletiek;0,1
+203;Barneveld;Golf;1,5
+203;Barneveld;Gymnastiek;1,6
+203;Barneveld;Hockey;0,7
+203;Barneveld;Paardensport;1,1
+203;Barneveld;Sportvissen;2,6
+203;Barneveld;Tennis;2,2
+203;Barneveld;Voetbal;6,4
+203;Barneveld;Volleybal;1,0
+203;Barneveld;Zwemmen;1,8
+209;Beuningen;Atletiek;0,3
+209;Beuningen;Golf;2,2
+209;Beuningen;Gymnastiek;1,1
+209;Beuningen;Hockey;1,8
+209;Beuningen;Paardensport;0,7
+209;Beuningen;Sportvissen;3,9
+209;Beuningen;Tennis;4,5
+209;Beuningen;Voetbal;8,0
+209;Beuningen;Volleybal;0,6
+209;Beuningen;Zwemmen;0,6
+213;Brummen;Atletiek;0,5
+213;Brummen;Golf;2,5
+213;Brummen;Gymnastiek;0,5
+213;Brummen;Hockey;0,5
+213;Brummen;Paardensport;1,4
+213;Brummen;Sportvissen;3,9
+213;Brummen;Tennis;3,5
+213;Brummen;Voetbal;10,2
+213;Brummen;Volleybal;1,4
+213;Brummen;Zwemmen;0,8
+214;Buren;Atletiek;0,5
+214;Buren;Golf;2,1
+214;Buren;Gymnastiek;1,7
+214;Buren;Hockey;0,7
+214;Buren;Paardensport;1,6
+214;Buren;Sportvissen;5,7
+214;Buren;Tennis;4,4
+214;Buren;Voetbal;6,6
+214;Buren;Volleybal;0,2
+214;Buren;Zwemmen;0,4
+216;Culemborg;Atletiek;1,1
+216;Culemborg;Golf;1,9
+216;Culemborg;Gymnastiek;2,2
+216;Culemborg;Hockey;1,4
+216;Culemborg;Paardensport;0,5
+216;Culemborg;Sportvissen;3,4
+216;Culemborg;Tennis;4,0
+216;Culemborg;Voetbal;6,5
+216;Culemborg;Volleybal;0,7
+216;Culemborg;Zwemmen;1,1
+221;Doesburg;Atletiek;0,3
+221;Doesburg;Golf;2,0
+221;Doesburg;Gymnastiek;2,1
+221;Doesburg;Hockey;0,4
+221;Doesburg;Paardensport;0,4
+221;Doesburg;Sportvissen;4,1
+221;Doesburg;Tennis;2,6
+221;Doesburg;Voetbal;6,0
+221;Doesburg;Volleybal;0,8
+221;Doesburg;Zwemmen;0,8
+222;Doetinchem;Atletiek;0,9
+222;Doetinchem;Golf;1,9
+222;Doetinchem;Gymnastiek;1,5
+222;Doetinchem;Hockey;0,9
+222;Doetinchem;Paardensport;0,6
+222;Doetinchem;Sportvissen;3,4
+222;Doetinchem;Tennis;2,7
+222;Doetinchem;Voetbal;8,2
+222;Doetinchem;Volleybal;1,2
+222;Doetinchem;Zwemmen;0,6
+225;Druten;Atletiek;0,1
+225;Druten;Golf;1,5
+225;Druten;Gymnastiek;1,7
+225;Druten;Hockey;1,9
+225;Druten;Paardensport;0,7
+225;Druten;Sportvissen;4,1
+225;Druten;Tennis;2,8
+225;Druten;Voetbal;9,5
+225;Druten;Volleybal;0,9
+225;Druten;Zwemmen;0,6
+226;Duiven;Atletiek;0,4
+226;Duiven;Golf;2,0
+226;Duiven;Gymnastiek;1,4
+226;Duiven;Hockey;1,2
+226;Duiven;Paardensport;0,8
+226;Duiven;Sportvissen;3,0
+226;Duiven;Tennis;3,3
+226;Duiven;Voetbal;8,5
+226;Duiven;Volleybal;0,7
+226;Duiven;Zwemmen;0,4
+228;Ede;Atletiek;0,8
+228;Ede;Golf;1,7
+228;Ede;Gymnastiek;2,1
+228;Ede;Hockey;0,8
+228;Ede;Paardensport;0,7
+228;Ede;Sportvissen;2,8
+228;Ede;Tennis;2,0
+228;Ede;Voetbal;5,8
+228;Ede;Volleybal;0,6
+228;Ede;Zwemmen;0,6
+230;Elburg;Atletiek;0,3
+230;Elburg;Golf;1,0
+230;Elburg;Gymnastiek;2,5
+230;Elburg;Hockey;0,1
+230;Elburg;Paardensport;0,8
+230;Elburg;Sportvissen;6,1
+230;Elburg;Tennis;1,5
+230;Elburg;Voetbal;9,1
+230;Elburg;Volleybal;1,3
+230;Elburg;Zwemmen;0,5
+232;Epe;Atletiek;0,8
+232;Epe;Golf;2,1
+232;Epe;Gymnastiek;1,0
+232;Epe;Hockey;0,7
+232;Epe;Paardensport;1,5
+232;Epe;Sportvissen;4,1
+232;Epe;Tennis;2,7
+232;Epe;Voetbal;10,3
+232;Epe;Volleybal;0,7
+232;Epe;Zwemmen;0,7
+233;Ermelo;Atletiek;0,6
+233;Ermelo;Golf;2,1
+233;Ermelo;Gymnastiek;2,2
+233;Ermelo;Hockey;0,3
+233;Ermelo;Paardensport;1,1
+233;Ermelo;Sportvissen;3,3
+233;Ermelo;Tennis;2,8
+233;Ermelo;Voetbal;7,6
+233;Ermelo;Volleybal;0,6
+233;Ermelo;Zwemmen;0,6
+243;Harderwijk;Atletiek;1,3
+243;Harderwijk;Golf;2,2
+243;Harderwijk;Gymnastiek;1,7
+243;Harderwijk;Hockey;1,3
+243;Harderwijk;Paardensport;0,8
+243;Harderwijk;Sportvissen;3,8
+243;Harderwijk;Tennis;2,2
+243;Harderwijk;Voetbal;7,7
+243;Harderwijk;Volleybal;0,9
+243;Harderwijk;Zwemmen;0,5
+244;Hattem;Atletiek;0,7
+244;Hattem;Golf;3,3
+244;Hattem;Gymnastiek;3,4
+244;Hattem;Hockey;2,0
+244;Hattem;Paardensport;0,7
+244;Hattem;Sportvissen;4,8
+244;Hattem;Tennis;4,3
+244;Hattem;Voetbal;10,0
+244;Hattem;Volleybal;1,0
+244;Hattem;Zwemmen;0,9
+246;Heerde;Atletiek;1,4
+246;Heerde;Golf;1,5
+246;Heerde;Gymnastiek;1,4
+246;Heerde;Hockey;0,3
+246;Heerde;Paardensport;1,2
+246;Heerde;Sportvissen;6,7
+246;Heerde;Tennis;3,0
+246;Heerde;Voetbal;10,0
+246;Heerde;Volleybal;0,5
+246;Heerde;Zwemmen;1,4
+252;Heumen;Atletiek;0,7
+252;Heumen;Golf;2,9
+252;Heumen;Gymnastiek;1,3
+252;Heumen;Hockey;2,2
+252;Heumen;Paardensport;1,1
+252;Heumen;Sportvissen;2,5
+252;Heumen;Tennis;5,4
+252;Heumen;Voetbal;8,6
+252;Heumen;Volleybal;0,3
+252;Heumen;Zwemmen;0,2
+262;Lochem;Atletiek;0,4
+262;Lochem;Golf;3,9
+262;Lochem;Gymnastiek;2,1
+262;Lochem;Hockey;2,2
+262;Lochem;Paardensport;2,1
+262;Lochem;Sportvissen;3,5
+262;Lochem;Tennis;4,1
+262;Lochem;Voetbal;9,0
+262;Lochem;Volleybal;1,9
+262;Lochem;Zwemmen;0,8
+263;Maasdriel;Atletiek;0,2
+263;Maasdriel;Golf;2,4
+263;Maasdriel;Gymnastiek;1,7
+263;Maasdriel;Hockey;0,5
+263;Maasdriel;Paardensport;0,7
+263;Maasdriel;Sportvissen;4,8
+263;Maasdriel;Tennis;4,4
+263;Maasdriel;Voetbal;10,1
+263;Maasdriel;Volleybal;0,1
+263;Maasdriel;Zwemmen;0,2
+267;Nijkerk;Atletiek;0,8
+267;Nijkerk;Golf;2,5
+267;Nijkerk;Gymnastiek;1,8
+267;Nijkerk;Hockey;1,3
+267;Nijkerk;Paardensport;1,3
+267;Nijkerk;Sportvissen;3,1
+267;Nijkerk;Tennis;3,8
+267;Nijkerk;Voetbal;7,9
+267;Nijkerk;Volleybal;0,9
+267;Nijkerk;Zwemmen;0,6
+268;Nijmegen;Atletiek;0,7
+268;Nijmegen;Golf;1,6
+268;Nijmegen;Gymnastiek;1,3
+268;Nijmegen;Hockey;2,0
+268;Nijmegen;Paardensport;0,3
+268;Nijmegen;Sportvissen;1,6
+268;Nijmegen;Tennis;3,7
+268;Nijmegen;Voetbal;6,0
+268;Nijmegen;Volleybal;0,6
+268;Nijmegen;Zwemmen;0,4
+269;Oldebroek;Atletiek;0,6
+269;Oldebroek;Golf;0,7
+269;Oldebroek;Gymnastiek;2,6
+269;Oldebroek;Hockey;0,1
+269;Oldebroek;Paardensport;1,0
+269;Oldebroek;Sportvissen;6,0
+269;Oldebroek;Tennis;1,3
+269;Oldebroek;Voetbal;8,4
+269;Oldebroek;Volleybal;1,2
+269;Oldebroek;Zwemmen;0,2
+273;Putten;Atletiek;0,5
+273;Putten;Golf;1,9
+273;Putten;Gymnastiek;3,0
+273;Putten;Hockey;0,2
+273;Putten;Paardensport;1,4
+273;Putten;Sportvissen;3,4
+273;Putten;Tennis;4,0
+273;Putten;Voetbal;7,4
+273;Putten;Volleybal;0,6
+273;Putten;Zwemmen;0,6
+274;Renkum;Atletiek;0,4
+274;Renkum;Golf;4,6
+274;Renkum;Gymnastiek;1,7
+274;Renkum;Hockey;2,7
+274;Renkum;Paardensport;0,8
+274;Renkum;Sportvissen;2,3
+274;Renkum;Tennis;5,3
+274;Renkum;Voetbal;6,3
+274;Renkum;Volleybal;0,5
+274;Renkum;Zwemmen;1,1
+275;Rheden;Atletiek;0,7
+275;Rheden;Golf;2,7
+275;Rheden;Gymnastiek;1,0
+275;Rheden;Hockey;1,6
+275;Rheden;Paardensport;0,8
+275;Rheden;Sportvissen;3,0
+275;Rheden;Tennis;3,9
+275;Rheden;Voetbal;6,6
+275;Rheden;Volleybal;0,6
+275;Rheden;Zwemmen;0,8
+277;Rozendaal;Atletiek;1,0
+277;Rozendaal;Golf;12,3
+277;Rozendaal;Gymnastiek;1,1
+277;Rozendaal;Hockey;5,8
+277;Rozendaal;Paardensport;1,1
+277;Rozendaal;Sportvissen;1,7
+277;Rozendaal;Tennis;10,0
+277;Rozendaal;Voetbal;6,3
+277;Rozendaal;Volleybal;0,6
+277;Rozendaal;Zwemmen;0,9
+279;Scherpenzeel;Atletiek;0,1
+279;Scherpenzeel;Golf;1,5
+279;Scherpenzeel;Gymnastiek;2,5
+279;Scherpenzeel;Hockey;1,7
+279;Scherpenzeel;Paardensport;1,2
+279;Scherpenzeel;Sportvissen;3,1
+279;Scherpenzeel;Tennis;3,3
+279;Scherpenzeel;Voetbal;10,1
+279;Scherpenzeel;Volleybal;1,8
+279;Scherpenzeel;Zwemmen;2,2
+281;Tiel;Atletiek;0,5
+281;Tiel;Golf;1,7
+281;Tiel;Gymnastiek;1,0
+281;Tiel;Hockey;1,0
+281;Tiel;Paardensport;0,7
+281;Tiel;Sportvissen;4,1
+281;Tiel;Tennis;2,6
+281;Tiel;Voetbal;5,8
+281;Tiel;Volleybal;0,4
+281;Tiel;Zwemmen;0,4
+285;Voorst;Atletiek;0,2
+285;Voorst;Golf;2,2
+285;Voorst;Gymnastiek;1,7
+285;Voorst;Hockey;1,3
+285;Voorst;Paardensport;1,3
+285;Voorst;Sportvissen;3,5
+285;Voorst;Tennis;3,4
+285;Voorst;Voetbal;11,2
+285;Voorst;Volleybal;1,7
+285;Voorst;Zwemmen;0,5
+289;Wageningen;Atletiek;1,3
+289;Wageningen;Golf;1,7
+289;Wageningen;Gymnastiek;0,9
+289;Wageningen;Hockey;1,5
+289;Wageningen;Paardensport;0,3
+289;Wageningen;Sportvissen;2,2
+289;Wageningen;Tennis;3,2
+289;Wageningen;Voetbal;5,6
+289;Wageningen;Volleybal;1,0
+289;Wageningen;Zwemmen;1,0
+293;Westervoort;Atletiek;0,2
+293;Westervoort;Golf;1,3
+293;Westervoort;Gymnastiek;1,7
+293;Westervoort;Hockey;0,6
+293;Westervoort;Paardensport;0,8
+293;Westervoort;Sportvissen;3,3
+293;Westervoort;Tennis;1,6
+293;Westervoort;Voetbal;7,4
+293;Westervoort;Volleybal;0,9
+293;Westervoort;Zwemmen;0,7
+294;Winterswijk;Atletiek;0,8
+294;Winterswijk;Golf;2,9
+294;Winterswijk;Gymnastiek;3,4
+294;Winterswijk;Hockey;0,6
+294;Winterswijk;Paardensport;1,3
+294;Winterswijk;Sportvissen;3,6
+294;Winterswijk;Tennis;3,6
+294;Winterswijk;Voetbal;11,4
+294;Winterswijk;Volleybal;1,1
+294;Winterswijk;Zwemmen;0,7
+296;Wijchen;Atletiek;1,0
+296;Wijchen;Golf;1,7
+296;Wijchen;Gymnastiek;1,1
+296;Wijchen;Hockey;1,8
+296;Wijchen;Paardensport;0,9
+296;Wijchen;Sportvissen;3,7
+296;Wijchen;Tennis;5,2
+296;Wijchen;Voetbal;8,1
+296;Wijchen;Volleybal;0,8
+296;Wijchen;Zwemmen;0,3
+297;Zaltbommel;Atletiek;0,3
+297;Zaltbommel;Golf;1,5
+297;Zaltbommel;Gymnastiek;1,4
+297;Zaltbommel;Hockey;1,1
+297;Zaltbommel;Paardensport;0,8
+297;Zaltbommel;Sportvissen;5,2
+297;Zaltbommel;Tennis;3,2
+297;Zaltbommel;Voetbal;7,6
+297;Zaltbommel;Volleybal;0,5
+297;Zaltbommel;Zwemmen;0,5
+299;Zevenaar;Atletiek;0,5
+299;Zevenaar;Golf;1,3
+299;Zevenaar;Gymnastiek;1,6
+299;Zevenaar;Hockey;0,7
+299;Zevenaar;Paardensport;0,6
+299;Zevenaar;Sportvissen;3,3
+299;Zevenaar;Tennis;1,6
+299;Zevenaar;Voetbal;7,5
+299;Zevenaar;Volleybal;0,8
+299;Zevenaar;Zwemmen;0,4
+301;Zutphen;Atletiek;0,9
+301;Zutphen;Golf;2,0
+301;Zutphen;Gymnastiek;1,1
+301;Zutphen;Hockey;1,1
+301;Zutphen;Paardensport;0,6
+301;Zutphen;Sportvissen;3,3
+301;Zutphen;Tennis;2,9
+301;Zutphen;Voetbal;6,9
+301;Zutphen;Volleybal;0,7
+301;Zutphen;Zwemmen;0,5
+302;Nunspeet;Atletiek;0,4
+302;Nunspeet;Golf;1,8
+302;Nunspeet;Gymnastiek;1,7
+302;Nunspeet;Hockey;0,7
+302;Nunspeet;Paardensport;0,9
+302;Nunspeet;Sportvissen;4,1
+302;Nunspeet;Tennis;1,9
+302;Nunspeet;Voetbal;6,7
+302;Nunspeet;Volleybal;0,9
+302;Nunspeet;Zwemmen;0,7
+303;Dronten;Atletiek;0,9
+303;Dronten;Golf;3,0
+303;Dronten;Gymnastiek;1,5
+303;Dronten;Hockey;1,1
+303;Dronten;Paardensport;0,8
+303;Dronten;Sportvissen;4,7
+303;Dronten;Tennis;2,1
+303;Dronten;Voetbal;5,8
+303;Dronten;Volleybal;0,6
+303;Dronten;Zwemmen;0,8
+307;Amersfoort;Atletiek;1,4
+307;Amersfoort;Golf;3,3
+307;Amersfoort;Gymnastiek;1,3
+307;Amersfoort;Hockey;1,7
+307;Amersfoort;Paardensport;0,8
+307;Amersfoort;Sportvissen;2,1
+307;Amersfoort;Tennis;4,0
+307;Amersfoort;Voetbal;6,6
+307;Amersfoort;Volleybal;0,7
+307;Amersfoort;Zwemmen;0,7
+308;Baarn;Atletiek;1,9
+308;Baarn;Golf;5,6
+308;Baarn;Gymnastiek;1,3
+308;Baarn;Hockey;3,9
+308;Baarn;Paardensport;0,5
+308;Baarn;Sportvissen;2,7
+308;Baarn;Tennis;7,6
+308;Baarn;Voetbal;5,7
+308;Baarn;Volleybal;0,5
+308;Baarn;Zwemmen;0,6
+310;De Bilt;Atletiek;0,9
+310;De Bilt;Golf;7,1
+310;De Bilt;Gymnastiek;1,1
+310;De Bilt;Hockey;5,1
+310;De Bilt;Paardensport;0,9
+310;De Bilt;Sportvissen;2,3
+310;De Bilt;Tennis;6,8
+310;De Bilt;Voetbal;6,1
+310;De Bilt;Volleybal;0,9
+310;De Bilt;Zwemmen;0,6
+312;Bunnik;Atletiek;1,1
+312;Bunnik;Golf;4,2
+312;Bunnik;Gymnastiek;2,1
+312;Bunnik;Hockey;3,6
+312;Bunnik;Paardensport;0,8
+312;Bunnik;Sportvissen;2,9
+312;Bunnik;Tennis;7,5
+312;Bunnik;Voetbal;8,7
+312;Bunnik;Volleybal;1,0
+312;Bunnik;Zwemmen;0,6
+313;Bunschoten;Atletiek;0,1
+313;Bunschoten;Golf;1,5
+313;Bunschoten;Gymnastiek;4,9
+313;Bunschoten;Hockey;0,2
+313;Bunschoten;Paardensport;0,8
+313;Bunschoten;Sportvissen;3,8
+313;Bunschoten;Tennis;4,1
+313;Bunschoten;Voetbal;10,6
+313;Bunschoten;Volleybal;0,7
+313;Bunschoten;Zwemmen;1,1
+317;Eemnes;Atletiek;0,9
+317;Eemnes;Golf;4,3
+317;Eemnes;Gymnastiek;1,5
+317;Eemnes;Hockey;1,0
+317;Eemnes;Paardensport;1,8
+317;Eemnes;Sportvissen;3,3
+317;Eemnes;Tennis;6,2
+317;Eemnes;Voetbal;9,2
+317;Eemnes;Volleybal;1,1
+317;Eemnes;Zwemmen;0,4
+321;Houten;Atletiek;0,7
+321;Houten;Golf;3,5
+321;Houten;Gymnastiek;1,4
+321;Houten;Hockey;2,5
+321;Houten;Paardensport;0,6
+321;Houten;Sportvissen;3,4
+321;Houten;Tennis;4,3
+321;Houten;Voetbal;8,1
+321;Houten;Volleybal;1,0
+321;Houten;Zwemmen;0,5
+327;Leusden;Atletiek;0,6
+327;Leusden;Golf;4,6
+327;Leusden;Gymnastiek;2,1
+327;Leusden;Hockey;2,3
+327;Leusden;Paardensport;1,3
+327;Leusden;Sportvissen;2,4
+327;Leusden;Tennis;5,8
+327;Leusden;Voetbal;6,1
+327;Leusden;Volleybal;0,7
+327;Leusden;Zwemmen;0,8
+331;Lopik;Atletiek;0,3
+331;Lopik;Golf;1,6
+331;Lopik;Gymnastiek;2,0
+331;Lopik;Hockey;0,5
+331;Lopik;Paardensport;1,0
+331;Lopik;Sportvissen;5,4
+331;Lopik;Tennis;3,5
+331;Lopik;Voetbal;8,9
+331;Lopik;Volleybal;1,2
+331;Lopik;Zwemmen;0,3
+335;Montfoort;Atletiek;0,4
+335;Montfoort;Golf;2,9
+335;Montfoort;Gymnastiek;2,6
+335;Montfoort;Hockey;2,2
+335;Montfoort;Paardensport;1,0
+335;Montfoort;Sportvissen;4,0
+335;Montfoort;Tennis;4,9
+335;Montfoort;Voetbal;8,1
+335;Montfoort;Volleybal;1,0
+335;Montfoort;Zwemmen;0,3
+339;Renswoude;Atletiek;0,1
+339;Renswoude;Golf;1,6
+339;Renswoude;Gymnastiek;3,2
+339;Renswoude;Hockey;0,4
+339;Renswoude;Paardensport;1,0
+339;Renswoude;Sportvissen;3,8
+339;Renswoude;Tennis;2,8
+339;Renswoude;Voetbal;9,7
+339;Renswoude;Volleybal;1,4
+339;Renswoude;Zwemmen;0,5
+340;Rhenen;Atletiek;1,0
+340;Rhenen;Golf;1,9
+340;Rhenen;Gymnastiek;2,1
+340;Rhenen;Hockey;0,7
+340;Rhenen;Paardensport;0,5
+340;Rhenen;Sportvissen;4,6
+340;Rhenen;Tennis;3,8
+340;Rhenen;Voetbal;6,2
+340;Rhenen;Volleybal;0,6
+340;Rhenen;Zwemmen;0,5
+342;Soest;Atletiek;1,9
+342;Soest;Golf;5,7
+342;Soest;Gymnastiek;1,2
+342;Soest;Hockey;2,3
+342;Soest;Paardensport;0,8
+342;Soest;Sportvissen;2,4
+342;Soest;Tennis;4,8
+342;Soest;Voetbal;6,0
+342;Soest;Volleybal;0,7
+342;Soest;Zwemmen;1,0
+344;Utrecht;Atletiek;0,7
+344;Utrecht;Golf;2,7
+344;Utrecht;Gymnastiek;0,8
+344;Utrecht;Hockey;3,0
+344;Utrecht;Paardensport;0,4
+344;Utrecht;Sportvissen;1,5
+344;Utrecht;Tennis;3,9
+344;Utrecht;Voetbal;6,2
+344;Utrecht;Volleybal;0,7
+344;Utrecht;Zwemmen;0,7
+345;Veenendaal;Atletiek;0,7
+345;Veenendaal;Golf;1,4
+345;Veenendaal;Gymnastiek;1,6
+345;Veenendaal;Hockey;0,8
+345;Veenendaal;Paardensport;0,3
+345;Veenendaal;Sportvissen;3,9
+345;Veenendaal;Tennis;2,9
+345;Veenendaal;Voetbal;7,5
+345;Veenendaal;Volleybal;0,5
+345;Veenendaal;Zwemmen;0,8
+351;Woudenberg;Atletiek;0,1
+351;Woudenberg;Golf;2,3
+351;Woudenberg;Gymnastiek;2,6
+351;Woudenberg;Hockey;0,4
+351;Woudenberg;Paardensport;1,1
+351;Woudenberg;Sportvissen;2,7
+351;Woudenberg;Tennis;4,6
+351;Woudenberg;Voetbal;6,4
+351;Woudenberg;Volleybal;1,4
+351;Woudenberg;Zwemmen;0,6
+352;Wijk bij Duurstede;Atletiek;0,2
+352;Wijk bij Duurstede;Golf;3,1
+352;Wijk bij Duurstede;Gymnastiek;1,5
+352;Wijk bij Duurstede;Hockey;2,2
+352;Wijk bij Duurstede;Paardensport;0,8
+352;Wijk bij Duurstede;Sportvissen;4,8
+352;Wijk bij Duurstede;Tennis;3,9
+352;Wijk bij Duurstede;Voetbal;6,2
+352;Wijk bij Duurstede;Volleybal;0,8
+352;Wijk bij Duurstede;Zwemmen;0,2
+353;IJsselstein;Atletiek;0,3
+353;IJsselstein;Golf;3,8
+353;IJsselstein;Gymnastiek;0,5
+353;IJsselstein;Hockey;2,6
+353;IJsselstein;Paardensport;0,5
+353;IJsselstein;Sportvissen;3,5
+353;IJsselstein;Tennis;3,7
+353;IJsselstein;Voetbal;8,4
+353;IJsselstein;Volleybal;0,9
+353;IJsselstein;Zwemmen;1,0
+355;Zeist;Atletiek;0,8
+355;Zeist;Golf;6,1
+355;Zeist;Gymnastiek;1,0
+355;Zeist;Hockey;4,6
+355;Zeist;Paardensport;0,6
+355;Zeist;Sportvissen;1,8
+355;Zeist;Tennis;6,3
+355;Zeist;Voetbal;6,2
+355;Zeist;Volleybal;0,4
+355;Zeist;Zwemmen;0,7
+356;Nieuwegein;Atletiek;0,4
+356;Nieuwegein;Golf;2,1
+356;Nieuwegein;Gymnastiek;0,9
+356;Nieuwegein;Hockey;1,0
+356;Nieuwegein;Paardensport;0,4
+356;Nieuwegein;Sportvissen;3,5
+356;Nieuwegein;Tennis;2,2
+356;Nieuwegein;Voetbal;5,5
+356;Nieuwegein;Volleybal;0,4
+356;Nieuwegein;Zwemmen;0,8
+358;Aalsmeer;Atletiek;1,0
+358;Aalsmeer;Golf;3,1
+358;Aalsmeer;Gymnastiek;1,3
+358;Aalsmeer;Hockey;1,8
+358;Aalsmeer;Paardensport;0,8
+358;Aalsmeer;Sportvissen;4,1
+358;Aalsmeer;Tennis;6,5
+358;Aalsmeer;Voetbal;7,4
+358;Aalsmeer;Volleybal;0,3
+358;Aalsmeer;Zwemmen;0,8
+361;Alkmaar;Atletiek;0,6
+361;Alkmaar;Golf;2,2
+361;Alkmaar;Gymnastiek;1,1
+361;Alkmaar;Hockey;0,6
+361;Alkmaar;Paardensport;0,6
+361;Alkmaar;Sportvissen;3,3
+361;Alkmaar;Tennis;3,6
+361;Alkmaar;Voetbal;6,2
+361;Alkmaar;Volleybal;0,2
+361;Alkmaar;Zwemmen;0,3
+362;Amstelveen;Atletiek;0,9
+362;Amstelveen;Golf;4,3
+362;Amstelveen;Gymnastiek;1,1
+362;Amstelveen;Hockey;3,3
+362;Amstelveen;Paardensport;0,5
+362;Amstelveen;Sportvissen;1,5
+362;Amstelveen;Tennis;4,6
+362;Amstelveen;Voetbal;5,5
+362;Amstelveen;Volleybal;0,4
+362;Amstelveen;Zwemmen;0,7
+363;Amsterdam;Atletiek;0,4
+363;Amsterdam;Golf;2,5
+363;Amsterdam;Gymnastiek;0,6
+363;Amsterdam;Hockey;1,7
+363;Amsterdam;Paardensport;0,3
+363;Amsterdam;Sportvissen;1,0
+363;Amsterdam;Tennis;2,8
+363;Amsterdam;Voetbal;4,1
+363;Amsterdam;Volleybal;0,3
+363;Amsterdam;Zwemmen;0,4
+373;Bergen (NH.);Atletiek;0,7
+373;Bergen (NH.);Golf;5,0
+373;Bergen (NH.);Gymnastiek;1,0
+373;Bergen (NH.);Hockey;1,5
+373;Bergen (NH.);Paardensport;1,2
+373;Bergen (NH.);Sportvissen;2,6
+373;Bergen (NH.);Tennis;6,8
+373;Bergen (NH.);Voetbal;6,5
+373;Bergen (NH.);Volleybal;0,1
+373;Bergen (NH.);Zwemmen;0,2
+375;Beverwijk;Atletiek;0,6
+375;Beverwijk;Golf;2,0
+375;Beverwijk;Gymnastiek;1,1
+375;Beverwijk;Hockey;1,3
+375;Beverwijk;Paardensport;0,6
+375;Beverwijk;Sportvissen;3,4
+375;Beverwijk;Tennis;4,1
+375;Beverwijk;Voetbal;5,0
+375;Beverwijk;Volleybal;0,3
+375;Beverwijk;Zwemmen;0,9
+376;Blaricum;Atletiek;1,3
+376;Blaricum;Golf;10,4
+376;Blaricum;Gymnastiek;1,3
+376;Blaricum;Hockey;5,0
+376;Blaricum;Paardensport;1,5
+376;Blaricum;Sportvissen;2,3
+376;Blaricum;Tennis;8,1
+376;Blaricum;Voetbal;5,5
+376;Blaricum;Volleybal;0,3
+376;Blaricum;Zwemmen;0,3
+377;Bloemendaal;Atletiek;0,5
+377;Bloemendaal;Golf;13,5
+377;Bloemendaal;Gymnastiek;1,1
+377;Bloemendaal;Hockey;10,4
+377;Bloemendaal;Paardensport;1,2
+377;Bloemendaal;Sportvissen;1,5
+377;Bloemendaal;Tennis;9,8
+377;Bloemendaal;Voetbal;5,6
+377;Bloemendaal;Volleybal;0,2
+377;Bloemendaal;Zwemmen;0,5
+383;Castricum;Atletiek;1,7
+383;Castricum;Golf;3,5
+383;Castricum;Gymnastiek;1,9
+383;Castricum;Hockey;1,7
+383;Castricum;Paardensport;0,6
+383;Castricum;Sportvissen;3,2
+383;Castricum;Tennis;5,9
+383;Castricum;Voetbal;7,8
+383;Castricum;Volleybal;0,3
+383;Castricum;Zwemmen;0,4
+384;Diemen;Atletiek;0,7
+384;Diemen;Golf;2,1
+384;Diemen;Gymnastiek;1,0
+384;Diemen;Hockey;1,2
+384;Diemen;Paardensport;0,4
+384;Diemen;Sportvissen;1,6
+384;Diemen;Tennis;2,1
+384;Diemen;Voetbal;5,5
+384;Diemen;Volleybal;0,7
+384;Diemen;Zwemmen;0,8
+385;Edam-Volendam;Atletiek;2,2
+385;Edam-Volendam;Golf;1,3
+385;Edam-Volendam;Gymnastiek;3,8
+385;Edam-Volendam;Hockey;0,1
+385;Edam-Volendam;Paardensport;0,5
+385;Edam-Volendam;Sportvissen;3,2
+385;Edam-Volendam;Tennis;4,7
+385;Edam-Volendam;Voetbal;7,5
+385;Edam-Volendam;Volleybal;0,5
+385;Edam-Volendam;Zwemmen;1,7
+388;Enkhuizen;Atletiek;0,4
+388;Enkhuizen;Golf;1,4
+388;Enkhuizen;Gymnastiek;1,9
+388;Enkhuizen;Hockey;0,1
+388;Enkhuizen;Paardensport;0,4
+388;Enkhuizen;Sportvissen;4,5
+388;Enkhuizen;Tennis;3,4
+388;Enkhuizen;Voetbal;6,2
+388;Enkhuizen;Volleybal;1,1
+388;Enkhuizen;Zwemmen;0,5
+392;Haarlem;Atletiek;0,4
+392;Haarlem;Golf;2,9
+392;Haarlem;Gymnastiek;1,4
+392;Haarlem;Hockey;2,3
+392;Haarlem;Paardensport;0,6
+392;Haarlem;Sportvissen;1,8
+392;Haarlem;Tennis;3,8
+392;Haarlem;Voetbal;5,2
+392;Haarlem;Volleybal;0,4
+392;Haarlem;Zwemmen;0,9
+394;Haarlemmermeer;Atletiek;0,4
+394;Haarlemmermeer;Golf;3,2
+394;Haarlemmermeer;Gymnastiek;1,3
+394;Haarlemmermeer;Hockey;1,7
+394;Haarlemmermeer;Paardensport;0,8
+394;Haarlemmermeer;Sportvissen;2,9
+394;Haarlemmermeer;Tennis;4,5
+394;Haarlemmermeer;Voetbal;6,3
+394;Haarlemmermeer;Volleybal;0,4
+394;Haarlemmermeer;Zwemmen;0,8
+396;Heemskerk;Atletiek;0,5
+396;Heemskerk;Golf;2,2
+396;Heemskerk;Gymnastiek;1,3
+396;Heemskerk;Hockey;0,9
+396;Heemskerk;Paardensport;0,7
+396;Heemskerk;Sportvissen;3,5
+396;Heemskerk;Tennis;4,7
+396;Heemskerk;Voetbal;5,8
+396;Heemskerk;Volleybal;0,3
+396;Heemskerk;Zwemmen;1,3
+397;Heemstede;Atletiek;0,3
+397;Heemstede;Golf;9,1
+397;Heemstede;Gymnastiek;1,9
+397;Heemstede;Hockey;6,9
+397;Heemstede;Paardensport;0,8
+397;Heemstede;Sportvissen;1,6
+397;Heemstede;Tennis;9,7
+397;Heemstede;Voetbal;6,7
+397;Heemstede;Volleybal;0,2
+397;Heemstede;Zwemmen;0,6
+399;Heiloo;Atletiek;1,4
+399;Heiloo;Golf;5,3
+399;Heiloo;Gymnastiek;1,6
+399;Heiloo;Hockey;2,7
+399;Heiloo;Paardensport;0,8
+399;Heiloo;Sportvissen;2,9
+399;Heiloo;Tennis;8,8
+399;Heiloo;Voetbal;7,3
+399;Heiloo;Volleybal;0,2
+399;Heiloo;Zwemmen;0,4
+400;Den Helder;Atletiek;1,1
+400;Den Helder;Golf;1,3
+400;Den Helder;Gymnastiek;1,0
+400;Den Helder;Hockey;0,3
+400;Den Helder;Paardensport;0,6
+400;Den Helder;Sportvissen;5,0
+400;Den Helder;Tennis;2,4
+400;Den Helder;Voetbal;4,0
+400;Den Helder;Volleybal;0,3
+400;Den Helder;Zwemmen;0,8
+402;Hilversum;Atletiek;1,5
+402;Hilversum;Golf;4,0
+402;Hilversum;Gymnastiek;0,8
+402;Hilversum;Hockey;2,6
+402;Hilversum;Paardensport;0,7
+402;Hilversum;Sportvissen;2,2
+402;Hilversum;Tennis;4,7
+402;Hilversum;Voetbal;5,4
+402;Hilversum;Volleybal;0,6
+402;Hilversum;Zwemmen;0,9
+405;Hoorn;Atletiek;0,7
+405;Hoorn;Golf;2,0
+405;Hoorn;Gymnastiek;0,9
+405;Hoorn;Hockey;0,7
+405;Hoorn;Paardensport;0,6
+405;Hoorn;Sportvissen;2,9
+405;Hoorn;Tennis;3,7
+405;Hoorn;Voetbal;5,7
+405;Hoorn;Volleybal;0,4
+405;Hoorn;Zwemmen;0,2
+406;Huizen;Atletiek;1,3
+406;Huizen;Golf;4,5
+406;Huizen;Gymnastiek;0,8
+406;Huizen;Hockey;2,1
+406;Huizen;Paardensport;0,9
+406;Huizen;Sportvissen;2,9
+406;Huizen;Tennis;4,5
+406;Huizen;Voetbal;6,6
+406;Huizen;Volleybal;0,5
+406;Huizen;Zwemmen;0,6
+415;Landsmeer;Atletiek;1,8
+415;Landsmeer;Golf;3,7
+415;Landsmeer;Gymnastiek;3,1
+415;Landsmeer;Hockey;1,6
+415;Landsmeer;Paardensport;0,7
+415;Landsmeer;Sportvissen;4,7
+415;Landsmeer;Tennis;5,3
+415;Landsmeer;Voetbal;7,2
+415;Landsmeer;Volleybal;0,4
+415;Landsmeer;Zwemmen;0,3
+417;Laren;Atletiek;0,5
+417;Laren;Golf;15,5
+417;Laren;Gymnastiek;0,9
+417;Laren;Hockey;6,8
+417;Laren;Paardensport;1,3
+417;Laren;Sportvissen;1,1
+417;Laren;Tennis;10,8
+417;Laren;Voetbal;5,5
+417;Laren;Volleybal;0,3
+417;Laren;Zwemmen;0,5
+420;Medemblik;Atletiek;0,4
+420;Medemblik;Golf;1,5
+420;Medemblik;Gymnastiek;0,8
+420;Medemblik;Hockey;0,1
+420;Medemblik;Paardensport;0,7
+420;Medemblik;Sportvissen;4,1
+420;Medemblik;Tennis;5,0
+420;Medemblik;Voetbal;8,8
+420;Medemblik;Volleybal;0,4
+420;Medemblik;Zwemmen;0,3
+431;Oostzaan;Atletiek;0,7
+431;Oostzaan;Golf;2,3
+431;Oostzaan;Gymnastiek;3,8
+431;Oostzaan;Hockey;0,9
+431;Oostzaan;Paardensport;0,7
+431;Oostzaan;Sportvissen;4,5
+431;Oostzaan;Tennis;6,4
+431;Oostzaan;Voetbal;7,6
+431;Oostzaan;Volleybal;1,3
+431;Oostzaan;Zwemmen;0,5
+432;Opmeer;Atletiek;0,5
+432;Opmeer;Golf;1,5
+432;Opmeer;Gymnastiek;1,7
+432;Opmeer;Hockey;0,8
+432;Opmeer;Paardensport;1,0
+432;Opmeer;Sportvissen;5,2
+432;Opmeer;Tennis;4,0
+432;Opmeer;Voetbal;11,1
+432;Opmeer;Volleybal;0,4
+432;Opmeer;Zwemmen;0,0
+437;Ouder-Amstel;Atletiek;0,7
+437;Ouder-Amstel;Golf;4,7
+437;Ouder-Amstel;Gymnastiek;2,2
+437;Ouder-Amstel;Hockey;3,1
+437;Ouder-Amstel;Paardensport;0,7
+437;Ouder-Amstel;Sportvissen;2,0
+437;Ouder-Amstel;Tennis;8,1
+437;Ouder-Amstel;Voetbal;7,6
+437;Ouder-Amstel;Volleybal;1,3
+437;Ouder-Amstel;Zwemmen;0,9
+439;Purmerend;Atletiek;0,4
+439;Purmerend;Golf;2,2
+439;Purmerend;Gymnastiek;1,1
+439;Purmerend;Hockey;0,5
+439;Purmerend;Paardensport;0,6
+439;Purmerend;Sportvissen;3,6
+439;Purmerend;Tennis;2,5
+439;Purmerend;Voetbal;6,1
+439;Purmerend;Volleybal;0,4
+439;Purmerend;Zwemmen;0,4
+441;Schagen;Atletiek;1,2
+441;Schagen;Golf;3,4
+441;Schagen;Gymnastiek;0,9
+441;Schagen;Hockey;0,4
+441;Schagen;Paardensport;1,0
+441;Schagen;Sportvissen;4,4
+441;Schagen;Tennis;5,7
+441;Schagen;Voetbal;7,9
+441;Schagen;Volleybal;0,8
+441;Schagen;Zwemmen;0,2
+448;Texel;Atletiek;1,4
+448;Texel;Golf;2,3
+448;Texel;Gymnastiek;2,8
+448;Texel;Hockey;0,0
+448;Texel;Paardensport;1,1
+448;Texel;Sportvissen;1,0
+448;Texel;Tennis;4,2
+448;Texel;Voetbal;6,1
+448;Texel;Volleybal;0,7
+448;Texel;Zwemmen;0,1
+450;Uitgeest;Atletiek;0,6
+450;Uitgeest;Golf;3,2
+450;Uitgeest;Gymnastiek;2,2
+450;Uitgeest;Hockey;2,2
+450;Uitgeest;Paardensport;0,6
+450;Uitgeest;Sportvissen;3,9
+450;Uitgeest;Tennis;7,5
+450;Uitgeest;Voetbal;8,2
+450;Uitgeest;Volleybal;0,5
+450;Uitgeest;Zwemmen;0,6
+451;Uithoorn;Atletiek;1,5
+451;Uithoorn;Golf;3,1
+451;Uithoorn;Gymnastiek;0,6
+451;Uithoorn;Hockey;1,5
+451;Uithoorn;Paardensport;0,4
+451;Uithoorn;Sportvissen;3,0
+451;Uithoorn;Tennis;3,2
+451;Uithoorn;Voetbal;6,1
+451;Uithoorn;Volleybal;0,4
+451;Uithoorn;Zwemmen;0,6
+453;Velsen;Atletiek;0,6
+453;Velsen;Golf;2,7
+453;Velsen;Gymnastiek;0,8
+453;Velsen;Hockey;1,6
+453;Velsen;Paardensport;0,9
+453;Velsen;Sportvissen;3,3
+453;Velsen;Tennis;4,2
+453;Velsen;Voetbal;6,1
+453;Velsen;Volleybal;0,4
+453;Velsen;Zwemmen;0,8
+473;Zandvoort;Atletiek;0,2
+473;Zandvoort;Golf;6,6
+473;Zandvoort;Gymnastiek;1,0
+473;Zandvoort;Hockey;2,5
+473;Zandvoort;Paardensport;0,8
+473;Zandvoort;Sportvissen;2,1
+473;Zandvoort;Tennis;3,4
+473;Zandvoort;Voetbal;4,5
+473;Zandvoort;Volleybal;0,3
+473;Zandvoort;Zwemmen;0,1
+479;Zaanstad;Atletiek;0,8
+479;Zaanstad;Golf;1,4
+479;Zaanstad;Gymnastiek;1,4
+479;Zaanstad;Hockey;0,4
+479;Zaanstad;Paardensport;0,5
+479;Zaanstad;Sportvissen;3,5
+479;Zaanstad;Tennis;2,9
+479;Zaanstad;Voetbal;6,4
+479;Zaanstad;Volleybal;0,3
+479;Zaanstad;Zwemmen;0,8
+482;Alblasserdam;Atletiek;0,8
+482;Alblasserdam;Golf;1,1
+482;Alblasserdam;Gymnastiek;2,6
+482;Alblasserdam;Hockey;0,5
+482;Alblasserdam;Paardensport;0,3
+482;Alblasserdam;Sportvissen;5,2
+482;Alblasserdam;Tennis;1,8
+482;Alblasserdam;Voetbal;6,3
+482;Alblasserdam;Volleybal;0,7
+482;Alblasserdam;Zwemmen;0,8
+484;Alphen aan den Rijn;Atletiek;1,1
+484;Alphen aan den Rijn;Golf;2,6
+484;Alphen aan den Rijn;Gymnastiek;1,9
+484;Alphen aan den Rijn;Hockey;1,1
+484;Alphen aan den Rijn;Paardensport;0,6
+484;Alphen aan den Rijn;Sportvissen;3,7
+484;Alphen aan den Rijn;Tennis;3,2
+484;Alphen aan den Rijn;Voetbal;6,6
+484;Alphen aan den Rijn;Volleybal;0,5
+484;Alphen aan den Rijn;Zwemmen;0,7
+489;Barendrecht;Atletiek;1,2
+489;Barendrecht;Golf;3,4
+489;Barendrecht;Gymnastiek;1,9
+489;Barendrecht;Hockey;1,8
+489;Barendrecht;Paardensport;0,7
+489;Barendrecht;Sportvissen;2,1
+489;Barendrecht;Tennis;2,9
+489;Barendrecht;Voetbal;6,7
+489;Barendrecht;Volleybal;0,5
+489;Barendrecht;Zwemmen;0,8
+498;Drechterland;Atletiek;0,7
+498;Drechterland;Golf;1,9
+498;Drechterland;Gymnastiek;0,6
+498;Drechterland;Hockey;0,1
+498;Drechterland;Paardensport;0,9
+498;Drechterland;Sportvissen;4,3
+498;Drechterland;Tennis;5,0
+498;Drechterland;Voetbal;9,5
+498;Drechterland;Volleybal;0,5
+498;Drechterland;Zwemmen;2,4
+502;Capelle aan den IJssel;Atletiek;0,4
+502;Capelle aan den IJssel;Golf;2,5
+502;Capelle aan den IJssel;Gymnastiek;0,8
+502;Capelle aan den IJssel;Hockey;0,9
+502;Capelle aan den IJssel;Paardensport;0,7
+502;Capelle aan den IJssel;Sportvissen;2,1
+502;Capelle aan den IJssel;Tennis;1,7
+502;Capelle aan den IJssel;Voetbal;5,4
+502;Capelle aan den IJssel;Volleybal;0,3
+502;Capelle aan den IJssel;Zwemmen;0,7
+503;Delft;Atletiek;0,6
+503;Delft;Golf;2,7
+503;Delft;Gymnastiek;0,6
+503;Delft;Hockey;2,4
+503;Delft;Paardensport;0,4
+503;Delft;Sportvissen;2,2
+503;Delft;Tennis;2,5
+503;Delft;Voetbal;4,2
+503;Delft;Volleybal;0,7
+503;Delft;Zwemmen;0,8
+505;Dordrecht;Atletiek;0,7
+505;Dordrecht;Golf;1,6
+505;Dordrecht;Gymnastiek;2,2
+505;Dordrecht;Hockey;0,7
+505;Dordrecht;Paardensport;0,5
+505;Dordrecht;Sportvissen;3,3
+505;Dordrecht;Tennis;2,9
+505;Dordrecht;Voetbal;5,1
+505;Dordrecht;Volleybal;0,3
+505;Dordrecht;Zwemmen;0,7
+512;Gorinchem;Atletiek;0,7
+512;Gorinchem;Golf;2,5
+512;Gorinchem;Gymnastiek;1,6
+512;Gorinchem;Hockey;1,2
+512;Gorinchem;Paardensport;0,5
+512;Gorinchem;Sportvissen;3,0
+512;Gorinchem;Tennis;2,4
+512;Gorinchem;Voetbal;7,3
+512;Gorinchem;Volleybal;0,5
+512;Gorinchem;Zwemmen;0,5
+513;Gouda;Atletiek;0,6
+513;Gouda;Golf;1,4
+513;Gouda;Gymnastiek;0,9
+513;Gouda;Hockey;0,8
+513;Gouda;Paardensport;0,5
+513;Gouda;Sportvissen;2,8
+513;Gouda;Tennis;2,6
+513;Gouda;Voetbal;5,8
+513;Gouda;Volleybal;0,6
+513;Gouda;Zwemmen;0,5
+518;Den Haag;Atletiek;0,5
+518;Den Haag;Golf;2,5
+518;Den Haag;Gymnastiek;0,5
+518;Den Haag;Hockey;1,5
+518;Den Haag;Paardensport;0,3
+518;Den Haag;Sportvissen;1,8
+518;Den Haag;Tennis;2,1
+518;Den Haag;Voetbal;4,4
+518;Den Haag;Volleybal;0,3
+518;Den Haag;Zwemmen;1,0
+523;Hardinxveld-Giessendam;Atletiek;0,2
+523;Hardinxveld-Giessendam;Golf;1,2
+523;Hardinxveld-Giessendam;Gymnastiek;4,8
+523;Hardinxveld-Giessendam;Hockey;0,1
+523;Hardinxveld-Giessendam;Paardensport;0,4
+523;Hardinxveld-Giessendam;Sportvissen;5,4
+523;Hardinxveld-Giessendam;Tennis;1,3
+523;Hardinxveld-Giessendam;Voetbal;5,4
+523;Hardinxveld-Giessendam;Volleybal;1,1
+523;Hardinxveld-Giessendam;Zwemmen;0,4
+531;Hendrik-Ido-Ambacht;Atletiek;0,4
+531;Hendrik-Ido-Ambacht;Golf;2,5
+531;Hendrik-Ido-Ambacht;Gymnastiek;2,1
+531;Hendrik-Ido-Ambacht;Hockey;1,3
+531;Hendrik-Ido-Ambacht;Paardensport;0,9
+531;Hendrik-Ido-Ambacht;Sportvissen;3,6
+531;Hendrik-Ido-Ambacht;Tennis;3,0
+531;Hendrik-Ido-Ambacht;Voetbal;7,4
+531;Hendrik-Ido-Ambacht;Volleybal;0,7
+531;Hendrik-Ido-Ambacht;Zwemmen;0,5
+532;Stede Broec;Atletiek;1,0
+532;Stede Broec;Golf;1,2
+532;Stede Broec;Gymnastiek;1,8
+532;Stede Broec;Hockey;0,0
+532;Stede Broec;Paardensport;0,4
+532;Stede Broec;Sportvissen;5,2
+532;Stede Broec;Tennis;2,7
+532;Stede Broec;Voetbal;6,6
+532;Stede Broec;Volleybal;1,4
+532;Stede Broec;Zwemmen;2,5
+534;Hillegom;Atletiek;0,6
+534;Hillegom;Golf;3,0
+534;Hillegom;Gymnastiek;1,2
+534;Hillegom;Hockey;0,8
+534;Hillegom;Paardensport;1,2
+534;Hillegom;Sportvissen;4,0
+534;Hillegom;Tennis;4,5
+534;Hillegom;Voetbal;6,0
+534;Hillegom;Volleybal;0,2
+534;Hillegom;Zwemmen;0,2
+537;Katwijk;Atletiek;0,8
+537;Katwijk;Golf;1,8
+537;Katwijk;Gymnastiek;1,8
+537;Katwijk;Hockey;0,9
+537;Katwijk;Paardensport;0,5
+537;Katwijk;Sportvissen;5,0
+537;Katwijk;Tennis;4,3
+537;Katwijk;Voetbal;8,5
+537;Katwijk;Volleybal;0,3
+537;Katwijk;Zwemmen;1,4
+542;Krimpen aan den IJssel;Atletiek;0,2
+542;Krimpen aan den IJssel;Golf;2,2
+542;Krimpen aan den IJssel;Gymnastiek;2,5
+542;Krimpen aan den IJssel;Hockey;1,1
+542;Krimpen aan den IJssel;Paardensport;0,4
+542;Krimpen aan den IJssel;Sportvissen;2,9
+542;Krimpen aan den IJssel;Tennis;2,7
+542;Krimpen aan den IJssel;Voetbal;5,5
+542;Krimpen aan den IJssel;Volleybal;0,3
+542;Krimpen aan den IJssel;Zwemmen;0,6
+546;Leiden;Atletiek;0,9
+546;Leiden;Golf;2,3
+546;Leiden;Gymnastiek;1,1
+546;Leiden;Hockey;2,3
+546;Leiden;Paardensport;0,3
+546;Leiden;Sportvissen;2,2
+546;Leiden;Tennis;3,7
+546;Leiden;Voetbal;4,7
+546;Leiden;Volleybal;0,5
+546;Leiden;Zwemmen;0,9
+547;Leiderdorp;Atletiek;0,8
+547;Leiderdorp;Golf;3,1
+547;Leiderdorp;Gymnastiek;1,4
+547;Leiderdorp;Hockey;2,4
+547;Leiderdorp;Paardensport;0,7
+547;Leiderdorp;Sportvissen;3,4
+547;Leiderdorp;Tennis;4,0
+547;Leiderdorp;Voetbal;5,6
+547;Leiderdorp;Volleybal;0,6
+547;Leiderdorp;Zwemmen;0,9
+553;Lisse;Atletiek;1,6
+553;Lisse;Golf;4,4
+553;Lisse;Gymnastiek;1,3
+553;Lisse;Hockey;1,9
+553;Lisse;Paardensport;0,9
+553;Lisse;Sportvissen;3,8
+553;Lisse;Tennis;5,1
+553;Lisse;Voetbal;6,2
+553;Lisse;Volleybal;0,4
+553;Lisse;Zwemmen;0,3
+556;Maassluis;Atletiek;0,7
+556;Maassluis;Golf;1,8
+556;Maassluis;Gymnastiek;1,3
+556;Maassluis;Hockey;1,0
+556;Maassluis;Paardensport;0,7
+556;Maassluis;Sportvissen;2,8
+556;Maassluis;Tennis;2,0
+556;Maassluis;Voetbal;6,2
+556;Maassluis;Volleybal;0,2
+556;Maassluis;Zwemmen;0,4
+569;Nieuwkoop;Atletiek;0,3
+569;Nieuwkoop;Golf;2,5
+569;Nieuwkoop;Gymnastiek;0,6
+569;Nieuwkoop;Hockey;1,0
+569;Nieuwkoop;Paardensport;0,8
+569;Nieuwkoop;Sportvissen;4,0
+569;Nieuwkoop;Tennis;6,3
+569;Nieuwkoop;Voetbal;9,7
+569;Nieuwkoop;Volleybal;1,0
+569;Nieuwkoop;Zwemmen;0,8
+575;Noordwijk;Atletiek;0,8
+575;Noordwijk;Golf;5,5
+575;Noordwijk;Gymnastiek;1,3
+575;Noordwijk;Hockey;1,6
+575;Noordwijk;Paardensport;0,7
+575;Noordwijk;Sportvissen;3,7
+575;Noordwijk;Tennis;6,3
+575;Noordwijk;Voetbal;7,5
+575;Noordwijk;Volleybal;0,3
+575;Noordwijk;Zwemmen;0,9
+579;Oegstgeest;Atletiek;1,6
+579;Oegstgeest;Golf;7,3
+579;Oegstgeest;Gymnastiek;1,7
+579;Oegstgeest;Hockey;5,4
+579;Oegstgeest;Paardensport;0,5
+579;Oegstgeest;Sportvissen;2,4
+579;Oegstgeest;Tennis;7,5
+579;Oegstgeest;Voetbal;6,3
+579;Oegstgeest;Volleybal;0,8
+579;Oegstgeest;Zwemmen;1,5
+589;Oudewater;Atletiek;0,2
+589;Oudewater;Golf;2,5
+589;Oudewater;Gymnastiek;1,2
+589;Oudewater;Hockey;0,4
+589;Oudewater;Paardensport;1,2
+589;Oudewater;Sportvissen;3,4
+589;Oudewater;Tennis;8,7
+589;Oudewater;Voetbal;9,3
+589;Oudewater;Volleybal;2,0
+589;Oudewater;Zwemmen;1,3
+590;Papendrecht;Atletiek;1,2
+590;Papendrecht;Golf;1,8
+590;Papendrecht;Gymnastiek;1,4
+590;Papendrecht;Hockey;0,5
+590;Papendrecht;Paardensport;0,6
+590;Papendrecht;Sportvissen;3,2
+590;Papendrecht;Tennis;2,1
+590;Papendrecht;Voetbal;6,2
+590;Papendrecht;Volleybal;0,8
+590;Papendrecht;Zwemmen;0,7
+597;Ridderkerk;Atletiek;0,4
+597;Ridderkerk;Golf;1,5
+597;Ridderkerk;Gymnastiek;1,5
+597;Ridderkerk;Hockey;0,3
+597;Ridderkerk;Paardensport;0,5
+597;Ridderkerk;Sportvissen;3,2
+597;Ridderkerk;Tennis;1,6
+597;Ridderkerk;Voetbal;5,2
+597;Ridderkerk;Volleybal;0,2
+597;Ridderkerk;Zwemmen;0,6
+599;Rotterdam;Atletiek;0,5
+599;Rotterdam;Golf;2,0
+599;Rotterdam;Gymnastiek;0,7
+599;Rotterdam;Hockey;1,3
+599;Rotterdam;Paardensport;0,3
+599;Rotterdam;Sportvissen;1,4
+599;Rotterdam;Tennis;1,8
+599;Rotterdam;Voetbal;4,6
+599;Rotterdam;Volleybal;0,3
+599;Rotterdam;Zwemmen;0,5
+603;Rijswijk;Atletiek;0,4
+603;Rijswijk;Golf;2,7
+603;Rijswijk;Gymnastiek;0,7
+603;Rijswijk;Hockey;1,7
+603;Rijswijk;Paardensport;0,3
+603;Rijswijk;Sportvissen;2,2
+603;Rijswijk;Tennis;1,9
+603;Rijswijk;Voetbal;4,3
+603;Rijswijk;Volleybal;0,4
+603;Rijswijk;Zwemmen;0,8
+606;Schiedam;Atletiek;0,3
+606;Schiedam;Golf;1,8
+606;Schiedam;Gymnastiek;0,7
+606;Schiedam;Hockey;0,9
+606;Schiedam;Paardensport;0,3
+606;Schiedam;Sportvissen;1,9
+606;Schiedam;Tennis;1,1
+606;Schiedam;Voetbal;5,0
+606;Schiedam;Volleybal;0,2
+606;Schiedam;Zwemmen;0,2
+610;Sliedrecht;Atletiek;0,4
+610;Sliedrecht;Golf;0,9
+610;Sliedrecht;Gymnastiek;2,4
+610;Sliedrecht;Hockey;0,1
+610;Sliedrecht;Paardensport;0,6
+610;Sliedrecht;Sportvissen;4,2
+610;Sliedrecht;Tennis;1,3
+610;Sliedrecht;Voetbal;5,5
+610;Sliedrecht;Volleybal;1,5
+610;Sliedrecht;Zwemmen;0,8
+613;Albrandswaard;Atletiek;0,5
+613;Albrandswaard;Golf;3,7
+613;Albrandswaard;Gymnastiek;1,4
+613;Albrandswaard;Hockey;1,7
+613;Albrandswaard;Paardensport;0,7
+613;Albrandswaard;Sportvissen;2,5
+613;Albrandswaard;Tennis;4,5
+613;Albrandswaard;Voetbal;7,6
+613;Albrandswaard;Volleybal;0,3
+613;Albrandswaard;Zwemmen;0,7
+622;Vlaardingen;Atletiek;0,7
+622;Vlaardingen;Golf;2,1
+622;Vlaardingen;Gymnastiek;0,7
+622;Vlaardingen;Hockey;1,3
+622;Vlaardingen;Paardensport;0,6
+622;Vlaardingen;Sportvissen;3,2
+622;Vlaardingen;Tennis;1,4
+622;Vlaardingen;Voetbal;5,6
+622;Vlaardingen;Volleybal;0,2
+622;Vlaardingen;Zwemmen;1,0
+626;Voorschoten;Atletiek;1,4
+626;Voorschoten;Golf;5,1
+626;Voorschoten;Gymnastiek;2,7
+626;Voorschoten;Hockey;4,4
+626;Voorschoten;Paardensport;0,6
+626;Voorschoten;Sportvissen;3,3
+626;Voorschoten;Tennis;5,6
+626;Voorschoten;Voetbal;6,4
+626;Voorschoten;Volleybal;0,6
+626;Voorschoten;Zwemmen;0,6
+627;Waddinxveen;Atletiek;1,0
+627;Waddinxveen;Golf;1,8
+627;Waddinxveen;Gymnastiek;1,9
+627;Waddinxveen;Hockey;0,8
+627;Waddinxveen;Paardensport;0,7
+627;Waddinxveen;Sportvissen;3,7
+627;Waddinxveen;Tennis;3,7
+627;Waddinxveen;Voetbal;5,4
+627;Waddinxveen;Volleybal;0,4
+627;Waddinxveen;Zwemmen;0,8
+629;Wassenaar;Atletiek;0,5
+629;Wassenaar;Golf;11,4
+629;Wassenaar;Gymnastiek;0,9
+629;Wassenaar;Hockey;5,0
+629;Wassenaar;Paardensport;0,5
+629;Wassenaar;Sportvissen;2,6
+629;Wassenaar;Tennis;7,5
+629;Wassenaar;Voetbal;4,8
+629;Wassenaar;Volleybal;0,3
+629;Wassenaar;Zwemmen;1,3
+632;Woerden;Atletiek;1,4
+632;Woerden;Golf;2,9
+632;Woerden;Gymnastiek;1,8
+632;Woerden;Hockey;1,5
+632;Woerden;Paardensport;0,9
+632;Woerden;Sportvissen;3,3
+632;Woerden;Tennis;4,6
+632;Woerden;Voetbal;7,9
+632;Woerden;Volleybal;1,2
+632;Woerden;Zwemmen;0,9
+637;Zoetermeer;Atletiek;0,8
+637;Zoetermeer;Golf;2,1
+637;Zoetermeer;Gymnastiek;0,9
+637;Zoetermeer;Hockey;0,9
+637;Zoetermeer;Paardensport;0,5
+637;Zoetermeer;Sportvissen;3,1
+637;Zoetermeer;Tennis;2,4
+637;Zoetermeer;Voetbal;4,7
+637;Zoetermeer;Volleybal;0,3
+637;Zoetermeer;Zwemmen;1,0
+638;Zoeterwoude;Atletiek;0,5
+638;Zoeterwoude;Golf;2,7
+638;Zoeterwoude;Gymnastiek;5,6
+638;Zoeterwoude;Hockey;1,0
+638;Zoeterwoude;Paardensport;0,8
+638;Zoeterwoude;Sportvissen;4,3
+638;Zoeterwoude;Tennis;5,7
+638;Zoeterwoude;Voetbal;8,4
+638;Zoeterwoude;Volleybal;0,4
+638;Zoeterwoude;Zwemmen;0,9
+642;Zwijndrecht;Atletiek;0,4
+642;Zwijndrecht;Golf;1,5
+642;Zwijndrecht;Gymnastiek;1,8
+642;Zwijndrecht;Hockey;0,7
+642;Zwijndrecht;Paardensport;0,7
+642;Zwijndrecht;Sportvissen;3,7
+642;Zwijndrecht;Tennis;1,9
+642;Zwijndrecht;Voetbal;6,1
+642;Zwijndrecht;Volleybal;0,3
+642;Zwijndrecht;Zwemmen;0,6
+654;Borsele;Atletiek;0,5
+654;Borsele;Golf;0,8
+654;Borsele;Gymnastiek;0,9
+654;Borsele;Hockey;0,1
+654;Borsele;Paardensport;1,2
+654;Borsele;Sportvissen;2,1
+654;Borsele;Tennis;2,8
+654;Borsele;Voetbal;8,6
+654;Borsele;Volleybal;0,1
+654;Borsele;Zwemmen;0,3
+664;Goes;Atletiek;0,7
+664;Goes;Golf;2,2
+664;Goes;Gymnastiek;1,2
+664;Goes;Hockey;0,6
+664;Goes;Paardensport;0,5
+664;Goes;Sportvissen;2,0
+664;Goes;Tennis;3,0
+664;Goes;Voetbal;6,2
+664;Goes;Volleybal;0,2
+664;Goes;Zwemmen;0,2
+668;West Maas en Waal;Atletiek;0,2
+668;West Maas en Waal;Golf;1,8
+668;West Maas en Waal;Gymnastiek;1,9
+668;West Maas en Waal;Hockey;0,3
+668;West Maas en Waal;Paardensport;0,9
+668;West Maas en Waal;Sportvissen;3,8
+668;West Maas en Waal;Tennis;4,2
+668;West Maas en Waal;Voetbal;8,7
+668;West Maas en Waal;Volleybal;1,0
+668;West Maas en Waal;Zwemmen;0,3
+677;Hulst;Atletiek;0,7
+677;Hulst;Golf;1,5
+677;Hulst;Gymnastiek;0,4
+677;Hulst;Hockey;1,0
+677;Hulst;Paardensport;0,6
+677;Hulst;Sportvissen;1,2
+677;Hulst;Tennis;4,0
+677;Hulst;Voetbal;7,2
+677;Hulst;Volleybal;0,0
+677;Hulst;Zwemmen;1,0
+678;Kapelle;Atletiek;0,4
+678;Kapelle;Golf;1,6
+678;Kapelle;Gymnastiek;2,8
+678;Kapelle;Hockey;0,2
+678;Kapelle;Paardensport;0,5
+678;Kapelle;Sportvissen;2,3
+678;Kapelle;Tennis;4,0
+678;Kapelle;Voetbal;6,9
+678;Kapelle;Volleybal;0,6
+678;Kapelle;Zwemmen;1,1
+687;Middelburg;Atletiek;0,6
+687;Middelburg;Golf;1,2
+687;Middelburg;Gymnastiek;1,6
+687;Middelburg;Hockey;0,5
+687;Middelburg;Paardensport;0,5
+687;Middelburg;Sportvissen;1,2
+687;Middelburg;Tennis;2,7
+687;Middelburg;Voetbal;6,0
+687;Middelburg;Volleybal;0,1
+687;Middelburg;Zwemmen;0,3
+703;Reimerswaal;Atletiek;0,2
+703;Reimerswaal;Golf;0,4
+703;Reimerswaal;Gymnastiek;0,5
+703;Reimerswaal;Hockey;0,0
+703;Reimerswaal;Paardensport;0,5
+703;Reimerswaal;Sportvissen;2,8
+703;Reimerswaal;Tennis;2,7
+703;Reimerswaal;Voetbal;6,3
+703;Reimerswaal;Volleybal;0,0
+703;Reimerswaal;Zwemmen;0,3
+715;Terneuzen;Atletiek;0,7
+715;Terneuzen;Golf;1,1
+715;Terneuzen;Gymnastiek;1,2
+715;Terneuzen;Hockey;0,5
+715;Terneuzen;Paardensport;0,5
+715;Terneuzen;Sportvissen;2,3
+715;Terneuzen;Tennis;3,3
+715;Terneuzen;Voetbal;5,9
+715;Terneuzen;Volleybal;0,4
+715;Terneuzen;Zwemmen;0,8
+716;Tholen;Atletiek;0,2
+716;Tholen;Golf;0,9
+716;Tholen;Gymnastiek;2,3
+716;Tholen;Hockey;0,1
+716;Tholen;Paardensport;0,6
+716;Tholen;Sportvissen;3,6
+716;Tholen;Tennis;2,2
+716;Tholen;Voetbal;6,8
+716;Tholen;Volleybal;0,3
+716;Tholen;Zwemmen;0,1
+717;Veere;Atletiek;0,5
+717;Veere;Golf;1,8
+717;Veere;Gymnastiek;3,5
+717;Veere;Hockey;0,2
+717;Veere;Paardensport;1,3
+717;Veere;Sportvissen;1,7
+717;Veere;Tennis;4,6
+717;Veere;Voetbal;8,2
+717;Veere;Volleybal;0,0
+717;Veere;Zwemmen;0,2
+718;Vlissingen;Atletiek;0,6
+718;Vlissingen;Golf;0,9
+718;Vlissingen;Gymnastiek;2,8
+718;Vlissingen;Hockey;0,4
+718;Vlissingen;Paardensport;0,5
+718;Vlissingen;Sportvissen;1,3
+718;Vlissingen;Tennis;2,1
+718;Vlissingen;Voetbal;4,9
+718;Vlissingen;Volleybal;0,2
+718;Vlissingen;Zwemmen;0,5
+736;De Ronde Venen;Atletiek;0,6
+736;De Ronde Venen;Golf;4,6
+736;De Ronde Venen;Gymnastiek;1,3
+736;De Ronde Venen;Hockey;2,5
+736;De Ronde Venen;Paardensport;0,8
+736;De Ronde Venen;Sportvissen;3,4
+736;De Ronde Venen;Tennis;6,5
+736;De Ronde Venen;Voetbal;6,6
+736;De Ronde Venen;Volleybal;0,4
+736;De Ronde Venen;Zwemmen;1,4
+737;Tytsjerksteradiel;Atletiek;0,5
+737;Tytsjerksteradiel;Golf;0,7
+737;Tytsjerksteradiel;Gymnastiek;2,1
+737;Tytsjerksteradiel;Hockey;0,1
+737;Tytsjerksteradiel;Paardensport;1,3
+737;Tytsjerksteradiel;Sportvissen;7,4
+737;Tytsjerksteradiel;Tennis;2,6
+737;Tytsjerksteradiel;Voetbal;9,6
+737;Tytsjerksteradiel;Volleybal;0,5
+737;Tytsjerksteradiel;Zwemmen;0,5
+743;Asten;Atletiek;0,5
+743;Asten;Golf;3,6
+743;Asten;Gymnastiek;1,2
+743;Asten;Hockey;2,0
+743;Asten;Paardensport;0,7
+743;Asten;Sportvissen;2,9
+743;Asten;Tennis;4,9
+743;Asten;Voetbal;9,3
+743;Asten;Volleybal;0,1
+743;Asten;Zwemmen;1,4
+744;Baarle-Nassau;Atletiek;2,3
+744;Baarle-Nassau;Golf;2,8
+744;Baarle-Nassau;Gymnastiek;0,1
+744;Baarle-Nassau;Hockey;1,5
+744;Baarle-Nassau;Paardensport;1,2
+744;Baarle-Nassau;Sportvissen;1,8
+744;Baarle-Nassau;Tennis;2,3
+744;Baarle-Nassau;Voetbal;7,0
+744;Baarle-Nassau;Volleybal;0,1
+744;Baarle-Nassau;Zwemmen;0,0
+748;Bergen op Zoom;Atletiek;1,2
+748;Bergen op Zoom;Golf;2,6
+748;Bergen op Zoom;Gymnastiek;1,1
+748;Bergen op Zoom;Hockey;0,8
+748;Bergen op Zoom;Paardensport;0,5
+748;Bergen op Zoom;Sportvissen;2,0
+748;Bergen op Zoom;Tennis;4,2
+748;Bergen op Zoom;Voetbal;6,1
+748;Bergen op Zoom;Volleybal;0,1
+748;Bergen op Zoom;Zwemmen;0,4
+753;Best;Atletiek;1,8
+753;Best;Golf;3,2
+753;Best;Gymnastiek;2,1
+753;Best;Hockey;2,4
+753;Best;Paardensport;0,4
+753;Best;Sportvissen;2,8
+753;Best;Tennis;4,8
+753;Best;Voetbal;7,7
+753;Best;Volleybal;0,4
+753;Best;Zwemmen;1,0
+755;Boekel;Atletiek;0,3
+755;Boekel;Golf;1,5
+755;Boekel;Gymnastiek;1,8
+755;Boekel;Hockey;1,9
+755;Boekel;Paardensport;0,9
+755;Boekel;Sportvissen;3,9
+755;Boekel;Tennis;8,1
+755;Boekel;Voetbal;10,9
+755;Boekel;Volleybal;0,5
+755;Boekel;Zwemmen;0,4
+757;Boxtel;Atletiek;0,8
+757;Boxtel;Golf;3,0
+757;Boxtel;Gymnastiek;0,8
+757;Boxtel;Hockey;3,5
+757;Boxtel;Paardensport;0,4
+757;Boxtel;Sportvissen;3,7
+757;Boxtel;Tennis;5,4
+757;Boxtel;Voetbal;8,2
+757;Boxtel;Volleybal;0,2
+757;Boxtel;Zwemmen;0,4
+758;Breda;Atletiek;1,1
+758;Breda;Golf;5,2
+758;Breda;Gymnastiek;1,0
+758;Breda;Hockey;3,3
+758;Breda;Paardensport;0,4
+758;Breda;Sportvissen;1,8
+758;Breda;Tennis;5,3
+758;Breda;Voetbal;6,7
+758;Breda;Volleybal;0,3
+758;Breda;Zwemmen;0,4
+762;Deurne;Atletiek;0,7
+762;Deurne;Golf;2,2
+762;Deurne;Gymnastiek;1,2
+762;Deurne;Hockey;1,1
+762;Deurne;Paardensport;0,6
+762;Deurne;Sportvissen;2,3
+762;Deurne;Tennis;3,7
+762;Deurne;Voetbal;10,2
+762;Deurne;Volleybal;0,3
+762;Deurne;Zwemmen;1,0
+765;Pekela;Atletiek;0,3
+765;Pekela;Golf;0,5
+765;Pekela;Gymnastiek;1,5
+765;Pekela;Hockey;0,1
+765;Pekela;Paardensport;0,8
+765;Pekela;Sportvissen;10,5
+765;Pekela;Tennis;1,7
+765;Pekela;Voetbal;7,9
+765;Pekela;Volleybal;0,7
+765;Pekela;Zwemmen;0,3
+766;Dongen;Atletiek;1,8
+766;Dongen;Golf;2,8
+766;Dongen;Gymnastiek;1,5
+766;Dongen;Hockey;2,2
+766;Dongen;Paardensport;0,5
+766;Dongen;Sportvissen;3,2
+766;Dongen;Tennis;2,9
+766;Dongen;Voetbal;7,7
+766;Dongen;Volleybal;0,1
+766;Dongen;Zwemmen;0,8
+770;Eersel;Atletiek;1,3
+770;Eersel;Golf;3,0
+770;Eersel;Gymnastiek;0,7
+770;Eersel;Hockey;1,6
+770;Eersel;Paardensport;1,1
+770;Eersel;Sportvissen;2,2
+770;Eersel;Tennis;7,8
+770;Eersel;Voetbal;11,3
+770;Eersel;Volleybal;0,3
+770;Eersel;Zwemmen;1,3
+772;Eindhoven;Atletiek;0,5
+772;Eindhoven;Golf;2,4
+772;Eindhoven;Gymnastiek;0,6
+772;Eindhoven;Hockey;1,5
+772;Eindhoven;Paardensport;0,3
+772;Eindhoven;Sportvissen;1,4
+772;Eindhoven;Tennis;3,4
+772;Eindhoven;Voetbal;4,9
+772;Eindhoven;Volleybal;0,3
+772;Eindhoven;Zwemmen;0,8
+777;Etten-Leur;Atletiek;1,7
+777;Etten-Leur;Golf;2,8
+777;Etten-Leur;Gymnastiek;0,2
+777;Etten-Leur;Hockey;1,7
+777;Etten-Leur;Paardensport;0,4
+777;Etten-Leur;Sportvissen;2,6
+777;Etten-Leur;Tennis;4,0
+777;Etten-Leur;Voetbal;7,8
+777;Etten-Leur;Volleybal;0,2
+777;Etten-Leur;Zwemmen;0,8
+779;Geertruidenberg;Atletiek;0,4
+779;Geertruidenberg;Golf;2,1
+779;Geertruidenberg;Gymnastiek;1,0
+779;Geertruidenberg;Hockey;1,9
+779;Geertruidenberg;Paardensport;0,3
+779;Geertruidenberg;Sportvissen;5,5
+779;Geertruidenberg;Tennis;4,2
+779;Geertruidenberg;Voetbal;8,2
+779;Geertruidenberg;Volleybal;0,2
+779;Geertruidenberg;Zwemmen;0,2
+784;Gilze en Rijen;Atletiek;1,1
+784;Gilze en Rijen;Golf;3,2
+784;Gilze en Rijen;Gymnastiek;0,1
+784;Gilze en Rijen;Hockey;1,3
+784;Gilze en Rijen;Paardensport;0,8
+784;Gilze en Rijen;Sportvissen;2,3
+784;Gilze en Rijen;Tennis;4,8
+784;Gilze en Rijen;Voetbal;7,7
+784;Gilze en Rijen;Volleybal;0,2
+784;Gilze en Rijen;Zwemmen;0,2
+785;Goirle;Atletiek;0,8
+785;Goirle;Golf;4,0
+785;Goirle;Gymnastiek;1,2
+785;Goirle;Hockey;3,4
+785;Goirle;Paardensport;0,8
+785;Goirle;Sportvissen;1,9
+785;Goirle;Tennis;5,7
+785;Goirle;Voetbal;8,5
+785;Goirle;Volleybal;0,3
+785;Goirle;Zwemmen;0,4
+794;Helmond;Atletiek;0,5
+794;Helmond;Golf;3,0
+794;Helmond;Gymnastiek;0,7
+794;Helmond;Hockey;1,7
+794;Helmond;Paardensport;0,5
+794;Helmond;Sportvissen;3,2
+794;Helmond;Tennis;3,7
+794;Helmond;Voetbal;6,4
+794;Helmond;Volleybal;0,3
+794;Helmond;Zwemmen;0,6
+796;Den Bosch;Atletiek;0,8
+796;Den Bosch;Golf;3,7
+796;Den Bosch;Gymnastiek;1,2
+796;Den Bosch;Hockey;2,2
+796;Den Bosch;Paardensport;0,4
+796;Den Bosch;Sportvissen;2,4
+796;Den Bosch;Tennis;5,2
+796;Den Bosch;Voetbal;6,7
+796;Den Bosch;Volleybal;0,4
+796;Den Bosch;Zwemmen;0,7
+797;Heusden;Atletiek;0,9
+797;Heusden;Golf;2,6
+797;Heusden;Gymnastiek;2,3
+797;Heusden;Hockey;2,3
+797;Heusden;Paardensport;0,5
+797;Heusden;Sportvissen;4,1
+797;Heusden;Tennis;4,8
+797;Heusden;Voetbal;8,2
+797;Heusden;Volleybal;0,3
+797;Heusden;Zwemmen;0,8
+798;Hilvarenbeek;Atletiek;1,1
+798;Hilvarenbeek;Golf;3,4
+798;Hilvarenbeek;Gymnastiek;0,4
+798;Hilvarenbeek;Hockey;3,4
+798;Hilvarenbeek;Paardensport;0,8
+798;Hilvarenbeek;Sportvissen;2,2
+798;Hilvarenbeek;Tennis;7,4
+798;Hilvarenbeek;Voetbal;10,3
+798;Hilvarenbeek;Volleybal;0,8
+798;Hilvarenbeek;Zwemmen;1,2
+809;Loon op Zand;Atletiek;0,5
+809;Loon op Zand;Golf;2,5
+809;Loon op Zand;Gymnastiek;1,9
+809;Loon op Zand;Hockey;2,2
+809;Loon op Zand;Paardensport;0,9
+809;Loon op Zand;Sportvissen;3,0
+809;Loon op Zand;Tennis;5,2
+809;Loon op Zand;Voetbal;8,3
+809;Loon op Zand;Volleybal;0,4
+809;Loon op Zand;Zwemmen;0,2
+820;Nuenen, Gerwen en Nederwetten;Atletiek;0,5
+820;Nuenen, Gerwen en Nederwetten;Golf;5,6
+820;Nuenen, Gerwen en Nederwetten;Gymnastiek;0,6
+820;Nuenen, Gerwen en Nederwetten;Hockey;3,1
+820;Nuenen, Gerwen en Nederwetten;Paardensport;1,1
+820;Nuenen, Gerwen en Nederwetten;Sportvissen;2,1
+820;Nuenen, Gerwen en Nederwetten;Tennis;8,6
+820;Nuenen, Gerwen en Nederwetten;Voetbal;8,2
+820;Nuenen, Gerwen en Nederwetten;Volleybal;0,3
+820;Nuenen, Gerwen en Nederwetten;Zwemmen;1,1
+823;Oirschot;Atletiek;1,6
+823;Oirschot;Golf;2,6
+823;Oirschot;Gymnastiek;0,3
+823;Oirschot;Hockey;2,7
+823;Oirschot;Paardensport;0,9
+823;Oirschot;Sportvissen;3,9
+823;Oirschot;Tennis;3,8
+823;Oirschot;Voetbal;10,7
+823;Oirschot;Volleybal;1,3
+823;Oirschot;Zwemmen;1,0
+824;Oisterwijk;Atletiek;1,1
+824;Oisterwijk;Golf;4,8
+824;Oisterwijk;Gymnastiek;0,6
+824;Oisterwijk;Hockey;2,8
+824;Oisterwijk;Paardensport;0,9
+824;Oisterwijk;Sportvissen;2,5
+824;Oisterwijk;Tennis;8,4
+824;Oisterwijk;Voetbal;6,8
+824;Oisterwijk;Volleybal;0,1
+824;Oisterwijk;Zwemmen;0,6
+826;Oosterhout;Atletiek;1,3
+826;Oosterhout;Golf;4,2
+826;Oosterhout;Gymnastiek;1,0
+826;Oosterhout;Hockey;1,8
+826;Oosterhout;Paardensport;0,4
+826;Oosterhout;Sportvissen;3,0
+826;Oosterhout;Tennis;3,8
+826;Oosterhout;Voetbal;6,5
+826;Oosterhout;Volleybal;0,2
+826;Oosterhout;Zwemmen;0,5
+828;Oss;Atletiek;0,4
+828;Oss;Golf;2,3
+828;Oss;Gymnastiek;1,3
+828;Oss;Hockey;1,1
+828;Oss;Paardensport;0,4
+828;Oss;Sportvissen;3,7
+828;Oss;Tennis;3,6
+828;Oss;Voetbal;8,1
+828;Oss;Volleybal;0,2
+828;Oss;Zwemmen;0,6
+840;Rucphen;Atletiek;0,7
+840;Rucphen;Golf;1,5
+840;Rucphen;Gymnastiek;0,6
+840;Rucphen;Hockey;0,5
+840;Rucphen;Paardensport;0,9
+840;Rucphen;Sportvissen;3,4
+840;Rucphen;Tennis;3,6
+840;Rucphen;Voetbal;7,5
+840;Rucphen;Volleybal;0,0
+840;Rucphen;Zwemmen;0,5
+845;Sint-Michielsgestel;Atletiek;0,6
+845;Sint-Michielsgestel;Golf;4,6
+845;Sint-Michielsgestel;Gymnastiek;0,4
+845;Sint-Michielsgestel;Hockey;3,2
+845;Sint-Michielsgestel;Paardensport;0,7
+845;Sint-Michielsgestel;Sportvissen;4,0
+845;Sint-Michielsgestel;Tennis;9,4
+845;Sint-Michielsgestel;Voetbal;8,8
+845;Sint-Michielsgestel;Volleybal;0,8
+845;Sint-Michielsgestel;Zwemmen;0,8
+847;Someren;Atletiek;0,7
+847;Someren;Golf;2,2
+847;Someren;Gymnastiek;2,5
+847;Someren;Hockey;0,7
+847;Someren;Paardensport;1,0
+847;Someren;Sportvissen;3,3
+847;Someren;Tennis;3,7
+847;Someren;Voetbal;10,5
+847;Someren;Volleybal;0,0
+847;Someren;Zwemmen;0,5
+848;Son en Breugel;Atletiek;0,9
+848;Son en Breugel;Golf;5,4
+848;Son en Breugel;Gymnastiek;0,2
+848;Son en Breugel;Hockey;2,7
+848;Son en Breugel;Paardensport;0,6
+848;Son en Breugel;Sportvissen;2,4
+848;Son en Breugel;Tennis;8,7
+848;Son en Breugel;Voetbal;7,8
+848;Son en Breugel;Volleybal;0,3
+848;Son en Breugel;Zwemmen;0,5
+851;Steenbergen;Atletiek;0,9
+851;Steenbergen;Golf;2,2
+851;Steenbergen;Gymnastiek;1,6
+851;Steenbergen;Hockey;0,1
+851;Steenbergen;Paardensport;0,8
+851;Steenbergen;Sportvissen;5,0
+851;Steenbergen;Tennis;4,0
+851;Steenbergen;Voetbal;8,3
+851;Steenbergen;Volleybal;0,0
+851;Steenbergen;Zwemmen;0,2
+852;Waterland;Atletiek;1,3
+852;Waterland;Golf;2,6
+852;Waterland;Gymnastiek;2,9
+852;Waterland;Hockey;1,6
+852;Waterland;Paardensport;0,9
+852;Waterland;Sportvissen;3,0
+852;Waterland;Tennis;7,7
+852;Waterland;Voetbal;9,0
+852;Waterland;Volleybal;0,3
+852;Waterland;Zwemmen;0,6
+855;Tilburg;Atletiek;0,6
+855;Tilburg;Golf;2,4
+855;Tilburg;Gymnastiek;0,8
+855;Tilburg;Hockey;2,1
+855;Tilburg;Paardensport;0,4
+855;Tilburg;Sportvissen;1,6
+855;Tilburg;Tennis;3,3
+855;Tilburg;Voetbal;5,5
+855;Tilburg;Volleybal;0,4
+855;Tilburg;Zwemmen;0,3
+858;Valkenswaard;Atletiek;0,7
+858;Valkenswaard;Golf;3,5
+858;Valkenswaard;Gymnastiek;0,9
+858;Valkenswaard;Hockey;1,8
+858;Valkenswaard;Paardensport;0,9
+858;Valkenswaard;Sportvissen;3,1
+858;Valkenswaard;Tennis;5,0
+858;Valkenswaard;Voetbal;7,3
+858;Valkenswaard;Volleybal;0,2
+858;Valkenswaard;Zwemmen;0,2
+861;Veldhoven;Atletiek;1,0
+861;Veldhoven;Golf;3,1
+861;Veldhoven;Gymnastiek;1,5
+861;Veldhoven;Hockey;1,4
+861;Veldhoven;Paardensport;0,7
+861;Veldhoven;Sportvissen;2,1
+861;Veldhoven;Tennis;5,7
+861;Veldhoven;Voetbal;7,8
+861;Veldhoven;Volleybal;0,4
+861;Veldhoven;Zwemmen;0,7
+865;Vught;Atletiek;2,5
+865;Vught;Golf;7,2
+865;Vught;Gymnastiek;1,8
+865;Vught;Hockey;4,4
+865;Vught;Paardensport;0,6
+865;Vught;Sportvissen;2,6
+865;Vught;Tennis;8,5
+865;Vught;Voetbal;7,5
+865;Vught;Volleybal;0,4
+865;Vught;Zwemmen;0,3
+866;Waalre;Atletiek;0,7
+866;Waalre;Golf;7,7
+866;Waalre;Gymnastiek;0,9
+866;Waalre;Hockey;5,2
+866;Waalre;Paardensport;1,0
+866;Waalre;Sportvissen;1,7
+866;Waalre;Tennis;7,6
+866;Waalre;Voetbal;7,1
+866;Waalre;Volleybal;0,2
+866;Waalre;Zwemmen;0,6
+867;Waalwijk;Atletiek;0,6
+867;Waalwijk;Golf;2,3
+867;Waalwijk;Gymnastiek;1,6
+867;Waalwijk;Hockey;1,8
+867;Waalwijk;Paardensport;0,4
+867;Waalwijk;Sportvissen;3,9
+867;Waalwijk;Tennis;4,0
+867;Waalwijk;Voetbal;8,4
+867;Waalwijk;Volleybal;0,4
+867;Waalwijk;Zwemmen;0,4
+873;Woensdrecht;Atletiek;0,7
+873;Woensdrecht;Golf;2,1
+873;Woensdrecht;Gymnastiek;0,4
+873;Woensdrecht;Hockey;0,2
+873;Woensdrecht;Paardensport;0,8
+873;Woensdrecht;Sportvissen;2,9
+873;Woensdrecht;Tennis;3,2
+873;Woensdrecht;Voetbal;6,9
+873;Woensdrecht;Volleybal;0,3
+873;Woensdrecht;Zwemmen;0,4
+879;Zundert;Atletiek;1,7
+879;Zundert;Golf;2,1
+879;Zundert;Gymnastiek;2,5
+879;Zundert;Hockey;0,7
+879;Zundert;Paardensport;0,9
+879;Zundert;Sportvissen;2,4
+879;Zundert;Tennis;3,5
+879;Zundert;Voetbal;11,9
+879;Zundert;Volleybal;0,2
+879;Zundert;Zwemmen;0,4
+880;Wormerland;Atletiek;0,5
+880;Wormerland;Golf;2,3
+880;Wormerland;Gymnastiek;1,2
+880;Wormerland;Hockey;0,3
+880;Wormerland;Paardensport;0,7
+880;Wormerland;Sportvissen;4,0
+880;Wormerland;Tennis;4,6
+880;Wormerland;Voetbal;8,4
+880;Wormerland;Volleybal;0,6
+880;Wormerland;Zwemmen;0,4
+882;Landgraaf;Atletiek;0,6
+882;Landgraaf;Golf;0,5
+882;Landgraaf;Gymnastiek;1,8
+882;Landgraaf;Hockey;0,2
+882;Landgraaf;Paardensport;0,5
+882;Landgraaf;Sportvissen;1,7
+882;Landgraaf;Tennis;2,2
+882;Landgraaf;Voetbal;6,5
+882;Landgraaf;Volleybal;0,3
+882;Landgraaf;Zwemmen;0,2
+888;Beek;Atletiek;0,8
+888;Beek;Golf;0,8
+888;Beek;Gymnastiek;0,5
+888;Beek;Hockey;0,2
+888;Beek;Paardensport;0,6
+888;Beek;Sportvissen;1,1
+888;Beek;Tennis;3,9
+888;Beek;Voetbal;6,8
+888;Beek;Volleybal;0,1
+888;Beek;Zwemmen;0,5
+889;Beesel;Atletiek;0,2
+889;Beesel;Golf;0,8
+889;Beesel;Gymnastiek;1,7
+889;Beesel;Hockey;0,1
+889;Beesel;Paardensport;1,1
+889;Beesel;Sportvissen;2,5
+889;Beesel;Tennis;2,6
+889;Beesel;Voetbal;7,9
+889;Beesel;Volleybal;1,8
+889;Beesel;Zwemmen;1,7
+893;Bergen (L.);Atletiek;0,1
+893;Bergen (L.);Golf;1,2
+893;Bergen (L.);Gymnastiek;0,8
+893;Bergen (L.);Hockey;0,1
+893;Bergen (L.);Paardensport;1,4
+893;Bergen (L.);Sportvissen;2,9
+893;Bergen (L.);Tennis;2,5
+893;Bergen (L.);Voetbal;8,0
+893;Bergen (L.);Volleybal;0,7
+893;Bergen (L.);Zwemmen;0,2
+899;Brunssum;Atletiek;0,4
+899;Brunssum;Golf;0,6
+899;Brunssum;Gymnastiek;1,5
+899;Brunssum;Hockey;0,2
+899;Brunssum;Paardensport;0,2
+899;Brunssum;Sportvissen;2,2
+899;Brunssum;Tennis;1,5
+899;Brunssum;Voetbal;7,1
+899;Brunssum;Volleybal;0,1
+899;Brunssum;Zwemmen;0,3
+907;Gennep;Atletiek;0,5
+907;Gennep;Golf;1,3
+907;Gennep;Gymnastiek;1,2
+907;Gennep;Hockey;0,2
+907;Gennep;Paardensport;0,9
+907;Gennep;Sportvissen;2,7
+907;Gennep;Tennis;3,9
+907;Gennep;Voetbal;9,4
+907;Gennep;Volleybal;0,9
+907;Gennep;Zwemmen;0,5
+917;Heerlen;Atletiek;0,3
+917;Heerlen;Golf;0,8
+917;Heerlen;Gymnastiek;0,7
+917;Heerlen;Hockey;0,4
+917;Heerlen;Paardensport;0,2
+917;Heerlen;Sportvissen;1,6
+917;Heerlen;Tennis;1,4
+917;Heerlen;Voetbal;5,7
+917;Heerlen;Volleybal;0,2
+917;Heerlen;Zwemmen;0,1
+928;Kerkrade;Atletiek;0,4
+928;Kerkrade;Golf;0,5
+928;Kerkrade;Gymnastiek;1,5
+928;Kerkrade;Hockey;0,3
+928;Kerkrade;Paardensport;0,4
+928;Kerkrade;Sportvissen;1,5
+928;Kerkrade;Tennis;1,2
+928;Kerkrade;Voetbal;5,6
+928;Kerkrade;Volleybal;0,4
+928;Kerkrade;Zwemmen;0,2
+935;Maastricht;Atletiek;0,7
+935;Maastricht;Golf;1,8
+935;Maastricht;Gymnastiek;0,4
+935;Maastricht;Hockey;0,8
+935;Maastricht;Paardensport;0,3
+935;Maastricht;Sportvissen;1,1
+935;Maastricht;Tennis;2,5
+935;Maastricht;Voetbal;4,6
+935;Maastricht;Volleybal;0,3
+935;Maastricht;Zwemmen;0,3
+938;Meerssen;Atletiek;0,7
+938;Meerssen;Golf;2,6
+938;Meerssen;Gymnastiek;0,8
+938;Meerssen;Hockey;1,5
+938;Meerssen;Paardensport;0,6
+938;Meerssen;Sportvissen;1,2
+938;Meerssen;Tennis;4,4
+938;Meerssen;Voetbal;7,7
+938;Meerssen;Volleybal;0,1
+938;Meerssen;Zwemmen;0,3
+944;Mook en Middelaar;Atletiek;0,6
+944;Mook en Middelaar;Golf;3,6
+944;Mook en Middelaar;Gymnastiek;1,3
+944;Mook en Middelaar;Hockey;1,2
+944;Mook en Middelaar;Paardensport;0,7
+944;Mook en Middelaar;Sportvissen;1,9
+944;Mook en Middelaar;Tennis;5,2
+944;Mook en Middelaar;Voetbal;6,9
+944;Mook en Middelaar;Volleybal;0,4
+944;Mook en Middelaar;Zwemmen;0,2
+946;Nederweert;Atletiek;0,3
+946;Nederweert;Golf;1,3
+946;Nederweert;Gymnastiek;1,0
+946;Nederweert;Hockey;0,1
+946;Nederweert;Paardensport;0,9
+946;Nederweert;Sportvissen;2,2
+946;Nederweert;Tennis;4,3
+946;Nederweert;Voetbal;9,6
+946;Nederweert;Volleybal;0,4
+946;Nederweert;Zwemmen;0,8
+957;Roermond;Atletiek;0,6
+957;Roermond;Golf;1,5
+957;Roermond;Gymnastiek;0,6
+957;Roermond;Hockey;0,9
+957;Roermond;Paardensport;0,3
+957;Roermond;Sportvissen;1,9
+957;Roermond;Tennis;3,1
+957;Roermond;Voetbal;6,0
+957;Roermond;Volleybal;0,5
+957;Roermond;Zwemmen;0,7
+965;Simpelveld;Atletiek;0,5
+965;Simpelveld;Golf;0,6
+965;Simpelveld;Gymnastiek;2,7
+965;Simpelveld;Hockey;0,1
+965;Simpelveld;Paardensport;0,5
+965;Simpelveld;Sportvissen;1,2
+965;Simpelveld;Tennis;2,8
+965;Simpelveld;Voetbal;11,9
+965;Simpelveld;Volleybal;0,1
+965;Simpelveld;Zwemmen;0,0
+971;Stein;Atletiek;0,5
+971;Stein;Golf;0,6
+971;Stein;Gymnastiek;0,9
+971;Stein;Hockey;0,1
+971;Stein;Paardensport;0,6
+971;Stein;Sportvissen;2,2
+971;Stein;Tennis;2,2
+971;Stein;Voetbal;6,0
+971;Stein;Volleybal;0,5
+971;Stein;Zwemmen;0,3
+981;Vaals;Atletiek;0,2
+981;Vaals;Golf;0,7
+981;Vaals;Gymnastiek;2,3
+981;Vaals;Hockey;0,1
+981;Vaals;Paardensport;0,2
+981;Vaals;Sportvissen;0,7
+981;Vaals;Tennis;1,6
+981;Vaals;Voetbal;5,4
+981;Vaals;Volleybal;0,1
+981;Vaals;Zwemmen;0,0
+983;Venlo;Atletiek;0,4
+983;Venlo;Golf;2,0
+983;Venlo;Gymnastiek;0,8
+983;Venlo;Hockey;1,3
+983;Venlo;Paardensport;0,4
+983;Venlo;Sportvissen;1,9
+983;Venlo;Tennis;2,4
+983;Venlo;Voetbal;6,0
+983;Venlo;Volleybal;0,5
+983;Venlo;Zwemmen;0,2
+984;Venray;Atletiek;0,6
+984;Venray;Golf;2,0
+984;Venray;Gymnastiek;1,3
+984;Venray;Hockey;0,9
+984;Venray;Paardensport;0,9
+984;Venray;Sportvissen;2,0
+984;Venray;Tennis;3,5
+984;Venray;Voetbal;8,2
+984;Venray;Volleybal;0,3
+984;Venray;Zwemmen;0,5
+986;Voerendaal;Atletiek;0,2
+986;Voerendaal;Golf;1,7
+986;Voerendaal;Gymnastiek;1,4
+986;Voerendaal;Hockey;0,3
+986;Voerendaal;Paardensport;0,5
+986;Voerendaal;Sportvissen;1,3
+986;Voerendaal;Tennis;4,7
+986;Voerendaal;Voetbal;9,3
+986;Voerendaal;Volleybal;0,6
+986;Voerendaal;Zwemmen;0,2
+988;Weert;Atletiek;0,9
+988;Weert;Golf;2,3
+988;Weert;Gymnastiek;0,8
+988;Weert;Hockey;1,3
+988;Weert;Paardensport;0,6
+988;Weert;Sportvissen;2,0
+988;Weert;Tennis;3,0
+988;Weert;Voetbal;7,1
+988;Weert;Volleybal;0,5
+988;Weert;Zwemmen;0,5
+994;Valkenburg aan de Geul;Atletiek;0,2
+994;Valkenburg aan de Geul;Golf;1,7
+994;Valkenburg aan de Geul;Gymnastiek;0,4
+994;Valkenburg aan de Geul;Hockey;1,4
+994;Valkenburg aan de Geul;Paardensport;0,6
+994;Valkenburg aan de Geul;Sportvissen;1,0
+994;Valkenburg aan de Geul;Tennis;3,2
+994;Valkenburg aan de Geul;Voetbal;6,8
+994;Valkenburg aan de Geul;Volleybal;0,4
+994;Valkenburg aan de Geul;Zwemmen;0,1
+995;Lelystad;Atletiek;0,5
+995;Lelystad;Golf;1,6
+995;Lelystad;Gymnastiek;0,7
+995;Lelystad;Hockey;0,6
+995;Lelystad;Paardensport;0,7
+995;Lelystad;Sportvissen;3,7
+995;Lelystad;Tennis;2,2
+995;Lelystad;Voetbal;3,8
+995;Lelystad;Volleybal;0,4
+995;Lelystad;Zwemmen;0,5
+1507;Horst aan de Maas;Atletiek;0,1
+1507;Horst aan de Maas;Golf;1,6
+1507;Horst aan de Maas;Gymnastiek;1,1
+1507;Horst aan de Maas;Hockey;0,8
+1507;Horst aan de Maas;Paardensport;1,7
+1507;Horst aan de Maas;Sportvissen;2,8
+1507;Horst aan de Maas;Tennis;3,7
+1507;Horst aan de Maas;Voetbal;10,4
+1507;Horst aan de Maas;Volleybal;2,1
+1507;Horst aan de Maas;Zwemmen;1,1
+1509;Oude IJsselstreek;Atletiek;1,2
+1509;Oude IJsselstreek;Golf;1,1
+1509;Oude IJsselstreek;Gymnastiek;2,3
+1509;Oude IJsselstreek;Hockey;0,6
+1509;Oude IJsselstreek;Paardensport;1,0
+1509;Oude IJsselstreek;Sportvissen;2,9
+1509;Oude IJsselstreek;Tennis;2,5
+1509;Oude IJsselstreek;Voetbal;10,2
+1509;Oude IJsselstreek;Volleybal;1,1
+1509;Oude IJsselstreek;Zwemmen;1,1
+1525;Teylingen;Atletiek;0,8
+1525;Teylingen;Golf;5,0
+1525;Teylingen;Gymnastiek;1,3
+1525;Teylingen;Hockey;1,8
+1525;Teylingen;Paardensport;0,6
+1525;Teylingen;Sportvissen;3,9
+1525;Teylingen;Tennis;5,4
+1525;Teylingen;Voetbal;8,1
+1525;Teylingen;Volleybal;0,5
+1525;Teylingen;Zwemmen;1,4
+1581;Utrechtse Heuvelrug;Atletiek;0,3
+1581;Utrechtse Heuvelrug;Golf;5,9
+1581;Utrechtse Heuvelrug;Gymnastiek;1,3
+1581;Utrechtse Heuvelrug;Hockey;4,3
+1581;Utrechtse Heuvelrug;Paardensport;1,1
+1581;Utrechtse Heuvelrug;Sportvissen;2,5
+1581;Utrechtse Heuvelrug;Tennis;6,1
+1581;Utrechtse Heuvelrug;Voetbal;5,5
+1581;Utrechtse Heuvelrug;Volleybal;0,4
+1581;Utrechtse Heuvelrug;Zwemmen;0,5
+1586;Oost Gelre;Atletiek;0,9
+1586;Oost Gelre;Golf;1,7
+1586;Oost Gelre;Gymnastiek;3,6
+1586;Oost Gelre;Hockey;0,0
+1586;Oost Gelre;Paardensport;0,8
+1586;Oost Gelre;Sportvissen;3,1
+1586;Oost Gelre;Tennis;6,0
+1586;Oost Gelre;Voetbal;11,5
+1586;Oost Gelre;Volleybal;2,1
+1586;Oost Gelre;Zwemmen;1,1
+1598;Koggenland;Atletiek;0,7
+1598;Koggenland;Golf;2,5
+1598;Koggenland;Gymnastiek;2,0
+1598;Koggenland;Hockey;0,2
+1598;Koggenland;Paardensport;1,0
+1598;Koggenland;Sportvissen;3,8
+1598;Koggenland;Tennis;5,9
+1598;Koggenland;Voetbal;10,5
+1598;Koggenland;Volleybal;0,3
+1598;Koggenland;Zwemmen;0,2
+1621;Lansingerland;Atletiek;1,2
+1621;Lansingerland;Golf;4,4
+1621;Lansingerland;Gymnastiek;1,8
+1621;Lansingerland;Hockey;3,3
+1621;Lansingerland;Paardensport;1,1
+1621;Lansingerland;Sportvissen;2,8
+1621;Lansingerland;Tennis;6,1
+1621;Lansingerland;Voetbal;7,5
+1621;Lansingerland;Volleybal;0,7
+1621;Lansingerland;Zwemmen;0,9
+1640;Leudal;Atletiek;0,8
+1640;Leudal;Golf;1,7
+1640;Leudal;Gymnastiek;1,0
+1640;Leudal;Hockey;0,1
+1640;Leudal;Paardensport;1,0
+1640;Leudal;Sportvissen;2,2
+1640;Leudal;Tennis;3,4
+1640;Leudal;Voetbal;8,7
+1640;Leudal;Volleybal;1,3
+1640;Leudal;Zwemmen;0,7
+1641;Maasgouw;Atletiek;0,1
+1641;Maasgouw;Golf;1,2
+1641;Maasgouw;Gymnastiek;1,4
+1641;Maasgouw;Hockey;0,1
+1641;Maasgouw;Paardensport;0,4
+1641;Maasgouw;Sportvissen;3,2
+1641;Maasgouw;Tennis;3,9
+1641;Maasgouw;Voetbal;7,3
+1641;Maasgouw;Volleybal;0,8
+1641;Maasgouw;Zwemmen;0,4
+1652;Gemert-Bakel;Atletiek;1,5
+1652;Gemert-Bakel;Golf;2,6
+1652;Gemert-Bakel;Gymnastiek;0,6
+1652;Gemert-Bakel;Hockey;2,2
+1652;Gemert-Bakel;Paardensport;0,8
+1652;Gemert-Bakel;Sportvissen;3,5
+1652;Gemert-Bakel;Tennis;5,1
+1652;Gemert-Bakel;Voetbal;9,2
+1652;Gemert-Bakel;Volleybal;0,4
+1652;Gemert-Bakel;Zwemmen;0,7
+1655;Halderberge;Atletiek;1,2
+1655;Halderberge;Golf;1,8
+1655;Halderberge;Gymnastiek;0,7
+1655;Halderberge;Hockey;1,0
+1655;Halderberge;Paardensport;0,9
+1655;Halderberge;Sportvissen;4,0
+1655;Halderberge;Tennis;4,2
+1655;Halderberge;Voetbal;6,7
+1655;Halderberge;Volleybal;0,3
+1655;Halderberge;Zwemmen;0,4
+1658;Heeze-Leende;Atletiek;0,3
+1658;Heeze-Leende;Golf;4,6
+1658;Heeze-Leende;Gymnastiek;2,0
+1658;Heeze-Leende;Hockey;2,8
+1658;Heeze-Leende;Paardensport;1,6
+1658;Heeze-Leende;Sportvissen;2,4
+1658;Heeze-Leende;Tennis;7,2
+1658;Heeze-Leende;Voetbal;8,9
+1658;Heeze-Leende;Volleybal;0,0
+1658;Heeze-Leende;Zwemmen;0,4
+1659;Laarbeek;Atletiek;0,4
+1659;Laarbeek;Golf;2,9
+1659;Laarbeek;Gymnastiek;0,2
+1659;Laarbeek;Hockey;0,6
+1659;Laarbeek;Paardensport;0,7
+1659;Laarbeek;Sportvissen;4,6
+1659;Laarbeek;Tennis;5,5
+1659;Laarbeek;Voetbal;9,8
+1659;Laarbeek;Volleybal;0,3
+1659;Laarbeek;Zwemmen;0,2
+1667;Reusel-De Mierden;Atletiek;2,3
+1667;Reusel-De Mierden;Golf;1,5
+1667;Reusel-De Mierden;Gymnastiek;1,3
+1667;Reusel-De Mierden;Hockey;0,1
+1667;Reusel-De Mierden;Paardensport;1,0
+1667;Reusel-De Mierden;Sportvissen;2,5
+1667;Reusel-De Mierden;Tennis;3,7
+1667;Reusel-De Mierden;Voetbal;11,9
+1667;Reusel-De Mierden;Volleybal;0,5
+1667;Reusel-De Mierden;Zwemmen;0,4
+1669;Roerdalen;Atletiek;0,3
+1669;Roerdalen;Golf;1,3
+1669;Roerdalen;Gymnastiek;1,0
+1669;Roerdalen;Hockey;0,1
+1669;Roerdalen;Paardensport;0,7
+1669;Roerdalen;Sportvissen;2,2
+1669;Roerdalen;Tennis;3,1
+1669;Roerdalen;Voetbal;7,1
+1669;Roerdalen;Volleybal;0,5
+1669;Roerdalen;Zwemmen;0,6
+1674;Roosendaal;Atletiek;1,0
+1674;Roosendaal;Golf;2,3
+1674;Roosendaal;Gymnastiek;0,8
+1674;Roosendaal;Hockey;1,1
+1674;Roosendaal;Paardensport;0,5
+1674;Roosendaal;Sportvissen;2,8
+1674;Roosendaal;Tennis;3,4
+1674;Roosendaal;Voetbal;6,5
+1674;Roosendaal;Volleybal;0,2
+1674;Roosendaal;Zwemmen;0,3
+1676;Schouwen-Duiveland;Atletiek;1,1
+1676;Schouwen-Duiveland;Golf;2,3
+1676;Schouwen-Duiveland;Gymnastiek;2,2
+1676;Schouwen-Duiveland;Hockey;0,8
+1676;Schouwen-Duiveland;Paardensport;1,3
+1676;Schouwen-Duiveland;Sportvissen;3,0
+1676;Schouwen-Duiveland;Tennis;3,1
+1676;Schouwen-Duiveland;Voetbal;6,4
+1676;Schouwen-Duiveland;Volleybal;0,3
+1676;Schouwen-Duiveland;Zwemmen;0,3
+1680;Aa en Hunze;Atletiek;0,9
+1680;Aa en Hunze;Golf;2,6
+1680;Aa en Hunze;Gymnastiek;0,9
+1680;Aa en Hunze;Hockey;0,3
+1680;Aa en Hunze;Paardensport;1,9
+1680;Aa en Hunze;Sportvissen;6,2
+1680;Aa en Hunze;Tennis;3,3
+1680;Aa en Hunze;Voetbal;8,6
+1680;Aa en Hunze;Volleybal;1,6
+1680;Aa en Hunze;Zwemmen;0,7
+1681;Borger-Odoorn;Atletiek;0,4
+1681;Borger-Odoorn;Golf;1,7
+1681;Borger-Odoorn;Gymnastiek;2,1
+1681;Borger-Odoorn;Hockey;0,1
+1681;Borger-Odoorn;Paardensport;1,5
+1681;Borger-Odoorn;Sportvissen;7,1
+1681;Borger-Odoorn;Tennis;2,4
+1681;Borger-Odoorn;Voetbal;8,1
+1681;Borger-Odoorn;Volleybal;1,1
+1681;Borger-Odoorn;Zwemmen;0,4
+1690;De Wolden;Atletiek;0,4
+1690;De Wolden;Golf;1,4
+1690;De Wolden;Gymnastiek;2,6
+1690;De Wolden;Hockey;0,2
+1690;De Wolden;Paardensport;2,0
+1690;De Wolden;Sportvissen;5,8
+1690;De Wolden;Tennis;5,1
+1690;De Wolden;Voetbal;9,8
+1690;De Wolden;Volleybal;0,8
+1690;De Wolden;Zwemmen;0,6
+1695;Noord-Beveland;Atletiek;0,3
+1695;Noord-Beveland;Golf;1,4
+1695;Noord-Beveland;Gymnastiek;1,5
+1695;Noord-Beveland;Hockey;0,1
+1695;Noord-Beveland;Paardensport;0,8
+1695;Noord-Beveland;Sportvissen;3,4
+1695;Noord-Beveland;Tennis;2,9
+1695;Noord-Beveland;Voetbal;6,4
+1695;Noord-Beveland;Volleybal;0,1
+1695;Noord-Beveland;Zwemmen;0,4
+1696;Wijdemeren;Atletiek;0,7
+1696;Wijdemeren;Golf;5,4
+1696;Wijdemeren;Gymnastiek;1,3
+1696;Wijdemeren;Hockey;1,3
+1696;Wijdemeren;Paardensport;1,2
+1696;Wijdemeren;Sportvissen;4,1
+1696;Wijdemeren;Tennis;5,2
+1696;Wijdemeren;Voetbal;8,2
+1696;Wijdemeren;Volleybal;1,0
+1696;Wijdemeren;Zwemmen;0,4
+1699;Noordenveld;Atletiek;0,9
+1699;Noordenveld;Golf;2,7
+1699;Noordenveld;Gymnastiek;1,8
+1699;Noordenveld;Hockey;0,9
+1699;Noordenveld;Paardensport;1,0
+1699;Noordenveld;Sportvissen;6,8
+1699;Noordenveld;Tennis;4,6
+1699;Noordenveld;Voetbal;8,5
+1699;Noordenveld;Volleybal;0,9
+1699;Noordenveld;Zwemmen;1,0
+1700;Twenterand;Atletiek;0,4
+1700;Twenterand;Golf;0,9
+1700;Twenterand;Gymnastiek;3,2
+1700;Twenterand;Hockey;0,0
+1700;Twenterand;Paardensport;1,0
+1700;Twenterand;Sportvissen;6,5
+1700;Twenterand;Tennis;2,9
+1700;Twenterand;Voetbal;11,9
+1700;Twenterand;Volleybal;0,9
+1700;Twenterand;Zwemmen;0,6
+1701;Westerveld;Atletiek;0,4
+1701;Westerveld;Golf;2,3
+1701;Westerveld;Gymnastiek;1,5
+1701;Westerveld;Hockey;0,1
+1701;Westerveld;Paardensport;1,8
+1701;Westerveld;Sportvissen;5,2
+1701;Westerveld;Tennis;3,0
+1701;Westerveld;Voetbal;7,8
+1701;Westerveld;Volleybal;0,7
+1701;Westerveld;Zwemmen;0,2
+1705;Lingewaard;Atletiek;0,1
+1705;Lingewaard;Golf;1,8
+1705;Lingewaard;Gymnastiek;0,9
+1705;Lingewaard;Hockey;1,0
+1705;Lingewaard;Paardensport;0,8
+1705;Lingewaard;Sportvissen;3,4
+1705;Lingewaard;Tennis;5,5
+1705;Lingewaard;Voetbal;9,9
+1705;Lingewaard;Volleybal;1,2
+1705;Lingewaard;Zwemmen;0,9
+1706;Cranendonck;Atletiek;0,2
+1706;Cranendonck;Golf;2,1
+1706;Cranendonck;Gymnastiek;2,5
+1706;Cranendonck;Hockey;1,3
+1706;Cranendonck;Paardensport;1,1
+1706;Cranendonck;Sportvissen;2,0
+1706;Cranendonck;Tennis;3,3
+1706;Cranendonck;Voetbal;8,1
+1706;Cranendonck;Volleybal;0,8
+1706;Cranendonck;Zwemmen;1,6
+1708;Steenwijkerland;Atletiek;0,6
+1708;Steenwijkerland;Golf;1,3
+1708;Steenwijkerland;Gymnastiek;1,3
+1708;Steenwijkerland;Hockey;0,5
+1708;Steenwijkerland;Paardensport;1,0
+1708;Steenwijkerland;Sportvissen;6,9
+1708;Steenwijkerland;Tennis;2,0
+1708;Steenwijkerland;Voetbal;8,6
+1708;Steenwijkerland;Volleybal;1,1
+1708;Steenwijkerland;Zwemmen;0,6
+1709;Moerdijk;Atletiek;1,0
+1709;Moerdijk;Golf;2,6
+1709;Moerdijk;Gymnastiek;1,6
+1709;Moerdijk;Hockey;0,9
+1709;Moerdijk;Paardensport;0,6
+1709;Moerdijk;Sportvissen;4,1
+1709;Moerdijk;Tennis;3,9
+1709;Moerdijk;Voetbal;8,4
+1709;Moerdijk;Volleybal;0,2
+1709;Moerdijk;Zwemmen;0,1
+1711;Echt-Susteren;Atletiek;0,2
+1711;Echt-Susteren;Golf;0,9
+1711;Echt-Susteren;Gymnastiek;1,0
+1711;Echt-Susteren;Hockey;0,2
+1711;Echt-Susteren;Paardensport;0,8
+1711;Echt-Susteren;Sportvissen;2,0
+1711;Echt-Susteren;Tennis;2,7
+1711;Echt-Susteren;Voetbal;7,4
+1711;Echt-Susteren;Volleybal;0,4
+1711;Echt-Susteren;Zwemmen;0,4
+1714;Sluis;Atletiek;0,8
+1714;Sluis;Golf;1,1
+1714;Sluis;Gymnastiek;1,6
+1714;Sluis;Hockey;0,0
+1714;Sluis;Paardensport;0,4
+1714;Sluis;Sportvissen;1,7
+1714;Sluis;Tennis;3,4
+1714;Sluis;Voetbal;7,1
+1714;Sluis;Volleybal;0,3
+1714;Sluis;Zwemmen;0,9
+1719;Drimmelen;Atletiek;0,5
+1719;Drimmelen;Golf;2,6
+1719;Drimmelen;Gymnastiek;1,6
+1719;Drimmelen;Hockey;1,2
+1719;Drimmelen;Paardensport;0,4
+1719;Drimmelen;Sportvissen;4,7
+1719;Drimmelen;Tennis;3,8
+1719;Drimmelen;Voetbal;8,4
+1719;Drimmelen;Volleybal;0,4
+1719;Drimmelen;Zwemmen;0,3
+1721;Bernheze;Atletiek;0,3
+1721;Bernheze;Golf;3,3
+1721;Bernheze;Gymnastiek;1,2
+1721;Bernheze;Hockey;1,9
+1721;Bernheze;Paardensport;0,8
+1721;Bernheze;Sportvissen;3,1
+1721;Bernheze;Tennis;8,5
+1721;Bernheze;Voetbal;11,5
+1721;Bernheze;Volleybal;0,2
+1721;Bernheze;Zwemmen;0,7
+1723;Alphen-Chaam;Atletiek;0,8
+1723;Alphen-Chaam;Golf;3,6
+1723;Alphen-Chaam;Gymnastiek;0,3
+1723;Alphen-Chaam;Hockey;0,8
+1723;Alphen-Chaam;Paardensport;1,3
+1723;Alphen-Chaam;Sportvissen;1,8
+1723;Alphen-Chaam;Tennis;7,2
+1723;Alphen-Chaam;Voetbal;11,4
+1723;Alphen-Chaam;Volleybal;0,2
+1723;Alphen-Chaam;Zwemmen;0,1
+1724;Bergeijk;Atletiek;0,4
+1724;Bergeijk;Golf;1,9
+1724;Bergeijk;Gymnastiek;0,3
+1724;Bergeijk;Hockey;0,4
+1724;Bergeijk;Paardensport;1,3
+1724;Bergeijk;Sportvissen;3,4
+1724;Bergeijk;Tennis;6,9
+1724;Bergeijk;Voetbal;11,5
+1724;Bergeijk;Volleybal;0,5
+1724;Bergeijk;Zwemmen;0,4
+1728;Bladel;Atletiek;1,1
+1728;Bladel;Golf;1,9
+1728;Bladel;Gymnastiek;0,9
+1728;Bladel;Hockey;0,2
+1728;Bladel;Paardensport;0,8
+1728;Bladel;Sportvissen;2,6
+1728;Bladel;Tennis;5,1
+1728;Bladel;Voetbal;10,0
+1728;Bladel;Volleybal;0,7
+1728;Bladel;Zwemmen;0,5
+1729;Gulpen-Wittem;Atletiek;0,6
+1729;Gulpen-Wittem;Golf;1,4
+1729;Gulpen-Wittem;Gymnastiek;1,0
+1729;Gulpen-Wittem;Hockey;0,1
+1729;Gulpen-Wittem;Paardensport;0,5
+1729;Gulpen-Wittem;Sportvissen;1,0
+1729;Gulpen-Wittem;Tennis;2,4
+1729;Gulpen-Wittem;Voetbal;9,4
+1729;Gulpen-Wittem;Volleybal;0,1
+1729;Gulpen-Wittem;Zwemmen;0,2
+1730;Tynaarlo;Atletiek;0,8
+1730;Tynaarlo;Golf;3,4
+1730;Tynaarlo;Gymnastiek;2,5
+1730;Tynaarlo;Hockey;2,5
+1730;Tynaarlo;Paardensport;1,1
+1730;Tynaarlo;Sportvissen;5,3
+1730;Tynaarlo;Tennis;4,9
+1730;Tynaarlo;Voetbal;8,2
+1730;Tynaarlo;Volleybal;1,2
+1730;Tynaarlo;Zwemmen;0,5
+1731;Midden-Drenthe;Atletiek;0,5
+1731;Midden-Drenthe;Golf;1,3
+1731;Midden-Drenthe;Gymnastiek;2,4
+1731;Midden-Drenthe;Hockey;0,1
+1731;Midden-Drenthe;Paardensport;1,6
+1731;Midden-Drenthe;Sportvissen;6,9
+1731;Midden-Drenthe;Tennis;3,4
+1731;Midden-Drenthe;Voetbal;9,4
+1731;Midden-Drenthe;Volleybal;1,1
+1731;Midden-Drenthe;Zwemmen;0,9
+1734;Overbetuwe;Atletiek;0,3
+1734;Overbetuwe;Golf;1,7
+1734;Overbetuwe;Gymnastiek;2,3
+1734;Overbetuwe;Hockey;1,6
+1734;Overbetuwe;Paardensport;0,9
+1734;Overbetuwe;Sportvissen;3,6
+1734;Overbetuwe;Tennis;5,1
+1734;Overbetuwe;Voetbal;9,3
+1734;Overbetuwe;Volleybal;1,1
+1734;Overbetuwe;Zwemmen;1,0
+1735;Hof van Twente;Atletiek;1,0
+1735;Hof van Twente;Golf;2,7
+1735;Hof van Twente;Gymnastiek;2,0
+1735;Hof van Twente;Hockey;0,8
+1735;Hof van Twente;Paardensport;1,3
+1735;Hof van Twente;Sportvissen;3,8
+1735;Hof van Twente;Tennis;5,5
+1735;Hof van Twente;Voetbal;12,6
+1735;Hof van Twente;Volleybal;2,0
+1735;Hof van Twente;Zwemmen;1,1
+1740;Neder-Betuwe;Atletiek;0,4
+1740;Neder-Betuwe;Golf;0,6
+1740;Neder-Betuwe;Gymnastiek;3,1
+1740;Neder-Betuwe;Hockey;0,1
+1740;Neder-Betuwe;Paardensport;0,6
+1740;Neder-Betuwe;Sportvissen;6,0
+1740;Neder-Betuwe;Tennis;1,9
+1740;Neder-Betuwe;Voetbal;5,6
+1740;Neder-Betuwe;Volleybal;0,2
+1740;Neder-Betuwe;Zwemmen;0,2
+1742;Rijssen-Holten;Atletiek;1,5
+1742;Rijssen-Holten;Golf;1,2
+1742;Rijssen-Holten;Gymnastiek;2,0
+1742;Rijssen-Holten;Hockey;0,3
+1742;Rijssen-Holten;Paardensport;1,1
+1742;Rijssen-Holten;Sportvissen;5,8
+1742;Rijssen-Holten;Tennis;2,6
+1742;Rijssen-Holten;Voetbal;10,2
+1742;Rijssen-Holten;Volleybal;0,9
+1742;Rijssen-Holten;Zwemmen;1,5
+1771;Geldrop-Mierlo;Atletiek;0,8
+1771;Geldrop-Mierlo;Golf;3,1
+1771;Geldrop-Mierlo;Gymnastiek;1,1
+1771;Geldrop-Mierlo;Hockey;2,4
+1771;Geldrop-Mierlo;Paardensport;0,8
+1771;Geldrop-Mierlo;Sportvissen;2,5
+1771;Geldrop-Mierlo;Tennis;4,4
+1771;Geldrop-Mierlo;Voetbal;6,1
+1771;Geldrop-Mierlo;Volleybal;0,3
+1771;Geldrop-Mierlo;Zwemmen;0,4
+1773;Olst-Wijhe;Atletiek;0,4
+1773;Olst-Wijhe;Golf;1,2
+1773;Olst-Wijhe;Gymnastiek;2,4
+1773;Olst-Wijhe;Hockey;0,2
+1773;Olst-Wijhe;Paardensport;1,1
+1773;Olst-Wijhe;Sportvissen;4,7
+1773;Olst-Wijhe;Tennis;2,7
+1773;Olst-Wijhe;Voetbal;9,0
+1773;Olst-Wijhe;Volleybal;1,1
+1773;Olst-Wijhe;Zwemmen;0,7
+1774;Dinkelland;Atletiek;0,6
+1774;Dinkelland;Golf;1,9
+1774;Dinkelland;Gymnastiek;0,9
+1774;Dinkelland;Hockey;0,2
+1774;Dinkelland;Paardensport;1,6
+1774;Dinkelland;Sportvissen;3,2
+1774;Dinkelland;Tennis;6,5
+1774;Dinkelland;Voetbal;13,6
+1774;Dinkelland;Volleybal;3,6
+1774;Dinkelland;Zwemmen;1,2
+1783;Westland;Atletiek;0,6
+1783;Westland;Golf;3,0
+1783;Westland;Gymnastiek;2,1
+1783;Westland;Hockey;0,9
+1783;Westland;Paardensport;0,6
+1783;Westland;Sportvissen;3,5
+1783;Westland;Tennis;5,5
+1783;Westland;Voetbal;7,9
+1783;Westland;Volleybal;0,3
+1783;Westland;Zwemmen;0,3
+1842;Midden-Delfland;Atletiek;0,5
+1842;Midden-Delfland;Golf;4,7
+1842;Midden-Delfland;Gymnastiek;2,7
+1842;Midden-Delfland;Hockey;1,7
+1842;Midden-Delfland;Paardensport;1,1
+1842;Midden-Delfland;Sportvissen;3,3
+1842;Midden-Delfland;Tennis;7,9
+1842;Midden-Delfland;Voetbal;10,1
+1842;Midden-Delfland;Volleybal;0,3
+1842;Midden-Delfland;Zwemmen;0,6
+1859;Berkelland;Atletiek;0,8
+1859;Berkelland;Golf;1,4
+1859;Berkelland;Gymnastiek;3,2
+1859;Berkelland;Hockey;0,2
+1859;Berkelland;Paardensport;1,3
+1859;Berkelland;Sportvissen;3,9
+1859;Berkelland;Tennis;4,0
+1859;Berkelland;Voetbal;11,6
+1859;Berkelland;Volleybal;2,4
+1859;Berkelland;Zwemmen;0,9
+1876;Bronckhorst;Atletiek;0,6
+1876;Bronckhorst;Golf;2,3
+1876;Bronckhorst;Gymnastiek;2,3
+1876;Bronckhorst;Hockey;0,2
+1876;Bronckhorst;Paardensport;1,5
+1876;Bronckhorst;Sportvissen;3,6
+1876;Bronckhorst;Tennis;2,8
+1876;Bronckhorst;Voetbal;10,1
+1876;Bronckhorst;Volleybal;2,6
+1876;Bronckhorst;Zwemmen;0,6
+1883;Sittard-Geleen;Atletiek;0,5
+1883;Sittard-Geleen;Golf;1,1
+1883;Sittard-Geleen;Gymnastiek;1,2
+1883;Sittard-Geleen;Hockey;0,4
+1883;Sittard-Geleen;Paardensport;0,4
+1883;Sittard-Geleen;Sportvissen;1,4
+1883;Sittard-Geleen;Tennis;3,2
+1883;Sittard-Geleen;Voetbal;5,6
+1883;Sittard-Geleen;Volleybal;0,3
+1883;Sittard-Geleen;Zwemmen;0,3
+1884;Kaag en Braassem;Atletiek;0,5
+1884;Kaag en Braassem;Golf;2,9
+1884;Kaag en Braassem;Gymnastiek;0,8
+1884;Kaag en Braassem;Hockey;1,1
+1884;Kaag en Braassem;Paardensport;0,9
+1884;Kaag en Braassem;Sportvissen;4,4
+1884;Kaag en Braassem;Tennis;6,5
+1884;Kaag en Braassem;Voetbal;9,2
+1884;Kaag en Braassem;Volleybal;0,6
+1884;Kaag en Braassem;Zwemmen;1,0
+1891;Dantumadiel;Atletiek;0,3
+1891;Dantumadiel;Golf;0,3
+1891;Dantumadiel;Gymnastiek;2,2
+1891;Dantumadiel;Hockey;0,1
+1891;Dantumadiel;Paardensport;1,1
+1891;Dantumadiel;Sportvissen;7,9
+1891;Dantumadiel;Tennis;1,4
+1891;Dantumadiel;Voetbal;9,8
+1891;Dantumadiel;Volleybal;0,8
+1891;Dantumadiel;Zwemmen;0,5
+1892;Zuidplas;Atletiek;0,3
+1892;Zuidplas;Golf;3,0
+1892;Zuidplas;Gymnastiek;1,4
+1892;Zuidplas;Hockey;1,4
+1892;Zuidplas;Paardensport;1,0
+1892;Zuidplas;Sportvissen;3,4
+1892;Zuidplas;Tennis;3,3
+1892;Zuidplas;Voetbal;6,3
+1892;Zuidplas;Volleybal;0,8
+1892;Zuidplas;Zwemmen;0,9
+1894;Peel en Maas;Atletiek;0,5
+1894;Peel en Maas;Golf;1,8
+1894;Peel en Maas;Gymnastiek;1,8
+1894;Peel en Maas;Hockey;0,5
+1894;Peel en Maas;Paardensport;1,1
+1894;Peel en Maas;Sportvissen;2,5
+1894;Peel en Maas;Tennis;3,5
+1894;Peel en Maas;Voetbal;10,7
+1894;Peel en Maas;Volleybal;1,7
+1894;Peel en Maas;Zwemmen;0,1
+1895;Oldambt;Atletiek;0,7
+1895;Oldambt;Golf;0,8
+1895;Oldambt;Gymnastiek;1,3
+1895;Oldambt;Hockey;0,4
+1895;Oldambt;Paardensport;0,6
+1895;Oldambt;Sportvissen;8,0
+1895;Oldambt;Tennis;2,4
+1895;Oldambt;Voetbal;7,3
+1895;Oldambt;Volleybal;0,6
+1895;Oldambt;Zwemmen;0,3
+1896;Zwartewaterland;Atletiek;0,5
+1896;Zwartewaterland;Golf;0,7
+1896;Zwartewaterland;Gymnastiek;2,0
+1896;Zwartewaterland;Hockey;0,0
+1896;Zwartewaterland;Paardensport;0,7
+1896;Zwartewaterland;Sportvissen;6,6
+1896;Zwartewaterland;Tennis;2,2
+1896;Zwartewaterland;Voetbal;10,6
+1896;Zwartewaterland;Volleybal;0,7
+1896;Zwartewaterland;Zwemmen;3,0
+1900;Súdwest-Fryslân;Atletiek;0,6
+1900;Súdwest-Fryslân;Golf;1,2
+1900;Súdwest-Fryslân;Gymnastiek;1,3
+1900;Súdwest-Fryslân;Hockey;0,6
+1900;Súdwest-Fryslân;Paardensport;1,2
+1900;Súdwest-Fryslân;Sportvissen;5,7
+1900;Súdwest-Fryslân;Tennis;3,3
+1900;Súdwest-Fryslân;Voetbal;8,1
+1900;Súdwest-Fryslân;Volleybal;2,2
+1900;Súdwest-Fryslân;Zwemmen;0,9
+1901;Bodegraven-Reeuwijk;Atletiek;0,6
+1901;Bodegraven-Reeuwijk;Golf;2,4
+1901;Bodegraven-Reeuwijk;Gymnastiek;2,1
+1901;Bodegraven-Reeuwijk;Hockey;1,3
+1901;Bodegraven-Reeuwijk;Paardensport;0,8
+1901;Bodegraven-Reeuwijk;Sportvissen;3,7
+1901;Bodegraven-Reeuwijk;Tennis;4,3
+1901;Bodegraven-Reeuwijk;Voetbal;8,3
+1901;Bodegraven-Reeuwijk;Volleybal;1,0
+1901;Bodegraven-Reeuwijk;Zwemmen;1,2
+1903;Eijsden-Margraten;Atletiek;0,5
+1903;Eijsden-Margraten;Golf;1,8
+1903;Eijsden-Margraten;Gymnastiek;0,8
+1903;Eijsden-Margraten;Hockey;0,7
+1903;Eijsden-Margraten;Paardensport;0,8
+1903;Eijsden-Margraten;Sportvissen;1,1
+1903;Eijsden-Margraten;Tennis;2,3
+1903;Eijsden-Margraten;Voetbal;10,1
+1903;Eijsden-Margraten;Volleybal;0,3
+1903;Eijsden-Margraten;Zwemmen;0,8
+1904;Stichtse Vecht;Atletiek;0,7
+1904;Stichtse Vecht;Golf;4,6
+1904;Stichtse Vecht;Gymnastiek;1,2
+1904;Stichtse Vecht;Hockey;3,2
+1904;Stichtse Vecht;Paardensport;0,8
+1904;Stichtse Vecht;Sportvissen;3,8
+1904;Stichtse Vecht;Tennis;4,9
+1904;Stichtse Vecht;Voetbal;6,7
+1904;Stichtse Vecht;Volleybal;0,4
+1904;Stichtse Vecht;Zwemmen;0,5
+1911;Hollands Kroon;Atletiek;0,8
+1911;Hollands Kroon;Golf;1,9
+1911;Hollands Kroon;Gymnastiek;1,7
+1911;Hollands Kroon;Hockey;0,1
+1911;Hollands Kroon;Paardensport;1,1
+1911;Hollands Kroon;Sportvissen;5,6
+1911;Hollands Kroon;Tennis;4,5
+1911;Hollands Kroon;Voetbal;8,3
+1911;Hollands Kroon;Volleybal;0,2
+1911;Hollands Kroon;Zwemmen;0,3
+1916;Leidschendam-Voorburg;Atletiek;0,6
+1916;Leidschendam-Voorburg;Golf;4,7
+1916;Leidschendam-Voorburg;Gymnastiek;1,3
+1916;Leidschendam-Voorburg;Hockey;3,2
+1916;Leidschendam-Voorburg;Paardensport;0,6
+1916;Leidschendam-Voorburg;Sportvissen;2,4
+1916;Leidschendam-Voorburg;Tennis;2,5
+1916;Leidschendam-Voorburg;Voetbal;5,0
+1916;Leidschendam-Voorburg;Volleybal;0,5
+1916;Leidschendam-Voorburg;Zwemmen;1,2
+1924;Goeree-Overflakkee;Atletiek;0,4
+1924;Goeree-Overflakkee;Golf;1,5
+1924;Goeree-Overflakkee;Gymnastiek;0,7
+1924;Goeree-Overflakkee;Hockey;0,5
+1924;Goeree-Overflakkee;Paardensport;1,2
+1924;Goeree-Overflakkee;Sportvissen;3,5
+1924;Goeree-Overflakkee;Tennis;1,9
+1924;Goeree-Overflakkee;Voetbal;7,8
+1924;Goeree-Overflakkee;Volleybal;0,3
+1924;Goeree-Overflakkee;Zwemmen;0,7
+1926;Pijnacker-Nootdorp;Atletiek;0,6
+1926;Pijnacker-Nootdorp;Golf;3,4
+1926;Pijnacker-Nootdorp;Gymnastiek;1,4
+1926;Pijnacker-Nootdorp;Hockey;2,5
+1926;Pijnacker-Nootdorp;Paardensport;1,1
+1926;Pijnacker-Nootdorp;Sportvissen;3,5
+1926;Pijnacker-Nootdorp;Tennis;4,3
+1926;Pijnacker-Nootdorp;Voetbal;7,4
+1926;Pijnacker-Nootdorp;Volleybal;0,5
+1926;Pijnacker-Nootdorp;Zwemmen;0,7
+1930;Nissewaard;Atletiek;0,4
+1930;Nissewaard;Golf;1,3
+1930;Nissewaard;Gymnastiek;1,0
+1930;Nissewaard;Hockey;0,7
+1930;Nissewaard;Paardensport;0,6
+1930;Nissewaard;Sportvissen;4,0
+1930;Nissewaard;Tennis;2,4
+1930;Nissewaard;Voetbal;5,6
+1930;Nissewaard;Volleybal;0,2
+1930;Nissewaard;Zwemmen;0,6
+1931;Krimpenerwaard;Atletiek;0,6
+1931;Krimpenerwaard;Golf;1,8
+1931;Krimpenerwaard;Gymnastiek;2,9
+1931;Krimpenerwaard;Hockey;0,6
+1931;Krimpenerwaard;Paardensport;0,9
+1931;Krimpenerwaard;Sportvissen;4,1
+1931;Krimpenerwaard;Tennis;3,7
+1931;Krimpenerwaard;Voetbal;8,1
+1931;Krimpenerwaard;Volleybal;1,1
+1931;Krimpenerwaard;Zwemmen;0,9
+1940;De Fryske Marren;Atletiek;0,3
+1940;De Fryske Marren;Golf;1,5
+1940;De Fryske Marren;Gymnastiek;2,0
+1940;De Fryske Marren;Hockey;0,6
+1940;De Fryske Marren;Paardensport;1,4
+1940;De Fryske Marren;Sportvissen;6,2
+1940;De Fryske Marren;Tennis;2,7
+1940;De Fryske Marren;Voetbal;9,6
+1940;De Fryske Marren;Volleybal;1,8
+1940;De Fryske Marren;Zwemmen;0,5
+1942;Gooise Meren;Atletiek;1,3
+1942;Gooise Meren;Golf;8,6
+1942;Gooise Meren;Gymnastiek;1,5
+1942;Gooise Meren;Hockey;8,6
+1942;Gooise Meren;Paardensport;0,9
+1942;Gooise Meren;Sportvissen;2,3
+1942;Gooise Meren;Tennis;8,7
+1942;Gooise Meren;Voetbal;5,3
+1942;Gooise Meren;Volleybal;0,3
+1942;Gooise Meren;Zwemmen;0,4
+1945;Berg en Dal;Atletiek;0,4
+1945;Berg en Dal;Golf;2,2
+1945;Berg en Dal;Gymnastiek;0,9
+1945;Berg en Dal;Hockey;0,7
+1945;Berg en Dal;Paardensport;0,5
+1945;Berg en Dal;Sportvissen;3,1
+1945;Berg en Dal;Tennis;4,6
+1945;Berg en Dal;Voetbal;8,8
+1945;Berg en Dal;Volleybal;0,9
+1945;Berg en Dal;Zwemmen;0,2
+1948;Meierijstad;Atletiek;0,4
+1948;Meierijstad;Golf;3,4
+1948;Meierijstad;Gymnastiek;0,6
+1948;Meierijstad;Hockey;2,1
+1948;Meierijstad;Paardensport;0,6
+1948;Meierijstad;Sportvissen;3,2
+1948;Meierijstad;Tennis;6,4
+1948;Meierijstad;Voetbal;9,4
+1948;Meierijstad;Volleybal;0,4
+1948;Meierijstad;Zwemmen;0,7
+1949;Waadhoeke;Atletiek;0,5
+1949;Waadhoeke;Golf;0,4
+1949;Waadhoeke;Gymnastiek;1,1
+1949;Waadhoeke;Hockey;0,1
+1949;Waadhoeke;Paardensport;1,0
+1949;Waadhoeke;Sportvissen;5,7
+1949;Waadhoeke;Tennis;3,0
+1949;Waadhoeke;Voetbal;8,7
+1949;Waadhoeke;Volleybal;0,7
+1949;Waadhoeke;Zwemmen;0,5
+1950;Westerwolde;Atletiek;0,3
+1950;Westerwolde;Golf;0,9
+1950;Westerwolde;Gymnastiek;2,0
+1950;Westerwolde;Hockey;0,1
+1950;Westerwolde;Paardensport;0,8
+1950;Westerwolde;Sportvissen;8,3
+1950;Westerwolde;Tennis;1,7
+1950;Westerwolde;Voetbal;6,7
+1950;Westerwolde;Volleybal;0,8
+1950;Westerwolde;Zwemmen;0,2
+1952;Midden-Groningen;Atletiek;0,2
+1952;Midden-Groningen;Golf;1,4
+1952;Midden-Groningen;Gymnastiek;1,1
+1952;Midden-Groningen;Hockey;0,7
+1952;Midden-Groningen;Paardensport;0,9
+1952;Midden-Groningen;Sportvissen;7,1
+1952;Midden-Groningen;Tennis;2,6
+1952;Midden-Groningen;Voetbal;7,0
+1952;Midden-Groningen;Volleybal;0,9
+1952;Midden-Groningen;Zwemmen;0,5
+1954;Beekdaelen;Atletiek;0,4
+1954;Beekdaelen;Golf;1,1
+1954;Beekdaelen;Gymnastiek;1,9
+1954;Beekdaelen;Hockey;0,5
+1954;Beekdaelen;Paardensport;0,8
+1954;Beekdaelen;Sportvissen;1,8
+1954;Beekdaelen;Tennis;2,9
+1954;Beekdaelen;Voetbal;7,4
+1954;Beekdaelen;Volleybal;0,2
+1954;Beekdaelen;Zwemmen;0,2
+1955;Montferland;Atletiek;0,4
+1955;Montferland;Golf;1,1
+1955;Montferland;Gymnastiek;2,3
+1955;Montferland;Hockey;0,4
+1955;Montferland;Paardensport;0,9
+1955;Montferland;Sportvissen;3,1
+1955;Montferland;Tennis;2,8
+1955;Montferland;Voetbal;11,0
+1955;Montferland;Volleybal;0,9
+1955;Montferland;Zwemmen;0,5
+1959;Altena;Atletiek;0,7
+1959;Altena;Golf;1,7
+1959;Altena;Gymnastiek;1,8
+1959;Altena;Hockey;0,2
+1959;Altena;Paardensport;0,6
+1959;Altena;Sportvissen;6,3
+1959;Altena;Tennis;2,9
+1959;Altena;Voetbal;9,8
+1959;Altena;Volleybal;0,3
+1959;Altena;Zwemmen;0,9
+1960;West Betuwe;Atletiek;0,2
+1960;West Betuwe;Golf;1,9
+1960;West Betuwe;Gymnastiek;1,2
+1960;West Betuwe;Hockey;1,0
+1960;West Betuwe;Paardensport;1,2
+1960;West Betuwe;Sportvissen;5,8
+1960;West Betuwe;Tennis;3,5
+1960;West Betuwe;Voetbal;9,0
+1960;West Betuwe;Volleybal;0,6
+1960;West Betuwe;Zwemmen;0,5
+1961;Vijfheerenlanden;Atletiek;0,2
+1961;Vijfheerenlanden;Golf;2,0
+1961;Vijfheerenlanden;Gymnastiek;2,1
+1961;Vijfheerenlanden;Hockey;1,1
+1961;Vijfheerenlanden;Paardensport;0,7
+1961;Vijfheerenlanden;Sportvissen;5,1
+1961;Vijfheerenlanden;Tennis;2,6
+1961;Vijfheerenlanden;Voetbal;8,0
+1961;Vijfheerenlanden;Volleybal;0,8
+1961;Vijfheerenlanden;Zwemmen;0,5
+1963;Hoeksche Waard;Atletiek;0,6
+1963;Hoeksche Waard;Golf;2,9
+1963;Hoeksche Waard;Gymnastiek;1,5
+1963;Hoeksche Waard;Hockey;0,7
+1963;Hoeksche Waard;Paardensport;1,3
+1963;Hoeksche Waard;Sportvissen;4,3
+1963;Hoeksche Waard;Tennis;3,3
+1963;Hoeksche Waard;Voetbal;7,0
+1963;Hoeksche Waard;Volleybal;0,5
+1963;Hoeksche Waard;Zwemmen;0,5
+1966;Het Hogeland;Atletiek;0,4
+1966;Het Hogeland;Golf;0,5
+1966;Het Hogeland;Gymnastiek;1,4
+1966;Het Hogeland;Hockey;0,5
+1966;Het Hogeland;Paardensport;0,9
+1966;Het Hogeland;Sportvissen;5,8
+1966;Het Hogeland;Tennis;1,6
+1966;Het Hogeland;Voetbal;9,6
+1966;Het Hogeland;Volleybal;1,0
+1966;Het Hogeland;Zwemmen;0,8
+1969;Westerkwartier;Atletiek;0,6
+1969;Westerkwartier;Golf;1,0
+1969;Westerkwartier;Gymnastiek;1,3
+1969;Westerkwartier;Hockey;0,6
+1969;Westerkwartier;Paardensport;1,2
+1969;Westerkwartier;Sportvissen;6,6
+1969;Westerkwartier;Tennis;2,5
+1969;Westerkwartier;Voetbal;9,4
+1969;Westerkwartier;Volleybal;1,3
+1969;Westerkwartier;Zwemmen;0,4
+1970;Noardeast-Fryslân;Atletiek;0,4
+1970;Noardeast-Fryslân;Golf;0,3
+1970;Noardeast-Fryslân;Gymnastiek;2,1
+1970;Noardeast-Fryslân;Hockey;0,4
+1970;Noardeast-Fryslân;Paardensport;1,0
+1970;Noardeast-Fryslân;Sportvissen;6,8
+1970;Noardeast-Fryslân;Tennis;1,9
+1970;Noardeast-Fryslân;Voetbal;10,1
+1970;Noardeast-Fryslân;Volleybal;0,9
+1970;Noardeast-Fryslân;Zwemmen;0,6
+1978;Molenlanden;Atletiek;0,4
+1978;Molenlanden;Golf;1,7
+1978;Molenlanden;Gymnastiek;3,0
+1978;Molenlanden;Hockey;0,3
+1978;Molenlanden;Paardensport;0,9
+1978;Molenlanden;Sportvissen;5,1
+1978;Molenlanden;Tennis;2,5
+1978;Molenlanden;Voetbal;8,7
+1978;Molenlanden;Volleybal;1,5
+1978;Molenlanden;Zwemmen;0,4
+1979;Eemsdelta;Atletiek;0,5
+1979;Eemsdelta;Golf;0,8
+1979;Eemsdelta;Gymnastiek;1,7
+1979;Eemsdelta;Hockey;0,4
+1979;Eemsdelta;Paardensport;1,0
+1979;Eemsdelta;Sportvissen;6,7
+1979;Eemsdelta;Tennis;1,4
+1979;Eemsdelta;Voetbal;7,8
+1979;Eemsdelta;Volleybal;0,4
+1979;Eemsdelta;Zwemmen;0,4
+1980;Dijk en Waard;Atletiek;0,6
+1980;Dijk en Waard;Golf;2,2
+1980;Dijk en Waard;Gymnastiek;1,3
+1980;Dijk en Waard;Hockey;0,5
+1980;Dijk en Waard;Paardensport;1,0
+1980;Dijk en Waard;Sportvissen;4,0
+1980;Dijk en Waard;Tennis;3,7
+1980;Dijk en Waard;Voetbal;6,8
+1980;Dijk en Waard;Volleybal;0,3
+1980;Dijk en Waard;Zwemmen;0,6
+1982;Land van Cuijk;Atletiek;0,3
+1982;Land van Cuijk;Golf;1,7
+1982;Land van Cuijk;Gymnastiek;1,2
+1982;Land van Cuijk;Hockey;1,2
+1982;Land van Cuijk;Paardensport;0,9
+1982;Land van Cuijk;Sportvissen;2,7
+1982;Land van Cuijk;Tennis;4,8
+1982;Land van Cuijk;Voetbal;10,4
+1982;Land van Cuijk;Volleybal;1,2
+1982;Land van Cuijk;Zwemmen;0,5
+1991;Maashorst;Atletiek;0,7
+1991;Maashorst;Golf;2,4
+1991;Maashorst;Gymnastiek;1,5
+1991;Maashorst;Hockey;1,3
+1991;Maashorst;Paardensport;0,7
+1991;Maashorst;Sportvissen;2,7
+1991;Maashorst;Tennis;6,2
+1991;Maashorst;Voetbal;9,7
+1991;Maashorst;Volleybal;0,8
+1991;Maashorst;Zwemmen;0,7
+1992;Voorne aan Zee;Atletiek;0,8
+1992;Voorne aan Zee;Golf;2,7
+1992;Voorne aan Zee;Gymnastiek;2,1
+1992;Voorne aan Zee;Hockey;1,2
+1992;Voorne aan Zee;Paardensport;1,1
+1992;Voorne aan Zee;Sportvissen;4,6
+1992;Voorne aan Zee;Tennis;3,9
+1992;Voorne aan Zee;Voetbal;6,2
+1992;Voorne aan Zee;Volleybal;0,2
+1992;Voorne aan Zee;Zwemmen;0,3

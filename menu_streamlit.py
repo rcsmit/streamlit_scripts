@@ -98,7 +98,7 @@ def main():
                 ["[65] Lonen vs inflatie ","lonen_inflatie",""],
                 ["[66] Generate monopoply ","generate_monopoly",""],
                 ["[67] EasyMapNL ","easy_map_nl","Make a custom map of the Netherlands"],
-                ["[68] 2e kamer 2023 ","tweedekamer_2023","Verschil gemeente resultaten vs. landelijke "],
+                ["[68] 2e kamer ","tweedekamer","Verkiezings analyses 2e kamer"],
     
                 ]
  
