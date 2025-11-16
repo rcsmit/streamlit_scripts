@@ -103,6 +103,7 @@ def show_info():
     st.info("Obesitas:  https://www.vzinfo.nl/overgewicht/regionaal/obesitas#obesitas-volwassenen")
     st.info("Inkomen (2020) : https://www.cbs.nl/nl-nl/maatwerk/2023/35/inkomen-per-gemeente-en-wijk-2020")
     st.info("Opleiding [%>= HBO/WO] (2024) : https://www.clo.nl/indicatoren/nl210016-hbo-en-wo-gediplomeerden-2024")
+    st.info("Sportlidmaatschappen : https://www.sportenbewegenincijfers.nl/kaarten/sportlidmaatschappen")
     st.info(
         """FORMULES
             
@@ -835,7 +836,8 @@ def obesitas_inkomen():
         mode_="markers+text"
     else:
         mode_="markers"
-    plot_scatter_correlation(df_res, "percentage_votes", sport, partij, None,mode_, False)
+    df_res2=df_merge[df_merge["LijstNaam"]==partij]
+    plot_scatter_correlation(df_res2, "percentage_votes", sport, partij, None,mode_, False)
 
     col1,col2,col3=st.columns(3)
     with col1:
