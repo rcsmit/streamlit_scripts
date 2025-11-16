@@ -1029,15 +1029,37 @@ def kaart_per_partij():
         st.error("Partij heeft geen stemmen")
         st.stop()
 
+def sport_vs_uitslagen():
+    df_j = load_votes(2025)
+   
+    # https://www.sportenbewegenincijfers.nl/kaarten/sportlidmaatschappen
+    url_sport =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_sportlidmaatschappen_2024.csv"
+    df_sport = pd.read_csv(url_sport)
+    df_sport_pivot=df_sport.pivot_table(
+        index="Gemeente", 
+        columns="Sport", 
+        values="Percentage",
+        aggfunc="mean"
+    ).reset_index()
+    
+
+    df_merge = df_j.merge(df_sport_pivot, left_on="Regio", right_on="Gemeente", how="inner")
+    st.write(df_merge)
+   
+
 def main():
+    sport_vs_uitslagen()
+    st.stop()
     """Main functie
     """  
 
     jaren=[2023,2025] 
-    tab1, tab2, tab3,tab4,tab5,tab6 = st.tabs(["Resultaten", "Enkele gemeente","Partij","voorkeurscoalitie","obesitas/inkomen/opleiding", "Info"])
+    tab1, tab2, tab3,tab4,tab5,tab6,tab7 = st.tabs(["Resultaten", "Enkele gemeente","Partij","voorkeurscoalitie","obesitas/inkomen/opleiding", "sport", "Info"])
 
-    with tab6:
+    with tab7:
         show_info()
+    with tab6:
+        sport_vs_uitslagen()
     with tab4:
         voorkeurscoalitie_per_gemeente()
     with tab5:
