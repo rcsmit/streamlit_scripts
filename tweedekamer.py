@@ -1,4 +1,3 @@
-import json
 import requests
 import pandas as pd
 import streamlit as st
@@ -6,14 +5,11 @@ import folium
 from streamlit_folium import st_folium
 import branca.colormap as cm
 from scipy.stats import chi2_contingency
-import datetime
 import numpy as np
 import random
 import plotly.graph_objects as go
 import statsmodels.api as sm
 import geopandas as gpd
-from shapely.geometry import shape
-import folium
 import plotly.express as px
 from statsmodels.formula.api import glm
 #from statsmodels.genmod.families import Beta
@@ -35,11 +31,12 @@ def load_votes(jaar):
 
 @st.cache_data(show_spinner=False)
 def load_votes_2025():
-  
-    # C:\Users\rcxsm\Documents\python_scripts\python_scripts_rcsmit\fetch_combine_anp_tk2025.py
+    """Laad de stemmen in 2025
 
-    # url_results=r"C:\Users\rcxsm\Documents\python_scripts\alle_resultaten_per_gemeente.csv"
-    # url_partynames = r"C:\Users\rcxsm\Downloads\party_names.csv"
+    Returns:
+        df: dataframe met de stemmen
+    """  
+    # C:\Users\rcxsm\Documents\python_scripts\python_scripts_rcsmit\fetch_combine_anp_tk2025.py
 
     url_results= "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/alle_resultaten_per_gemeente_2025.csv"
     url_partynames =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/partij_keys.csv"
@@ -56,14 +53,11 @@ def load_votes_2025():
     df_results_new=df_results_new.fillna("UNKNOWN_X")
     
     df_results_new=df_results_new[["Gemeentecode","Regio","Waarde", "LijstNaam","voters_current"]]
-    #df_results_new=df_results_new[df_results_new["Regio"] !="Venray"]  # Venray moet nog worden geteld
     den = df_results_new.groupby("Regio")["Waarde"].transform("sum")
     df_results_new["percentage_votes"] = (100 * df_results_new["Waarde"] / den).fillna(0).round(2)
     df_results_new["totaal_gemeente"] =  den
     
     return df_results_new
-
-
 
 @st.cache_data(show_spinner=False)
 def load_votes_2023():
@@ -78,7 +72,6 @@ def load_votes_2023():
     df["percentage_votes"] = (100 * df["Waarde"] / den).fillna(0).round(2)
     return df
 
-
 @st.cache_data(show_spinner=False)
 def load_geojson():
     """Load the file with the shapees of the municipalities
@@ -90,7 +83,6 @@ def load_geojson():
     r = requests.get(url, timeout=30)
     r.raise_for_status()
     return r.json()
-
 
 def show_info():
     """Show information about the app"""
@@ -108,6 +100,7 @@ def show_info():
     st.info("Inkomen (2020) : https://www.cbs.nl/nl-nl/maatwerk/2023/35/inkomen-per-gemeente-en-wijk-2020")
     st.info("Opleiding [%>= HBO/WO] (2024) : https://www.clo.nl/indicatoren/nl210016-hbo-en-wo-gediplomeerden-2024")
     st.info("Sportlidmaatschappen : https://www.sportenbewegenincijfers.nl/kaarten/sportlidmaatschappen")
+    st.info("Gemeeente info: https://nl.wikipedia.org/wiki/Lijst_van_Nederlandse_gemeenten")
     st.info(
         """FORMULES
             
@@ -175,8 +168,6 @@ Wil je een **neutrale afstand** zonder p-waardes: **chi2_rtl**.
     # maar of de verdeling van stemmen per partij in uitgelicht proportioneel afwijkt van de landelijke verdeling.
 
     # Dat vraagt om een vergelijking van percentages (proporties), niet absolute aantallen.
-
-
 
 def calculate_results_gemeente(df,jaar):
     """Bereken de resultaten van een bepaalde gemeente
@@ -297,7 +288,7 @@ def calculate_results_landelijk(jaar, df):
 
     df_res = pd.DataFrame(resultaten).sort_values(f"Chi2_rtl_{jaar}", ascending=True)
     for fieldname in [f"Chi2_rtl_{jaar}", f"Chi2_prop_{jaar}", f"Chi2_test_{jaar}"]:
-        # Rangorde op basis van Chi2_prop, hoogste eerst
+        # Rangorde op basis van Chi2_prop, laagste eerst
         try:
             df_res[f"Rank_{fieldname}"] = (
                 df_res[fieldname].rank(method="dense", ascending=True).astype(int)
@@ -312,23 +303,13 @@ def calculate_results_landelijk(jaar, df):
             
     return df_res
 
-
-
-#
-
 def fmt(x, nd=2):
     x = round(x, nd)
     return f"{int(x)}" if math.isclose(x, int(x)) else f"{x:.{nd}f}"
 def make_bins_and_labels(value_max, nd=1):
     pct  = [0, 12.5,25,37.5,50,62.5,75,82.5, 100]
     edges = [value_max * p / 100 for p in pct]
-    #edges =[0,15,20,25,30,35,40,45,100]
-    # labels = (
-    #     [f"< {fmt(edges[1], nd)}"] +
-    #     [f"{fmt(edges[i], nd)} to {fmt(edges[i+1], nd)}" for i in range(1, len(edges) - 2)] +
-    #     [f"> {fmt(edges[-2], nd)}"]
-    # )
-
+   
     labels = (
         [f"< {fmt(edges[1], nd)}"] +
         [f"{fmt(edges[i], nd)} to {fmt(edges[i+1], nd)}" for i in range(1, len(edges) - 1)] )
@@ -343,7 +324,6 @@ def choropleth_binned(df,  value_col, value_max):
    
     fix = {"Hengelo (O)": "Hengelo", "Den Bosch": "'s-Hertogenbosch", "Den Haag": "'s-Gravenhage",
         "Bergen (L)": "Bergen (L.)", "Bergen (NH)": "Bergen (NH.)"}
-
 
     df["Gemeente"] = df["Gemeente"].replace(fix)
     
@@ -387,8 +367,11 @@ def choropleth_binned(df,  value_col, value_max):
     )
 
     st.plotly_chart(fig)
-   
+
 def kaart_per_partij_binned():
+    """Maak een binned choropleth map per partij
+    """
+    
     jaren = [2023, 2025]
     jaar = st.radio("Jaar", jaren, index=1, horizontal=True, key="partij_jaar")
     df_j = load_votes(jaar)
@@ -407,24 +390,20 @@ def kaart_per_partij_binned():
     value_col = f"Percentage_{partij}"
     df_p = df_p.rename(columns={"percentage_votes": value_col})
     
-  
-
-    
-
-
     # 2) draw the binned map
-
-    # if your current make_map can use a categorical column, call it here
-    # make_map(df_p, jaar, "klasse")  # and handle discrete colors inside that function
-                # GeoDataFrame with a Gemeente property
     choropleth_binned(df_p,  value_col=f"Percentage_{partij}", value_max=value_max)
-    
-    # except Exception as e:
-    #     st.error(f"Fout bij het maken van de kaart: {e}")
 
     st.write(df_p)
 
 def make_map(df_res, jaar, metric):
+    """Maak een choropleth map van de resultaten
+
+    Args:
+        df_res (_type_): _description_
+        jaar (int): jaar
+        metric (_type_): _description_
+    """
+
     gjson = load_geojson()
 
     # naamfix per jaar
@@ -466,7 +445,12 @@ def make_map(df_res, jaar, metric):
         # glijdende schaal voor continue metrics
         vmin = float(df_res[metric].min()); vmax = float(df_res[metric].max())
         cmap = cm.LinearColormap(colors=["#ffff00", "#ff0000"], vmin=vmin, vmax=vmax).to_step(7)
-        cmap.caption = "gemiddeld            zeer afwijkend" if metric == "Chi2_prop" else "laag             hoog"
+        if metric.startswith("Chi2_prop"):
+            cmap.caption = "gemiddeld            zeer afwijkend"
+        else:
+            cmap.caption = "laag             hoog"
+ 
+        
         def style_function(feature):
             val = feature["properties"].get(metric)
             color = "#cccccc" if val is None else cmap(val)
@@ -513,16 +497,6 @@ def make_map(df_res, jaar, metric):
         gdf["lon"] = gdf["centroid"].x
         gdf["lat"] = gdf["centroid"].y
 
-    
-    
-        # # ---- 2) Merge centroid met df_res ----
-        # gdf = gdf.merge(
-        #     df_res,
-        #     left_on="statnaam",
-        #     right_on="Gemeente_fix",
-        #     how="left"
-        # )
-
         # ---- 3) Voeg cirkels toe aan bestaande map m ----
         # lineaire schaal: bepaal max straal
     
@@ -556,14 +530,21 @@ def make_map(df_res, jaar, metric):
                 popup=f"{row['statnaam']}<br>stemmen: {row['totaal_gemeente']:,}"
             ).add_to(m)
 
-
-
     st.markdown(f"## Kaart: {metric}")
     st_folium(m, returned_objects=[])
 
   
 def plot_scatter(df_res_all,xaxis,yaxis,extra_info=True):
-   
+    """Plot een scatter plot van twee kolommen in df_res_all
+
+    Args:
+        df_res_all (_type_): _description_
+        xaxis (_type_): _description_
+        yaxis (_type_): _description_
+        extra_info (bool, optional): Voeg "Is meer cq minder afwijkend dan vorig jaar toe" in de hoeken. 
+                                        Defaults to True.
+    """
+
     # Voorbeeld dataframe
     # df_res_all bevat o.a. kolommen: Gemeente, Rank_Chi2_rtl_2023, Rank_Chi2_rtl_2025
     # df_res_all = pd.DataFrame(...)
@@ -631,7 +612,18 @@ def plot_scatter(df_res_all,xaxis,yaxis,extra_info=True):
     )
 
     st.plotly_chart(fig, width=True)
+
 def calculate_r2(df,x_axis,y_axis):
+    """Bereken R² en slope tussen twee kolommen in df
+    Args:
+        df (_type_): _description_
+        x_axis (_type_): _description_
+        y_axis (_type_): _description_
+    Returns:
+        r2, slope: _description_
+    """
+
+
     try:
         # Bereken lineaire regressie
         x = df[x_axis].astype(float)
@@ -648,8 +640,6 @@ def calculate_r2(df,x_axis,y_axis):
         r2,slope = 0,0
     return r2,slope
 
-
-
 def plot_scatter_correlation(
     df_,
     x_axis,
@@ -660,6 +650,18 @@ def plot_scatter_correlation(
     log_inkomen,
     weight_col=None,          # bv. "Inwoneraantal_2025" of "Land-oppervlakte" of None
 ):
+    """Plot een scatter plot met correlatie tussen twee kolommen in df_
+    Args:
+        df_ (_type_): _description_
+        x_axis (_type_): _description_
+        y_axis (_type_): _description_
+        partij (_type_): _description_
+        indicator (_type_): _description_
+        mode_ (_type_): _description_
+        log_inkomen (_type_): _description_
+        weight_col (_type_, optional): _description_. Defaults to None.
+    """
+
     # kopie zodat df zelf niet verandert
     df = df_.copy()
 
@@ -744,8 +746,8 @@ def plot_scatter_correlation(
     )
     if weight_col is not None and weight_col in df.columns:
         customdata = np.stack([df[weight_col].astype(float)], axis=-1)
-        hovertemplate += f"<br>{weight_col}: %{customdata[0]}"
-        
+        hovertemplate += f"<br>{weight_col}: %{{customdata[0]}}"
+ 
     else:
         customdata = None
 
@@ -797,76 +799,15 @@ def plot_scatter_correlation(
 
     st.plotly_chart(fig, use_container_width=True)
 
-def plot_scatter_correlation_(df_, x_axis, y_axis, partij, indicator,mode_, log_inkomen):
-    # kopie zodat df zelf niet verandert
-    df = df_.copy()
-
-    # log-transform als de kolom ink_inw heet
-    if x_axis == "ink_inw" and log_inkomen:
-        df[x_axis] = np.log(df[x_axis].astype(float))
-        x_label = f"log({x_axis})"
-    else:
-        x_label = x_axis
-
-    # Bereken lineaire regressie
-    x = df[x_axis].astype(float)
-    y = df[y_axis].astype(float)
-    coeffs = np.polyfit(x, y, 1)
-    slope, intercept = coeffs
-    y_pred = slope * x + intercept
-
-    # R²
-    ss_res = np.sum((y - y_pred) ** 2)
-    ss_tot = np.sum((y - np.mean(y)) ** 2)
-    r2 = 1 - ss_res / ss_tot
-
-    # Maak plot
-    fig = go.Figure()
-
-    # Scatterpunten
-    fig.add_trace(
-        go.Scatter(
-            x=x,
-            y=y,
-            mode=mode_,
-            name="Gemeenten",
-            text=df["Naam"],
-            textposition="top center",
-            marker=dict(size=8, color="teal", opacity=0.7, line=dict(width=0.5, color="white")),
-            hovertemplate="<b>%{text}</b><br>"
-                          f"{x_axis}: "+"%{x}<br>"
-                          f"{y_axis}: "+"%{y}<extra></extra>",
-        )
-    )
-
-    # Trendline
-    fig.add_trace(
-        go.Scatter(
-            x=x,
-            y=y_pred,
-            mode="lines",
-            name="Trendline",
-            line=dict(color="gray", width=2, dash="dash"),
-            hoverinfo="skip"
-        )
-    )
-
-    # Layout
-    fig.update_layout(
-        title=f"{y_axis}<br> vs {x_axis} | (R² = {r2:.3f} | {partij})",
-        xaxis_title=x_label,
-        yaxis_title=y_axis,
-        template="plotly_white",
-    )
-    # # Log-schaal als x-axis "ink_inw" is
-    # if x_axis == "ink_inw":
-    #     fig.update_xaxes(type="log")
-
-   
-    st.plotly_chart(fig)
-
-
 def r2_per_parties(df_merge, indicator_):
+    """Bereken R² tussen stemmen per partij en verschillende indicatoren
+
+    Args:
+        df_merge (_type_): _description_
+        indicator_ (_type_): _description_
+    Returns:
+        df_result: _description_
+    """
 
     # predictors -> column names
     features = {
@@ -897,12 +838,18 @@ def r2_per_parties(df_merge, indicator_):
     # show
     st.dataframe(df_result)
 
-
 @st.cache_data(show_spinner=False)
 def get_info_obesitas_inkomen():
+    """Haal info over obesitas, inkomen, opleiding en sportlidmaatschappen per gemeente
+    Returns:
+        df_merge: samengevoegde dataframe
+        list_sports: lijst met sporten
+    """
+
     df_votes=  load_votes(2025)
-   
-    df_votes["aantal_votes"] =  round(df_votes["Waarde"] / df_votes["percentage_votes"],0) *100
+    tot_per_gem = df_votes.groupby("Regio")["Waarde"].transform("sum")
+    df_votes["aantal_votes"] = tot_per_gem
+    #df_votes["aantal_votes"] =  round(df_votes["Waarde"] / df_votes["percentage_votes"],0) *100
     
    
     # https://www.vzinfo.nl/overgewicht/regionaal/obesitas#obesitas-volwassenen
@@ -919,7 +866,6 @@ def get_info_obesitas_inkomen():
     #url_inkomen = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gemeente_inkomen.csv"
     url_inkomen = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_inkomen.csv"
     df_inkomen = pd.read_csv(url_inkomen)
-
 
      # https://www.sportenbewegenincijfers.nl/kaarten/sportlidmaatschappen
     url_sport =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_sportlidmaatschappen_2024.csv"
@@ -954,38 +900,13 @@ def get_info_obesitas_inkomen():
     return df_merge,list_sports
 
            
-def obesitas_inkomen():
-  
-    df_merge,list_sports = get_info_obesitas_inkomen()
-    
- 
 
-    df_merge.fillna(0)
-    
-    # st.write(gemeentes_niet_in_dfj.sort_values().reset_index(drop=True))
-    #st.write(df_merge)
-    
-    heatmap_partij_sport_r2(df_merge, list_sports)
+def scatters_obesitas_opleiding_inkomen(df_merge):
+    """Maak scatterplots obesitas, opleiding, inkomen per paritj
 
-
-    col1,col2,col3=st.columns(3)
-    with col1:
-        partij = st.selectbox("Partij", sorted(df_merge["LijstNaam"].unique().tolist()), key="afdadsf", index=0)
-    with col2:
-        sport = st.selectbox("Sport", list_sports, key="aasdffdadsf", index=0)
-    with col3:
-        show_text = st.checkbox("Toon tekstlabels", key="affadsf4", value=True)
-        weegfactor = st.selectbox("Weegfactor", [None,"Inwoneraantal_2025","Land-oppervlakte"])
-    
-    if show_text:
-        mode_="markers+text"
-    else:
-        mode_="markers"
-    df_res2=df_merge[df_merge["LijstNaam"]==partij]
-    
-    plot_scatter_correlation(df_res2, "percentage_votes", sport, partij, None,mode_, False, weegfactor)
-
-
+    Args:
+        df_merge (_type_): _description_
+    """
     col1,col2,col3=st.columns(3)
     with col1:
         partij = st.selectbox("Partij", sorted(df_merge["LijstNaam"].unique().tolist()), key="afhhdadsf", index=0)
@@ -1006,8 +927,6 @@ def obesitas_inkomen():
     col1,col2, =st.columns(2)
     with col1:
         plot_scatter_correlation(df_res,f"Percentage_{indicator_}",f"percentage_votes_{partij}", partij, indicator_,mode_,log_inkomen)
-    
-
     with col2:
         plot_scatter_correlation(df_res,"HBO_WO_2024",f"percentage_votes_{partij}", partij,"",mode_,log_inkomen)
     col1,col2, =st.columns(2)
@@ -1016,11 +935,41 @@ def obesitas_inkomen():
     with col2:
         plot_scatter_correlation(df_res,"ink_inw",f"Percentage_{indicator_}", partij, indicator_,mode_,log_inkomen)
 
-   
     ols_corr(df_res, partij,indicator_)
     r2_per_parties(df_merge, indicator_)
 
+def scatter_sport_vs_partij(df_merge, list_sports):
+    """Maak scatterplots sportlidmaatschappen vs stemmen per partij
+
+    Args:
+        df_merge (_type_): _description_
+        list_sports (_type_): _description_
+    """
+
+    col1,col2,col3=st.columns(3)
+    with col1:
+        partij = st.selectbox("Partij", sorted(df_merge["LijstNaam"].unique().tolist()), key="afdadsf", index=0)
+    with col2:
+        sport = st.selectbox("Sport", list_sports, key="aasdffdadsf", index=0)
+    with col3:
+        show_text = st.checkbox("Toon tekstlabels", key="affadsf4", value=True)
+        weegfactor = st.selectbox("Weegfactor", [None,"Inwoneraantal_2025","Land-oppervlakte"])
+    
+    if show_text:
+        mode_="markers+text"
+    else:
+        mode_="markers"
+    df_res2=df_merge[df_merge["LijstNaam"]==partij]
+    
+    plot_scatter_correlation(df_res2, "percentage_votes", sport, partij, None,mode_, False, weegfactor)
+
 def heatmap_partij_sport_r2(df_merge, list_sports):
+    """Maak heatmap met R² tussen sportlidmaatschappen en stemmen per partij
+    Args:
+        df_merge (_type_): _description_
+        list_sports (_type_): _description_
+    """
+
     partijen =  sorted(df_merge["LijstNaam"].unique().tolist())
    
 
@@ -1136,8 +1085,19 @@ def ols_corr(df, partij,indicator_):
         model_w = glm(formula=formula, data=df, family=Beta(), freq_weights=df["aantal_votes"]).fit()
         st.write(model_w.summary())
 
+def obesitas_inkomen():
+    """Analyseer verband tussen obesitas, inkomen, opleiding en stemgedrag
+    """
+
+    df_merge,list_sports = get_info_obesitas_inkomen()
+    print(df_merge.dtypes)
+    provincies =   st.multiselect("Provincies", sorted(df_merge["Provincie"].unique().tolist()), index=0) 
+    heatmap_partij_sport_r2(df_merge, list_sports)
+    scatter_sport_vs_partij(df_merge, list_sports)
+    scatters_obesitas_opleiding_inkomen(df_merge)
+
 def all_results():
- 
+    """Maak een kaart met de verschillen met het gemiddelde per gemeente. Plot ook verschillende scatterplots"""
     df_res_all = pd.DataFrame()
     jaren = [2023, 2025]
     columns_metrics = [
@@ -1267,16 +1227,12 @@ def voorkeurscoalitie_per_gemeente():
 
     
 
-
-
 def kaart_per_partij():
     """Maak een kaart per partij"""
  
     jaren=[2023,2025]
     jaar = st.radio("Jaar", jaren, index=1, horizontal=True, key="partij_jaar")
     df_j = load_votes(jaar)
-    
-    
 
     #check = df.groupby("Regio")["percentage"].sum().round(2)
     df_j["Gemeente"]=df_j["Regio"]
@@ -1285,18 +1241,12 @@ def kaart_per_partij():
     df_p=df_j[df_j["LijstNaam"] == partij]
     
     if len(df_p)>0:
-      
-
         df_p=df_p[["Gemeente","Waarde","percentage_votes"]].sort_values("percentage_votes", ascending=False)
-        df_p["Zetels"] = round(df_p["percentage_votes"]/0.66667,1)
-        #df_p[f"Percentage_{partij}"] = df_p["percentage"]
-        
+        df_p["Zetels"] = round(df_p["percentage_votes"]/0.66667,1)  
         df_p = df_p.rename(columns={"percentage_votes": f"Percentage_{partij}"})
-        
-        
+          
         try:
-            make_map(df_p, jaar, f"Percentage_{partij}")
-            
+            make_map(df_p, jaar, f"Percentage_{partij}")      
         except:
             #error VRIJVER 2025
             st.error("Fout bij het maken van de kaart")
@@ -1305,10 +1255,7 @@ def kaart_per_partij():
         st.error("Partij heeft geen stemmen")
         st.stop()
 
-
-   
 def main():
-  
     """Main functie
     """  
 
@@ -1321,7 +1268,6 @@ def main():
         obesitas_inkomen()
     with tab4:
         voorkeurscoalitie_per_gemeente()
-   
     with tab1:
         all_results()   
     with tab2:
