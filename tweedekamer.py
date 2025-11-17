@@ -966,9 +966,9 @@ def scatter_sport_vs_partij(df_merge, list_sports):
     with col2:
         sport = st.selectbox("Sport/kenmerk", list_sports, key="aasdffdadsf", index=0)
     with col3:
-        show_text = st.checkbox("Toon tekstlabels", key="affadsf4", value=True)
         weegfactor = st.selectbox("Weegfactor", [None,"Inw_2025","Land-oppervlakte"])
-    
+        show_text = st.checkbox("Toon tekstlabels", key="affadsf4", value=True)
+        
     if show_text:
         mode_="markers+text"
     else:
@@ -1112,6 +1112,7 @@ def obesitas_inkomen():
         st.stop()
     df_merge = df_merge[df_merge["Prov"].isin(provincies)]
     st.write(f"Aantal gemeentes : {len(df_merge["Gemeente"].unique().tolist())}")
+   
     heatmap_partij_sport_r2(df_merge, list_sports)
     scatter_sport_vs_partij(df_merge, list_sports)
     scatters_obesitas_opleiding_inkomen(df_merge)
