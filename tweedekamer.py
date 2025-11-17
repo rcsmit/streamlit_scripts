@@ -622,23 +622,31 @@ def calculate_r2(df,x_axis,y_axis):
     Returns:
         r2, slope: _description_
     """
+    x = df[x_axis].astype(float)
+    y = df[y_axis].astype(float)
 
+    # NaN’s eruit
+    mask = x.notna() & y.notna()
+    x = x[mask]
+    y = y[mask]
+
+    # Te weinig of geen variatie
+    if len(x) < 2 or np.all(x == x.iloc[0]):
+        return np.nan, np.nan
 
     try:
-        # Bereken lineaire regressie
-        x = df[x_axis].astype(float)
-        y = df[y_axis].astype(float)
         coeffs = np.polyfit(x, y, 1)
         slope, intercept = coeffs
         y_pred = slope * x + intercept
 
-        # R²
         ss_res = np.sum((y - y_pred) ** 2)
         ss_tot = np.sum((y - np.mean(y)) ** 2)
         r2 = 1 - ss_res / ss_tot
-    except:
-        r2,slope = 0,0
-    return r2,slope
+    except Exception:
+        r2, slope = np.nan, np.nan
+
+    return r2, slope
+
 
 def plot_scatter_correlation(
     df_,
@@ -661,7 +669,7 @@ def plot_scatter_correlation(
         log_inkomen (_type_): _description_
         weight_col (_type_, optional): _description_. Defaults to None.
     """
-
+    
     # kopie zodat df zelf niet verandert
     df = df_.copy()
 
@@ -692,7 +700,12 @@ def plot_scatter_correlation(
     y = y[mask].astype(float)
     if w is not None:
         w = w[mask].astype(float)
+    
 
+    if len(x) < 2 or np.all(x == x.iloc[0]):
+        print (f"Te weinig variatie in x om een regressielijn te fitten -  {x_axis}, {y_axis}, {partij}")
+        return
+    
     # Gewogen of ongewogen regressie
     if w is None:
         # gewone OLS
@@ -897,6 +910,7 @@ def get_info_obesitas_inkomen():
     df_merge = df_merge.merge(df_sport_pivot, on="Gemeentecode", how="outer")
     df_merge=df_merge.merge(df_gemeenteinfo, on="Gemeentecode", how="inner")
     list_sports =  sorted(df_sport["Sport"].unique().tolist())
+    list_sports = list_sports + ["ink_inw","HBO_WO_2024","Inw_2025","Land-oppervlakte","Inw_km2_2025","perc_migratie2024"] 
     return df_merge,list_sports
 
            
@@ -921,7 +935,7 @@ def scatters_obesitas_opleiding_inkomen(df_merge):
         mode_="markers"
 
     df_res=df_merge[(df_merge["Indicator"]==indicator_)& (df_merge["LijstNaam"]==partij)]
-    df_res[f"Percentage_{indicator_}"] = df_res["Percentage"]
+    df_res.loc[:,f"Percentage_{indicator_}"] = df_res["Percentage"]
     df_res.loc[:,f"percentage_votes_{partij}"] = df_res["percentage_votes"]
    
     col1,col2, =st.columns(2)
@@ -950,10 +964,10 @@ def scatter_sport_vs_partij(df_merge, list_sports):
     with col1:
         partij = st.selectbox("Partij", sorted(df_merge["LijstNaam"].unique().tolist()), key="afdadsf", index=0)
     with col2:
-        sport = st.selectbox("Sport", list_sports, key="aasdffdadsf", index=0)
+        sport = st.selectbox("Sport/kenmerk", list_sports, key="aasdffdadsf", index=0)
     with col3:
         show_text = st.checkbox("Toon tekstlabels", key="affadsf4", value=True)
-        weegfactor = st.selectbox("Weegfactor", [None,"Inwoneraantal_2025","Land-oppervlakte"])
+        weegfactor = st.selectbox("Weegfactor", [None,"Inw_2025","Land-oppervlakte"])
     
     if show_text:
         mode_="markers+text"
@@ -1090,8 +1104,14 @@ def obesitas_inkomen():
     """
 
     df_merge,list_sports = get_info_obesitas_inkomen()
-    print(df_merge.dtypes)
-    provincies = st.multiselect("Provincies", sorted(df_merge["Prov"].unique().tolist()), index=0) 
+    df_merge=df_merge[df_merge["LijstNaam"] != "Overig"]
+    provincies_=sorted(df_merge["Prov"].unique().tolist())
+    provincies = st.multiselect("Provincies", provincies_,provincies_) 
+    if len(provincies)==0:
+        st.warning("Selecteer minstens één provincie")
+        st.stop()
+    df_merge = df_merge[df_merge["Prov"].isin(provincies)]
+    st.write(f"Aantal gemeentes : {len(df_merge["Gemeente"].unique().tolist())}")
     heatmap_partij_sport_r2(df_merge, list_sports)
     scatter_sport_vs_partij(df_merge, list_sports)
     scatters_obesitas_opleiding_inkomen(df_merge)
@@ -1125,6 +1145,7 @@ def all_results():
             df_res_all = df_res_all.merge(df_res, on="Gemeente", how="inner")
     st.markdown("## Vergelijkingen")
     #st.dataframe(df_res_all.style.format({"Chi2": "{:.4f}"}))
+    
     plot_scatter(df_res_all,xaxis=f"Rank_Chi2_rtl_2023", yaxis=f"Rank_Chi2_rtl_2025")
     plot_scatter(df_res_all,f"Rank_Chi2_rtl_2025",f"Rank_Chi2_prop_2025", False)
     plot_scatter(df_res_all,f"Rank_Chi2_rtl_2023",f"Rank_Chi2_test_2023", False)
