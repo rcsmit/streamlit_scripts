@@ -1090,8 +1090,8 @@ def obesitas_inkomen():
     """
 
     df_merge,list_sports = get_info_obesitas_inkomen()
-   
-    provincies = st.multiselect("Provincies", sorted(df_merge["Provincie"].unique().tolist()), index=0) 
+    print(df_merge.dtypes)
+    provincies = st.multiselect("Provincies", sorted(df_merge["Prov"].unique().tolist()), index=0) 
     heatmap_partij_sport_r2(df_merge, list_sports)
     scatter_sport_vs_partij(df_merge, list_sports)
     scatters_obesitas_opleiding_inkomen(df_merge)
