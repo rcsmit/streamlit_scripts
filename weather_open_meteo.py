@@ -201,7 +201,7 @@ def show_month(df, to_show, day_min, day_max, month, month_names, where):
     """   
     
     df_month = df[(df['Month'] == month) & (df['Day']>=day_min) & (df['Day']<=day_max)]             
-    fig = px.line(df_month, x='Day', y=to_show, color='Year', labels={'temp': 'Temperature (°C)'}, title=f'{to_show} for {month_names[month-1]} in {where}')
+    fig = px.line(df_month, x='Day', y=to_show, color='Year', labels={'temp': f'{to_show}'}, title=f'{to_show} for {month_names[month-1]} in {where}')
     st.plotly_chart(fig)
 
     frequency_table = df_month[to_show].value_counts().reset_index()
@@ -215,8 +215,8 @@ def show_month(df, to_show, day_min, day_max, month, month_names, where):
     total_absolute_frequency = frequency_table['Frequency'].sum()
     frequency_table['Cumulative Percentage'] = (frequency_table['Cumulative Absolute Frequency'] / total_absolute_frequency) * 100
 
-    # Display the frequency table
-    st.write(frequency_table)
+    # # Display the frequency table
+    # st.write(frequency_table)
 
     
     # Frequency table
@@ -227,13 +227,13 @@ def show_month(df, to_show, day_min, day_max, month, month_names, where):
     frequency_table = frequency_table.reset_index()
     frequency_table['Temp_Bin'] = frequency_table['Temp_Bin'].apply(lambda x: x.mid)
 
-    # Display the frequency table
-    st.write(frequency_table)
+    # # Display the frequency table
+    # st.write(frequency_table)
 
     # Frequency line graph
     frequency_table_melted = frequency_table.melt(id_vars='Temp_Bin', var_name='Year', value_name='Frequency')
     fig = px.line(frequency_table_melted, x='Temp_Bin', y='Frequency', color='Year',
-                  labels={'Temp_Bin': 'Temperature (°C)', 'Frequency': 'Frequency'},
+                  labels={'Temp_Bin': f'{to_show}', 'Frequency': 'Frequency'},
                   title=f'Frequency of {to_show} for {month_names[month-1]} in {where}')
     st.plotly_chart(fig)
     nbins = len(range(int(df_month[to_show].min()), int(df_month[to_show].max()) + 2))
@@ -756,7 +756,7 @@ def show_locations(locations):
 
   
 def main_(locations):
-    """Show the data from Ogimet in a graph, and average values per month per year
+    """Show the data from OpenMeteo in a graph, and average values per month per year
     """    
 
     
@@ -767,6 +767,7 @@ def main_(locations):
     from_ = st.sidebar.text_input("startdatum (yyyy-mm-dd) from 1-1-1900", start_)
     until_ = st.sidebar.text_input("enddatum (yyyy-mm-dd)", today)
     FROM, UNTIL = check_from_until(from_, until_)
+    start_month, end_month = st.sidebar.slider("Months (incl)", 1,12,(1,12))
     # Convert FROM and UNTIL to datetime
     FROM_ = pd.to_datetime(FROM)
     UNTIL_ = pd.to_datetime(UNTIL)
@@ -834,6 +835,7 @@ def main_(locations):
     df["MM"] = df["date"].dt.month
     df["DD"] = df["date"].dt.day
     n_years = df['Year'].nunique()
+    df=df[(df['MM']>=start_month) & (df['MM']<=end_month)]
 
     # Convert all columns except 'date' to appropriate data types
     df[df.columns.difference(['date'])] = df[df.columns.difference(['date'])].apply(pd.to_numeric, errors='coerce')
@@ -857,7 +859,10 @@ def main_(locations):
     cross_table_montly_avg(df, to_show, where, y_axis_zero)   
     show_treshold(where, to_show, treshold_value, above_under, df)
     #show_warmingstripes(df, to_show, where) 
-    show_month(df, to_show, day_min, day_max,month, month_names,where)
+    if month >= start_month and month <= end_month:
+        show_month(df, to_show, day_min, day_max,month, month_names,where)
+    else:
+        st.info("Selected month is not in the indicated range for months to show")
     show_info()
 def legenda():
     # https://open-meteo.com/en/docs/historical-weather-api
