@@ -384,9 +384,6 @@ def show_treshold(where, to_show, treshold_value, above_under, df):
 
     st.write(table_year)
 
-
-
-
     # Zorg dat data schoon is
     table_year = table_year.sort_index()
     x = table_year.index.to_numpy()
@@ -422,7 +419,6 @@ def show_treshold(where, to_show, treshold_value, above_under, df):
         f"**{richting_np}** en **{'significant' if significant_np else 'niet significant'}**"
     )
 
-   
     # X moet 2D zijn, y 1D
     X = table_year.index.to_numpy().reshape(-1, 1)
     y = table_year[to_show].to_numpy()
@@ -462,11 +458,10 @@ def show_treshold(where, to_show, treshold_value, above_under, df):
     all_years = df['Year'].unique()
     table = table.reindex(index=all_months, columns=all_years, fill_value=0)
     st.write(table)
-
+    
     st.subheader(f"Effect van jaar op het {to_show}")
     df_counts = table.stack().reset_index()
     df_counts.columns = ['Month', 'Year', 'Count']
-
 
     X = sm.add_constant(df_counts['Year'])
     y = df_counts['Count']
@@ -570,6 +565,7 @@ def line_graph(to_show, window_size, y_axis_zero, df):
     # fig.show()
     # plotly.offline.plot(fig)
     st.plotly_chart(fig)
+
 #@st.cache_data(ttl=24*60*60)
 def get_data_old(where):
     # load_local = True if platform.processor() else False
