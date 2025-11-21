@@ -84,6 +84,17 @@ def load_geojson():
     r.raise_for_status()
     return r.json()
 
+def load_geojson_provincies():
+    """Load the file with the shapees of the municipalities
+
+    Returns:
+        _type_: json file
+    """
+    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/provinciegrenzen.geojson"
+    r = requests.get(url, timeout=30)
+    r.raise_for_status()
+    return r.json()
+
 def show_info():
     """Show information about the app"""
     st.title(
@@ -316,6 +327,12 @@ def make_bins_and_labels(value_max, nd=1):
     return edges, labels
 
 def choropleth_binned(df,  value_col, value_max):
+    """Maak een binned choropleth map met px.choropleth_mapbox
+    Args:
+        df
+        value_col
+        value_max
+    """
     geojson_path = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_2023.geojson"
     geojson_gemeenten = gpd.read_file(geojson_path)                        # NL gemeenten
     
@@ -369,7 +386,7 @@ def choropleth_binned(df,  value_col, value_max):
     st.plotly_chart(fig)
 
 def kaart_per_partij_binned():
-    """Maak een binned choropleth map per partij
+    """Wrapper om een  binned choropleth map per partij te maken
     """
     
     jaren = [2023, 2025]
@@ -392,11 +409,11 @@ def kaart_per_partij_binned():
     
     # 2) draw the binned map
     choropleth_binned(df_p,  value_col=f"Percentage_{partij}", value_max=value_max)
-
+    make_map(df_p,2025,f"Percentage_{partij}",["#aaaaFF", "#0000FF"])
     st.write(df_p)
 
-def make_map(df_res, jaar, metric):
-    """Maak een choropleth map van de resultaten
+def make_map(df_res, jaar, metric,colors=["#FF0000", "#800080", "#0000FF"]):
+    """Maak een choropleth map met Folium van de resultaten
 
     Args:
         df_res (_type_): _description_
@@ -433,7 +450,7 @@ def make_map(df_res, jaar, metric):
     if use_categorical:
         # 1 = rood, 2 = paars, 3 = rood (zoals gevraagd)
 
-        CAT_COLORS = {1: "#ff0000", 2: "#800080", 3: "#0000ff", 0: "#cccccc", None: "#eeeeee"}
+        CAT_COLORS = {1: colors[0], 2: colors[1], 3: colors[2], 0: "#cccccc", None: "#eeeeee"}
         #CAT_COLORS = {1: "#eeeeee", 2: "#eeeeee", 3: "#eeeeee", 0: "#eeeeee", None: "#eeeeee"}
         
         def style_function(feature):
@@ -444,7 +461,7 @@ def make_map(df_res, jaar, metric):
     else:
         # glijdende schaal voor continue metrics
         vmin = float(df_res[metric].min()); vmax = float(df_res[metric].max())
-        cmap = cm.LinearColormap(colors=["#ffff00", "#ff0000"], vmin=vmin, vmax=vmax).to_step(7)
+        cmap = cm.LinearColormap(colors=[colors[0], colors[1]], vmin=vmin, vmax=vmax).to_step(7)
         if metric.startswith("Chi2_prop"):
             cmap.caption = "gemiddeld            zeer afwijkend"
         else:
@@ -454,7 +471,7 @@ def make_map(df_res, jaar, metric):
         def style_function(feature):
             val = feature["properties"].get(metric)
             color = "#cccccc" if val is None else cmap(val)
-            return {"fillColor": color, "color": "#ffffff", "weight": 0.6, "fillOpacity": 0.85}
+            return {"fillColor": color, "color": "#ffffff", "weight": 0.0, "fillOpacity": 0.85}
 
         # -------- map + tooltip --------
         tooltip_fields = ["statnaam"] + [c for c in df_res.columns if c != "Gemeente_fix"]
@@ -513,11 +530,11 @@ def make_map(df_res, jaar, metric):
             if pd.isna(row["totaal_gemeente"]):
                 continue
             if row["populairste_coalitie"]==1:
-                fill_color="ff0000"
+                fill_color=colors[0]
             elif row["populairste_coalitie"]==2:
-                fill_color="#800080"
+                fill_color=colors[1]
             elif row["populairste_coalitie"]==3:
-                fill_color="#0000ff"
+                fill_color=colors[2]
             else:   
                 fill_color="#ffffff"
             folium.CircleMarker(
@@ -1137,7 +1154,7 @@ def all_results():
         df_res = calculate_results_landelijk(jaar, df)
         if jaar ==jaren[-1]:
             metric_=f"{metric}_{jaar}"
-            make_map(df_res, jaar, metric_)
+            make_map(df_res, jaar, metric_,["#FFFF00","#FF0000",])
             st.write(f"Aantal gemeentes in {jaar} : {len(df_res)}")
             st.dataframe(df_res.style.format({"Chi2": "{:.4f}"}))
         if df_res_all.empty:
@@ -1173,9 +1190,9 @@ def voorkeurscoalitie_per_gemeente():
 
     # Standaardsets (filter op bestaande kolommen, "PVVD" wordt automatisch genegeerd als onbestaand)
     defaults = {
-        "links":  ["GL-PvdA","D66", "VOLT"],   # 'PVVD' bestaat waarschijnlijk niet -> gefilterd
-        "midden": [],
-        "rechts": ["FvD","JA21", "PVV"],
+        "links":  ["GL-PvdA","D66", "Volt", "SP", "PVDD", "Denk"],   # 'PVVD' bestaat waarschijnlijk niet -> gefilterd
+        "midden": ["CU", "VVD", "CDA", "50Plus"],
+        "rechts": ["FVD","JA21", "PVV","BBB","SGP"],
     }
  
     # defaults = {
@@ -1184,40 +1201,43 @@ def voorkeurscoalitie_per_gemeente():
     #     "rechts": ["D66", "VVD", "CDA", "JA21"],
     # }
 
-    defaults = {
-    "links": [
-        "GL-PvdA",
-        "D66",
-        "SP",
-        "PvdD",
-        "BIJ1",
-        "Volt",
-    ],
-    "midden": [
-        "NSC",
-        "CDA",
-        "CU",
-        "BBB",
-    ],
-    "rechts": [
-        "VVD",
-        "PVV",
-        "JA21",
-        "FvD",
-        "SGP",
-    ],
-}
+#     defaults = {
+#     "links": [
+#         "GL-PvdA",
+#         "D66",
+#         "SP",
+#         "PvdD",
+#         "BIJ1",
+#         "Volt",
+#     ],
+#     "midden": [
+#         "NSC",
+#         "CDA",
+#         "CU",
+#         "BBB",
+#     ],
+#     "rechts": [
+#         "VVD",
+#         "PVV",
+#         "JA21",
+#         "FvD",
+#         "SGP",
+#     ],
+# }
 
     
     defaults = {k: [p for p in v if p in partijen] for k, v in defaults.items()}
-
+    color=[None,None,None]
     col_l, col_m, col_r = st.columns(3)
     with col_l:
         sel_links  = st.multiselect("Links",  options=partijen, default=defaults["links"])
+        color[0]=st.color_picker("Kleur Links", "#FF0000")
     with col_m:
         sel_midden = st.multiselect("Midden", options=partijen, default=defaults["midden"])
+        color[1]=st.color_picker("Kleur Links", "#FFFF00")
     with col_r:
         sel_rechts = st.multiselect("Rechts", options=partijen, default=defaults["rechts"])
+        color[2]=st.color_picker("Kleur Links", "#0000FF")
 
     # Nieuwe kolommen met som per blok
     def sum_or_zero(df, cols):
@@ -1240,11 +1260,14 @@ def voorkeurscoalitie_per_gemeente():
     df_pivot["populairste_coalitie"] = np.where(ties, 0, winner)
     df_pivot = df_pivot.reset_index()
     df_pivot["Gemeente"] =df_pivot["Regio"]
-    make_map(df_pivot,2025,"populairste_coalitie")
+    make_map(df_pivot,2025,"populairste_coalitie",[color[0],color[1],color[2]])
     
-    for c in cols:
-        st.subheader(c)
-        choropleth_binned(df_pivot, c, df_pivot[c].max())
+    columns = st.columns(3)
+    for i,c in enumerate(cols):
+        with columns[i]:
+            st.subheader(c)
+            choropleth_binned(df_pivot, c, df_pivot[c].max())
+            make_map(df_pivot,2025,c,["#FFFFFF", color[i]])
     st.dataframe(df_pivot.round(2))
 
     
