@@ -482,7 +482,7 @@ def make_map(df_res, jaar, metric,colors=["#FF0000", "#800080", "#0000FF"]):
     def style_prov(feature):
         return {
             "fillColor": "#fff000",
-            "fillOpacity":0.5,      # geen vulling
+            "fillOpacity":0,      # geen vulling
             "color": "black",      # randkleur provincie
             "weight": 0.5,           # lijndikte
             
