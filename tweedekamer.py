@@ -1,4 +1,4 @@
-import requests
+3import requests
 import pandas as pd
 import streamlit as st
 import folium
@@ -485,6 +485,7 @@ def make_map(df_res, jaar, metric,colors=["#FF0000", "#800080", "#0000FF"]):
             "fillOpacity":0,      # geen vulling
             "color": "black",      # randkleur provincie
             "weight": 0.5,           # lijndikte
+            "interactive": False,
             
         }
 
