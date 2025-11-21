@@ -85,8 +85,8 @@ def load_geojson():
     return r.json()
 
 def load_geojson_provincies():
-    """Load the file with the shapees of the municipalities
-
+    """Load the file with the shapees of the provincies
+    https://data.overheid.nl/dataset/10928-provinciegrenzen-nederland--gegeneraliseerd-vlak-bestand#panel-resources
     Returns:
         _type_: json file
     """
@@ -422,7 +422,7 @@ def make_map(df_res, jaar, metric,colors=["#FF0000", "#800080", "#0000FF"]):
     """
 
     gjson = load_geojson()
-
+    gjson_provincies = load_geojson_provincies()
     # naamfix per jaar
 
     # "Den Haag":'s-Gravenhage',
@@ -476,7 +476,7 @@ def make_map(df_res, jaar, metric,colors=["#FF0000", "#800080", "#0000FF"]):
         # -------- map + tooltip --------
         tooltip_fields = ["statnaam"] + [c for c in df_res.columns if c != "Gemeente_fix"]
     m = folium.Map(location=[52.2, 5.3], zoom_start=7, tiles="cartodbpositron")
-
+    gj_prov = folium.GeoJson(gjson_provincies,name="Provincies")
     gj = folium.GeoJson(
         gjson,
         name="Gemeenten",
@@ -486,7 +486,7 @@ def make_map(df_res, jaar, metric,colors=["#FF0000", "#800080", "#0000FF"]):
                                     localize=True, sticky=True, labels=True),
     )
     gj.add_to(m)
-
+    gj_prov.add_to(m)
     # legenda
     if use_categorical:
         legend_html = """
