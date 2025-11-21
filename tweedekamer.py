@@ -1147,7 +1147,7 @@ def obesitas_inkomen():
         st.warning("Selecteer minstens één provincie")
         st.stop()
     df_merge = df_merge[df_merge["Prov"].isin(provincies)]
-    st.write(f"Aantal gemeentes : {len(df_merge["Gemeente"].unique().tolist())}")
+    st.write(f"Aantal gemeentes : {len(df_merge['Gemeente'].unique().tolist())}")
    
     heatmap_partij_sport_r2(df_merge, list_sports)
     scatter_sport_vs_partij(df_merge, list_sports)
