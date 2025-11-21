@@ -87,10 +87,11 @@ def load_geojson():
 def load_geojson_provincies():
     """Load the file with the shapees of the provincies
     https://data.overheid.nl/dataset/10928-provinciegrenzen-nederland--gegeneraliseerd-vlak-bestand#panel-resources
+    https://public.opendatasoft.com/explore/assets/georef-netherlands-provincie/export/
     Returns:
         _type_: json file
     """
-    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/provinciegrenzen.geojson"
+    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/georef-netherlands-provincie.geojson"
     r = requests.get(url, timeout=30)
     r.raise_for_status()
     return r.json()
@@ -471,22 +472,40 @@ def make_map(df_res, jaar, metric,colors=["#FF0000", "#800080", "#0000FF"]):
         def style_function(feature):
             val = feature["properties"].get(metric)
             color = "#cccccc" if val is None else cmap(val)
-            return {"fillColor": color, "color": "#ffffff", "weight": 0.0, "fillOpacity": 0.85}
+            return {"fillColor": color, "color": "#ffffff", "weight": 0.3, "fillOpacity": 0.85}
 
         # -------- map + tooltip --------
         tooltip_fields = ["statnaam"] + [c for c in df_res.columns if c != "Gemeente_fix"]
     m = folium.Map(location=[52.2, 5.3], zoom_start=7, tiles="cartodbpositron")
-    gj_prov = folium.GeoJson(gjson_provincies,name="Provincies")
+   
+
+    def style_prov(feature):
+        return {
+            "fillColor": "#fff000",
+            "fillOpacity":0.5,      # geen vulling
+            "color": "black",      # randkleur provincie
+            "weight": 10,           # lijndikte
+            
+        }
+
+    gj_prov = folium.GeoJson(
+        gjson_provincies,
+        name="Provincies",
+        style_function=style_prov,
+    )
     gj = folium.GeoJson(
         gjson,
         name="Gemeenten",
         style_function=style_function,
-        highlight_function=lambda f: {"weight": 2, "color": "#222222"},
+        highlight_function=lambda f: {"weight": 1, "color": "#222222"},
         tooltip=folium.GeoJsonTooltip(fields=tooltip_fields, aliases=tooltip_fields,
                                     localize=True, sticky=True, labels=True),
     )
     gj.add_to(m)
     gj_prov.add_to(m)
+    
+    
+    #folium.LayerControl(collapsed=False).add_to(m)
     # legenda
     if use_categorical:
         legend_html = """
