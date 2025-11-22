@@ -53,8 +53,12 @@ def load_votes_2025():
     #                             )
     # df_results_new=df_results.merge(df_partynames, on="party_key", how="left")
     # df_results_new=df_results_new.fillna("UNKNOWN_X")
-    
-    df_results_new=df_results_new[["Gemeentecode","Regio","AantalStemmen", "LijstNaam"]]
+    try:
+        df_results_new["LijstNaam"] = df_results_new["Partij"]
+    except:
+        pass
+    st.write(df_results_new)
+    df_results_new=df_results_new[["Gemeentecode","Regio","Waarde", "LijstNaam"]]
     den = df_results_new.groupby("Regio")["Waarde"].transform("sum")
     df_results_new["percentage_votes"] = (100 * df_results_new["Waarde"] / den).fillna(0).round(2)
     df_results_new["totaal_gemeente"] =  den
