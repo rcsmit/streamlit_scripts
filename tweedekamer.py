@@ -30,7 +30,7 @@ def load_votes(jaar):
         st.error("Fout in jaar")
         st.stop()
 
-#@st.cache_data(show_spinner=False)
+@st.cache_data(show_spinner=False)
 def load_votes_2025():
     """Laad de stemmen in 2025
 
@@ -53,14 +53,14 @@ def load_votes_2025():
     #                             )
     # df_results_new=df_results.merge(df_partynames, on="party_key", how="left")
     # df_results_new=df_results_new.fillna("UNKNOWN_X")
-    try:
-        df_results_new["LijstNaam"] = df_results_new["Partij"]
-    except:
-        pass
-    try:
-        df_results_new["Waarde"] = df_results_new["AantalStemmen"]
-    except:
-        pass
+    # try:
+    #     df_results_new["LijstNaam"] = df_results_new["Partij"]
+    # except:
+    #     pass
+    # try:
+    #     df_results_new["Waarde"] = df_results_new["AantalStemmen"]
+    # except:
+    #     pass
     
     df_results_new=df_results_new[["Gemeentecode","Regio","Waarde", "LijstNaam"]]
     den = df_results_new.groupby("Regio")["Waarde"].transform("sum")
@@ -1347,7 +1347,7 @@ def kaart_populairste_partij():
     }
 
     jaar = st.radio("Jaar", [2023, 2025], index=1, horizontal=True, key="pop_partij_jaar")
-    use_scale = st.checkbox("Gebruik een intensiteitsschaal", False)
+    use_scale = st.checkbox("Gebruik een intensiteitsschaal", True)
     df = load_votes(jaar)
     
     # Vind per gemeente de partij met hoogste percentage
@@ -1376,12 +1376,16 @@ def kaart_populairste_partij():
     # Hardcoded kleuren per partij
     partij_base_colors = {
         "PVV": "#000000",
+        "PVV (Partij voor de Vrijheid)": "#000000",
         "D66": "#39ff14",
         "CDA": "#94CAB6",
         "GL-PvdA": "#FA4987",
+        "GROENLINKS / Partij van de Arbeid (PvdA)": "#FA4987",
         "VVD": "#000ABC",
         "SGP": "#6E562E",
+        "Staatkundig Gereformeerde Partij (SGP)": "#6E562E",
         "NSC": "#00CED1",
+        "Nieuw Sociaal Contract: "#00CED1",
         "BBB": "#5bc500",
         "SP": "#FF0000",
         "FVD": "#8B0000",
