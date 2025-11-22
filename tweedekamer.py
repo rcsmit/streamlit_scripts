@@ -71,6 +71,7 @@ def load_votes_2023():
     df = df[df["VeldType"] == "LijstAantalStemmen"]
     den = df.groupby("Regio")["Waarde"].transform("sum")
     df["percentage_votes"] = (100 * df["Waarde"] / den).fillna(0).round(2)
+    df["totaal_gemeente"] =  den
     return df
 
 @st.cache_data(show_spinner=False)
