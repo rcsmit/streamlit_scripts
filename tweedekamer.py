@@ -1326,7 +1326,7 @@ def kaart_populairste_partij():
     }
 
     jaar = st.radio("Jaar", [2023, 2025], index=1, horizontal=True, key="pop_partij_jaar")
-    
+    use_scale = st.checkbox("Gebruik een intensiteitsschaal", False)
     df = load_votes(jaar)
     
     # Vind per gemeente de partij met hoogste percentage
@@ -1445,7 +1445,10 @@ def kaart_populairste_partij():
             base_color = partij_base_colors[partij]
             min_pct = pct_ranges.loc[partij, 'min']
             max_pct = pct_ranges.loc[partij, 'max']
-            color = adjust_color_intensity(base_color, pct, min_pct, max_pct)
+            if use_scale:
+                color = adjust_color_intensity(base_color, pct, min_pct, max_pct)
+            else:
+                color = base_color
         else:
             color = "#cccccc"
         
@@ -1488,30 +1491,50 @@ def kaart_populairste_partij():
         low_color = adjust_color_intensity(base_color, min_pct, min_pct, max_pct)
         mid_color = adjust_color_intensity(base_color, (min_pct + max_pct) / 2, min_pct, max_pct)
         high_color = adjust_color_intensity(base_color, max_pct, min_pct, max_pct)
-        
-        legend_items.append(f'''
-        <div style="margin:4px 0; padding: 2px 0;">
-            <b>{p}</b> ({min_pct:.1f}% - {max_pct:.1f}%)<br>
-            <span style="background:linear-gradient(to right, {low_color}, {mid_color}, {high_color});
-                         display:inline-block;width:100px;height:12px;border:1px solid #333;
-                         margin-top:2px"></span>
+        if use_scale:
+                
+            legend_items.append(f'''
+            <div style="margin:4px 0; padding: 2px 0;">
+                <b>{p}</b> ({min_pct:.1f}% - {max_pct:.1f}%)<br>
+                <span style="background:linear-gradient(to right, {low_color}, {mid_color}, {high_color});
+                            display:inline-block;width:100px;height:12px;border:1px solid #333;
+                            margin-top:2px"></span>
+            </div>
+            ''')
+        else:
+            legend_items.append(f'''
+            <div style="margin:4px 0; padding: 2px 0;">
+                <b>{p}</b><br>
+                <span style="background:linear-gradient(to right, {high_color}, {high_color}, {high_color});
+                            display:inline-block;width:100px;height:12px;border:1px solid #333;
+                            margin-top:2px"></span>
+            </div>
+            ''')
+    if use_scale:
+        legend_html = f"""
+        <div style="bottom: 20px; left: 20px; z-index: 9999;
+                    background: white; padding: 10px; border: 2px solid #ccc; 
+                    font-size: 11px;>
+        <b>Populairste partij per gemeente</b><br>
+        <i style="font-size:10px">Kleurintensiteit = percentage stemmen</i><br>
+        {''.join(legend_items)}
         </div>
-        ''')
-    
-    legend_html = f"""
-    <div style="bottom: 20px; left: 20px; z-index: 9999;
-                background: white; padding: 10px; border: 2px solid #ccc; 
-                font-size: 11px;>
-    <b>Populairste partij per gemeente</b><br>
-    <i style="font-size:10px">Kleurintensiteit = percentage stemmen</i><br>
-    {''.join(legend_items)}
-    </div>
-    """
+        """
+    else:
+        legend_html = f"""
+        <div style="bottom: 20px; left: 20px; z-index: 9999;
+                    background: white; padding: 10px; border: 2px solid #ccc; 
+                    font-size: 11px;>
+        <i style="font-size:10px">Kleurintensiteit = percentage stemmen</i><br>
+        {''.join(legend_items)}
+        </div>
+        """
     
     #folium.map.Marker([0,0], icon=folium.DivIcon(html=legend_html)).add_to(m)
     
     st.subheader(f"Populairste partij per gemeente ({jaar})")
-    st.info("💡 Helderder kleur = hoger percentage stemmen voor die partij in die gemeente")
+    if use_scale:
+        st.info("💡 Helderder kleur = hoger percentage stemmen voor die partij in die gemeente")
     
     from streamlit_folium import st_folium
 
