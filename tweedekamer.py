@@ -42,7 +42,7 @@ def load_votes_2025():
     url_results= "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/uitslag_TK20251029_Gemeente.csv"
     
     # url_partynames =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/partij_keys.csv"
-    df_results_new = pd.read_csv(url_results, dtype={"cbs_code":str})
+    df_results_new = pd.read_csv(url_results)
     # df_partynames = pd.read_csv(url_partynames)
     # df_partynames =df_partynames[["party_key","LijstNaam"]]
     # df_results["Gemeentecode"] = ("GM"
