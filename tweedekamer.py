@@ -30,7 +30,7 @@ def load_votes(jaar):
         st.error("Fout in jaar")
         st.stop()
 
-@st.cache_data(show_spinner=False)
+#@st.cache_data(show_spinner=False)
 def load_votes_2025():
     """Laad de stemmen in 2025
 
@@ -57,7 +57,11 @@ def load_votes_2025():
         df_results_new["LijstNaam"] = df_results_new["Partij"]
     except:
         pass
-    st.write(df_results_new)
+    try:
+        df_results_new["Waarde"] = df_results_new["AantalStemmen"]
+    except:
+        pass
+    
     df_results_new=df_results_new[["Gemeentecode","Regio","Waarde", "LijstNaam"]]
     den = df_results_new.groupby("Regio")["Waarde"].transform("sum")
     df_results_new["percentage_votes"] = (100 * df_results_new["Waarde"] / den).fillna(0).round(2)
@@ -458,6 +462,18 @@ def make_map(df_res, jaar, metric,colors=["#FF0000", "#800080", "#0000FF"]):
     df_res["Gemeente_fix"] = df_res["Gemeente"].replace(fix)
 
     # Data → GeoJSON properties
+    #data_dict = df_res.set_index("Gemeente_fix").to_dict(orient="index")
+    # data_dict = df_res.set_index("Gemeente_fix").to_dict()
+
+
+
+    # Optie 3: Check en toon duplicaten eerst
+    duplicates = df_res[df_res.duplicated(subset="Gemeente_fix", keep=False)]
+    if len(duplicates) > 0:
+        st.warning(f"Let op: {len(duplicates)} duplicaten gevonden!")
+        st.dataframe(duplicates)
+        
+    df_res = df_res.drop_duplicates(subset="Gemeente_fix", keep="first")
     data_dict = df_res.set_index("Gemeente_fix").to_dict(orient="index")
     for feature in gjson["features"]:
         name = feature["properties"].get("statnaam")
