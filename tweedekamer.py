@@ -90,7 +90,11 @@ def load_geojson_provincies():
     Returns:
         _type_: json file
     """
-    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/georef-netherlands-provincie.geojson"
+    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/provincie_2025.geojson"
+    
+    # # url= r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\provincie_2025.geojson"
+    # url= r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\provincie_2025.geojson"
+
     r = requests.get(url, timeout=30)
     r.raise_for_status()
     return r.json()
