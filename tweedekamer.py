@@ -39,7 +39,7 @@ def load_votes_2025():
     """  
     # C:\Users\rcxsm\Documents\python_scripts\python_scripts_rcsmit\fetch_combine_anp_tk2025.py
 
-    url_results= "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/uitslag_TK20251029_Gemeente.csv.csv"
+    url_results= "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/uitslag_TK20251029_Gemeente.csv"
     
     # url_partynames =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/partij_keys.csv"
     df_results_new = pd.read_csv(url_results, dtype={"cbs_code":str})
