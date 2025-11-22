@@ -39,21 +39,22 @@ def load_votes_2025():
     """  
     # C:\Users\rcxsm\Documents\python_scripts\python_scripts_rcsmit\fetch_combine_anp_tk2025.py
 
-    url_results= "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/alle_resultaten_per_gemeente_2025.csv"
-    url_partynames =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/partij_keys.csv"
-    df_results = pd.read_csv(url_results, dtype={"cbs_code":str})
-    df_partynames = pd.read_csv(url_partynames)
-    df_partynames =df_partynames[["party_key","LijstNaam"]]
-    df_results["Gemeentecode"] = ("GM"
-                                    + df_results["Municipality_cbs"] 
-                                        .astype(int)              # 123.0 -> 123
-                                        .astype(str)              # 123 -> "123"
-                                        .str.zfill(4)             # "0123"
-                                )
-    df_results_new=df_results.merge(df_partynames, on="party_key", how="left")
-    df_results_new=df_results_new.fillna("UNKNOWN_X")
+    url_results= "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/uitslag_TK20251029_Gemeente.csv.csv"
     
-    df_results_new=df_results_new[["Gemeentecode","Regio","Waarde", "LijstNaam","voters_current"]]
+    # url_partynames =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/partij_keys.csv"
+    df_results_new = pd.read_csv(url_results, dtype={"cbs_code":str})
+    # df_partynames = pd.read_csv(url_partynames)
+    # df_partynames =df_partynames[["party_key","LijstNaam"]]
+    # df_results["Gemeentecode"] = ("GM"
+    #                                 + df_results["Municipality_cbs"] 
+    #                                     .astype(int)              # 123.0 -> 123
+    #                                     .astype(str)              # 123 -> "123"
+    #                                     .str.zfill(4)             # "0123"
+    #                             )
+    # df_results_new=df_results.merge(df_partynames, on="party_key", how="left")
+    # df_results_new=df_results_new.fillna("UNKNOWN_X")
+    
+    df_results_new=df_results_new[["Gemeentecode","Regio","AantalStemmen", "LijstNaam"]]
     den = df_results_new.groupby("Regio")["Waarde"].transform("sum")
     df_results_new["percentage_votes"] = (100 * df_results_new["Waarde"] / den).fillna(0).round(2)
     df_results_new["totaal_gemeente"] =  den
