@@ -86,7 +86,6 @@ def load_geojson():
 
 def load_geojson_provincies():
     """Load the file with the shapees of the provincies
-    https://data.overheid.nl/dataset/10928-provinciegrenzen-nederland--gegeneraliseerd-vlak-bestand#panel-resources
     https://public.opendatasoft.com/explore/assets/georef-netherlands-provincie/export/
     Returns:
         _type_: json file
@@ -389,13 +388,22 @@ def choropleth_binned(df,  value_col, value_max):
 def kaart_per_partij_binned():
     """Wrapper om een  binned choropleth map per partij te maken
     """
+    # jaar = st.radio("Jaar", jaren, index=1, horizontal=True, key="partij_jaar")
     
     jaren = [2023, 2025]
-    jaar = st.radio("Jaar", jaren, index=1, horizontal=True, key="partij_jaar")
-    df_j = load_votes(jaar)
-    df_j["Gemeente"] = df_j["Regio"]
+    col1,col2,col3=st.columns(3)
+    with col1:
+        jaar = st.radio("Jaar", jaren, index=1, horizontal=True, key="partij_jaar")
+        df_j = load_votes(jaar)
+        df_j["Gemeente"] = df_j["Regio"]
+    with col2:
+        partij = st.selectbox("Partij", sorted(df_j["LijstNaam"].unique().tolist()), index=0)
+    
+    with col3:
+        color_picked = st.color_picker("Kleur", "#FF0000")
 
-    partij = st.selectbox("Partij", sorted(df_j["LijstNaam"].unique().tolist()), index=0)
+    
+
     df_p = df_j[df_j["LijstNaam"] == partij]
 
     if len(df_p) == 0:
@@ -409,8 +417,8 @@ def kaart_per_partij_binned():
     df_p = df_p.rename(columns={"percentage_votes": value_col})
     
     # 2) draw the binned map
-    choropleth_binned(df_p,  value_col=f"Percentage_{partij}", value_max=value_max)
-    make_map(df_p,2025,f"Percentage_{partij}",["#aaaaFF", "#0000FF"])
+    #choropleth_binned(df_p,  value_col=f"Percentage_{partij}", value_max=value_max)
+    make_map(df_p,2025,f"Percentage_{partij}",["#FFFFFF", color_picked])
     st.write(df_p)
 
 def make_map(df_res, jaar, metric,colors=["#FF0000", "#800080", "#0000FF"]):
@@ -472,7 +480,7 @@ def make_map(df_res, jaar, metric,colors=["#FF0000", "#800080", "#0000FF"]):
         def style_function(feature):
             val = feature["properties"].get(metric)
             color = "#cccccc" if val is None else cmap(val)
-            return {"fillColor": color, "color": "#ffffff", "weight": 0.3, "fillOpacity": 0.85}
+            return {"fillColor": color, "color": "#ffffff", "weight": 0.3, "fillOpacity":1}
 
         # -------- map + tooltip --------
         tooltip_fields = ["statnaam"] + [c for c in df_res.columns if c != "Gemeente_fix"]
@@ -482,10 +490,10 @@ def make_map(df_res, jaar, metric,colors=["#FF0000", "#800080", "#0000FF"]):
     def style_prov(feature):
         return {
             "fillColor": "#fff000",
-            "fillOpacity":0.5,      # geen vulling
-            "color": "black",      # randkleur provincie
-            "weight": 10,           # lijndikte
-            
+            "fillOpacity":0.0,      # geen vulling
+            "color": "#333333",      # randkleur provincie
+            "weight": .5,           # lijndikte
+             "interactive": False,
         }
 
     gj_prov = folium.GeoJson(
@@ -863,7 +871,12 @@ def r2_per_parties(df_merge, indicator_):
         "R2_overgewicht": "Percentage",
         "R2_inkomen": "ink_inw",
         "R2_opleiding": "HBO_WO_2024",
+        "R2_inw": "Inw_2025",
+        "R2_opp": "Land-oppervlakte",
+        "R2_inw_per_km2": "Inw_km2_2025",
+        "R2_immigratie": "perc_migratie2024"
     }
+
 
     ycol = "percentage_votes"
 
@@ -1068,7 +1081,7 @@ def ols_corr(df, partij,indicator_):
     """
     # Select predictors and target
     
-    X = df[[f"Percentage_{indicator_}", "ink_inw", "HBO_WO_2024"]]
+    X = df[[f"Percentage_{indicator_}", "ink_inw", "HBO_WO_2024", "Inw_2025","Land-oppervlakte","Inw_km2_2025","perc_migratie2024"]]
     y = df[f"percentage_votes_{partij}"]
     # y = df["nps"]
 
@@ -1076,7 +1089,7 @@ def ols_corr(df, partij,indicator_):
     data = pd.concat([X, y], axis=1).dropna()
 
     # Your original switch to predict Instructions from the others kept as-is
-    X = data[[f"Percentage_{indicator_}", "ink_inw", "HBO_WO_2024"]]
+    X = data[[f"Percentage_{indicator_}", "ink_inw", "HBO_WO_2024","Inw_2025","Land-oppervlakte","Inw_km2_2025","perc_migratie2024"]]
     y = data[f"percentage_votes_{partij}"]
     # y=data["nps"]
 
@@ -1089,20 +1102,18 @@ def ols_corr(df, partij,indicator_):
     st.write(
         df[
             [
-                f"percentage_votes_{partij}", f"Percentage_{indicator_}", "ink_inw", "HBO_WO_2024"
+                f"percentage_votes_{partij}", f"Percentage_{indicator_}", "ink_inw", "HBO_WO_2024","Inw_2025","Land-oppervlakte","Inw_km2_2025","perc_migratie2024"
             ]
         ].corr()
     )
     df.loc[:, "y"] = (df[f"percentage_votes_{partij}"] / 100).clip(1e-6, 1 - 1e-6)
-    for col in [f"Percentage_{indicator_}", "HBO_WO_2024", "ink_inw"]:
-        df.loc[:, col] = (df[col] - df[col].mean()) / df[col].std()
-    model = sm.GLM(df["y"], X, family=sm.families.Binomial(), var_weights=df["aantal_votes"])
-    res = model.fit()
-    st.write(res.summary())
-
-    
-    beta_=False
-    if beta_ :
+    if 1==2:
+        for col in [f"Percentage_{indicator_}", "HBO_WO_2024", "ink_inw", "Inw_2025","Land-oppervlakte","Inw_km2_2025","perc_migratie2024"]:
+            df.loc[:, col] = (df[col] - df[col].mean()) / df[col].std()
+        model = sm.GLM(df["y"], X, family=sm.families.Binomial(), var_weights=df["aantal_votes"])
+        res = model.fit()
+        st.write(res.summary())
+    if 1==2:
 
         # voorbeeld: percentage stemmen op SP
         df = df.copy()
@@ -1110,7 +1121,7 @@ def ols_corr(df, partij,indicator_):
         df["y"] = (df[ f"percentage_votes_{partij}"] / 100).clip(epsilon, 1 - epsilon)
 
         # formule notatie zoals bij R
-        formula = f"y ~  Percentage_{indicator_} + ink_inw + HBO_WO_2024"
+        formula = f"y ~  Percentage_{indicator_} + ink_inw + HBO_WO_2024 + Inw_2025 + Land-oppervlakte + Inw_km2_2025 + perc_migratie2024"
 
         model = glm(formula=formula, data=df, family=Beta()).fit()
         st.write(model.summary())
@@ -1253,10 +1264,10 @@ def voorkeurscoalitie_per_gemeente():
         color[0]=st.color_picker("Kleur Links", "#FF0000")
     with col_m:
         sel_midden = st.multiselect("Midden", options=partijen, default=defaults["midden"])
-        color[1]=st.color_picker("Kleur Links", "#FFFF00")
+        color[1]=st.color_picker("Kleur Midden", "#FFFF00")
     with col_r:
         sel_rechts = st.multiselect("Rechts", options=partijen, default=defaults["rechts"])
-        color[2]=st.color_picker("Kleur Links", "#0000FF")
+        color[2]=st.color_picker("Kleur Rechts", "#0000FF")
 
     # Nieuwe kolommen met som per blok
     def sum_or_zero(df, cols):
@@ -1289,35 +1300,7 @@ def voorkeurscoalitie_per_gemeente():
             make_map(df_pivot,2025,c,["#FFFFFF", color[i]])
     st.dataframe(df_pivot.round(2))
 
-    
 
-def kaart_per_partij():
-    """Maak een kaart per partij"""
- 
-    jaren=[2023,2025]
-    jaar = st.radio("Jaar", jaren, index=1, horizontal=True, key="partij_jaar")
-    df_j = load_votes(jaar)
-
-    #check = df.groupby("Regio")["percentage"].sum().round(2)
-    df_j["Gemeente"]=df_j["Regio"]
-    
-    partij = st.selectbox("Partij", sorted(df_j["LijstNaam"].unique().tolist()), index=0)
-    df_p=df_j[df_j["LijstNaam"] == partij]
-    
-    if len(df_p)>0:
-        df_p=df_p[["Gemeente","Waarde","percentage_votes"]].sort_values("percentage_votes", ascending=False)
-        df_p["Zetels"] = round(df_p["percentage_votes"]/0.66667,1)  
-        df_p = df_p.rename(columns={"percentage_votes": f"Percentage_{partij}"})
-          
-        try:
-            make_map(df_p, jaar, f"Percentage_{partij}")      
-        except:
-            #error VRIJVER 2025
-            st.error("Fout bij het maken van de kaart")
-        st.write(df_p)
-    else:
-        st.error("Partij heeft geen stemmen")
-        st.stop()
 
 def main():
     """Main functie
@@ -1328,6 +1311,8 @@ def main():
 
     with tab6:
         show_info()
+    with tab3:
+        kaart_per_partij_binned()
     with tab5:
         obesitas_inkomen()
     with tab4:
@@ -1338,9 +1323,7 @@ def main():
         jaar = st.radio("Jaar", jaren, index=1, horizontal=True, key="gemeente_jaar")
         df_j = load_votes(jaar)
         calculate_results_gemeente(df_j, jaar)
-    with tab3:
-        #kaart_per_partij()
-        kaart_per_partij_binned()
+   
         
 if __name__ == "__main__":
     main()
