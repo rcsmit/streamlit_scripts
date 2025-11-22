@@ -12,6 +12,7 @@ import statsmodels.api as sm
 import geopandas as gpd
 import plotly.express as px
 from statsmodels.formula.api import glm
+import streamlit.components.v1 as components
 #from statsmodels.genmod.families import Beta
 import math
 try:
@@ -110,7 +111,7 @@ def show_info():
     st.info(
         "Data  https://data.overheid.nl/dataset/verkiezingsuitslag-tweede-kamer-2023?utm_source=chatgpt.com#panel-description"
     )
-    st.info("Gemeentegrenzen : https://cartomap.github.io/nl/")
+    st.info("Gemeente-/provinciegrenzen : https://cartomap.github.io/nl/")
     st.info("Obesitas:  https://www.vzinfo.nl/overgewicht/regionaal/obesitas#obesitas-volwassenen")
     st.info("Inkomen (2020) : https://www.cbs.nl/nl-nl/maatwerk/2023/35/inkomen-per-gemeente-en-wijk-2020")
     st.info("Opleiding [%>= HBO/WO] (2024) : https://www.clo.nl/indicatoren/nl210016-hbo-en-wo-gediplomeerden-2024")
@@ -474,11 +475,11 @@ def make_map(df_res, jaar, metric,colors=["#FF0000", "#800080", "#0000FF"]):
     else:
         # glijdende schaal voor continue metrics
         vmin = float(df_res[metric].min()); vmax = float(df_res[metric].max())
-        cmap = cm.LinearColormap(colors=[colors[0], colors[1]], vmin=vmin, vmax=vmax).to_step(7)
-        if metric.startswith("Chi2_prop"):
-            cmap.caption = "gemiddeld            zeer afwijkend"
-        else:
-            cmap.caption = "laag             hoog"
+        cmap = cm.LinearColormap(colors=[colors[0], colors[1]], vmin=vmin, vmax=vmax).to_step(9)
+        # if metric.startswith("Chi2_prop"):
+        #     cmap.caption = "gemiddeld            zeer afwijkend"
+        # else:
+        #     cmap.caption = "laag             hoog"
  
         
         def style_function(feature):
@@ -1304,16 +1305,269 @@ def voorkeurscoalitie_per_gemeente():
             make_map(df_pivot,2025,c,["#FFFFFF", color[i]])
     st.dataframe(df_pivot.round(2))
 
+def kaart_populairste_partij():
+    """Toon kaart met de populairste partij per gemeente - elke partij heeft eigen kleur
+    https://x.com/cart0graf/status/1991544348413161703
+    """
+    GEMEENTE_NAME_FIXES = {
+        2023: {
+            "Hengelo (O)": "Hengelo",
+            "Bergen (L)": "Bergen (L.)",
+            "Bergen (NH)": "Bergen (NH.)"
+        },
+        2025: {
+            "Hengelo (O)": "Hengelo",
+            "Den Bosch": "'s-Hertogenbosch",
+            "Den Haag": "'s-Gravenhage",
+            "Bergen (L)": "Bergen (L.)",
+            "Bergen (NH)": "Bergen (NH.)"
+        }
+    }
+
+    jaar = st.radio("Jaar", [2023, 2025], index=1, horizontal=True, key="pop_partij_jaar")
+    
+    df = load_votes(jaar)
+    
+    # Vind per gemeente de partij met hoogste percentage
+    idx = df.groupby("Regio")["percentage_votes"].idxmax()
+    df_max = df.loc[idx, ["Regio", "LijstNaam", "percentage_votes", "totaal_gemeente"]].copy()
+    df_max.columns = ["Gemeente", "Populairste_partij", "Percentage_stemmen", "totaal_gemeente"]
+    
+    # Pas naam fixes toe
+    fix = GEMEENTE_NAME_FIXES.get(jaar, {})
+    df_max["Gemeente_fix"] = df_max["Gemeente"].replace(fix)
+    
+    # # Genereer base kleuren voor partijen
+    # import plotly.express as px
+    # alle_partijen = sorted(df_max["Populairste_partij"].unique().tolist())
+    
+    # colors_qual = (
+    #     px.colors.qualitative.Set1 + 
+    #     px.colors.qualitative.Set2 + 
+    #     px.colors.qualitative.Set3
+    # )
+    
+    # partij_base_colors = {partij: colors_qual[i % len(colors_qual)] 
+    #                       for i, partij in enumerate(alle_partijen)}
 
 
+    # Hardcoded kleuren per partij
+    partij_base_colors = {
+        "PVV": "#000000",
+        "D66": "#39ff14",
+        "CDA": "#94CAB6",
+        "GL-PvdA": "#FA4987",
+        "VVD": "#000ABC",
+        "SGP": "#6E562E",
+        "NSC": "#00CED1",
+        "BBB": "#5bc500",
+        "SP": "#FF0000",
+        "FVD": "#8B0000",
+        "DENK": "#00CED1",
+        "PvdD": "#006F3C",
+        "Volt": "#502379",
+        "JA21": "#0080FF",
+        "CU": "#00A7EB",
+        "BIJ1": "#FFCC00",
+        "50PLUS": "#800080",
+        # Voeg meer partijen toe indien nodig
+    }
+    
+    alle_partijen = sorted(df_max["Populairste_partij"].unique().tolist())
+    
+    # Fallback kleur voor partijen zonder gedefinieerde kleur
+    import plotly.express as px
+    colors_qual = px.colors.qualitative.Set1
+    
+    for i, partij in enumerate(alle_partijen):
+        if partij not in partij_base_colors:
+            partij_base_colors[partij] = colors_qual[i % len(colors_qual)]
+        
+    # Functie om kleur te converteren naar RGB tuple
+    def color_to_rgb(color_str):
+        """Converteer verschillende kleurformaten naar RGB tuple"""
+        import re
+        
+        # Check if hex format
+        if color_str.startswith('#'):
+            hex_color = color_str.lstrip('#')
+            if len(hex_color) == 6:
+                return int(hex_color[0:2], 16), int(hex_color[2:4], 16), int(hex_color[4:6], 16)
+        
+        # Check if rgb format: rgb(r, g, b)
+        rgb_match = re.match(r'rgb\((\d+),\s*(\d+),\s*(\d+)\)', color_str)
+        if rgb_match:
+            return int(rgb_match.group(1)), int(rgb_match.group(2)), int(rgb_match.group(3))
+        
+        # Default to gray if unrecognized
+        return 128, 128, 128
+    
+    # Functie om RGB naar hex te converteren
+    def rgb_to_hex(r, g, b):
+        """Converteer RGB tuple naar hex string"""
+        return f'#{int(r):02x}{int(g):02x}{int(b):02x}'
+    
+    # Functie om kleur te dimmen/verhellen op basis van percentage
+    def adjust_color_intensity(color_str, percentage, min_pct, max_pct):
+        """Pas kleurintensiteit aan op basis van percentage (hoger = helderder)"""
+        # Normaliseer percentage naar 0-1 range
+        normalized = (percentage - min_pct) / (max_pct - min_pct) if max_pct > min_pct else 0.5
+        
+        # Converteer naar RGB
+        r, g, b = color_to_rgb(color_str)
+        
+        # Mix met wit voor lage percentages (min 30% intensiteit, max 100%)
+        intensity = 0.3 + (normalized * 0.7)
+        
+        r = r * intensity + 255 * (1 - intensity)
+        g = g * intensity + 255 * (1 - intensity)
+        b = b * intensity + 255 * (1 - intensity)
+        
+        return rgb_to_hex(r, g, b)
+    
+    # Bepaal min/max percentage per partij voor normalisatie
+    pct_ranges = df_max.groupby("Populairste_partij")["Percentage_stemmen"].agg(['min', 'max'])
+    
+    # Data naar GeoJSON
+    gjson = load_geojson()
+    data_dict = df_max.set_index("Gemeente_fix").to_dict(orient="index")
+    for feature in gjson["features"]:
+        name = feature["properties"].get("statnaam")
+        if name in data_dict:
+            feature["properties"].update(data_dict[name])
+    
+    def style_function(feature):
+        partij = feature["properties"].get("Populairste_partij")
+        pct = feature["properties"].get("Percentage_stemmen")
+        
+        if partij and pct and partij in partij_base_colors:
+            base_color = partij_base_colors[partij]
+            min_pct = pct_ranges.loc[partij, 'min']
+            max_pct = pct_ranges.loc[partij, 'max']
+            color = adjust_color_intensity(base_color, pct, min_pct, max_pct)
+        else:
+            color = "#cccccc"
+        
+        return {
+            "fillColor": color, 
+            "color": "#ffffff", 
+            "weight": 0.3, 
+            "fillOpacity": 0.85
+        }
+    
+    # Maak map
+    import folium
+    m = folium.Map(location=[52.2, 5.3], zoom_start=7, tiles="cartodbpositron")
+    
+    tooltip_fields = ["statnaam", "Populairste_partij", "Percentage_stemmen"]
+    
+    gj = folium.GeoJson(
+        gjson,
+        name="Gemeenten",
+        style_function=style_function,
+        highlight_function=lambda f: {"weight": 1, "color": "#222222"},
+        tooltip=folium.GeoJsonTooltip(
+            fields=tooltip_fields, 
+            aliases=["Gemeente", "Partij", "Percentage"],
+            localize=True, 
+            sticky=True, 
+            labels=True
+        ),
+    )
+    gj.add_to(m)
+    
+    # Maak legend met kleur gradaties per partij
+    legend_items = []
+    for p in alle_partijen:
+        base_color = partij_base_colors[p]
+        min_pct = pct_ranges.loc[p, 'min']
+        max_pct = pct_ranges.loc[p, 'max']
+        
+        # Toon 3 gradaties: laag, midden, hoog
+        low_color = adjust_color_intensity(base_color, min_pct, min_pct, max_pct)
+        mid_color = adjust_color_intensity(base_color, (min_pct + max_pct) / 2, min_pct, max_pct)
+        high_color = adjust_color_intensity(base_color, max_pct, min_pct, max_pct)
+        
+        legend_items.append(f'''
+        <div style="margin:4px 0; padding: 2px 0;">
+            <b>{p}</b> ({min_pct:.1f}% - {max_pct:.1f}%)<br>
+            <span style="background:linear-gradient(to right, {low_color}, {mid_color}, {high_color});
+                         display:inline-block;width:100px;height:12px;border:1px solid #333;
+                         margin-top:2px"></span>
+        </div>
+        ''')
+    
+    legend_html = f"""
+    <div style="bottom: 20px; left: 20px; z-index: 9999;
+                background: white; padding: 10px; border: 2px solid #ccc; 
+                font-size: 11px;>
+    <b>Populairste partij per gemeente</b><br>
+    <i style="font-size:10px">Kleurintensiteit = percentage stemmen</i><br>
+    {''.join(legend_items)}
+    </div>
+    """
+    
+    #folium.map.Marker([0,0], icon=folium.DivIcon(html=legend_html)).add_to(m)
+    
+    st.subheader(f"Populairste partij per gemeente ({jaar})")
+    st.info("💡 Helderder kleur = hoger percentage stemmen voor die partij in die gemeente")
+    
+    from streamlit_folium import st_folium
+
+    col1,col2=st.columns(2)
+    with col1:
+        st_folium(m, returned_objects=[])
+    with col2:
+        components.html(legend_html, height=600, scrolling=True)
+    # Statistieken
+    summary = df_max.groupby("Populairste_partij").agg({
+        "Gemeente": "count",
+        "Percentage_stemmen": ["mean", "min", "max"]
+    })
+    summary.columns = ["Aantal_gemeenten", "Gem_percentage", "Min_percentage", "Max_percentage"]
+    summary = summary.sort_values("Aantal_gemeenten", ascending=False)
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        st.subheader("Samenvatting")
+        st.dataframe(summary.round(2))
+    
+    with col2:
+        # Converteer kleuren naar hex voor plotly
+        partij_hex_colors = {p: rgb_to_hex(*color_to_rgb(c)) 
+                            for p, c in partij_base_colors.items()}
+        
+        fig = px.bar(
+            summary.reset_index(), 
+            x="Populairste_partij", 
+            y="Aantal_gemeenten",
+            color="Populairste_partij",
+            color_discrete_map=partij_hex_colors,
+            title="Aantal gemeenten per partij"
+        )
+        fig.update_layout(showlegend=False, xaxis_title="", yaxis_title="Aantal gemeenten")
+        st.plotly_chart(fig, use_container_width=True)
+    
+    st.subheader("Details per gemeente")
+    st.dataframe(df_max.sort_values("Percentage_stemmen", ascending=False).round(2))
 def main():
     """Main functie
     """  
 
     jaren=[2023,2025] 
-    tab1, tab2, tab3,tab4,tab5,tab6= st.tabs(["Resultaten", "Enkele gemeente","Partij","voorkeurscoalitie","obesitas/inkomen/opleiding/sport", "Info"])
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+        "Resultaten", 
+        "Enkele gemeente",
+        "Partij",
+        "Voorkeurscoalitie",
+        "Obesitas/inkomen/opleiding/sport",
+        "Populairste partij",  # NIEUW
+        "Info"
+    ])
 
     with tab6:
+        kaart_populairste_partij() 
+    with tab7:
         show_info()
     with tab3:
         kaart_per_partij_binned()
