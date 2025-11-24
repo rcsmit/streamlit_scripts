@@ -38,7 +38,7 @@ from scipy.stats import linregress
 import statsmodels.api as sm
 import pandas as pd
 from scipy.stats import kendalltau
-
+import pydeck as pdk
 try:
     st.set_page_config(layout='wide')
 except:
@@ -199,25 +199,49 @@ def show_month(df, to_show, day_min, day_max, month, month_names, where):
         month_names (_type_): _description_
         where (_type_): _description_
     """   
-    
+    st.header("Show month")
     df_month = df[(df['Month'] == month) & (df['Day']>=day_min) & (df['Day']<=day_max)]             
     fig = px.line(df_month, x='Day', y=to_show, color='Year', labels={'temp': f'{to_show}'}, title=f'{to_show} for {month_names[month-1]} in {where}')
     st.plotly_chart(fig)
+    crosstable_daily = pd.pivot_table(df_month, values=to_show, index='Year', columns='Day', aggfunc='mean').round(1)
+    avg_value = np.nanmean(crosstable_daily.to_numpy())
+    st.metric(
+        label=f"Average daily value {to_show} - {month_names[month-1]} - {where}",
+        value=f"{avg_value:.1f}"
+    )
+    #st.write (crosstable_daily)
+    title=f"Daily values  of {to_show} - {month_names[month-1]} - {where}"
+    # fig=px.imshow(crosstable_daily, title=title, text_auto='.1f')
+    fig = px.imshow(
+        crosstable_daily,
+        title=title,
+        text_auto=".0f",
+        color_continuous_scale=[(0.0, "white"), (1.0, "darkblue")],
+        zmin=0  # make sure 0 is the lowest value
+    )
 
-    frequency_table = df_month[to_show].value_counts().reset_index()
-    frequency_table.columns = [to_show, 'Frequency']
-    # Sort the frequency table by the variable 'to_show'
-    frequency_table = frequency_table.sort_values(by=to_show, ascending=False)
-    # Calculate cumulative absolute frequency
-    frequency_table['Cumulative Absolute Frequency'] = frequency_table['Frequency'].cumsum()
 
-    # Calculate cumulative percentage
-    total_absolute_frequency = frequency_table['Frequency'].sum()
-    frequency_table['Cumulative Percentage'] = (frequency_table['Cumulative Absolute Frequency'] / total_absolute_frequency) * 100
+    st.plotly_chart(fig)
+    # Average of all cells (ignores NaNs)
+    
+    if 1==1:
+        # is this table used?
 
-    # # Display the frequency table
-    # st.write(frequency_table)
+        frequency_table = df_month[to_show].value_counts().reset_index()
+        frequency_table.columns = [to_show, 'Frequency']
+        # Sort the frequency table by the variable 'to_show'
+        frequency_table = frequency_table.sort_values(by=to_show, ascending=True)
+        # Calculate cumulative absolute frequency
+        frequency_table['Cumulative Absolute Frequency'] = frequency_table['Frequency'].cumsum()
 
+        # Calculate cumulative percentage
+        total_absolute_frequency = frequency_table['Frequency'].sum()
+        frequency_table['Cumulative Percentage'] = (frequency_table['Cumulative Absolute Frequency'] / total_absolute_frequency) * 100
+
+        # # Display the frequency table
+       
+        fig=px.line(frequency_table, x=to_show, y='Cumulative Percentage', title=f'Frequency of {to_show} for {month_names[month-1]} in {where}',)
+        st.plotly_chart(fig)
     
     # Frequency table
     df_month['Temp_Bin'] = pd.cut(df_month[to_show], bins=range(int(df_month[to_show].min()), int(df_month[to_show].max()) + 2))
@@ -245,7 +269,7 @@ def show_month(df, to_show, day_min, day_max, month, month_names, where):
 
     #show_warmingstripes(df_month, to_show, where)
 
-def cross_table_montly_avg(df, to_show, where, y_axis_zero):  
+def cross_table_montly_avg(df, to_show, where, y_axis_zero, selected_month):  
     """_summary_
 
     Args:
@@ -258,26 +282,12 @@ def cross_table_montly_avg(df, to_show, where, y_axis_zero):
     st.subheader (f"Monthly averages of {to_show} - {where}")
     crosstable = pd.pivot_table(df, values=to_show, index='Month', columns='Year', aggfunc='mean').round(1)
     st.write (crosstable)
-
-    st.subheader (f"Monthly averages of {to_show} - {where}")
+    
+    title= f"Monthly averages of {to_show} - {where}"
     # Create the heatmap using Plotly Express
-    fig = px.imshow(crosstable)
-    #fig.show()
+    fig = px.imshow(crosstable, title=title)  
     st.plotly_chart(fig)
 
-    #  # SHOW MONTLY AVERAGES THROUGH THE YEARS
-    # transposed_df = crosstable.T
-    # fig_x = go.Figure()
-
-    # for column in transposed_df.columns:
-    #     fig_x.add_trace(go.Scatter(x=transposed_df.index, y=transposed_df[column], mode='lines', name=column))
-
-    # fig_x.update_layout(title=f'Monthly averages of {to_show} through time - {where}',
-    #                 xaxis_title='Years',
-    #                 yaxis_title=f'Montly average of {to_show}')
-    # if y_axis_zero:
-    #     fig_x.update_layout(yaxis_range=[0, max(transposed_df.max())])
-    # st.plotly_chart(fig_x)
 
     transposed_df = crosstable.T
 
@@ -359,7 +369,7 @@ def show_treshold(where, to_show, treshold_value, above_under, df):
     elif above_under =="equal":
         df_above_30 = df[df[to_show] == treshold_value]
         au_txt = "="
-    elif above_under =="above":
+    elif above_under =="below":
         df_above_30 = df[df[to_show] <= treshold_value]
         au_txt = "<="
     else:
@@ -566,51 +576,6 @@ def line_graph(to_show, window_size, y_axis_zero, df):
     # plotly.offline.plot(fig)
     st.plotly_chart(fig)
 
-#@st.cache_data(ttl=24*60*60)
-def get_data_old(where):
-    # load_local = True if platform.processor() else False
-    load_local = False
-
-    # Define the base directory where the CSV files are stored
-    base_dir = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input"
-    github_base_url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input"
-
-    # Map locations to their respective CSV files
-    locations = {
-        "Koh Samui": "weather_ko_samui",
-        "Chiang Mai": "weather_chiang_mai",
-        "Rome Fiumicino": "weather_rome_fiumicino",
-        "Venezia": "weather_venezia"
-    }
-
-    # Check if the 'where' value is valid
-    if where not in locations:
-        st.error("Error in WHERE")
-        st.stop()
-
-    # Build the URL based on the location
-    url = os.path.join(base_dir, locations[where]) if load_local else f"{github_base_url}/{locations[where]}.csv"
-    url2 = os.path.join(base_dir, locations[where]) if load_local else f"{github_base_url}/{locations[where]}_b.csv"
-    
-    st.write(url)
-    df_ = pd.read_csv(url)
-   
-    try:
-        df_2 = pd.read_csv(url2)
-        
-    except:
-        df_2 = pd.DataFrame()  # Create an empty DataFrame if the second file is not found
-
-    # Align columns of df_2 to match df_, filling missing columns with None
-    df_2 = df_2.reindex(columns=df_.columns, fill_value=None)
-
-    # Concatenate the DataFrames
-    df_combined = pd.concat([df_, df_2], ignore_index=True)
-
-
-
-    return df_combined
-
 
 
 # Function to convert Celsius to Fahrenheit
@@ -687,7 +652,7 @@ def check_from_until(from_, until_):
         st.stop()
 
     return FROM, UNTIL
-def show_locations(locations):
+def show_locations_2(locations):
 
     # Convert to DataFrame
     df_map = pd.DataFrame(locations)
@@ -696,66 +661,181 @@ def show_locations(locations):
     st.title("🌍 World Locations Map")
     #st.map(df_map.rename(columns={"lat": "latitude", "lon": "longitude"}))
 
-    MAPBOX = "pk.eyJ1IjoicmNzbWl0IiwiYSI6Ii1IeExqOGcifQ.EB6Xcz9f-ZCzd5eQMwSKLQ"
-    # original_Name
-    df_map = df_map.rename(columns={"name": "original_Name", "lat": "lat", "lon": "lon"})
-    # Ensure the DataFrame has the correct columns for pydeck
-    if "original_Name" not in df_map.columns or "lat" not in df_map.columns or "lon" not in df_map.columns:
-        st.error("DataFrame must contain 'original_Name', 'lat', and 'lon' columns.")
-        return
+    # MAPBOX = "pk.eyJ1IjoicmNzbWl0IiwiYSI6Ii1IeExqOGcifQ.EB6Xcz9f-ZCzd5eQMwSKLQ"
+    # # original_Name
+    # df_map = df_map.rename(columns={"name": "original_Name", "lat": "lat", "lon": "lon"})
+    # # Ensure the DataFrame has the correct columns for pydeck
+    # if "original_Name" not in df_map.columns or "lat" not in df_map.columns or "lon" not in df_map.columns:
+    #     st.error("DataFrame must contain 'original_Name', 'lat', and 'lon' columns.")
+    #     return
     
-    df_map = df_map[["original_Name", "lat", "lon"]]
+    # df_map = df_map[["original_Name", "lat", "lon"]]
 
-    # Adding code so we can have map default to the center of the data
-    midpoint = (np.average(df_map['lat']), np.average(df_map['lon']))
-    import pydeck as pdk
-    tooltip = {
-            "html":
-                "{original_Name} <br/>"
-            }
+    # # Adding code so we can have map default to the center of the data
+    # midpoint = (np.average(df_map['lat']), np.average(df_map['lon']))
+    # 
+    # tooltip = {
+    #         "html":
+    #             "{original_Name} <br/>"
+    #         }
         
-    layer1= pdk.Layer(
-            'ScatterplotLayer',     # Change the `type` positional argument here
-                df_map,
-                get_position=['lon', 'lat'],
-                auto_highlight=True,
-                get_radius=4000,          # Radius is given in meters
-                get_fill_color=[180, 0, 200, 140],  # Set an RGBA value for fill
-                pickable=True)
-    layer2 =  pdk.Layer(
-                    type="TextLayer",
-                    data=df_map,
-                    pickable=False,
-                    get_position=["lon", "lat"],
-                    get_text="original_Name",
-                    get_color=[0, 0, 0],
-                    get_angle=0,
-                    sizeScale= 0.75,
-                    # Note that string constants in pydeck are explicitly passed as strings
-                    # This distinguishes them from columns in a data set
-                    getTextAnchor= '"middle"',
-                    get_alignment_baseline='"bottom"'
-                )
+    # layer1= pdk.Layer(
+    #         'ScatterplotLayer',     # Change the `type` positional argument here
+    #             df_map,
+    #             get_position=['lon', 'lat'],
+    #             auto_highlight=True,
+    #             get_radius=4000,          # Radius is given in meters
+    #             get_fill_color=[180, 0, 200, 140],  # Set an RGBA value for fill
+    #             pickable=True)
+    # layer2 =  pdk.Layer(
+    #                 type="TextLayer",
+    #                 data=df_map,
+    #                 pickable=False,
+    #                 get_position=["lon", "lat"],
+    #                 get_text="original_Name",
+    #                 get_color=[0, 0, 0],
+    #                 get_angle=0,
+    #                 sizeScale= 0.75,
+    #                 # Note that string constants in pydeck are explicitly passed as strings
+    #                 # This distinguishes them from columns in a data set
+    #                 getTextAnchor= '"middle"',
+    #                 get_alignment_baseline='"bottom"'
+    #             )
 
-    st.pydeck_chart(pdk.Deck(
-        map_style='mapbox://styles/mapbox/light-v9',
-        initial_view_state=pdk.ViewState(
-             longitude=midpoint[1],
-            latitude=midpoint[0],
-            pitch=0,
-            zoom=3,
-        ),
-        layers=[layer1, layer2
+    # st.pydeck_chart(pdk.Deck(
+    #     map_style='mapbox://styles/mapbox/light-v9',
+    #     initial_view_state=pdk.ViewState(
+    #          longitude=midpoint[1],
+    #         latitude=midpoint[0],
+    #         pitch=0,
+    #         zoom=3,
+    #     ),
+    #     layers=[layer1, layer2
             
-        ],tooltip = tooltip
-    ))
+    #     ],tooltip = tooltip
+    # ))
+
+    col1,col2,col3=st.columns(3)
+    with col1:
+        map_style = st.selectbox("Kaartstijl", ["light", "dark", "road", "satellite", "dark_no_labels","light_no_labels"],5)
+    
+        angle_txt = st.number_input("Hoek tekst", 0,360,0)
+    with col2:
+        font_family = st.selectbox("Lettertype", ["serif","sans-serif","monospace","cursive","fantasy","system-ui"],2)
+        size_scale = st.number_input("Text grootte", .1,10.,.5,.1)
+    with col3:
+        text_anchor = st.selectbox(
+            "Horizontale uitlijning",
+            options=["start", "middle", "end"],
+            index=1  # default = "middle"
+        )
+
+    
+        # Alignment baseline options
+        alignment_baseline = st.selectbox(
+            "Verticale uitlijning",
+            options=["top", "center", "bottom"],
+            index=2  # default = "bottom"
+        )
+
+    # Filter in Polars
+    pdf = pd.DataFrame(locations)
+
+    # Midpoint
+    midpoint = (np.average(pdf["lat"]), np.average(pdf["lon"]))
+
+    # Optioneel: Mapbox token
+    # pdk.settings.mapbox_api_key = "YOUR_MAPBOX_TOKEN"
+
+    tooltip = {"html": "{name}"}
+
+    layer_points = pdk.Layer(
+        "ScatterplotLayer",
+        pdf,
+        get_position=["lon", "lat"],
+        auto_highlight=True,
+        get_radius=4000,
+        pickable=True,
+    )
+
+    layer_text = pdk.Layer(
+        "TextLayer",
+        pdf,
+        pickable=False,
+        get_position=["lon", "lat"],
+        get_text="name",
+     
+        get_angle=angle_txt,
+        fontFamily = f'"{font_family}"',
+        sizeScale=size_scale,
+        getTextAnchor=f'"{text_anchor}"',
+        get_alignment_baseline=f'"{alignment_baseline}"',
+        # wordBreak=word_break,
+        # maxWidth=max_width,
+    )
+
+    deck = pdk.Deck(
+            map_style=map_style,
+            initial_view_state=pdk.ViewState(
+                longitude=midpoint[1],
+                latitude=midpoint[0],
+                pitch=0,
+                zoom=1,
+            ),
+            layers=[layer_points, layer_text],
+            tooltip=tooltip,
+        )
+    
+    # In Streamlit tonen
+    st.pydeck_chart(deck)
+
 
   
-def main_(locations):
+def main_(df, n_years, locations,FROM, UNTIL, start_month, end_month, where, to_show, window_size, y_axis_zero, multiply_minus_one, treshold_value, above_under, percentile_colomap_max, month_names, month, selected_month, day_min, day_max, number_of_columns):
     """Show the data from OpenMeteo in a graph, and average values per month per year
     """    
 
     
+  
+
+    st.title(f"Weather info from {where}")
+ 
+    line_graph(to_show, window_size, y_axis_zero, df)
+    if n_years>11:
+        st.info("Too much years to show heatmaps")
+    elif n_years>5:
+
+        with st.expander ("Year heatmaps", expanded = False):
+            show_calender_heatmap(df,"date", [to_show], where, percentile_colomap_max,number_of_columns)
+            show_year_heatmap(df,"date", [to_show])
+    else:
+        show_calender_heatmap(df,"date", [to_show], where, percentile_colomap_max,number_of_columns)
+        show_year_heatmap(df,"date", [to_show])
+
+    cross_table_montly_avg(df, to_show, where, y_axis_zero, selected_month)   
+    
+    
+    
+def prepare_dataframe(start_month, end_month, df):
+    df['date'] = pd.to_datetime(df['date'])
+    df['Day'] = df['date'].dt.day
+    df['Month'] = df['date'].dt.month
+    df['Year'] = df['date'].dt.year
+    df = df.sort_values(by='date') 
+    df["date"] = pd.to_datetime(df["date"].astype(str))
+    df["YYYY"] = df["date"].dt.year
+    df["MM"] = df["date"].dt.month
+    df["DD"] = df["date"].dt.day
+    n_years = df['Year'].nunique()
+    df=df[(df['MM']>=start_month) & (df['MM']<=end_month)]
+
+    # Convert all columns except 'date' to appropriate data types
+    df[df.columns.difference(['date'])] = df[df.columns.difference(['date'])].apply(pd.to_numeric, errors='coerce')
+    # Apply the feels_like_temperature function to each row in the DataFrame
+    df['Feels_Like'] = df.apply(feels_like_temperature, axis=1)
+    return df,n_years
+
+def interface(locations):
     location_names = [loc["name"] for loc in locations]
     
     start_ = "2019-01-01"
@@ -790,76 +870,16 @@ def main_(locations):
     window_size =  st.sidebar.slider("Window for SMA",1,365,7) 
     y_axis_zero = st.sidebar.selectbox("Y axis start at zero", [True,False],1)
     multiply_minus_one = st.sidebar.selectbox("Multiply by -1", [True,False],1)
-    treshold_value = st.sidebar.number_input("Treshold value (incl.)")
+    treshold_value = st.sidebar.number_input("Treshold value (incl.)",-100.0,100.0,.1)
     above_under = st.sidebar.selectbox("Above or below", ["above", "equal", "below"],0)
     percentile_colomap_max = st.sidebar.number_input("percentile_colomap_max",1,100,100)
     
     month_names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
     month = month_names.index(st.sidebar.selectbox("Month", month_names, index=0)) + 1
+    selected_month = month_names[month -1]
     day_min, day_max  = st.sidebar.slider("days",1,31,(1,31))
     number_of_columns = st.sidebar.number_input("Number of columns", 1,10,2)
-    
-    df_ = get_data(where,locations, FROM, UNTIL)
-   
-    if multiply_minus_one:
-        # needed for for ex. visability 
-        # Make a copy of the DataFrame without the "date" column
-        df_copy = df_.drop(columns=['date']).copy()
-
-        # Multiply all values by -1
-        df_copy = df_copy * -1
-
-        # Combine the "date" column back with the modified values
-        df = pd.concat([df_['date'], df_copy], axis=1)
-    else:
-        df = df_
-    df['date'] = pd.to_datetime(df['date'])
-
-    # # Filter the DataFrame based on the start and end dates
-    # df = df[(df['date'] >= FROM) & (df['date'] <= UNTIL)]
-
-
-
-    df['Day'] = df['date'].dt.day
-    df['Month'] = df['date'].dt.month
-    df['Year'] = df['date'].dt.year
-    df = df.sort_values(by='date')
-
-    
-    df["date"] = pd.to_datetime(df["date"].astype(str))
-    df["YYYY"] = df["date"].dt.year
-    df["MM"] = df["date"].dt.month
-    df["DD"] = df["date"].dt.day
-    n_years = df['Year'].nunique()
-    df=df[(df['MM']>=start_month) & (df['MM']<=end_month)]
-
-    # Convert all columns except 'date' to appropriate data types
-    df[df.columns.difference(['date'])] = df[df.columns.difference(['date'])].apply(pd.to_numeric, errors='coerce')
-    # Apply the feels_like_temperature function to each row in the DataFrame
-    df['Feels_Like'] = df.apply(feels_like_temperature, axis=1)
-
-    st.title(f"Weather info from {where}")
- 
-    line_graph(to_show, window_size, y_axis_zero, df)
-    if n_years>10:
-        st.info("Too much years to show heatmaps")
-    elif n_years>5:
-
-        with st.expander ("Year heatmaps", expanded = False):
-            show_calender_heatmap(df,"date", [to_show], where, percentile_colomap_max,number_of_columns)
-            show_year_heatmap(df,"date", [to_show])
-    else:
-        show_calender_heatmap(df,"date", [to_show], where, percentile_colomap_max,number_of_columns)
-        show_year_heatmap(df,"date", [to_show])
-
-    cross_table_montly_avg(df, to_show, where, y_axis_zero)   
-    show_treshold(where, to_show, treshold_value, above_under, df)
-    #show_warmingstripes(df, to_show, where) 
-    if month >= start_month and month <= end_month:
-        show_month(df, to_show, day_min, day_max,month, month_names,where)
-    else:
-        st.info("Selected month is not in the indicated range for months to show")
-    show_info()
+    return FROM,UNTIL,start_month,end_month,where,to_show,window_size,y_axis_zero,multiply_minus_one,treshold_value,above_under,percentile_colomap_max,month_names,month,selected_month,day_min,day_max,number_of_columns
 def legenda():
     # https://open-meteo.com/en/docs/historical-weather-api
     # Define the data for hourly and daily parameters
@@ -930,9 +950,9 @@ def legenda():
 
     st.dataframe(df_daily)
 def main():
-
     locations = [
         {"name": "Koh Phangan", "lat": 9.755106899960907, "lon": 99.9609068, "timezone": "Asia/Bangkok"},
+        {"name": "Koh Chang", "lat":  12.10361, "lon": 102.35194, "timezone": "Asia/Bangkok"},
         {"name": "Chiang Mai", "lat": 18.7931784, "lon": 98.9774429, "timezone": "Asia/Bangkok"},
         {"name": "Amsterdam", "lat": 52.3676, "lon": 4.9041, "timezone": "Europe/Amsterdam"},
         {"name": "Lisbon", "lat": 38.7169, "lon": -9.1399, "timezone": "Europe/Lisbon"},
@@ -953,15 +973,44 @@ def main():
         {"name": "São Paulo", "lat": -23.5505, "lon": -46.6333, "timezone": "America/Sao_Paulo"},
         {"name": "Istanbul", "lat": 41.0082, "lon": 28.9784, "timezone": "Europe/Istanbul"},
     ]
-    tab1,tab2, tab3 = st.tabs(["Data", "Locations", "Source and Legenda"])
-    with tab1:
-        main_(locations)
-    with tab2:
-        show_locations(locations)
-    with tab3:
-        legenda()
+    FROM, UNTIL, start_month, end_month, where, to_show, window_size, y_axis_zero, multiply_minus_one, treshold_value, above_under, percentile_colomap_max, month_names, month, selected_month, day_min, day_max, number_of_columns = interface(locations)
     
+    df_ = get_data(where,locations, FROM, UNTIL)
+   
+    if multiply_minus_one:
+        # needed for for ex. visability 
+        # Make a copy of the DataFrame without the "date" column
+        df_copy = df_.drop(columns=['date']).copy()
 
+        # Multiply values by -1
+        # df_copy = df_copy * -1
+        df[to_show] = -df[to_show]
+        # Combine the "date" column back with the modified values
+        df = pd.concat([df_['date'], df_copy], axis=1)
+    else:
+        df = df_
+    df, n_years = prepare_dataframe(start_month, end_month, df)
+
+  
+    tab1,tab2, tab3,tab4,tab5 = st.tabs(["Data",  "Specific month","Treshold/Climate change","Locations","Source and Legenda"])
+    
+    with tab4:
+        show_locations_2(locations)
+    with tab5:
+        show_info()
+        legenda()
+    with tab1:
+        main_(df, n_years, locations,FROM, UNTIL, start_month, end_month, where, to_show, window_size, y_axis_zero, multiply_minus_one, treshold_value, above_under, percentile_colomap_max, month_names, month, selected_month, day_min, day_max, number_of_columns )
+    
+    with tab3:
+        show_treshold(where, to_show, treshold_value, above_under, df)
+    with tab2:
+        #show_warmingstripes(df, to_show, where) 
+        if month >= start_month and month <= end_month:
+            show_month(df, to_show, day_min, day_max,month, month_names,where)
+        else:
+            st.info("Selected month is not in the indicated range for months to show")
+    
 if __name__ == "__main__":
     #read_ogimet()
     main()
