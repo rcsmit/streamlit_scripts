@@ -1434,7 +1434,7 @@ def legenda():
     ]
 
     # Create DataFrames
-    df_hourly = pd.DataFrame(hourly_data, columns=["Variable", "Valid time", "Unit", "Description"])
+    #df_hourly = pd.DataFrame(hourly_data, columns=["Variable", "Valid time", "Unit", "Description"])
     df_daily = pd.DataFrame(daily_data, columns=["Variable", "Valid time", "Unit", "Description"])
 
     st.dataframe(df_daily)
@@ -1477,7 +1477,7 @@ def main():
     FROM, UNTIL, start_month, end_month, where, to_show, window_size, y_axis_zero, multiply_minus_one, treshold_value, above_under, percentile_colomap_max, month_names, month, selected_month, day_min, day_max, number_of_columns = interface(locations)
     
     df_,df_hourly = get_data(where,locations, FROM, UNTIL)
-    st.write(df_hourly)
+   
     if multiply_minus_one:
         # needed for for ex. visability 
         # Make a copy of the DataFrame without the "date" column
