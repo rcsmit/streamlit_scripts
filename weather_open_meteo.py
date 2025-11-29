@@ -1440,15 +1440,18 @@ def legenda():
     st.dataframe(df_daily)
 
 def location_dashboard(df, df_hourly, where, day_min, day_max, month, month_names, treshold_value):
-    st.subheader(f"Location dashboard for {where} - {month_names[month-1]}")    
+
+   
     df["rain_day"] = (df["rain_sum"] >= treshold_value).astype(int)
     df["dry_day"] = (df["rain_sum"] < treshold_value).astype(int)
     values_to_show = ["temp_max","dry_day","rain_day","rain_sum","precipitation_hours"]
-    columns = st.columns(len(values_to_show))
     
-    for i,to_show in enumerate(values_to_show):
-        with columns[i]:
-            show_month(df, to_show, day_min, day_max,month, month_names,where, False)
+    for month in range (1,13):
+        st.subheader(f"Location dashboard for {where} - {month_names[month-1]}")  
+        columns = st.columns(len(values_to_show))  
+        for i,to_show in enumerate(values_to_show):
+            with columns[i]:
+                show_month(df, to_show, day_min, day_max,month, month_names,where, False)
 def main():
     locations = [
         {"name": "Koh Phangan", "lat": 9.755106899960907, "lon": 99.9609068, "timezone": "Asia/Bangkok"},
