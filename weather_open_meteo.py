@@ -43,6 +43,17 @@ try:
     st.set_page_config(layout='wide')
 except:
     pass
+
+
+import numpy as np
+import pandas as pd
+import streamlit as st
+import plotly.express as px
+import plotly.graph_objects as go
+from scipy.stats import linregress, kendalltau
+import statsmodels.api as sm
+
+
 @st.cache_data()
 def get_data(location_name,locations, start_date, end_date):
     """Get the weather data for a specific location and date range from Open Meteo archive API.
@@ -119,9 +130,46 @@ def get_data(location_name,locations, start_date, end_date):
     df["week"] = df["date"].dt.isocalendar().week
     df = df.dropna(subset=["year", "week"])
     
-    return df
+    if 1==2:
 
+        url_hourly = (
+            f"https://archive-api.open-meteo.com/v1/archive"
+            f"?latitude={loc['lat']}"
+            f"&longitude={loc['lon']}"
+            f"&start_date={start_date}"
+            f"&end_date={end_date}"
+            f"&hourly=rain,temperature_2m,is_day,sunshine_duration"
+            f"&timezone={loc['timezone'].replace('/', '%2F')}"
+        )
 
+        print(f"Fetching weather for {location_name}: {url_hourly}")
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.json().get("hourly")
+        st.write(data)
+
+        # if not data or "time" not in data:
+        #     raise KeyError("Invalid weather API response structure")
+        
+        df_hourly = pd.DataFrame({
+            "date": pd.to_datetime(data["time"]),
+            "Date": pd.to_datetime(data["time"]), #some external scripts use Date
+            "temp": data["temperature_2m"],
+            "rain": data["rain"],
+            "is_day": data["is_day"],
+            "sunshine_duration": data["sunshine_duration"]  
+            
+            })
+
+        df_hourly["year"] = df_hourly["date"].dt.isocalendar().year
+        df_hourly["time"] = df_hourly["date"].dt.isocalendar().time
+        df_hourly["week"] = df_hourly["date"].dt.isocalendar().week
+        df_hourly = df_hourly.dropna(subset=["year", "week"])
+        
+    else:
+        df_hourly=None
+
+    return df,df_hourly
 
 def show_warmingstripes(df_, to_show, where):
     """_summary_
@@ -185,7 +233,7 @@ def show_warmingstripes(df_, to_show, where):
     st.set_option("deprecation.showPyplotGlobalUse", False)
     st.pyplot(fig)
     plt.close()
-def show_month(df, to_show, day_min, day_max, month, month_names, where):
+def show_month(df, to_show, day_min, day_max, month, month_names, where, verbose=True):
     """Show graph with to_show in different lines for each years for a certain (period of) a month
        Show a frequency table of this data
        Show a histogram of this data 
@@ -199,32 +247,64 @@ def show_month(df, to_show, day_min, day_max, month, month_names, where):
         month_names (_type_): _description_
         where (_type_): _description_
     """   
-    st.header("Show month")
+    if verbose:
+        st.header(f"Show month {to_show} in {where} in {month_names[month-1]}")
+    else:
+        if to_show=="precipitation_hours":
+            st.subheader(f"prec hours")
+        else:
+            st.subheader(to_show)
+
     df_month = df[(df['Month'] == month) & (df['Day']>=day_min) & (df['Day']<=day_max)]             
-    fig = px.line(df_month, x='Day', y=to_show, color='Year', labels={'temp': f'{to_show}'}, title=f'{to_show} for {month_names[month-1]} in {where}')
-    st.plotly_chart(fig)
+    if verbose:
+        fig = px.line(df_month, x='Day', y=to_show, color='Year', labels={'temp': f'{to_show}'}, title=f'{to_show} for {month_names[month-1]} in {where}')
+        st.plotly_chart(fig)
     crosstable_daily = pd.pivot_table(df_month, values=to_show, index='Year', columns='Day', aggfunc='mean').round(1)
     avg_value = np.nanmean(crosstable_daily.to_numpy())
-    st.metric(
-        label=f"Average daily value {to_show} - {month_names[month-1]} - {where}",
-        value=f"{avg_value:.1f}"
-    )
+    if verbose:
+        st.metric(
+            label=f"Average daily value {to_show} - {month_names[month-1]} - {where}",
+            value=f"{avg_value:.1f}"
+        )
+    else:
+        
+        if to_show in ["dry_day","rain_day"]:
+            st.metric(
+                label=f"{to_show}",
+                value=f"{avg_value*100:.0f} %"
+            )
+        elif to_show=="precipitation_hours":
+            st.metric(
+            label=f"prec hours",
+            value=f"{avg_value:.1f} hrs"
+            )
+
+        else:
+            st.metric(
+            label=f"{to_show}",
+            value=f"{avg_value:.1f}"
+            )
     #st.write (crosstable_daily)
-    title=f"Daily values  of {to_show} - {month_names[month-1]} - {where}"
+    if verbose:
+        title=f"Daily values  of {to_show} - {month_names[month-1]} - {where}"
+    else:
+        title=f"{to_show}"
     # fig=px.imshow(crosstable_daily, title=title, text_auto='.1f')
     fig = px.imshow(
         crosstable_daily,
         title=title,
         text_auto=".0f",
         color_continuous_scale=[(0.0, "white"), (1.0, "darkblue")],
-        zmin=0  # make sure 0 is the lowest value
+        zmin=0,  # make sure 0 is the lowest value
+        
     )
+    if not verbose:
+        fig.update_coloraxes(showscale=False)
 
-
-    st.plotly_chart(fig)
-    # Average of all cells (ignores NaNs)
-    
-    if 1==1:
+    st.plotly_chart(fig, key=f'{title}{datetime.now().strftime("%H:%M:%S.%f")[:-3]}')
+        # Average of all cells (ignores NaNs)
+    if verbose:  
+        
         # is this table used?
 
         frequency_table = df_month[to_show].value_counts().reset_index()
@@ -239,32 +319,32 @@ def show_month(df, to_show, day_min, day_max, month, month_names, where):
         frequency_table['Cumulative Percentage'] = (frequency_table['Cumulative Absolute Frequency'] / total_absolute_frequency) * 100
 
         # # Display the frequency table
-       
+    
         fig=px.line(frequency_table, x=to_show, y='Cumulative Percentage', title=f'Frequency of {to_show} for {month_names[month-1]} in {where}',)
         st.plotly_chart(fig)
-    
-    # Frequency table
-    df_month['Temp_Bin'] = pd.cut(df_month[to_show], bins=range(int(df_month[to_show].min()), int(df_month[to_show].max()) + 2))
-    frequency_table = df_month.pivot_table(index='Temp_Bin', columns='Year', aggfunc='size', fill_value=0)
+        
+        # Frequency table
+        df_month['Temp_Bin'] = pd.cut(df_month[to_show], bins=range(int(df_month[to_show].min()), int(df_month[to_show].max()) + 2))
+        frequency_table = df_month.pivot_table(index='Temp_Bin', columns='Year', aggfunc='size', fill_value=0)
 
-    # Reset the index for plotting
-    frequency_table = frequency_table.reset_index()
-    frequency_table['Temp_Bin'] = frequency_table['Temp_Bin'].apply(lambda x: x.mid)
+        # Reset the index for plotting
+        frequency_table = frequency_table.reset_index()
+        frequency_table['Temp_Bin'] = frequency_table['Temp_Bin'].apply(lambda x: x.mid)
 
-    # # Display the frequency table
-    # st.write(frequency_table)
+        # # Display the frequency table
+        # st.write(frequency_table)
 
-    # Frequency line graph
-    frequency_table_melted = frequency_table.melt(id_vars='Temp_Bin', var_name='Year', value_name='Frequency')
-    fig = px.line(frequency_table_melted, x='Temp_Bin', y='Frequency', color='Year',
-                  labels={'Temp_Bin': f'{to_show}', 'Frequency': 'Frequency'},
-                  title=f'Frequency of {to_show} for {month_names[month-1]} in {where}')
-    st.plotly_chart(fig)
-    nbins = len(range(int(df_month[to_show].min()), int(df_month[to_show].max()) + 2))
-    # Histogram of the to_show variable
-    fig = px.histogram(df_month, x=to_show, nbins=nbins, title=f'Histogram of of {to_show} for {month_names[month-1]} in {where}', 
-                       labels={to_show: f'{to_show}', 'count': 'Frequency'})
-    st.plotly_chart(fig)
+        # Frequency line graph
+        frequency_table_melted = frequency_table.melt(id_vars='Temp_Bin', var_name='Year', value_name='Frequency')
+        fig = px.line(frequency_table_melted, x='Temp_Bin', y='Frequency', color='Year',
+                    labels={'Temp_Bin': f'{to_show}', 'Frequency': 'Frequency'},
+                    title=f'Frequency of {to_show} for {month_names[month-1]} in {where}')
+        st.plotly_chart(fig)
+        nbins = len(range(int(df_month[to_show].min()), int(df_month[to_show].max()) + 2))
+        # Histogram of the to_show variable
+        fig = px.histogram(df_month, x=to_show, nbins=nbins, title=f'Histogram of of {to_show} for {month_names[month-1]} in {where}', 
+                        labels={to_show: f'{to_show}', 'count': 'Frequency'})
+        st.plotly_chart(fig)
 
 
     #show_warmingstripes(df_month, to_show, where)
@@ -352,7 +432,7 @@ Muñoz Sabater, J. (2019). ERA5-Land hourly data from 2001 to present [Data set]
 Schimanke S., Ridal M., Le Moigne P., Berggren L., Undén P., Randriamampianina R., Andrea U., Bazile E., Bertelsen A., Brousseau P., Dahlgren P., Edvinsson L., El Said A., Glinton M., Hopsch S., Isaksson L., Mladek R., Olsson E., Verrelle A., Wang Z.Q. (2021). CERRA sub-daily regional reanalysis data for Europe on single levels from 1984 to present [Data set]. ECMWF. https://doi.org/10.24381/CDS.622A565A
     '''
     st.info("Data retrieval script based on code of @orwell2022")
-def show_treshold(where, to_show, treshold_value, above_under, df):
+def show_treshold_old(where, to_show, treshold_value, above_under, df):
     """_summary_
 
     Args:
@@ -552,6 +632,414 @@ def show_treshold(where, to_show, treshold_value, above_under, df):
     fig = px.imshow(table)
     #fig.show()
     st.plotly_chart(fig)
+
+
+
+
+# ------------------ Helpers: filtering ------------------ #
+def filter_by_threshold(df: pd.DataFrame,
+                        to_show: str,
+                        treshold_value: float,
+                        above_under: str) -> tuple[pd.DataFrame, str]:
+    if above_under == "above":
+        df_thr = df[df[to_show] >= treshold_value]
+        au_txt = ">="
+    elif above_under == "equal":
+        df_thr = df[df[to_show] == treshold_value]
+        au_txt = "="
+    elif above_under == "below":
+        df_thr = df[df[to_show] <= treshold_value]
+        au_txt = "<="
+    else:
+        st.error("above_under must be 'above', 'equal' or 'below'")
+        st.stop()
+
+    return df_thr, au_txt
+
+
+# ------------------ Helpers: statistiek jaar ------------------ #
+def analyze_year_trend(table_year: pd.DataFrame, to_show: str) -> dict | None:
+    x = table_year.index.to_numpy()
+    y = table_year[to_show].to_numpy()
+
+    if len(x) < 2:
+        st.write("Te weinig jaren voor trendanalyse.")
+        return None
+
+    # lineaire trend
+    lin = linregress(x, y)
+    slope = lin.slope
+    intercept = lin.intercept
+    r2 = lin.rvalue ** 2
+    p_lin = lin.pvalue
+
+    richting = "stijgend" if slope > 0 else "dalend" if slope < 0 else "vlak"
+    significant = p_lin < 0.05
+
+    st.write(
+        f"**Lineair** trend: slope={slope:.3f}, R²={r2:.3f}, p={p_lin:.4f} → "
+        f"**{richting}** en **{'significant' if significant else 'niet significant'}**"
+    )
+
+    # Kendall tau
+    tau, p_kendall = kendalltau(x, y)
+    richting_np = "stijgend" if tau > 0 else "dalend" if tau < 0 else "vlak"
+    significant_np = p_kendall < 0.05
+
+    st.write(
+        f"**Kendall tau**: tau={tau:.3f}, p={p_kendall:.4f} → "
+        f"**{richting_np}** en **{'significant' if significant_np else 'niet significant'}**"
+    )
+
+    return {
+        "x": x,
+        "y": y,
+        "slope": slope,
+        "intercept": intercept,
+        "r2": r2,
+        "p_lin": p_lin,
+        "richting": richting,
+    }
+
+
+# ------------------ Helpers: statistiek maand totaal ------------------ #
+def analyze_global_month_trend(table: pd.DataFrame, to_show: str) -> pd.DataFrame:
+    st.subheader(f"Effect van jaar op het {to_show}")
+
+    df_counts = table.stack().rename("Count").reset_index()  # Month, Year, Count
+
+    X = sm.add_constant(df_counts["Year"])
+    y_counts = df_counts["Count"]
+
+    model = sm.OLS(y_counts, X).fit()
+    st.write(model.summary())
+    st.write("Als p < 0.05 → significant stijgende of dalende trend.")
+
+    tau_all, p_all = kendalltau(df_counts["Year"], df_counts["Count"])
+    trend_all = "significant" if p_all < 0.05 else "not significant"
+    st.write(f"If there is no normal distribution : Kendall tau={tau_all:.3f}, p={p_all:.3f} [{trend_all}]")
+
+    return df_counts
+
+
+# ------------------ Helpers: statistiek per maand ------------------ #
+def analyze_month_trends(table: pd.DataFrame) -> dict:
+    transposed = table.T  # index = Year, columns = Month
+    month_stats: dict = {}
+
+    for month in transposed.columns:
+        y_m = transposed[month].values
+        x_m = transposed.index.values
+
+        mask = ~np.isnan(y_m)
+        x_m = x_m[mask]
+        y_m = y_m[mask]
+
+        if len(y_m) < 2:
+            continue
+
+        lin_m = linregress(x_m, y_m)
+        slope_m = lin_m.slope
+        intercept_m = lin_m.intercept
+        r2_m = lin_m.rvalue ** 2
+        p_m = lin_m.pvalue
+        trend_m = "significant" if p_m < 0.05 else "not significant"
+
+        st.write(f"Maand {month}: slope={slope_m:.3f}, R²={r2_m:.2f}, p={p_m:.3f} [{trend_m}]")
+
+        month_stats[month] = {
+            "x": x_m,
+            "y": y_m,
+            "slope": slope_m,
+            "intercept": intercept_m,
+            "r2": r2_m,
+            "p": p_m,
+        }
+
+    return month_stats
+
+
+# ------------------ Helpers: plots ------------------ #
+def plot_year_trend(table_year: pd.DataFrame,
+                    to_show: str,
+                    au_txt: str,
+                    treshold_value: float,
+                    where: str,
+                    stats: dict | None) -> None:
+    if stats is None:
+        return
+
+    x = stats["x"]
+    y = stats["y"]
+    slope = stats["slope"]
+    intercept = stats["intercept"]
+    p_lin = stats["p_lin"]
+    richting = stats["richting"]
+
+    trendline = slope * x + intercept
+
+    fig_year = go.Figure()
+    fig_year.add_trace(
+        go.Bar(
+            x=table_year.index,
+            y=table_year[to_show],
+            name="Number of days",
+        )
+    )
+    fig_year.add_trace(
+        go.Scatter(
+            x=table_year.index,
+            y=trendline,
+            mode="lines",
+            name="Trendline",
+        )
+    )
+
+    fig_year.update_layout(
+        title=f"Numbers of days per year that {to_show} was {au_txt} {treshold_value} - {where}",
+        xaxis_title="Years",
+        yaxis_title=f"Number of days {to_show} was {au_txt} {treshold_value}",
+    )
+
+    label = f"trend {richting}, p={p_lin:.3f}"
+    fig_year.add_annotation(
+        x=x[-1],
+        y=float(np.max(y)),
+        text=label,
+        showarrow=False,
+    )
+
+    st.plotly_chart(fig_year)
+
+
+def plot_month_trends(to_show: str,
+                      au_txt: str,
+                      treshold_value: float,
+                      where: str,
+                      month_stats: dict) -> None:
+    fig = go.Figure()
+
+    for month, stats in month_stats.items():
+        x = stats["x"]
+        y = stats["y"]
+        slope = stats["slope"]
+        intercept = stats["intercept"]
+
+        trendline = slope * x + intercept
+
+        fig.add_trace(
+            go.Scatter(
+                x=x,
+                y=y,
+                mode="markers",
+                name=f"Month {month} Scatter",
+            )
+        )
+        fig.add_trace(
+            go.Scatter(
+                x=x,
+                y=trendline,
+                mode="lines",
+                name=f"Month {month} Trendline",
+            )
+        )
+
+    fig.update_layout(
+        title=f"Numbers of days per month that {to_show} was {au_txt} {treshold_value} - {where}",
+        xaxis_title="Years",
+        yaxis_title=f"Number of days {to_show} was {au_txt} {treshold_value}",
+    )
+    st.plotly_chart(fig)
+
+
+def plot_month_heatmap(table: pd.DataFrame,
+                       to_show: str,
+                       au_txt: str,
+                       treshold_value: float,
+                       where: str) -> None:
+    st.subheader(f"Numbers of days per month that {to_show} was {au_txt} {treshold_value} - {where}")
+    fig_heat = px.imshow(table)
+    st.plotly_chart(fig_heat)
+
+
+# ------------------ Hoofdfunctie ------------------ #
+def show_treshold(where: str,
+                  to_show: str,
+                  treshold_value: float,
+                  above_under: str,
+                  df: pd.DataFrame) -> None:
+    """Toon counts en trends voor dagen boven/onder/equal aan een drempel."""
+    treshold_value = round(treshold_value,2)
+    # Filter
+    df_thr, au_txt = filter_by_threshold(df, to_show, treshold_value, above_under)
+
+    # Per jaar
+    st.subheader(f"Numbers of days per year that {to_show} was {au_txt} {treshold_value} - {where}")
+    table_year = (
+        pd.pivot_table(
+            df_thr,
+            values=to_show,
+            index="Year",
+            aggfunc="count",
+            fill_value=0,
+        )
+        .sort_index()
+    )
+    table_year = table_year.rename(columns={"rainsum": "number_days"})
+
+    st.write(table_year)
+
+    year_stats = analyze_year_trend(table_year, to_show)
+    plot_year_trend(table_year, to_show, au_txt, treshold_value, where, year_stats)
+
+    # Per maand
+    st.subheader(f"Numbers of days per month that {to_show} was {au_txt} {treshold_value} - {where}")
+    table = pd.pivot_table(
+        df_thr,
+        values=to_show,
+        index="Month",
+        columns="Year",
+        aggfunc="count",
+        fill_value=0,
+    )
+    all_months = range(1, 13)
+    all_years = df["Year"].unique()
+    table = table.reindex(index=all_months, columns=all_years, fill_value=0)
+    st.write(table)
+
+    # Statistiek op totaal aantal dagen per jaar over alle maanden
+    _ = analyze_global_month_trend(table, to_show)
+
+    # Statistiek per maand en bijbehorende plot
+    month_stats = analyze_month_trends(table)
+    plot_month_trends(to_show, au_txt, treshold_value, where, month_stats)
+
+    # Heatmap
+    plot_month_heatmap(table, to_show, au_txt, treshold_value, where)
+
+def plot_year_value_trend(table_year: pd.DataFrame,
+                          to_show: str,
+                          where: str,
+                          stats: dict | None) -> None:
+    if stats is None:
+        return
+
+    x = stats["x"]
+    y = stats["y"]
+    slope = stats["slope"]
+    intercept = stats["intercept"]
+
+    trendline = slope * x + intercept
+
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=table_year.index,
+            y=table_year[to_show],
+            mode="markers+lines",
+            name=f"{to_show}",
+        )
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=table_year.index,
+            y=trendline,
+            mode="lines",
+            name="Trendline",
+        )
+    )
+
+    fig.update_layout(
+        title=f"Yearly trend in {to_show} value - {where}",
+        xaxis_title="Year",
+        yaxis_title=to_show,
+    )
+
+    st.plotly_chart(fig)
+
+
+def plot_month_value_trends(to_show: str,
+                            where: str,
+                            month_stats: dict) -> None:
+    if not month_stats:
+        return
+
+    fig = go.Figure()
+
+    for month, stats in month_stats.items():
+        x = stats["x"]
+        y = stats["y"]
+        slope = stats["slope"]
+        intercept = stats["intercept"]
+        trendline = slope * x + intercept
+
+        fig.add_trace(
+            go.Scatter(
+                x=x,
+                y=y,
+                mode="markers",
+                name=f"Month {month} values",
+            )
+        )
+        fig.add_trace(
+            go.Scatter(
+                x=x,
+                y=trendline,
+                mode="lines",
+                name=f"Month {month} trend",
+            )
+        )
+
+    fig.update_layout(
+        title=f"Monthly trend in {to_show} value - {where}",
+        xaxis_title="Year",
+        yaxis_title=to_show,
+    )
+
+    st.plotly_chart(fig)
+
+
+def show_value_trend(where: str,
+                     to_show: str,
+                     df: pd.DataFrame) -> None:
+    """Trend in de waarde zelf, per jaar en per maand."""
+
+    # Jaarlijke gemiddelde waarde
+    st.subheader(f"Yearly {to_show} value - {where}")
+    table_year = (
+        pd.pivot_table(
+            df,
+            values=to_show,
+            index="Year",
+            aggfunc="sum",
+        )
+        .sort_index()
+    )
+    
+    year_stats = analyze_year_trend(table_year, to_show)
+    plot_year_value_trend(table_year, to_show, where, year_stats)
+    st.write(table_year)
+
+    # Maandgemiddelde waarde
+    st.subheader(f"Monthly {to_show} value - {where}")
+    table = pd.pivot_table(
+        df,
+        values=to_show,
+        index="Month",
+        columns="Year",
+        aggfunc="mean",
+    )
+
+    all_months = range(1, 13)
+    all_years = df["Year"].unique()
+    table = table.reindex(index=all_months, columns=all_years, fill_value=np.nan)
+    st.write(table)
+
+    # Hergebruik bestaande statistiek helpers
+    _ = analyze_global_month_trend(table, to_show)
+    month_stats = analyze_month_trends(table)
+    plot_month_value_trends(to_show, where, month_stats)
+
 
 def line_graph(to_show, window_size, y_axis_zero, df):
     """_summary_
@@ -949,6 +1437,17 @@ def legenda():
     df_daily = pd.DataFrame(daily_data, columns=["Variable", "Valid time", "Unit", "Description"])
 
     st.dataframe(df_daily)
+
+def location_dashboard(df, df_hourly, where, day_min, day_max, month, month_names, treshold_value):
+    st.subheader(f"Location dashboard for {where} - {month_names[month-1]}")    
+    df["rain_day"] = (df["rain_sum"] >= treshold_value).astype(int)
+    df["dry_day"] = (df["rain_sum"] < treshold_value).astype(int)
+    values_to_show = ["temp_max","dry_day","rain_day","rain_sum","precipitation_hours"]
+    columns = st.columns(len(values_to_show))
+    
+    for i,to_show in enumerate(values_to_show):
+        with columns[i]:
+            show_month(df, to_show, day_min, day_max,month, month_names,where, False)
 def main():
     locations = [
         {"name": "Koh Phangan", "lat": 9.755106899960907, "lon": 99.9609068, "timezone": "Asia/Bangkok"},
@@ -959,6 +1458,7 @@ def main():
         {"name": "Rome", "lat": 41.9102088, "lon": 12.371185, "timezone": "Europe/Rome"},
         {"name": "Venezia", "lat": 45.4408, "lon": 12.3155, "timezone": "Europe/Rome"},
         {"name": "Hoi An", "lat": 15.8801, "lon": 108.3380, "timezone": "Asia/Ho_Chi_Minh"},
+        {"name": "Da Nang", "lat": 16.047079, "lon":108.206230, "timezone": "Asia/Ho_Chi_Minh"},
         {"name": "Ho Chi Minh City", "lat": 10.7769, "lon": 106.7009, "timezone": "Asia/Ho_Chi_Minh"},
         {"name": "Hanoi", "lat": 21.0285, "lon": 105.8542, "timezone": "Asia/Bangkok"},
         {"name": "Manila", "lat": 14.5995, "lon": 120.9842, "timezone": "Asia/Manila"},
@@ -975,8 +1475,8 @@ def main():
     ]
     FROM, UNTIL, start_month, end_month, where, to_show, window_size, y_axis_zero, multiply_minus_one, treshold_value, above_under, percentile_colomap_max, month_names, month, selected_month, day_min, day_max, number_of_columns = interface(locations)
     
-    df_ = get_data(where,locations, FROM, UNTIL)
-   
+    df_,df_hourly = get_data(where,locations, FROM, UNTIL)
+    st.write(df_hourly)
     if multiply_minus_one:
         # needed for for ex. visability 
         # Make a copy of the DataFrame without the "date" column
@@ -984,7 +1484,7 @@ def main():
 
         # Multiply values by -1
         # df_copy = df_copy * -1
-        df[to_show] = -df[to_show]
+        df_[to_show] = -df_[to_show]
         # Combine the "date" column back with the modified values
         df = pd.concat([df_['date'], df_copy], axis=1)
     else:
@@ -992,17 +1492,21 @@ def main():
     df, n_years = prepare_dataframe(start_month, end_month, df)
 
   
-    tab1,tab2, tab3,tab4,tab5 = st.tabs(["Data",  "Specific month","Treshold/Climate change","Locations","Source and Legenda"])
+    tab1,tab2, tab3,tab4,tab5,tab6,tab7 = st.tabs(["Data",  "Specific month","Trends","Treshold","Location dashboard","Locations","Source and Legenda"])
     
-    with tab4:
+    with tab6:
         show_locations_2(locations)
-    with tab5:
+    with tab7:
         show_info()
         legenda()
     with tab1:
         main_(df, n_years, locations,FROM, UNTIL, start_month, end_month, where, to_show, window_size, y_axis_zero, multiply_minus_one, treshold_value, above_under, percentile_colomap_max, month_names, month, selected_month, day_min, day_max, number_of_columns )
-    
     with tab3:
+    
+        show_value_trend(where, to_show,df)
+    with tab5:
+        location_dashboard(df, df_hourly, where, day_min, day_max, month, month_names,treshold_value)
+    with tab4:
         show_treshold(where, to_show, treshold_value, above_under, df)
     with tab2:
         #show_warmingstripes(df, to_show, where) 
