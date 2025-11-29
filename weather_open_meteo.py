@@ -171,6 +171,7 @@ def get_data(location_name,locations, start_date, end_date):
 
     return df,df_hourly
 
+
 def show_warmingstripes(df_, to_show, where):
     """_summary_
 
