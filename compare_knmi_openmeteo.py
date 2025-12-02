@@ -66,8 +66,8 @@ def interface(locations):
 def show_open_meteo(where,locations, FROM, UNTIL,start_month,end_month):
     if start_month == 9 and end_month ==11:
         print ("Statisch bestand ivm API limiet")
-        #url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\de_bilt_ sep_nov_1996_2025.csv"
-        url= "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/de_bilt_ sep_nov_1996_2025.csv"
+        #url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\de_bilt_sep_nov_1996_2025.csv"
+        url= "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/de_bilt_1996_2025.csv"
         df_open_meteo_ = pd.read_csv(url)
         
     else:
