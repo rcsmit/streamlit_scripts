@@ -125,10 +125,7 @@ def main():
     
     col1,col2=st.columns(2)
     with col1:
-        try:
-            show_open_meteo(where,locations, FROM, UNTIL,start_month,end_month)
-        except:
-            st.info("Cant show open meteo data")
+        show_open_meteo(where,locations, FROM, UNTIL,start_month,end_month)
     with col2:
         show_knmi(FROM, UNTIL,start_month,end_month)
 
