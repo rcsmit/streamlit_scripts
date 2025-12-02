@@ -64,7 +64,14 @@ def interface(locations):
 
 @st.cache_data()
 def show_open_meteo(where,locations, FROM, UNTIL,start_month,end_month):
-    df_open_meteo_,_ = get_data_open_meteo(where,locations, FROM, UNTIL)
+    if start_month == 9 and end_month ==11:
+        print ("Statisch bestand ivm API limiet")
+        #url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\de_bilt_ sep_nov_1996_2025.csv"
+        url= "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/de_bilt_ sep_nov_1996_2025.csv"
+        df_open_meteo_ = pd.read_csv(url)
+        
+    else:
+        df_open_meteo_,_ = get_data_open_meteo(where,locations, FROM, UNTIL)
 
 
     df_open_meteo_seizoen, _ = prepare_dataframe(start_month,end_month, df_open_meteo_)
