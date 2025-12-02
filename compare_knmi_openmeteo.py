@@ -64,19 +64,19 @@ def interface(locations):
 
 @st.cache_data()
 def show_open_meteo(where,locations, FROM, UNTIL,start_month,end_month):
-    if start_month == 9 and end_month ==11:
-        print ("Statisch bestand ivm API limiet")
-        #url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\de_bilt_sep_nov_1996_2025.csv"
-        url= "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/de_bilt_1996_2025.csv"
-        df_open_meteo_ = pd.read_csv(url)
+    # if start_month == 9 and end_month ==11:
+    #     print ("Statisch bestand ivm API limiet")
+    #     #url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\de_bilt_sep_nov_1996_2025.csv"
         
-    else:
-        df_open_meteo_,_ = get_data_open_meteo(where,locations, FROM, UNTIL)
+    # else:
+    #     df_open_meteo_,_ = get_data_open_meteo(where,locations, FROM, UNTIL)
 
+    url= "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/de_bilt_1996_2025.csv"
+    df_open_meteo_ = pd.read_csv(url)
+        
 
     df_open_meteo_seizoen, _ = prepare_dataframe(start_month,end_month, df_open_meteo_)
     
-    df_open_meteo_seizoen_2025 = df_open_meteo_seizoen[(df_open_meteo_seizoen["YYYY"]>=2025) ]
     
 
     df_open_meteo_seizoen = (
@@ -88,16 +88,18 @@ def show_open_meteo(where,locations, FROM, UNTIL,start_month,end_month):
             "rain_sum": "sum",
         })
 )
+    df_open_meteo_seizoen_2025 = df_open_meteo_seizoen[(df_open_meteo_seizoen["YYYY"] == 2025) ]
+   
     st.subheader("Open meteo")
-    st.write(f"2025 Temp mean🌡️ - {df_open_meteo_seizoen_2025['temp_mean'].mean():.1f} ")
-    st.write(f"2025 Zon☀️ - {df_open_meteo_seizoen_2025['sunshine_duration'].sum():.1f} ")
-    st.write(f"2025 Neerslag 🌧️ - {df_open_meteo_seizoen_2025['rain_sum'].sum():.1f} ")
+    st.write(f"2025 Temp mean🌡️ [11,6] - {df_open_meteo_seizoen_2025['temp_mean'].mean():.1f} ")
+    st.write(f"2025 Zon☀️ [354] - {df_open_meteo_seizoen_2025['sunshine_duration'].mean():.1f} ")
+    st.write(f"2025 Neerslag 🌧️ [294] - {df_open_meteo_seizoen_2025['rain_sum'].mean():.1f} ")
 
-    st.write(f"1996-2025 Temp mean🌡️ - {df_open_meteo_seizoen['temp_mean'].mean():.1f} ")
-    st.write(f"1996-2025 Zon☀️ - {df_open_meteo_seizoen['sunshine_duration'].mean():.1f} ")
-    st.write(f"1996-2025 Neerslag 🌧️ - {df_open_meteo_seizoen['rain_sum'].mean():.1f} ")
+    st.write(f"1996-2025 Temp mean🌡️ [10,9] - {df_open_meteo_seizoen['temp_mean'].mean():.1f} ")
+    st.write(f"1996-2025 Zon☀️ [349] - {df_open_meteo_seizoen['sunshine_duration'].mean():.1f} ")
+    st.write(f"1996-2025 Neerslag 🌧️ [245] - {df_open_meteo_seizoen['rain_sum'].mean():.1f} ")
+    st.write(df_open_meteo_seizoen)
     st.write(df_open_meteo_)
-
 @st.cache_data()
 def show_knmi(FROM, UNTIL,start_month,end_month):
     df_knmi, url = getdata_wrapper(260, FROM.strftime("%Y%m%d"), UNTIL.strftime("%Y%m%d"))
@@ -111,16 +113,18 @@ def show_knmi(FROM, UNTIL,start_month,end_month):
             "neerslag_etmaalsom": "sum",
         })
 )
-    df_knmi_seizoen_2025 = df_knmi[(df_knmi["YYYY"]==2025)]
     
+    df_knmi_seizoen_2025 = df_knmi_seizoen[df_knmi_seizoen["YYYY"]==2025]
+   
     st.subheader("KNMI")
-    st.write(f"2025 Temp mean🌡️ - {df_knmi_seizoen_2025['temp_avg'].mean():.1f} ")
-    st.write(f"2025 Zon☀️ - {df_knmi_seizoen_2025['zonneschijnduur'].sum():.1f} ")
-    st.write(f"2025 Neerslag 🌧️ - {df_knmi_seizoen_2025['neerslag_etmaalsom'].sum():.1f} ")
+    st.write(f"2025 Temp mean🌡️ [11,6] - {df_knmi_seizoen_2025['temp_avg'].mean():.1f} ")
+    st.write(f"2025 Zon☀️ [352] - {df_knmi_seizoen_2025['zonneschijnduur'].mean():.1f} ")
+    st.write(f"2025 Neerslag [293]🌧️ - {df_knmi_seizoen_2025['neerslag_etmaalsom'].mean():.1f} ")
 
-    st.write(f"1996-2025 Temp mean🌡️ - {df_knmi_seizoen['temp_avg'].mean():.1f} ")
-    st.write(f"1996-2025 Zon☀️ - {df_knmi_seizoen['zonneschijnduur'].mean():.1f} ")
-    st.write(f"1996-2025 Neerslag 🌧️ - {df_knmi_seizoen['neerslag_etmaalsom'].mean():.1f} ")
+    st.write(f"1996-2025 Temp mean🌡️ [11,2]- {df_knmi_seizoen['temp_avg'].mean():.1f} ")
+    st.write(f"1996-2025 Zon☀️ [361]- {df_knmi_seizoen['zonneschijnduur'].mean():.1f} ")
+    st.write(f"1996-2025 Neerslag 🌧️ [248] - {df_knmi_seizoen['neerslag_etmaalsom'].mean():.1f} ")
+    st.write(df_knmi_seizoen)
     st.write(df_knmi)
 def main():
     st.info("Replicating https://x.com/HansV_16/status/1996605222899716180/photo/1")
