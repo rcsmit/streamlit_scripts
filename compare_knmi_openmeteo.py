@@ -62,7 +62,7 @@ def interface(locations):
     
     return FROM,UNTIL,start_month,end_month,where,month_names,month
 
-
+@st.cache_data()
 def show_open_meteo(where,locations, FROM, UNTIL,start_month,end_month):
     df_open_meteo_,_ = get_data_open_meteo(where,locations, FROM, UNTIL)
 
@@ -91,6 +91,7 @@ def show_open_meteo(where,locations, FROM, UNTIL,start_month,end_month):
     st.write(f"1996-2025 Neerslag 🌧️ - {df_open_meteo_seizoen['rain_sum'].sum():.1f} ")
 
 
+@st.cache_data()
 def show_knmi(FROM, UNTIL,start_month,end_month):
     df_knmi, url = getdata_wrapper(260, FROM.strftime("%Y%m%d"), UNTIL.strftime("%Y%m%d"))
     
