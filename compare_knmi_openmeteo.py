@@ -89,7 +89,7 @@ def show_open_meteo(where,locations, FROM, UNTIL,start_month,end_month):
     st.write(f"1996-2025 Temp mean🌡️ - {df_open_meteo_seizoen['temp_mean'].mean():.1f} ")
     st.write(f"1996-2025 Zon☀️ - {df_open_meteo_seizoen['sunshine_duration'].sum():.1f} ")
     st.write(f"1996-2025 Neerslag 🌧️ - {df_open_meteo_seizoen['rain_sum'].sum():.1f} ")
-
+    st.write(df_open_meteo_)
 
 @st.cache_data()
 def show_knmi(FROM, UNTIL,start_month,end_month):
@@ -114,7 +114,7 @@ def show_knmi(FROM, UNTIL,start_month,end_month):
     st.write(f"1996-2025 Temp mean🌡️ - {df_knmi_seizoen['temp_avg'].mean():.1f} ")
     st.write(f"1996-2025 Zon☀️ - {df_knmi_seizoen['zonneschijnduur'].mean():.1f} ")
     st.write(f"1996-2025 Neerslag 🌧️ - {df_knmi_seizoen['neerslag_etmaalsom'].mean():.1f} ")
-
+    st.write(df_knmi)
 def main():
     st.info("Replicating https://x.com/HansV_16/status/1996605222899716180/photo/1")
     locations = [
