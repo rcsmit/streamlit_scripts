@@ -99,6 +99,7 @@ def main():
                 ["[66] Generate monopoply ","generate_monopoly",""],
                 ["[67] EasyMapNL ","easy_map_nl","Make a custom map of the Netherlands"],
                 ["[68] 2e kamer ","tweedekamer","Verkiezings analyses 2e kamer"],
+                ["[69] knmi vs openmeteo ","compare_knmi_openmeteo", "seizoensinfo knmi vs openmeteo"],
     
                 ]
  

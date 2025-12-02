@@ -55,7 +55,7 @@ import statsmodels.api as sm
 
 
 @st.cache_data()
-def get_data(location_name,locations, start_date, end_date):
+def get_data_open_meteo(location_name,locations, start_date, end_date):
     """Get the weather data for a specific location and date range from Open Meteo archive API.
     https://open-meteo.com/en/docs/historical-weather-api?daily=rain_sum,temperature_2m_mean,temperature_2m_max,temperature_2m_min,precipitation_hours,precipitation_sum,visibility_mean,visibility_min,visibility_max,relative_humidity_2m_mean,relative_humidity_2m_max,relative_humidity_2m_min,&latitude=9.755106899960907&longitude=99.9609068&start_date=2025-01-01&end_date=2025-07-15&hourly=&timezone=Asia%2FBangkok
     Args:
@@ -82,7 +82,8 @@ def get_data(location_name,locations, start_date, end_date):
         "relative_humidity_2m_mean",
         "relative_humidity_2m_max",
         "relative_humidity_2m_min",
-        "wind_speed_10m_max"
+        "wind_speed_10m_max",
+        "sunshine_duration"
     ])
 
     # Find the matching location
@@ -123,9 +124,10 @@ def get_data(location_name,locations, start_date, end_date):
         "rel_humidity_mean": data["relative_humidity_2m_mean"],
         "rel_humidity_max": data["relative_humidity_2m_max"],
         "rel_humidity_min": data["relative_humidity_2m_min"],
-        "wind_max": data["wind_speed_10m_max"]
+        "wind_max": data["wind_speed_10m_max"],
+        "sunshine_duration":data["sunshine_duration"],
     })
-
+    df["sunshine_duration"]=df["sunshine_duration"]/3600
     df["year"] = df["date"].dt.isocalendar().year
     df["week"] = df["date"].dt.isocalendar().week
     df = df.dropna(subset=["year", "week"])
@@ -279,7 +281,11 @@ def show_month(df, to_show, day_min, day_max, month, month_names, where, verbose
             label=f"prec hours",
             value=f"{avg_value:.1f} hrs"
             )
-
+        elif to_show=="sunshine_duration":
+            st.metric(
+            label=f"sun hours",
+            value=f"{avg_value:.1f} hrs"
+            )
         else:
             st.metric(
             label=f"{to_show}",
@@ -1444,7 +1450,7 @@ def location_dashboard(df, df_hourly, where, day_min, day_max, month, month_name
    
     df["rain_day"] = (df["rain_sum"] >= treshold_value).astype(int)
     df["dry_day"] = (df["rain_sum"] < treshold_value).astype(int)
-    values_to_show = ["temp_max","dry_day","rain_day","rain_sum","precipitation_hours"]
+    values_to_show = ["temp_max","rain_day","rain_sum","precipitation_hours", "sunshine_duration"]
     
     for month in range (1,13):
         st.subheader(f"Location dashboard for {where} - {month_names[month-1]}")  
@@ -1479,7 +1485,7 @@ def main():
     ]
     FROM, UNTIL, start_month, end_month, where, to_show, window_size, y_axis_zero, multiply_minus_one, treshold_value, above_under, percentile_colomap_max, month_names, month, selected_month, day_min, day_max, number_of_columns = interface(locations)
     
-    df_,df_hourly = get_data(where,locations, FROM, UNTIL)
+    df_,df_hourly = get_data_open_meteo(where,locations, FROM, UNTIL)
    
     if multiply_minus_one:
         # needed for for ex. visability 
