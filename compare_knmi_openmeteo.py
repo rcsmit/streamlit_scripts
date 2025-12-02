@@ -69,7 +69,7 @@ def show_open_meteo(where,locations, FROM, UNTIL,start_month,end_month):
 
     df_open_meteo_seizoen, _ = prepare_dataframe(start_month,end_month, df_open_meteo_)
     
-    df_open_meteo_seizoen_2025 = df_open_meteo[(df_open_meteo["YYYY"]>=2025) ]
+    df_open_meteo_seizoen_2025 = df_open_meteo_seizoen[(df_open_meteo_seizoen["YYYY"]>=2025) ]
     
 
     df_open_meteo_seizoen = (
