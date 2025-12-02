@@ -87,8 +87,8 @@ def show_open_meteo(where,locations, FROM, UNTIL,start_month,end_month):
     st.write(f"2025 Neerslag 🌧️ - {df_open_meteo_seizoen_2025['rain_sum'].sum():.1f} ")
 
     st.write(f"1996-2025 Temp mean🌡️ - {df_open_meteo_seizoen['temp_mean'].mean():.1f} ")
-    st.write(f"1996-2025 Zon☀️ - {df_open_meteo_seizoen['sunshine_duration'].sum():.1f} ")
-    st.write(f"1996-2025 Neerslag 🌧️ - {df_open_meteo_seizoen['rain_sum'].sum():.1f} ")
+    st.write(f"1996-2025 Zon☀️ - {df_open_meteo_seizoen['sunshine_duration'].mean():.1f} ")
+    st.write(f"1996-2025 Neerslag 🌧️ - {df_open_meteo_seizoen['rain_sum'].mean():.1f} ")
     st.write(df_open_meteo_)
 
 @st.cache_data()
