@@ -253,7 +253,7 @@ def get_cpi(basisjaar, get_from_cbs):
     return df
 @st.cache_data()
 def get_minimumloon(basisjaar):
-    kolommen = ["loon_40",	"loon_38",	"loon_36"]
+    kolommen = ["loon_40",	"loon_38",	"loon_36", "Gemiddeld gestandaardiseerd inkomen","Mediaan gestandaardiseerd inkomen","Gemiddeld persoonlijk inkomen", "Mediaan persoonlijk inkomen"]
     sheet_id_minimumloon = "11bCLM4-lLZ56-XJjBjvXyXJ11P3PiNjV6Yl96x-tEnM"
     sheet_name_minimumloon = "data"
     # https://docs.google.com/spreadsheets/d/11bCLM4-lLZ56-XJjBjvXyXJ11P3PiNjV6Yl96x-tEnM/gviz/tq?tqx=out:csv&sheet=data
@@ -278,7 +278,7 @@ def get_minimumloon(basisjaar):
         df_minimumloon[col] = pd.to_numeric(df_minimumloon[col])
 
     df_minimumloon = verleg_basisjaar(df_minimumloon, basisjaar, kolommen, "dummy", "minimumloon")
-    df_minimumloon=df_minimumloon[["datum", "jaar", "loon_40", "loon_38", "loon_36"]]
+    df_minimumloon=df_minimumloon[["datum", "jaar", "loon_40", "loon_38", "loon_36", "Gemiddeld gestandaardiseerd inkomen","Mediaan gestandaardiseerd inkomen","Gemiddeld persoonlijk inkomen", "Mediaan persoonlijk inkomen"]]
    
     return df_minimumloon
 
@@ -287,7 +287,8 @@ def make_plot(df_totaal,teller,noemer, basisjaar):
         Args:
             df_totaal (pd.DataFrame): De dataframe met de gegevens.
     """
-    
+  
+    df_totaal=df_totaal[df_totaal["dag"]==7]
     # lijst met kolommen die je wilt plotten
     kolommen_ = [
         "CaoLonenPerMaandExclBijzBeloningen_1",
@@ -296,9 +297,16 @@ def make_plot(df_totaal,teller,noemer, basisjaar):
         "loon_38",
         "loon_36",
         "netto_loon_index",
-        "belastingdruk"
-    ]
+        "belastingdruk",
+        "Gemiddeld gestandaardiseerd inkomen",
+        "Mediaan gestandaardiseerd inkomen",
+        "Gemiddeld persoonlijk inkomen", 
+        
+        "Mediaan persoonlijk inkomen"
+    
 
+        ]
+    #
     kolommen = st.multiselect("Lijnen", kolommen_, kolommen_)
     # def make_plot(df_totaal):
     
@@ -306,6 +314,7 @@ def make_plot(df_totaal,teller,noemer, basisjaar):
     col1,col2=st.columns(2)
     with col1:
         dfp = df_totaal.sort_values("jaar")
+       
         fig = px.line(dfp, x="jaar", y=kolommen, markers=True, template="plotly_white",
                     title=f"CAO-lonen, CPI en minimumloon ({basisjaar} = 100)")
         
@@ -352,9 +361,10 @@ def info():
     st.info("Consumentenprijzen; prijsindex 2015=100. Gewijzigd op: 1 oktober 2025 - https://opendata.cbs.nl/statline/?dl=3F0E#/CBS/nl/dataset/83131NED/table - cijfers tot en met 2012: https://opendata.cbs.nl/#/CBS/nl/dataset/71905ned/table")
     st.info("Minimumloon (bruto) per maand voor 36, 38 en 40 uur per week. Bron: Rijksoverheid - https://www.rijksoverheid.nl/onderwerpen/minimumloon/bedragen-minimumloon - https://www.internetconsultatie.nl/weteerlijkerinkomen/document/6198 - https://docs.google.com/spreadsheets/d/11bCLM4-lLZ56-XJjBjvXyXJ11P3PiNjV6Yl96x-tEnM/edit?usp=sharing")
     st.info("Belastingdruk : https://www.cbs.nl/nl-nl/longread/diversen/2021/inkomens-verdeeld-40-jaar-in-vogelvlucht/4-belastingen?utm_source=chatgpt.com")
+    st.info("Gemiddeld|mediaan gestandaardiseerd|persoonlijk inkomen : https://opendata.cbs.nl/#/CBS/nl/dataset/86162NED/table?ts=1764906162032")
     st.info("Door het combineren van databronnen en het verleggen van basisjaren kunnen er minimale afwijkingen ontstaan.")
 def main_():
-    kol = ["CaoLonenPerMaandExclBijzBeloningen_1","CPI_1","loon_40","loon_38","loon_36","netto_loon_index"]
+    kol = ["CaoLonenPerMaandExclBijzBeloningen_1","CPI_1","loon_40","loon_38","loon_36","netto_loon_index", "Gemiddeld gestandaardiseerd inkomen","Mediaan gestandaardiseerd inkomen","Gemiddeld persoonlijk inkomen", "Mediaan persoonlijk inkomen"]
     col1,col2,col3,col4=st.columns(4)
     with col3:
         teller = st.selectbox("Teller", kol, index=0)
@@ -388,6 +398,7 @@ def main_():
     
     
     df_totaal["ratio"] = df_totaal[teller] / df_totaal[noemer] * 100
+    
     make_plot(df_totaal,teller,noemer, basisjaar)
     st.info("Loon_36,loon_38,loon_40 zijn respectievelijk het minimumloon voor 36, 38 en 40 uur per week.")
 def main():
