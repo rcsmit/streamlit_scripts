@@ -143,7 +143,7 @@ def get_inkomstenheffingen():
     df = pd.read_csv(file, delimiter=";",  decimal="." )
 
     # nieuwe kolom met de som (behalve jaar)
-    print (df.dtypes)
+ 
     # som van alle numerieke kolommen behalve Jaar
     for col in df.columns:
         if col not in ["Group"]:
@@ -233,6 +233,7 @@ def get_cpi(basisjaar, get_from_cbs):
         # https://docs.google.com/spreadsheets/d/11bCLM4-lLZ56-XJjBjvXyXJ11P3PiNjV6Yl96x-tEnM/edit?usp=sharing
         url_cpi_googlesheets = f"https://docs.google.com/spreadsheets/d/{sheet_id_cpi_googlesheets}/gviz/tq?tqx=out:csv&sheet={sheet_name_cpi_googlesheets}"
         df = pd.read_csv(url_cpi_googlesheets, delimiter=",",  decimal="," )
+        st.write(df) 
         df=df[["datum","dummy", "CPI_1"]]
         # omzetten naar datetime
         df["datum"] = pd.to_datetime(df["datum"], errors="coerce")
@@ -247,13 +248,13 @@ def get_cpi(basisjaar, get_from_cbs):
         
         for col in kolommen:
             df[col] = pd.to_numeric(df[col])
-  
+   
     df = verleg_basisjaar(df, basisjaar, kolommen, "dummy", "CPI")
-    
+ 
     return df
 @st.cache_data()
-def get_minimumloon(basisjaar):
-    kolommen = ["loon_40",	"loon_38",	"loon_36", "Gemiddeld gestandaardiseerd inkomen","Mediaan gestandaardiseerd inkomen","Gemiddeld persoonlijk inkomen", "Mediaan persoonlijk inkomen"]
+def get_minimumloon(basisjaar, kolommen):
+    #kolommen = ["loon_40",	"loon_38",	"loon_36", "modaal_bruto", "Gemiddeld gestandaardiseerd inkomen","Mediaan gestandaardiseerd inkomen","Gemiddeld persoonlijk inkomen", "Mediaan persoonlijk inkomen"]
     sheet_id_minimumloon = "11bCLM4-lLZ56-XJjBjvXyXJ11P3PiNjV6Yl96x-tEnM"
     sheet_name_minimumloon = "data"
     # https://docs.google.com/spreadsheets/d/11bCLM4-lLZ56-XJjBjvXyXJ11P3PiNjV6Yl96x-tEnM/gviz/tq?tqx=out:csv&sheet=data
@@ -270,7 +271,7 @@ def get_minimumloon(basisjaar):
     df_minimumloon["jaar"] = df_minimumloon["datum"].dt.year
     df_minimumloon["maand"] = df_minimumloon["datum"].dt.month
     df_minimumloon["dag"] = df_minimumloon["datum"].dt.day
-
+   
     # filter: alleen maand 7 (juli). Om de een of andere reden wordt de datum als mm-dd-jjjj gelezen
     df_minimumloon = df_minimumloon[df_minimumloon["dag"] == 7]
    
@@ -278,11 +279,12 @@ def get_minimumloon(basisjaar):
         df_minimumloon[col] = pd.to_numeric(df_minimumloon[col])
 
     df_minimumloon = verleg_basisjaar(df_minimumloon, basisjaar, kolommen, "dummy", "minimumloon")
-    df_minimumloon=df_minimumloon[["datum", "jaar", "loon_40", "loon_38", "loon_36", "Gemiddeld gestandaardiseerd inkomen","Mediaan gestandaardiseerd inkomen","Gemiddeld persoonlijk inkomen", "Mediaan persoonlijk inkomen"]]
+    kolommen2 = ["datum", "jaar"] + kolommen +["maand", "dag"]
+    df_minimumloon=df_minimumloon[kolommen2]
    
     return df_minimumloon
 
-def make_plot(df_totaal,teller,noemer, basisjaar):
+def make_plot(df_totaal,teller,noemer, basisjaar, kolommen_):
     """ Maakt een plot van de opgegeven dataframe met de opgegeven kolommen.
         Args:
             df_totaal (pd.DataFrame): De dataframe met de gegevens.
@@ -290,31 +292,40 @@ def make_plot(df_totaal,teller,noemer, basisjaar):
   
     df_totaal=df_totaal[df_totaal["dag"]==7]
     # lijst met kolommen die je wilt plotten
-    kolommen_ = [
-        "CaoLonenPerMaandExclBijzBeloningen_1",
-        "CPI_1",
-        "loon_40",
-        "loon_38",
-        "loon_36",
-        "netto_loon_index",
-        "belastingdruk",
-        "Gemiddeld gestandaardiseerd inkomen",
-        "Mediaan gestandaardiseerd inkomen",
-        "Gemiddeld persoonlijk inkomen", 
+    # kolommen_ = [
+    #     "CaoLonenPerMaandExclBijzBeloningen_1",
+    #     "CPI_1",
+    #     "loon_40",
+    #     "loon_38",
+    #     "loon_36",
+    #     "netto_loon_index",
+    #     "belastingdruk",
+    #     "modaal_bruto",
+    #     "Gemiddeld gestandaardiseerd inkomen",
+    #     "Mediaan gestandaardiseerd inkomen",
+    #     "Gemiddeld persoonlijk inkomen", 
         
-        "Mediaan persoonlijk inkomen"
+    #     "Mediaan persoonlijk inkomen"
     
 
-        ]
+    #     ]
     #
     kolommen = st.multiselect("Lijnen", kolommen_, kolommen_)
-    # def make_plot(df_totaal):
+   
     
     
     col1,col2=st.columns(2)
     with col1:
         dfp = df_totaal.sort_values("jaar")
-       
+        
+        # st.write(kolommen)
+      
+        # st.write(dfp.columns)
+
+        # missing = [col for col in kolommen if col not in dfp.columns]
+        # st.write("Ontbrekende kolommen:", missing)
+
+
         fig = px.line(dfp, x="jaar", y=kolommen, markers=True, template="plotly_white",
                     title=f"CAO-lonen, CPI en minimumloon ({basisjaar} = 100)")
         
@@ -364,7 +375,8 @@ def info():
     st.info("Gemiddeld|mediaan gestandaardiseerd|persoonlijk inkomen : https://opendata.cbs.nl/#/CBS/nl/dataset/86162NED/table?ts=1764906162032")
     st.info("Door het combineren van databronnen en het verleggen van basisjaren kunnen er minimale afwijkingen ontstaan.")
 def main_():
-    kol = ["CaoLonenPerMaandExclBijzBeloningen_1","CPI_1","loon_40","loon_38","loon_36","netto_loon_index", "Gemiddeld gestandaardiseerd inkomen","Mediaan gestandaardiseerd inkomen","Gemiddeld persoonlijk inkomen", "Mediaan persoonlijk inkomen"]
+    kol_ = ["CPI_1","loon_40","loon_38","loon_36", "modaal_bruto", "Gemiddeld gestandaardiseerd inkomen","Mediaan gestandaardiseerd inkomen","Gemiddeld persoonlijk inkomen", "Mediaan persoonlijk inkomen"]
+    kol = ["CaoLonenPerMaandExclBijzBeloningen_1","netto_loon_index"]+kol_ 
     col1,col2,col3,col4=st.columns(4)
     with col3:
         teller = st.selectbox("Teller", kol, index=0)
@@ -372,20 +384,22 @@ def main_():
         noemer = st.selectbox("Noemer", kol, index=1)
     with col2:
         basisjaar=st.number_input("Basisjaar voor indexcijfers", min_value=1969, max_value=2025, value=2015, step=1)
-    
+
     
     df_cao_lonen = get_cao_lonen(basisjaar, False)
+  
+    # df_cpi = get_cpi(basisjaar, False)
     
-    df_cpi = get_cpi(basisjaar, False)
-    df_minimumloon = get_minimumloon(basisjaar)
+    df_minimumloon = get_minimumloon(basisjaar, kol_)
     df_belastingdruk= get_inkomstenheffingen()
     
     # merge stap voor stap
-    df_merge = df_cao_lonen.merge(df_cpi, on="jaar", how="outer")
-    df_merge = df_merge.merge(df_belastingdruk, on="jaar", how="outer")
+    # df_merge = df_cao_lonen.merge(df_cpi, on="jaar", how="outer")
+    df_merge = df_cao_lonen.merge(df_belastingdruk, on="jaar", how="outer")
     df_totaal = df_merge.merge(df_minimumloon, on="jaar", how="outer")
     df_totaal["netto_lonen"] = df_totaal["CaoLonenPerMaandExclBijzBeloningen_1"] * (1-df_totaal["belastingdruk"]/100)
-
+  
+    
     basiswaarde_nettoloon = df_totaal.loc[df_totaal["jaar"] == basisjaar, "netto_lonen"].iloc[0]
     df_totaal["netto_loon_index"] = df_totaal["netto_lonen"] / basiswaarde_nettoloon * 100
 
@@ -399,7 +413,7 @@ def main_():
     
     df_totaal["ratio"] = df_totaal[teller] / df_totaal[noemer] * 100
     
-    make_plot(df_totaal,teller,noemer, basisjaar)
+    make_plot(df_totaal,teller,noemer, basisjaar, kol)
     st.info("Loon_36,loon_38,loon_40 zijn respectievelijk het minimumloon voor 36, 38 en 40 uur per week.")
 def main():
     tab1,tab2=st.tabs(["Plot","Bronnen"])
