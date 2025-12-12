@@ -42,3 +42,5 @@ opencv-python-headless
 streamlit
 numpy
 protobuf<5
+libgl1-mesa-glx
+libglib2.0-0
