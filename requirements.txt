@@ -38,9 +38,5 @@ pytz
 geopandas
 shapely
 mediapipe==0.10.20
-opencv-python-headless
-streamlit
-numpy
-protobuf<5
-libgl1-mesa-glx
-libglib2.0-0
+opencv-python-headless==4.5.5.62
+Pillow==9.0.1
