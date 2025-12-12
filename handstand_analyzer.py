@@ -20,7 +20,7 @@ from datetime import datetime
 import tempfile
 import os
 import shutil
-
+from pathlib import Path
 # # Force read-only model loading
 os.environ["MEDIAPIPE_DISABLE_GPU"] = "1"
 os.environ["GLOG_minloglevel"] = "2"
@@ -36,6 +36,20 @@ os.environ['TMPDIR'] = temp_dir
 #     shutil.copytree(src, dst)
 #     print("Kopieer de modellen naar een schrijfbare map: DONE")
 # os.environ["MEDIAPIPE_MODEL_PATH"] = dst
+
+@st.cache_resource
+def load_mediapipe_pose():
+    """Load MediaPipe pose model with caching"""
+    mp_pose = mp.solutions.pose
+    pose = mp_pose.Pose(
+        static_image_mode=False,
+        model_complexity=1,
+        smooth_landmarks=True,
+        min_detection_confidence=0.5,
+        min_tracking_confidence=0.5
+    )
+    return pose, mp_pose
+
 def calculate_angle(a, b, c):
     a = np.array(a)  # first
     b = np.array(b)  # mid
@@ -60,8 +74,37 @@ def run(run_streamlit, stframe, filetype, input_file, output_file, detection_con
     text_color_green =(0, 255, 255)
     start_time = time.time()
 
-    mp_drawing = mp.solutions.drawing_utils
-    mp_pose = mp.solutions.pose
+    # Copy MediaPipe models to writable temp directory
+    @st.cache_resource
+    def setup_mediapipe():
+        try:
+            # Get MediaPipe module path
+            mp_path = Path(mp.__file__).parent
+            models_src = mp_path / "modules"
+            
+            # Create temp directory for models
+            temp_dir = Path(tempfile.mkdtemp())
+            models_dst = temp_dir / "modules"
+            
+            # Copy models if they don't exist in temp
+            if models_src.exists() and not models_dst.exists():
+                shutil.copytree(models_src, models_dst, dirs_exist_ok=True)
+                # Make all files writable
+                for file in models_dst.rglob('*'):
+                    if file.is_file():
+                        file.chmod(0o666)
+            
+            # Point MediaPipe to temp location
+            os.environ['MEDIAPIPE_MODEL_PATH'] = str(models_dst)
+            
+        except Exception as e:
+            st.warning(f"Model setup warning: {e}")
+        
+        return mp.solutions.pose, mp.solutions.drawing_utils
+
+    mp_pose, mp_drawing = setup_mediapipe()
+    # mp_drawing = mp.solutions.drawing_utils
+    # mp_pose = mp.solutions.pose
 
     
     
