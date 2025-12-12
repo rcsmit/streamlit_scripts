@@ -19,6 +19,11 @@ import time
 import streamlit as st
 from datetime import datetime
 import tempfile
+import os
+
+# Force read-only model loading
+os.environ["MEDIAPIPE_DISABLE_GPU"] = "1"
+os.environ["GLOG_minloglevel"] = "2"
 
 def calculate_angle(a, b, c):
     a = np.array(a)  # first
