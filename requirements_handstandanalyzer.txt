@@ -1,0 +1,6 @@
+streamlit
+mediapipe==0.10.20
+opencv-python-headless
+protobuf<5
+numpy
+pillow
