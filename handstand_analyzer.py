@@ -42,7 +42,8 @@ def load_mediapipe_pose():
     """Load MediaPipe pose model with caching"""
     mp_pose = mp.solutions.pose
     pose = mp_pose.Pose(
-        static_image_mode=False,
+        #static_image_mode=False,
+        static_image_mode=True, 
         model_complexity=1,
         smooth_landmarks=True,
         min_detection_confidence=0.5,
@@ -141,6 +142,7 @@ def run(run_streamlit, stframe, filetype, input_file, output_file, detection_con
             out = None
 
         with mp_pose.Pose(
+            static_image_mode=True, 
             min_detection_confidence=detection_confidence,         
             min_tracking_confidence=tracking_confidence,         
             #model_complexity=complexity,    
