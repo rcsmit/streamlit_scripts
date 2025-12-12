@@ -37,9 +37,3 @@ astral
 pytz
 geopandas
 shapely
-#mediapipe==0.10.20
-mediapipe==0.10.5
-
-opencv-python-headless==4.5.5.62
-Pillow==9.0.1
-protobuf<5
