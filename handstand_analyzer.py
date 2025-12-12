@@ -22,11 +22,15 @@ import os
 import shutil
 
 # # Force read-only model loading
-# os.environ["MEDIAPIPE_DISABLE_GPU"] = "1"
-# os.environ["GLOG_minloglevel"] = "2"
+os.environ["MEDIAPIPE_DISABLE_GPU"] = "1"
+os.environ["GLOG_minloglevel"] = "2"
 
 # src = "/home/adminuser/venv/lib/python3.10/site-packages/mediapipe/modules/pose_landmark"
 # dst = "/tmp/pose_landmark"
+
+# Set writable temp directory for MediaPipe
+temp_dir = tempfile.gettempdir()
+os.environ['TMPDIR'] = temp_dir
 
 # if not os.path.exists(dst):
 #     shutil.copytree(src, dst)
