@@ -12,7 +12,6 @@
 # https://github.com/google/mediapipe/blob/master/docs/solutions/pose.md
 import cv2
 import mediapipe as mp
-import numpy as np
 import argparse
 import numpy as np
 import time
@@ -26,13 +25,13 @@ import shutil
 # os.environ["MEDIAPIPE_DISABLE_GPU"] = "1"
 # os.environ["GLOG_minloglevel"] = "2"
 
-src = "/home/adminuser/venv/lib/python3.10/site-packages/mediapipe/modules/pose_landmark"
-dst = "/tmp/pose_landmark"
+# src = "/home/adminuser/venv/lib/python3.10/site-packages/mediapipe/modules/pose_landmark"
+# dst = "/tmp/pose_landmark"
 
-if not os.path.exists(dst):
-    shutil.copytree(src, dst)
-    print("Kopieer de modellen naar een schrijfbare map: DONE")
-os.environ["MEDIAPIPE_MODEL_PATH"] = dst
+# if not os.path.exists(dst):
+#     shutil.copytree(src, dst)
+#     print("Kopieer de modellen naar een schrijfbare map: DONE")
+# os.environ["MEDIAPIPE_MODEL_PATH"] = dst
 def calculate_angle(a, b, c):
     a = np.array(a)  # first
     b = np.array(b)  # mid
