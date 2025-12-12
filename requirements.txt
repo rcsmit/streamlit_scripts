@@ -37,5 +37,7 @@ astral
 pytz
 geopandas
 shapely
-opencv-python
 mediapipe
+opencv-python-headless
+libgl1-mesa-glx 
+libglib2.0-0 
