@@ -37,5 +37,5 @@ astral
 pytz
 geopandas
 shapely
-cv2
+opencv-python
 mediapipe
