@@ -1,0 +1,282 @@
+{
+  "basics": {
+    "name": "René Smit",
+    "birthDate": "1977-08-23",
+    "nationality": "Dutch",
+    "summary": "Customer-oriented hospitality professional with long-term experience in camping, tourism, and guest services across Europe.",
+    "location": {
+      "countryCode": "NL"
+    },
+    "profiles": []
+  },
+  "work": [
+    {
+      "name": "Eurocamp",
+      "position": "Camping host",
+      "startDate": "2025-05-01",
+      "endDate": "2025-09-30",
+      "location": "De Schatberg, Sevenum, Netherlands",
+      "summary": "Seasonal camping host",
+      "highlights": [
+        "Checking, preparing, and cleaning accommodations ",
+        "Guest check-in and check-out ",
+        "Handling guest interactions and issues ",
+        "Designing various signs and routes for the campsite"
+       
+      ]
+    },
+     {
+      "name": "Eurocamp",
+      "position": "Camping representative",
+      "startDate": "2024-07-08",
+      "endDate": "2024-09-30",
+      "location": "Pra delle Torri, Caorle, Italy",
+      "summary": "Seasonal camping host.",
+      "highlights": [
+        "Checking and preparing accommodations  ",
+        "Guest check-in and check-out  ",
+        "Handling guest interactions and issues  "
+      ]
+    },
+  
+    {
+      "name": "Vacansoleil",
+      "position": "Camping host",
+      "startDate": "2023-03-01",
+      "endDate": "2023-09-30",
+      "location": "De Schatberg, Sevenum, Netherlands",
+      "summary": "Seasonal camping host.",
+      "highlights": [
+        "Checking, preparing, and cleaning accommodations",
+        "Guest check-in and check-out",
+        "Handling guest interactions and issues",
+        "Assisting and replacing the supervisor"
+      ]
+    },
+    {
+      "name": "Vacansoleil",
+      "position": "Camping host",
+      "startDate": "2022-06-06",
+      "endDate": "2022-09-30",
+      "location": "De Schatberg, Sevenum, Netherlands",
+      "summary": "Seasonal camping host.",
+      "highlights": [
+        "Checking, preparing, and cleaning accommodations",
+        "Guest check-in and check-out",
+        "Handling guest interactions and issues",
+        "Assisting and replacing the supervisor"
+      ]
+    },
+{
+      "name": "Vacansoleil",
+      "position": "Camping host",
+      "startDate": "2021-04-01",
+      "endDate": "2021-09-30",
+      "location": "De Schatberg, Sevenum, Netherlands",
+      "summary": "Seasonal camping host.",
+      "highlights": [
+        "Checking, preparing, and cleaning accommodations",
+        "Guest check-in and check-out",
+        "Handling guest interactions and issues",
+        "Assisting and replacing the supervisor"
+      ]
+    },
+    {
+      "name": "Vacansoleil",
+      "position": "Camping host",
+      "startDate": "2020-09-07",
+      "endDate": "2020-09-30",
+      "location": "De Schatberg, Sevenum, Netherlands",
+      "summary": "Seasonal camping host.",
+      "highlights": [
+        "Checking, preparing, and cleaning accommodations",
+        "Guest check-in and check-out",
+        "Handling guest interactions and issues",
+        "Assisting and replacing the supervisor"
+      ]
+    },
+    {
+      "name": "Vacansoleil",
+      "position": "Camping host",
+      "startDate": "2020-07-20",
+      "endDate": "2020-09-07",
+      "location": "De Twee Bruggen, Sevenum, Netherlands",
+      "summary": "Sanitary facility employee.",
+      "highlights": [
+       "Taking care of cleanliness and hygiene of sanitary facilities"
+      ]
+    },
+    {
+      "name": "Camping Village Fabulous",
+      "position": "Staff member info-point",
+      "startDate": "2019-04-12",
+      "endDate": "2019-09-30",
+      "location": "Camping Village Fabulous, Rome, Italy",
+      "highlights": [
+        "Providing information about the campsite and Rome",
+        "Selling tickets and excursions",
+        "Assisting guests in unforeseen situations"
+      ]
+    },
+     {
+      "name": "Vacansoleil",
+      "position": "Camping host ",
+      "startDate": "2018-03-26",
+      "endDate": "2018-09-30",
+      "location": "Camping Village Fabulous, Rome, Italy",
+      "summary": "Seasonal camping host.",
+      "highlights": [
+        "Checking, preparing, and cleaning accommodations",
+        "Guest check-in and check-out",
+        "Handling guest interactions and issues",
+        "Assisting and replacing the supervisor"
+      ]
+    },
+      {
+      "name": "Vacansoleil",
+      "position": "Camping host ",
+      "startDate": "2017-04-01",
+      "endDate": "2017-09-30",
+      "location": "Camping Village Fabulous, Rome, Italy",
+      "summary": "Seasonal camping host.",
+      "highlights": [
+        "Checking, preparing, and cleaning accommodations",
+        "Guest check-in and check-out",
+        "Handling guest interactions and issues",
+        "Assisting and replacing the supervisor"
+      ]
+    },
+     
+     {
+      "name": "Camping Village Fabulous",
+      "position": "Staff member info-point",
+      "startDate": "2016-04-11",
+      "endDate": "2016-09-30",
+      "location": "Camping Village Fabulous, Rome, Italy",
+      "highlights": [
+        "Providing information about the campsite and Rome",
+        "Selling tickets and excursions",
+        "Assisting guests in unforeseen situations"
+      ]
+    },
+    {
+      "name": "Disneyland Paris",
+      "position": "Waiter",
+      "startDate": "2014-11-01",
+      "endDate": "2016-04-01",
+      "location": "Paris, France",
+      "highlights": [
+        "Waiter at Hotel New York (4*)",
+        "Cited as outstanding cast member by guests"
+      ]
+    },
+     {
+      "name": "Camping Village Fabulous",
+      "position": "Staff member info-point",
+      "startDate": "2014-04-22",
+      "endDate": "2014-09-14",
+      "location": "Camping Village Fabulous, Rome, Italy",
+      "highlights": [
+        "Providing information about the campsite and Rome",
+        "Selling tickets and excursions",
+        "Assisting guests in unforeseen situations"
+      ]
+    },
+     {
+      "name": "Selectcamp",
+      "position": "Camping host",
+      "startDate": "2013-06-22",
+      "endDate": "2013-09-15",
+      "location": "Ca savio, Caorle, Italy",
+      "summary": "Seasonal camping host.",
+      "highlights": [
+        "Checking, preparing, and cleaning accommodations",
+        "Guest check-in and check-out",
+        "Handling guest interactions and issues",
+        "Assisting and replacing the supervisor"
+      ]
+    },
+     {
+      "name": "Selectcamp",
+      "position": "Camping host",
+      "startDate": "2012-05-05",
+      "endDate": "2012-10-12",
+      "location": "Pra delle Torri, Caorle, Italy",
+      "summary": "Seasonal camping host.",
+      "highlights": [
+        "Checking, preparing, and cleaning accommodations",
+        "Guest check-in and check-out",
+        "Handling guest interactions and issues",
+        "Assisting and replacing the supervisor"
+      ]
+    },
+    {
+      "name": "Disneyland Paris",
+      "position": "Waiter",
+      "startDate": "2006-06-12",
+      "endDate": "2011-11-30",
+      "location": "Paris, France",
+      "highlights": [
+        "Waiter at Disneyland Hotel (5*) and Hotel New York (4*)",
+        "Repeatedly cited as outstanding cast member by guests"
+      ]
+    },
+    {
+      "name": "Hotel Papendal / JMW / 68 Degrees",
+      "position": "Waiter (via temp agencies)",
+      "startDate": "2004-10-01",
+      "endDate": "2013-12-31",
+      "location": "Arnhem, Netherlands",
+      "highlights": [
+        "Events, banqueting, and party catering"
+      ]
+    },
+    {
+      "name": "Koffiebranderij G. Peeze B.V.",
+      "position": "QESH employee",
+      "startDate": "2001-09-01",
+      "endDate": "2004-09-30",
+      "location": "Arnhem, Netherlands",
+      "highlights": [
+        "Quality management",
+        "Environment, Safety and Health",
+        "Hygiene and HACCP in coffee roasting"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "Larenstein Velp",
+      "area": "Food Technology",
+      "studyType": "BSc",
+      "startDate": "1997-09-01",
+      "endDate": "2001-06-30",
+      "courses": [
+        "Quality management"
+      ]
+    }
+  ],
+  "languages": [
+    { "language": "Dutch", "fluency": "C2" },
+    { "language": "English", "fluency": "B2/C1" },
+    { "language": "French", "fluency": "B2/C1" },
+    { "language": "Italian", "fluency": "B1/B2" },
+    { "language": "German", "fluency": "B1/B2" },
+    { "language": "Spanish", "fluency": "A1/A2" }
+  ],
+  "skills": [
+    { "name": "Customer oriented" },
+    { "name": "Versatile" },
+    { "name": "Team spirit" },
+    { "name": "Organizational capabilities" },
+    { "name": "Reliable" },
+    { "name": "Flexible" },
+    { "name": "Business intelligence" },
+    { "name": "Design / infographics" }
+  ],
+  "certificates": [
+    {
+      "name": "Driver license B (car)"
+    }
+  ]
+}
