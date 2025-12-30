@@ -14,7 +14,7 @@ def main():
     st.write("Adjust the sliders to indicate the subjective lenght.")
 
     # --- Sidebar Controls ---
-    st.sidebar.header("Maand Instellingen")
+    st.sidebar.header("Month Length Settings")
     st.sidebar.write("Small numbers = fast, Big numbers = Slow")
 
     months_default = {
