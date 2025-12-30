@@ -10,6 +10,7 @@ def main():
     except:
         pass  # Page config can only be set once
 
+
     st.title("📅 How This Year Went Generator")
     st.write("Adjust the sliders to indicate the subjective lenght.")
 
