@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import io
 
-def main()
+def main():
     # Set page config
     try:
         st.set_page_config(page_title="Year Timeline Generator", layout="centered")
