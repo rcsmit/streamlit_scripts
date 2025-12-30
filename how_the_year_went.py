@@ -19,15 +19,15 @@ def main():
     st.sidebar.write("Small numbers = fast, Big numbers = Slow")
 
     months_default = {
-        "January": 2, "February": 2, "March": 2,
-        "April": 4, "May": 6, "June": 6,
-        "July": 7, "August": 9, "September": 14,
-        "October": 4, "November": 2, "December": 1
+        "January": 2.0, "February": 2.0, "March": 2.0,
+        "April": 4.0, "May": 6.0, "June": 6.0,
+        "July": 7.0, "August": 9.0, "September": 14.0,
+        "October": 4.0, "November": 1.0, "December": 0.5
     }
 
     month_values = {}
     for month, default in months_default.items():
-        month_values[month] = st.sidebar.slider(f"{month}", 1, 20, default)
+        month_values[month] = st.sidebar.slider(f"{month}", 0.0, 20.0, default)
 
     chart_title = st.sidebar.text_input("Title of the graph", "HOW THIS YEAR WENT:")
 
