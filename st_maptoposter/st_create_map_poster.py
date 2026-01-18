@@ -405,7 +405,7 @@ def main():
     with st.sidebar:
         st.header("⚙️ Settings")
          # Or enter custom coordinates
-        use_custom = st.checkbox("Use custom coordinates")
+        use_custom = st.checkbox("Use custom coordinates", False, help="Check to enter latitude and longitude manually")
 
         if use_custom:
             with st.expander("🌍 Use Custom Coordinates"):
