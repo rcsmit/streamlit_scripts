@@ -10,6 +10,7 @@ from datetime import datetime
 import streamlit as st
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
+# from geopy.geocoders import Nominatim
 
 # Get the directory where this script is located
 SCRIPT_DIR = Path(__file__).parent.absolute()
@@ -23,6 +24,7 @@ FONTS_DIR.mkdir(exist_ok=True)
 POSTERS_DIR.mkdir(exist_ok=True)
 
 # Pre-defined city coordinates (no API needed!)
+# (Nominatim geocoding service has strict usage policies)
 CITY_COORDINATES = {
     "Amsterdam, Netherlands": (52.3676, 4.9041),
     "New York, USA": (40.7128, -74.0060),
@@ -76,6 +78,28 @@ CITY_COORDINATES = {
     "Munich, Germany": (48.1351, 11.5820),
     "Hamburg, Germany": (53.5511, 9.9937),
 }
+
+
+def get_coordinates(city, country):
+    """
+    DOESNT WORK ANYMORE DUE TO NOMINATIM USAGE POLICY WITH STREAMLIT (Sharing)
+    Fetches coordinates for a given city and country using geopy.
+    Includes rate limiting to be respectful to the geocoding service.
+    """
+    print("Looking up coordinates...")
+    geolocator = Nominatim(user_agent="city_map_poster")
+    
+    # Add a small delay to respect Nominatim's usage policy
+    time.sleep(1)
+    
+    location = geolocator.geocode(f"{city}, {country}")
+    
+    if location:
+        print(f"✓ Found: {location.address}")
+        print(f"✓ Coordinates: {location.latitude}, {location.longitude}")
+        return (location.latitude, location.longitude)
+    else:
+        raise ValueError(f"Could not find coordinates for {city}, {country}")
 
 # Timeout configuration
 DEFAULT_TIMEOUT = 30  # seconds
