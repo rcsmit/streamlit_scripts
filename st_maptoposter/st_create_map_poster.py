@@ -431,9 +431,9 @@ def main():
         
         distance = st.number_input(
             "Distance (meters)", 
-            min_value=1000, 
+            min_value=100, 
             max_value=50000, 
-            value=10000, 
+            value=1000, 
             step=1000,
             help="Map radius from city center"
         )
@@ -499,7 +499,6 @@ def main():
                     use_container_width=True
                 )
             
-            st.caption("Based on Map to Poster by Ankur Gupta. MIT License. Data from OpenStreetMap. Streamlit app by Rene Smit https://github.com/rcsmit/streamlit_scripts/blob/main/st_maptoposter/st_create_map_poster.py")
             
         except Exception as e:
             st.error(f"❌ Error: {e}")
@@ -509,7 +508,8 @@ def main():
     
     else:
         st.info("👈 Configure your settings in the sidebar and click 'Generate Poster'")
-        
+        st.sidebar.info("Based on Map to Poster by Ankur Gupta. MIT License. Data from OpenStreetMap. Streamlit app by Rene Smit https://github.com/rcsmit/streamlit_scripts/blob/main/st_maptoposter/st_create_map_poster.py")
+            
         # Show available cities
         with st.expander(f"📍 Available Cities ({len(CITY_COORDINATES)})"):
             cols = st.columns(3)
