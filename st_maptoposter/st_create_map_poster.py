@@ -318,12 +318,13 @@ def create_poster(city, country, point, dist, output_file):
             fontproperties=font_attr, zorder=11)
 
     # 5. Save
+    st.pyplot(fig)
     st.write(f"Saving to {output_file}...")
     plt.savefig(output_file, dpi=300, facecolor=THEME['bg'])
     plt.close()
     st.write(f"✓ Done! Poster saved as {output_file}")
 
-def st.write_examples():
+def print_examples():
     """st.write usage examples."""
     st.write("""
 City Map Poster Generator
@@ -427,7 +428,7 @@ if __name__ == "__main__":
     
     # # If no arguments provided, show examples
     # if len(os.sys.argv) == 1:
-    #     st.write_examples()
+    #     print_examples()
     #     os.sys.exit(0)
     
     # # List themes if requested
@@ -438,7 +439,7 @@ if __name__ == "__main__":
     # # Validate required arguments
     # if not args.city or not args.country:
     #     st.write("Error: --city and --country are required.\n")
-    #     st.write_examples()
+    #     print_examples()
     #     os.sys.exit(1)
     
     # Validate theme exists
@@ -474,5 +475,5 @@ if __name__ == "__main__":
     except Exception as e:
         st.write(f"\n✗ Error: {e}")
         # import traceback
-        # traceback.st.write_exc()
+        # traceback.print_exc()
         # os.sys.exit(1)
