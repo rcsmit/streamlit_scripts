@@ -319,10 +319,10 @@ def create_poster(city, country, point, dist, output_file):
 
     # 5. Save
     st.pyplot(fig)
-    st.write(f"Saving to {output_file}...")
-    plt.savefig(output_file, dpi=300, facecolor=THEME['bg'])
+    # st.write(f"Saving to {output_file}...")
+    # plt.savefig(output_file, dpi=300, facecolor=THEME['bg'])
     plt.close()
-    st.write(f"✓ Done! Poster saved as {output_file}")
+    # st.write(f"✓ Done! Poster saved as {output_file}")
 
 def print_examples():
     """st.write usage examples."""
