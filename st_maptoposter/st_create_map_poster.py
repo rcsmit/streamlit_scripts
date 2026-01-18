@@ -9,8 +9,7 @@ import os
 from datetime import datetime
 import streamlit as st
 from pathlib import Path
-from functools import wraps
-import signal
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 
 # Get the directory where this script is located
 SCRIPT_DIR = Path(__file__).parent.absolute()
@@ -81,46 +80,20 @@ CITY_COORDINATES = {
 # Timeout configuration
 DEFAULT_TIMEOUT = 30  # seconds
 
-class TimeoutException(Exception):
-    """Exception raised when operation times out"""
-    pass
-
-def timeout_handler(signum, frame):
-    """Signal handler for timeout"""
-    raise TimeoutException("Operation timed out")
-
-def with_timeout(seconds):
-    """Decorator to add timeout to functions"""
-    def decorator(func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            # Set the signal handler
-            old_handler = signal.signal(signal.SIGALRM, timeout_handler)
-            signal.alarm(seconds)
-            try:
-                result = func(*args, **kwargs)
-            finally:
-                # Restore the old signal handler
-                signal.alarm(0)
-                signal.signal(signal.SIGALRM, old_handler)
-            return result
-        return wrapper
-    return decorator
-
 def fetch_with_timeout(fetch_func, timeout_seconds, *args, **kwargs):
     """
-    Wrapper to fetch data with a timeout.
+    Wrapper to fetch data with a timeout using ThreadPoolExecutor.
     Returns None if timeout occurs or fetch fails.
     """
     try:
-        @with_timeout(timeout_seconds)
-        def timed_fetch():
-            return fetch_func(*args, **kwargs)
-        
-        return timed_fetch()
-    except TimeoutException:
-        st.warning(f"⏱️ Timeout: {fetch_func.__name__} took too long, skipping...")
-        return None
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(fetch_func, *args, **kwargs)
+            try:
+                result = future.result(timeout=timeout_seconds)
+                return result
+            except FuturesTimeoutError:
+                st.warning(f"⏱️ Timeout after {timeout_seconds}s: Skipping this data layer...")
+                return None
     except Exception as e:
         st.warning(f"⚠️ Error fetching data: {str(e)}")
         return None
@@ -526,7 +499,7 @@ def main():
                     use_container_width=True
                 )
             
-            st.caption("Based on Map to Poster by Ankur Gupta. MIT License. Enable for streamlit by Rene Smit. https://github.com/rcsmit/streamlit_scripts/blob/main/st_maptoposter/st_create_map_poster.py")
+            st.caption("Based on Map to Poster by Ankur Gupta. MIT License. Data from OpenStreetMap. Streamlit app by Rene Smit https://github.com/rcsmit/streamlit_scripts/blob/main/st_maptoposter/st_create_map_poster.py")
             
         except Exception as e:
             st.error(f"❌ Error: {e}")
