@@ -418,7 +418,7 @@ def main():
         with st.expander("🌍 Use Custom Coordinates"):
             custom_lat = st.number_input("Latitude", -90.0, 90.0, 52.3676, format="%.4f")
             custom_lon = st.number_input("Longitude", -180.0, 180.0, 4.9041, format="%.4f")
-            custom_city = st.text_input("Custom City Name", "Custom Location")
+            custom_city = st.text_input("Custom City Name", "Amsterdam, Netherlands", help="In format [City, Country]")
             use_custom = st.checkbox("Use custom coordinates")
         
         st.markdown("---")
