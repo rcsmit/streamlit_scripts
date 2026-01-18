@@ -253,6 +253,7 @@ def create_poster(city, country, point, dist, theme, fonts):
     #     parks = ox.features_from_point(point, tags={'leisure': 'park', 'landuse': 'grass'}, dist=dist)
     # except:
     #     parks = None
+    parks=None
     progress_bar.progress(80)
     
     status_text.text("🎨 Rendering map...")
