@@ -347,7 +347,8 @@ def sunburst_chart(df, years_to_show):
                 (2021, 1.5,10.5),
                 (2022, 4.6+1.75, 12-(4.6+1.75)),
                 (2023, 1.6+ 1.5,12-1.6+ 1.5),
-                (2024, 4.33+ 0,12-(4.33+ 1.75))
+                (2024, 4.33+ 0,12-(4.33+ 1.75)),
+                (2025, 5,7)
             ]
                     
             # Calculate and apply divide_by for each category and year

@@ -186,11 +186,15 @@ def find_kruis_posten():
 
         # Toon resultaat
         print(f"Aantal kruisposten zonder tegenhanger: {len(unmatched)}")
-        print(unmatched[["date","Bedrag","Description","main_category","category"]].sort_values("date"))
+        if unmatched["Bedrag"].sum() != 0:
+            print(unmatched[["date","Bedrag","Description","main_category","category"]].sort_values("date"))
+        
+        print (f"TOTAAL BEDRAG {jaar} : {unmatched["Bedrag"].sum()}")
         if len(unmatched)>0:
-            # Schrijf naar nieuw tabblad
-            with pd.ExcelWriter(path, engine="openpyxl", mode="a", if_sheet_exists="replace") as xw:
-                unmatched.to_excel(xw, sheet_name=out_sheet, index=False)
+            if unmatched["Bedrag"].sum() != 0:
+                # Schrijf naar nieuw tabblad
+                with pd.ExcelWriter(path, engine="openpyxl", mode="a", if_sheet_exists="replace") as xw:
+                    unmatched.to_excel(xw, sheet_name=out_sheet, index=False)
         else:
             print(f"Nothing found in {jaar}")
 
