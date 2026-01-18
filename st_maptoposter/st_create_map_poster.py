@@ -10,6 +10,7 @@ import json
 import os
 from datetime import datetime
 import argparse
+import streamlit as st
 
 THEMES_DIR = "themes"
 FONTS_DIR = "fonts"
@@ -404,68 +405,74 @@ def list_themes():
         st.write()
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Generate beautiful map posters for any city",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  python create_map_poster.py --city "New York" --country "USA"
-  python create_map_poster.py --city Tokyo --country Japan --theme midnight_blue
-  python create_map_poster.py --city Paris --country France --theme noir --distance 15000
-  python create_map_poster.py --list-themes
-        """
-    )
+#     parser = argparse.ArgumentParser(
+#         description="Generate beautiful map posters for any city",
+#         formatter_class=argparse.RawDescriptionHelpFormatter,
+#         epilog="""
+# Examples:
+#   python create_map_poster.py --city "New York" --country "USA"
+#   python create_map_poster.py --city Tokyo --country Japan --theme midnight_blue
+#   python create_map_poster.py --city Paris --country France --theme noir --distance 15000
+#   python create_map_poster.py --list-themes
+#         """
+#     )
     
-    parser.add_argument('--city', '-c', type=str, help='City name')
-    parser.add_argument('--country', '-C', type=str, help='Country name')
-    parser.add_argument('--theme', '-t', type=str, default='feature_based', help='Theme name (default: feature_based)')
-    parser.add_argument('--distance', '-d', type=int, default=29000, help='Map radius in meters (default: 29000)')
-    parser.add_argument('--list-themes', action='store_true', help='List all available themes')
+    # parser.add_argument('--city', '-c', type=str, help='City name')
+    # parser.add_argument('--country', '-C', type=str, help='Country name')
+    # parser.add_argument('--theme', '-t', type=str, default='feature_based', help='Theme name (default: feature_based)')
+    # parser.add_argument('--distance', '-d', type=int, default=29000, help='Map radius in meters (default: 29000)')
+    # parser.add_argument('--list-themes', action='store_true', help='List all available themes')
     
-    args = parser.parse_args()
+    # args = parser.parse_args()
     
-    # If no arguments provided, show examples
-    if len(os.sys.argv) == 1:
-        st.write_examples()
-        os.sys.exit(0)
+    # # If no arguments provided, show examples
+    # if len(os.sys.argv) == 1:
+    #     st.write_examples()
+    #     os.sys.exit(0)
     
-    # List themes if requested
-    if args.list_themes:
-        list_themes()
-        os.sys.exit(0)
+    # # List themes if requested
+    # if args.list_themes:
+    #     list_themes()
+    #     os.sys.exit(0)
     
-    # Validate required arguments
-    if not args.city or not args.country:
-        st.write("Error: --city and --country are required.\n")
-        st.write_examples()
-        os.sys.exit(1)
+    # # Validate required arguments
+    # if not args.city or not args.country:
+    #     st.write("Error: --city and --country are required.\n")
+    #     st.write_examples()
+    #     os.sys.exit(1)
     
     # Validate theme exists
     available_themes = get_available_themes()
-    if args.theme not in available_themes:
-        st.write(f"Error: Theme '{args.theme}' not found.")
-        st.write(f"Available themes: {', '.join(available_themes)}")
-        os.sys.exit(1)
+    city = st.text_input("City","Amsterdam")
+    country = st.text_input("Country", "The Netherlands")
+    theme = st.selectbox("Theme", available_themes, "feature_based")
+    distance = st.number_input("Distance (meters)", 29000)
+    # )
+    # if args.theme not in available_themes:
+    #     st.write(f"Error: Theme '{args.theme}' not found.")
+    #     st.write(f"Available themes: {', '.join(available_themes)}")
+    #     os.sys.exit(1)
     
     st.write("=" * 50)
     st.write("City Map Poster Generator")
     st.write("=" * 50)
     
     # Load theme
-    THEME = load_theme(args.theme)
+    THEME = load_theme(theme)
     
     # Get coordinates and generate poster
     try:
-        coords = get_coordinates(args.city, args.country)
-        output_file = generate_output_filename(args.city, args.theme)
-        create_poster(args.city, args.country, coords, args.distance, output_file)
+        coords = get_coordinates(city, country)
+        output_file = generate_output_filename(city, theme)
+        create_poster(city, country, coords, distance, output_file)
         
         st.write("\n" + "=" * 50)
         st.write("✓ Poster generation complete!")
         st.write("=" * 50)
+        st.info("Based on Map to Poster by Ankur Gupta. MIT License. https://github.com/originalankur/maptoposter")
         
     except Exception as e:
         st.write(f"\n✗ Error: {e}")
-        import traceback
-        traceback.st.write_exc()
-        os.sys.exit(1)
+        # import traceback
+        # traceback.st.write_exc()
+        # os.sys.exit(1)
