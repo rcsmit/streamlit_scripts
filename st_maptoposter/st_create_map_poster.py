@@ -275,7 +275,7 @@ def create_poster(city_label, point, dist, theme, fonts, timeout=DEFAULT_TIMEOUT
         )
         
         if G is None:
-            st.error("❌ Failed to download street network. Try reducing the distance or choosing another city.")
+            st.error("❌ Failed to download street network. Try reducing the distance, increasing the time-out or choosing another city.")
             progress_bar.empty()
             status_text.empty()
             return None
@@ -404,23 +404,27 @@ def main():
     # Sidebar inputs
     with st.sidebar:
         st.header("⚙️ Settings")
-        
-        # City selection from predefined list
-        city_label = st.selectbox(
-            "Select City",
-            options=sorted(CITY_COORDINATES.keys()),
-            index=0,
-            help="Choose from pre-loaded cities"
-        )
+         # Or enter custom coordinates
+        use_custom = st.checkbox("Use custom coordinates")
+
+        if use_custom:
+            with st.expander("🌍 Use Custom Coordinates"):
+                
+                custom_lat = st.number_input("Latitude", -90.0, 90.0, 52.3676, format="%.4f")
+                custom_lon = st.number_input("Longitude", -180.0, 180.0, 4.9041, format="%.4f")
+                custom_city = st.text_input("Custom City Name", "Amsterdam, Netherlands", help="In format [City, Country]")
+        else:
+            # City selection from predefined list
+            city_label = st.selectbox(
+                "Select City",
+                options=sorted(CITY_COORDINATES.keys()),
+                index=0,
+                help="Choose from pre-loaded cities"
+            )
         
         st.markdown("---")
         
-        # Or enter custom coordinates
-        with st.expander("🌍 Use Custom Coordinates"):
-            custom_lat = st.number_input("Latitude", -90.0, 90.0, 52.3676, format="%.4f")
-            custom_lon = st.number_input("Longitude", -180.0, 180.0, 4.9041, format="%.4f")
-            custom_city = st.text_input("Custom City Name", "Amsterdam, Netherlands", help="In format [City, Country]")
-            use_custom = st.checkbox("Use custom coordinates")
+         
         
         st.markdown("---")
         
