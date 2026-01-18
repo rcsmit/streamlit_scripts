@@ -422,12 +422,7 @@ def main():
                 help="Choose from pre-loaded cities"
             )
         
-        st.markdown("---")
-        
-         
-        
-        st.markdown("---")
-        
+       
         theme_name = st.selectbox(
             "Theme", 
             available_themes,
@@ -451,15 +446,15 @@ def main():
             step=5,
             help="Maximum time to wait for data downloads"
         )
-        
+        generate_btn = st.button("🎨 Generate Poster", type="primary", use_container_width=True)
+    
         st.markdown("---")
         st.markdown("**Distance Guide:**")
         st.markdown("- 4,000-6,000m: Small cities")
         st.markdown("- 8,000-12,000m: Medium cities")
         st.markdown("- 15,000-20,000m: Large metros")
         
-        generate_btn = st.button("🎨 Generate Poster", type="primary", use_container_width=True)
-    
+        
     # Show selected city info
     if not use_custom:
         coords = CITY_COORDINATES[city_label]
