@@ -248,11 +248,11 @@ def create_poster(city, country, point, dist, theme, fonts):
     time.sleep(0.3)
     
     # 3. Fetch Parks
-    status_text.text("🌳 Downloading parks/green spaces...")
-    try:
-        parks = ox.features_from_point(point, tags={'leisure': 'park', 'landuse': 'grass'}, dist=dist)
-    except:
-        parks = None
+    # status_text.text("🌳 Downloading parks/green spaces...")
+    # try:
+    #     parks = ox.features_from_point(point, tags={'leisure': 'park', 'landuse': 'grass'}, dist=dist)
+    # except:
+    #     parks = None
     progress_bar.progress(80)
     
     status_text.text("🎨 Rendering map...")
