@@ -446,7 +446,7 @@ if __name__ == "__main__":
     available_themes = get_available_themes()
     city = st.text_input("City","Amsterdam")
     country = st.text_input("Country", "The Netherlands")
-    theme = st.selectbox("Theme", available_themes, "feature_based")
+    theme = st.selectbox("Theme", available_themes)
     distance = st.number_input("Distance (meters)", 29000)
     # )
     # if args.theme not in available_themes:
