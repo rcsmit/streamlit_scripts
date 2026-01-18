@@ -208,17 +208,17 @@ def get_coordinates(city, country):
     Fetches coordinates for a given city and country using geopy.
     """
     with st.spinner("🌍 Looking up coordinates..."):
-        geolocator = Nominatim(user_agent="city_map_poster_streamlit")
-        time.sleep(1)
+        # geolocator = Nominatim(user_agent="city_map_poster_streamlit")
+        # time.sleep(1)
         
-        location = geolocator.geocode(f"{city}, {country}")
-        
-        if location:
-            st.success(f"✓ Found: {location.address}")
-            st.info(f"📍 Coordinates: {location.latitude:.4f}, {location.longitude:.4f}")
-            return (location.latitude, location.longitude)
-        else:
-            raise ValueError(f"Could not find coordinates for {city}, {country}")
+        #location = geolocator.geocode(f"{city}, {country}")
+        return 52.3676, 4.9041  # Amsterdam coordinates for testing
+        # if location:
+        #     st.success(f"✓ Found: {location.address}")
+        #     st.info(f"📍 Coordinates: {location.latitude:.4f}, {location.longitude:.4f}")
+        #     return (location.latitude, location.longitude)
+        # else:
+        #     raise ValueError(f"Could not find coordinates for {city}, {country}")
 
 def create_poster(city, country, point, dist, theme, fonts):
     """
@@ -234,6 +234,7 @@ def create_poster(city, country, point, dist, theme, fonts):
     status_text.text("📡 Downloading street network...")
     progress_bar.progress(10)
     G = ox.graph_from_point(point, dist=dist, dist_type='bbox', network_type='all')
+    
     progress_bar.progress(40)
     time.sleep(0.5)
     
