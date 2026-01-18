@@ -81,14 +81,14 @@ CITY_COORDINATES = {
 DEFAULT_TIMEOUT = 30  # seconds
 
 @st.cache_data()
-def fetch_with_timeout(fetch_func, timeout_seconds, *args, **kwargs):
+def fetch_with_timeout(_fetch_func, timeout_seconds, *args, **kwargs):
     """
     Wrapper to fetch data with a timeout using ThreadPoolExecutor.
     Returns None if timeout occurs or fetch fails.
     """
     try:
         with ThreadPoolExecutor(max_workers=1) as executor:
-            future = executor.submit(fetch_func, *args, **kwargs)
+            future = executor.submit(_fetch_func, *args, **kwargs)
             try:
                 result = future.result(timeout=timeout_seconds)
                 return result
