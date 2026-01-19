@@ -1,0 +1,15 @@
+{
+  "name": "Majorminorblackinverse",
+  "description": "Theme converted from majorminorblackinverse.mrules",
+  "bg": "#000000",
+  "text": "#000000",
+  "gradient_color": "#000000",
+  "water": "#A5BFDD",
+  "parks": "#8CC98D",
+  "road_motorway": "#FFFFFF",
+  "road_primary": "#F9F177",
+  "road_secondary": "#F9F177",
+  "road_tertiary": "#F9F177",
+  "road_residential": "#FEFEFE",
+  "road_default": "#F800EF"
+}

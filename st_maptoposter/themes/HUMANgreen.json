@@ -1,0 +1,15 @@
+{
+  "name": "Humangreen",
+  "description": "Theme converted from HUMANgreen.mrules",
+  "bg": "#FFFFFF",
+  "text": "#000000",
+  "gradient_color": "#FFFFFF",
+  "water": "#A7CDBD",
+  "parks": "#7488DD",
+  "road_motorway": "#90C74B",
+  "road_primary": "#90C74B",
+  "road_secondary": "#90C74B",
+  "road_tertiary": "#90C74B",
+  "road_residential": "#FEFEFE",
+  "road_default": "#FEFEFE"
+}

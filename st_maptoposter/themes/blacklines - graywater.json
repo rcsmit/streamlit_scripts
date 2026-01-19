@@ -1,0 +1,15 @@
+{
+  "name": "Blacklines - Graywater",
+  "description": "Theme converted from blacklines - graywater.mrules",
+  "bg": "#FFFFFF",
+  "text": "#000000",
+  "gradient_color": "#FFFFFF",
+  "water": "#8EC1E9",
+  "parks": "#8CC98D",
+  "road_motorway": "#FC9066",
+  "road_primary": "#101010",
+  "road_secondary": "#101010",
+  "road_tertiary": "#101010",
+  "road_residential": "#FEFEFE",
+  "road_default": "#FEFEFE"
+}

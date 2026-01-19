@@ -1,0 +1,15 @@
+{
+  "name": "Rome",
+  "description": "Theme converted from rome.mrules",
+  "bg": "#FEFEE9",
+  "text": "#000000",
+  "gradient_color": "#FEFEE9",
+  "water": "#8EC1E9",
+  "parks": "#8CC98D",
+  "road_motorway": "#FC9066",
+  "road_primary": "#FF4800",
+  "road_secondary": "#FF4800",
+  "road_tertiary": "#FF4800",
+  "road_residential": "#FF4800",
+  "road_default": "#F800EF"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Majoronly",
+  "description": "Theme converted from majoronly.mrules",
+  "bg": "#FFFFFF",
+  "text": "#000000",
+  "gradient_color": "#FFFFFF",
+  "water": "#8EC1E9",
+  "parks": "#8CC98D",
+  "road_motorway": "#2E2E2E",
+  "road_primary": "#2E2E2E",
+  "road_secondary": "#2E2E2E",
+  "road_tertiary": "#2E2E2E",
+  "road_residential": "#FEFEFE",
+  "road_default": "#FEFEFE"
+}

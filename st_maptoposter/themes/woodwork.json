@@ -1,0 +1,15 @@
+{
+  "name": "Woodwork",
+  "description": "Theme converted from woodwork.mrules",
+  "bg": "#FFFFFF",
+  "text": "#000000",
+  "gradient_color": "#FFFFFF",
+  "water": "#8EC1E9",
+  "parks": "#8CC98D",
+  "road_motorway": "#000000",
+  "road_primary": "#F9F177",
+  "road_secondary": "#F9F177",
+  "road_tertiary": "#F9F177",
+  "road_residential": "#FEFEFE",
+  "road_default": "#FEFEFE"
+}

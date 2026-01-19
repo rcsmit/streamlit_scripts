@@ -537,8 +537,6 @@ def main_():
                                 use_container_width=True
                             )
             
-           
-             
         except Exception as e:
             st.error(f"❌ Error: {e}")
             import traceback
@@ -566,8 +564,6 @@ def generate_examples():
         st.info("Create a file like `themes/noir.json` with color definitions.")
         st.stop()
 
-
-   
     number_of_cols=3    
     cols = st.columns(number_of_cols)
     for i,theme_name in enumerate(available_themes):
@@ -597,8 +593,9 @@ def main():
         if st.button("Show examples"):
             generate_examples()
     with tab3:
-
-        show_posters()
+        st.header("Galery")
+        if st.button("Show Galery"):
+            show_posters()
 
 if __name__ == "__main__":
     main()

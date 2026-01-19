@@ -1,0 +1,15 @@
+{
+  "name": "Urbanight",
+  "description": "Theme converted from urbanight.mrules",
+  "bg": "#000000",
+  "text": "#000000",
+  "gradient_color": "#000000",
+  "water": "#8EC1E9",
+  "parks": "#8CC98D",
+  "road_motorway": "#FC9066",
+  "road_primary": "#F9F177",
+  "road_secondary": "#F9F177",
+  "road_tertiary": "#F9F177",
+  "road_residential": "#FEFEFE",
+  "road_default": "#FEFEFE"
+}
