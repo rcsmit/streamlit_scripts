@@ -1,3 +1,13 @@
+# Map to Poster
+
+SPINOFF made by Rene Smit
+
+Accessible at https://st-maptoposter.streamlit.app/
+Original by Ankur Gupta : https://github.com/originalankur/maptoposter
+Another spinoff: https://github.com/Bikiprasad/maptoPosterUI - https://maptoposterui.streamlit.app/
+
+MIT License
+ 
 # City Map Poster Generator
 
 Generate beautiful, minimalist map posters for any city in the world.
