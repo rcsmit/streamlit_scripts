@@ -404,25 +404,24 @@ def main():
     # Sidebar inputs
     with st.sidebar:
         st.header("⚙️ Settings")
+        use_custom = st.checkbox("Use custom coordinates", False, help="Check to enter latitude and longitude manually")
+        if not use_custom:
+            # City selection from predefined list
+            city_label = st.selectbox(
+                "Select City",
+                options=sorted(CITY_COORDINATES.keys()),
+                index=0,
+                help="Choose from pre-loaded cities"
+            )
+        else:
+                    # Or enter custom coordinates
+            with st.expander("🌍 Use Custom Coordinates"):
+                custom_lat = st.number_input("Latitude", -90.0, 90.0, 52.3676, format="%.4f")
+                custom_lon = st.number_input("Longitude", -180.0, 180.0, 4.9041, format="%.4f")
+                custom_city = st.text_input("Custom City Name", "Custom Location")
+                
         
-        # City selection from predefined list
-        city_label = st.selectbox(
-            "Select City",
-            options=sorted(CITY_COORDINATES.keys()),
-            index=0,
-            help="Choose from pre-loaded cities"
-        )
         
-        st.markdown("---")
-        
-        # Or enter custom coordinates
-        with st.expander("🌍 Use Custom Coordinates"):
-            custom_lat = st.number_input("Latitude", -90.0, 90.0, 52.3676, format="%.4f")
-            custom_lon = st.number_input("Longitude", -180.0, 180.0, 4.9041, format="%.4f")
-            custom_city = st.text_input("Custom City Name", "Custom Location")
-            use_custom = st.checkbox("Use custom coordinates")
-        
-        st.markdown("---")
         
         theme_name = st.selectbox(
             "Theme", 
@@ -434,7 +433,7 @@ def main():
             "Distance (meters)", 
             min_value=1000, 
             max_value=50000, 
-            value=10000, 
+            value=1000, 
             step=1000,
             help="Map radius from city center"
         )
@@ -447,15 +446,15 @@ def main():
             step=5,
             help="Maximum time to wait for data downloads"
         )
-        
+        generate_btn = st.button("🎨 Generate Poster", type="primary", use_container_width=True)
+    
         st.markdown("---")
         st.markdown("**Distance Guide:**")
         st.markdown("- 4,000-6,000m: Small cities")
         st.markdown("- 8,000-12,000m: Medium cities")
         st.markdown("- 15,000-20,000m: Large metros")
         
-        generate_btn = st.button("🎨 Generate Poster", type="primary", use_container_width=True)
-    
+        
     # Show selected city info
     if not use_custom:
         coords = CITY_COORDINATES[city_label]
