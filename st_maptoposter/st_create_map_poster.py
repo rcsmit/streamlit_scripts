@@ -558,7 +558,7 @@ def main_():
 def main():
     tab1,tab2=st.tabs(["Start", "Galery"])
     with tab1:
-        main()
+        main_()
     with tab2:
         show_posters()
 
