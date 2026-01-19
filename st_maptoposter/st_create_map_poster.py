@@ -563,4 +563,4 @@ def main():
         show_posters()
 
 if __name__ == "__main__":
-    main_()
+    main()
