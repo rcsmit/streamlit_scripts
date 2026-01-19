@@ -116,21 +116,21 @@ def extract_colors_from_mrules(mrules_file):
     
     # Set fallback colors if not found
     if not colors['water']:
-        colors['water'] = '#8EC1E9'  # Light blue from the file
+        colors['water'] = "#2D94E4"  # Light blue from the file
     if not colors['parks']:
-        colors['parks'] = '#8CC98D'  # Light green from the file
+        colors['parks'] = "#49C74B"  # Light green from the file
     if not colors['road_motorway']:
-        colors['road_motorway'] = '#FC9066'  # Orange from the file
+        colors['road_motorway'] = "#FF6022"  # Orange from the file
     if not colors['road_primary']:
-        colors['road_primary'] = '#F9F177'  # Yellow from the file
+        colors['road_primary'] = "#292711"  # Yellow from the file
     if not colors['road_secondary']:
-        colors['road_secondary'] = '#F9F177'
+        colors['road_secondary'] = "#242424"
     if not colors['road_tertiary']:
-        colors['road_tertiary'] = '#F9F177'
+        colors['road_tertiary'] = "#414141"
     if not colors['road_residential']:
-        colors['road_residential'] = '#FEFEFE'  # White from the file
+        colors['road_residential'] = "#7C7C7C"  # White from the file
     if not colors['road_default']:
-        colors['road_default'] = '#FEFEFE'
+        colors['road_default'] = "#303030"
     
     # Text color - try to extract or default to black
     colors['text'] = '#000000'

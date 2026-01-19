@@ -5,11 +5,11 @@
   "text": "#000000",
   "gradient_color": "#000000",
   "water": "#A5BFDD",
-  "parks": "#8CC98D",
+  "parks": "#49C74B",
   "road_motorway": "#FFFFFF",
-  "road_primary": "#F9F177",
-  "road_secondary": "#F9F177",
-  "road_tertiary": "#F9F177",
-  "road_residential": "#FEFEFE",
+  "road_primary": "#292711",
+  "road_secondary": "#242424",
+  "road_tertiary": "#414141",
+  "road_residential": "#7C7C7C",
   "road_default": "#F800EF"
 }

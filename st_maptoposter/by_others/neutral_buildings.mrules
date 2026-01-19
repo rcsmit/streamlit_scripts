@@ -1,0 +1,278 @@
+// origin: https://wiki.openstreetmap.org/wiki/User:Planemad/neutralmap
+
+// Neutralmap - Maperitive rule file
+// Style brief : To create a map style that is suitable as a base map for overlaying and highlighting data over it
+// Style preview : http://www.flickr.com/photos/arunganesh/5104440951/
+// Author: Arun Ganesh http://wiki.openstreetmap.org/wiki/User:Planemad
+// 22 Oct 2010 - Still in development
+// https://gist.github.com/notsidney/9c8947794ef5fa95784d17e90ff56e30
+
+features
+	lines
+		railway : railway=rail OR service=spur OR service=siding OR railway=subway OR railway=narrow_gauge OR railway=construction
+		waterway river : waterway=river OR waterway=canal
+		waterway drain : waterway=drain
+		aeroway : aeroway=runway OR aeroway=taxiway
+
+		highway motorway : highway=motorway
+		highway motorway link : highway=motorway_link
+		highway trunk : highway=trunk
+		highway trunk link: highway=trunk_link
+		highway primary link : highway=primary_link
+		highway primary : highway=primary
+		highway secondary : highway=secondary
+		highway tertiary : highway=tertiary
+		highway unclassified : highway=unclassified
+		highway residential : highway=residential OR highway=living_street
+		highway road : highway=road
+		highway service : highway=service
+		highway pedestrian : highway=pedestrian
+		highway track : highway=track
+		highway footway : highway=footway
+		highway cycleway : highway=cycleway
+		highway path : highway=path
+		highway private : access=private AND highway
+		highway steps : highway=steps
+		route ferry : route=ferry
+
+		motorway : highway=motorway
+		motorway link : highway=motorway_link
+		major road : @isOneOf(highway, trunk, trunk_link, primary, primary_link, secondary, tertiary)
+		minor road : @isOneOf(highway, unclassified, residential, service, living_street) OR (highway=track AND (@isOneOf(tracktype, grade1, grade2, grade3) OR NOT tracktype))
+		path : @isOneOf(highway, path) OR (highway=track AND @isOneOf(tracktype, grade4, grade5)) OR (highway=pedestrian AND bridge=yes)
+		//path : @isOneOf(highway, path, footway, pedestrian, steps) OR (highway=track AND @isOneOf(tracktype, grade4, grade5))
+
+
+		boundary country : boundary=administrative AND (admin_level=2 OR admin_level=4)
+		boundary province : boundary=administrative AND (admin_level=6)
+		boundary municipal : boundary=administrative AND (admin_level=8)
+
+		contours major : contour[elevation_multiplier=50]
+		contours minor : contour[elevation_multiplier=10 and not elevation_multiplier=50]
+
+	areas
+		water : natural=water OR waterway=riverbank OR landuse=reservoir OR natural=wetland
+		forest : landuse=forest OR natural=wood
+		leisure : leisure=park OR leisure=playground OR tourism=zoo OR leisure=golf_course OR leisure=common OR landuse=farm OR landuse=farmland OR leisure=nature_reserve OR landuse=grass OR leisure=pitch
+
+		graveyard : amenity=grave_yard OR landuse=cemetery
+
+		landuse hospital : amenity=hospital
+		landuse academic : amenity=university OR amenity=college OR amenity=school
+		landuse retail : landuse=retail
+		landuse industrial : landuse=industrial OR landuse=railway OR aeroway=aerodrome OR landuse=military OR military=airfield
+		landuse commercial : landuse=commercial
+		landuse residential : landuse=residential
+
+		aeroway apron: aeroway=apron
+
+		building : building
+
+		land : natural=island OR natural=land OR place=island
+		place : place=town OR place=city
+		pedestrian : highway=pedestrian
+
+	points
+		rail station : railway=station
+		place city : place=city
+		place town : place=town
+		place village : place=village
+		place hamlet : place=hamlet
+		place suburb : place=suburb
+
+properties
+	map-background-color: #f5f5f5
+	map-background-opacity: 1
+	font-weight : bold
+	font-family : Verdana
+	text-max-width : 7
+	text-halo-width : 25%
+	text-halo-opacity : 0.75
+	text-align-horizontal : center
+	text-align-vertical : center
+	font-stretch : 0.9
+
+rules
+
+	target : railway
+		define
+			line-color : #CCCCCC
+			line-width : 1:0.1;10:0.2
+			line-join : round
+			border-style : solid
+			border-color : #CCCCCC black 50%
+			border-width : 25%
+		draw : line
+
+
+
+	target : building
+		define
+			line-style : solid
+			line-width : 1:1;10:2
+			line-color : #bbb
+			fill-color : #ccc
+		draw : fill
+
+//roads
+	target : motorway
+		if : *link
+			define
+				min-zoom : 11
+				line-width : 7:1;13:2;15:3
+		else
+			define
+				min-zoom : 5
+				line-width : 7:1.5;13:3;15:4;18:6
+		define
+			line-color : #ffa824
+			text-color : #ffa824 black 50%
+			//text-halo-color: red
+			text-halo-width : 50%
+			text-halo-opacity : 0.75
+			font-size : 8:8;20:20
+			text : ref
+		draw : line
+		define
+			min-zoom : 5
+			max-zoom : 12
+			border-style : none
+		draw : line
+
+	target : major road
+		define
+			min-zoom : 7
+			line-color : #FFea84
+			line-width : 7:1;13:3;15:10
+			border-style : solid
+			border-color : #fc9
+			border-width : 20%
+			font-size : 8:8;20:20
+			text : ref
+			text-color : #ff6633 black 50%
+		draw : line
+
+	target : minor road
+		define
+			min-zoom : 11
+			line-color : white
+			line-width : 13:1.5;14:2.5;15:5;16:10
+			text : none
+			border-style : solid
+			border-color : #cfcfcf
+			border-width : 15%
+			
+			line-join: round
+			line-start-cap: round
+			line-end-cap: round
+		draw : line
+
+	target : path
+		define
+			min-zoom : 14
+			line-color : #ddd
+			line-width : 14:1;15:1;15.5:4
+			border-style : solid
+			border-width : 1
+			border-color : #bbb
+		draw : line
+
+	target : route ferry
+		define
+			min-zoom : 9
+			line-color : #EAEAEA
+			line-width : 10:0.1;13:0.3;15:0.5;18:3
+			line-style : dash
+		draw : line
+
+	target : aeroway
+		define
+			min-zoom : 10
+			line-color : #CCCCCC
+			line-width : 10:0.5;15:7
+			line-join : round
+		for: aeroway=taxiway
+			define
+				line-width : 10:0.1;15:4
+
+		draw : line
+
+	target : waterway*
+		define
+			min-zoom : 11
+			line-color : white
+			line-width : 1:1;14:3
+		if : *drain
+			define
+				min-zoom : 12
+				line-width: 2
+		draw: line
+
+	target : pedestrian
+		define
+			fill-color : black
+			line-style : none
+			fill-opacity : 10%
+		draw : fill
+
+	target : $featuretype(area)
+		define
+			fill-color : #f5f5f5
+			line-color : red
+			line-style : none
+			line-width : 1
+
+		if : forest
+			define
+				min-zoom : 5
+				fill-color : #C5FF5B black 30%
+				fill-opacity: 0.3
+		
+		if : $regex("(.*park)|(.*playground)|(.*graveyard)")
+			define
+				min-zoom : 13
+				fill-color : #b4FF4B black 10%
+				fill-opacity: 0.3
+		if : leisure
+			define
+				min-zoom : 13
+				fill-color : #b4FF4B black 10%
+				fill-opacity: 0.3
+				line-style : solid
+				line-color : #b4FF4B black 10%
+				line-width : 2
+		if : land
+			define
+				min-zoom : 7
+				fill-color : #F5F5F5
+		if : water
+			define
+				min-zoom : 7
+				fill-color : #6af
+				fill-opacity: 0.5
+				line-style : solid
+				line-color : #6af black 10%
+				line-width : 2
+				line-opacity : 0.5
+			for : natural=wetland
+				define
+					fill-opacity: 0.5 
+
+		if : aeroway apron
+			define
+				min-zoom : 13
+				fill-color : #DDDDDD
+		if : landuse residentail
+			define
+				fill-color: #f00
+		if : landuse*
+			define
+				min-zoom : 11
+				fill-color : #f5f5f5
+		if : place*
+			define
+				min-zoom : 11
+
+		draw : fill
+		define
+			min-zoom : 17
