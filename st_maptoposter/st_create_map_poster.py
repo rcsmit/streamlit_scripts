@@ -446,6 +446,13 @@ def main():
             step=5,
             help="Maximum time to wait for data downloads"
         )
+
+        output_format = st.radio(
+            "Output Format",
+            options=["PNG", "SVG", "Both"],
+            index=0,
+            help="Choose file format for your poster"
+        )
         generate_btn = st.button("🎨 Generate Poster", type="primary", use_container_width=True)
     
         st.markdown("---")
@@ -481,24 +488,51 @@ def main():
             
             # Display
             st.pyplot(fig)
+
+            # Save files based on selected format
+            saved_files = []
             
-            # Save option
-            output_file = generate_output_filename(city_label.split(',')[0], theme_name)
-            fig.savefig(output_file, dpi=300, facecolor=theme['bg'], bbox_inches='tight')
+            if output_format in ["PNG", "Both"]:
+                output_file_png = generate_output_filename(city_label.split(',')[0], theme_name, "png")
+                fig.savefig(output_file_png, dpi=300, facecolor=theme['bg'], bbox_inches='tight')
+                saved_files.append(("PNG", output_file_png, "image/png"))
+                st.success(f"✅ PNG saved: {output_file_png.name}")
+            
+            if output_format in ["SVG", "Both"]:
+                output_file_svg = generate_output_filename(city_label.split(',')[0], theme_name, "svg")
+                fig.savefig(output_file_svg, format='svg', facecolor=theme['bg'], bbox_inches='tight')
+                saved_files.append(("SVG", output_file_svg, "image/svg+xml"))
+                st.success(f"✅ SVG saved: {output_file_svg.name}")
+            
             plt.close(fig)
             
-            st.success(f"✅ Poster saved to: {output_file.name}")
+            # Download buttons for all saved files
+            if len(saved_files) == 1:
+                # Single download button
+                file_type, file_path, mime_type = saved_files[0]
+                with open(file_path, "rb") as file:
+                    st.download_button(
+                        label=f"⬇️ Download {file_type}",
+                        data=file,
+                        file_name=file_path.name,
+                        mime=mime_type,
+                        use_container_width=True
+                    )
+            else:
+                # Multiple download buttons
+                col1, col2 = st.columns(2)
+                for idx, (file_type, file_path, mime_type) in enumerate(saved_files):
+                    with (col1 if idx == 0 else col2):
+                        with open(file_path, "rb") as file:
+                            st.download_button(
+                                label=f"⬇️ Download {file_type}",
+                                data=file,
+                                file_name=file_path.name,
+                                mime=mime_type,
+                                use_container_width=True
+                            )
             
-            # Download button
-            with open(output_file, "rb") as file:
-                st.download_button(
-                    label="⬇️ Download Poster",
-                    data=file,
-                    file_name=output_file.name,
-                    mime="image/png",
-                    use_container_width=True
-                )
-            
+           
              
         except Exception as e:
             st.error(f"❌ Error: {e}")
