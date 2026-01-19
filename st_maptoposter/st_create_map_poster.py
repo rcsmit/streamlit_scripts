@@ -10,7 +10,7 @@ from datetime import datetime
 import streamlit as st
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
-
+from show_posters import show_posters()
 # Get the directory where this script is located
 SCRIPT_DIR = Path(__file__).parent.absolute()
 THEMES_DIR = SCRIPT_DIR / "themes"
@@ -386,7 +386,7 @@ def create_poster(city_label, point, dist, theme, fonts, gradient_fade, timeout=
         raise e
 
 # Streamlit App
-def main():
+def main_():
     st.set_page_config(page_title="City Map Poster Generator", page_icon="🗺️", layout="wide")
     
     st.title("🗺️ City Map Poster Generator")
@@ -555,6 +555,12 @@ def main():
             for idx, city in enumerate(sorted(CITY_COORDINATES.keys())):
                 with cols[idx % 3]:
                     st.text(city)
-
+def main():
+    tab1,tab2=st.tabs(["Start", "Galery"])
+    with tab1:
+        main()
+    with tab2:
+        show_posters()
+        
 if __name__ == "__main__":
-    main()
+    main_()
