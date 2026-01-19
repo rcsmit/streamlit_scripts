@@ -253,7 +253,7 @@ def get_edge_widths_by_type(G):
     
     return edge_widths
 
-def create_poster(city_label, point, dist, theme, fonts, timeout=DEFAULT_TIMEOUT):
+def create_poster(city_label, point, dist, theme, fonts, gradient_fade, timeout=DEFAULT_TIMEOUT):
     """Generate the map poster."""
     
     # Progress tracking
@@ -328,10 +328,10 @@ def create_poster(city_label, point, dist, theme, fonts, timeout=DEFAULT_TIMEOUT
             edge_linewidth=edge_widths,
             show=False, close=False
         )
-        
-        # Gradients
-        create_gradient_fade(ax, theme['gradient_color'], location='bottom', zorder=10)
-        create_gradient_fade(ax, theme['gradient_color'], location='top', zorder=10)
+        if gradient_fade:
+            # Gradients
+            create_gradient_fade(ax, theme['gradient_color'], location='bottom', zorder=10)
+            create_gradient_fade(ax, theme['gradient_color'], location='top', zorder=10)
         
         # Typography
         if fonts:
@@ -447,9 +447,14 @@ def main():
             help="Maximum time to wait for data downloads"
         )
 
+        gradient_fade = st.checkbox(
+            "Add Gradient Fade",
+            value=True,
+            help="Add gradient fade effect at top and bottom of the poster"
+        )
         output_format = st.radio(
             "Output Format",
-            options=["PNG", "SVG", "Both"],
+            options=["PNG", "SVG"] #, "Both"], Both gives a problem because the download buttons dissapear when you download one of them
             index=0,
             help="Choose file format for your poster"
         )
@@ -481,7 +486,7 @@ def main():
             
             # Generate poster
             st.write(f"🗺️ Generating map for **{city_label}**...")
-            fig = create_poster(city_label, coords, distance, theme, fonts, timeout)
+            fig = create_poster(city_label, coords, distance, theme, fonts,  gradient_fade, timeout)
             
             if fig is None:
                 st.stop()
