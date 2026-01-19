@@ -592,6 +592,8 @@ def main():
         main_()
    
     with tab2:
+        st.header("Examples")
+        st.info("The examples are made with a small town in the Netherlands due to efficiency reasons")
         if st.button("Show examples"):
             generate_examples()
     with tab3:
