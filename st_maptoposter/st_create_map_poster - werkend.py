@@ -10,6 +10,7 @@ from datetime import datetime
 import streamlit as st
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
+# from geopy.geocoders import Nominatim
 
 # Get the directory where this script is located
 SCRIPT_DIR = Path(__file__).parent.absolute()
@@ -23,6 +24,7 @@ FONTS_DIR.mkdir(exist_ok=True)
 POSTERS_DIR.mkdir(exist_ok=True)
 
 # Pre-defined city coordinates (no API needed!)
+# (Nominatim geocoding service has strict usage policies)
 CITY_COORDINATES = {
     "Amsterdam, Netherlands": (52.3676, 4.9041),
     "New York, USA": (40.7128, -74.0060),
@@ -77,17 +79,40 @@ CITY_COORDINATES = {
     "Hamburg, Germany": (53.5511, 9.9937),
 }
 
+
+def get_coordinates(city, country):
+    """
+    DOESNT WORK ANYMORE DUE TO NOMINATIM USAGE POLICY WITH STREAMLIT (Sharing)
+    Fetches coordinates for a given city and country using geopy.
+    Includes rate limiting to be respectful to the geocoding service.
+    """
+    print("Looking up coordinates...")
+    geolocator = Nominatim(user_agent="city_map_poster")
+    
+    # Add a small delay to respect Nominatim's usage policy
+    time.sleep(1)
+    
+    location = geolocator.geocode(f"{city}, {country}")
+    
+    if location:
+        print(f"✓ Found: {location.address}")
+        print(f"✓ Coordinates: {location.latitude}, {location.longitude}")
+        return (location.latitude, location.longitude)
+    else:
+        raise ValueError(f"Could not find coordinates for {city}, {country}")
+
 # Timeout configuration
 DEFAULT_TIMEOUT = 30  # seconds
 
-def fetch_with_timeout(fetch_func, timeout_seconds, *args, **kwargs):
+@st.cache_data()
+def fetch_with_timeout(_fetch_func, timeout_seconds, *args, **kwargs):
     """
     Wrapper to fetch data with a timeout using ThreadPoolExecutor.
     Returns None if timeout occurs or fetch fails.
     """
     try:
         with ThreadPoolExecutor(max_workers=1) as executor:
-            future = executor.submit(fetch_func, *args, **kwargs)
+            future = executor.submit(_fetch_func, *args, **kwargs)
             try:
                 result = future.result(timeout=timeout_seconds)
                 return result
@@ -274,7 +299,7 @@ def create_poster(city_label, point, dist, theme, fonts, timeout=DEFAULT_TIMEOUT
         )
         
         if G is None:
-            st.error("❌ Failed to download street network. Try reducing the distance or choosing another city.")
+            st.error("❌ Failed to download street network. Try reducing the distance, increasing the time-out or choosing another city.")
             progress_bar.empty()
             status_text.empty()
             return None
@@ -403,26 +428,25 @@ def main():
     # Sidebar inputs
     with st.sidebar:
         st.header("⚙️ Settings")
+         # Or enter custom coordinates
+        use_custom = st.checkbox("Use custom coordinates", False, help="Check to enter latitude and longitude manually")
+
+        if use_custom:
+            with st.expander("🌍 Use Custom Coordinates"):
+                
+                custom_lat = st.number_input("Latitude", -90.0, 90.0, 52.3676, format="%.4f")
+                custom_lon = st.number_input("Longitude", -180.0, 180.0, 4.9041, format="%.4f")
+                custom_city = st.text_input("Custom City Name", "Amsterdam, Netherlands", help="In format [City, Country]")
+        else:
+            # City selection from predefined list
+            city_label = st.selectbox(
+                "Select City",
+                options=sorted(CITY_COORDINATES.keys()),
+                index=0,
+                help="Choose from pre-loaded cities"
+            )
         
-        # City selection from predefined list
-        city_label = st.selectbox(
-            "Select City",
-            options=sorted(CITY_COORDINATES.keys()),
-            index=0,
-            help="Choose from pre-loaded cities"
-        )
-        
-        st.markdown("---")
-        
-        # Or enter custom coordinates
-        with st.expander("🌍 Use Custom Coordinates"):
-            custom_lat = st.number_input("Latitude", -90.0, 90.0, 52.3676, format="%.4f")
-            custom_lon = st.number_input("Longitude", -180.0, 180.0, 4.9041, format="%.4f")
-            custom_city = st.text_input("Custom City Name", "Custom Location")
-            use_custom = st.checkbox("Use custom coordinates")
-        
-        st.markdown("---")
-        
+       
         theme_name = st.selectbox(
             "Theme", 
             available_themes,
@@ -431,9 +455,9 @@ def main():
         
         distance = st.number_input(
             "Distance (meters)", 
-            min_value=1000, 
+            min_value=100, 
             max_value=50000, 
-            value=10000, 
+            value=1000, 
             step=1000,
             help="Map radius from city center"
         )
@@ -446,15 +470,15 @@ def main():
             step=5,
             help="Maximum time to wait for data downloads"
         )
-        
+        generate_btn = st.button("🎨 Generate Poster", type="primary", use_container_width=True)
+    
         st.markdown("---")
         st.markdown("**Distance Guide:**")
         st.markdown("- 4,000-6,000m: Small cities")
         st.markdown("- 8,000-12,000m: Medium cities")
         st.markdown("- 15,000-20,000m: Large metros")
         
-        generate_btn = st.button("🎨 Generate Poster", type="primary", use_container_width=True)
-    
+        
     # Show selected city info
     if not use_custom:
         coords = CITY_COORDINATES[city_label]
@@ -499,7 +523,7 @@ def main():
                     use_container_width=True
                 )
             
-             
+            
         except Exception as e:
             st.error(f"❌ Error: {e}")
             import traceback
@@ -509,7 +533,7 @@ def main():
     else:
         st.info("👈 Configure your settings in the sidebar and click 'Generate Poster'")
         st.sidebar.info("Based on Map to Poster by Ankur Gupta. MIT License. Data from OpenStreetMap. Streamlit app by Rene Smit https://github.com/rcsmit/streamlit_scripts/blob/main/st_maptoposter/st_create_map_poster.py")
-       
+            
         # Show available cities
         with st.expander(f"📍 Available Cities ({len(CITY_COORDINATES)})"):
             cols = st.columns(3)
