@@ -578,7 +578,7 @@ def generate_examples():
                 st.stop()
             
             # Generate poster
-            
+            st.subheader(theme_name)
             fig = create_poster(city_label, coords, distance, theme, fonts,  gradient_fade, timeout)
             
             if fig is None:
