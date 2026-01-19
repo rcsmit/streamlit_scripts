@@ -458,7 +458,7 @@ def main_():
             index=0,
             help="Choose file format for your poster"
         )
-        generate_btn = st.button("🎨 Generate Poster", type="primary", use_container_width=True)
+        generate_btn = st.button("🎨 Generate Poster", type="primary")
     
         st.markdown("---")
         st.markdown("**Distance Guide:**")
@@ -521,7 +521,7 @@ def main_():
                         data=file,
                         file_name=file_path.name,
                         mime=mime_type,
-                        use_container_width=True
+                    
                     )
             else:
                 # Multiple download buttons
