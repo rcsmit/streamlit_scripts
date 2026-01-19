@@ -454,7 +454,7 @@ def main():
         )
         output_format = st.radio(
             "Output Format",
-            options=["PNG", "SVG"] #, "Both"], Both gives a problem because the download buttons dissapear when you download one of them
+            options=["PNG", "SVG"], #, "Both"], Both gives a problem because the download buttons dissapear when you download one of them
             index=0,
             help="Choose file format for your poster"
         )
