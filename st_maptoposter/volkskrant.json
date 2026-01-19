@@ -1,0 +1,15 @@
+{
+  "name": "Google Maps Style",
+  "description": "Theme converted from volkskrant.mrules",
+  "bg": "#FFFFFF",
+  "text": "#000000",
+  "gradient_color": "#FFFFFF",
+  "water": "#677F9E",
+  "parks": "#88A676",
+  "road_motorway": "#918686",
+  "road_primary": "#FFFFFF",
+  "road_secondary": "#FFFFFF",
+  "road_tertiary": "#FFFFFF",
+  "road_residential": "#918686",
+  "road_default": "#918686"
+}

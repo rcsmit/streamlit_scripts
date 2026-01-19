@@ -1,0 +1,15 @@
+{
+  "name": "Google Maps Style",
+  "description": "Theme converted from major.mrules",
+  "bg": "#F2EFE9",
+  "text": "#000000",
+  "gradient_color": "#F2EFE9",
+  "water": "#A5BFDD",
+  "parks": "#C0F6B0",
+  "road_motorway": "#FFFF00",
+  "road_primary": "#00FF00",
+  "road_secondary": "#00FF00",
+  "road_tertiary": "#00FF00",
+  "road_residential": "#FFCCEE",
+  "road_default": "#F800EF"
+}

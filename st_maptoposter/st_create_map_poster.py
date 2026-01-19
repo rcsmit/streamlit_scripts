@@ -567,7 +567,7 @@ def generate_examples():
     number_of_cols=3    
     cols = st.columns(number_of_cols)
     for i,theme_name in enumerate(available_themes):
-        st.subheader(theme_name)
+       
         with cols[i % number_of_cols]:
             theme = load_theme(theme_name)
             if theme is None:

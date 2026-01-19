@@ -1,0 +1,15 @@
+{
+  "name": "Google Maps Style",
+  "description": "Theme converted from wijck.mrules",
+  "bg": "#FFFFFF",
+  "text": "#000000",
+  "gradient_color": "#FFFFFF",
+  "water": "#B5D0D0",
+  "parks": "#C0F6B0",
+  "road_motorway": "#FFFFFF",
+  "road_primary": "#FFFFFF",
+  "road_secondary": "#FFFFFF",
+  "road_tertiary": "#FFFFFF",
+  "road_residential": "#000000",
+  "road_default": "#000000"
+}

@@ -1,0 +1,11 @@
+bounds-set 12.1967,41.6387,12.6764,42.0479
+http://www.overpass-api.de/api/xapi?way[bbox=12.1967,41.6387,12.6764,42.0479][maintenance=gritting][@meta]
+
+https://www.openstreetmap.org/api/0.6/map?bbox=4.8481%2C52.3371%2C4.9587%2C52.3903
+
+
+AMSTERDAM
+
+http://www.overpass-api.de/api/xapi?way[bbox=4.8481,52.3371,4.9587,52.3903]
+
+use-ruleset location="C:\Users\rcxsm\Documents\Maperitive-latest\Maperitive\rules\HUMANmajorminorblackinverse.mrules"

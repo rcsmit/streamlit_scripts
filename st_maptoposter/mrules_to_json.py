@@ -1,6 +1,7 @@
 import re
 import json
 from pathlib import Path
+import sys
 
 def parse_color(color_str):
     """
@@ -30,13 +31,54 @@ def parse_color(color_str):
         'blue': '#0000FF',
         'green': '#00FF00',
         'yellow': '#FFFF00',
+        'orange': '#FFA500',
+        'purple': '#800080',
+        'cyan': '#00FFFF',
         'gray': '#808080',
         'grey': '#808080',
+        'lightblue': '#ADD8E6',
     }
     
     return color_map.get(color_str.lower(), None)
 
-def extract_colors_from_mrules(mrules_file):
+def find_section_colors(content, target_pattern, color_property='line-color'):
+    """
+    Find colors within a specific target section using regex.
+    Returns the first color found for the specified property.
+    """
+    # Build pattern to find target section and extract color
+    pattern = rf'target\s*:\s*{target_pattern}.*?{color_property}\s*:\s*([#\w\s%]+?)(?:\n|;|$)'
+    
+    matches = re.findall(pattern, content, re.DOTALL | re.IGNORECASE)
+    
+    if matches:
+        # Return first match, parsed
+        return parse_color(matches[0])
+    return None
+
+def find_area_colors(content, condition_pattern, color_property='fill-color'):
+    """
+    Find colors in area definitions (within $featuretype(area) blocks).
+    """
+    # Find the entire area block
+    area_block_pattern = r'target\s*:\s*\$featuretype\(area\)(.*?)(?=target\s*:|$)'
+    area_blocks = re.findall(area_block_pattern, content, re.DOTALL)
+    
+    if not area_blocks:
+        return None
+    
+    area_content = area_blocks[0]
+    
+    # Look for specific condition (if/elseif blocks)
+    condition_pattern_full = rf'(?:if|elseif)\s*:\s*{condition_pattern}.*?{color_property}\s*:\s*([#\w\s%]+?)(?:\n|define|if|elseif|else|draw|for)'
+    
+    matches = re.findall(condition_pattern_full, area_content, re.DOTALL | re.IGNORECASE)
+    
+    if matches:
+        return parse_color(matches[0])
+    return None
+
+def extract_colors_from_mrules(mrules_file, verbose=False):
     """
     Extract colors from Maperitive .mrules file.
     Returns a dictionary with theme colors.
@@ -60,87 +102,136 @@ def extract_colors_from_mrules(mrules_file):
     with open(mrules_file, 'r', encoding='utf-8') as f:
         content = f.read()
     
-    # Extract map background color
+    if verbose:
+        print("\n🔍 Analyzing .mrules file...\n")
+    
+    # Extract map background color from properties section
     bg_match = re.search(r'map-background-color\s*:\s*([#\w]+)', content)
     if bg_match:
         colors['bg'] = parse_color(bg_match.group(1))
+        if verbose:
+            print(f"✓ Background: {colors['bg']}")
     
-    # Extract water color
-    # Look for water area fill-color
-    water_pattern = r'if\s*:\s*water.*?fill-color\s*:\s*([#\w\s%]+)'
-    water_match = re.search(water_pattern, content, re.DOTALL)
-    if water_match:
-        colors['water'] = parse_color(water_match.group(1))
+    # Extract gradient color (same as background)
+    colors['gradient_color'] = colors['bg']
     
-    # Also check for water line color as fallback
+    # Extract water color from area definition
+    water_color = find_area_colors(content, r'water', 'fill-color')
+    if water_color:
+        colors['water'] = water_color
+        if verbose:
+            print(f"✓ Water (area): {colors['water']}")
+    
+    # Try water line as fallback
     if not colors['water']:
-        water_line_pattern = r'target\s*:\s*water\s+line.*?line-color\s*:\s*([#\w\s%]+)'
-        water_line_match = re.search(water_line_pattern, content, re.DOTALL)
-        if water_line_match:
-            colors['water'] = parse_color(water_line_match.group(1))
+        water_line_color = find_section_colors(content, r'(?:water\s+line|river|stream|canal)', 'line-color')
+        if water_line_color:
+            colors['water'] = water_line_color
+            if verbose:
+                print(f"✓ Water (line): {colors['water']}")
     
     # Extract park/green space color
-    park_pattern = r'elseif\s*:\s*park.*?fill-color\s*:\s*([#\w\s%]+)'
-    park_match = re.search(park_pattern, content, re.DOTALL)
-    if park_match:
-        colors['parks'] = parse_color(park_match.group(1))
+    park_color = find_area_colors(content, r'park', 'fill-color')
+    if park_color:
+        colors['parks'] = park_color
+        if verbose:
+            print(f"✓ Parks: {colors['parks']}")
     
-    # Extract road colors
-    # Motorway
-    motorway_pattern = r'target\s*:\s*motorway\s*\n.*?line-color\s*:\s*([#\w\s%]+)'
-    motorway_match = re.search(motorway_pattern, content, re.DOTALL)
-    if motorway_match:
-        colors['road_motorway'] = parse_color(motorway_match.group(1))
-    
-    # Major road (primary/secondary/tertiary)
-    major_road_pattern = r'target\s*:\s*major\s+road.*?line-color\s*:\s*([#\w\s%]+)'
-    major_road_match = re.search(major_road_pattern, content, re.DOTALL)
-    if major_road_match:
-        major_color = parse_color(major_road_match.group(1))
-        # Use same color for primary, secondary, tertiary if not specified
-        colors['road_primary'] = major_color
-        colors['road_secondary'] = major_color
-        colors['road_tertiary'] = major_color
-    
-    # Minor road (residential)
-    minor_road_pattern = r'target\s*:\s*minor\s+road.*?line-color\s*:\s*([#\w\s%]+)'
-    minor_road_match = re.search(minor_road_pattern, content, re.DOTALL)
-    if minor_road_match:
-        colors['road_residential'] = parse_color(minor_road_match.group(1))
-    
-    # Path as default
-    path_pattern = r'target\s*:\s*path.*?line-color\s*:\s*([#\w\s%]+)'
-    path_match = re.search(path_pattern, content, re.DOTALL)
-    if path_match:
-        colors['road_default'] = parse_color(path_match.group(1))
-    
-    # Set fallback colors if not found
-    if not colors['water']:
-        colors['water'] = "#2D94E4"  # Light blue from the file
+    # If no park, try forest or grass
     if not colors['parks']:
-        colors['parks'] = "#49C74B"  # Light green from the file
-    if not colors['road_motorway']:
-        colors['road_motorway'] = "#FF6022"  # Orange from the file
+        for alt in ['forest', 'grass', 'nature\s+reserve']:
+            alt_color = find_area_colors(content, alt, 'fill-color')
+            if alt_color:
+                colors['parks'] = alt_color
+                if verbose:
+                    print(f"✓ Parks (from {alt}): {colors['parks']}")
+                break
+    
+    # Extract road colors - MOTORWAY
+    motorway_color = find_section_colors(content, r'(?:highway\s+)?motorway(?!\s+link)', 'line-color')
+    if motorway_color:
+        colors['road_motorway'] = motorway_color
+        if verbose:
+            print(f"✓ Motorway: {colors['road_motorway']}")
+    
+    # PRIMARY
+    primary_color = find_section_colors(content, r'(?:highway\s+)?primary(?!\s+link)', 'line-color')
+    if primary_color:
+        colors['road_primary'] = primary_color
+        if verbose:
+            print(f"✓ Primary: {colors['road_primary']}")
+    
+    # If no primary found, look in "major road" section
     if not colors['road_primary']:
-        colors['road_primary'] = "#292711"  # Yellow from the file
-    if not colors['road_secondary']:
-        colors['road_secondary'] = "#242424"
-    if not colors['road_tertiary']:
-        colors['road_tertiary'] = "#414141"
-    if not colors['road_residential']:
-        colors['road_residential'] = "#7C7C7C"  # White from the file
-    if not colors['road_default']:
-        colors['road_default'] = "#303030"
+        major_color = find_section_colors(content, r'major\s+road', 'line-color')
+        if major_color:
+            colors['road_primary'] = major_color
+            if verbose:
+                print(f"✓ Primary (from major road): {colors['road_primary']}")
+    
+    # SECONDARY
+    secondary_color = find_section_colors(content, r'(?:highway\s+)?secondary', 'line-color')
+    if secondary_color:
+        colors['road_secondary'] = secondary_color
+        if verbose:
+            print(f"✓ Secondary: {colors['road_secondary']}")
+    else:
+        # Fallback to primary or major road color
+        colors['road_secondary'] = colors['road_primary']
+    
+    # TERTIARY
+    tertiary_color = find_section_colors(content, r'(?:highway\s+)?tertiary', 'line-color')
+    if tertiary_color:
+        colors['road_tertiary'] = tertiary_color
+        if verbose:
+            print(f"✓ Tertiary: {colors['road_tertiary']}")
+    else:
+        # Fallback to primary color
+        colors['road_tertiary'] = colors['road_primary']
+    
+    # RESIDENTIAL (minor roads)
+    residential_color = find_section_colors(content, r'(?:highway\s+)?residential', 'line-color')
+    if not residential_color:
+        residential_color = find_section_colors(content, r'minor\s+road', 'line-color')
+    if residential_color:
+        colors['road_residential'] = residential_color
+        if verbose:
+            print(f"✓ Residential: {colors['road_residential']}")
+    
+    # DEFAULT (path/footway)
+    default_color = find_section_colors(content, r'(?:highway\s+)?path', 'line-color')
+    if not default_color:
+        default_color = find_section_colors(content, r'(?:highway\s+)?footway', 'line-color')
+    if default_color:
+        colors['road_default'] = default_color
+        if verbose:
+            print(f"✓ Default/Path: {colors['road_default']}")
+    
+    # Set fallback colors for any missing values
+    fallbacks = {
+        'water': '#B5D0D0',
+        'parks': '#C0F6B0',
+        'road_motorway': "#000000",
+        'road_primary': "#000000",
+        'road_secondary': "#000000",
+        'road_tertiary': "#000000",
+        'road_residential':"#000000",
+        'road_default':"#000000",
+    }
+    nr_fallback = 0
+    for key, fallback_value in fallbacks.items():
+        if not colors[key]:
+            colors[key] = fallback_value
+            nr_fallback =nr_fallback+ 1
+            if verbose:
+                print(f"⚠ {key}: using fallback {fallback_value}")
     
     # Text color - try to extract or default to black
     colors['text'] = '#000000'
     
-    # Gradient color - same as background
-    colors['gradient_color'] = colors['bg']
-    
-    return colors
+    return colors, nr_fallback
 
-def create_theme_json(mrules_file, output_file=None, theme_name=None, description=None):
+def create_theme_json(mrules_file, output_file=None, theme_name=None, description=None, verbose=False):
     """
     Convert a Maperitive .mrules file to a JSON theme file.
     
@@ -149,6 +240,7 @@ def create_theme_json(mrules_file, output_file=None, theme_name=None, descriptio
         output_file: Path for the output JSON file (optional)
         theme_name: Name for the theme (optional)
         description: Description for the theme (optional)
+        verbose: Print detailed extraction info
     """
     
     mrules_path = Path(mrules_file)
@@ -157,39 +249,54 @@ def create_theme_json(mrules_file, output_file=None, theme_name=None, descriptio
         raise FileNotFoundError(f"File not found: {mrules_file}")
     
     # Extract colors
-    colors = extract_colors_from_mrules(mrules_path)
+    colors, nr_fallback = extract_colors_from_mrules(mrules_path, verbose=verbose)
+    
+    # Extract theme name from filename or use provided
+    if not theme_name:
+        # Try to extract theme name from comments
+        with open(mrules_path, 'r', encoding='utf-8') as f:
+            first_lines = ''.join(f.readlines()[:20])
+            
+        # Look for descriptive comments
+        if 'amsterdam' in first_lines.lower():
+            theme_name = "Amsterdam Classic"
+        elif 'google' in first_lines.lower():
+            theme_name = "Google Maps Style"
+        elif 'mapnik' in first_lines.lower():
+            theme_name = "OSM Mapnik"
+        else:
+            theme_name = mrules_path.stem.replace('_', ' ').title()
     
     # Create theme object
     theme = {
-        "name": theme_name or mrules_path.stem.replace('_', ' ').title(),
+        "name": theme_name,
         "description": description or f"Theme converted from {mrules_path.name}",
         **colors
     }
-    
-    # Determine output file
-    if not output_file:
-        output_file = mrules_path.parent / f"{mrules_path.stem}.json"
-    
-    # Write JSON
-    with open(output_file, 'w', encoding='utf-8') as f:
-        json.dump(theme, f, indent=2)
-    
-    print(f"✅ Created theme: {output_file}")
-    print(f"📋 Theme name: {theme['name']}")
-    print(f"\nColors extracted:")
-    for key, value in colors.items():
-        if key not in ['name', 'description']:
-            print(f"  {key:20s}: {value}")
-    
+    if nr_fallback <3:
+        print(f"\n🎉 Successfully extracted colors from {mrules_path.name} with {nr_fallback} fallbacks.")
+        # Determine output file
+        if not output_file:
+            #output_file = mrules_path.parent / f"{mrules_path.stem}_{nr_fallback}_fallbacks.json"
+            output_file = mrules_path.parent / f"{mrules_path.stem}.json"
+        
+        # Write JSON
+        with open(output_file, 'w', encoding='utf-8') as f:
+            json.dump(theme, f, indent=2)
+        
+        print(f"\n✅ Created theme: {output_file}")
+        print(f"📋 Theme name: {theme['name']}")
+        
+        if not verbose:
+            print(f"\n💡 Use --verbose flag to see detailed color extraction")
+    else:
+        print(f"\n❌  Unsuccessfully extracted colors from {mrules_path.name} with {nr_fallback} fallbacks.")
+        
     return theme
 
-def batch_convert_mrules(input_dir, output_dir=None):
+def batch_convert_mrules(input_dir, output_dir=None, verbose=False):
     """
     Convert all .mrules files in a directory to JSON themes.
-    
-    Args:
-        input_dir: Directory containing .mrules files
-        output_dir: Directory for output JSON files (optional, defaults to input_dir)
     """
     input_path = Path(input_dir)
     output_path = Path(output_dir) if output_dir else input_path
@@ -210,29 +317,37 @@ def batch_convert_mrules(input_dir, output_dir=None):
     for mrules_file in mrules_files:
         output_file = output_path / f"{mrules_file.stem}.json"
         try:
-            create_theme_json(mrules_file, output_file)
+            create_theme_json(mrules_file, output_file, verbose=verbose)
             print()
         except Exception as e:
             print(f"❌ Error converting {mrules_file.name}: {e}\n")
 
 # Example usage
 if __name__ == "__main__":
-    import sys
-    
     print("=" * 60)
     print("Maperitive Rules to JSON Theme Converter")
     print("=" * 60)
     print()
     
+    # Parse command line arguments
+    verbose = '--verbose' in sys.argv or '-v' in sys.argv
+    
+    # Remove verbose flag from args
+    args = [arg for arg in sys.argv[1:] if arg not in ['--verbose', '-v']]
+    
     # Check command line arguments
-    if len(sys.argv) < 2:
+    if len(args) < 1:
         print("Usage:")
-        print("  python mrules_to_json.py <file.mrules>")
-        print("  python mrules_to_json.py <file.mrules> <output.json>")
-        print("  python mrules_to_json.py --batch <directory>")
+        print("  python mrules_to_json.py <file.mrules> [options]")
+        print("  python mrules_to_json.py <file.mrules> <output.json> [options]")
+        print("  python mrules_to_json.py --batch <directory> [options]")
+        print()
+        print("Options:")
+        print("  --verbose, -v    Show detailed color extraction")
         print()
         print("Examples:")
         print("  python mrules_to_json.py amsterdam.mrules")
+        print("  python mrules_to_json.py amsterdam.mrules --verbose")
         print("  python mrules_to_json.py amsterdam.mrules themes/amsterdam.json")
         print("  python mrules_to_json.py --batch maperitive_rules/")
         print()
@@ -246,8 +361,10 @@ if __name__ == "__main__":
             print()
             response = input("Convert all? (y/n): ").strip().lower()
             if response == 'y':
+                verbose_choice = input("Use verbose mode? (y/n): ").strip().lower()
+                verbose = verbose_choice == 'y'
                 for mrules_file in mrules_files:
-                    create_theme_json(mrules_file)
+                    create_theme_json(mrules_file, verbose=verbose)
                     print()
         else:
             print("No .mrules files found in current directory.")
@@ -255,17 +372,17 @@ if __name__ == "__main__":
         sys.exit(0)
     
     # Batch mode
-    if sys.argv[1] == '--batch':
-        if len(sys.argv) < 3:
+    if args[0] == '--batch':
+        if len(args) < 2:
             print("❌ Error: Please specify a directory")
             print("Usage: python mrules_to_json.py --batch <directory>")
             sys.exit(1)
         
-        batch_convert_mrules(sys.argv[2])
+        batch_convert_mrules(args[1], verbose=verbose)
     
     # Single file mode
     else:
-        input_file = sys.argv[1]
-        output_file = sys.argv[2] if len(sys.argv) > 2 else None
+        input_file = args[0]
+        output_file = args[1] if len(args) > 1 else None
         
-        create_theme_json(input_file, output_file)
+        create_theme_json(input_file, output_file, verbose=verbose)
