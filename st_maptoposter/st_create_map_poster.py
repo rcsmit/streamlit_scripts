@@ -10,7 +10,7 @@ from datetime import datetime
 import streamlit as st
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
-from show_posters import show_posters()
+from show_posters import show_posters
 # Get the directory where this script is located
 SCRIPT_DIR = Path(__file__).parent.absolute()
 THEMES_DIR = SCRIPT_DIR / "themes"
@@ -561,6 +561,6 @@ def main():
         main()
     with tab2:
         show_posters()
-        
+
 if __name__ == "__main__":
     main_()
