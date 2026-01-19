@@ -162,11 +162,11 @@ def load_theme(theme_name="feature_based"):
         st.error(f"Error loading theme: {e}")
         return None
 
-def generate_output_filename(city, theme_name):
+def generate_output_filename(city, theme_name, file_format="png"):
     """Generate unique output filename."""
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     city_slug = city.lower().replace(' ', '_').replace(',', '')
-    filename = f"{city_slug}_{theme_name}_{timestamp}.png"
+    filename = f"{city_slug}_{theme_name}_{timestamp}.{file_format}"
     return POSTERS_DIR / filename
 
 def create_gradient_fade(ax, color, location='bottom', zorder=10):
