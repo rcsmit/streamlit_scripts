@@ -555,12 +555,38 @@ def main_():
             for idx, city in enumerate(sorted(CITY_COORDINATES.keys())):
                 with cols[idx % 3]:
                     st.text(city)
+
+def generate_examples():
+    city_label, coords, distance,  gradient_fade, timeout = "Stadskanaal, Netherlands",(52.996700, 6.895670), 1000,False,30
+    fonts = load_fonts()
+    available_themes = get_available_themes()
+    
+    if not available_themes:
+        st.error("⚠️ No themes found! Please add theme JSON files to the 'themes' directory.")
+        st.info("Create a file like `themes/noir.json` with color definitions.")
+        st.stop()
+    for theme_name in available_themes:
+        theme = load_theme(theme_name)
+        if theme is None:
+            st.stop()
+        
+        # Generate poster
+        st.write(f"🗺️ Generating map for **{city_label}**...")
+        fig = create_poster(city_label, coords, distance, theme, fonts,  gradient_fade, timeout)
+        
+        if fig is None:
+            st.stop()
+        
+        # Display
+        st.pyplot(fig)
 def main():
-    tab1,tab2=st.tabs(["Start", "Galery"])
+    tab1,tab2,tab3=st.tabs(["Start", "Examples","Galery"])
     with tab1:
         main_()
-    with tab2:
+    with tab3:
         show_posters()
+    with tab2:
+        generate_examples()
 
 if __name__ == "__main__":
     main()
