@@ -137,7 +137,7 @@ def get_available_themes_streamlit_sharing():
     return themes
 
 #@st.cache_data
-def load_theme__streamlit_sharing(theme_name="feature_based"):
+def load_theme_streamlit_sharing(theme_name="feature_based"):
     """Load theme from JSON file in themes directory."""
     theme_file = THEMES_DIR / f"{theme_name}.json"
     
