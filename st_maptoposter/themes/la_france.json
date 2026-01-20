@@ -1,0 +1,16 @@
+
+{
+  "name": "La France ",
+  "description": "Dark dramatic theme with red and blue accents on black - based on Crimson Noir -  inspired by urban night maps - https://x.com/ScottySalvo/status/2013317298749165946/photo/1",
+  "bg": "#0A0A0A",
+  "text": "#FFFFFF",
+  "gradient_color": "#0A0A0A",
+  "water": "#1A1A2E",
+  "parks": "#141414",
+  "road_motorway": "#E74C3C",
+  "road_primary": "#C0392B",
+  "road_secondary": "#3498DB",
+  "road_tertiary": "#5DADE2",
+  "road_residential": "#444444",
+  "road_default": "#2C2C2C"
+}

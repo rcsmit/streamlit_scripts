@@ -1,6 +1,7 @@
 from youtube_transcript_api import YouTubeTranscriptApi
 from urllib import parse
 import streamlit as st
+# import openai
 
 list_languages = ["nl", "en", "de", "fr", "it", "sv", "da", "af", "sq", "am", "ar", "hy", "az", "eu", "be", "bn", "my",
                 "bs", "bg", "ca", "ceb", "zh-Hant", "zh-Hans",
@@ -92,6 +93,19 @@ def main():
 
     if video_id != None:
         transcribe_video(video_id, translate, language_from, translate_to)
+
+    # summary = summarize_video(video_id)
+    # st.write(summary)
+
+def summarize_video(video_id):
+    transcript = YouTubeTranscriptApi.get_transcript(video_id)
+    text = "\n".join([t['text'] for t in transcript])
+    resp = openai.ChatCompletion.create(
+        model="gpt-4o-mini",
+        messages=[{"role":"user", "content": f"Summarize:\n{text}"}]
+    )
+    return resp.choices[0].message.content
+
 
 if __name__ == "__main__":
     main()
