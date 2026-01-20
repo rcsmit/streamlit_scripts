@@ -1,0 +1,15 @@
+{
+  "name": "Terracotta Sage",
+  "description": "Warm earth tones with sage green water - inspired by vintage Vietnamese maps and classic cartography",
+  "bg": "#F5EFE6",
+  "text": "#2C2C2C",
+  "gradient_color": "#F5EFE6",
+  "water": "#7FA99B",
+  "parks": "#C8A882",
+  "road_motorway": "#D17A5C",
+  "road_primary": "#C98E6F",
+  "road_secondary": "#5C8A7D",
+  "road_tertiary": "#A89F91",
+  "road_residential": "#D4C4B0",
+  "road_default": "#E0D5C7"
+}

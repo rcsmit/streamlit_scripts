@@ -1,0 +1,15 @@
+{
+  "name": "Acroyoga Rainbow",
+  "description": "Soft, welcoming pastel gradient inspired by inclusive community values - purple to peach to mint",
+  "bg": "#F5F0E8",
+  "text": "#2C2C2C",
+  "gradient_color": "#F5F0E8",
+  "water": "#87C5D6",
+  "parks": "#A8D5BA",
+  "road_motorway": "#B895C4",
+  "road_primary": "#D4A5BD",
+  "road_secondary": "#E8B89A",
+  "road_tertiary": "#F2C99B",
+  "road_residential": "#C9E4CA",
+  "road_default": "#E5DDD3"
+}
