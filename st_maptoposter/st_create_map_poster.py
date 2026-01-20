@@ -119,7 +119,7 @@ def load_fonts():
     
     return {k: str(v) for k, v in fonts.items()}
 
-@st.cache_data
+#@st.cache_data
 def get_available_themes():
     """Scans the themes directory and returns a list of available theme names."""
     if not THEMES_DIR.exists():
