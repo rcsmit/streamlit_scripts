@@ -11,6 +11,10 @@ import streamlit as st
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 from show_posters import show_posters
+from create_map_poster import load_fonts, get_available_themes, load_theme, create_gradient_fade, get_edge_colors_by_type, get_edge_widths_by_type, create_poster
+
+# generate_outputfilename has extra parameter (filetype)
+
 # Get the directory where this script is located
 SCRIPT_DIR = Path(__file__).parent.absolute()
 THEMES_DIR = SCRIPT_DIR / "themes"
@@ -100,7 +104,7 @@ def fetch_with_timeout(fetch_func, timeout_seconds, *args, **kwargs):
         return None
 
 @st.cache_resource
-def load_fonts():
+def load_fonts_():
     """Load Roboto fonts from the fonts directory."""
     fonts = {
         'bold': FONTS_DIR / 'Roboto-Bold.ttf',
@@ -120,7 +124,7 @@ def load_fonts():
     return {k: str(v) for k, v in fonts.items()}
 
 #@st.cache_data
-def get_available_themes():
+def get_available_themes_():
     """Scans the themes directory and returns a list of available theme names."""
     if not THEMES_DIR.exists():
         return []
@@ -133,7 +137,7 @@ def get_available_themes():
     return themes
 
 #@st.cache_data
-def load_theme(theme_name="feature_based"):
+def load_theme_(theme_name="feature_based"):
     """Load theme from JSON file in themes directory."""
     theme_file = THEMES_DIR / f"{theme_name}.json"
     
@@ -169,7 +173,7 @@ def generate_output_filename(city, theme_name, file_format="png"):
     filename = f"{city_slug}_{theme_name}_{timestamp}.{file_format}"
     return POSTERS_DIR / filename
 
-def create_gradient_fade(ax, color, location='bottom', zorder=10):
+def create_gradient_fade_(ax, color, location='bottom', zorder=10):
     """Creates a fade effect at the top or bottom of the map."""
     vals = np.linspace(0, 1, 256).reshape(-1, 1)
     gradient = np.hstack((vals, vals))
@@ -201,7 +205,7 @@ def create_gradient_fade(ax, color, location='bottom', zorder=10):
     ax.imshow(gradient, extent=[xlim[0], xlim[1], y_bottom, y_top], 
               aspect='auto', cmap=custom_cmap, zorder=zorder, origin='lower')
 
-def get_edge_colors_by_type(G, theme):
+def get_edge_colors_by_type_(G, theme):
     """Assigns colors to edges based on road type hierarchy."""
     edge_colors = []
     
@@ -228,7 +232,7 @@ def get_edge_colors_by_type(G, theme):
     
     return edge_colors
 
-def get_edge_widths_by_type(G):
+def get_edge_widths_by_type_(G):
     """Assigns line widths to edges based on road type."""
     edge_widths = []
     
@@ -253,7 +257,7 @@ def get_edge_widths_by_type(G):
     
     return edge_widths
 
-def create_poster(city_label, point, dist, theme, fonts, gradient_fade, timeout=DEFAULT_TIMEOUT):
+def create_poster_(city_label, point, dist, theme, fonts, gradient_fade, timeout=DEFAULT_TIMEOUT):
     """Generate the map poster."""
     
     # Progress tracking
