@@ -1,0 +1,15 @@
+{
+  "name": "ALL COLORS",
+  "description": "Every item has another color, to distinguish all map elements clearly.",
+  "bg": "#FFFFFF",
+  "text": "#000000",
+  "gradient_color": "#FFFFFF",
+  "water": "#0000BB",
+  "parks": "#00BBBB",
+  "road_motorway": "#FFFF00",
+  "road_primary": "#FF0000",
+  "road_secondary": "#00FF00",
+  "road_tertiary": "#0000FF",
+  "road_residential": "#00FFFF",
+  "road_default": "#FF00FF"
+}
