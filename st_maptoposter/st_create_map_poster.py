@@ -11,7 +11,7 @@ import streamlit as st
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 from show_posters import show_posters
-from create_map_poster import load_fonts, get_available_themes, load_theme, create_gradient_fade, get_edge_colors_by_type, get_edge_widths_by_type, create_poster
+from create_map_poster import load_fonts,   create_gradient_fade, get_edge_colors_by_type, get_edge_widths_by_type, create_poster
 
 # generate_outputfilename has extra parameter (filetype)
 
@@ -561,7 +561,7 @@ def main_():
 def generate_examples():
     city_label, coords, distance,  gradient_fade, timeout = "Stadskanaal, Netherlands",(52.996700, 6.895670), 1000,False,30
     fonts = load_fonts()
-    available_themes = get_available_themes()
+    available_themes = get_available_themes_streamlit_sharing()
     
     if not available_themes:
         st.error("⚠️ No themes found! Please add theme JSON files to the 'themes' directory.")
@@ -573,7 +573,7 @@ def generate_examples():
     for i,theme_name in enumerate(available_themes):
        
         with cols[i % number_of_cols]:
-            theme = load_theme(theme_name)
+            theme = load_theme_streamlit_sharing(theme_name)
             if theme is None:
                 st.stop()
             
