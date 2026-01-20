@@ -11,10 +11,6 @@ import streamlit as st
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 from show_posters import show_posters
-from create_map_poster import load_fonts,   create_gradient_fade, get_edge_colors_by_type, get_edge_widths_by_type, create_poster
-
-# generate_outputfilename has extra parameter (filetype)
-
 # Get the directory where this script is located
 SCRIPT_DIR = Path(__file__).parent.absolute()
 THEMES_DIR = SCRIPT_DIR / "themes"
@@ -104,7 +100,7 @@ def fetch_with_timeout(fetch_func, timeout_seconds, *args, **kwargs):
         return None
 
 @st.cache_resource
-def load_fonts_():
+def load_fonts():
     """Load Roboto fonts from the fonts directory."""
     fonts = {
         'bold': FONTS_DIR / 'Roboto-Bold.ttf',
@@ -124,7 +120,7 @@ def load_fonts_():
     return {k: str(v) for k, v in fonts.items()}
 
 #@st.cache_data
-def get_available_themes_streamlit_sharing():
+def get_available_themes():
     """Scans the themes directory and returns a list of available theme names."""
     if not THEMES_DIR.exists():
         return []
@@ -137,7 +133,7 @@ def get_available_themes_streamlit_sharing():
     return themes
 
 #@st.cache_data
-def load_theme_streamlit_sharing(theme_name="feature_based"):
+def load_theme(theme_name="feature_based"):
     """Load theme from JSON file in themes directory."""
     theme_file = THEMES_DIR / f"{theme_name}.json"
     
@@ -173,7 +169,7 @@ def generate_output_filename(city, theme_name, file_format="png"):
     filename = f"{city_slug}_{theme_name}_{timestamp}.{file_format}"
     return POSTERS_DIR / filename
 
-def create_gradient_fade_(ax, color, location='bottom', zorder=10):
+def create_gradient_fade(ax, color, location='bottom', zorder=10):
     """Creates a fade effect at the top or bottom of the map."""
     vals = np.linspace(0, 1, 256).reshape(-1, 1)
     gradient = np.hstack((vals, vals))
@@ -205,7 +201,7 @@ def create_gradient_fade_(ax, color, location='bottom', zorder=10):
     ax.imshow(gradient, extent=[xlim[0], xlim[1], y_bottom, y_top], 
               aspect='auto', cmap=custom_cmap, zorder=zorder, origin='lower')
 
-def get_edge_colors_by_type_(G, theme):
+def get_edge_colors_by_type(G, theme):
     """Assigns colors to edges based on road type hierarchy."""
     edge_colors = []
     
@@ -232,7 +228,7 @@ def get_edge_colors_by_type_(G, theme):
     
     return edge_colors
 
-def get_edge_widths_by_type_(G):
+def get_edge_widths_by_type(G):
     """Assigns line widths to edges based on road type."""
     edge_widths = []
     
@@ -257,7 +253,7 @@ def get_edge_widths_by_type_(G):
     
     return edge_widths
 
-def create_poster_(city_label, point, dist, theme, fonts, gradient_fade, timeout=DEFAULT_TIMEOUT):
+def create_poster(city_label, point, dist, theme, fonts, gradient_fade, timeout=DEFAULT_TIMEOUT):
     """Generate the map poster."""
     
     # Progress tracking
@@ -398,7 +394,7 @@ def main_():
     
     # Load resources
     fonts = load_fonts()
-    available_themes = get_available_themes_streamlit_sharing()
+    available_themes = get_available_themes()
     
     if not available_themes:
         st.error("⚠️ No themes found! Please add theme JSON files to the 'themes' directory.")
@@ -458,7 +454,7 @@ def main_():
         )
         output_format = st.radio(
             "Output Format",
-            options=["png", "svg"], #, "Both"], Both gives a problem because the download buttons dissapear when you download one of them
+            options=["PNG", "SVG"], #, "Both"], Both gives a problem because the download buttons dissapear when you download one of them
             index=0,
             help="Choose file format for your poster"
         )
@@ -479,22 +475,18 @@ def main_():
         coords = (custom_lat, custom_lon)
         city_label = f"{custom_city}, Custom"
         st.info(f"📍 **Custom Location** - Coordinates: {custom_lat:.4f}°, {custom_lon:.4f}°")
-    parts = city_label.split(',')
-    city = parts[0].strip()
-    country = parts[1].strip() if len(parts) > 1 else ""
-    output_file = generate_output_filename(city, theme_name, output_format)
+    
     # Main content area
     if generate_btn:
         try:
             # Load theme
-            theme = load_theme_streamlit_sharing(theme_name)
+            theme = load_theme(theme_name)
             if theme is None:
                 st.stop()
             
             # Generate poster
             st.write(f"🗺️ Generating map for **{city_label}**...")
-            #fig = create_poster(city_label, coords, distance, theme, fonts,  gradient_fade, timeout)
-            fig = create_poster(city, country, coords, distance,output_file)
+            fig = create_poster(city_label, coords, distance, theme, fonts,  gradient_fade, timeout)
             
             if fig is None:
                 st.stop()
@@ -565,7 +557,7 @@ def main_():
 def generate_examples():
     city_label, coords, distance,  gradient_fade, timeout = "Stadskanaal, Netherlands",(52.996700, 6.895670), 1000,False,30
     fonts = load_fonts()
-    available_themes = get_available_themes_streamlit_sharing()
+    available_themes = get_available_themes()
     
     if not available_themes:
         st.error("⚠️ No themes found! Please add theme JSON files to the 'themes' directory.")
@@ -577,7 +569,7 @@ def generate_examples():
     for i,theme_name in enumerate(available_themes):
        
         with cols[i % number_of_cols]:
-            theme = load_theme_streamlit_sharing(theme_name)
+            theme = load_theme(theme_name)
             if theme is None:
                 st.stop()
             
@@ -591,7 +583,7 @@ def generate_examples():
             # Display
             st.pyplot(fig)
 def main():
-    tab1,tab2,tab3=st.tabs(["Start_x", "Examples","Galery"])
+    tab1,tab2,tab3=st.tabs(["Start", "Examples","Galery"])
     with tab1:
         main_()
    
