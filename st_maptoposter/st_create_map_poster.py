@@ -124,7 +124,7 @@ def load_fonts_():
     return {k: str(v) for k, v in fonts.items()}
 
 #@st.cache_data
-def get_available_themes_():
+def get_available_themes_streamlit_sharing():
     """Scans the themes directory and returns a list of available theme names."""
     if not THEMES_DIR.exists():
         return []
@@ -137,7 +137,7 @@ def get_available_themes_():
     return themes
 
 #@st.cache_data
-def load_theme_(theme_name="feature_based"):
+def load_theme__streamlit_sharing(theme_name="feature_based"):
     """Load theme from JSON file in themes directory."""
     theme_file = THEMES_DIR / f"{theme_name}.json"
     
@@ -398,7 +398,7 @@ def main_():
     
     # Load resources
     fonts = load_fonts()
-    available_themes = get_available_themes()
+    available_themes = get_available_themes_streamlit_sharing()
     
     if not available_themes:
         st.error("⚠️ No themes found! Please add theme JSON files to the 'themes' directory.")
@@ -484,7 +484,7 @@ def main_():
     if generate_btn:
         try:
             # Load theme
-            theme = load_theme(theme_name)
+            theme = load_theme_streamlit_sharing(theme_name)
             if theme is None:
                 st.stop()
             
