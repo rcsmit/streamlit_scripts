@@ -1,0 +1,15 @@
+ {
+    "name": "Nordic Frost",
+    "description": "Cool minimalist design with icy blues and grays inspired by Scandinavian maps",
+    "bg": "#F5F7FA",
+    "text": "#2C3E50",
+    "gradient_color": "#F5F7FA",
+    "water": "#BDD5EA",
+    "parks": "#D4E4ED",
+    "road_motorway": "#34495E",
+    "road_primary": "#4A6B84",
+    "road_secondary": "#607D8B",
+    "road_tertiary": "#7895A8",
+    "road_residential": "#95AAB6",
+    "road_default": "#A8BCC7"
+  }

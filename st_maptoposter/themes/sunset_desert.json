@@ -1,0 +1,15 @@
+{
+    "name": "Sunset Desert",
+    "description": "Warm terracotta and golden hues reminiscent of desert maps at dusk",
+    "bg": "#FFF8F0",
+    "text": "#3D2817",
+    "gradient_color": "#FFF8F0",
+    "water": "#C4D7E0",
+    "parks": "#E8D4B8",
+    "road_motorway": "#D94E1F",
+    "road_primary": "#E67E50",
+    "road_secondary": "#F2A06A",
+    "road_tertiary": "#F5B882",
+    "road_residential": "#F8D0A8",
+    "road_default": "#ECC49B"
+  }

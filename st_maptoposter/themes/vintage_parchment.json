@@ -1,0 +1,15 @@
+ {
+    "name": "Vintage Parchment",
+    "description": "Classic antique map aesthetic with sepia tones and aged paper texture",
+    "bg": "#F4ECD8",
+    "text": "#3E2723",
+    "gradient_color": "#F4ECD8",
+    "water": "#A8C5D1",
+    "parks": "#C8D5B9",
+    "road_motorway": "#8B4513",
+    "road_primary": "#A0522D",
+    "road_secondary": "#B8704F",
+    "road_tertiary": "#CD8B6C",
+    "road_residential": "#D4A57A",
+    "road_default": "#C4996B"
+  }

@@ -1,0 +1,15 @@
+{
+    "name": "Midnight Ocean",
+    "description": "Deep blues and teals inspired by night-time cartography with subtle oceanic tones",
+    "bg": "#0A1628",
+    "text": "#E8F4F8",
+    "gradient_color": "#0A1628",
+    "water": "#1A3A52",
+    "parks": "#1C3334",
+    "road_motorway": "#4A90E2",
+    "road_primary": "#5BA3D0",
+    "road_secondary": "#7AB8D9",
+    "road_tertiary": "#92C7E1",
+    "road_residential": "#B8D4E8",
+    "road_default": "#A5C9DD"
+  }

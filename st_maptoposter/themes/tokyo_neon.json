@@ -1,0 +1,15 @@
+{
+    "name": "Tokyo Neon",
+    "description": "High-contrast cyberpunk palette with electric pinks and purples on dark background",
+    "bg": "#1A1A2E",
+    "text": "#EAEAEA",
+    "gradient_color": "#1A1A2E",
+    "water": "#162447",
+    "parks": "#1F3A3A",
+    "road_motorway": "#FF007F",
+    "road_primary": "#E94B9C",
+    "road_secondary": "#C770B9",
+    "road_tertiary": "#9D84D6",
+    "road_residential": "#6B9AE3",
+    "road_default": "#5FADDB"
+  }
