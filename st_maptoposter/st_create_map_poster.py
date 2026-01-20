@@ -458,7 +458,7 @@ def main_():
         )
         output_format = st.radio(
             "Output Format",
-            options=["PNG", "SVG"], #, "Both"], Both gives a problem because the download buttons dissapear when you download one of them
+            options=["png", "svg"], #, "Both"], Both gives a problem because the download buttons dissapear when you download one of them
             index=0,
             help="Choose file format for your poster"
         )
@@ -479,7 +479,10 @@ def main_():
         coords = (custom_lat, custom_lon)
         city_label = f"{custom_city}, Custom"
         st.info(f"📍 **Custom Location** - Coordinates: {custom_lat:.4f}°, {custom_lon:.4f}°")
-    
+    parts = city_label.split(',')
+    city = parts[0].strip()
+    country = parts[1].strip() if len(parts) > 1 else ""
+    output_file = generate_output_filename(city, theme_name, output_format)
     # Main content area
     if generate_btn:
         try:
@@ -490,7 +493,8 @@ def main_():
             
             # Generate poster
             st.write(f"🗺️ Generating map for **{city_label}**...")
-            fig = create_poster(city_label, coords, distance, theme, fonts,  gradient_fade, timeout)
+            #fig = create_poster(city_label, coords, distance, theme, fonts,  gradient_fade, timeout)
+            fig = create_poster(city, country, coords, distance,output_file)
             
             if fig is None:
                 st.stop()
