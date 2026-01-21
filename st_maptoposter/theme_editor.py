@@ -189,8 +189,7 @@ def theme_editor():
     
     # Save button
     st.divider()
-    #col_save1, col_save2, col_save3 = st.columns([2, 1, 1])
-    col_save1, col_save2 = st.columns([ 1, 1])
+    col_save1, col_save2, col_save3 = st.columns([2, 1, 1])
     
     with col_save1:
         save_name = st.text_input("Save as (filename)", value=theme_name.lower().replace(" ", "_")+"_")
@@ -203,7 +202,16 @@ def theme_editor():
                     st.balloons()
             else:
                 st.error("Please provide a filename")
-    
+    with col_save3:
+        # Download button
+        json_str = json.dumps(theme_data, indent=2)
+        st.download_button(
+            label="⬇️ Download",
+            data=json_str,
+            file_name=f"{save_name}.json",
+            mime="application/json",
+            use_container_width=True
+        )
     # with col_save3:
     #     if st.button("🗑️ Delete Theme", use_container_width=True):
     #         if mode == "Edit Existing Theme" and available_themes:
