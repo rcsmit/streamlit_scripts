@@ -11,6 +11,8 @@ import streamlit as st
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 from show_posters import show_posters
+from theme_editor import theme_editor
+
 # Get the directory where this script is located
 SCRIPT_DIR = Path(__file__).parent.absolute()
 THEMES_DIR = SCRIPT_DIR / "themes"
@@ -583,7 +585,7 @@ def generate_examples():
             # Display
             st.pyplot(fig)
 def main():
-    tab1,tab2,tab3=st.tabs(["Start", "Examples","Galery"])
+    tab1,tab2,tab3,tab4=st.tabs(["Start", "Examples","Galery","Theme Editor"])
     with tab1:
         main_()
    
@@ -596,6 +598,8 @@ def main():
         st.header("Galery")
         if st.button("Show Galery"):
             show_posters()
+    with tab4:
+        theme_editor()
 
 if __name__ == "__main__":
     main()
