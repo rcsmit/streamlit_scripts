@@ -77,7 +77,7 @@ def theme_editor():
         st.header("Theme Selection")
         
         available_themes = get_available_themes()
-        
+        st.write(available_themes)
         # Option to create new or edit existing
         mode = st.radio("Mode", ["Edit Existing Theme", "Create New Theme"])
         
