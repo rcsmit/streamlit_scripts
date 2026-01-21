@@ -10,6 +10,50 @@ except:
 THEMES_DIR = Path("themes")
 THEMES_DIR.mkdir(exist_ok=True)
 
+
+#@st.cache_data
+def get_available_themes():
+    """Scans the themes directory and returns a list of available theme names."""
+    if not THEMES_DIR.exists():
+        return []
+    
+    themes = []
+    for file in sorted(THEMES_DIR.glob("*.json")):
+        theme_name = file.stem
+        themes.append(theme_name)
+    
+    return themes
+
+#@st.cache_data
+def load_theme(theme_name="feature_based"):
+    """Load theme from JSON file in themes directory."""
+    theme_file = THEMES_DIR / f"{theme_name}.json"
+    
+    if not theme_file.exists():
+        st.warning(f"⚠️ Theme file not found. Using default theme.")
+        return {
+            "name": "Feature-Based Shading",
+            "bg": "#FFFFFF",
+            "text": "#000000",
+            "gradient_color": "#FFFFFF",
+            "water": "#C0C0C0",
+            "parks": "#F0F0F0",
+            "road_motorway": "#0A0A0A",
+            "road_primary": "#1A1A1A",
+            "road_secondary": "#2A2A2A",
+            "road_tertiary": "#3A3A3A",
+            "road_residential": "#4A4A4A",
+            "road_default": "#3A3A3A"
+        }
+    
+    try:
+        with open(theme_file, 'r') as f:
+            theme = json.load(f)
+            return theme
+    except Exception as e:
+        st.error(f"Error loading theme: {e}")
+        return None
+
 def save_theme(theme_name, theme_data):
     """Save theme to JSON file."""
     theme_file = THEMES_DIR / f"{theme_name}.json"
