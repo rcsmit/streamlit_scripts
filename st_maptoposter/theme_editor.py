@@ -189,7 +189,8 @@ def theme_editor():
     
     # Save button
     st.divider()
-    col_save1, col_save2, col_save3 = st.columns([2, 1, 1])
+    #col_save1, col_save2, col_save3 = st.columns([2, 1, 1])
+    col_save1, col_save2 = st.columns([ 1, 1])
     
     with col_save1:
         save_name = st.text_input("Save as (filename)", value=theme_name.lower().replace(" ", "_")+"_")
@@ -203,14 +204,14 @@ def theme_editor():
             else:
                 st.error("Please provide a filename")
     
-    with col_save3:
-        if st.button("🗑️ Delete Theme", use_container_width=True):
-            if mode == "Edit Existing Theme" and available_themes:
-                theme_file = THEMES_DIR / f"{selected_theme}.json"
-                if theme_file.exists():
-                    theme_file.unlink()
-                    st.success(f"Deleted theme: {selected_theme}")
-                    st.rerun()
+    # with col_save3:
+    #     if st.button("🗑️ Delete Theme", use_container_width=True):
+    #         if mode == "Edit Existing Theme" and available_themes:
+    #             theme_file = THEMES_DIR / f"{selected_theme}.json"
+    #             if theme_file.exists():
+    #                 theme_file.unlink()
+    #                 st.success(f"Deleted theme: {selected_theme}")
+    #                 st.rerun()
 def main():
     theme_editor()
 
