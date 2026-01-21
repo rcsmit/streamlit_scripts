@@ -257,103 +257,6 @@ def get_edge_widths_by_type(G):
     
     return edge_widths
 
-def get_crop_limits(G: MultiDiGraph, fig: Figure) -> tuple[tuple[float, float], tuple[float, float]]:
-    """
-    Determine cropping limits to maintain aspect ratio of the figure.
-
-    This function calculates the extents of the graph's nodes and adjusts
-    the x and y limits to match the aspect ratio of the provided figure.
-    
-    :param G: The graph to be plotted
-    :type G: MultiDiGraph
-    :param fig: The matplotlib figure object
-    :type fig: Figure
-    :return: Tuple of x and y limits for cropping
-    :rtype: tuple[tuple[float, float], tuple[float, float]]
-    """
-    # Compute node extents in projected coordinates
-    xs = [data['x'] for _, data in G.nodes(data=True)]
-    ys = [data['y'] for _, data in G.nodes(data=True)]
-    minx, maxx = min(xs), max(xs)
-    miny, maxy = min(ys), max(ys)
-    x_range = maxx - minx
-    y_range = maxy - miny
-
-    fig_width, fig_height = fig.get_size_inches()
-    desired_aspect = fig_width / fig_height
-    current_aspect = x_range / y_range
-
-    center_x = (minx + maxx) / 2
-    center_y = (miny + maxy) / 2
-
-    if current_aspect > desired_aspect:
-        # Too wide, need to crop horizontally
-        desired_x_range = y_range * desired_aspect
-        new_minx = center_x - desired_x_range / 2
-        new_maxx = center_x + desired_x_range / 2
-        new_miny, new_maxy = miny, maxy
-        crop_xlim = (new_minx, new_maxx)
-        crop_ylim = (new_miny, new_maxy)
-    elif current_aspect < desired_aspect:
-        # Too tall, need to crop vertically
-        desired_y_range = x_range / desired_aspect
-        new_miny = center_y - desired_y_range / 2
-        new_maxy = center_y + desired_y_range / 2
-        new_minx, new_maxx = minx, maxx
-        crop_xlim = (new_minx, new_maxx)
-        crop_ylim = (new_miny, new_maxy)
-    else:
-        # Otherwise, keep original extents (no horizontal crop)
-        crop_xlim = (minx, maxx)
-        crop_ylim = (miny, maxy)
-    
-    return crop_xlim, crop_ylim
-
-def fetch_graph(point, dist) -> MultiDiGraph | None:
-    lat, lon = point
-    graph = f"graph_{lat}_{lon}_{dist}"
-    cached = cache_get(graph)
-    if cached is not None:
-        print("✓ Using cached street network")
-        return cast(MultiDiGraph, cached)
-
-    try:
-        G = ox.graph_from_point(point, dist=dist, dist_type='bbox', network_type='all')
-        # Rate limit between requests
-        time.sleep(0.5)
-        try:
-            cache_set(graph, G)
-        except CacheError as e:
-            print(e)
-        return G
-    except Exception as e:
-        print(f"OSMnx error while fetching graph: {e}")
-        return None
-
-def fetch_features(point, dist, tags, name) -> GeoDataFrame | None:
-    lat, lon = point
-    tag_str = "_".join(tags.keys())
-    features = f"{name}_{lat}_{lon}_{dist}_{tag_str}"
-    cached = cache_get(features)
-    if cached is not None:
-        print(f"✓ Using cached {name}")
-        return cast(GeoDataFrame, cached)
-
-    try:
-        data = ox.features_from_point(point, tags=tags, dist=dist)
-        # Rate limit between requests
-        time.sleep(0.3)
-        try:
-            cache_set(features, data)
-        except CacheError as e:
-            print(e)
-        return data
-    except Exception as e:
-        print(f"OSMnx error while fetching features: {e}")
-        return None
-
-
-
 def create_poster(city_label, point, dist, theme, fonts, gradient_fade, timeout=DEFAULT_TIMEOUT):
     """Generate the map poster."""
     
@@ -366,7 +269,7 @@ def create_poster(city_label, point, dist, theme, fonts, gradient_fade, timeout=
         status_text.text("📡 Downloading street network...")
         progress_bar.progress(10)
         
-        G_ = fetch_with_timeout(
+        G = fetch_with_timeout(
             ox.graph_from_point,
             timeout,
             point,
@@ -375,7 +278,7 @@ def create_poster(city_label, point, dist, theme, fonts, gradient_fade, timeout=
             network_type='all'
         )
         
-        if G_ is None:
+        if G is None:
             st.error("❌ Failed to download street network. Try reducing the distance or choosing another city.")
             progress_bar.empty()
             status_text.empty()
@@ -407,15 +310,11 @@ def create_poster(city_label, point, dist, theme, fonts, gradient_fade, timeout=
         
         status_text.text("🎨 Rendering map...")
         
-            # Determine cropping limits to maintain the poster aspect ratio
-        crop_xlim, crop_ylim = get_crop_limits(G, fig)
         # Setup Plot
         fig, ax = plt.subplots(figsize=(12, 16), facecolor=theme['bg'])
         ax.set_facecolor(theme['bg'])
         ax.set_position([0, 0, 1, 1])
         
-         # Project graph to a metric CRS so distances and aspect are linear (meters)
-        G = ox.project_graph(G_)
         # Plot Layers
         if water is not None and not water.empty:
             water.plot(ax=ax, facecolor=theme['water'], edgecolor='none', zorder=1)
@@ -433,25 +332,22 @@ def create_poster(city_label, point, dist, theme, fonts, gradient_fade, timeout=
             edge_linewidth=edge_widths,
             show=False, close=False
         )
-        ax.set_aspect('equal', adjustable='box')
-        ax.set_xlim(crop_xlim)
-        ax.set_ylim(crop_ylim)
         if gradient_fade:
             # Gradients
             create_gradient_fade(ax, theme['gradient_color'], location='bottom', zorder=10)
             create_gradient_fade(ax, theme['gradient_color'], location='top', zorder=10)
         
-        # # Typography
-        # if fonts:
-        #     font_main = FontProperties(fname=fonts['bold'], size=60)
-        #     font_sub = FontProperties(fname=fonts['light'], size=22)
-        #     font_coords = FontProperties(fname=fonts['regular'], size=14)
-        #     font_attr = FontProperties(fname=fonts['light'], size=8)
-        # else:
-        #     font_main = FontProperties(family='sans-serif', weight='bold', size=60)
-        #     font_sub = FontProperties(family='sans-serif', weight='300', size=22)
-        #     font_coords = FontProperties(family='sans-serif', size=14)
-        #     font_attr = FontProperties(family='sans-serif', size=8)
+        # Typography
+        if fonts:
+            font_main = FontProperties(fname=fonts['bold'], size=60)
+            font_sub = FontProperties(fname=fonts['light'], size=22)
+            font_coords = FontProperties(fname=fonts['regular'], size=14)
+            font_attr = FontProperties(fname=fonts['light'], size=8)
+        else:
+            font_main = FontProperties(family='sans-serif', weight='bold', size=60)
+            font_sub = FontProperties(family='sans-serif', weight='300', size=22)
+            font_coords = FontProperties(family='sans-serif', size=14)
+            font_attr = FontProperties(family='sans-serif', size=8)
         
         # Parse city and country from label
         parts = city_label.split(',')
@@ -459,31 +355,13 @@ def create_poster(city_label, point, dist, theme, fonts, gradient_fade, timeout=
         country = parts[1].strip() if len(parts) > 1 else ""
         
         spaced_city = "  ".join(list(city.upper()))
-         # Dynamically adjust font size based on city name length to prevent truncation
-        base_font_size = 60
-        city_char_count = len(city)
-        if city_char_count > 10:
-            # Scale down font size for longer names
-            scale_factor = 10 / city_char_count
-            adjusted_font_size = max(base_font_size * scale_factor, 24)  # Minimum size of 24
-        else:
-            adjusted_font_size = base_font_size
-
-        if fonts:
-            font_main_adjusted = FontProperties(fname=fonts['bold'], size=adjusted_font_size)
-        else:
-            font_main_adjusted = FontProperties(family='monospace', weight='bold', size=adjusted_font_size)
-
         
-        # --- BOTTOM TEXT ---
+        # Bottom text
         ax.text(0.5, 0.14, spaced_city, transform=ax.transAxes,
-                color=theme['text'], ha='center', fontproperties=font_main_adjusted, zorder=11)
+                color=theme['text'], ha='center', fontproperties=font_main, zorder=11)
         
-     
         ax.text(0.5, 0.10, country.upper(), transform=ax.transAxes,
                 color=theme['text'], ha='center', fontproperties=font_sub, zorder=11)
-        
-        
         
         lat, lon = point
         coords = f"{lat:.4f}° N / {abs(lon):.4f}° E" if lat >= 0 else f"{abs(lat):.4f}° S / {abs(lon):.4f}° E"
