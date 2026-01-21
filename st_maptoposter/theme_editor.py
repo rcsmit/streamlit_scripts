@@ -197,11 +197,32 @@ def theme_editor():
     with col_save2:
         if st.button("💾 Save Theme", type="primary", use_container_width=True):
             if save_name:
-                if save_theme(save_name, theme_data):
-                    st.success(f"✅ Theme saved as '{save_name}.json'")
-                    st.balloons()
+                theme_file = THEMES_DIR / f"{save_name}.json"
+                if theme_file.exists():
+                    st.session_state['confirm_overwrite'] = True
+                else:
+                    if save_theme(save_name, theme_data):
+                        st.success(f"✅ Theme saved as '{save_name}.json'")
+                        st.balloons()
             else:
                 st.error("Please provide a filename")
+        
+        # Show confirmation dialog if file exists
+        if st.session_state.get('confirm_overwrite', False):
+            st.warning(f"⚠️ Theme '{save_name}' already exists!")
+            col_confirm1, col_confirm2 = st.columns(2)
+            with col_confirm1:
+                if st.button("✅ Overwrite", key="btn_overwrite", use_container_width=True):
+                    if save_theme(save_name, theme_data):
+                        st.success(f"✅ Theme overwritten: '{save_name}.json'")
+                        st.balloons()
+                        st.session_state['confirm_overwrite'] = False
+                        st.rerun()
+            with col_confirm2:
+                if st.button("❌ Cancel", key="btn_cancel", use_container_width=True):
+                    st.session_state['confirm_overwrite'] = False
+                    st.rerun()
+
     with col_save3:
         # Download button
         json_str = json.dumps(theme_data, indent=2)
