@@ -105,15 +105,20 @@ def theme_editor():
             }
     
     # Main editing area
+    
+    
+    st.header("Theme Settings")
+    
+    # Basic info
     col1, col2 = st.columns([1, 1])
     
     with col1:
-        st.header("Theme Settings")
-        
-        # Basic info
         theme_name = st.text_input("Theme Name", value=current_theme.get("name", ""))
+    with col2:
         theme_description = st.text_area("Description", value=current_theme.get("description", ""))
-        
+    col1, col2 = st.columns([1, 1])
+    
+    with col1:   
         st.subheader("Colors")
         
         # Background and text colors
