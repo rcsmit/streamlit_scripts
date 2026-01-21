@@ -26,6 +26,8 @@ POSTERS_DIR.mkdir(exist_ok=True)
 
 # Pre-defined city coordinates (no API needed!)
 CITY_COORDINATES = {
+    "Da Nang, Vietnam": (16.06778, 108.22083),
+    "Hoi An, Vietnam": (15.88006, 108.33804),
     "Stadskanaal, Netherlands":(52.996700, 6.895670),
     "Amsterdam, Netherlands": (52.3676, 4.9041),
     "New York, USA": (40.7128, -74.0060),
