@@ -1,15 +1,15 @@
 {
   "name": "ALL COLORS",
-  "description": "Every item has another color, to distinguish all map elements clearly.",
+  "description": "Every item has another color, to distinguish all map elements clearly. Water-darkblue|parks-darkgreen||Roads: motorway-yellow|pimary-red|sec.-green|tert.-blue|residential_cyam|default-magenta.",
   "bg": "#FFFFFF",
   "text": "#000000",
   "gradient_color": "#FFFFFF",
-  "water": "#0000BB",
-  "parks": "#00BBBB",
-  "road_motorway": "#FFFF00",
-  "road_primary": "#FF0000",
-  "road_secondary": "#00FF00",
-  "road_tertiary": "#0000FF",
-  "road_residential": "#00FFFF",
-  "road_default": "#FF00FF"
+  "water": "#02025A", //dark blue
+  "parks": "#2E7B1B", //dark green
+  "road_motorway": "#FFFF00", //yellow
+  "road_primary": "#FF0000", //red
+  "road_secondary": "#00FF00", //green
+  "road_tertiary": "#0000FF", //blue
+  "road_residential": "#00FFFF", //cyan
+  "road_default": "#FF00FF" // magenta
 }
