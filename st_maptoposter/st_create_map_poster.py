@@ -586,6 +586,7 @@ def generate_examples():
             st.pyplot(fig)
 def main():
     tab1,tab2,tab3,tab4=st.tabs(["Start", "Examples","Galery","Theme Editor"])
+    
     with tab1:
         main_()
    
