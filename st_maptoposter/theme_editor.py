@@ -192,7 +192,7 @@ def theme_editor():
     col_save1, col_save2, col_save3 = st.columns([2, 1, 1])
     
     with col_save1:
-        save_name = st.text_input("Save as (filename)", value=theme_name.lower().replace(" ", "_"))
+        save_name = st.text_input("Save as (filename)", value=theme_name.lower().replace(" ", "_")&"_")
     
     with col_save2:
         if st.button("💾 Save Theme", type="primary", use_container_width=True):
