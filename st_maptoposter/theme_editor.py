@@ -1,7 +1,11 @@
 import streamlit as st
 import json
 from pathlib import Path
-from st_create_map_poster import get_available_themes, load_theme
+try:
+    from st_create_map_poster import get_available_themes, load_theme
+except:
+    pass
+
 # Set up themes directory
 THEMES_DIR = Path("themes")
 THEMES_DIR.mkdir(exist_ok=True)
@@ -163,6 +167,6 @@ def theme_editor():
                     st.rerun()
 def main():
     theme_editor()
-    
+
 if __name__ == "__main__":
     main()
