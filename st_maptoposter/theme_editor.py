@@ -146,7 +146,21 @@ def theme_editor():
             default_color = st.color_picker("Default Road", value=current_theme.get("road_default", "#3A3A3A"))
     
     
-        
+    theme_data = {
+        "name": theme_name,
+        "description": theme_description,
+        "bg": bg_color,
+        "text": text_color,
+        "gradient_color": gradient_color,
+        "water": water_color,
+        "parks": parks_color,
+        "road_motorway": motorway_color,
+        "road_primary": primary_color,
+        "road_secondary": secondary_color,
+        "road_tertiary": tertiary_color,
+        "road_residential": residential_color,
+        "road_default": default_color
+    }  
     
     # Save button
     st.divider()
@@ -208,21 +222,7 @@ def theme_editor():
     # col1,col2=st.columns(2)
     # with col1:
     st.subheader("JSON Preview")
-    theme_data = {
-        "name": theme_name,
-        "description": theme_description,
-        "bg": bg_color,
-        "text": text_color,
-        "gradient_color": gradient_color,
-        "water": water_color,
-        "parks": parks_color,
-        "road_motorway": motorway_color,
-        "road_primary": primary_color,
-        "road_secondary": secondary_color,
-        "road_tertiary": tertiary_color,
-        "road_residential": residential_color,
-        "road_default": default_color
-    }
+    
     st.json(theme_data)
 
     # with col2:
