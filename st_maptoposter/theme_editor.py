@@ -164,12 +164,14 @@ def theme_editor():
     
     # Save button
     st.divider()
-    col_save1, col_save2, col_save3 = st.columns([2, 1, 1])
+    col_save1,  col_save3 = st.columns([2, 1])
     
     with col_save1:
         save_name = st.text_input("Save as (filename)", value=theme_name.lower().replace(" ", "_")+"_")
     
-    with col_save2:
+    if 1==2:
+        # not sure if the themes are saved on the github repo or locally only, To be sure
+        # disabled
         if st.button("💾 Save Theme", type="primary", use_container_width=True):
             if save_name:
                 theme_file = THEMES_DIR / f"{save_name}.json"
