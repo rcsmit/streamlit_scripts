@@ -164,7 +164,7 @@ def theme_editor():
             </div>
         </div>
         """
-        st.markdown(preview_html, unsafe_allow_html=True)
+        #st.markdown(preview_html, unsafe_allow_html=True)
         
         # Show JSON preview
         st.subheader("JSON Preview")
