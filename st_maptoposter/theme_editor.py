@@ -7,9 +7,10 @@ except:
     pass
 
 # Set up themes directory
-THEMES_DIR = Path("themes")
-THEMES_DIR.mkdir(exist_ok=True)
 
+SCRIPT_DIR = Path(__file__).parent.absolute()
+THEMES_DIR = SCRIPT_DIR / "themes"
+THEMES_DIR.mkdir(exist_ok=True)
 
 #@st.cache_data
 def get_available_themes():
@@ -73,7 +74,8 @@ def theme_editor():
     st.markdown("Choose an existing theme to edit or create a new one from scratch.")
     
     # Sidebar for theme selection
-    with st.sidebar:
+    if 1==1:
+    #with st.sidebar:
         st.header("Theme Selection")
         
         available_themes = get_available_themes()
