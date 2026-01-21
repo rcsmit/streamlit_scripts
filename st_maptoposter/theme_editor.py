@@ -105,7 +105,7 @@ def theme_editor():
             }
     
     # Main editing area
-    col1, col2 = st.columns([2, 1])
+    col1, col2 = st.columns([1, 1])
     
     with col1:
         st.header("Theme Settings")
@@ -126,7 +126,7 @@ def theme_editor():
         with col_b:
             water_color = st.color_picker("Water", value=current_theme.get("water", "#C0C0C0"))
             parks_color = st.color_picker("Parks", value=current_theme.get("parks", "#F0F0F0"))
-        
+    with col2:
         st.subheader("Road Colors")
         
         col_c, col_d = st.columns(2)
@@ -140,52 +140,8 @@ def theme_editor():
             residential_color = st.color_picker("Residential Road", value=current_theme.get("road_residential", "#4A4A4A"))
             default_color = st.color_picker("Default Road", value=current_theme.get("road_default", "#3A3A3A"))
     
-    with col2:
-        st.header("Preview")
+    
         
-        # Display color swatches
-        preview_html = f"""
-        <div style="background-color: {bg_color}; padding: 20px; border-radius: 10px; border: 1px solid #ccc;">
-            <p style="color: {text_color}; font-size: 18px; font-weight: bold;">{theme_name}</p>
-            <p style="color: {text_color}; font-size: 14px;">{theme_description}</p>
-            
-            <div style="margin-top: 20px;">
-                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                    <div style="width: 50px; height: 50px; background-color: {water_color}; border-radius: 5px;" title="Water"></div>
-                    <div style="width: 50px; height: 50px; background-color: {parks_color}; border-radius: 5px;" title="Parks"></div>
-                    <div style="width: 50px; height: 50px; background-color: {gradient_color}; border-radius: 5px;" title="Gradient"></div>
-                </div>
-                
-                <div style="display: flex; gap: 10px;">
-                    <div style="width: 30px; height: 30px; background-color: {motorway_color}; border-radius: 3px;" title="Motorway"></div>
-                    <div style="width: 30px; height: 30px; background-color: {primary_color}; border-radius: 3px;" title="Primary"></div>
-                    <div style="width: 30px; height: 30px; background-color: {secondary_color}; border-radius: 3px;" title="Secondary"></div>
-                    <div style="width: 30px; height: 30px; background-color: {tertiary_color}; border-radius: 3px;" title="Tertiary"></div>
-                    <div style="width: 30px; height: 30px; background-color: {residential_color}; border-radius: 3px;" title="Residential"></div>
-                </div>
-            </div>
-        </div>
-        """
-        #st.markdown(preview_html, unsafe_allow_html=True)
-        
-        # Show JSON preview
-        st.subheader("JSON Preview")
-        theme_data = {
-            "name": theme_name,
-            "description": theme_description,
-            "bg": bg_color,
-            "text": text_color,
-            "gradient_color": gradient_color,
-            "water": water_color,
-            "parks": parks_color,
-            "road_motorway": motorway_color,
-            "road_primary": primary_color,
-            "road_secondary": secondary_color,
-            "road_tertiary": tertiary_color,
-            "road_residential": residential_color,
-            "road_default": default_color
-        }
-        st.json(theme_data)
     
     # Save button
     st.divider()
@@ -241,6 +197,57 @@ def theme_editor():
     #                 theme_file.unlink()
     #                 st.success(f"Deleted theme: {selected_theme}")
     #                 st.rerun()
+
+    st.divider()
+    # Show JSON preview
+    # col1,col2=st.columns(2)
+    # with col1:
+    st.subheader("JSON Preview")
+    theme_data = {
+        "name": theme_name,
+        "description": theme_description,
+        "bg": bg_color,
+        "text": text_color,
+        "gradient_color": gradient_color,
+        "water": water_color,
+        "parks": parks_color,
+        "road_motorway": motorway_color,
+        "road_primary": primary_color,
+        "road_secondary": secondary_color,
+        "road_tertiary": tertiary_color,
+        "road_residential": residential_color,
+        "road_default": default_color
+    }
+    st.json(theme_data)
+
+    # with col2:
+    #     st.header("Preview")
+        
+    #     # Display color swatches
+    #     preview_html = f"""
+    #     <div style="background-color: {bg_color}; padding: 20px; border-radius: 10px; border: 1px solid #ccc;">
+    #         <p style="color: {text_color}; font-size: 18px; font-weight: bold;">{theme_name}</p>
+    #         <p style="color: {text_color}; font-size: 14px;">{theme_description}</p>
+            
+    #         <div style="margin-top: 20px;">
+    #             <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+    #                 <div style="width: 50px; height: 50px; background-color: {water_color}; border-radius: 5px;" title="Water"></div>
+    #                 <div style="width: 50px; height: 50px; background-color: {parks_color}; border-radius: 5px;" title="Parks"></div>
+    #                 <div style="width: 50px; height: 50px; background-color: {gradient_color}; border-radius: 5px;" title="Gradient"></div>
+    #             </div>
+                
+    #             <div style="display: flex; gap: 10px;">
+    #                 <div style="width: 30px; height: 30px; background-color: {motorway_color}; border-radius: 3px;" title="Motorway"></div>
+    #                 <div style="width: 30px; height: 30px; background-color: {primary_color}; border-radius: 3px;" title="Primary"></div>
+    #                 <div style="width: 30px; height: 30px; background-color: {secondary_color}; border-radius: 3px;" title="Secondary"></div>
+    #                 <div style="width: 30px; height: 30px; background-color: {tertiary_color}; border-radius: 3px;" title="Tertiary"></div>
+    #                 <div style="width: 30px; height: 30px; background-color: {residential_color}; border-radius: 3px;" title="Residential"></div>
+    #             </div>
+    #         </div>
+    #     </div>
+    #     """
+    #     #st.markdown(preview_html, unsafe_allow_html=True)
+        
 def main():
     theme_editor()
 
