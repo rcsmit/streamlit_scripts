@@ -90,9 +90,9 @@ def show_calender_heatmap(df,what_to_show="pm25"):
                 st.plotly_chart(fig2)
 
 def main():
-    #url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/input/chiang-mai-air-quality.csv" 
+    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/input/chiang-mai-air-quality.csv" 
     
-    url =r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\chiang-mai-air-quality.csv"
+    #url =r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\chiang-mai-air-quality.csv"
 
 
     df = pd.read_csv(url)

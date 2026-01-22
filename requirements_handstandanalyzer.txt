@@ -1,6 +1,0 @@
-streamlit
-opencv-python==4.8.1.78
-mediapipe==0.10.20
-protobuf<5
-numpy
-pillow
