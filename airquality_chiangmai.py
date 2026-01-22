@@ -91,7 +91,7 @@ def show_calender_heatmap(df,what_to_show="pm25"):
 
 def main():
     url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/input/chiang-mai-air-quality.csv" 
-    
+    url = "https://github.com/rcsmit/streamlit_scripts/blob/main/input/chiang-mai-air-quality.csv"
     #url =r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\chiang-mai-air-quality.csv"
 
 
