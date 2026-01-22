@@ -257,7 +257,7 @@ def get_edge_widths_by_type(G):
     
     return edge_widths
 
-def get_crop_limits(G, fig):
+def get_crop_limits(G: MultiDiGraph, fig: Figure) -> tuple[tuple[float, float], tuple[float, float]]:
     """
     Determine cropping limits to maintain aspect ratio of the figure.
 
@@ -441,17 +441,17 @@ def create_poster(city_label, point, dist, theme, fonts, gradient_fade, timeout=
             create_gradient_fade(ax, theme['gradient_color'], location='bottom', zorder=10)
             create_gradient_fade(ax, theme['gradient_color'], location='top', zorder=10)
         
-        # # Typography
-        # if fonts:
-        #     font_main = FontProperties(fname=fonts['bold'], size=60)
-        #     font_sub = FontProperties(fname=fonts['light'], size=22)
-        #     font_coords = FontProperties(fname=fonts['regular'], size=14)
-        #     font_attr = FontProperties(fname=fonts['light'], size=8)
-        # else:
-        #     font_main = FontProperties(family='sans-serif', weight='bold', size=60)
-        #     font_sub = FontProperties(family='sans-serif', weight='300', size=22)
-        #     font_coords = FontProperties(family='sans-serif', size=14)
-        #     font_attr = FontProperties(family='sans-serif', size=8)
+        # Typography
+        if fonts:
+            font_main = FontProperties(fname=fonts['bold'], size=60)
+            font_sub = FontProperties(fname=fonts['light'], size=22)
+            font_coords = FontProperties(fname=fonts['regular'], size=14)
+            font_attr = FontProperties(fname=fonts['light'], size=8)
+        else:
+            font_main = FontProperties(family='sans-serif', weight='bold', size=60)
+            font_sub = FontProperties(family='sans-serif', weight='300', size=22)
+            font_coords = FontProperties(family='sans-serif', size=14)
+            font_attr = FontProperties(family='sans-serif', size=8)
         
         # Parse city and country from label
         parts = city_label.split(',')
