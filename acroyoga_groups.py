@@ -67,12 +67,25 @@ def main():
     plugins.Geocoder().add_to(m)
 
     kleur = ['red', 'green', 'yellow', 'purple', 'blue', 'pink','orange']
+    
+    # Add CSS styling once, outside the loop
+    st.markdown("""
+                <style>
+                .big-font {
+                    font-size:30px !important;
+                }
+                </style>
+                """, unsafe_allow_html=True)
+    
+    # Collect all filtered data for the table
+    all_filtered_data = []
 
     for i,l in enumerate(layers_to_show):
         df = df_[df_['Layer'] == l]
+        all_filtered_data.append(df)
         
         for index, row in df.iterrows():
-            if row["remarks"] != "None":
+            if row["remarks"] != "None" and row["remarks"] != "":
                 remarks_ = row["remarks"]
             else:
                 remarks_ = " "
@@ -82,8 +95,8 @@ def main():
                        
             folium.CircleMarker(location=depot_node,
                                     radius=3,    
-                                    color=[kleur[i]],
-                                    fill_color =[kleur[i]],
+                                    color=kleur[i],
+                                    fill_color=kleur[i],
                                     fill_opacity=0.7,
                                     ).add_to(m)
             folium.map.Marker(depot_node,
@@ -93,22 +106,18 @@ def main():
                                 html=f'<div style="font-size: 10pt">%s</div>' % row["Name"],
                             ),tooltip=remarks
                             ).add_to(m)  
-
-        st.markdown("""
-                    <style>
-                    .big-font {
-                        font-size:30px !important;
-                    }
-                    </style>
-                    """, unsafe_allow_html=True)
                             
         text= f"<font  class='big-font'  color={kleur[i]}>•</font> - {l}"
         st.sidebar.write(text, unsafe_allow_html=True)
             
-        # Display the map in Streamlit
-        # call to render Folium map in Streamlit
+    # Display the map in Streamlit
+    # call to render Folium map in Streamlit
     st_data = st_folium(m, width=1500, returned_objects=[])
-    show_table(df)
+    
+    # Show table with all selected layers combined
+    if all_filtered_data:
+        combined_df = pd.concat(all_filtered_data, ignore_index=True)
+        show_table(combined_df)
 
     credits()
 
