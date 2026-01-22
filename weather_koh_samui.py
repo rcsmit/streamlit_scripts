@@ -471,8 +471,10 @@ def get_data(where):
 
     # Define the base directory where the CSV files are stored
     base_dir = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input"
-    github_base_url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input"
+    #github_base_url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input"
+    github_base_url="https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input"
 
+ 
     # Map locations to their respective CSV files
     locations = {
         "Koh Samui": "weather_ko_samui",

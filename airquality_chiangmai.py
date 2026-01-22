@@ -25,8 +25,10 @@ def show_calender_heatmap(df,what_to_show="pm25"):
     years = df["date"].dt.year.unique()
     df["Vis"]=df["Vis"]*-1
     # Loop through each year and each what_to_show value
-    for year in years:
+    for year in years[5:]:
         df_year = df[df["date"].dt.year == year]  
+        st.write(df_year)
+        print(df_year.dtypes)
         if df_year[what_to_show].sum() > 0: #dont show empty years
                 
             # Assuming df[what_to_show] contains the values you want to process
