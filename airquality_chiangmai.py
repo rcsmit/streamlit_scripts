@@ -21,14 +21,12 @@ def show_calender_heatmap(df,what_to_show="pm25"):
     df["date"] = pd.to_datetime(df["date"], format="%Y/%m/%d")
     df=df.sort_values(by="date")
     
-
     years = df["date"].dt.year.unique()
     df["Vis"]=df["Vis"]*-1
     # Loop through each year and each what_to_show value
-    for year in years[5:]:
+    for year in years:
         df_year = df[df["date"].dt.year == year]  
-        st.write(df_year)
-        print(df_year.dtypes)
+     
         if df_year[what_to_show].sum() > 0: #dont show empty years
                 
             # Assuming df[what_to_show] contains the values you want to process
@@ -112,7 +110,7 @@ def main():
     # Create a scatter plot with Plotly
     show_calender_heatmap(merged_df)
 
-
+ 
     fig = px.scatter(merged_df, y='Vis', x='pm25',  title='Visibility vs PM2.5', labels={'vis': 'Visibility', 'pm2.5': 'PM2.5'},hover_data={'date': True, 'Vis': True, 'pm25': True})
 
     # Display the plot in Streamlit
