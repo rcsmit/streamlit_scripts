@@ -257,7 +257,7 @@ def get_edge_widths_by_type(G):
     
     return edge_widths
 
-def get_crop_limits(G: MultiDiGraph, fig: Figure) -> tuple[tuple[float, float], tuple[float, float]]:
+def get_crop_limits(G, fig):
     """
     Determine cropping limits to maintain aspect ratio of the figure.
 
