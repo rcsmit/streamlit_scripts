@@ -101,6 +101,7 @@ def main():
                 ["[68] 2e kamer ","tweedekamer","Verkiezings analyses 2e kamer"],
                 ["[69] knmi vs openmeteo ","compare_knmi_openmeteo", "seizoensinfo knmi vs openmeteo"],
                 ["[70] Year timeline ","how_the_year_went", "Timeline of the year with subjective length of months"],
+                ["[71] Airquality Chiang Mai","airquality_chiangmai", "Historical airquality in Chiang Mai"],
     
                 ]
  
