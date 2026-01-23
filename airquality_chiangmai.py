@@ -115,6 +115,9 @@ def main():
 
     # Display the plot in Streamlit
     st.plotly_chart(fig)
+
+    st.info("Source PM2.5: https://aqicn.org/historical/#city:chiang-mai")
+    st.info("Source air visibility : https://www.ogimet.com")
 if __name__ == "__main__":
     main()
  

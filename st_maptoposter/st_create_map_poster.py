@@ -435,7 +435,7 @@ def main_():
         
         distance = st.number_input(
             "Distance (meters)", 
-            min_value=1000, 
+            min_value=50, 
             max_value=50000, 
             value=1000, 
             step=1000,
