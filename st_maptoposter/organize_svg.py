@@ -157,6 +157,8 @@ def organize_svg_by_color(input_file, output_file, color_map):
         fill_name = get_color_name(fill, color_map)
         layer_name = fill_name if fill_name != 'none' else stroke_name
         print(f"  {layer_name}: {len(elements)} elements (stroke={stroke}, fill={fill})")
+        
+    return output_file
 
 
 def main(input_file,output_file):
