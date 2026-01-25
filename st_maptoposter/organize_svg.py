@@ -3,6 +3,7 @@ from collections import defaultdict
 import json
 import os
 import urllib.request
+import streamlit as st
 
 
 # ORGANIZE SVG ELEMENTS BY COLOR THEME
@@ -201,10 +202,10 @@ def organize_svg_with_theme(input_svg_path, output_svg_path):
     try:
         # Create color map from theme dictionary
         main(input_file,output_file)
-        return True
+        return output_file
     except Exception as e:
         st.write(f"Error organizing SVG: {e}")
-        return False
+        return None
  
 if __name__ == "__main__":
 

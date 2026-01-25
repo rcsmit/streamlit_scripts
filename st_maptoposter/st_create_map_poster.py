@@ -521,12 +521,12 @@ def main_():
                 output_file_svg = generate_output_filename(city_label.split(',')[0], theme_name, "svg")
 
                 fig.savefig(output_file_svg, format='svg', facecolor=theme['bg'], bbox_inches='tight')
-                saved_files.append(("SVG", output_file_svg, "image/svg+xml"))
-                st.success(f"✅ SVG saved: {output_file_svg.name}")
+                #saved_files.append(("SVG", output_file_svg, "image/svg+xml"))
+                #st.success(f"✅ SVG saved: {output_file_svg.name}")
 
                 # Organize the SVG by colors
                 output_file_svg_organized = output_file_svg.with_stem(f"{output_file_svg.stem}_organized")
-                if organize_svg_with_theme(str(output_file_svg), str(output_file_svg_organized)):
+                if organize_svg_with_theme(str(output_file_svg), str(output_file_svg_organized)) is not None:
                     saved_files.append(("SVG Organized", output_file_svg_organized, "image/svg+xml"))
                     st.success(f"✅ Organized SVG saved: {output_file_svg_organized.name}")
                 else:
