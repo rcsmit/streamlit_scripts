@@ -1,0 +1,15 @@
+{
+  "name":"GTA",
+  "description":"GTA-style map theme with green land and high-contrast roads. Jamie Duk https://github.com/originalankur/maptoposter/issues/108",
+  "bg":"#1f3d2b",
+  "text":"#e6f2ec",
+  "gradient_color":"#1f3d2b",
+  "water":"#3b6f73",
+  "parks":"#2f6b3f",
+  "road_motorway":"#e8efe9",
+  "road_primary":"#d4e0d8",
+  "road_secondary":"#b8c9bf",
+  "road_tertiary":"#9fb2a6",
+  "road_residential":"#8a9c91",
+  "road_default":"#b8c9bf"
+}
