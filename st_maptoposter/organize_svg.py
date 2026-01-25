@@ -152,8 +152,8 @@ def organize_svg_by_color(input_file, output_file, color_map):
                 new_group.append(element)
    
     # Re-add text elements at the end so they appear on top
-    for text_group in text_elements:
-        axes.append(text_group)
+    # for text_group in text_elements:
+    #     axes.append(text_group)
     
     # Write the modified SVG
     tree.write(output_file, encoding='utf-8', xml_declaration=True)
