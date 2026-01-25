@@ -16,6 +16,10 @@ import streamlit as st
 # Example usage: python organize_svg.py input.svg output.svg
 # theme file is in http://www.github.com/rcsmit/streamlit_scripts/st_maptoposter/themes/all_colors.json
 
+
+# To use from another script you can use
+# organize_svg_with_theme(input_svg_path, output_svg_path, theme_dict)
+
 def load_color_theme(theme_path):
     """Load color theme from JSON file or URL."""
     # Check if it's a URL
