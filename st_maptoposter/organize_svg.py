@@ -96,10 +96,16 @@ def organize_svg_by_color(input_file, output_file, color_map):
     # Collect all elements to reorganize
     color_groups = defaultdict(list)
     elements_to_remove = []
+    text_elements = []  # Keep track of text elements
     
     # Process all groups in axes_1
     for group in list(axes):
         if group.tag.endswith('}g') or group.tag == 'g':
+             group_id = group.get('id', '')
+             # Check if this is a text element group (text_1, text_2, etc.)
+            if group_id.startswith('text_'):
+                text_elements.append(group)
+                continue  # Don't process text groups
             # Process all children in this group
             for element in list(group):
                 color_key = get_color_key(element)
@@ -144,6 +150,10 @@ def organize_svg_by_color(input_file, output_file, color_map):
             if group_id not in layers_to_ignore:  # Skip background layer
                 new_group.append(element)
    
+    # Re-add text elements at the end so they appear on top
+    for text_group in text_elements:
+        axes.append(text_group)
+    
     # Write the modified SVG
     tree.write(output_file, encoding='utf-8', xml_declaration=True)
     
@@ -157,7 +167,7 @@ def organize_svg_by_color(input_file, output_file, color_map):
         fill_name = get_color_name(fill, color_map)
         layer_name = fill_name if fill_name != 'none' else stroke_name
         print(f"  {layer_name}: {len(elements)} elements (stroke={stroke}, fill={fill})")
-        
+
     return output_file
 
 
