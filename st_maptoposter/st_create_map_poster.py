@@ -526,7 +526,7 @@ def main_():
 
                 # Organize the SVG by colors
                 output_file_svg_organized = output_file_svg.with_stem(f"{output_file_svg.stem}_organized")
-                if organize_svg_with_theme(str(output_file_svg), str(output_file_svg_organized)) is not None:
+                if organize_svg_with_theme(str(output_file_svg), str(output_file_svg_organized), theme) is not None:
                     saved_files.append(("SVG Organized", output_file_svg_organized, "image/svg+xml"))
                     st.success(f"✅ Organized SVG saved: {output_file_svg_organized.name}")
                 else:
