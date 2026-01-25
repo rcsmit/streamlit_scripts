@@ -101,8 +101,8 @@ def organize_svg_by_color(input_file, output_file, color_map):
     # Process all groups in axes_1
     for group in list(axes):
         if group.tag.endswith('}g') or group.tag == 'g':
-             group_id = group.get('id', '')
-             # Check if this is a text element group (text_1, text_2, etc.)
+            group_id = group.get('id', '')
+            # Check if this is a text element group (text_1, text_2, etc.)
             if group_id.startswith('text_'):
                 text_elements.append(group)
                 continue  # Don't process text groups
