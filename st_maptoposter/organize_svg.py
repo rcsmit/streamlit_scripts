@@ -141,7 +141,7 @@ def organize_svg_by_color(input_file, output_file, color_map):
         # Add all elements with this color to the new group
         layers_to_ignore = ["layer_background", "layer_gradient_color", "layer_9"]
         for element in elements:
-            if group_id not in layers_to_ignore  # Skip background layer
+            if group_id not in layers_to_ignore:  # Skip background layer
                 new_group.append(element)
    
     # Write the modified SVG
