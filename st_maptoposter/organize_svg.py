@@ -188,7 +188,7 @@ def main(input_file,output_file):
     print(f"\nOrganized SVG saved to: {output_file}")
 
 
-def organize_svg_with_theme(input_file,output_file):
+def organize_svg_with_theme(input_svg_path, output_svg_path, theme_dict):
     """
     Convenience function to organize SVG using a theme dictionary.
     
@@ -201,9 +201,19 @@ def organize_svg_with_theme(input_file,output_file):
         True if successful, False otherwise
     """
     try:
-        # Create color map from theme dictionary
-        main(input_file,output_file)
-        return output_file
+        # # Create color map from theme dictionary
+        # main(input_file,output_file)
+        # return output_file
+
+
+          # Create color map from theme dictionary
+        color_map = {}
+        for key, value in theme_dict.items():
+            if key not in ['name', 'description'] and isinstance(value, str) and value.startswith('#'):
+                color_map[value.lower()] = key
+        
+        # Organize the SVG
+        organize_svg_by_color(input_svg_path, output_svg_path, color_map)
     except Exception as e:
         st.write(f"Error organizing SVG: {e}")
         return None
