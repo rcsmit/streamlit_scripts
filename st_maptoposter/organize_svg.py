@@ -203,7 +203,7 @@ def organize_svg_with_theme(input_svg_path, output_svg_path):
         main(input_file,output_file)
         return True
     except Exception as e:
-        print(f"Error organizing SVG: {e}")
+        st.write(f"Error organizing SVG: {e}")
         return False
  
 if __name__ == "__main__":
