@@ -186,6 +186,25 @@ def main(input_file,output_file):
     print(f"\nOrganized SVG saved to: {output_file}")
 
 
+def organize_svg_with_theme(input_svg_path, output_svg_path):
+    """
+    Convenience function to organize SVG using a theme dictionary.
+    
+    Args:
+        input_svg_path: Path to input SVG file
+        output_svg_path: Path to save organized SVG file
+        theme_dict: Dictionary containing theme colors (same format as all_colors.json)
+    
+    Returns:
+        True if successful, False otherwise
+    """
+    try:
+        # Create color map from theme dictionary
+        main(input_file,output_file)
+        return True
+    except Exception as e:
+        print(f"Error organizing SVG: {e}")
+        return False
  
 if __name__ == "__main__":
 
