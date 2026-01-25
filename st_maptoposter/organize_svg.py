@@ -187,7 +187,7 @@ def main(input_file,output_file):
     print(f"\nOrganized SVG saved to: {output_file}")
 
 
-def organize_svg_with_theme(input_svg_path, output_svg_path):
+def organize_svg_with_theme(input_file,output_file):
     """
     Convenience function to organize SVG using a theme dictionary.
     
