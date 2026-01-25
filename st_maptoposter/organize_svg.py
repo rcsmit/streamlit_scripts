@@ -213,7 +213,7 @@ def organize_svg_with_theme(input_svg_path, output_svg_path, theme_dict):
                 color_map[value.lower()] = key
         
         # Organize the SVG
-        organize_svg_by_color(input_svg_path, output_svg_path, color_map)
+        return organize_svg_by_color(input_svg_path, output_svg_path, color_map)
     except Exception as e:
         st.write(f"Error organizing SVG: {e}")
         return None
