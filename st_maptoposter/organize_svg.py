@@ -180,12 +180,12 @@ def main(input_file,output_file):
         color_map = load_color_theme(theme_path)
         print(f"Loaded {len(color_map)} colors from theme\n")
     except Exception as e:
-        print(f"Error loading theme: {e}")
+        st.write(f"Error loading theme: {e}")
         exit(1)
 
     # Organize the SVG
     organize_svg_by_color(input_file, output_file, color_map)
-    print(f"\nOrganized SVG saved to: {output_file}")
+    st.write(f"\nOrganized SVG saved to: {output_file}")
 
 
 def organize_svg_with_theme(input_svg_path, output_svg_path, theme_dict):
