@@ -1,0 +1,20 @@
+{
+  "name": "Acroyoga Chiang Mai",
+  "description": "Colors used for the AY CM community infographics 2025",
+  "bg": "#FFFBEF",
+  "text": "#2C2C2C",
+  "gradient_color": "#F5F0E8",
+  "water": "#009FB7",
+  "parks": "#A1CF6B",
+  "road_motorway": "#FED766",
+  "road_primary": "#FE4A49",
+  "road_secondary": "#FE4A49",
+  "road_tertiary": "#FE4A49",
+  "road_residential": "#FF9900",
+  "road_default": "#FE4A49",
+  "building_pink": "#FFC5BC",
+  "buildig_grey":"#A2A2A2",
+  "dried_out_water":"#B49A7A",
+  "unaccented_parks":"#D0E5AD",
+  "airport": "#FEE9DF"
+}
