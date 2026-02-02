@@ -135,9 +135,10 @@ def get_available_themes():
         return []
     
     themes = []
-    for file in sorted(THEMES_DIR.glob("*.json")):
-        theme_name = file.stem
-        themes.append(f"{theme_name}")
+    for file in sorted(THEMES_DIR.iterdir()):
+        if file.is_file() and file.suffix.lower() == '.json':
+            theme_name = file.stem
+            themes.append(f"{theme_name}")
     
     for folder in sorted(THEMES_DIR.iterdir()):
         if folder.is_dir():
