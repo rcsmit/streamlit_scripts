@@ -126,38 +126,25 @@ def load_fonts():
     return {k: str(v) for k, v in fonts.items()}
 
 #@st.cache_data
-#Replace the get_available_themes() function (lines 129-139)
 def get_available_themes():
-    """Scans the themes directory and returns a list of available theme names from folders."""
-    
+    """Scans the themes directory and returns a list of available theme names."""
     if not THEMES_DIR.exists():
-        st.error("THEMES_DIR doesnt exist")
         return []
     
     themes = []
-    for folder in sorted(THEMES_DIR.iterdir()):
-      
-        if folder.is_dir():
-            for file in folder.iterdir():
-                
-                theme_file = folder / f"{file.name}"
-                
-                if theme_file.exists():
-                    #themes.append(file.name)
-                    #themes.append(f"{folder}/{file.name}")
-                    themes.append(f"{folder.name}/{file.name}")
-
-        #st.write(themes)
+    for file in sorted(THEMES_DIR.glob("*.json")):
+        theme_name = file.stem
+        themes.append(theme_name)
+    
     return themes
 
-# Replace the load_theme() function (lines 142-169)
+#@st.cache_data
 def load_theme(theme_name="feature_based"):
-    """Load theme from JSON file in theme's folder."""
-    theme_folder = THEMES_DIR 
-    theme_file = theme_folder / f"{theme_name}"
-    st.write(theme_file)
+    """Load theme from JSON file in themes directory."""
+    theme_file = THEMES_DIR / f"{theme_name}.json"
+    
     if not theme_file.exists():
-        st.warning(f"⚠️ Theme file not found at {theme_file}. Using default theme.")
+        st.warning(f"⚠️ Theme file not found. Using default theme.")
         return {
             "name": "Feature-Based Shading",
             "bg": "#FFFFFF",
@@ -180,7 +167,7 @@ def load_theme(theme_name="feature_based"):
     except Exception as e:
         st.error(f"Error loading theme: {e}")
         return None
-    
+
 def generate_output_filename(city, theme_name, file_format="png"):
     """Generate unique output filename."""
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
