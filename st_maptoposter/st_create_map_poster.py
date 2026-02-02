@@ -135,27 +135,22 @@ def get_available_themes():
         return []
     
     themes = []
+    for file in sorted(THEMES_DIR.glob("*.json")):
+        theme_name = file.stem
+        themes.append(f"{theme_name}")
+    
     for folder in sorted(THEMES_DIR.iterdir()):
-      
         if folder.is_dir():
-            for file in folder.iterdir():
-                
-                theme_file = folder / f"{file.name}"
-                
+            for file in folder.iterdir(): 
+                theme_file = folder / f"{file.stem}.json"
                 if theme_file.exists():
-                    #themes.append(file.name)
-                    #themes.append(f"{folder}/{file.name}")
-                    themes.append(f"{folder.name}/{file.name}")
-
-        #st.write(themes)
+                    themes.append(f"{folder.name}/{file.stem}")
     return themes
 
-# Replace the load_theme() function (lines 142-169)
 def load_theme(theme_name="feature_based"):
     """Load theme from JSON file in theme's folder."""
     theme_folder = THEMES_DIR 
-    theme_file = theme_folder / f"{theme_name}"
-    st.write(theme_file)
+    theme_file = theme_folder / f"{theme_name}.json"
     if not theme_file.exists():
         st.warning(f"⚠️ Theme file not found at {theme_file}. Using default theme.")
         return {
