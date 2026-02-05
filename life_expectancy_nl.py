@@ -287,7 +287,7 @@ class LifeExpectancyCalculator:
 
         # Update the layout to adjust the appearance of the graph
         fig3.update_layout(
-            title="Age Frequency Bar Graph",
+            title=f"Age Frequency Bar Graph (n={self.num_simulations})",
             xaxis_title="Ages",
             yaxis_title="Frequency",
         )
