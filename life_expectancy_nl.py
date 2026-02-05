@@ -13,7 +13,7 @@ import datetime
 class LifeExpectancyCalculator:
     def __init__(self):
         # Initialize default values
-        self.current_age = 47
+        self.current_age = 48
         self.max_age= 110
         # Get the current date and time
         current_datetime = datetime.datetime.now()
@@ -26,11 +26,11 @@ class LifeExpectancyCalculator:
         self.current_age = st.sidebar.number_input("Current Age:", value=self.current_age)
 
         st.sidebar.subheader("--- Simulations ---")
-        self.num_simulations = st.sidebar.number_input("Number of simulations",1,10_000_000,100)
+        self.num_simulations = st.sidebar.number_input("Number of simulations",1,10_000_000,10_000)
         self.new_method =  True # st.sidebar.selectbox("Use AG table", [True, False],0)
         self.print_individual =  st.sidebar.selectbox("Print individual runs", [True, False],1)
         self.ag_jaar =  st.sidebar.selectbox("Year AG table", ["2022","2024"],1)
-        self.startjaar =  st.sidebar.number_input("startjaar",2022,2100,2024)
+        self.startjaar =  st.sidebar.number_input("startjaar",2022,2100,2026)
     def calculate_life_expectancy(self):
         """Calculate life expectancy
 
@@ -217,7 +217,7 @@ class LifeExpectancyCalculator:
         for c in ["cdf", "cdf_1"]:
             st.write("______________________________")
             if c =="cdf":
-                l = [10,25,50,75,95,99]
+                l = [1,2.5,5,10,25,50,75,95,99]
                 name  =f'Cumulative Distribution Function (CDF) of Ages ({self.sexe} - {self.current_age})'
                 name2 = "CDF"
                 verb = "to be deceased"

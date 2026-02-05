@@ -1,0 +1,15 @@
+{
+  "name": "Human",
+  "description": "Theme converted from HUMAN.mrules",
+  "bg": "#EBE4CD",
+  "text": "#000000",
+  "gradient_color": "#EBE4CD",
+  "water": "#CEEAF7",
+  "parks": "#7488DD",
+  "road_motorway": "#BC8FC0",
+  "road_primary": "#BC8FC0",
+  "road_secondary": "#BC8FC0",
+  "road_tertiary": "#BC8FC0",
+  "road_residential": "#FEFEFE",
+  "road_default": "#FEFEFE"
+}

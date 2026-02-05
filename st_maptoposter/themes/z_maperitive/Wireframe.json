@@ -1,0 +1,15 @@
+{
+  "name": "Wireframe",
+  "description": "Theme converted from Wireframe.mrules",
+  "bg": "#181818",
+  "text": "#000000",
+  "gradient_color": "#181818",
+  "water": "#2D94E4",
+  "parks": "#49C74B",
+  "road_motorway": "#FF6022",
+  "road_primary": "#292711",
+  "road_secondary": "#242424",
+  "road_tertiary": "#414141",
+  "road_residential": "#7C7C7C",
+  "road_default": "#303030"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Bw",
+  "description": "Theme converted from bw.mrules",
+  "bg": "#F1EEE8",
+  "text": "#000000",
+  "gradient_color": "#F1EEE8",
+  "water": "#B5B5B5",
+  "parks": "#BBBBBB",
+  "road_motorway": "#FF6022",
+  "road_primary": "#292711",
+  "road_secondary": "#242424",
+  "road_tertiary": "#414141",
+  "road_residential": "#7C7C7C",
+  "road_default": "#303030"
+}

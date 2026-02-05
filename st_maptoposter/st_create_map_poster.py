@@ -87,6 +87,7 @@ CITY_COORDINATES = {
 # Timeout configuration
 DEFAULT_TIMEOUT = 30  # seconds
 
+#@st.cache_data
 def fetch_with_timeout(fetch_func, timeout_seconds, *args, **kwargs):
     """
     Wrapper to fetch data with a timeout using ThreadPoolExecutor.
@@ -180,7 +181,10 @@ def load_theme(theme_name="feature_based"):
 def generate_output_filename(city, theme_name, file_format="png"):
     """Generate unique output filename."""
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    city_slug = city.lower().replace(' ', '_').replace(',', '')
+    
+    city_slug = city.lower().replace(' ', '_').replace(',', '').replace('\\', '_').replace('/', '_')
+    theme_name = theme_name.lower().replace(' ', '_').replace(',', '').replace('\\', '_').replace('/', '_')
+    
     filename = f"{city_slug}_{theme_name}_{timestamp}.{file_format}"
     return POSTERS_DIR / filename
 
@@ -268,13 +272,12 @@ def get_edge_widths_by_type(G):
     
     return edge_widths
 
-def create_poster(city_label, point, dist, theme, fonts, gradient_fade, timeout=DEFAULT_TIMEOUT):
-    """Generate the map poster."""
-    
-    # Progress tracking
+@st.cache_data()
+def download(city_label, point, dist,timeout):
+     # Progress tracking
     progress_bar = st.progress(0)
     status_text = st.empty()
-    
+    status_text.text("🎨 Getting data...")
     try:
         # 1. Fetch Street Network
         status_text.text("📡 Downloading street network...")
@@ -318,8 +321,20 @@ def create_poster(city_label, point, dist, theme, fonts, gradient_fade, timeout=
             dist=dist
         )
         progress_bar.progress(80)
+        progress_bar.progress(100)
+        status_text.text("✅ Complete!")
+    except Exception as e:
+        status_text.text("")
+        progress_bar.empty()
+        raise e
+
+    return G, water, parks
+def create_poster(city_label, point, dist, theme, fonts, gradient_fade, timeout=DEFAULT_TIMEOUT):
+    """Generate the map poster."""
+    try:
+        G, water, parks = download(city_label, point, dist,timeout)
         
-        status_text.text("🎨 Rendering map...")
+        
         
         # Setup Plot
         fig, ax = plt.subplots(figsize=(12, 16), facecolor=theme['bg'])
@@ -390,14 +405,13 @@ def create_poster(city_label, point, dist, theme, fonts, gradient_fade, timeout=
                 color=theme['text'], alpha=0.5, ha='right', va='bottom', 
                 fontproperties=font_attr, zorder=11)
         
-        progress_bar.progress(100)
-        status_text.text("✅ Complete!")
+        
         
         return fig
         
     except Exception as e:
-        status_text.text("")
-        progress_bar.empty()
+        # status_text.text("")
+        # progress_bar.empty()
         raise e
 
 # Streamlit App
@@ -517,6 +531,7 @@ def main_():
             
             if output_format in ["PNG", "Both"]:
                 output_file_png = generate_output_filename(city_label.split(',')[0], theme_name, "png")
+                st.write(output_file_png)
                 fig.savefig(output_file_png, dpi=300, facecolor=theme['bg'], bbox_inches='tight')
                 saved_files.append(("PNG", output_file_png, "image/png"))
                 st.success(f"✅ PNG saved: {output_file_png.name}")
@@ -588,6 +603,9 @@ def main_():
 
 def generate_examples():
     city_label, coords, distance,  gradient_fade, timeout = "Stadskanaal, Netherlands",(52.996700, 6.895670), 1000,False,30
+    #city_label, coords, distance,  gradient_fade, timeout =  "Amsterdam, Netherlands", (52.3676, 4.9041), 1000,False,30
+    
+   
     fonts = load_fonts()
     available_themes = get_available_themes()
     
