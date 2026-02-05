@@ -121,6 +121,7 @@ class LifeExpectancyCalculator:
         # Store all results in the instance variable
         placeholder.empty()
         self.deceased_ages = deceased_ages
+        
         self.median_age_at_death = round(statistics.median(deceased_ages),1)
   
         sorted_ages = np.sort(deceased_ages)
@@ -132,7 +133,15 @@ class LifeExpectancyCalculator:
         self.percentile_97_5 = np.percentile(sorted_ages, 97.5)
 
         end_table = self.calculate_age_distribution()
-         
+        result_table = end_table.copy()
+
+        result_table["year"] = 2026 + (result_table["ages"] - self.current_age).astype(int)
+        
+        result_table["perc_died"] =  result_table["frequency"] / self.num_simulations *100
+        result_table["perc_alive_cumm"] =  result_table["cdf_1"] 
+        result_table["perc_death_cumm"] =  result_table["cdf"] 
+        result_table = result_table[["ages", "year", "perc_died", "perc_alive_cumm", "perc_death_cumm"]]
+        st.write(result_table)
         self.show_end_info(end_table)
         self.plot_probability_over_time(df_prob_die)
         
@@ -207,8 +216,8 @@ class LifeExpectancyCalculator:
         # Show plot
         st.plotly_chart(fig)  
     def show_end_info(self, end_table):
-        st.write(f"Average age at death of {self.num_simulations} individuals ({self.sexe}): {round(sum(self.deceased_ages)/len(self.deceased_ages),2)} [{round(sum(self.deceased_ages)/len(self.deceased_ages)-self.current_age,2)}] - SD {round(np.std(self.deceased_ages),2)}")
-        st.write(f"Median age at death: {round(statistics.median(self.deceased_ages),2)} [{round(statistics.median(self.deceased_ages)-self.current_age,2)}]")
+        st.write(f"Average age at death of {self.num_simulations} individuals ({self.sexe}): {round(sum(self.deceased_ages)/len(self.deceased_ages),2)} [in {round(sum(self.deceased_ages)/len(self.deceased_ages)-self.current_age,2)} years] - SD {round(np.std(self.deceased_ages),2)}")
+        st.write(f"Median age at death: {round(statistics.median(self.deceased_ages),2)} [in {round(statistics.median(self.deceased_ages)-self.current_age,2)} years]")
         st.write (f"2.5% Percentile: {self.percentile_2_5:.2f} / 95% Percentile: {self.percentile_95:.2f} / 97.5% Percentile: {self.percentile_97_5:.2f}")
         st.write(f"Sum of persons {end_table['frequency'].sum()}")
         st.info(f"Projections Life Table AG{self.ag_jaar} https://www.actuarieelgenootschap.nl/kennisbank/prognosetafel-ag{self.ag_jaar}-2")
