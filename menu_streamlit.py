@@ -102,6 +102,7 @@ def main():
                 ["[69] knmi vs openmeteo ","compare_knmi_openmeteo", "seizoensinfo knmi vs openmeteo"],
                 ["[70] Year timeline ","how_the_year_went", "Timeline of the year with subjective length of months"],
                 ["[71] Airquality Chiang Mai","airquality_chiangmai", "Historical airquality in Chiang Mai"],
+                ["[72] Letter Frequentie Analyse","letter_count", "Welk woord heeft de meeste van elke letter?"],
     
                 ]
  
