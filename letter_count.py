@@ -1,17 +1,48 @@
 import pandas as pd
 import streamlit as st
+import requests
 
 def main():
-    language = st.selectbox("Select Language / Selecteer Taal", ["nl","fr"],0)
-    url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\wordlist.txt"
-    url = f"https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/wordlist_{language}.txt"
+    #url = f"https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/wordlist.txt"
 
+    # Dictionary met woordenlijsten per taal
+    WORDLISTS = {
+        "NL": {
+            "bron": "https://github.com/OpenTaal/opentaal-wordlist",
+            "wordlist": "https://raw.githubusercontent.com/OpenTaal/opentaal-wordlist/master/wordlist.txt"
+        },
+        "FR": {
+            "bron": "https://github.com/Taknok/French-Wordlist",
+            "wordlist": "https://raw.githubusercontent.com/Taknok/French-Wordlist/master/francais.txt"
+        },
+        "DE": {
+            "bron": "https://gist.github.com/MarvinJWendt/2f4f4154b8ae218600eb091a5706b5f4",
+            "wordlist": "https://gist.githubusercontent.com/MarvinJWendt/2f4f4154b8ae218600eb091a5706b5f4/raw/ce6e5c3249be6e11c81e265f69e0e0c8ef0c91a3/germanWordList.txt"
+        }
+    }
+
+
+    # Selecteer taal
+    language = st.selectbox("Kies taal:", options=list(WORDLISTS.keys()))
+    language_lower = language.lower()
+    # Haal juiste URLs op
+    bron_url = WORDLISTS[language]["bron"]
+    url = f"https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/wordlist_{language_lower}.txt"
+    
     # Blacklist
     blacklist = ["wie het kleine niet eert is het grote niet weerd"]
 
-    # Lees woorden
-    with open(url, 'r', encoding='utf-8') as f:
-        words = [line.strip().lower() for line in f if line.strip()]
+    # Lees woorden voor lokale bestanden
+    # with open(url, 'r', encoding='utf-8') as f:
+    #     words = [line.strip().lower() for line in f if line.strip()]
+
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Check of request succesvol was
+    except requests.exceptions.RequestException as e:
+        st.error(f"Fout bij het ophalen van de woordenlijst: {e}")
+        st.stop()   
+    words = [line.strip().lower() for line in response.text.split('\n') if line.strip()]
 
     # Filter blacklist woorden
     words = [word for word in words if word not in blacklist]
@@ -39,8 +70,9 @@ def main():
     st.title("Letter Frequentie Analyse")
     st.dataframe(df)
 
+    st.info(f"Number of words : {len(words)}")
     st.info("Geinspireerd door : https://x.com/aaaronson/status/2019797712179187889 ")
-    st.info("Woordenlijst NL: https://github.com/OpenTaal/opentaal-wordlist/blob/master/wordlist.txt")
-    st.info("Woordenlijst FR: https://github.com/Taknok/French-Wordlist/blob/master/francais.txt")
-if name__ == "__main__":
+    st.info("Woordenlijst : {bron_url}")
+   
+if __name__ == "__main__":
     main()
