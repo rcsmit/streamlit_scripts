@@ -291,11 +291,12 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
        
         polar_debug(df)
     elif mode == "normaal_verdeeld":
-       
-        normaal_verdeeld(df,what_to_show)
+        for what_to_show_ in what_to_show:
+            normaal_verdeeld(df,what_to_show_)
 
     elif mode == "gamma_distribution":
-        gamma_distribution(df, what_to_show, 1901, 2025)
+        for what_to_show_ in what_to_show:
+            gamma_distribution(df, what_to_show_, 1901, 2025)
     elif mode =="show year histogram animation":
         show_year_histogram_animation(df, what_to_show)
         
