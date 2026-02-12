@@ -23,7 +23,7 @@ def gamma_distribution(df, what_to_show_, start_year, special_year):
     """
 
     if st.button("GO"):
-        what_to_show = what_to_show_[0]
+        what_to_show = what_to_show_ #[0]
         st.title(f"Gamma-verdeling van {what_to_show} per dag van het jaar (start {start_year})")
         placeholder = st.empty()
         df['date'] = pd.to_datetime(df['YYYYMMDD'], format='%Y%m%d')
