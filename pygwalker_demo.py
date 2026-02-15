@@ -13,7 +13,7 @@ def main():
     except:
         pass
     # Import your data
-    df = pd.read_csv(r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gapminder_data_graphs.csv")
+    df = pd.read_csv(r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\gapminder_data_graphs.csv")
     
     pyg_app = StreamlitRenderer(df)
     

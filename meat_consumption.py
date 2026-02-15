@@ -16,13 +16,13 @@ def prepare_data():
     """Function to compare the country names in the various files. URL_COUNTRY is leading.
     """
 
-    url_meat = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption.csv"
-    url_gm = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gapminder_data_graphs.csv"
-    url_health = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\health_efficiency_index.csv"
-    url_education_mean = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\mean-years-of-schooling-long-run.csv"
-    url_education_expected = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\expected-years-of-schooling.csv"
-    url_country = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\country_codes.csv"
-    url_country_wikipedia = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\country_wikipedia.csv"
+    url_meat = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\meat_consumption.csv"
+    url_gm = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\gapminder_data_graphs.csv"
+    url_health = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\health_efficiency_index.csv"
+    url_education_mean = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\mean-years-of-schooling-long-run.csv"
+    url_education_expected = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\expected-years-of-schooling.csv"
+    url_country = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\country_codes.csv"
+    url_country_wikipedia = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\country_wikipedia.csv"
     df =     pd.read_csv(url_education_expected, delimiter=',')
     df_country =  pd.read_csv(url_country, delimiter=',')
     
@@ -62,23 +62,23 @@ def get_data(join_how):
     Returns:
         df: the complete dataframe
     """    
-    #url_country_wikipedia = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\country_wikipedia.csv"
-    url_country = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/country_codes.csv"
-    url_meat = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption.csv"
-    url_gm = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gapminder_data_graphs.csv"
-    url_health =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/health_efficiency_index.csv"
-    url_education_mean = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/mean-years-of-schooling-long-run.csv"
-    url_education_expected = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/expected-years-of-schooling.csv"
-    url_length = 'https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/length_male.csv'
-    url_length_eur = 'https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/length_male_europe.csv'
-    #url_length_eur = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\length_male_europe.csv"
-    #url_length = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\length_male.csv"
-    # url_country = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\country_codes.csv"
-    # url_meat = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption.csv"
-    # url_gm = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\gapminder_data_graphs.csv"
-    # url_health = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\health_efficiency_index.csv"
-    # url_education_mean = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\mean-years-of-schooling-long-run.csv"
-    # url_education_expected = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\expected-years-of-schooling.csv"
+    #url_country_wikipedia = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\country_wikipedia.csv"
+    url_country = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption/country_codes.csv"
+    url_meat = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption/meat_consumption.csv"
+    url_gm = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption/gapminder_data_graphs.csv"
+    url_health =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption/health_efficiency_index.csv"
+    url_education_mean = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption/mean-years-of-schooling-long-run.csv"
+    url_education_expected = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption/expected-years-of-schooling.csv"
+    url_length = 'https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption/length_male.csv'
+    url_length_eur = 'https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption/length_male_europe.csv'
+    #url_length_eur = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\length_male_europe.csv"
+    #url_length = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\length_male.csv"
+    # url_country = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\country_codes.csv"
+    # url_meat = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\meat_consumption.csv"
+    # url_gm = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\gapminder_data_graphs.csv"
+    # url_health = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\health_efficiency_index.csv"
+    # url_education_mean = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\mean-years-of-schooling-long-run.csv"
+    # url_education_expected = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\expected-years-of-schooling.csv"
 
  
     df_country =  pd.read_csv(url_country, delimiter=',')

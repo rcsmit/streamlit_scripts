@@ -1,0 +1,399 @@
+======================================================================
+ANALYZING REPOSITORY
+======================================================================
+
+Found 132 files/references in input directory
+Found 180 Python files in repository
+
+Scanning Python files for references...
+Found 88 referenced files
+
+======================================================================
+RESULTS
+======================================================================
+
+🔍 Found 37 potentially unused files:
+
+  • 246375303_463647438455097_6805633592735272994_n.jpg (155,003 bytes)
+  • SportTracks Export 2010-05-31 - 2011-02-20.xls (141,824 bytes)
+  • accotypes_ec_sb.csv (1,613 bytes)
+  • alle_resultaten_per_gemeente.csv (978,469 bytes)
+  • alle_resultaten_per_gemeente_2025.csv (978,472 bytes)
+  • alle_resultaten_per_gemeente_oud.csv (978,355 bytes)
+  • cities_country_lat_lon.csv (149,334 bytes)
+  • country_wikipedia.xlsx (30,473 bytes)
+  • countrylist.csv (8,492 bytes)
+  • de_bilt_1901_2023.csv (3,627,423 bytes)
+  • de_bilt_1901_2023_no_header.csv (3,627,342 bytes)
+  • de_bilt_jaargem_1901_2022 - Copy.csv (8,407 bytes)
+  • eindresultaat.csv (3,851 bytes)
+  • eindresultaat2.csv (3,851 bytes)
+  • feedly2020 - Copy.opml (205,134 bytes)
+  • feedly2020a.opml (97,482 bytes)
+  • housing_kp.txt (871,745 bytes)
+  • knmi_nw_beerta_no_header.csv (1,303,819 bytes)
+  • kpg_events.txt (7,959 bytes)
+  • meat_consumption - Copy.csv (13,093 bytes)
+  • meat_consumption.xlsx (28,490 bytes)
+  • only_endo.csv (1,423 bytes)
+  • only_runkeeper2.csv.csv (1,111 bytes)
+  • overlijdenskansen.csv (5,716 bytes)
+  • overlijdenskansen.json (25,359 bytes)
+  • planning_2019-2022_dummy.csv (391,665 bytes)
+  • sterfte_eurostats_weekly__2000_01__2025_26.csv (10,905,587 bytes)
+  • trend_de_bilt_jaargem_1901_2022.png (28,807 bytes)
+  • weather_chiang_mai.csv (448,491 bytes)
+  • weather_chiang_mai_b.csv (27,316 bytes)
+  • weather_ko_samui.csv (536,582 bytes)
+  • weather_ko_samui_b.csv (19,195 bytes)
+  • weather_rome_fiumicino.csv (447,165 bytes)
+  • weather_venezia.csv (1,201,602 bytes)
+  • wordlist_de.txt (5,578,894 bytes)
+  • wordlist_fr.txt (228,279 bytes)
+  • wordlist_nl.txt (5,104,598 bytes)
+
+======================================================================
+Summary: 37 unused out of 125 total files
+======================================================================
+
+======================================================================
+FILE USAGE MAP
+======================================================================
+
+Showing which Python scripts use which input files:
+
+📄 AG2022DefinitiefGevalideerd_female.csv
+   → extra_pension_OOP.py
+
+📄 AG2022DefinitiefGevalideerd_male.csv
+   → extra_pension_OOP.py
+
+📄 AG2024DefinitiefGevalideerd_female.csv
+   → aantal_vrijkomende_woningen.py
+   → nog_in_leven_over_40_jaar.py
+
+📄 AG2024DefinitiefGevalideerd_male.csv
+   → aantal_vrijkomende_woningen.py
+   → nog_in_leven_over_40_jaar.py
+
+📄 Averta-Bold.ttf
+   → ecg_doorsigns.py
+
+📄 Averta-Regular.ttf
+   → ecg_doorsigns.py
+
+📄 Het-Boek.txt
+   → txt_generator_streamlit.py
+
+📄 JupiteroidBold.ttf
+   → ecg_doorsigns.py
+   → public_doorsigns.py
+
+📄 MIDJOURNEY_prompt_generator_keuzes.csv
+   → midjourney_prompt_generator.py
+
+📄 RK_gpx_2025-03-13_1317.gpx
+   → gpx_analyzer.py
+
+📄 Seminopoly_placeholders.svg
+   → generate_monopoly.py
+
+📄 TK2023_uitslag_gemeente.csv
+   → tweedekamer.py
+
+📄 activities_didier.csv
+   → show_sportactivities.py
+
+📄 activities_endomondo.csv
+   → gitnore\compare_files.py
+
+📄 activities_runkeeper.csv
+   → gitnore\compare_files.py
+
+📄 bevolking_leeftijd_NL.csv
+   → aantal_vrijkomende_woningen.py
+   → nog_in_leven_over_40_jaar.py
+   → sterfte_temperatuur_rcsmit.py
+
+📄 caolonen.csv
+   → lonen_inflatie.py
+
+📄 cbs_besteedbaar_inkomen_2021.csv
+   → tax_pvda_gl.py
+
+📄 cbs_gestandaardiseerd_inkomen_2021.csv
+   → tax_pvda_gl.py
+
+📄 chiang-mai-air-quality.csv
+   → airquality_chiangmai.py
+
+📄 chopra.txt
+   → txt_generator_streamlit.py
+
+📄 country_codes.csv
+   → meat_consumption.py
+
+📄 country_wikipedia.csv
+   → meat_consumption.py
+
+📄 cpi.csv
+   → lonen_inflatie.py
+
+📄 cv_rene_smit_json_resume.json
+   → show_cv.py
+
+📄 daterages_neerslagstations.csv
+   → neerslaganalyse.py
+
+📄 de_bilt_1996_2025.csv
+   → compare_knmi_openmeteo.py
+
+📄 de_bilt_jaargem_1901_2022.csv
+   → loess.py
+   → loess_scikitmisc - Copy.py
+   → loess_scikitmisc.py
+   → show_knmi_functions\anomaly.py
+
+📄 dummy_occupation.xlsx
+   → read_bezetting_test.py
+
+📄 eigen_bijdrage2022.csv
+   → fit_to_data_streamlit.py
+
+📄 entry_all_blogs.xlsx
+   → weblogs.py
+
+📄 expected-years-of-schooling.csv
+   → meat_consumption.py
+
+📄 feedly2020.opml
+   → news_reader_claude.py
+
+📄 feedly2025.opml
+   → news_reader_claude.py
+
+📄 gapminder_data_graphs.csv
+   → meat_consumption.py
+   → pygwalker_demo.py
+
+📄 garminactivities_2022.csv
+   → show_sportactivities.py
+
+📄 garminactivities_2023a.csv
+   → show_sportactivities.py
+
+📄 garminactivities_2023b.csv
+   → show_sportactivities.py
+
+📄 garminactivities_2025a.csv
+   → show_sportactivities.py
+
+📄 garminactivities_2025b.csv
+   → show_sportactivities.py
+
+📄 garminactivities_new.csv
+   → gitnore\compare_files.py
+   → gitnore\st_write_df_error.py
+   → show_sportactivities.py
+
+📄 gasstanden95xxCN5.xlsx
+   → gas_stand_vs_temp.py
+   → loess_simple.py
+
+📄 gemeente_2023.geojson
+   → tweedekamer.py
+
+📄 gemeente_info2025.csv
+   → tweedekamer.py
+
+📄 gemeente_inkomen.csv
+   → tweedekamer.py
+
+📄 gemeente_opleiding.csv
+   → tweedekamer.py
+
+📄 gemeente_overgewicht.csv
+   → tweedekamer.py
+
+📄 gemeente_sportlidmaatschappen_2024.csv
+   → tweedekamer.py
+
+📄 health_efficiency_index.csv
+   → meat_consumption.py
+
+📄 inkomensheffingen.csv
+   → lonen_inflatie.py
+
+📄 knmi_nw_beerta.csv
+   → zonnepanelen.py
+
+📄 knmi_r_script__vs__scikit-misc.png
+   → loess_scikitmisc.py
+
+📄 length_male.csv
+   → meat_consumption.py
+
+📄 length_male_europe.csv
+   → meat_consumption.py
+
+📄 maxhavelaar.txt
+   → txt_generator_streamlit.py
+
+📄 mean-years-of-schooling-long-run.csv
+   → meat_consumption.py
+
+📄 meat_consumption.csv
+   → meat_consumption.py
+   → not_in_menu\multiple_lineair_regression.py
+
+📄 meat_consumption_simple.csv
+   → not_in_menu\multiple_lineair_regression.py
+
+📄 meditation.txt
+   → txt_generator_streamlit.py
+
+📄 nw_beerta.csv
+   → gas_stand_vs_temp.py
+   → sterfte_temperatuur_rcsmit.py
+   → zonnepanelen.py
+
+📄 only_runkeeper.csv
+   → gitnore\compare_files.py
+
+📄 partij_keys.csv
+   → tweedekamer.py
+
+📄 prijzen_dummy.csv
+   → read_bezetting_optimized.py
+
+📄 provincie_2025.geojson
+   → tweedekamer.py
+
+📄 schoonmaaktijden.csv
+   → schoonmaaktijden.py
+   → schoonmaaktijden2025.py
+
+📄 stations.csv
+   → knmi_utils.py
+   → neerslaganalyse.py
+   → show_knmi_functions\utils.py
+
+📄 stations_195_to_344.csv
+   → neerslaganalyse.py
+
+📄 stations_1_to_194.csv
+   → neerslaganalyse.py
+
+📄 stations_345_to_530.csv
+   → neerslaganalyse.py
+
+📄 stations_531_to_716.csv
+   → neerslaganalyse.py
+
+📄 stations_718_to_910.csv
+   → neerslaganalyse.py
+
+📄 stations_911_to_983.csv
+   → neerslaganalyse.py
+
+📄 sterfte_eurostats_weekly__2000_01__2023_41.csv
+   → sterfte_temperatuur_rcsmit.py
+
+📄 sterfte_eurostats_weekly__2000_01__2025_14.csv
+   → sterfte_temperatuur_rcsmit.py
+
+📄 taylorswiftlyrics.txt
+   → txt_generator_streamlit.py
+
+📄 template_doorsign.pdf
+   → ecg_doorsigns.py
+
+📄 template_parking_1.pdf
+   → ecg_doorsigns.py
+
+📄 template_parking_2.pdf
+   → ecg_doorsigns.py
+   → public_doorsigns.py
+
+📄 template_parking_public_1.pdf
+   → ecg_doorsigns.py
+   → public_doorsigns.py
+
+📄 template_parking_public_2.pdf
+   → ecg_doorsigns.py
+   → public_doorsigns.py
+
+📄 template_public.pdf
+   → ecg_doorsigns.py
+   → public_doorsigns.py
+
+📄 templates_ecg_2025a.pdf
+   → ecg_doorsigns.py
+
+📄 trend_de_bilt_jaargem_1901_2022.csv
+   → loess.py
+   → loess_scikitmisc - Copy.py
+
+📄 uitslag_TK20251029_Gemeente.csv
+   → tweedekamer.py
+
+📄 woonplaats_lat_lon.csv
+   → easy_map_nl.py
+
+📄 yepcheck.sqlite
+   → yepcheck.py
+
+📄 zonnepanelen.csv
+   → zonnepanelen.py
+
+📄 zorgtoeslag.csv
+   → fit_to_data_streamlit.py
+
+======================================================================
+
+======================================================================
+
+Do you want to move these unused files to 'unused' directory? (yes/no): y
+
+Moving unused files...
+
+Creating directory: C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\unused       
+  ✓ Moved: kpg_events.txt
+  ✓ Moved: housing_kp.txt
+  ✓ Moved: gitnore\only_runkeeper2.csv.csv
+  ✓ Moved: country_wikipedia.xlsx
+  ✓ Moved: weather_chiang_mai.csv
+  ✓ Moved: meat_consumption.xlsx
+  ✓ Moved: gitnore\only_endo.csv
+  ✓ Moved: trend_de_bilt_jaargem_1901_2022.png
+  ✓ Moved: weather_ko_samui.csv
+  ✓ Moved: weather_chiang_mai_b.csv
+  ✓ Moved: de_bilt_jaargem_1901_2022 - Copy.csv
+  ✓ Moved: sterfte_eurostats_weekly__2000_01__2025_26.csv
+  ✓ Moved: 246375303_463647438455097_6805633592735272994_n.jpg
+  ✓ Moved: wordlist_nl.txt
+  ✓ Moved: de_bilt_1901_2023.csv
+  ✓ Moved: accotypes_ec_sb.csv
+  ✓ Moved: cities_country_lat_lon.csv
+  ✓ Moved: de_bilt_1901_2023_no_header.csv
+  ✓ Moved: gitnore\eindresultaat.csv
+  ✓ Moved: meat_consumption - Copy.csv
+  ✓ Moved: planning_2019-2022_dummy.csv
+  ✓ Moved: knmi_nw_beerta_no_header.csv
+  ✓ Moved: weather_rome_fiumicino.csv
+  ✓ Moved: countrylist.csv
+  ✓ Moved: weather_venezia.csv
+  ✓ Moved: SportTracks Export 2010-05-31 - 2011-02-20.xls
+  ✓ Moved: weather_ko_samui_b.csv
+  ✓ Moved: alle_resultaten_per_gemeente_2025.csv
+  ✓ Moved: alle_resultaten_per_gemeente.csv
+  ✓ Moved: alle_resultaten_per_gemeente_oud.csv
+  ✓ Moved: gitnore\eindresultaat2.csv
+  ✓ Moved: overlijdenskansen.json
+  ✓ Moved: feedly2020 - Copy.opml
+  ✓ Moved: wordlist_fr.txt
+  ✓ Moved: wordlist_de.txt
+  ✓ Moved: overlijdenskansen.csv
+  ✓ Moved: feedly2020a.opml
+
+✓ Successfully moved 37 files to 'unused' directory

@@ -23,8 +23,8 @@ def get_data():
     Returns:
         df: the complete dataframe
     """    
-    #url_meat = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption.csv"
-    url_meat = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption_simple.csv"
+    #url_meat = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption/meat_consumption.csv"
+    url_meat = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption/meat_consumption_simple.csv"
     #url_meat = r"C:\Users\rcxsm\Downloads\meat_consumption_simple.csv"
     df_meat =  pd.read_csv(url_meat, delimiter=',')
     return df_meat

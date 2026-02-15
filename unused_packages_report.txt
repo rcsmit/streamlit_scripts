@@ -1,0 +1,146 @@
+UNUSED PACKAGES REPORT
+======================================================================
+
+Repository: C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts
+Total packages in requirements.txt: 39
+Used packages: 32
+Unused packages: 7
+
+======================================================================
+PACKAGE USAGE MAP (Which Python file imports which package)
+======================================================================
+
+Note: Only showing file references for packages used in fewer than 7 files
+
+[*] astral (used in 1 file(s))
+    - sunset_azimut.py
+
+[*] branca (used in 2 file(s))
+    - gpx_analyzer.py
+    - tweedekamer.py
+
+[*] cbsodata (used in 2 file(s))
+    - levensverw_door_tijd_heen.py
+    - lonen_inflatie.py
+
+[*] deep_translator (used in 1 file(s))
+    - transcript_thai.py
+
+[*] folium (used in 6 file(s))
+    - acroyoga_groups.py
+    - berlin.py
+    - conscious_communities.py
+    - gpx_analyzer.py
+    - rome.py
+    - tweedekamer.py
+
+[*] geopandas (used in 1 file(s))
+    - tweedekamer.py
+
+[*] geopy (used in 2 file(s))
+    - gpx_analyzer.py
+    - st_maptoposter\create_map_poster.py
+
+[*] gpxpy (used in 1 file(s))
+    - gpx_analyzer.py
+
+[*] imageio (used in 2 file(s))
+    - show_knmi_functions\polar_plot.py
+    - show_knmi_functions\show_year_histogram_animation.py
+
+[*] matplotlib (used in 34 file(s))
+
+[*] numpy (used in 92 file(s))
+
+[*] openai (used in 2 file(s))
+    - not_in_menu\summarizer.py
+    - tarot_symbols.py
+
+[*] openpyxl (used in 3 file(s))
+    - not_in_menu\edit_master_finance.py
+    - read_bezetting_optimized.py
+    - read_bezetting_test.py
+
+[*] pandas (used in 134 file(s))
+
+[*] patsy (used in 2 file(s))
+    - sterfte_temperatuur_rcsmit.py
+    - zonnepanelen.py
+
+[*] plotly (used in 89 file(s))
+
+[*] plotly-calplot (used in 3 file(s))
+    - airquality_chiangmai.py
+    - show_knmi_functions\show_calender_heatmap.py
+    - show_knmi_functions\show_year_heatmap.py
+
+[*] polars (used in 4 file(s))
+    - easy_map_nl.py
+    - neerslaganalyse.py
+    - not_in_menu\edit_master_finance.py
+    - show_knmi_functions\show_extremen.py
+
+[*] pymannkendall (used in 1 file(s))
+    - neerslaganalyse.py
+
+[*] pymupdf (used in 2 file(s))
+    - ecg_doorsigns.py
+    - public_doorsigns.py
+
+[*] pypdf2 (used in 2 file(s))
+    - images_to_pdf.py
+    - pdf_to_table.py
+
+[*] pytesseract (used in 1 file(s))
+    - images_to_pdf.py
+
+[*] pytz (used in 1 file(s))
+    - sunset_azimut.py
+
+[*] scikit-learn (used in 7 file(s))
+
+[*] scipy (used in 35 file(s))
+
+[*] seaborn (used in 5 file(s))
+    - seasonality.py
+    - show_knmi_functions\gamma_distribution.py
+    - show_knmi_functions\normaal_verdeeld.py
+    - show_sportactivities.py
+    - whatsapp_analyzer.py
+
+[*] simpy (used in 2 file(s))
+    - not_in_menu\waiting_times_disney.py
+    - waiting_times_disney_OO.py
+
+[*] statsmodels (used in 16 file(s))
+
+[*] streamlit (used in 161 file(s))
+
+[*] streamlit_folium (used in 6 file(s))
+    - acroyoga_groups.py
+    - berlin.py
+    - conscious_communities.py
+    - gpx_analyzer.py
+    - rome.py
+    - tweedekamer.py
+
+[*] yfinance (used in 14 file(s))
+
+[*] youtube_transcript_api (used in 2 file(s))
+    - YoutubeTranscriber_streamlit.py
+    - not_in_menu\summarizer.py
+
+
+======================================================================
+UNUSED PACKAGES
+======================================================================
+WARNING: Some packages may be used indirectly or at runtime.
+Review carefully before removing!
+
+fitz
+gsheetsdb
+latex
+lmfit
+scikit-misc
+shapely
+tabulate
