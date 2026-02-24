@@ -2,7 +2,7 @@ import streamlit as st
 import json
 from pathlib import Path
 try:
-    from st_create_map_poster import get_available_themes, load_theme
+    from utils import get_available_themes, load_theme
 except:
     pass
 
