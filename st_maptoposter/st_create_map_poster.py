@@ -129,7 +129,8 @@ from app import app
 # #@st.cache_data
 # #Replace the get_available_themes() function (lines 129-139)
 def get_available_themes_with_subdirs():
-    """Scans the themes directory and returns a list of available theme names from folders."""
+    """Scans the themes directory and returns a list of available theme names from folders.
+    Doesnt work yet"""
     
     if not THEMES_DIR.exists():
         st.error("THEMES_DIR doesnt exist")

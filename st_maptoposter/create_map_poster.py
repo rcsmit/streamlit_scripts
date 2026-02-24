@@ -7,7 +7,7 @@ It fetches OpenStreetMap data using OSMnx, applies customizable themes, and crea
 high-quality poster-ready images with roads, water features, and parks.
 
 CHANGES:
-added get_available_themes_with_subdirs()
+added get_available_themes_with_subdirs() -> doesnt work yet
 
 THEMES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "themes")
 FONTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts")
@@ -586,7 +586,7 @@ def generate_poster(
     width = min(width, 20.0)
     height = min(height, 20.0)
 
-    available_themes = get_available_themes_with_subdirs()
+    available_themes = get_available_themes()
     if not available_themes:
         raise ValueError("No themes found in 'themes/' directory.")
 
@@ -643,7 +643,7 @@ def generate_poster(
 
 def list_themes():
     """List all available themes with descriptions."""
-    available_themes = get_available_themes_with_subdirs()
+    available_themes = get_available_themes()
     if not available_themes:
         print("No themes found in 'themes/' directory.")
         return
