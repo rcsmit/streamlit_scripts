@@ -1458,6 +1458,366 @@ def location_dashboard(df, df_hourly, where, day_min, day_max, month, month_name
         for i,to_show in enumerate(values_to_show):
             with columns[i]:
                 show_month(df, to_show, day_min, day_max,month, month_names,where, False)
+
+
+def replicate_weatherspark_temperature(
+    df: pd.DataFrame,
+    to_show: int = None,
+    title: str = "Temperature History 2026",
+):
+    """
+    Replicate a WeatherSpark-style temperature history chart using Plotly.
+
+    Parameters
+    ----------
+    df       : DataFrame with columns 'date' (datetime), 'temp_max', 'temp_min'.
+               Optionally 'temp_mean'. Temperatures in °C or °F.
+    to_show  : Year to highlight with daily bars/ticks. Defaults to latest year.
+    title    : Chart title string.
+
+    Returns
+    -------
+    fig      : plotly.graph_objects.Figure
+    """
+
+    # ── 0. Normalise ──────────────────────────────────────────────────────────
+    df = df.copy()
+    #df.columns = [c.lower() for c in df.columns]
+
+    # date_col = next(
+    #     (c for c in df.columns if "date" in c and pd.api.types.is_datetime64_any_dtype(df[c])),
+    #     None,
+    # )
+    # if date_col is None:
+    #     date_col = next((c for c in df.columns if "date" in c), "date")
+    # try:
+    #     df["_date"] = pd.to_datetime(df[date_col])
+    # except:
+    df["_date"] = df["date"]
+    df["_doy"] = df["_date"].dt.dayofyear
+    df["_year"] = df["_date"].dt.year
+
+    max_col = next((c for c in df.columns if c in ("temp_max", "tmax", "max_temp")), None)
+    min_col = next((c for c in df.columns if c in ("temp_min", "tmin", "min_temp")), None)
+    mean_col = next((c for c in df.columns if c in ("temp_mean", "tmean", "mean_temp")), None)
+
+    if max_col is None or min_col is None:
+        raise ValueError("DataFrame must contain 'temp_max' and 'temp_min' columns.")
+
+    # °C → °F if needed
+    if 1==2: # df[max_col].median() < 60:
+        df["_tmax"] = df[max_col] * 9 / 5 + 32
+        df["_tmin"] = df[min_col] * 9 / 5 + 32
+        df["_tmean"] = (df[mean_col] * 9 / 5 + 32) if mean_col else (df["_tmax"] + df["_tmin"]) / 2
+    else:
+        df["_tmax"] = df[max_col]
+        df["_tmin"] = df[min_col]
+        df["_tmean"] = df[mean_col] if mean_col else (df["_tmax"] + df["_tmin"]) / 2
+
+    if to_show is None:
+        to_show = int(df["_year"].max())
+
+    # ── 1. Climatological percentile bands ───────────────────────────────────
+    clim = df.groupby("_doy").agg(
+        p10_max=("_tmax", lambda x: np.nanpercentile(x, 10)),
+        p25_max=("_tmax", lambda x: np.nanpercentile(x, 25)),
+        p75_max=("_tmax", lambda x: np.nanpercentile(x, 75)),
+        p90_max=("_tmax", lambda x: np.nanpercentile(x, 90)),
+        avg_max=("_tmax", "mean"),
+        p10_min=("_tmin", lambda x: np.nanpercentile(x, 10)),
+        p25_min=("_tmin", lambda x: np.nanpercentile(x, 25)),
+        p75_min=("_tmin", lambda x: np.nanpercentile(x, 75)),
+        p90_min=("_tmin", lambda x: np.nanpercentile(x, 90)),
+        avg_min=("_tmin", "mean"),
+    ).reset_index()
+
+    # smooth with 14-day rolling
+    for col in clim.columns[1:]:
+        clim[col] = clim[col].rolling(14, center=True, min_periods=1).mean()
+
+    doy = clim["_doy"].values
+
+    # ── 2. Current-year actuals ───────────────────────────────────────────────
+    curr = df[df["_year"] == to_show].sort_values("_doy").copy()
+
+    # ── 3. DOY → fake date string for x-axis (use a non-leap year base) ──────
+    base_year = 2001  # non-leap
+    def doy_to_date(d):
+        return pd.Timestamp(f"{base_year}-01-01") + pd.Timedelta(days=int(d) - 1)
+
+    clim["_xdate"] = clim["_doy"].apply(doy_to_date)
+    curr["_xdate"] = curr["_doy"].apply(doy_to_date)
+
+    today_doy = datetime.today().timetuple().tm_yday
+    today_xdate = doy_to_date(today_doy)
+
+    # ── 4. Build figure ───────────────────────────────────────────────────────
+    fig = go.Figure()
+
+    xd = clim["_xdate"]
+
+    # ── HIGH bands ─────────────────────────────────────────────────────────
+    # 10–90 outer band
+    fig.add_trace(go.Scatter(
+        x=list(xd) + list(xd[::-1]),
+        y=list(clim["p90_max"]) + list(clim["p10_max"][::-1]),
+        fill="toself", fillcolor="rgba(220,130,135,0.25)",
+        line=dict(width=0), hoverinfo="skip", showlegend=False, name="High 10–90%",
+    ))
+    # 25–75 inner band
+    fig.add_trace(go.Scatter(
+        x=list(xd) + list(xd[::-1]),
+        y=list(clim["p75_max"]) + list(clim["p25_max"][::-1]),
+        fill="toself", fillcolor="rgba(200,80,88,0.35)",
+        line=dict(width=0), hoverinfo="skip", showlegend=False, name="High 25–75%",
+    ))
+    # Average high line
+    fig.add_trace(go.Scatter(
+        x=xd, y=clim["avg_max"],
+        line=dict(color="rgba(192,57,63,0.7)", width=2),
+        hovertemplate="Avg High: %{y:.1f}°F<extra></extra>",
+        showlegend=False, name="Avg High",
+    ))
+
+    # ── LOW bands ──────────────────────────────────────────────────────────
+    fig.add_trace(go.Scatter(
+        x=list(xd) + list(xd[::-1]),
+        y=list(clim["p90_min"]) + list(clim["p10_min"][::-1]),
+        fill="toself", fillcolor="rgba(130,150,220,0.25)",
+        line=dict(width=0), hoverinfo="skip", showlegend=False, name="Low 10–90%",
+    ))
+    fig.add_trace(go.Scatter(
+        x=list(xd) + list(xd[::-1]),
+        y=list(clim["p75_min"]) + list(clim["p25_min"][::-1]),
+        fill="toself", fillcolor="rgba(70,90,190,0.35)",
+        line=dict(width=0), hoverinfo="skip", showlegend=False, name="Low 25–75%",
+    ))
+    fig.add_trace(go.Scatter(
+        x=xd, y=clim["avg_min"],
+        line=dict(color="rgba(58,78,170,0.7)", width=2),
+        hovertemplate="Avg Low: %{y:.1f}°F<extra></extra>",
+        showlegend=False, name="Avg Low",
+    ))
+
+    # ── Daily actual bars (gray range + red/blue ticks) ──────────────────
+    if not curr.empty:
+        tick_w = pd.Timedelta(hours=8)  # half-width of tick marks
+
+        for _, row in curr.iterrows():
+            xdate = row["_xdate"]
+            hi = row["_tmax"]
+            lo = row["_tmin"]
+
+            # gray range bar
+            fig.add_trace(go.Scatter(
+                x=[xdate, xdate], y=[lo, hi],
+                mode="lines",
+                line=dict(color="rgba(120,120,120,0.55)", width=1.5),
+                hovertemplate=(
+                    f"<b>{row['_date'].strftime('%b %d')}</b><br>"
+                    f"High: {hi:.1f}°F<br>Low: {lo:.1f}°F<extra></extra>"
+                ),
+                showlegend=False, name="",
+            ))
+            # red tick at high
+            fig.add_trace(go.Scatter(
+                x=[xdate - tick_w, xdate + tick_w], y=[hi, hi],
+                mode="lines", line=dict(color="rgba(200,50,50,0.8)", width=1.5),
+                hoverinfo="skip", showlegend=False,
+            ))
+            # blue tick at low
+            fig.add_trace(go.Scatter(
+                x=[xdate - tick_w, xdate + tick_w], y=[lo, lo],
+                mode="lines", line=dict(color="rgba(50,50,200,0.8)", width=1.5),
+                hoverinfo="skip", showlegend=False,
+            ))
+
+    # ── "Now" vertical line ───────────────────────────────────────────────
+    fig.add_vline(
+        x=today_xdate.timestamp() * 1000,
+        line=dict(color="#cc2222", width=1.8, dash="solid"),
+    )
+    fig.add_annotation(
+        x=today_xdate, y=67,
+        text="<b>Now</b>", showarrow=False,
+        font=dict(color="#cc2222", size=11),
+        xshift=18,
+    )
+
+    # ── 5. Layout ─────────────────────────────────────────────────────────
+    month_ticks = [doy_to_date(d) for d in [1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335]]
+    month_labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+    fig.update_layout(
+        title=dict(text=title, font=dict(size=15, color="#222"), x=0.5, xanchor="center"),
+        plot_bgcolor="white",
+        paper_bgcolor="white",
+        xaxis=dict(
+            tickvals=month_ticks,
+            ticktext=month_labels,
+            tickfont=dict(size=11, color="#333"),
+            showgrid=False,
+            showline=False,
+            zeroline=False,
+            range=[doy_to_date(1), doy_to_date(366)],
+        ),
+        yaxis=dict(
+            # tickvals=list(range(70, 101, 5)),
+            # ticktext=[f"{t}°C" for t in range(70, 101, 5)],
+            tickfont=dict(size=10, color="#333"),
+            showgrid=True,
+            gridcolor="#e8e8e8",
+            gridwidth=1,
+            showline=False,
+            zeroline=False,
+            # range=[65, 100],
+        ),
+        yaxis2=dict(
+            # tickvals=list(range(70, 101, 5)),
+            # ticktext=[f"{t}°F" for t in range(70, 101, 5)],
+            tickfont=dict(size=10, color="#333"),
+            overlaying="y", side="right",
+            showgrid=False, showline=False, zeroline=False,
+            # range=[65, 100],
+        ),
+        margin=dict(l=60, r=60, t=60, b=80),
+        height=480,
+        width=900,
+        hovermode="x unified",
+        annotations=[
+            dict(
+                text=(
+                    "The daily range of reported temperatures (gray bars) and 24-hour highs (red ticks) and lows (blue ticks),<br>"
+                    "placed over the daily average high (faint red line) and low (faint blue line) temperature, "
+                    "with 25th to 75th and 10th to 90th percentile bands."
+                ),
+                xref="paper", yref="paper",
+                x=0.5, y=-0.18,
+                showarrow=False,
+                font=dict(size=9, color="#666", style="italic"),
+                align="center",
+            )
+        ],
+    )
+    st.plotly_chart(fig)
+    return 
+
+def plot_precipitation_chance(df, what, treshold, window=14):
+    """
+    Plot the probability of a precipitation day (precipitation_sum > treshold)
+    smoothed across day-of-year, WeatherSpark-style.
+
+    Parameters
+    ----------
+    df     : DataFrame with 'date' (datetime) and 'precipitation_sum' columns.
+    window : Rolling window in days for smoothing (default 14).
+    title  : Chart title.
+
+    Returns
+    -------
+    fig : plotly.graph_objects.Figure
+    """
+  
+    df = df.copy()
+    #df.columns = [c.lower() for c in df.columns]
+
+    # ── resolve date column ───────────────────────────────────────────────────
+    date_col = next((c for c in df.columns if c == "date" and pd.api.types.is_datetime64_any_dtype(df[c])), None)
+    if date_col is None:
+        date_col = next((c for c in df.columns if c == "date"), None)
+    if date_col is None:
+        date_col = next((c for c in df.columns if pd.api.types.is_datetime64_any_dtype(df[c])), None)
+
+    df["_date"] = pd.to_datetime(df[date_col])
+    df["_doy"]  = df["_date"].dt.dayofyear
+    df["_rain"] = (df[what] > treshold).astype(float)
+
+    # ── percentile bands by DOY across all years ──────────────────────────────
+    clim = df.groupby("_doy")["_rain"].agg(
+        mean_prob="mean",
+    ).reset_index()
+
+    # smooth
+    clim["prob_smooth"] = clim["mean_prob"].rolling(window, center=True, min_periods=1).mean()
+
+    # ── DOY → fake calendar date for x-axis ──────────────────────────────────
+    def doy_to_date(d):
+        return pd.Timestamp("2001-01-01") + pd.Timedelta(days=int(d) - 1)
+
+    clim["_xdate"] = clim["_doy"].apply(doy_to_date)
+    xd   = clim["_xdate"]
+    prob = clim["prob_smooth"] * 100   # → percentage
+
+    # ── build figure ──────────────────────────────────────────────────────────
+    fig = go.Figure()
+
+    # filled area
+    fig.add_trace(go.Scatter(
+        x=list(xd) + list(xd[::-1]),
+        y=list(prob) + [0] * len(prob),
+        fill="toself",
+        fillcolor="rgba(70, 130, 200, 0.25)",
+        line=dict(width=0),
+        hoverinfo="skip",
+        showlegend=False,
+    ))
+
+    # line
+    fig.add_trace(go.Scatter(
+        x=xd,
+        y=prob,
+        mode="lines",
+        line=dict(color="rgba(50, 110, 185, 0.9)", width=2.5),
+        hovertemplate="%{x|%b %d}: <b>%{y:.0f}%</b><extra></extra>",
+        showlegend=False,
+        name="Precip chance",
+    ))
+
+    # month tick positions
+    month_ticks  = [doy_to_date(d) for d in [1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335]]
+    month_labels = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+    title=f"Chance of {what}>{treshold} Through the Year"
+    fig.update_layout(
+        title=dict(text=title, font=dict(size=15, color="#222"), x=0.5, xanchor="center"),
+        plot_bgcolor="white",
+        paper_bgcolor="white",
+        xaxis=dict(
+            tickvals=month_ticks,
+            ticktext=month_labels,
+            tickfont=dict(size=11, color="#333"),
+            showgrid=False, showline=False, zeroline=False,
+            range=[doy_to_date(1), doy_to_date(366)],
+        ),
+        yaxis=dict(
+            tickvals=list(range(0, 101, 20)),
+            ticktext=[f"{t}%" for t in range(0, 101, 20)],
+            tickfont=dict(size=10, color="#333"),
+            showgrid=True, gridcolor="#e8e8e8", gridwidth=1,
+            showline=False, zeroline=False,
+            range=[0, 100],
+        ),
+        yaxis2=dict(
+            tickvals=list(range(0, 101, 20)),
+            ticktext=[f"{t}%" for t in range(0, 101, 20)],
+            overlaying="y", side="right",
+            tickfont=dict(size=10, color="#333"),
+            showgrid=False, showline=False, zeroline=False,
+            range=[0, 100],
+        ),
+        margin=dict(l=60, r=60, t=60, b=60),
+        height=420,
+        width=900,
+        hovermode="x unified",
+        annotations=[dict(
+            text=f"A precipitation day is defined as {what} > {treshold}. Smoothed with a {window}-day rolling average.",
+            xref="paper", yref="paper", x=0.5, y=-0.12,
+            showarrow=False, font=dict(size=9, color="#666", style="italic"), align="center",
+        )],
+    )
+    st.plotly_chart(fig)
+    
+
 def main():
     locations = [
         {"name": "Koh Phangan", "lat": 9.755106899960907, "lon": 99.9609068, "timezone": "Asia/Bangkok"},
@@ -1501,13 +1861,16 @@ def main():
     else:
         df = df_
     df, n_years = prepare_dataframe(start_month, end_month, df)
-
+    print (df.dtypes)
   
-    tab1,tab2, tab3,tab4,tab5,tab6,tab7 = st.tabs(["Data",  "Specific month","Trends","Treshold","Location dashboard","Locations","Source and Legenda"])
-    
+    tab1,tab2, tab3,tab4,tab5,tab6,tab7,tab8 = st.tabs(["Data",  "Specific month","Trends","Treshold","Location dashboard","Weatherpark","Locations","Source and Legenda"])
     with tab6:
-        show_locations_2(locations)
+        # https://weatherspark.com/y/149191/Average-Weather-at-Ngurah-Rai-International-Airport-Indonesia-Year-Round#Sections-Sources
+        replicate_weatherspark_temperature(df, 2026, f"Temperature History for {where}")
+        plot_precipitation_chance(df, to_show, treshold_value)
     with tab7:
+        show_locations_2(locations)
+    with tab8:
         show_info()
         legenda()
     with tab1:
