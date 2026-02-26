@@ -1463,7 +1463,7 @@ def main():
         {"name": "Koh Phangan", "lat": 9.755106899960907, "lon": 99.9609068, "timezone": "Asia/Bangkok"},
         {"name": "Koh Chang", "lat":  12.10361, "lon": 102.35194, "timezone": "Asia/Bangkok"},
         {"name": "Chiang Mai", "lat": 18.7931784, "lon": 98.9774429, "timezone": "Asia/Bangkok"},
-        {"name": "Ubud", "lat": 52.376744, "lon": 4.9096158,"timezone": "Asia/Gianyar"},
+        {"name": "Ubud", "lat": -8.4960241, "lon": 115.2248393,"timezone": "auto"},
         {"name": "Amsterdam", "lat": 52.3676, "lon": 4.9041, "timezone": "Europe/Amsterdam"},
         {"name": "Lisbon", "lat": 38.7169, "lon": -9.1399, "timezone": "Europe/Lisbon"},
         {"name": "Rome", "lat": 41.9102088, "lon": 12.371185, "timezone": "Europe/Rome"},
