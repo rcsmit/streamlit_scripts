@@ -1575,7 +1575,7 @@ def replicate_weatherspark_temperature(
     fig.add_trace(go.Scatter(
         x=xd, y=clim["avg_max"],
         line=dict(color="rgba(192,57,63,0.7)", width=2),
-        hovertemplate="Avg High: %{y:.1f}°F<extra></extra>",
+        hovertemplate="Avg High: %{y:.1f}°C<extra></extra>",
         showlegend=False, name="Avg High",
     ))
 
@@ -1595,7 +1595,7 @@ def replicate_weatherspark_temperature(
     fig.add_trace(go.Scatter(
         x=xd, y=clim["avg_min"],
         line=dict(color="rgba(58,78,170,0.7)", width=2),
-        hovertemplate="Avg Low: %{y:.1f}°F<extra></extra>",
+        hovertemplate="Avg Low: %{y:.1f}°C<extra></extra>",
         showlegend=False, name="Avg Low",
     ))
 
@@ -1615,7 +1615,7 @@ def replicate_weatherspark_temperature(
                 line=dict(color="rgba(120,120,120,0.55)", width=1.5),
                 hovertemplate=(
                     f"<b>{row['_date'].strftime('%b %d')}</b><br>"
-                    f"High: {hi:.1f}°F<br>Low: {lo:.1f}°F<extra></extra>"
+                    f"High: {hi:.1f}°C<br>Low: {lo:.1f}°C<extra></extra>"
                 ),
                 showlegend=False, name="",
             ))
@@ -1675,7 +1675,7 @@ def replicate_weatherspark_temperature(
         ),
         yaxis2=dict(
             # tickvals=list(range(70, 101, 5)),
-            # ticktext=[f"{t}°F" for t in range(70, 101, 5)],
+            # ticktext=[f"{t}°C" for t in range(70, 101, 5)],
             tickfont=dict(size=10, color="#333"),
             overlaying="y", side="right",
             showgrid=False, showline=False, zeroline=False,
