@@ -19,7 +19,7 @@ openpyxl
 openai
 folium
 streamlit_folium
-# scikit-misc
+scikit-misc #used for LOESS in historical weather
 simpy
 deep_translator
 cbsodata
