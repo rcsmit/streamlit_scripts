@@ -37,3 +37,4 @@ astral
 pytz
 geopandas
 # shapely
+Pillow  # PIL – used in land_cover_netherlands.py for image stitching and perspective transform
