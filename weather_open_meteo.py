@@ -331,8 +331,9 @@ def show_month(df, to_show, day_min, day_max, month, month_names, where, verbose
         st.plotly_chart(fig)
         
         # Frequency table
+        df_month = df_month.copy()
         df_month['Temp_Bin'] = pd.cut(df_month[to_show], bins=range(int(df_month[to_show].min()), int(df_month[to_show].max()) + 2))
-        frequency_table = df_month.pivot_table(index='Temp_Bin', columns='Year', aggfunc='size', fill_value=0)
+        frequency_table = df_month.pivot_table(index='Temp_Bin', columns='Year', aggfunc='size', fill_value=0, observed=False)
 
         # Reset the index for plotting
         frequency_table = frequency_table.reset_index()
@@ -1234,10 +1235,13 @@ def show_locations_2(locations):
         )
 
     # Filter in Polars
-    pdf = pd.DataFrame(locations)
-
+    pdf_ = pd.DataFrame(locations)
+    # st.write(pdf_)
+    pdf = records_for_pydeck(pdf_)
+    #pdf = locations.astype(pdf_)
+    # st.write(pdf)
     # Midpoint
-    midpoint = (np.average(pdf["lat"]), np.average(pdf["lon"]))
+    midpoint = (np.average(pdf_["lat"]), np.average(pdf_["lon"]))
 
     # Optioneel: Mapbox token
     # pdk.settings.mapbox_api_key = "YOUR_MAPBOX_TOKEN"
@@ -1284,14 +1288,25 @@ def show_locations_2(locations):
     # In Streamlit tonen
     st.pydeck_chart(deck)
 
+def records_for_pydeck(df: pd.DataFrame):
+    df = df.copy()
 
-  
+    # datetimes to ISO strings
+    for c in df.select_dtypes(include=["datetime64[ns]", "datetimetz"]).columns:
+        df[c] = df[c].dt.strftime("%Y-%m-%dT%H:%M:%S")
+
+    # make sure missing values become None
+    df = df.replace({np.nan: None})
+
+    # turn everything into basic python types
+    return df.astype(object).to_dict("records")
+
 def main_(df, n_years, locations,FROM, UNTIL, start_month, end_month, where, to_show, window_size, y_axis_zero, multiply_minus_one, treshold_value, above_under, percentile_colomap_max, month_names, month, selected_month, day_min, day_max, number_of_columns):
     """Show the data from OpenMeteo in a graph, and average values per month per year
     """    
 
     
-  
+    df["date"] = pd.to_datetime(df["date"], errors="coerce")
 
     st.title(f"Weather info from {where}")
  
@@ -1892,4 +1907,4 @@ def main():
 if __name__ == "__main__":
     #read_ogimet()
     main()
-    
+    print ("END")

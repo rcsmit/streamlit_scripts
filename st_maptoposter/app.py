@@ -52,9 +52,9 @@ def app():
 
         distance = st.slider(
             "Map radius (meters)",
-            min_value=2000,
+            min_value=1000,
             max_value=30000,
-            value=18000,
+            value=2000,
             step=500,
             help="Small cities: 4000–6000 m · Medium: 8000–12000 m · Large: 15000–20000 m",
         )

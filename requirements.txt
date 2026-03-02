@@ -2,7 +2,7 @@ streamlit
 scipy
 matplotlib
 numpy==1.26.4 #   prevent numpy.dtype size changed, may indicate binary incompatibility. Expected 96 from C header, got 88 from PyObject
-pandas
+pandas==2.3.3 # prevent installing pandas 3, causing a lot of backwards compatibitiy issues
 seaborn
 plotly
 # lmfit
