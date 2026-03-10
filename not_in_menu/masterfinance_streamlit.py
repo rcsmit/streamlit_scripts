@@ -533,16 +533,16 @@ def pivot_tables(df):
     df=df[df['hoofdrub'] !='STARTING_BALANCE']
     df['bedrag'] = np.where(df['in_uit'] != 'IN', df['bedrag'] * -1, df['bedrag'])
     in_uit_totalen = df.groupby(['in_uit'])['bedrag'].sum().reset_index()
-    in_uit_totalen.rename(columns={'bedrag': 'Totaal in_uit'}, inplace=True)
+    in_uit_totalen = in_uit_totalen.rename(columns={'bedrag': 'Totaal in_uit'})
 
 
     # Totaal bedrag per hoofdrub
     hoofdrub_totalen = df.groupby(['in_uit','hoofdrub'])['bedrag'].sum().reset_index()
-    hoofdrub_totalen.rename(columns={'bedrag': 'Totaal per hoofdrub'}, inplace=True)
+    hoofdrub_totalen = hoofdrub_totalen.rename(columns={'bedrag': 'Totaal per hoofdrub'})
 
     # Totaal bedrag per rubriek
     rubriek_totalen = df.groupby(['in_uit','hoofdrub','rubriek'])['bedrag'].sum().reset_index()
-    rubriek_totalen.rename(columns={'bedrag': 'Totaal per rubriek'}, inplace=True)
+    rubriek_totalen = rubriek_totalen.rename(columns={'bedrag': 'Totaal per rubriek'})
 
     
     # Totaalsaldo
@@ -711,11 +711,11 @@ def give_totals_boodschappen(df):
 
     # Group by month and calculate the sum of 'Bedrag'
     monthly_result = boodschappen_df.groupby('Month')['bedrag'].sum().reset_index()
-    monthly_result.rename(columns={'bedrag': 'Total_Bedrag_Month'}, inplace=True)
+    monthly_result = monthly_result.rename(columns={'bedrag': 'Total_Bedrag_Month'})
 
     # Group by year and calculate the sum of 'Bedrag'
     yearly_result = boodschappen_df.groupby('Year')['bedrag'].sum().reset_index()
-    yearly_result.rename(columns={'bedrag': 'Total_Bedrag_Year'}, inplace=True)
+    yearly_result = yearly_result.rename(columns={'bedrag': 'Total_Bedrag_Year'})
 
     # Print the resulting DataFrames
     st.write("Monthly Total:")

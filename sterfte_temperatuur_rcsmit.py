@@ -379,7 +379,7 @@ def decomposed(merged_df):
         merged_df["year_week"] + "-0", format="%Y_%W-%w"
     )
 
-    merged_df.set_index("common_time_column", inplace=True)
+    merged_df = merged_df.set_index("common_time_column")
     merged_df = merged_df.fillna(0)
     decomposition = seasonal_decompose(
         merged_df["temp_avg"], model="additive", period=52
@@ -480,7 +480,7 @@ def main_rcsmit():
     # calculate the average for each week for all 20 years and merge it
     df_avg_week = df_sterfte.groupby("week_number", as_index=False).mean(numeric_only=True)
 
-    df_avg_week.rename(columns={"OBS_VALUE": "OBS_MEAN"}, inplace=True)
+    df_avg_week = df_avg_week.rename(columns={"OBS_VALUE": "OBS_MEAN"})
     df_avg_week = df_avg_week[["week_number", "OBS_MEAN"]]
     df = df.merge(df_avg_week, on="week_number", how="outer")
 

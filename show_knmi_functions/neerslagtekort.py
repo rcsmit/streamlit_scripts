@@ -556,7 +556,7 @@ def first_day_of_dryness(df_master):
 
     # Fill the missing values in the 'x' and 'y' columns with a suitable value, such as 0 or NaN
     pivot_table.fillna(0)
-    pivot_table.set_index('year', inplace=True)
+    pivot_table = pivot_table.set_index('year')
    
     if mode !="count":
         # Create a dictionary that maps the day of year to the corresponding date in the format "mm-dd"

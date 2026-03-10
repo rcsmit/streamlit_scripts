@@ -196,7 +196,7 @@ def get_mortality(country: str) -> pd.DataFrame:
     df["year"] = pd.to_numeric(yw["y"], errors="coerce")
     df["week"] = pd.to_numeric(yw["w"], errors="coerce")
     df["age"] = df["age"].astype(str).str.split(":").str[0].str.strip()
-    df.rename(columns={"OBS_VALUE": "deaths"}, inplace=True)
+    df = df.rename(columns={"OBS_VALUE": "deaths"})
     df = df.dropna(subset=["year", "week", "age"])
     
     # Filter out UNK and any other unwanted age groups
@@ -253,7 +253,7 @@ def get_population(country: str) -> pd.DataFrame:
     tp_col = next(c for c in df.columns if "TIME_PERIOD" in c.upper())
     df["year"] = pd.to_numeric(df[tp_col].astype(str).str[:4], errors="coerce")
     df["age"] = df["age"].astype(str).str.split(":").str[0].str.strip()
-    df.rename(columns={"OBS_VALUE": "population"}, inplace=True)
+    df = df.rename(columns={"OBS_VALUE": "population"})
     pop_raw = df[["year", "age", "population"]].dropna().copy()
     
     if pop_raw.empty:

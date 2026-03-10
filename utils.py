@@ -98,7 +98,7 @@ def get_data_yfinance_non_working(choice, interval, period="3m",start="2015-01-0
 
     df['rownumber'] = np.arange(len(df))
     df["Koers"] = df["Close"]
-    df.reset_index(inplace=True)
+    df = df.reset_index()
     df["Date"] = pd.to_datetime(df.get("Datetime", df["Date"]))
     
     return df

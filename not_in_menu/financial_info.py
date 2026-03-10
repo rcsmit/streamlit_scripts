@@ -281,7 +281,7 @@ def get_monthly_pivot_table(ledger, period):
 
     #df_t_sum = df_t.sum(axis=1)
     #df_t['TOTAL_x'] = df_t_sum
-    df_t.reset_index(level=0, inplace=True) 
+    df_t = df_t.reset_index(level=0)
    
     return df, df_t
 
@@ -566,7 +566,7 @@ def barchart_income_expenses(table, titel, period):
 
 
 def make_graph_daily_trial_balance_totals(df_daily_trial_balance):
-    df_daily_trial_balance.reset_index(level=0, inplace=True)
+    df_daily_trial_balance = df_daily_trial_balance.reset_index(level=0)
 
     #df_daily_trial_balance_selected = df_daily_trial_balance.loc[:, ['Date', 'TOTAL']]
     
@@ -673,11 +673,11 @@ def give_totals_boodschappen(df):
 
     # Group by month and calculate the sum of 'Bedrag'
     monthly_result = boodschappen_df.groupby('Month')['bedrag'].sum().reset_index()
-    monthly_result.rename(columns={'bedrag': 'Total_Bedrag_Month'}, inplace=True)
+    monthly_result = monthly_result.rename(columns={'bedrag': 'Total_Bedrag_Month'})
 
     # Group by year and calculate the sum of 'Bedrag'
     yearly_result = boodschappen_df.groupby('Year')['bedrag'].sum().reset_index()
-    yearly_result.rename(columns={'bedrag': 'Total_Bedrag_Year'}, inplace=True)
+    yearly_result = yearly_result.rename(columns={'bedrag': 'Total_Bedrag_Year'})
 
     # Print the resulting DataFrames
     st.write("Monthly Total:")

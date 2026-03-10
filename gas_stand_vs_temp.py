@@ -234,7 +234,7 @@ def make_scatter(x,y, df):
     grouped['upper_ci'] = grouped['mean'] + grouped['margin_error']
 
     # Reset the index to make it more readable
-    grouped.reset_index(inplace=True)
+    grouped = grouped.reset_index()
     
     # Delete rows where margin_error is NaN
     grouped = grouped.dropna(subset=['mean'])
