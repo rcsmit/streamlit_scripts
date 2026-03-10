@@ -1,0 +1,41 @@
+Here's a summary of API error handling and security patterns in this repo:
+
+---
+
+## API Error Handling
+
+**Good patterns (using `raise_for_status()`):**
+- `letter_count.py`, `weather_open_meteo.py`, `generate_monopoly.py`, `tweedekamer.py`, `news_reader_claude.py`, `st_maptoposter/font_management.py` — proper HTTP error checking
+
+**Weak patterns:**
+- `YoutubeTranscriber_streamlit.py` — no try/except on YouTube/OpenAI API calls
+- `show_knmi_functions/utils.py`, `knmi_utils.py` — bare `except:` on data fetches
+- ~15 files use bare `except:` without specific exception types
+
+---
+
+## Security Patterns
+
+**Credentials:**
+- `keys.py` is gitignored (correct) — never committed
+- `not_in_menu/summarizer.py` and `tarot_symbols.py` import from `keys.py`/`keys_dummy.py` and assign `openai.api_key` directly (rather than using Streamlit secrets)
+- `keys_dummy.py` is a placeholder template
+
+**No SQL injection risk** — no database connections exist; all data is CSV/API-based.
+
+**Input validation** — done via `st.error()` + `st.stop()` in many scripts, but inconsistently applied.
+
+**Missing request timeouts** — most `requests.get()` calls don't set a timeout, which can cause hangs.
+
+**Caching** — `@st.cache_data()` used correctly in `utils.py`, `show_knmi_functions/utils.py`, `tweedekamer.py`, etc.
+
+---
+
+## Key Files to Note
+
+| File | Issue |
+|------|-------|
+| `YoutubeTranscriber_streamlit.py` | No error handling on API calls |
+| `tarot_symbols.py` | Uses `openai.api_key` directly |
+| `not_in_menu/summarizer.py` | Imports `from keys import *` |
+| `keys_dummy.py` | Credential template (safe, placeholder only) |

@@ -31,14 +31,18 @@ def transcribe_video(video_id, translate, language_from, translate_to):
         unsafe_allow_html=True)
 
 def transcribe_really(video_id, translate, language_from, translate_to,list_languages):
-    if translate == True:
-        transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
-        transcript = transcript_list.find_transcript([language_from])
-        translated_transcript = transcript.translate(translate_to)
-        transcript_fetched = (translated_transcript.fetch())
-    else:
-        transcript_fetched = YouTubeTranscriptApi.get_transcript(video_id,  languages=list_languages)
-
+    try:
+        if translate == True:
+            transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+            transcript = transcript_list.find_transcript([language_from])
+            translated_transcript = transcript.translate(translate_to)
+            transcript_fetched = (translated_transcript.fetch())
+        else:
+            transcript_fetched = YouTubeTranscriptApi.get_transcript(video_id,  languages=list_languages)
+    except Exception as e:
+        st.error(f"ERROR: {e}")
+        return None, None
+    
     total_text = ""
     for t in transcript_fetched:
         total_text += (t["text"])+ " "
@@ -100,10 +104,14 @@ def main():
 def summarize_video(video_id):
     transcript = YouTubeTranscriptApi.get_transcript(video_id)
     text = "\n".join([t['text'] for t in transcript])
-    resp = openai.ChatCompletion.create(
-        model="gpt-4o-mini",
-        messages=[{"role":"user", "content": f"Summarize:\n{text}"}]
-    )
+    try:
+        resp = openai.ChatCompletion.create(
+            model="gpt-4o-mini",
+            messages=[{"role":"user", "content": f"Summarize:\n{text}"}]
+        )
+    except Exception as e:
+        st.error(f"ERROR: {e}")
+        return None
     return resp.choices[0].message.content
 
 
