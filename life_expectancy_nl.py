@@ -114,7 +114,7 @@ class LifeExpectancyCalculator:
             df_prob_die = pd.read_csv(f"https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/AG{self.ag_jaar}DefinitiefGevalideerd_male.csv")
         else:
             df_prob_die = pd.read_csv(f"https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/AG{self.ag_jaar}DefinitiefGevalideerd_female.csv")
-        df_prob_die.set_index('age', inplace=True)
+        df_prob_die = df_prob_die.set_index('age')
         
         df_prob_die.columns = df_prob_die.columns.astype(int)
         # Stel de eerste kolom in als index

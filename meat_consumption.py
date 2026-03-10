@@ -419,7 +419,7 @@ def main():
     join_how = "outer"
 
     df = get_data(join_how)
-    df["continent"].fillna("UNKNOWN", inplace=True)
+    df["continent"] = df["continent"].fillna("UNKNOWN")
     df = df.dropna(subset="iso_2")
     df, what_x, what_y, show_log_x, show_log_y, trendline_per_continent = interface(df)
   

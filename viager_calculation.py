@@ -403,8 +403,8 @@ def complete_graph(self):
 
     placeholder.empty()
     # Make sure to reset the index to get the compensation as a column
-    pension_results.reset_index(inplace=True)
-    pension_results.rename(columns={'index': 'Compensation'}, inplace=True)
+    pension_results = pension_results.reset_index()
+    pension_results = pension_results.rename(columns={'index': 'Compensation'})
 
     # Melt the DataFrame to long format for Plotly
     pension_results_melted = pension_results.melt(id_vars='Compensation', var_name='Age', value_name='Result')

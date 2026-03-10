@@ -525,8 +525,8 @@ def add_extra_linnen(booking_table):
 
     for col in columns_to_update:
         merged_df[col + '_x'] += merged_df[col + '_y']
-        merged_df.drop(columns=[col + '_y'], inplace=True)
-        merged_df.rename(columns={col + '_x': col}, inplace=True)
+        merged_df = merged_df.drop(columns=[col + '_y'])
+        merged_df = merged_df.rename(columns={col + '_x': col})
 
     # Print the updated dataframe
     print(merged_df)
@@ -1129,8 +1129,8 @@ def babypackanalyse(df, y, what):
     df_babypacks = pd.DataFrame.from_dict(
         totals, orient="index", columns=[f"total_{what}"]
     )
-    df_babypacks.reset_index(inplace=True)
-    df_babypacks.rename(columns={"index": "date"}, inplace=True)
+    df_babypacks = df_babypacks.reset_index()
+    df_babypacks = df_babypacks.rename(columns={"index": "date"})
     df_babypacks["date"] = pd.to_datetime(df_babypacks["date"])
 
     fig = px.line(
@@ -1914,7 +1914,7 @@ def add_on_list(data_csv):
     st.write(sum_table)
 
     # Set 'checkin_date' column as the index
-    filtered_data.set_index('checkin_date', inplace=True)
+    filtered_data = filtered_data.set_index('checkin_date')
     
     # Resample the data by week, starting from Monday (M) and ending on Sunday (W-SUN)
     weekly_table = filtered_data.resample('W-MON')['sng_linnen', 'dbl_linnen', 'kst', 'bb'].sum()
@@ -2325,7 +2325,7 @@ def cleaningstaff_needed(df):
     pivot_df.columns = [f'{col[1]}_{col[0]}' for col in pivot_df.columns]
 
     pivot_df = pivot_df.fillna(0)
-    pivot_df.reset_index(inplace=True)
+    pivot_df = pivot_df.reset_index()
     pivot_df['date'] = pd.to_datetime(pivot_df['date'])
     pivot_df['year'] = pivot_df['date'].dt.year
    
@@ -2392,7 +2392,7 @@ def make_combined_frequency_table(df, what, bins):
     pivoted_frequency_table = combined_frequency_table.pivot(index=what, columns='Year', values='Frequency').fillna(0)
 
     # Reset the index and fill NaN values with 0
-    pivoted_frequency_table.reset_index(inplace=True)
+    pivoted_frequency_table = pivoted_frequency_table.reset_index()
 
     # Print the pivoted frequency table
     #st.table(pivoted_frequency_table)

@@ -491,7 +491,7 @@ def main_aantal_maanden():
         df = pd.concat([df, df_row.to_frame().T])
 
     # Set the index to the salaries
-    df.set_index(pd.Index([f"EUR {salary}" for salary in salaries]), inplace=True)
+    df = df.set_index(pd.Index([f"EUR {salary}" for salary in salaries]))
 
     # Display the DataFrame
     print(df)
@@ -531,7 +531,7 @@ def main_aantal_uren_per_week():
         df = pd.concat([df, df_row.to_frame().T])
 
     # Set the index to the salaries
-    df.set_index(pd.Index([f"EUR {salary}" for salary in salaries]), inplace=True)
+    df = df.set_index(pd.Index([f"EUR {salary}" for salary in salaries]))
 
     # Display the DataFrame
     print(df)

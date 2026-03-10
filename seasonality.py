@@ -31,7 +31,7 @@ def get_data_knmi():
         [13, "EV24"], [14, "wind_max"]
     ]
 
-    df.rename(columns=dict(column_replacements), inplace=True)
+    df = df.rename(columns=dict(column_replacements))
     df["Date"] = pd.to_datetime(df["YYYYMMDD"].astype(str))
     
     return df
@@ -255,7 +255,7 @@ def find_seasonality(df, fieldname, what):
         st.error("No data")
         return
     else:
-        df.set_index('Date', inplace=True) 
+        df = df.set_index('Date')
         df['Month'] = df.index.month
         df['Year'] = df.index.year
         df_grouped = df.groupby(['Year', 'Month'])[fieldname].mean().reset_index()
