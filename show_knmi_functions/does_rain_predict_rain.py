@@ -69,8 +69,8 @@ def does_rain_predict_rain(df):
     # Create the new column based on the condition
     stationDF['rain_period'] = stationDF['DaysOfRain'].where(stationDF['DaysOfRain_next'] == 0, other=0)
 
-    stationDF.drop('DlySumToday_tomorrow', axis=1, inplace=True)
-    stationDF.drop('DaysOfRain_next', axis=1, inplace=True)
+    stationDF = stationDF.drop('DlySumToday_tomorrow', axis=1)
+    stationDF = stationDF.drop('DaysOfRain_next', axis=1)
 
     st.header("Total period")
     rain_probabilities = stationDF.groupby('DaysOfRain')['does_it_rain_tomorrow'].mean().reset_index()

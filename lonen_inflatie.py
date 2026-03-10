@@ -74,7 +74,7 @@ def verleg_basisjaar(df, basisjaar, kolommen, groep, tabelnaam):
     out = df.merge(basis, on=groep, how="left")
     # vectorized: deel alles in één keer
     out[kolommen] = out[kolommen].values / out[[c+"_basis" for c in kolommen]].values * 100.0
-    out.drop(columns=[c+"_basis" for c in kolommen], inplace=True)
+    out = out.drop(columns=[c+"_basis" for c in kolommen])
  
     return out
 

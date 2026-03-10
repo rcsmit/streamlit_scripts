@@ -585,7 +585,7 @@ def rest(df):
         12 : 'Dec'
     }
     df['Month'] = df['Mon'].map(months)
-    df.drop('Mon',axis=1,inplace=True)
+    df = df.drop('Mon',axis=1)
 
     ### Mostly Active month
     fig = plt.figure()

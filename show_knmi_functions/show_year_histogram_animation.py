@@ -37,7 +37,7 @@ def show_animation_histogram_plotly(df, what):
     # Create a pivot table with Year as index and temp_avg frequencies as columns
     pivot_table = df.pivot_table(index='year', columns=what, aggfunc='size', fill_value=0).reset_index()
 
-    pivot_table.set_index('year', inplace=True)
+    pivot_table = pivot_table.set_index('year')
     dfs = pivot_table.unstack().reset_index()
     dfs.columns = [what, 'year',  'value']
     

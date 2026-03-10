@@ -121,7 +121,7 @@ def main():
                 combined_data = pd.concat([filtered_data_1, filtered_data_2])
 
                 # Reset the index if needed
-                combined_data.reset_index(drop=True, inplace=True)
+                combined_data = combined_data.reset_index(drop=True)
 
                 st.write(combined_data)
                 

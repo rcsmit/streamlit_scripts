@@ -37,7 +37,7 @@ def fill_up_weekend_days(df):
     """
     # https://stackoverflow.com/questions/70486174/insert-weekend-dates-into-dataframe-while-keeping-prices-in-index-location
     df['Date'] = pd.to_datetime(df['Date'])
-    df.set_index('Date', inplace=True)
+    df = df.set_index('Date')
     df = df.reindex(pd.date_range(df.index.min(), df.index.max())).sort_index(ascending=True).reset_index().rename(columns={'index': 'Date'})
     columns = df.columns.tolist()
     df = df.fillna(0)
