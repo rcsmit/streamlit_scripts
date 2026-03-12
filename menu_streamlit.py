@@ -29,7 +29,7 @@ def main():
         arr = os.listdir()
 
     counter = 1
-       options = [["[0] welcome","welcome","Landing page and overview of all available scripts"],
+    options = [["[0] welcome","welcome","Landing page and overview of all available scripts"],
                 ["[1] newagebullshitgenerator","newagebullshitgenerator","Generates random new age sentences using word lists"],
                 ["[2] KNMI grafieken","show_knmi","Dutch weather data visualization with multiple analysis modes"],
                 ["[3] Text generator","txt_generator_streamlit","Markov chain text generator from meditation scripts"],
