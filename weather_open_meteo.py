@@ -1718,6 +1718,363 @@ def replicate_weatherspark_temperature(
     st.plotly_chart(fig)
     return 
 
+def replicate_weatherspark_precipitation_sum(
+    df: pd.DataFrame,
+    to_show: int = None,
+    title: str = "Precipitation sum History 2026",
+    what: str="precipitation_sum"
+):
+    """
+    Replicate a WeatherSpark-style precipitation sum history chart using Plotly.
+
+    Parameters
+    ----------
+    df       : DataFrame with columns 'date' (datetime), 'temp_max', 'temp_min'.
+               Optionally 'temp_mean'. Temperatures in °C or °F.
+    to_show  : Year to highlight with daily bars/ticks. Defaults to latest year.
+    title    : Chart title string.
+
+    Returns
+    -------
+    fig      : plotly.graph_objects.Figure
+    """
+
+    # ── 0. Normalise ──────────────────────────────────────────────────────────
+    df = df.copy()
+    #df.columns = [c.lower() for c in df.columns]
+
+    # date_col = next(
+    #     (c for c in df.columns if "date" in c and pd.api.types.is_datetime64_any_dtype(df[c])),
+    #     None,
+    # )
+    # if date_col is None:
+    #     date_col = next((c for c in df.columns if "date" in c), "date")
+    # try:
+    #     df["_date"] = pd.to_datetime(df[date_col])
+    # except:
+    df["_date"] = df["date"]
+    df["_doy"] = df["_date"].dt.dayofyear
+    df["_year"] = df["_date"].dt.year
+
+
+    mean_col = next((c for c in df.columns if c in ("precipitation_sum", "precipitation_sum", "precipitation_sum")), None)
+
+    
+
+    df[what] = df[mean_col] 
+
+    if to_show is None:
+        to_show = int(df["_year"].max())
+
+    # ── 1. Climatological percentile bands ───────────────────────────────────
+    clim = df.groupby("_doy").agg(
+        p10_what=(what, lambda x: np.nanpercentile(x, 10)),
+        p25_what=(what, lambda x: np.nanpercentile(x, 25)),
+        p75_what=(what, lambda x: np.nanpercentile(x, 75)),
+        p90_what=(what, lambda x: np.nanpercentile(x, 90)),
+        avg_what=(what, "mean"),
+        median_what=(what, "median"),
+      
+    ).reset_index()
+
+    # smooth with 14-day rolling
+    for col in clim.columns[1:]:
+        clim[col] = clim[col].rolling(14, center=True, min_periods=1).mean()
+
+    doy = clim["_doy"].values
+
+    # ── 2. Current-year actuals ───────────────────────────────────────────────
+    curr = df[df["_year"] == to_show].sort_values("_doy").copy()
+
+    # ── 3. DOY → fake date string for x-axis (use a non-leap year base) ──────
+    base_year = 2001  # non-leap
+    def doy_to_date(d):
+        return pd.Timestamp(f"{base_year}-01-01") + pd.Timedelta(days=int(d) - 1)
+
+    clim["_xdate"] = clim["_doy"].apply(doy_to_date)
+    curr["_xdate"] = curr["_doy"].apply(doy_to_date)
+
+    today_doy = datetime.today().timetuple().tm_yday
+    today_xdate = doy_to_date(today_doy)
+
+    # ── 4. Build figure ───────────────────────────────────────────────────────
+    fig = go.Figure()
+
+    xd = clim["_xdate"]
+
+    # ── HIGH bands ─────────────────────────────────────────────────────────
+    # 10–90 outer band
+    fig.add_trace(go.Scatter(
+        x=list(xd) + list(xd[::-1]),
+        y=list(clim["p90_what"]) + list(clim["p10_what"][::-1]),
+        fill="toself", fillcolor="rgba(220,130,135,0.25)",
+        line=dict(width=0), hoverinfo="skip", showlegend=False, name="High 10–90%",
+    ))
+    # 25–75 inner band
+    fig.add_trace(go.Scatter(
+        x=list(xd) + list(xd[::-1]),
+        y=list(clim["p75_what"]) + list(clim["p25_what"][::-1]),
+        fill="toself", fillcolor="rgba(200,80,88,0.35)",
+        line=dict(width=0), hoverinfo="skip", showlegend=False, name="High 25–75%",
+    ))
+    # Average high line
+    fig.add_trace(go.Scatter(
+        x=xd, y=clim["avg_what"],
+        line=dict(color="rgba(192,57,63,0.3)", width=2),
+        hovertemplate="Avg Precipitation: %{y:.1f} mm<extra></extra>",
+        showlegend=False, name="Avg Precipitation",
+    ))
+
+    fig.add_trace(go.Scatter(
+        x=xd, y=clim["median_what"],
+        line=dict(color="rgba(192,30,90,0.7)", width=2),
+        hovertemplate="Median Precipitation: %{y:.1f} mm<extra></extra>",
+        showlegend=False, name="Median Precipitation",
+    ))
+
+
+   
+    fig.add_trace(go.Scatter(
+            x=curr["_xdate"],
+            y=curr["precipitation_sum"],
+            mode="lines",
+            line=dict(color="rgba(120,120,120,0.8)", width=1.5),
+            hovertemplate="<b>%{x|%b %d}</b><br>Precipitation: %{y:.1f} mm<extra></extra>",
+            showlegend=False,
+            name="Precipitation",
+        ))
+
+  
+            
+    # ── "Now" vertical line ───────────────────────────────────────────────
+    fig.add_vline(
+        x=today_xdate.timestamp() * 1000,
+        line=dict(color="#cc2222", width=1.8, dash="solid"),
+    )
+    fig.add_annotation(
+        x=today_xdate, y=67,
+        text="<b>Now</b>", showarrow=False,
+        font=dict(color="#cc2222", size=11),
+        xshift=18,
+    )
+
+    # ── 5. Layout ─────────────────────────────────────────────────────────
+    month_ticks = [doy_to_date(d) for d in [1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335]]
+    month_labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+    fig.update_layout(
+        title=dict(text=title, font=dict(size=15, color="#222"), x=0.5, xanchor="center"),
+        plot_bgcolor="white",
+        paper_bgcolor="white",
+        xaxis=dict(
+            tickvals=month_ticks,
+            ticktext=month_labels,
+            tickfont=dict(size=11, color="#333"),
+            showgrid=False,
+            showline=False,
+            zeroline=False,
+            range=[doy_to_date(1), doy_to_date(366)],
+        ),
+        yaxis=dict(
+            # tickvals=list(range(70, 101, 5)),
+            # ticktext=[f"{t}°C" for t in range(70, 101, 5)],
+            tickfont=dict(size=10, color="#333"),
+            showgrid=True,
+            gridcolor="#e8e8e8",
+            gridwidth=1,
+            showline=False,
+            zeroline=False,
+            # range=[65, 100],
+        ),
+        yaxis2=dict(
+            # tickvals=list(range(70, 101, 5)),
+            # ticktext=[f"{t}°C" for t in range(70, 101, 5)],
+            tickfont=dict(size=10, color="#333"),
+            overlaying="y", side="right",
+            showgrid=False, showline=False, zeroline=False,
+            # range=[65, 100],
+        ),
+        margin=dict(l=60, r=60, t=60, b=80),
+        height=480,
+        width=900,
+        hovermode="x unified",
+        annotations=[
+            dict(
+                text=(
+                    "The daily range of reported precipitation_sum ,<br>"
+                    "placed over the daily values, "
+                    "with 25th to 75th and 10th to 90th percentile bands."
+                    "The average is being pulled up by extreme rainfall days (right-skewed distribution)."
+                    "This is why mean as well as median is plotted."
+                ),
+                xref="paper", yref="paper",
+                x=0.5, y=-0.18,
+                showarrow=False,
+                font=dict(size=9, color="#666", style="italic"),
+                align="center",
+            )
+        ],
+    )
+    st.plotly_chart(fig)
+    return 
+
+def spaghetti_precipitation_sum(
+    df: pd.DataFrame,
+    to_show: int = None,
+    title: str = "Precipitation Spaghetti Plot",
+    what: str = "precipitation_sum",
+) -> None:
+    """
+    Spaghetti plot of yearly precipitation traces over day-of-year.
+
+    Each year is drawn as a faint line; the highlighted year (to_show)
+    is drawn bold on top. A smoothed median line provides a reference.
+
+    Parameters
+    ----------
+    df      : DataFrame with columns 'date' (datetime) and `what`.
+    to_show : Year to highlight. Defaults to latest year.
+    title   : Chart title string.
+    what    : Column name for the precipitation variable.
+    """
+    # ── 0. Prepare ────────────────────────────────────────────────────────────
+    df = df.copy()
+    df["_date"] = df["date"]
+    df["_doy"] = df["_date"].dt.dayofyear
+    df["_year"] = df["_date"].dt.year
+
+    if to_show is None:
+        to_show = int(df["_year"].max())
+
+    base_year = 2001  # non-leap
+
+    def doy_to_date(d: int) -> pd.Timestamp:
+        """Convert day-of-year integer to a fake timestamp for x-axis alignment."""
+        return pd.Timestamp(f"{base_year}-01-01") + pd.Timedelta(days=int(d) - 1)
+
+    # ── 1. Smoothed median reference ─────────────────────────────────────────
+    clim = (
+        df.groupby("_doy")[what]
+        .median()
+        .rolling(14, center=True, min_periods=1)
+        .mean()
+        .reset_index()
+    )
+    clim["_xdate"] = clim["_doy"].apply(doy_to_date)
+
+    # ── 2. Build figure ───────────────────────────────────────────────────────
+    fig = go.Figure()
+
+    years = sorted(df["_year"].unique())
+    n_years = len(years)
+
+    # faint grey palette for background years
+    for year in years:
+        if year == to_show:
+            continue
+        yr_df = df[df["_year"] == year].sort_values("_doy").copy()
+        yr_df["_xdate"] = yr_df["_doy"].apply(doy_to_date)
+
+        # fade older years slightly more
+        alpha = 0.15 + 0.10 * (year - years[0]) / max(n_years - 1, 1)
+        fig.add_trace(go.Scatter(
+            x=yr_df["_xdate"],
+            y=yr_df[what],
+            mode="lines",
+            line=dict(color=f"rgba(160,160,160,{alpha:.2f})", width=1),
+            hovertemplate=f"<b>{year}</b> – %{{x|%b %d}}: %{{y:.1f}} mm<extra></extra>",
+            showlegend=False,
+            name=str(year),
+        ))
+
+    # smoothed median reference line
+    fig.add_trace(go.Scatter(
+        x=clim["_xdate"],
+        y=clim[what],
+        mode="lines",
+        line=dict(color="rgba(192,57,63,0.7)", width=2, dash="dot"),
+        hovertemplate="Median: %{y:.1f} mm<extra></extra>",
+        showlegend=True,
+        name="Median (smoothed)",
+    ))
+
+    # highlighted year on top
+    curr = df[df["_year"] == to_show].sort_values("_doy").copy()
+    curr["_xdate"] = curr["_doy"].apply(doy_to_date)
+    fig.add_trace(go.Scatter(
+        x=curr["_xdate"],
+        y=curr[what],
+        mode="lines",
+        line=dict(color="rgba(30,100,200,0.9)", width=2.5),
+        hovertemplate=f"<b>{to_show}</b> – %{{x|%b %d}}: %{{y:.1f}} mm<extra></extra>",
+        showlegend=True,
+        name=str(to_show),
+    ))
+
+    # "Now" vertical line
+    today_doy = datetime.today().timetuple().tm_yday
+    today_xdate = doy_to_date(today_doy)
+    fig.add_vline(
+        x=today_xdate.timestamp() * 1000,
+        line=dict(color="#cc2222", width=1.8, dash="solid"),
+    )
+    fig.add_annotation(
+        x=today_xdate,
+        y=df[what].max() * 0.95,
+        text="<b>Now</b>",
+        showarrow=False,
+        font=dict(color="#cc2222", size=11),
+        xshift=18,
+    )
+
+    # ── 3. Layout ─────────────────────────────────────────────────────────────
+    month_ticks = [doy_to_date(d) for d in [1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335]]
+    month_labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+    fig.update_layout(
+        title=dict(text=title, font=dict(size=15, color="#222"), x=0.5, xanchor="center"),
+        plot_bgcolor="white",
+        paper_bgcolor="white",
+        xaxis=dict(
+            tickvals=month_ticks,
+            ticktext=month_labels,
+            tickfont=dict(size=11, color="#333"),
+            showgrid=False,
+            showline=False,
+            zeroline=False,
+            range=[doy_to_date(1), doy_to_date(366)],
+        ),
+        yaxis=dict(
+            tickfont=dict(size=10, color="#333"),
+            showgrid=True,
+            gridcolor="#e8e8e8",
+            gridwidth=1,
+            showline=False,
+            zeroline=False,
+        ),
+        #legend=dict(x=0.01, y=0.99, bgcolor="rgba(255,255,255,0.7)", borderwidth=0),
+        margin=dict(l=60, r=60, t=60, b=80),
+        height=480,
+        width=900,
+        #hovermode="x unified",
+        annotations=[
+            dict(
+                text=(
+                    f"Daily {what} per year (faint lines), with {to_show} highlighted (blue) "
+                    "and smoothed median (dotted red)."
+                ),
+                xref="paper", yref="paper",
+                x=0.5, y=-0.18,
+                showarrow=False,
+                font=dict(size=9, color="#666", style="italic"),
+                align="center",
+            )
+        ],
+    )
+    st.plotly_chart(fig)
+
 def plot_precipitation_chance(df, what, treshold, window=14):
     """
     Plot the probability of a precipitation day (precipitation_sum > treshold)
@@ -1882,7 +2239,10 @@ def main():
     with tab6:
         # https://weatherspark.com/y/149191/Average-Weather-at-Ngurah-Rai-International-Airport-Indonesia-Year-Round#Sections-Sources
         replicate_weatherspark_temperature(df, 2026, f"Temperature History for {where}")
+        replicate_weatherspark_precipitation_sum(df, 2026, f"Precipitation sum History for {where}")
+        spaghetti_precipitation_sum(df, 2026, f"Precipitation sum History for {where}")
         plot_precipitation_chance(df, to_show, treshold_value)
+        st.stop()
     with tab7:
         show_locations_2(locations)
     with tab8:
