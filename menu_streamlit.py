@@ -103,6 +103,8 @@ def main():
                 ["[70] Year timeline ","how_the_year_went", "Timeline of the year with subjective length of months"],
                 ["[71] Airquality Chiang Mai","airquality_chiangmai", "Historical airquality in Chiang Mai"],
                 ["[72] Letter Frequentie Analyse","letter_count", "Welk woord heeft de meeste van elke letter?"],
+                ["[73] Streamlit dashboard apps","streamlit_demo_apps", "Demo templates made by Streamlit"],
+
        ]
 
 
