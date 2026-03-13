@@ -2195,13 +2195,13 @@ def main():
         {"name": "Koh Phangan", "lat": 9.755106899960907, "lon": 99.9609068, "timezone": "Asia/Bangkok"},
         {"name": "Koh Chang", "lat":  12.10361, "lon": 102.35194, "timezone": "Asia/Bangkok"},
         {"name": "Chiang Mai", "lat": 18.7931784, "lon": 98.9774429, "timezone": "Asia/Bangkok"},
+        {"name": "Da Nang", "lat": 16.047079, "lon":108.206230, "timezone": "Asia/Ho_Chi_Minh"},
         {"name": "Ubud", "lat": -8.4960241, "lon": 115.2248393,"timezone": "auto"},
         {"name": "Amsterdam", "lat": 52.3676, "lon": 4.9041, "timezone": "Europe/Amsterdam"},
         {"name": "Lisbon", "lat": 38.7169, "lon": -9.1399, "timezone": "Europe/Lisbon"},
         {"name": "Rome", "lat": 41.9102088, "lon": 12.371185, "timezone": "Europe/Rome"},
         {"name": "Venezia", "lat": 45.4408, "lon": 12.3155, "timezone": "Europe/Rome"},
         {"name": "Hoi An", "lat": 15.8801, "lon": 108.3380, "timezone": "Asia/Ho_Chi_Minh"},
-        {"name": "Da Nang", "lat": 16.047079, "lon":108.206230, "timezone": "Asia/Ho_Chi_Minh"},
         {"name": "Ho Chi Minh City", "lat": 10.7769, "lon": 106.7009, "timezone": "Asia/Ho_Chi_Minh"},
         {"name": "Hanoi", "lat": 21.0285, "lon": 105.8542, "timezone": "Asia/Bangkok"},
         {"name": "Manila", "lat": 14.5995, "lon": 120.9842, "timezone": "Asia/Manila"},
@@ -2242,7 +2242,7 @@ def main():
         replicate_weatherspark_precipitation_sum(df, 2026, f"Precipitation sum History for {where}")
         spaghetti_precipitation_sum(df, 2026, f"Precipitation sum History for {where}")
         plot_precipitation_chance(df, to_show, treshold_value)
-        st.stop()
+        
     with tab7:
         show_locations_2(locations)
     with tab8:
