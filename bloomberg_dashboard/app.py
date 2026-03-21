@@ -187,7 +187,8 @@ def dashboard():
                         format_func=lambda x:f"{'🔄 SWING' if x=='swing' else '⚡ DAY'} TRADING MODE")
       st.session_state.mode=mode
   with c2:
-      if st.button("⟳ REFRESH"):
+      import random
+      if st.button("⟳ REFRESH", key=f"uitleg{random.randint(1,9999)}"):
           st.cache_data.clear(); st.session_state.last_refresh=time.time(); st.rerun()
 
   # ── FETCH ─────────────────────────────────────────────────────────
@@ -402,5 +403,6 @@ def dashboard():
 def main():
   dashboard()
 
-if __name__ =="main":
-  main()
+
+if __name__ == "__main__":
+    main()
