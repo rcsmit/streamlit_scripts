@@ -7,7 +7,8 @@ Gebruik:
 """
 
 import streamlit as st
-
+from theme import apply_article_theme
+  
 try:
     st.set_page_config(
         page_title="Should I Be Trading? — Uitleg",
@@ -19,152 +20,11 @@ except:
     pass
 
 def uitleg_backtest():
-    st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap');
-    :root{
-      --bg:#050a0f; --pan:#0a1520; --pan2:#0d1c2a; --bdr:#0e2233; --bdr2:#1a3a52;
-      --g:#00ff9d; --gd:#00cc7a; --gk:#003d25;
-      --r:#ff3a3a; --rd:#cc2222; --rk:#3d0000;
-      --a:#ffb700; --ad:#cc9200; --ak:#3d2c00;
-      --b:#00b4ff; --bd:#007ab5;
-      --t1:#c8dce8; --t2:#6a8fa8; --t3:#3a5a6e;
-      --mono:'Share Tech Mono',monospace;
-      --sans:'Rajdhani',sans-serif;
-      --serif:'Crimson Pro',Georgia,serif;
-    }
-    * { box-sizing: border-box; }
-    .stApp { background: var(--bg) !important; }
-    #MainMenu, footer, header { visibility: hidden; }
-    .block-container { padding: 2rem 4rem !important; max-width: 900px !important; margin: 0 auto; }
-    .stApp > header { display: none; }
-    section[data-testid="stSidebar"] { display: none; }
+    apply_article_theme()
+    st.markdown("<style>.block-container{padding:1rem 1.5rem!important;max-width:100%!important}</style>",
+            unsafe_allow_html=True)
 
-    /* Artikel typografie */
-    .art-title {
-      font-family: var(--sans);
-      font-size: 38px;
-      font-weight: 700;
-      color: var(--b);
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-      line-height: 1.1;
-    }
-    .art-sub {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--t3);
-      letter-spacing: .2em;
-      margin-bottom: 32px;
-    }
-    .art-lead {
-      font-family: var(--serif);
-      font-size: 19px;
-      color: var(--t1);
-      line-height: 1.75;
-      margin-bottom: 28px;
-      border-left: 3px solid var(--b);
-      padding-left: 18px;
-    }
-    h2 {
-      font-family: var(--sans) !important;
-      font-size: 20px !important;
-      font-weight: 700 !important;
-      color: var(--b) !important;
-      letter-spacing: .12em !important;
-      text-transform: uppercase !important;
-      border-bottom: 1px solid var(--bdr2) !important;
-      padding-bottom: 8px !important;
-      margin-top: 42px !important;
-      margin-bottom: 16px !important;
-    }
-    h3 {
-      font-family: var(--sans) !important;
-      font-size: 15px !important;
-      font-weight: 600 !important;
-      color: var(--a) !important;
-      letter-spacing: .1em !important;
-      text-transform: uppercase !important;
-      margin-top: 28px !important;
-      margin-bottom: 10px !important;
-    }
-    p, li {
-      font-family: var(--serif) !important;
-      font-size: 16px !important;
-      color: var(--t1) !important;
-      line-height: 1.8 !important;
-    }
-    li { margin-bottom: 4px !important; }
-    strong { color: var(--t1) !important; font-family: var(--mono) !important; font-size: 13px !important; }
-    code {
-      background: var(--pan2) !important;
-      color: var(--g) !important;
-      font-family: var(--mono) !important;
-      font-size: 12px !important;
-      padding: 1px 5px !important;
-      border-radius: 2px !important;
-      border: 1px solid var(--bdr) !important;
-    }
-
-    /* Callout boxes */
-    .callout {
-      padding: 14px 18px;
-      border-radius: 2px;
-      margin: 18px 0;
-      font-family: var(--mono);
-      font-size: 12px;
-      line-height: 1.7;
-    }
-    .callout-green  { background: var(--gk);  border-left: 3px solid var(--g);  color: var(--gd); }
-    .callout-yellow { background: var(--ak);  border-left: 3px solid var(--a);  color: var(--ad); }
-    .callout-red    { background: var(--rk);  border-left: 3px solid var(--r);  color: var(--rd); }
-    .callout-blue   { background: #001d30;    border-left: 3px solid var(--b);  color: var(--b);  }
-
-    /* Score-tabel */
-    .score-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-family: var(--mono); font-size: 12px; }
-    .score-table th { background: var(--pan2); color: var(--t3); letter-spacing: .15em; padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--bdr2); font-size: 10px; }
-    .score-table td { padding: 8px 12px; border-bottom: 1px solid var(--bdr); color: var(--t1); vertical-align: top; }
-    .score-table tr:last-child td { border-bottom: none; }
-    .score-table .cat  { color: var(--a); font-weight: 600; }
-    .score-table .wt   { color: var(--b); }
-    .score-table .pos  { color: var(--gd); }
-    .score-table .neg  { color: var(--rd); }
-
-    /* Formule box */
-    .formula {
-      background: var(--pan);
-      border: 1px solid var(--bdr2);
-      padding: 16px 20px;
-      font-family: var(--mono);
-      font-size: 13px;
-      color: var(--g);
-      margin: 16px 0;
-      line-height: 2;
-      border-radius: 2px;
-    }
-    .formula .dim { color: var(--t3); }
-
-    /* Divider */
-    .div { border: none; border-top: 1px solid var(--bdr2); margin: 36px 0; }
-
-    /* Disclaimer */
-    .disclaimer {
-      background: var(--pan);
-      border: 1px solid var(--bdr);
-      padding: 14px 18px;
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--t3);
-      line-height: 1.8;
-      margin-top: 48px;
-      border-radius: 2px;
-    }
-    .bodytext {padding:100px; max-width:800px; margin:0 auto;}
-    </style>
-    """, unsafe_allow_html=True)
-
-
+    
     # ════════════════════════════════════════════════════════════════════
     # TITEL
     # ════════════════════════════════════════════════════════════════════
@@ -215,10 +75,17 @@ def uitleg_backtest():
     st.markdown("## 2. De vijf factoren en hun gewichten")
 
     st.markdown("""
+    SPY is de ticker van de SPDR S&P 500 ETF Trust — het grootste en meest verhandelde beleggingsfonds 
+    ter wereld. SPY volgt de S&P 500 — een index van de 500 grootste beursgenoteerde bedrijven in Amerika.
+    Denk aan Apple, Microsoft, Amazon, Google, JPMorgan, Johnson & Johnson, etc. 
+    Samen vertegenwoordigen ze roughly 80% van de totale Amerikaanse beurswaarde.
+                """)
+    st.markdown("""
     De totaalscore — de **Market Quality Score (MQS)** — is een gewogen gemiddelde van vijf
     sub-scores, elk tussen 0 en 100. De gewichten reflecteren hoe sterk elke factor de
     kans op succesvolle trades beïnvloedt:
-    """)
+                """)
+    
 
     st.markdown("""
     <table class="score-table">

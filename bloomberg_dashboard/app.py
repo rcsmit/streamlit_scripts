@@ -14,120 +14,15 @@ import time
 from datetime import datetime
 import warnings
 warnings.filterwarnings('ignore')
-
+from theme import apply_theme
 
 def dashboard():
-  st.set_page_config(page_title="Should I Be Trading?", page_icon="📊", layout="wide", initial_sidebar_state="collapsed")
-
-  # ── CSS ──────────────────────────────────────────────────────────────
-  st.markdown("""
-  <style>
-  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
-  :root{
-    --bg:#050a0f; --bg2:#070d14; --pan:#0a1520; --pan2:#0d1c2a;
-    --bdr:#0e2233; --bdr2:#1a3a52;
-    --g:#00ff9d; --gd:#00cc7a; --gk:#003d25;
-    --r:#ff3a3a; --rd:#cc2222; --rk:#3d0000;
-    --a:#ffb700; --ad:#cc9200; --ak:#3d2c00;
-    --b:#00b4ff; --bd:#007ab5;
-    --t1:#c8dce8; --t2:#6a8fa8; --t3:#3a5a6e;
-    --mono:'Share Tech Mono',monospace; --sans:'Rajdhani',sans-serif;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  .stApp{background:var(--bg)!important;font-family:var(--mono)!important}
-  #MainMenu,footer,header{visibility:hidden}
-  .block-container{padding:0!important;max-width:100%!important}
-  .stApp>header{display:none}
-  section[data-testid="stSidebar"]{display:none}
-  /* ticker */
-  .tbr{background:#000;border-bottom:1px solid var(--bdr2);padding:5px 0;overflow:hidden;white-space:nowrap}
-  .tsc{display:inline-block;animation:sl 70s linear infinite;font-size:11px}
-  @keyframes sl{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-  .ti{display:inline-block;margin-right:26px;color:var(--t2)}
-  .ti .sy{color:var(--b);margin-right:3px}
-  .up{color:var(--g)} .dn{color:var(--r)} .fl{color:var(--t2)}
-  /* header */
-  .hdr{background:linear-gradient(90deg,#060e18,#0a1825);border-bottom:1px solid var(--bdr2);padding:9px 18px;display:flex;align-items:center;justify-content:space-between}
-  .ht{font-family:var(--sans);font-size:21px;font-weight:700;color:var(--b);letter-spacing:.12em;text-transform:uppercase}
-  .hs{font-size:9px;color:var(--t3);letter-spacing:.15em;margin-top:2px}
-  .lb{display:inline-block;background:var(--gk);color:var(--g);border:1px solid var(--gd);padding:2px 8px;font-size:9px;letter-spacing:.2em;border-radius:2px;animation:pu 2s ease-in-out infinite}
-  .db{display:inline-block;background:var(--ak);color:var(--a);border:1px solid var(--ad);padding:2px 8px;font-size:9px;letter-spacing:.2em;border-radius:2px}
-  @keyframes pu{0%,100%{opacity:1}50%{opacity:.55}}
-  .ts{font-size:9px;color:var(--t3)}
-  /* body */
-  .body{padding:12px 16px}
-  /* hero */
-  .hero{display:flex;gap:12px;margin-bottom:12px;align-items:stretch;min-height:170px}
-  .hdec{flex:0 0 230px;background:var(--pan);border:1px solid var(--bdr2);padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden}
-  .hdec::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-  .hy::before{background:var(--g);box-shadow:0 0 12px var(--g)}
-  .hc::before{background:var(--a);box-shadow:0 0 12px var(--a)}
-  .hn::before{background:var(--r);box-shadow:0 0 12px var(--r)}
-  .dl{font-size:9px;letter-spacing:.3em;color:var(--t3);margin-bottom:7px}
-  .db2{font-family:var(--sans);font-size:50px;font-weight:700;letter-spacing:.05em;line-height:1;margin-bottom:7px}
-  .dy{color:var(--g);text-shadow:0 0 20px rgba(0,255,157,.35)}
-  .dc{color:var(--a);text-shadow:0 0 20px rgba(255,183,0,.35)}
-  .dn2{color:var(--r);text-shadow:0 0 20px rgba(255,58,58,.35)}
-  .dd{font-size:9.5px;color:var(--t2);line-height:1.6;max-width:190px}
-  /* scores row */
-  .sr{display:flex;gap:12px;flex:1}
-  .sc{flex:1;background:var(--pan);border:1px solid var(--bdr2);padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-  .rc{position:relative;width:106px;height:106px;margin:0 auto 9px}
-  .rs{transform:rotate(-90deg)}
-  .rt{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:21px;font-weight:bold;font-family:var(--mono)}
-  .sct{font-size:9px;letter-spacing:.2em;color:var(--t3);margin-bottom:3px}
-  .scs{font-size:9px;color:var(--t2)}
-  /* panels */
-  .pg{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-bottom:10px}
-  .pn{background:var(--pan);border:1px solid var(--bdr);padding:11px}
-  .pn:hover{border-color:var(--bdr2)}
-  .ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;border-bottom:1px solid var(--bdr);padding-bottom:5px}
-  .pt{font-size:9px;letter-spacing:.2em;color:var(--t3);text-transform:uppercase}
-  .pb{font-size:10px;padding:1px 5px;border-radius:2px}
-  .bg{background:var(--gk);color:var(--g);border:1px solid var(--gd)}
-  .ba{background:var(--ak);color:var(--a);border:1px solid var(--ad)}
-  .br2{background:var(--rk);color:var(--r);border:1px solid var(--rd)}
-  .mr{display:flex;justify-content:space-between;align-items:center;padding:2px 0;border-bottom:1px solid #0a1820;font-size:10px}
-  .mr:last-of-type{border-bottom:none}
-  .mn{color:var(--t2);font-size:9px}
-  .mv{color:var(--t1)}
-  .mu{color:var(--g)} .md{color:var(--r)} .mn2{color:var(--t2)}
-  .ip{margin-top:6px;font-size:9px;padding:3px 6px;border-left:2px solid;letter-spacing:.04em;line-height:1.4}
-  .ih{border-color:var(--g);background:var(--gk);color:var(--gd)}
-  .in{border-color:var(--a);background:var(--ak);color:var(--ad)}
-  .ir{border-color:var(--r);background:var(--rk);color:var(--rd)}
-  /* bottom */
-  .br{display:grid;grid-template-columns:1fr 1fr 1.1fr;gap:9px}
-  .bp{background:var(--pan);border:1px solid var(--bdr);padding:11px}
-  .bpt{font-size:9px;letter-spacing:.2em;color:var(--b);margin-bottom:8px;border-bottom:1px solid var(--bdr);padding-bottom:5px;text-transform:uppercase}
-  /* sector */
-  .sbr{display:flex;align-items:center;margin-bottom:3px;gap:6px}
-  .sl2{color:var(--t2);width:36px;flex-shrink:0;font-size:9.5px}
-  .st{flex:1;height:11px;background:var(--bg2);position:relative;border:1px solid var(--bdr);overflow:hidden}
-  .sm{position:absolute;top:0;bottom:0;left:50%;width:1px;background:var(--bdr2)}
-  .sp{color:var(--t1);width:48px;text-align:right;flex-shrink:0;font-size:9.5px}
-  /* score breakdown */
-  .sbrow{display:flex;align-items:center;margin-bottom:6px;gap:6px}
-  .sbl{color:var(--t2);width:70px;font-size:9.5px;flex-shrink:0}
-  .sbw{color:var(--t3);width:26px;font-size:9px;flex-shrink:0}
-  .sbt{flex:1;height:8px;background:var(--bg2);position:relative;border:1px solid var(--bdr)}
-  .sbf{position:absolute;top:0;left:0;height:100%}
-  .sbv{color:var(--t1);width:26px;text-align:right;font-size:9.5px;flex-shrink:0}
-  /* terminal */
-  .th{font-size:9px;letter-spacing:.2em;color:var(--b);margin-bottom:7px;border-bottom:1px solid var(--bdr);padding-bottom:5px}
-  .tt{font-family:var(--mono);font-size:10px;color:var(--gd);line-height:1.9}
-  .tp{color:var(--t3)}
-  /* alert */
-  .al{background:var(--ak);border:1px solid var(--ad);padding:6px 14px;margin-bottom:9px;font-size:10.5px;color:var(--a);letter-spacing:.07em;animation:pu 1.8s infinite}
-  /* streamlit overrides */
-  div[data-testid="stHorizontalBlock"]{gap:0!important}
-  div[data-testid="column"]{padding:0 4px!important}
-  .stSelectbox>div>div{background:var(--pan)!important;border:1px solid var(--bdr2)!important;color:var(--t1)!important;font-family:var(--mono)!important;font-size:10.5px!important;border-radius:0!important}
-  .stButton>button{background:var(--pan)!important;color:var(--b)!important;border:1px solid var(--bd)!important;font-family:var(--mono)!important;font-size:10px!important;letter-spacing:.15em!important;padding:5px 12px!important;border-radius:0!important;text-transform:uppercase!important;width:100%}
-  .stButton>button:hover{background:var(--bd)!important;color:#fff!important}
-  </style>
-  """, unsafe_allow_html=True)
-
+  try:
+      st.set_page_config(page_title="Should I Be Trading?", page_icon="📊", layout="wide", initial_sidebar_state="collapsed")
+  except:
+      pass
+  apply_theme()
+ 
   # ── GEDEELDE MODULES ────────────────────────────────────────────────
   from scoring import SECTORS, compute_scores, THRESHOLDS
   from market_data import get_market_data

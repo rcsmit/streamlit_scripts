@@ -16,6 +16,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
 import warnings
+from theme import apply_theme
 warnings.filterwarnings("ignore")
 
 try:
@@ -31,44 +32,7 @@ except:
 def backtest():
 
 
-# ── CSS ─────────────────────────────────────────────────────────────
-    st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
-    :root{
-    --bg:#050a0f;--pan:#0a1520;--bdr:#0e2233;--bdr2:#1a3a52;
-    --g:#00ff9d;--gd:#00cc7a;--gk:#003d25;
-    --r:#ff3a3a;--rd:#cc2222;--rk:#3d0000;
-    --a:#ffb700;--ad:#cc9200;--ak:#3d2c00;
-    --b:#00b4ff;
-    --t1:#c8dce8;--t2:#6a8fa8;--t3:#3a5a6e;
-    --mono:'Share Tech Mono',monospace;--sans:'Rajdhani',sans-serif;
-    }
-    *{box-sizing:border-box}
-    .stApp{background:var(--bg)!important;font-family:var(--mono)!important;color:var(--t1)!important}
-    #MainMenu,footer,header{visibility:hidden}
-    .block-container{padding:1rem 1.5rem!important;max-width:100%!important}
-    .stApp>header{display:none}
-    section[data-testid="stSidebar"]{display:none}
-    .hdr{background:linear-gradient(90deg,#060e18,#0a1825);border-bottom:1px solid var(--bdr2);
-        padding:12px 18px;margin-bottom:16px;border-radius:4px}
-    .ht{font-family:var(--sans);font-size:22px;font-weight:700;color:var(--b);letter-spacing:.12em;text-transform:uppercase}
-    .hs{font-size:10px;color:var(--t3);letter-spacing:.12em;margin-top:3px}
-    .kpi{background:var(--pan);border:1px solid var(--bdr2);padding:14px;text-align:center;border-radius:2px}
-    .kpi-v{font-size:28px;font-weight:700;font-family:var(--sans);margin-bottom:3px}
-    .kpi-l{font-size:9px;letter-spacing:.2em;color:var(--t3)}
-    .sec-hdr{font-size:9px;letter-spacing:.25em;color:var(--b);border-bottom:1px solid var(--bdr2);
-            padding-bottom:6px;margin:18px 0 10px;text-transform:uppercase}
-    div[data-testid="stMetric"]{background:var(--pan);border:1px solid var(--bdr2);padding:12px;border-radius:2px}
-    .stSelectbox>div>div{background:var(--pan)!important;border:1px solid var(--bdr2)!important;
-        color:var(--t1)!important;font-family:var(--mono)!important;font-size:10.5px!important;border-radius:0!important}
-    .stButton>button{background:var(--pan)!important;color:var(--b)!important;border:1px solid var(--b)!important;
-        font-family:var(--mono)!important;font-size:10px!important;letter-spacing:.15em!important;
-        padding:6px 14px!important;border-radius:0!important;text-transform:uppercase!important}
-    .stButton>button:hover{background:var(--b)!important;color:#000!important}
-    </style>
-    """, unsafe_allow_html=True)
-
+    apply_theme()
     from scoring import SECTORS, compute_scores
     from market_data import load_historical
 

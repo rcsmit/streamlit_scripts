@@ -25,6 +25,7 @@ Gebruik:
 import streamlit as st
 from datetime import datetime
 
+from theme import apply_template_theme
 # ── PAGINA-CONFIG ────────────────────────────────────────────────────
 # Altijd als allereerste Streamlit-aanroep
 try:
@@ -37,11 +38,11 @@ try:
 except:
   pass
 
-def bloomberg_template():
-
-    # ════════════════════════════════════════════════════════════════════
+def css():
+     # ════════════════════════════════════════════════════════════════════
     # CSS
     # ════════════════════════════════════════════════════════════════════
+   
     st.markdown("""
     <style>
     /* ── Google Fonts ── */
@@ -509,6 +510,10 @@ def bloomberg_template():
     """, unsafe_allow_html=True)
 
 
+def bloomberg_template():
+    apply_template_theme()
+
+    
     # ════════════════════════════════════════════════════════════════════
     # HELPER-FUNCTIES
     # Kopieer deze naar je eigen app of importeer ze als module.
