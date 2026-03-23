@@ -104,6 +104,8 @@ def main():
                 ["[71] Airquality Chiang Mai","airquality_chiangmai", "Historical airquality in Chiang Mai"],
                 ["[72] Letter Frequentie Analyse","letter_count", "Welk woord heeft de meeste van elke letter?"],
                 ["[73] Streamlit dashboard apps","streamlit_demo_apps", "Demo templates made by Streamlit"],
+                ["[74] Birthday heatmap","birthday_heatmap", "Heatmap geboortedatums+afwijkingen per gemeente"],
+                ["[75] Bloomberg Dashboard","bloomberg_dashboard/bb_dashboard", "Heatmap geboortedatums+afwijkingen per gemeente"],
 
        ]
 

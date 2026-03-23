@@ -387,14 +387,38 @@ def make_chi2_map(summary_df: pd.DataFrame, value_col: str = "chi2", title: str 
     gdf["Gemeente"] = gdf["statnaam"]
     merged = gdf[["Gemeente", "geometry"]].merge(df_map, on="Gemeente", how="left")
 
+
+    vals = df_map[value_col].dropna().astype(float)
+    
+    if value_col == "p_value":
+        val_max = 1.00
+        edges = [0, .125, .25, .375, .50, .625, .75, .875, 1]
+        def fmt(x):
+            return f"{float(x):.3f}"
+    else:
+        val_max = float(vals.max())
+
+        pct_edges = [0, 12.5, 25, 37.5, 50, 62.5, 75, 87.5, 100]
+        edges = [float(vals.quantile(p/100)) for p in pct_edges]
+        def fmt(x):
+            x = float(x)
+            return f"{x:.0f}" if x >= 10 else f"{x:.1f}"
     #val_max = df_map[value_col].quantile(0.95)   # clip top 5% to avoid one outlier dominating
-    val_max = df_map[value_col].max()
-    # Bins: 8 equal-width steps up to val_max
-    pct_edges = [0, 12.5, 25, 37.5, 50, 62.5, 75, 87.5, 100]
-    #edges = [val_max * p / 100 for p in pct_edges]
-    edges = [df_map[value_col].quantile(p/100) for p in pct_edges]
-    def fmt(x):
-        return f"{x:.0f}" if x >= 10 else f"{x:.1f}"
+    # # val_max = df_map[value_col].max()
+   
+    # # # Bins: 8 equal-width steps up to val_max
+    # # pct_edges = [0, 12.5, 25, 37.5, 50, 62.5, 75, 87.5, 100]
+    # # #edges = [val_max * p / 100 for p in pct_edges]
+    # # # edges = [df_map[value_col].quantile(p/100) for p in pct_edges]
+    # # # edges = [float(df_map[value_col].quantile(p/100)) for p in pct_edges]
+    # # edges = [df_map[value_col].astype(float).quantile(p/100) for p in pct_edges]
+    
+    # def fmt(x):
+    #     x = float(x)
+    #     return f"{x:.0f}" if x >= 10 else f"{x:.1f}"
+    # def fmt_(x):
+        
+    #     return x
 
     labels = (
         [f"< {fmt(edges[1])}"] +
@@ -477,9 +501,9 @@ with tab1:
 # ── Tab 2: gemeente ──────────────────────────────────────────────
 with tab2:
     st.markdown("### Geboortepatroon per gemeente")
-
+    if 1==2:
     # ── paste this inside tab2, e.g. just above the overview table ──
-    with st.expander("🔍 Naam-mismatch diagnose: CSV ↔ GeoJSON"):
+    #with st.expander("🔍 Naam-mismatch diagnose: CSV ↔ GeoJSON"):
         in_csv_not_geo, in_geo_not_csv = get_name_mismatches(gemeente_cols)
 
         col_a, col_b = st.columns(2)
@@ -597,13 +621,14 @@ with tab2:
         unsafe_allow_html=True,
     )
 
-    map_col_choice = st.radio(
-        "Kleur op basis van",
-        ["chi2", "p_value"],
-        horizontal=True,
-        format_func=lambda x: "Chi² (absolute afwijking)" if x == "chi2" else "p-waarde (significantie)",
-        key="map_value_col",
-    )
+    map_col_choice = "chi2" 
+    # st.radio(
+    #     "Kleur op basis van",
+    #     ["chi2", "p_value"],
+    #     horizontal=True,
+    #     format_func=lambda x: "Chi² (absolute afwijking)" if x == "chi2" else "p-waarde (significantie)",
+    #     key="map_value_col",
+    # )
     map_title = (
         "Chi² per gemeente — afwijking geboorteverdeling t.o.v. Nederland (2024)"
         if map_col_choice == "chi2"
