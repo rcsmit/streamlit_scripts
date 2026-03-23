@@ -493,12 +493,12 @@ def main():
         col_b, col_c = st.columns(2)
         with col_b:
             st.markdown("### 🎂 Geboortedatum")
-            st.plotly_chart(fig_birth, use_container_width=True)
+            st.plotly_chart(fig_birth, width='stretch')
         with col_c:
             st.markdown("### 🌱 Conceptiedatum")
             st.markdown(f'<p class="subtitle">Geboortedatum − {CONCEPTION_DAYS} dagen</p>',
                         unsafe_allow_html=True)
-            st.plotly_chart(fig_concept, use_container_width=True)
+            st.plotly_chart(fig_concept, width='stretch')
         st.markdown('<p class="source-note">Bron: CBS / Gemeentelijke basisadministratie 2024</p>',
                     unsafe_allow_html=True)
 
@@ -515,14 +515,14 @@ def main():
                 st.markdown(f"**In CSV maar NIET op kaart** ({len(in_csv_not_geo)})")
                 if in_csv_not_geo:
                     st.dataframe(pd.DataFrame({"Gemeente (na fix)": in_csv_not_geo}),
-                                hide_index=True, use_container_width=True)
+                                hide_index=True, width='stretch')
                 else:
                     st.success("Geen mismatches ✅")
             with col_b:
                 st.markdown(f"**Op kaart maar NIET in CSV** ({len(in_geo_not_csv)})")
                 if in_geo_not_csv:
                     st.dataframe(pd.DataFrame({"statnaam (GeoJSON)": in_geo_not_csv}),
-                                hide_index=True, use_container_width=True)
+                                hide_index=True, width='stretch')
                 else:
                     st.success("Geen mismatches ✅")
 
@@ -531,7 +531,7 @@ def main():
             fix_df = pd.DataFrame(
                 [{"CSV-naam": k, "GeoJSON-naam": v} for k, v in GEMEENTE_FIX.items()]
             )
-            st.dataframe(fix_df, hide_index=True, use_container_width=True)
+            st.dataframe(fix_df, hide_index=True, width='stretch')
         st.markdown(
             '<p class="subtitle">'
             'Selecteer een gemeente om de rang-heatmaps (blauw/groen) én de afwijking t.o.v. '
@@ -581,16 +581,16 @@ def main():
             col_b2, col_c2 = st.columns(2)
             with col_b2:
                 st.markdown(f"#### 🎂 Geboortedatum — {gemeente_sel}")
-                st.plotly_chart(fig_b_gem, use_container_width=True)
+                st.plotly_chart(fig_b_gem, width='stretch')
             with col_c2:
                 st.markdown(f"#### 🌱 Conceptiedatum — {gemeente_sel}")
                 st.markdown(f'<p class="subtitle">Geboortedatum − {CONCEPTION_DAYS} dagen</p>',
                             unsafe_allow_html=True)
-                st.plotly_chart(fig_c_gem, use_container_width=True)
+                st.plotly_chart(fig_c_gem, width='stretch')
 
             # Row 2: z-score heatmap
             st.markdown(f"#### 📊 Afwijking t.o.v. landelijk — {gemeente_sel}")
-            st.plotly_chart(fig_z, use_container_width=True)
+            st.plotly_chart(fig_z, width='stretch')
 
             # Top-10 outlier days
             zdf_out = zdf.copy()
@@ -612,7 +612,7 @@ def main():
                     "richting":  "Richting",
                 })
                 .reset_index(drop=True),
-                use_container_width=True,
+                width='stretch',
                 hide_index=True,
             )
 
@@ -640,7 +640,7 @@ def main():
         )
         with st.spinner("Kaart laden…"):
             fig_map = make_chi2_map(summary_df, value_col=map_col_choice, title=map_title)
-        st.plotly_chart(fig_map, use_container_width=True)
+        st.plotly_chart(fig_map, width='stretch')
 
         # Overview table (always visible)
         st.markdown("---")
@@ -659,7 +659,7 @@ def main():
                 "significant": "Significant",
             })
             .reset_index(drop=True),
-            use_container_width=True,
+            width='stretch',
             hide_index=True,
         )
 
