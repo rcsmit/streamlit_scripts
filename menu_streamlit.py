@@ -3,6 +3,8 @@ import traceback
 import os
 import platform
 import streamlit as st
+import sys
+sys.path.append("bloomberg_dashboard")
 
 st.set_page_config(page_title="Streamlit scripts of René Smit")
 
@@ -98,14 +100,13 @@ def main():
                 ["[66] Generate monopoply ","generate_monopoly","SVG Monopoly board editor with placeholder replacement & mapping"],
                 ["[67] EasyMapNL ","easy_map_nl","Make a custom map of the Netherlands"],
                 ["[68] 2e kamer ","tweedekamer","Verkiezings analyses 2e kamer"],
-                ["[69] knmi vs openmeteo ","compare_knmi_openmeteo", "seizoensinfo knmi vs openmeteo"],
                 ["[69] knmi vs openmeteo ","compare_knmi_openmeteo", "Seizoensinfo: KNMI vs Open-Meteo weather data comparison"],
                 ["[70] Year timeline ","how_the_year_went", "Timeline of the year with subjective length of months"],
                 ["[71] Airquality Chiang Mai","airquality_chiangmai", "Historical airquality in Chiang Mai"],
                 ["[72] Letter Frequentie Analyse","letter_count", "Welk woord heeft de meeste van elke letter?"],
                 ["[73] Streamlit dashboard apps","streamlit_demo_apps", "Demo templates made by Streamlit"],
                 ["[74] Birthday heatmap","birthday_heatmap", "Heatmap geboortedatums+afwijkingen per gemeente"],
-                ["[75] Bloomberg Dashboard","bloomberg_dashboard.bb_dashboard", "Heatmap geboortedatums+afwijkingen per gemeente"],
+                ["[75] Bloomberg Dashboard","bb_dashboard", "Bloomberg dashboard + advice"],
 
        ]
 
