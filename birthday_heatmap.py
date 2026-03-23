@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
+import plotly.express as px
+import geopandas as gpd
 from scipy import stats
 
 st.set_page_config(
@@ -44,14 +46,32 @@ COLORSCALE_DIV = [
     [0.6,"#91cf60"],[0.8,"#1a9850"],[1.0,"#005a23"],
 ]
 
+GEOJSON_URL = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_2023.geojson"
+
+# Name fixes: birth-CSV name → GeoJSON statnaam
+GEMEENTE_FIX = {
+    "Hengelo (O.)":                  "Hengelo",
+    "'s-Gravenhage":                 "Den Haag",
+    "'s-Hertogenbosch":              "Den Bosch",
+    "Bergen (L.)":                   "Bergen (L)",
+    "Bergen (NH.)":                  "Bergen (NH)",
+    "Beek (L.)":                     "Beek",
+    "Nuenen, Gerwen en Nederwetten": "Nuenen",
+    "Rijswijk (ZH.)":               "Rijswijk",
+    "Stein (L.)":                    "Stein",
+    "Laren (NH.)":                   "Laren",
+}
+
 # ══════════════════════════════════════════════════════════════════
 # Data loading  –  robust NaN/None handling
 # ══════════════════════════════════════════════════════════════════
 @st.cache_data
 def load_full() -> pd.DataFrame:
+    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/verjaardagen_2024.csv"
     for path in [
-        "C:/Users/rcxsm/Documents/python_scripts/streamlit_scripts/input/verjaardagen_2024.csv",
-        "/mnt/user-data/uploads/verjaardagen_2024.csv",
+        # "C:/Users/rcxsm/Documents/python_scripts/streamlit_scripts/input/verjaardagen_2024.csv",
+        # "/mnt/user-data/uploads/verjaardagen_2024.csv",
+        url,
     ]:
         try:
             df = pd.read_csv(path, parse_dates=["date"], dayfirst=True)
@@ -320,6 +340,86 @@ def build_gemeente_figs(gemeente: str):
     return fb, fc, fz, zdf
 
 # ══════════════════════════════════════════════════════════════════
+# Choropleth map: Chi² per gemeente
+# ══════════════════════════════════════════════════════════════════
+@st.cache_data(show_spinner=False)
+def load_geojson_gemeenten():
+    return gpd.read_file(GEOJSON_URL)
+
+def make_chi2_map(summary_df: pd.DataFrame, value_col: str = "chi2", title: str = "Chi² per gemeente"):
+    """
+    Choropleth map colored by chi2 (or p_value) using binned Blues palette,
+    matching the pattern from tweedekamer.py.
+    """
+    gdf = load_geojson_gemeenten()
+
+    # Prepare data – apply name fixes so CSV names match GeoJSON statnaam
+    df_map = summary_df[["gemeente", value_col, "significant", "p_value", "total"]].copy()
+    df_map["Gemeente"] = df_map["gemeente"].replace(GEMEENTE_FIX)
+
+    # Merge so we know which municipalities matched
+    gdf["Gemeente"] = gdf["statnaam"]
+    merged = gdf[["Gemeente", "geometry"]].merge(df_map, on="Gemeente", how="left")
+
+    val_max = df_map[value_col].quantile(0.95)   # clip top 5% to avoid one outlier dominating
+
+    # Bins: 8 equal-width steps up to val_max
+    pct_edges = [0, 12.5, 25, 37.5, 50, 62.5, 75, 87.5, 100]
+    edges = [val_max * p / 100 for p in pct_edges]
+
+    def fmt(x):
+        return f"{x:.0f}" if x >= 10 else f"{x:.1f}"
+
+    labels = (
+        [f"< {fmt(edges[1])}"] +
+        [f"{fmt(edges[i])}–{fmt(edges[i+1])}" for i in range(1, len(edges) - 1)]
+    )
+
+    df_map["klasse"] = pd.cut(
+        df_map[value_col].clip(upper=val_max),
+        bins=edges,
+        labels=labels,
+        include_lowest=True,
+        right=True,
+        ordered=True,
+    )
+    # Also put klasse onto the merged gdf for hover
+    df_map_klasse = df_map[["Gemeente","klasse","significant","p_value","total", value_col]]
+
+    # Use px.choropleth_mapbox with the geopandas GeoDataFrame
+    palette = px.colors.sequential.Blues[1:9]   # 8 light→dark steps
+
+    fig = px.choropleth_mapbox(
+        df_map_klasse,
+        geojson=gdf.__geo_interface__,
+        locations="Gemeente",
+        featureidkey="properties.statnaam",
+        color="klasse",
+        category_orders={"klasse": labels},
+        color_discrete_sequence=palette,
+        hover_data={
+            "Gemeente":    True,
+            value_col:     ":.1f",
+            "p_value":     ":.4f",
+            "total":       ":,",
+            "significant": True,
+            "klasse":      False,
+        },
+        mapbox_style="carto-positron",
+        zoom=6,
+        center={"lat": 52.2, "lon": 5.3},
+        opacity=0.85,
+    )
+    fig.update_layout(
+        margin=dict(l=0, r=0, t=30, b=0),
+        height=620,
+        title=dict(text=title, font=dict(size=14, family="Source Serif 4")),
+        legend_title_text=f"{value_col} (klasse)",
+    )
+    return fig
+
+
+# ══════════════════════════════════════════════════════════════════
 # UI
 # ══════════════════════════════════════════════════════════════════
 st.markdown("## Hoe gewoon is jouw verjaardag?")
@@ -432,6 +532,31 @@ with tab2:
             hide_index=True,
         )
 
+    # Chi² map (always visible)
+    st.markdown("---")
+    st.markdown("#### 🗺️ Kaart: Chi² per gemeente")
+    st.markdown(
+        '<p class="subtitle">Donkerder blauw = grotere afwijking van de landelijke geboorteverdeling. '
+        'Klik op een gemeente voor details. Gemeentes zonder data zijn grijs.</p>',
+        unsafe_allow_html=True,
+    )
+
+    map_col_choice = st.radio(
+        "Kleur op basis van",
+        ["chi2", "p_value"],
+        horizontal=True,
+        format_func=lambda x: "Chi² (absolute afwijking)" if x == "chi2" else "p-waarde (significantie)",
+        key="map_value_col",
+    )
+    map_title = (
+        "Chi² per gemeente — afwijking geboorteverdeling t.o.v. Nederland (2024)"
+        if map_col_choice == "chi2"
+        else "p-waarde per gemeente — chi-kwadraattoets geboorteverdeling (2024)"
+    )
+    with st.spinner("Kaart laden…"):
+        fig_map = make_chi2_map(summary_df, value_col=map_col_choice, title=map_title)
+    st.plotly_chart(fig_map, use_container_width=True)
+
     # Overview table (always visible)
     st.markdown("---")
     st.markdown("#### Ranglijst: meest afwijkende gemeentes (top 30)")
@@ -487,5 +612,6 @@ with st.sidebar:
     for _, row in nl_birth_df.nlargest(5, "rank").iterrows():
         mn = MONTH_NAMES[_safe_int(row["month"]) - 1]
         st.markdown(f"**#{_safe_int(row['rank'])}** {_safe_int(row['day'])} {mn} ({_safe_int(row[NL_COL]):,})")
+    
     st.info("Inspired by https://x.com/Globalstats11/status/2034256404119482460/photo/1")
     st.info("Data: https://www.cbs.nl/nl-nl/maatwerk/2024/39/verjaardagen-in-nederland-2024")
