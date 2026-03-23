@@ -46,21 +46,47 @@ COLORSCALE_DIV = [
     [0.6,"#91cf60"],[0.8,"#1a9850"],[1.0,"#005a23"],
 ]
 
-GEOJSON_URL = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_2023.geojson"
-
+GEOJSON_URL = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/gemeente_2026.geojson"
+# https://cartomap.github.io/nl/wgs84/gemeente_2026.geojson
 # Name fixes: birth-CSV name → GeoJSON statnaam
 GEMEENTE_FIX = {
     "Hengelo (O.)":                  "Hengelo",
-    "'s-Gravenhage":                 "Den Haag",
-    "'s-Hertogenbosch":              "Den Bosch",
-    "Bergen (L.)":                   "Bergen (L)",
-    "Bergen (NH.)":                  "Bergen (NH)",
+    "Middelburg (Z.)":              "Middelburg",
     "Beek (L.)":                     "Beek",
-    "Nuenen, Gerwen en Nederwetten": "Nuenen",
     "Rijswijk (ZH.)":               "Rijswijk",
     "Stein (L.)":                    "Stein",
     "Laren (NH.)":                   "Laren",
 }
+#   "Nuenen, Gerwen en Nederwetten": "Nuenen",
+  
+# "'s-Gravenhage":                 "Den Haag",
+#     "'s-Hertogenbosch":              "Den Bosch",
+#    "Bergen (L.)":                   "Bergen (L)",
+#     "Bergen (NH.)":                  "Bergen (NH)",
+
+@st.cache_data(show_spinner=False)
+def get_name_mismatches(gemeente_cols: list) -> tuple[list, list]:
+    """
+    Compare gemeente names in the birth CSV vs. GeoJSON (after applying GEMEENTE_FIX).
+    Returns (in_csv_not_geo, in_geo_not_csv).
+    """
+    import requests
+
+    try:
+        r = requests.get(GEOJSON_URL, timeout=15)
+        r.raise_for_status()
+        geo_names = {f["properties"]["statnaam"] for f in r.json()["features"]}
+    except Exception as e:
+        st.warning(f"GeoJSON kon niet geladen worden: {e}")
+        return [], []
+
+    csv_fixed = {GEMEENTE_FIX.get(n, n) for n in gemeente_cols}
+
+    in_csv_not_geo = sorted(csv_fixed - geo_names)
+    in_geo_not_csv = sorted(geo_names - csv_fixed)
+    return in_csv_not_geo, in_geo_not_csv
+
+
 
 # ══════════════════════════════════════════════════════════════════
 # Data loading  –  robust NaN/None handling
@@ -69,8 +95,8 @@ GEMEENTE_FIX = {
 def load_full() -> pd.DataFrame:
     url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/verjaardagen_2024.csv"
     for path in [
-        # "C:/Users/rcxsm/Documents/python_scripts/streamlit_scripts/input/verjaardagen_2024.csv",
-        # "/mnt/user-data/uploads/verjaardagen_2024.csv",
+        "C:/Users/rcxsm/Documents/python_scripts/streamlit_scripts/input/verjaardagen_2024.csv",
+        "/mnt/user-data/uploads/verjaardagen_2024.csv",
         url,
     ]:
         try:
@@ -361,12 +387,12 @@ def make_chi2_map(summary_df: pd.DataFrame, value_col: str = "chi2", title: str 
     gdf["Gemeente"] = gdf["statnaam"]
     merged = gdf[["Gemeente", "geometry"]].merge(df_map, on="Gemeente", how="left")
 
-    val_max = df_map[value_col].quantile(0.95)   # clip top 5% to avoid one outlier dominating
-
+    #val_max = df_map[value_col].quantile(0.95)   # clip top 5% to avoid one outlier dominating
+    val_max = df_map[value_col].max()
     # Bins: 8 equal-width steps up to val_max
     pct_edges = [0, 12.5, 25, 37.5, 50, 62.5, 75, 87.5, 100]
-    edges = [val_max * p / 100 for p in pct_edges]
-
+    #edges = [val_max * p / 100 for p in pct_edges]
+    edges = [df_map[value_col].quantile(p/100) for p in pct_edges]
     def fmt(x):
         return f"{x:.0f}" if x >= 10 else f"{x:.1f}"
 
@@ -411,6 +437,9 @@ def make_chi2_map(summary_df: pd.DataFrame, value_col: str = "chi2", title: str 
         opacity=0.85,
     )
     fig.update_layout(
+    legend=dict(traceorder="normal"),
+    )
+    fig.update_layout(
         margin=dict(l=0, r=0, t=30, b=0),
         height=620,
         title=dict(text=title, font=dict(size=14, family="Source Serif 4")),
@@ -448,6 +477,33 @@ with tab1:
 # ── Tab 2: gemeente ──────────────────────────────────────────────
 with tab2:
     st.markdown("### Geboortepatroon per gemeente")
+
+    # ── paste this inside tab2, e.g. just above the overview table ──
+    with st.expander("🔍 Naam-mismatch diagnose: CSV ↔ GeoJSON"):
+        in_csv_not_geo, in_geo_not_csv = get_name_mismatches(gemeente_cols)
+
+        col_a, col_b = st.columns(2)
+        with col_a:
+            st.markdown(f"**In CSV maar NIET op kaart** ({len(in_csv_not_geo)})")
+            if in_csv_not_geo:
+                st.dataframe(pd.DataFrame({"Gemeente (na fix)": in_csv_not_geo}),
+                            hide_index=True, use_container_width=True)
+            else:
+                st.success("Geen mismatches ✅")
+        with col_b:
+            st.markdown(f"**Op kaart maar NIET in CSV** ({len(in_geo_not_csv)})")
+            if in_geo_not_csv:
+                st.dataframe(pd.DataFrame({"statnaam (GeoJSON)": in_geo_not_csv}),
+                            hide_index=True, use_container_width=True)
+            else:
+                st.success("Geen mismatches ✅")
+
+        # Also show the current fix dict so it's easy to extend
+        st.markdown("**Huidige `GEMEENTE_FIX` (CSV-naam → GeoJSON-naam)**")
+        fix_df = pd.DataFrame(
+            [{"CSV-naam": k, "GeoJSON-naam": v} for k, v in GEMEENTE_FIX.items()]
+        )
+        st.dataframe(fix_df, hide_index=True, use_container_width=True)
     st.markdown(
         '<p class="subtitle">'
         'Selecteer een gemeente om de rang-heatmaps (blauw/groen) én de afwijking t.o.v. '
