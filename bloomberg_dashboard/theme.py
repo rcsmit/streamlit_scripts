@@ -112,13 +112,14 @@ TOKENS = TOKENS_LICHT
 
 # * { box-sizing: border-box; margin: 0; padding: 0; }
 
-DISABLE_STREAMLIT_CSS = """
-    .stApp { background: var(--bg) !important; font-family: var(--mono) !important; color: var(--t1) !important; }
-    #MainMenu, footer, header { visibility: hidden; }
-    .stApp > header { display: none; }
+DISABLE_STREAMLITSIDEBAR_CSS = """
+    
     section[data-testid="stSidebar"] { display: none; }
     """
 BASE_CSS = """
+  .stApp { background: var(--bg) !important; font-family: var(--mono) !important; color: var(--t1) !important; }
+    #MainMenu, footer, header { visibility: hidden; }
+    .stApp > header { display: none; }
 /* Animaties */
 @keyframes pulse  { 0%,100%{opacity:1} 50%{opacity:.5} }
 @keyframes scroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
