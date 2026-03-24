@@ -107,7 +107,7 @@ def main():
                 ["[73] Streamlit dashboard apps","streamlit_demo_apps", "Demo templates made by Streamlit"],
                 ["[74] Birthday heatmap","birthday_heatmap", "Heatmap geboortedatums+afwijkingen per gemeente"],
                 ["[75] Bloomberg Dashboard","bb_dashboard", "Bloomberg dashboard + advice"],
-
+                ["[75] Pensioencalculator2","pensioencalculator2", "Another pension calculator"],
        ]
 
 
