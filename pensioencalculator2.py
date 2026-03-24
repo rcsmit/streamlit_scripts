@@ -302,7 +302,7 @@ levenden_eind = df.iloc[-1]["levenden_eind"]
 uitkering_laatste = optimale_uitkering * (inflatie ** (max_leeftijd - pensioenleeftijd - 1))
 totaal_ingelegd = df["inleg_totaal"].sum()
 totaal_uitgekeerd = df["uitkering_totaal"].sum()
-
+uitkering_reeel = (optimale_uitkering / (inflatie ** (pensioenleeftijd - start_leeftijd)))/12
 # ── KPI's ─────────────────────────────────────────────────────────────────────
 
 st.subheader("Uitkomsten")
@@ -312,6 +312,12 @@ with col1:
     st.metric(":material/euro: Uitkering jaar 1 (p.p.)", f"€ {optimale_uitkering:,.0f}/jaar")
     st.metric(":material/calendar_month: Per maand", f"€ {optimale_uitkering / 12:,.0f}/maand")
 
+    st.metric(
+        ":material/euro: Uitkering jaar 1 (huidig prijspeil)",
+        f"€ {uitkering_reeel:,.0f}/maand",
+        help=f"Uitkering jaar 1 gecorrigeerd voor {inflatie_pct:.1f}% inflatie over "
+            f"{pensioenleeftijd - start_leeftijd} jaar opbouw.",
+    )
 with col2:
     st.metric(":material/account_balance: Pot bij pensioen",
               f"€ {pot_bij_pensioen / 1_000_000:,.2f}M",
