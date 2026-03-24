@@ -104,9 +104,9 @@ class PensionCalculator:
         # Projections Life Table AG2022
         # https://www.actuarieelgenootschap.nl/kennisbank/ag-l-projections-life-table-ag2022.htm
         if self.sexe== "male":
-            df_prob_die = pd.read_csv("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/AG2022DefinitiefGevalideerd_male.csv")
+            df_prob_die = pd.read_csv("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/AG2024DefinitiefGevalideerd_male.csv")
         else:
-            df_prob_die = pd.read_csv("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/AG2022DefinitiefGevalideerd_female.csv")
+            df_prob_die = pd.read_csv("https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/AG2024DefinitiefGevalideerd_female.csv")
        
         special_years = [self.windfall_1_year, self.windfall_2_year,self. windfall_3_year]
         special_amounts = [self.windfall_1_amount, self.windfall_2_amount, self.windfall_3_amount]
