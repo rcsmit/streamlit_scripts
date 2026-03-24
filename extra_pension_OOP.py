@@ -203,6 +203,12 @@ class PensionCalculator:
                         saldo_at_death_values.append(balance)
                         person_alive = False
 
+            # FIX #6: if person survived the entire simulation, record them as dying at max_age
+            # Without this, survivors are silently dropped from deceased_ages, skewing ALL statistics
+            if person_alive:
+                deceased_ages.append(self.max_age)
+                saldo_at_death_values.append(balance)
+
             results.append({
                 'annual_contribution_values': annual_contribution_values,
                 'balance_values': balance_values,
