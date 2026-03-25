@@ -172,12 +172,19 @@ def main():
     df = read()
     df = df.fillna("_")
     df["artikel"] = clean_artikel(df["artikel"])
-
-    # Merge RSS feed as its own "blog" source
-    rss_df = fetch_rss_as_df("https://rene-smit.com/feed/?posts_per_page=100", blog_name="rene-smit.com")
-    if not rss_df.empty:
-        rss_df["artikel"] = clean_artikel(rss_df["artikel"])
-        df = pd.concat([df, rss_df], ignore_index=True)
+    feeds= [["https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/crazywaiter.xml","crazywaiter_xml"],
+            ["https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/yepyoga.xml","yepyoga_xml"],
+            ["https://rene-smit.com/feed/?posts_per_page=100","rene-smit.com"]]
+    for url,name in feeds:
+        rss_df = fetch_rss_as_df(url, blog_name=name)
+        if not rss_df.empty:
+            rss_df["artikel"] = clean_artikel(rss_df["artikel"])
+            df = pd.concat([df, rss_df], ignore_index=True)
+    # # Merge RSS feed as its own "blog" source
+    # rss_df = fetch_rss_as_df("https://rene-smit.com/feed/?posts_per_page=100", blog_name="rene-smit.com")
+    # if not rss_df.empty:
+    #     rss_df["artikel"] = clean_artikel(rss_df["artikel"])
+    #     df = pd.concat([df, rss_df], ignore_index=True)
 
     # Sort all entries newest-first
     df = df.sort_values("datum", ascending=False, na_position="last").reset_index(drop=True)
