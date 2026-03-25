@@ -1,3 +1,4 @@
+import re
 import xml.etree.ElementTree as ET
 
 import pandas as pd
@@ -22,16 +23,16 @@ st.markdown(
     (function suppressWebSocketError() {
         const _error = console.error.bind(console);
         console.error = (...args) => {
-            const msg = String(args[0] ?? \'\').toLowerCase();
-            if (msg.includes(\'websocket\')) return;
+            const msg = String(args[0] ?? '').toLowerCase();
+            if (msg.includes('websocket')) return;
             _error(...args);
         };
         const observer = new MutationObserver(() => {
-            document.querySelectorAll(\'[data-testid="stNotificationContentError"], [data-testid="stNotificationContentWarning"]\').forEach(el => {
-                const text = (el.innerText || \'\').toLowerCase();
-                if (text.includes(\'websocket\') || text.includes(\'connection\')) {
-                    const toast = el.closest(\'[data-testid="toastContainer"], .stToast, [class*="Toast"]\');
-                    if (toast) toast.style.display = \'none\';
+            document.querySelectorAll('[data-testid="stNotificationContentError"], [data-testid="stNotificationContentWarning"]').forEach(el => {
+                const text = (el.innerText || '').toLowerCase();
+                if (text.includes('websocket') || text.includes('connection')) {
+                    const toast = el.closest('[data-testid="toastContainer"], .stToast, [class*="Toast"]');
+                    if (toast) toast.style.display = 'none';
                 }
             });
         });
@@ -59,7 +60,8 @@ def read() -> pd.DataFrame:
         names=["id", "id_entry_original", "titel", "kopfoto", "artikel",
                "datum", "afbeelding", "link", "blog", "categorie"],
     )
-
+    df=df[df["blog"]!="CrazyWaiter"]
+    df=df[df["blog"]!="YepYoga"]
     try:
         df["datum"] = pd.to_datetime(df["datum"], format="%d-%m-%Y")
     except ValueError:
@@ -74,7 +76,6 @@ def read() -> pd.DataFrame:
 @st.cache_data(ttl=3600)
 def fetch_rss_as_df(url: str, blog_name: str) -> pd.DataFrame:
     """Fetch a WordPress RSS feed and return rows shaped like the main dataframe."""
-    # WordPress RSS namespaces
     NS = {
         "content": "http://purl.org/rss/1.0/modules/content/",
         "dc":      "http://purl.org/dc/elements/1.1/",
@@ -97,24 +98,20 @@ def fetch_rss_as_df(url: str, blog_name: str) -> pd.DataFrame:
         title    = item.findtext("title", "").strip()
         link     = item.findtext("link", "").strip()
         pub_date = item.findtext("pubDate", "").strip()
-        # Full post content (WordPress specific); fall back to <description>
         content  = item.findtext(f"{{{NS['content']}}}encoded", "").strip()
         if not content:
             content = item.findtext("description", "").strip()
+
         # Featured image: try multiple sources in order of preference
         image_url = "_"
-        # 1. media:content
         media_content = item.find("{http://search.yahoo.com/mrss/}content")
         if media_content is not None:
             image_url = media_content.get("url", "_")
-        # 2. enclosure
         if image_url == "_":
             enclosure = item.find("enclosure")
             if enclosure is not None:
                 image_url = enclosure.get("url", "_")
-        # 3. First <img src=...> anywhere in the content HTML
         if image_url == "_" and content:
-            import re
             m = re.search(r'<img[^>]+src=["\'](https?://[^"\']+)["\'][^>]*>', content)
             if m:
                 image_url = m.group(1)
@@ -128,16 +125,16 @@ def fetch_rss_as_df(url: str, blog_name: str) -> pd.DataFrame:
                 datum = pd.NaT
 
         rows.append({
-            "id":               f"rss_{i}",
+            "id":                f"rss_{i}",
             "id_entry_original": "_",
-            "titel":            title,
-            "kopfoto":          "_",
-            "artikel":          content,
-            "datum":            datum,
-            "afbeelding":       image_url,
-            "link":             link,
-            "blog":             blog_name,
-            "categorie":        ", ".join(c.text.strip() for c in item.findall("category") if c.text) or "_",
+            "titel":             title,
+            "kopfoto":           "_",
+            "artikel":           content,
+            "datum":             datum,
+            "afbeelding":        image_url,
+            "link":              link,
+            "blog":              blog_name,
+            "categorie":         ", ".join(c.text.strip() for c in item.findall("category") if c.text) or "_",
         })
 
     if not rows:
@@ -152,17 +149,14 @@ def fetch_rss_as_df(url: str, blog_name: str) -> pd.DataFrame:
 
 def clean_artikel(series: pd.Series) -> pd.Series:
     series = series.astype(str)
-    # Fix carriage return artefact from old Excel export (regex substring replace)
     series = series.str.replace("_x000D_", "", regex=False)
-    # Fix old yepcheck URLs
     series = series.str.replace(
         r"http://www\.yepcheck\.com/printbak/",
         "https://github.com/rcsmit/streamlit_scripts/tree/main/printbak/",
         regex=True,
     )
-    # Strip legacy HTML paragraph tags (regex so it matches anywhere in string)
     series = series.str.replace(r"<P>", "", regex=True)
-    series = series.str.replace(r"</P>", "\n", regex=True)  # was '/n' — bug fixed
+    series = series.str.replace(r"</P>", "\n", regex=True)
     return series
 
 
@@ -172,19 +166,17 @@ def main():
     df = read()
     df = df.fillna("_")
     df["artikel"] = clean_artikel(df["artikel"])
-    feeds= [["https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/crazywaiter.xml","crazywaiter_xml"],
-            ["https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/yepyoga.xml","yepyoga_xml"],
-            ["https://rene-smit.com/feed/?posts_per_page=100","rene-smit.com"]]
-    for url,name in feeds:
+
+    feeds = [
+        ["https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/crazywaiter.xml", "crazywaiter"],
+        ["https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/yepyoga.xml", "yepyoga"],
+        ["https://rene-smit.com/feed/?posts_per_page=100", "rene-smit.com"],
+    ]
+    for url, name in feeds:
         rss_df = fetch_rss_as_df(url, blog_name=name)
         if not rss_df.empty:
             rss_df["artikel"] = clean_artikel(rss_df["artikel"])
             df = pd.concat([df, rss_df], ignore_index=True)
-    # # Merge RSS feed as its own "blog" source
-    # rss_df = fetch_rss_as_df("https://rene-smit.com/feed/?posts_per_page=100", blog_name="rene-smit.com")
-    # if not rss_df.empty:
-    #     rss_df["artikel"] = clean_artikel(rss_df["artikel"])
-    #     df = pd.concat([df, rss_df], ignore_index=True)
 
     # Sort all entries newest-first
     df = df.sort_values("datum", ascending=False, na_position="last").reset_index(drop=True)
@@ -194,7 +186,7 @@ def main():
         lambda x: [c.strip() for c in x.split(",") if c.strip() and c.strip() != "_"] if x != "_" else []
     )
 
-    # --- Sidebar filters ---
+    # --- Sidebar: blog filter ---
     options = sorted(df["blog"].unique().tolist())
     selected_blogs = st.sidebar.multiselect("Select blog", options, options)
 
@@ -204,6 +196,7 @@ def main():
 
     df = df[df["blog"].isin(selected_blogs)]
 
+    # --- Sidebar: category filter ---
     if len(selected_blogs) == 1 and selected_blogs[0] in ("CrazyWaiter", "YepYoga", "rene-smit.com"):
         all_categories = sorted({c for cats in df["categorie_list"] for c in cats})
         selected_categories = st.sidebar.multiselect("Select categories", all_categories, all_categories)
@@ -213,11 +206,22 @@ def main():
             st.error("Choose a category.", icon=":material/filter_list:")
             st.stop()
 
+    # --- Sidebar: search ---
+    st.sidebar.markdown("---")
+    zoekterm = st.sidebar.text_input("Search", placeholder="Zoeken...", label_visibility="visible")
+    if zoekterm:
+        mask = (
+            df["titel"].str.contains(zoekterm, case=False, na=False)
+            | df["artikel"].str.contains(zoekterm, case=False, na=False)
+            | df["categorie"].str.contains(zoekterm, case=False, na=False)
+        )
+        df = df[mask]
+
     total = len(df)
 
-    # --- Sidebar pagination controls ---
+    # --- Sidebar: pagination ---
     st.sidebar.markdown("---")
-    st.sidebar.markdown(f"#### :material/menu_book: Pagination &nbsp; :gray-badge[{total}]")
+    st.sidebar.markdown(f"#### Pagination :gray-badge[{total}]")
     posts_per_page = st.sidebar.selectbox(
         "Posts per page", [5, 10, 25, 50], index=1
     )
@@ -238,16 +242,15 @@ def main():
             meta = f':material/calendar_today: {row.datum.strftime("%d %B %Y")}'
             if row.categorie != "_":
                 meta += f' &nbsp;·&nbsp; :material/label: {row.categorie}'
+            meta +=f'&nbsp;·&nbsp; :material/article: {row.blog}'
             st.markdown(meta)
 
-            # kopfoto: GitHub-hosted thumbnail (Google Sheet posts)
             if row.kopfoto != "_":
                 thumb = (
                     "https://raw.githubusercontent.com/rcsmit/"
                     f"streamlit_scripts/main/printbak/thumbnails/{row.kopfoto}"
                 )
                 st.image(thumb, use_container_width=False, width=480)
-            # afbeelding: full URL (RSS posts use this for featured image)
             elif row.afbeelding != "_" and row.afbeelding.startswith("http"):
                 st.image(row.afbeelding, use_container_width=False, width=480)
 
@@ -256,16 +259,10 @@ def main():
             col1, col2 = st.columns(2)
             if row.afbeelding != "_":
                 with col1:
-                    st.link_button(
-                        ":material/image: Afbeelding",
-                        row.afbeelding,
-                    )
+                    st.link_button(":material/image: Afbeelding", row.afbeelding)
             if row.link != "_":
                 with col2:
-                    st.link_button(
-                        ":material/open_in_new: Link",
-                        row.link,
-                    )
+                    st.link_button(":material/open_in_new: Link", row.link)
 
 
 if __name__ == "__main__":
