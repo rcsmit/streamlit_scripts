@@ -1,85 +1,265 @@
+import xml.etree.ElementTree as ET
+
 import pandas as pd
+import requests
 import streamlit as st
 
-@st.cache_data()
-def read():
-    filetype = 'google_sheet'
+st.set_page_config(
+    page_title="Blog viewer",
+    page_icon=":material/article:",
+    layout="centered",
+)
 
-    if filetype =='google_sheet':
-        sheet_name = "gegevens"
-        sheet_id = "1R5YDxVqpT1brUHz1P-Zjoyz0iHgLBJUIsSrbH9IfW5c"
-        # https://docs.google.com/spreadsheets/d/1R5YDxVqpT1brUHz1P-Zjoyz0iHgLBJUIsSrbH9IfW5c/edit?usp=sharing
-        url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
-        df = pd.read_csv(url, delimiter=',', header=0,
-                                 usecols=list(range(10)),
-                                names=["id","id_entry_original","titel","kopfoto","artikel","datum","afbeelding","link","blog","categorie"])
-      
-        try:
-            df["datum"] = pd.to_datetime(df["datum"], format="%d-%m-%Y")
-        except:
-            df["datum"] = pd.to_datetime(df["datum"], format='mixed')
-        # df = df[:-1]  #remove last row which appears to be a Nan
-    else:
-        st.write("type doesnt exist")
-        pass
-    df['jaar']=df['datum'].dt.strftime('%Y')
-    df['maand']=df['datum'].dt.strftime('%m')
+# Light background + card styling + suppress WebSocket error toast
+st.markdown(
+    """
+    <style>
+    [data-testid="stAppViewContainer"] { background-color: #f8f6f2; }
+    [data-testid="stSidebar"]          { background-color: #f0ede8; }
+    .article-meta { color: #888; font-size: 0.85rem; margin-bottom: 0.25rem; }
+    </style>
+    <script>
+    (function suppressWebSocketError() {
+        const _error = console.error.bind(console);
+        console.error = (...args) => {
+            const msg = String(args[0] ?? \'\').toLowerCase();
+            if (msg.includes(\'websocket\')) return;
+            _error(...args);
+        };
+        const observer = new MutationObserver(() => {
+            document.querySelectorAll(\'[data-testid="stNotificationContentError"], [data-testid="stNotificationContentWarning"]\').forEach(el => {
+                const text = (el.innerText || \'\').toLowerCase();
+                if (text.includes(\'websocket\') || text.includes(\'connection\')) {
+                    const toast = el.closest(\'[data-testid="toastContainer"], .stToast, [class*="Toast"]\');
+                    if (toast) toast.style.display = \'none\';
+                }
+            });
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+    })();
+    </script>
+    """,
+    unsafe_allow_html=True,
+)
 
-    df['maand_']=df['datum'].dt.strftime('%Y-%m')
+
+@st.cache_data(ttl=3600)
+def read() -> pd.DataFrame:
+    sheet_name = "gegevens"
+    sheet_id = "1R5YDxVqpT1brUHz1P-Zjoyz0iHgLBJUIsSrbH9IfW5c"
+    url = (
+        f"https://docs.google.com/spreadsheets/d/{sheet_id}"
+        f"/gviz/tq?tqx=out:csv&sheet={sheet_name}"
+    )
+    df = pd.read_csv(
+        url,
+        delimiter=",",
+        header=0,
+        usecols=list(range(10)),
+        names=["id", "id_entry_original", "titel", "kopfoto", "artikel",
+               "datum", "afbeelding", "link", "blog", "categorie"],
+    )
+
+    try:
+        df["datum"] = pd.to_datetime(df["datum"], format="%d-%m-%Y")
+    except ValueError:
+        df["datum"] = pd.to_datetime(df["datum"], format="mixed")
+
+    df["jaar"] = df["datum"].dt.strftime("%Y")
+    df["maand"] = df["datum"].dt.strftime("%m")
+    df["maand_"] = df["datum"].dt.strftime("%Y-%m")
     return df
 
 
+@st.cache_data(ttl=3600)
+def fetch_rss_as_df(url: str, blog_name: str) -> pd.DataFrame:
+    """Fetch a WordPress RSS feed and return rows shaped like the main dataframe."""
+    # WordPress RSS namespaces
+    NS = {
+        "content": "http://purl.org/rss/1.0/modules/content/",
+        "dc":      "http://purl.org/dc/elements/1.1/",
+    }
+    empty = pd.DataFrame(columns=[
+        "id", "id_entry_original", "titel", "kopfoto", "artikel",
+        "datum", "afbeelding", "link", "blog", "categorie",
+        "jaar", "maand", "maand_",
+    ])
+    try:
+        resp = requests.get(url, timeout=10)
+        resp.raise_for_status()
+        root = ET.fromstring(resp.content)
+    except Exception as e:
+        st.sidebar.warning(f"RSS feed unavailable: {e}")
+        return empty
+
+    rows = []
+    for i, item in enumerate(root.findall(".//item")):
+        title    = item.findtext("title", "").strip()
+        link     = item.findtext("link", "").strip()
+        pub_date = item.findtext("pubDate", "").strip()
+        # Full post content (WordPress specific); fall back to <description>
+        content  = item.findtext(f"{{{NS['content']}}}encoded", "").strip()
+        if not content:
+            content = item.findtext("description", "").strip()
+        # Featured image: try multiple sources in order of preference
+        image_url = "_"
+        # 1. media:content
+        media_content = item.find("{http://search.yahoo.com/mrss/}content")
+        if media_content is not None:
+            image_url = media_content.get("url", "_")
+        # 2. enclosure
+        if image_url == "_":
+            enclosure = item.find("enclosure")
+            if enclosure is not None:
+                image_url = enclosure.get("url", "_")
+        # 3. First <img src=...> anywhere in the content HTML
+        if image_url == "_" and content:
+            import re
+            m = re.search(r'<img[^>]+src=["\'](https?://[^"\']+)["\'][^>]*>', content)
+            if m:
+                image_url = m.group(1)
+
+        try:
+            datum = pd.to_datetime(pub_date, format="%a, %d %b %Y %H:%M:%S %z", utc=True).tz_localize(None)
+        except Exception:
+            try:
+                datum = pd.to_datetime(pub_date, utc=True).tz_localize(None)
+            except Exception:
+                datum = pd.NaT
+
+        rows.append({
+            "id":               f"rss_{i}",
+            "id_entry_original": "_",
+            "titel":            title,
+            "kopfoto":          "_",
+            "artikel":          content,
+            "datum":            datum,
+            "afbeelding":       image_url,
+            "link":             link,
+            "blog":             blog_name,
+            "categorie":        ", ".join(c.text.strip() for c in item.findall("category") if c.text) or "_",
+        })
+
+    if not rows:
+        return empty
+
+    df = pd.DataFrame(rows)
+    df["jaar"]   = df["datum"].dt.strftime("%Y")
+    df["maand"]  = df["datum"].dt.strftime("%m")
+    df["maand_"] = df["datum"].dt.strftime("%Y-%m")
+    return df
+
+
+def clean_artikel(series: pd.Series) -> pd.Series:
+    series = series.astype(str)
+    # Fix carriage return artefact from old Excel export (regex substring replace)
+    series = series.str.replace("_x000D_", "", regex=False)
+    # Fix old yepcheck URLs
+    series = series.str.replace(
+        r"http://www\.yepcheck\.com/printbak/",
+        "https://github.com/rcsmit/streamlit_scripts/tree/main/printbak/",
+        regex=True,
+    )
+    # Strip legacy HTML paragraph tags (regex so it matches anywhere in string)
+    series = series.str.replace(r"<P>", "", regex=True)
+    series = series.str.replace(r"</P>", "\n", regex=True)  # was '/n' — bug fixed
+    return series
+
+
 def main():
+    st.title(":material/article: Blog viewer")
+
     df = read()
-    df = df.fillna('_')
+    df = df.fillna("_")
+    df["artikel"] = clean_artikel(df["artikel"])
 
-    # Replace 'xxxx' in the 'artikel' column
-    df['artikel'] = df['artikel'].replace('http://www.yepcheck.com/printbak/', r'https://github.com/rcsmit/streamlit_scripts/tree/main/printbak/', regex=True)
-    df['artikel'] = df['artikel'].astype(str).replace('_x000D_','')
-    df['artikel'] = df['artikel'].replace('<P>','')
-    df['artikel'] = df['artikel'].replace('</P>','/n')
-    # Multiselect widget
-    options = df["blog"].unique().tolist()
-    selected_blogs = st.sidebar.multiselect("Select blog types", options, options)
+    # Merge RSS feed as its own "blog" source
+    rss_df = fetch_rss_as_df("https://rene-smit.com/feed/?posts_per_page=100", blog_name="rene-smit.com")
+    if not rss_df.empty:
+        rss_df["artikel"] = clean_artikel(rss_df["artikel"])
+        df = pd.concat([df, rss_df], ignore_index=True)
 
-    # Filter DataFrame based on selection
-    if selected_blogs:
-        df = df[df["blog"].isin(selected_blogs)]
+    # Sort all entries newest-first
+    df = df.sort_values("datum", ascending=False, na_position="last").reset_index(drop=True)
 
-    else:
-        st.error("Select one of more blogs")
+    # Split comma-separated categories into a list for accurate filtering
+    df["categorie_list"] = df["categorie"].apply(
+        lambda x: [c.strip() for c in x.split(",") if c.strip() and c.strip() != "_"] if x != "_" else []
+    )
+
+    # --- Sidebar filters ---
+    options = sorted(df["blog"].unique().tolist())
+    selected_blogs = st.sidebar.multiselect("Select blog", options, options)
+
+    if not selected_blogs:
+        st.error("Select one or more blogs.", icon=":material/error:")
         st.stop()
-    if (len(selected_blogs)==1 and ((selected_blogs == ["CrazyWaiter"]) or (selected_blogs==["YepYoga"]))):
-        categories= df["categorie"].unique().tolist()
-        selected_categories = st.sidebar.multiselect("Select categories", categories, categories)
 
-        df = df[df["categorie"].isin(selected_categories)]
-        if len(df)==0:
-            st.error("Choose a category")
-    for index, row in df.iterrows():
-        # st.write(f"Row {index}:")
-        # st.write(f"id: {row['id']}")
-        # st.write(f"id_entry_original: {row['id_entry_original']}")
-        st.subheader(f"{row['titel']}")
-        st.write(f"{row['datum']}")
-        if row['categorie'] != "_":
-            st.write(f"Categorie: {row['categorie']}")  
-        if row['kopfoto'] != "_":
-            #image_url = f"https://github.com/rcsmit/streamlit_scripts/tree/main/printbak/thumbnails/{row['kopfoto']}?raw=true"
-            image_url = f"https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/printbak/thumbnails/{row['kopfoto']}"
-            #st.write(image_url)
-            st.image(image_url)
-        #st.write(f"{row['artikel']}")
-        st.markdown(f"{row['artikel']}", unsafe_allow_html = True)
-   
-        if row['afbeelding'] != "_":
-            st.write(f"afbeelding: {row['afbeelding']}")
+    df = df[df["blog"].isin(selected_blogs)]
 
-        if row['link'] != "_":
-            st.write(f"link: {row['link']}")
-        st.write("\n")
-    
+    if len(selected_blogs) == 1 and selected_blogs[0] in ("CrazyWaiter", "YepYoga", "rene-smit.com"):
+        all_categories = sorted({c for cats in df["categorie_list"] for c in cats})
+        selected_categories = st.sidebar.multiselect("Select categories", all_categories, all_categories)
+        if selected_categories:
+            df = df[df["categorie_list"].apply(lambda cats: any(c in selected_categories for c in cats))]
+        if df.empty:
+            st.error("Choose a category.", icon=":material/filter_list:")
+            st.stop()
+
+    total = len(df)
+
+    # --- Sidebar pagination controls ---
+    st.sidebar.markdown("---")
+    st.sidebar.markdown(f"#### :material/menu_book: Pagination &nbsp; :gray-badge[{total}]")
+    posts_per_page = st.sidebar.selectbox(
+        "Posts per page", [5, 10, 25, 50], index=1
+    )
+    n_pages = max(1, -(-total // posts_per_page))  # ceiling division
+    page = st.sidebar.number_input(
+        "Page", min_value=1, max_value=n_pages, value=1, step=1
+    )
+    start = (page - 1) * posts_per_page
+    end   = start + posts_per_page
+    df_page = df.iloc[start:end]
+
+    st.caption(f"Page {page} of {n_pages} · {total} article(s) total")
+
+    # --- Article cards ---
+    for row in df_page.itertuples(index=False):
+        with st.container(border=True):
+            st.subheader(row.titel)
+            meta = f':material/calendar_today: {row.datum.strftime("%d %B %Y")}'
+            if row.categorie != "_":
+                meta += f' &nbsp;·&nbsp; :material/label: {row.categorie}'
+            st.markdown(meta)
+
+            # kopfoto: GitHub-hosted thumbnail (Google Sheet posts)
+            if row.kopfoto != "_":
+                thumb = (
+                    "https://raw.githubusercontent.com/rcsmit/"
+                    f"streamlit_scripts/main/printbak/thumbnails/{row.kopfoto}"
+                )
+                st.image(thumb, use_container_width=False, width=480)
+            # afbeelding: full URL (RSS posts use this for featured image)
+            elif row.afbeelding != "_" and row.afbeelding.startswith("http"):
+                st.image(row.afbeelding, use_container_width=False, width=480)
+
+            st.markdown(row.artikel, unsafe_allow_html=True)
+
+            col1, col2 = st.columns(2)
+            if row.afbeelding != "_":
+                with col1:
+                    st.link_button(
+                        ":material/image: Afbeelding",
+                        row.afbeelding,
+                    )
+            if row.link != "_":
+                with col2:
+                    st.link_button(
+                        ":material/open_in_new: Link",
+                        row.link,
+                    )
+
+
 if __name__ == "__main__":
     main()
-    #find_fill_color("B4")
-    
