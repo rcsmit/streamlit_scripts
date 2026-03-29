@@ -574,9 +574,9 @@ def main() -> None:
             delta=f"{bah_rendement}% total | CAGR {bah_cagr}%",
         )
 
+    plot_combined(df, choice, exec_dates, buy_price, sell_price, bb_signal, portfolio_values)
     plot_boll(df, choice, buy_price, sell_price, exec_dates)
     plot_value_portfolio(exec_dates, portfolio_values)
-    plot_combined(df, choice, exec_dates, buy_price, sell_price, bb_signal, portfolio_values)
 
     tekst = (
         "<style>.infobox{background-color:lightblue;padding:5px;}</style>"
