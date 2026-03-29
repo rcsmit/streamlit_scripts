@@ -110,7 +110,7 @@ def main():
                 ["[76] Pensioencalculator2","pensioencalculator2", "Another pension calculator"],
                 ["[77] ZZP tarieven vs bullshitgehalte","zzp_bullshit", "Hoe hoger de bullshit, des te hoger het tarief"],
        ]
-       ]
+       
 
 
     try:
