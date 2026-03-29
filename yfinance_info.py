@@ -494,6 +494,7 @@ def plot_combined(
         ),
         template="plotly_white",
         shapes=shapes,
+        legend=dict(x=1.1, y=1)#, xanchor="left", yanchor="top"),
     )
     st.plotly_chart(fig, width='stretch')
 
@@ -595,6 +596,7 @@ def main() -> None:
 
     st.markdown(tekst, unsafe_allow_html=True)
     st.markdown(disclaimer)
+
 
 if __name__ == "__main__":
     main()
