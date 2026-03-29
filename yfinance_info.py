@@ -596,6 +596,5 @@ def main() -> None:
     st.markdown(tekst, unsafe_allow_html=True)
     st.markdown(disclaimer)
 
-
 if __name__ == "__main__":
     main()
