@@ -34,6 +34,7 @@ def get_data_yfinance(choice, interval, period="3m",start="2015-01-01", window=7
         
     # else:
     df.columns = ['_'.join(col) for col in df.columns]
+    df["Open"] = df[f"{choice}_Open"]
     df["Close"] = df[f"{choice}_Close"]
     df["Koers"] = df[f"{choice}_Close"] #seasonality.py
    
