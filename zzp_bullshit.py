@@ -660,7 +660,7 @@ def main():
                 file_name="zzp_uurtarieven_gefilterd.csv",
                 mime="text/csv",
             )
-    st.sidebar.info("Bron: KNAB ZZP tarieven 2025")
+    st.sidebar.info("Bron: KNAB ZZP tarieven 2025 https://www.knab.nl/financiele-tools/zzp-uurtarief-berekenen")
 
 if __name__ == "__main__":
     main()
