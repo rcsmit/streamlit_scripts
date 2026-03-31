@@ -248,7 +248,7 @@ def main():
     c8.metric("Years simulated",         f"{n_years:.1f}")
 
     # ── Portfolio value chart ─────────────────────────────────────────────────────
-    st.subheader("📈 Portfolio Value Over Time")
+    st.subheader(f"📈 Portfolio Value Over Time - {ticker_choice}")
 
     fig = make_subplots(
         rows=2, cols=1,
