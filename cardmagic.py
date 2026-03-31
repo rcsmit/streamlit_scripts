@@ -1,6 +1,8 @@
 import random
 import streamlit as st
 
+# simulatie of een spel waarbij je een kaart herkent 
+# 
 def deal_into_columns(stack):
     cols = [[], [], []]  # A, B, C
     for i, card in enumerate(stack):

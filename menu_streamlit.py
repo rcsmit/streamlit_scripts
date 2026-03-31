@@ -109,6 +109,7 @@ def main():
                 ["[75] Bloomberg Dashboard","bb_dashboard", "Bloomberg dashboard + advice"],
                 ["[76] Pensioencalculator2","pensioencalculator2", "Another pension calculator"],
                 ["[77] ZZP tarieven vs bullshitgehalte","zzp_bullshit", "Hoe hoger de bullshit, des te hoger het tarief"],
+                ["[78] Backtest Fathers rules","backtest_fathers_rules", "Is the wisdom about trading stocks of Father right? "],
        ]
        
 
