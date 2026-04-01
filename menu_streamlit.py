@@ -109,24 +109,22 @@ options = [
 # letter_key is exposed as  ?cat=A  …  ?cat=I  in the URL.
 # ---------------------------------------------------------------------------
 CATEGORIES = [
-    ("A", "🏠  Home",               [0]),
-    ("B", "🗺️  Maps & Travel",      [17, 34, 40, 67,79]),
-    ("B", "🔤  Language & Text",    [3, 12, 13, 46, 72]),
-    ("D", "🎨  Fun & Creative",     [1, 9, 19, 21, 60, 62, 66,70]),
-    ("E", "🏃  Health & Lifestyle", [6,36,53 ]),
-    ("F", "🏕️  Camping Rep life",  [5,11,25, 41, 43,]),
+    ("A", "🏠  Home",                  [0],                                      "#6C8EBF"),
+    ("B", "🗺️  Maps & Travel",         [17, 34, 40, 67, 79],                     "#4ECDC4"),
+    ("B", "🔤  Language & Text",       [3, 12, 13, 46, 72],                      "#F7B731"),
+    ("D", "🎨  Fun & Creative",        [1, 9, 19, 21, 60, 62, 66, 70],           "#FF6B9D"),
+    ("E", "🏃  Health & Lifestyle",    [6, 36, 53],                               "#55EFC4"),
+    ("F", "🏕️  Camping & Rep life",   [5, 11, 25, 41, 43],                      "#E17055"),
+    ("G", "🌦️  Weather & Nature",      [2, 10, 22, 30, 42, 50, 59, 69, 71],     "#74B9FF"),
+    ("H", "📊  Data & Analysis",       [14, 23, 24, 26, 27, 31, 39, 51, 61, 64, 68, 74], "#A29BFE"),
+    ("I", "🛠️  Tools & Utilities",     [4, 37, 48, 55, 56, 58],                  "#B2BEC3"),
+    ("J", "👴  Life expectancy",       [35, 47, 49, 54],                          "#FDCB6E"),
+    ("K", "💰  Finance & Income",      [15, 16, 18, 28, 29, 32, 44, 65, 76, 77], "#27AE60"),
+    ("L", "📈  Trading",               [7, 8, 20, 33, 38, 45, 52, 57, 78],       "#E67E22"),
+    ("M", "🎨  Streamlit layouts",     [75, 63, 73],                              "#9B59B6"),
+]
 
-    ("G", "🌦️  Weather & Nature",   [2, 10, 22,  30, 42,50, 59, 69, 71]),
-    
-    ("H", "📊  Data & Analysis",    [14, 23, 24, 26, 27,31,39, 51,  61, 64,68, 74]),
-    ("I", "🛠️  Tools & Utilities",  [4, 37, 48, 55, 56, 58]),
-    ("J", "👴  Life expectancy stats", [35, 47, 49, 54]),
 
-    ("K", "💰  Finance and income",  [15, 16, 18,  28, 29, 32, 44,   65, 76, 77]),
-    ("L", "📈  Trading",  [7, 8,20,33,38,45,52,57,78]),
-    
-    ("M", "🎨  Streamlit layouts",  [75, 63, 73]),
-]    
 
 # Derived lookups (built once at import time)
 _choice_to_cat_i = {}          # choice_index  → index in CATEGORIES
@@ -136,6 +134,8 @@ for _cat_i, (_letter, _, _idxs) in enumerate(CATEGORIES):
     for _idx in _idxs:
         _choice_to_cat_i[_idx] = _cat_i
 
+def give_options_categories():
+    return options, CATEGORIES
 
 def main():
     # -----------------------------------------------------------------------
