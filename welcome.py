@@ -311,8 +311,11 @@ def main():
 {scripts_html}
 </div>
         """, unsafe_allow_html=True)
-        readme_txt  += f"### {cat_name}\n{'-'*len(cat_name)}\n{readme_txt_cat}\n\n"
-
+        readme_txt  +=f"""
+### {cat_name}
+| # | Script | Description |
+|---|--------|-------------|{readme_txt_cat}
+"""
         col_idx += 1
 
     # ── About ─────────────────────────────────────────────────────────────

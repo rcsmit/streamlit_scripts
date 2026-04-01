@@ -3,9 +3,11 @@
 > A living collection of 79+ interactive Python/Streamlit apps covering data analysis, finance, trading, maps, weather, and more.
 
 🔗 **Live app:** [rcsmit.streamlit.app](https://rcsmit.streamlit.app)
-### 🗺️  Maps & Travel
------------------
 
+
+### 🗺️  Maps & Travel
+| # | Script | Description |
+|---|--------|-------------|
 | 17 | [Conscious communities](https://rcsmit.streamlit.app/?choice=17) | Interactive map of ecovillages and intentional communities worldwide |
 | 34 | [Acroyoga groups](https://rcsmit.streamlit.app/?choice=34) | AcroYoga communities map with data from Google Sheets |
 | 40 | [Rome infomap](https://rcsmit.streamlit.app/?choice=40) | Rome attractions map with Google Sheets data and filtering |
@@ -13,8 +15,8 @@
 | 79 | [Berlin](https://rcsmit.streamlit.app/?choice=79) | POIs in Berlin |
 
 ### 🔤  Language & Text
-------------------
-
+| # | Script | Description |
+|---|--------|-------------|
 | 3 | [Text generator](https://rcsmit.streamlit.app/?choice=3) | Markov chain text generator from meditation scripts |
 | 12 | [Whatsapp analyzer](https://rcsmit.streamlit.app/?choice=12) | WhatsApp chat analysis with statistics and visualization |
 | 13 | [Breezertaal converter](https://rcsmit.streamlit.app/?choice=13) | Text converter that alternates case and replaces vowels |
@@ -22,8 +24,8 @@
 | 72 | [Letter Frequentie Analyse](https://rcsmit.streamlit.app/?choice=72) | Welk woord heeft de meeste van elke letter? |
 
 ### 🎨  Fun & Creative
------------------
-
+| # | Script | Description |
+|---|--------|-------------|
 | 1 | [newagebullshitgenerator](https://rcsmit.streamlit.app/?choice=1) | Generates random new age sentences using word lists |
 | 9 | [Yepcharts](https://rcsmit.streamlit.app/?choice=9) | iTunes hitlist fetcher and chart viewer for various countries |
 | 19 | [Tarot Symbols](https://rcsmit.streamlit.app/?choice=19) | Tarot card symbol meanings with images and GPT analysis |
@@ -34,15 +36,15 @@
 | 70 | [Year timeline](https://rcsmit.streamlit.app/?choice=70) | Timeline of the year with subjective length of months |
 
 ### 🏃  Health & Lifestyle
----------------------
-
+| # | Script | Description |
+|---|--------|-------------|
 | 6 | [Show sportactivities](https://rcsmit.streamlit.app/?choice=6) | Garmin activity tracker with running/sport statistics |
 | 36 | [Weblogs](https://rcsmit.streamlit.app/?choice=36) | Blog entry reader from Excel with statistics and visualization |
 | 53 | [GPX analyzer](https://rcsmit.streamlit.app/?choice=53) | GPS route analyzer calculating elevation profiles & effort distances |
 
 ### 🏕️  Camping & Rep life
-----------------------
-
+| # | Script | Description |
+|---|--------|-------------|
 | 5 | [Schoonmaaktijden](https://rcsmit.streamlit.app/?choice=5) | Cleaning time analysis fitted to Weibull distribution |
 | 11 | [Occupation Camping](https://rcsmit.streamlit.app/?choice=11) | Accommodation occupancy analysis from planning sheets |
 | 25 | [Yield management](https://rcsmit.streamlit.app/?choice=25) | Hotel yield management and pricing optimization tool |
@@ -50,8 +52,8 @@
 | 43 | [Cleaning simulation](https://rcsmit.streamlit.app/?choice=43) | Monte Carlo house cleaning simulation with probability analysis |
 
 ### 🌦️  Weather & Nature
---------------------
-
+| # | Script | Description |
+|---|--------|-------------|
 | 2 | [KNMI grafieken](https://rcsmit.streamlit.app/?choice=2) | Dutch weather data visualization with multiple analysis modes |
 | 10 | [Zonnepanelen](https://rcsmit.streamlit.app/?choice=10) | Solar panel yield analysis vs meteorological factors |
 | 22 | [Historical weather](https://rcsmit.streamlit.app/?choice=22) | Historical weather data from Open-Meteo API with visualizations |
@@ -63,8 +65,8 @@
 | 71 | [Airquality Chiang Mai](https://rcsmit.streamlit.app/?choice=71) | Historical airquality in Chiang Mai |
 
 ### 📊  Data & Analysis
-------------------
-
+| # | Script | Description |
+|---|--------|-------------|
 | 14 | [Fit to data](https://rcsmit.streamlit.app/?choice=14) | Curve fitting for Dutch housing allowance formula |
 | 23 | [KNMI trendline LOESS](https://rcsmit.streamlit.app/?choice=23) | KNMI temperature trend analysis using LOESS (statsmodels) |
 | 24 | [KNMI trendline LOESS - scikit](https://rcsmit.streamlit.app/?choice=24) | KNMI temperature trend analysis using LOESS (scikit-misc) |
@@ -79,8 +81,8 @@
 | 74 | [Birthday heatmap](https://rcsmit.streamlit.app/?choice=74) | Heatmap geboortedatums+afwijkingen per gemeente |
 
 ### 🛠️  Tools & Utilities
----------------------
-
+| # | Script | Description |
+|---|--------|-------------|
 | 4 | [YT transcriber](https://rcsmit.streamlit.app/?choice=4) | YouTube video transcriber with translation support |
 | 37 | [Yepcheck](https://rcsmit.streamlit.app/?choice=37) | SQLite database viewer displaying tables and their contents |
 | 48 | [Images2pdf](https://rcsmit.streamlit.app/?choice=48) | Image/PDF processor for rotation, contrast and resizing |
@@ -89,16 +91,16 @@
 | 58 | [Doorsigns](https://rcsmit.streamlit.app/?choice=58) | PDF door sign generator with custom fonts & batch processing |
 
 ### 👴  Life expectancy
-------------------
-
+| # | Script | Description |
+|---|--------|-------------|
 | 35 | [Life Expectancy NL](https://rcsmit.streamlit.app/?choice=35) | Dutch life expectancy calculator using Monte Carlo simulations |
 | 47 | [Levensverw. in tijd](https://rcsmit.streamlit.app/?choice=47) | Dutch life expectancy trends by age/gender using CBS data |
 | 49 | [Viager calculation](https://rcsmit.streamlit.app/?choice=49) | Real estate viager calculator using mortality tables & simulation |
 | 54 | [Nog in leven over 40 jaar](https://rcsmit.streamlit.app/?choice=54) | Dutch population survival projector for 85+ age group |
 
 ### 💰  Finance & Income
--------------------
-
+| # | Script | Description |
+|---|--------|-------------|
 | 15 | [Inkomstenbelasting](https://rcsmit.streamlit.app/?choice=15) | Dutch income tax calculator with scenario simulations |
 | 16 | [Exchange money](https://rcsmit.streamlit.app/?choice=16) | Thailand EUR-THB exchange rate comparison tool |
 | 18 | [How Much Month I need to work](https://rcsmit.streamlit.app/?choice=18) | Financial balance forecast for part-time work scenarios |
@@ -111,8 +113,8 @@
 | 77 | [ZZP tarieven vs bullshitgehalte](https://rcsmit.streamlit.app/?choice=77) | Hoe hoger de bullshit, des te hoger het tarief |
 
 ### 📈  Trading
-----------
-
+| # | Script | Description |
+|---|--------|-------------|
 | 7 | [YFinance info](https://rcsmit.streamlit.app/?choice=7) | Stock price Bollinger Bands trading strategy simulator |
 | 8 | [Crypto portfolio](https://rcsmit.streamlit.app/?choice=8) | Bitcoin/crypto portfolio tracker with cost tracking |
 | 20 | [Dollar Cost Average](https://rcsmit.streamlit.app/?choice=20) | Bitcoin DCA strategy calculator vs lump sum investing |
@@ -124,12 +126,11 @@
 | 78 | [Backtest Fathers rules](https://rcsmit.streamlit.app/?choice=78) | Is the wisdom about trading stocks of Father right? |
 
 ### 🎨  Streamlit layouts
---------------------
-
+| # | Script | Description |
+|---|--------|-------------|
 | 75 | [Bloomberg Dashboard](https://rcsmit.streamlit.app/?choice=75) | Bloomberg dashboard + advice |
 | 63 | [Streamlit layouts](https://rcsmit.streamlit.app/?choice=63) | Streamlit UI component showcase: cards, timelines, metrics |
 | 73 | [Streamlit dashboard apps](https://rcsmit.streamlit.app/?choice=73) | Demo templates made by Streamlit |
-
 ---
 
 ## 🚀 Running locally

@@ -129,7 +129,7 @@ CATEGORIES = [
 # Derived lookups (built once at import time)
 _choice_to_cat_i = {}          # choice_index  → index in CATEGORIES
 _letter_to_cat_i = {}          # "B"           → index in CATEGORIES
-for _cat_i, (_letter, _, _idxs) in enumerate(CATEGORIES):
+for _cat_i, (_letter, _, _idxs, color) in enumerate(CATEGORIES):
     _letter_to_cat_i[_letter.upper()] = _cat_i
     for _idx in _idxs:
         _choice_to_cat_i[_idx] = _cat_i
@@ -179,7 +179,7 @@ def main():
         st.caption("Pick a category, then a script. Options/parameters are below the menu")
         st.markdown("---")
 
-        for cat_i, (letter, cat_name, cat_indices) in enumerate(CATEGORIES):
+        for cat_i, (letter, cat_name, cat_indices, color) in enumerate(CATEGORIES):
             is_open = (cat_i == active_cat_i)
 
             with st.expander(f"**[{letter}]** {cat_name}", expanded=is_open):
