@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Berlijn 2025</name>
+    <description/>
+    <Style id="icon-1899-0288D1-labelson-nodesc">
+      <IconStyle>
+        <color>ffd18802</color>
+        <scale>1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="32" xunits="pixels" y="64" yunits="insetPixels"/>
+      </IconStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="icon-1899-097138-nodesc-normal">
+      <IconStyle>
+        <color>ff387109</color>
+        <scale>1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="32" xunits="pixels" y="64" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0</scale>
+      </LabelStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="icon-1899-097138-nodesc-highlight">
+      <IconStyle>
+        <color>ff387109</color>
+        <scale>1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="32" xunits="pixels" y="64" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>1</scale>
+      </LabelStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id="icon-1899-097138-nodesc">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#icon-1899-097138-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#icon-1899-097138-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="icon-1899-7CB342-labelson-nodesc">
+      <IconStyle>
+        <color>ff42b37c</color>
+        <scale>1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="32" xunits="pixels" y="64" yunits="insetPixels"/>
+      </IconStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="icon-1899-9C27B0-labelson">
+      <IconStyle>
+        <color>ffb0279c</color>
+        <scale>1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="32" xunits="pixels" y="64" yunits="insetPixels"/>
+      </IconStyle>
+    </Style>
+    <Style id="icon-1899-9C27B0-labelson-nodesc">
+      <IconStyle>
+        <color>ffb0279c</color>
+        <scale>1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="32" xunits="pixels" y="64" yunits="insetPixels"/>
+      </IconStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="icon-1899-E65100-labelson-nodesc">
+      <IconStyle>
+        <color>ff0051e6</color>
+        <scale>1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="32" xunits="pixels" y="64" yunits="insetPixels"/>
+      </IconStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="icon-1899-FFD600-labelson-nodesc">
+      <IconStyle>
+        <color>ff00d6ff</color>
+        <scale>1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="32" xunits="pixels" y="64" yunits="insetPixels"/>
+      </IconStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Folder>
+      <name><![CDATA[VEGAN & FOOD]]></name>
+      <Placemark>
+        <name>SOY</name>
+        <styleUrl>#icon-1899-7CB342-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.4114422,52.5260438,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[Lia's Kitchen - 100% Vegan]]></name>
+        <styleUrl>#icon-1899-7CB342-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.4137897,52.4914244,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>1990 Vegan Living</name>
+        <styleUrl>#icon-1899-7CB342-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.458578,52.5103695,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>li.ke : serious||thai||vegan</name>
+        <styleUrl>#icon-1899-7CB342-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.4586932,52.5115871,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Vegan Vibes Berlin</name>
+        <styleUrl>#icon-1899-7CB342-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.4585686,52.5132337,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Chay Long Hasenheide</name>
+        <styleUrl>#icon-1899-7CB342-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.4107326,52.4889667,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>doen doen® kebap</name>
+        <styleUrl>#icon-1899-7CB342-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.455839,52.5099086,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Bonvivant Cocktail Bistro</name>
+        <styleUrl>#icon-1899-7CB342-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.3537681,52.4946487,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Mamas Banh | Schöneberg</name>
+        <styleUrl>#icon-1899-7CB342-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.3543674,52.4898478,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Klunkerkranich</name>
+        <styleUrl>#icon-1899-7CB342-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.4318524,52.482195,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>FALCO´SLICE</name>
+        <styleUrl>#icon-1899-7CB342-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.4419715,52.4978689,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Vöner</name>
+        <styleUrl>#icon-1899-7CB342-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.4686933,52.506714,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Markthalle Neun</name>
+        <styleUrl>#icon-1899-7CB342-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.4315988,52.502135,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Hako Ramen Kreuzberg</name>
+        <styleUrl>#icon-1899-7CB342-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.3903131,52.489484,0
+          </coordinates>
+        </Point>
+      </Placemark>
+    </Folder>
+    <Folder>
+      <name>INFO</name>
+      <Placemark>
+        <name>Kiez Hostel Berlin</name>
+        <styleUrl>#icon-1899-FFD600-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.4475397,52.509766,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Woning Remon / Elektro Reibsch Andreas König</name>
+        <styleUrl>#icon-1899-FFD600-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.4609751,52.5084331,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Ostbahnhof</name>
+        <styleUrl>#icon-1899-FFD600-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.4354247,52.5098945,0
+          </coordinates>
+        </Point>
+      </Placemark>
+    </Folder>
+    <Folder>
+      <name>Friedrichshein</name>
+      <Placemark>
+        <name>RAW-Gelände</name>
+        <description>outdoor bars, graffiti, live DJs</description>
+        <styleUrl>#icon-1899-9C27B0-labelson</styleUrl>
+        <Point>
+          <coordinates>
+            13.452028,52.5076567,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Boxhagener Platz</name>
+        <description>fkeemarket sunday</description>
+        <styleUrl>#icon-1899-9C27B0-labelson</styleUrl>
+        <Point>
+          <coordinates>
+            13.4597132,52.5108764,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Volkspark Friedrichshain</name>
+        <styleUrl>#icon-1899-9C27B0-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.4363934,52.5280353,0
+          </coordinates>
+        </Point>
+      </Placemark>
+    </Folder>
+    <Folder>
+      <name><![CDATA[East side and Berlin Wall & HISTORY]]></name>
+      <Placemark>
+        <name>East Side Gallery</name>
+        <styleUrl>#icon-1899-E65100-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.4396953,52.5050224,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Checkpoint Charlie</name>
+        <styleUrl>#icon-1899-E65100-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.3903913,52.5074434,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Topographie des Terrors</name>
+        <styleUrl>#icon-1899-E65100-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.3837099,52.506747,0
+          </coordinates>
+        </Point>
+      </Placemark>
+    </Folder>
+    <Folder>
+      <name>MITTE</name>
+      <Placemark>
+        <name>Dom van Berlijn</name>
+        <styleUrl>#icon-1899-0288D1-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.401078,52.5190608,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Unter Den Linden</name>
+        <styleUrl>#icon-1899-0288D1-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.3891129,52.517171,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Brandenburger Tor</name>
+        <styleUrl>#icon-1899-0288D1-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.377704,52.5162746,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Reichstag</name>
+        <styleUrl>#icon-1899-0288D1-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.3761871,52.5186202,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>HÖR</name>
+        <styleUrl>#icon-1899-0288D1-labelson-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.4117694,52.488833,0
+          </coordinates>
+        </Point>
+      </Placemark>
+    </Folder>
+    <Folder>
+      <name>ALTERNATIVE BERLIN</name>
+      <Placemark>
+        <name>Tempelhofer Feld</name>
+        <styleUrl>#icon-1899-097138-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            13.4005926,52.4748569,0
+          </coordinates>
+        </Point>
+      </Placemark>
+    </Folder>
+  </Document>
+</kml>
