@@ -340,7 +340,6 @@ def main():
     </div>
     """, unsafe_allow_html=True)
 
-
     with st.expander("Contents for readme.MD"):
         st.code(readme_txt)
 if __name__ == "__main__":
