@@ -101,6 +101,7 @@ options = [
     ["[77] ZZP tarieven vs bullshitgehalte","zzp_bullshit",               "Hoe hoger de bullshit, des te hoger het tarief"],
     ["[78] Backtest Fathers rules",         "backtest_fathers_rules",      "Is the wisdom about trading stocks of Father right?"],
     ["[79] Berlin",         "berlin",      "POI's in Berlin"],
+    ["[80] Palentir style dashboard",         "palantir_dashboard",      "Palantir-style dashboard"],
 ]
 
 # ---------------------------------------------------------------------------
@@ -121,7 +122,7 @@ CATEGORIES = [
     ("J", "👴  Life expectancy",       [35, 47, 49, 54],                          "#FDCB6E"),
     ("K", "💰  Finance & Income",      [15, 16, 18, 28, 29, 32, 44, 65, 76, 77], "#27AE60"),
     ("L", "📈  Trading",               [7, 8, 20, 33, 38, 45, 52, 57, 78],       "#E67E22"),
-    ("M", "🎨  Streamlit layouts",     [75, 63, 73],                              "#9B59B6"),
+    ("M", "🎨  Streamlit layouts",     [75, 63, 73,80],                              "#9B59B6"),
 ]
 
 
