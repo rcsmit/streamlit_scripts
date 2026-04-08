@@ -164,7 +164,7 @@ streamlit run menu_streamlit.py
 ## 👤 About
 
 I'm René Smit — a Dutch multidisciplinary freelancer with a nomadic lifestyle across Da Nang, Chiang Mai, Bali, and the Netherlands.  
-My work spans **data analysis & visualisation**, **graphic & web design**, **life & financial coaching**, and **tourism & hospitality**.
+I am available for freelance data analysis & visualisation projects, Python/Streamlit development, financial coaching & planning,  graphic & web design, and consultancy for hospitality & tourism businesses.
 
 🌐 [rene-smit.com](https://rene-smit.com) · 📊 [rcsmit.streamlit.app](https://rcsmit.streamlit.app) · 🐙 [github.com/rcsmit](https://github.com/rcsmit)
 
