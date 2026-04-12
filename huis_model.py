@@ -148,8 +148,10 @@ def main() -> None:
     totaal_aflossing = 0.0
 
     # Spaarpot: startkapitaal = eigen inbreng + aankoopkosten
-    spaarpot = eigen_inbreng + aankoopkosten_totaal
     huur_jaar_huidig = huur_maand * 12
+    
+    spaarpot = eigen_inbreng + aankoopkosten_totaal
+    spaarpot_minus_huur = eigen_inbreng + aankoopkosten_totaal - huur_jaar_huidig
     cumulatief_bespaarde_huur = 0.0
     cumulatief_woonkosten_excl_afl = 0.0
 
@@ -214,7 +216,10 @@ def main() -> None:
 
         # ── Spaarpot: startkapitaal + alle koopkosten belegd ──
         spaarpot = spaarpot * (1 + spaar_rente_pct / 100) + jaarkosten
-
+        if spaarpot_minus_huur >0:
+            spaarpot_minus_huur = (spaarpot_minus_huur * (1 + spaar_rente_pct / 100) + jaarkosten) - huur_jaar_huidig
+        else:
+            spaarpot_minus_huur = (spaarpot_minus_huur  + jaarkosten) - huur_jaar_huidig
         # ── Koper totaalvermogen: overwaarde + cumulatief niet-betaalde huur ──
         cumulatief_bespaarde_huur += huur_jaar_huidig
         koper_totaalvermogen = overwaarde + cumulatief_bespaarde_huur
@@ -249,6 +254,7 @@ def main() -> None:
             "Cumulatieve kosten": round(cumulatief_kosten),
             "Netto vermogen": round(netto_vermogen),
             "Spaarpot": round(spaarpot),
+            "Spaarpot_minus_huur": round(spaarpot_minus_huur),
             "Koper totaalvermogen": round(koper_totaalvermogen),
             "Cumulatief woonvoordeel": round(cumulatief_bespaarde_huur),
             "Huur dit jaar": round(huur_jaar_huidig / (1 + huurstijging_pct / 100)),
@@ -426,6 +432,11 @@ def main() -> None:
         x=df["Jaar"], y=df["Spaarpot"],
         name=f"🏦 Spaarpot / beleggen ({spaar_rente_pct}%)",
         line=dict(color="#e74c3c", width=3, ),
+    ))
+    fig1.add_trace(go.Scatter(
+        x=df["Jaar"], y=df["Spaarpot_minus_huur"], visible="legendonly",
+        name=f"🏦 Spaarpot / beleggen ({spaar_rente_pct}%) minus huur",
+        line=dict(color="#004c3c", width=3, ),
     ))
     if toon_woonvoordeel:
         fig1.add_trace(go.Scatter(
