@@ -761,6 +761,7 @@ def main() -> None:
     st.info("""⚠️ **Dit model is een verkenner, geen financieel advies.**
         Raadpleeg een hypotheekadviseur voor persoonlijke beslissingen.""")
 
+    st.info("Script: https://github.com/rcsmit/streamlit_scripts/blob/main/huis_model.py")
 
 if __name__ == "__main__":
     main()
