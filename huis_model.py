@@ -598,11 +598,37 @@ def main() -> None:
 
     # ─── Detailtabel ───────────────────────────────────────────────────────
     with st.expander("📄 Jaarlijkse detailtabel"):
+
+
+        #     "Jaar": jaar,
+        #     "Woningwaarde": round(woningwaarde),
+        #     "Reële waarde": round(reele_waarde),
+        #     "Restschuld": round(restschuld),
+        #     "Overwaarde": round(overwaarde),
+        #     "Rente (netto)": round(netto_rente),
+        #     "Aflossing": round(aflossing_jaar),
+        #     "OZB": round(ozb),
+        #     "Onderhoud": round(onderhoud),
+        #     "Verzekering": round(verzekering),
+        #     "VvE": round(vve),
+        #     "EWF belasting": round(ewf_belasting),
+        #     "Totale jaarkosten": round(jaarkosten),
+        #     "Kosten excl. aflossing": round(jaarkosten_excl_aflossing),
+        #     "Cumulatieve kosten": round(cumulatief_kosten),
+        #     "Netto vermogen": round(netto_vermogen),
+        #     "Spaarpot": round(spaarpot),
+        #     "Koper totaalvermogen": round(koper_totaalvermogen),
+        #     "Cumulatief woonvoordeel": round(cumulatief_bespaarde_huur),
+        #     "Huur dit jaar": round(huur_jaar_huidig / (1 + huurstijging_pct / 100)),
+        #     "Netto rendement": round(netto_rendement),
+        #     "Netto rendement incl. woonvoordeel": round(netto_rendement_incl_woonvoordeel),
+        # })
+
         weergave_df = df[[
-            "Jaar", "Woningwaarde", "Restschuld", "Overwaarde",
+            "Jaar", "Woningwaarde", "Restschuld", "Overwaarde","Aflossing",
             "Rente (netto)", "OZB", "Onderhoud", "Verzekering",
             "EWF belasting", "Kosten excl. aflossing", "Totale jaarkosten",
-            "Netto rendement", "Netto rendement incl. woonvoordeel",
+            "Netto rendement", "Netto rendement incl. woonvoordeel","Spaarpot"
         ]].copy()
 
         # Formateer als euro
