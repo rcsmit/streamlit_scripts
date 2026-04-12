@@ -413,30 +413,30 @@ def main() -> None:
     )
 
     fig1.add_trace(go.Scatter(
-        x=df["Jaar"], y=df["Woningwaarde"],
+        x=df["Jaar"], y=df["Woningwaarde"], visible="legendonly",
         name="Woningwaarde", line=dict(color="#2ecc71", width=2, dash="dot"),
         fill="tozeroy", fillcolor="rgba(46,204,113,0.05)"
     ))
     fig1.add_trace(go.Scatter(
-        x=df["Jaar"], y=df["Overwaarde"],
+        x=df["Jaar"], y=df["Overwaarde"], visible="legendonly",
         name="🏠 Overwaarde (kopen)",
         line=dict(color="#3498db", width=3),
     ))
     fig1.add_trace(go.Scatter(
         x=df["Jaar"], y=df["Spaarpot"],
         name=f"🏦 Spaarpot / beleggen ({spaar_rente_pct}%)",
-        line=dict(color="#e74c3c", width=3),
+        line=dict(color="#e74c3c", width=3, ),
     ))
     if toon_woonvoordeel:
         fig1.add_trace(go.Scatter(
-            x=df["Jaar"], y=df["Koper totaalvermogen"],
+            x=df["Jaar"], y=df["Koper totaalvermogen"], visible="legendonly",
             name="🏠 Koper totaalvermogen (overwaarde + niet-betaalde huur)",
             line=dict(color="#1abc9c", width=2, dash="dash"),
         ))
 
     # Netto rendement lijnen
     fig1.add_trace(go.Scatter(
-        x=df["Jaar"], y=df["Netto rendement"],
+        x=df["Jaar"], y=df["Netto rendement"], visible="legendonly",
         name="💰 Netto rendement (na alle kosten + verkoopkosten)",
         line=dict(color="#f39c12", width=2, dash="dashdot"),
     ))
@@ -458,12 +458,12 @@ def main() -> None:
     st.plotly_chart(fig1, width="stretch")
 
     # ─── Grafiek 1b: Netto rendement ──────────────────────────────────────
-    st.subheader("💰 Netto rendement bij verkoop op jaar X")
-    st.caption(
-        "Overwaarde − verkoopkosten (makelaar ~1% + notaris €500) "
-        "− aankoopkosten − cumulatieve woonkosten excl. aflossing. "
-        "Negatief in de beginjaren is normaal: dan wegen de eenmalige kosten nog zwaar."
-    )
+    # st.subheader("💰 Netto rendement bij verkoop op jaar X")
+    # st.caption(
+    #     "Overwaarde − verkoopkosten (makelaar ~1% + notaris €500) "
+    #     "− aankoopkosten − cumulatieve woonkosten excl. aflossing. "
+    #     "Negatief in de beginjaren is normaal: dan wegen de eenmalige kosten nog zwaar."
+    # )
 
     # fig1b = go.Figure()
     # fig1b.add_shape(type="line", x0=0, x1=jaren, y0=0, y1=0,
