@@ -103,6 +103,9 @@ options = [
     ["[79] Berlin",         "berlin",      "POI's in Berlin"],
     ["[80] Palentir style dashboard",         "palantir_dashboard",      "Palantir-style dashboard"],
     ["[81] From SMA to LOESS",         "sma_vs_loess",      "Which LOESS-span for a given SMA?"],
+    ["[82] AEX dashboard",         "aex_dashboard",      "AEX fund performance dashboard"],
+    ["[83] Huis model",         "huis_model",      "Aankoop huis als belegging?"],
+    
 ]
 
 # ---------------------------------------------------------------------------
@@ -122,7 +125,7 @@ CATEGORIES = [
     ("I", "🛠️  Tools & Utilities",     [4, 37, 48, 55, 56, 58],                  "#B2BEC3"),
     ("J", "👴  Life expectancy",       [35, 47, 49, 54],                          "#FDCB6E"),
     ("K", "💰  Finance & Income",      [15, 16, 18, 28, 29, 32, 44, 65, 76, 77], "#27AE60"),
-    ("L", "📈  Trading",               [7, 8, 20, 33, 38, 45, 52, 57, 78],       "#E67E22"),
+    ("L", "📈  Trading",               [7, 8, 20, 33, 38, 45, 52, 57, 78,82],       "#E67E22"),
     ("M", "🎨  Streamlit layouts",     [75, 63, 73,80],                              "#9B59B6"),
 ]
 
