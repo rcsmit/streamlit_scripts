@@ -73,6 +73,9 @@ def main() -> None:
         vve_maand = st.number_input(
             "VvE bijdrage (€/maand, 0 = geen)", 0, 1000, 0, 25
         )
+        ozb_pct_jaar=st.number_input(
+            "OZB per jaar (% van WOZ-waarde (eigenaar))",0.0,100.0,0.1
+        )
 
         st.subheader("📈 Waardestijging")
         waardestijging_pct = st.slider(
@@ -136,8 +139,8 @@ def main() -> None:
         annuiteit_maand = hypotheek / n
 
     # OZB (gemeentelijk, gemiddeld NL)
-    ozb_pct_jaar = 0.1   # ~0,1% van WOZ-waarde (eigenaar)
-
+    # ozb_pct_jaar = 0.1   # ~0,1% van WOZ-waarde (eigenaar)
+    
     # ─── Jaarlijkse simulatie ──────────────────────────────────────────────
     rows: list[dict] = []
     woningwaarde = aankoopprijs
