@@ -222,10 +222,40 @@
       ]
     },
     {
-      "name": "Hotel Papendal / JMW / 68 Degrees",
+      "name": "JMW",
       "position": "Waiter (via temp agencies)",
       "startDate": "2004-10-01",
       "endDate": "2013-12-31",
+      "location": "Arnhem, Netherlands",
+      "highlights": [
+        "Events, banqueting, and party catering"
+      ]
+    },
+    {
+      "name": "Hotel Papendal",
+      "position": "Waiter (via temp agencies)",
+      "startDate": "2012-11-12",
+      "endDate": "2014-03-31",
+      "location": "Arnhem, Netherlands",
+      "highlights": [
+        "Events, banqueting, and party catering"
+      ]
+    },
+      {
+      "name": "68 Degrees",
+      "position": "Waiter (via temp agencies)",
+      "startDate": "2013-09-16",
+      "endDate": "2014-05-01",
+      "location": "Arnhem, Netherlands",
+      "highlights": [
+        "Events, banqueting, and party catering"
+      ]
+    },
+     {
+      "name": "68 Degrees",
+      "position": "Waiter (via temp agencies)",
+      "startDate": "2012-10-17",
+      "endDate": "2013-04-20",
       "location": "Arnhem, Netherlands",
       "highlights": [
         "Events, banqueting, and party catering"
