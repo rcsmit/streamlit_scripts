@@ -223,7 +223,7 @@
     },
     {
       "name": "JMW",
-      "position": "Waiter (via temp agencies)",
+      "position": "Waiter (via temp agency)",
       "startDate": "2004-10-01",
       "endDate": "2013-12-31",
       "location": "Arnhem, Netherlands",
@@ -233,17 +233,17 @@
     },
     {
       "name": "Hotel Papendal",
-      "position": "Waiter (via temp agencies)",
+      "position": "Waiter",
       "startDate": "2012-11-12",
       "endDate": "2014-03-31",
       "location": "Arnhem, Netherlands",
       "highlights": [
-        "Events, banqueting, and party catering"
+        "Banqueting, events, restaurant and bar"
       ]
     },
       {
       "name": "68 Degrees",
-      "position": "Waiter (via temp agencies)",
+      "position": "Waiter (via temp agency)",
       "startDate": "2013-09-16",
       "endDate": "2014-05-01",
       "location": "Arnhem, Netherlands",
@@ -253,7 +253,7 @@
     },
      {
       "name": "68 Degrees",
-      "position": "Waiter (via temp agencies)",
+      "position": "Waiter (via temp agency)",
       "startDate": "2012-10-17",
       "endDate": "2013-04-20",
       "location": "Arnhem, Netherlands",
@@ -262,7 +262,7 @@
       ]
     },
     {
-      "name": "Koffiebranderij G. Peeze B.V.",
+      "name": "Koffiebranderij Peeze",
       "position": "QESH employee",
       "startDate": "2001-09-01",
       "endDate": "2004-09-30",
