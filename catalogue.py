@@ -97,7 +97,7 @@ options = [
     ["[81] From SMA to LOESS",              "sma_vs_loess",                "Which LOESS-span for a given SMA?"],
     ["[82] AEX dashboard",                  "aex_dashboard",               "AEX fund performance dashboard"],
     ["[83] Huis model",                     "huis_model",                  "Aankoop huis als belegging?"],
-       ["[84] Loess viewer", "Plot LOESS lines in a dataset "],
+       ["[84] Loess viewer","loess_viewer", "Plot LOESS lines in a dataset "],
 ]
 
 # ---------------------------------------------------------------------------

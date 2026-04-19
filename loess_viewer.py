@@ -206,7 +206,7 @@ def main():
             y_use = y[valid]
             x_show = x_display.loc[valid] if hasattr(x_display, "loc") else x_display[valid]
 
-            span = 1.412 * window / len(x_use)
+            span = 1.417 * window / len(x_use)
             span = min(max(span, 0.001), 1.0)
 
             y_loess = loess_smooth(x_use, y_use, span)
@@ -233,7 +233,7 @@ def main():
             )
 
     st.caption(
-        "Span formula: 1.412 × window / len(t)"
+        "Span formula: 1.417 × window / len(t)"
         + ("  |  Using skmisc.loess" if SKMISC_AVAILABLE else "  |  Using fallback LOESS")
     )
 
