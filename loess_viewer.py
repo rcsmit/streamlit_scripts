@@ -210,7 +210,7 @@ def main():
             span = min(max(span, 0.001), 1.0)
 
             y_loess = loess_smooth(x_use, y_use, span)
-            y_sma= pd.Series(y_use).rolling(window=window, min_periods=1, center=True).mean().to_numpy()
+            y_sma= pd.Series(y_use).rolling(window=window, center=True).mean().to_numpy()
             print (y_loess)
             if first:
                 fig.add_trace(
