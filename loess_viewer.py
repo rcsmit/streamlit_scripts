@@ -218,6 +218,7 @@ def main():
                         y=y_use,
                         mode="markers",
                         name=f"{y_col} raw",
+                        marker=dict(size=1),
                         opacity=0.35,
                     )
                 )
@@ -228,7 +229,7 @@ def main():
                     y=y_loess,
                     mode="lines",
                     name=f"{y_col} loess {window}",
-                    line=dict(width=3),
+                    line=dict(width=1),
                 )
             )
 
