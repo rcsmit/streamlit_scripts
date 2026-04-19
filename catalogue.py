@@ -97,6 +97,7 @@ options = [
     ["[81] From SMA to LOESS",              "sma_vs_loess",                "Which LOESS-span for a given SMA?"],
     ["[82] AEX dashboard",                  "aex_dashboard",               "AEX fund performance dashboard"],
     ["[83] Huis model",                     "huis_model",                  "Aankoop huis als belegging?"],
+       ["[84] Loess viewer", "Plot LOESS lines in a dataset "],
 ]
 
 # ---------------------------------------------------------------------------
@@ -115,7 +116,7 @@ CATEGORIES = [
     ("E", "🏃  Health & Lifestyle",    [6, 36, 53],                                    "#55EFC4"),
     ("F", "🏕️  Camping & Rep life",   [5, 11, 25, 41, 43],                           "#E17055"),
     ("G", "🌦️  Weather & Nature",      [2, 10, 22, 30, 42, 50, 59, 69, 71],          "#74B9FF"),
-    ("H", "📊  Data & Analysis",       [14, 23, 24, 26, 27, 31, 39, 51, 61, 64, 68, 74, 81], "#A29BFE"),
+    ("H", "📊  Data & Analysis",       [14, 23, 24, 26, 27, 31, 39, 51, 61, 64, 68, 74, 81,84], "#A29BFE"),
     ("I", "🛠️  Tools & Utilities",     [4, 37, 48, 55, 56, 58],                       "#B2BEC3"),
     ("J", "👴  Life expectancy",       [35, 47, 49, 54],                               "#FDCB6E"),
     ("K", "💰  Finance & Income",      [15, 16, 18, 28, 29, 32, 44, 65, 76, 77, 83],  "#27AE60"),

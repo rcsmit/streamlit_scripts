@@ -354,8 +354,8 @@ def main():
     time_start = datetime.now().strftime("%H:%M:%S")
     print("Starting workbook load at " + time_start)
 
-    #main_()
-    find_kruis_posten()
+    main_()
+    # find_kruis_posten()
     #edit_paypal()
     #find_kruis_posten_polars()
 
