@@ -67,7 +67,7 @@ def loess_smooth(x,y,span):
         l.model.degree = 1
         l.control.iterations = 1 #it # must be 1 for replicating the R-script
         l.control.surface = "direct"
-        if len(y)<1000:
+        if len(y)<100:
             l.control.statistics = "exact"
         else:
             l.control.statistics = "approximate"   # or "none" if supported in your version
