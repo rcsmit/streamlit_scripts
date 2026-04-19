@@ -219,7 +219,7 @@ def main():
                         mode="markers",
                         name=f"{y_col} raw",
                         marker=dict(size=1),
-                        opacity=0.35,
+                        opacity=0.85,
                     )
                 )
                 first=False
