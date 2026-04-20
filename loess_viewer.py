@@ -129,7 +129,7 @@ def main():
 
     all_columns = df.columns.tolist()
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3,col4 = st.columns(4)
 
     with col1:
         filter_col = st.selectbox("Filter column", ["None"] + all_columns)
@@ -145,7 +145,8 @@ def main():
 
     with col3:
         x_col = st.selectbox("X axis", all_columns)
-
+    with col4:
+        factor = st.number_input("Factor",1.417)
     df_plot = df.copy()
 
     if filter_col != "None" and filter_val != "All":
@@ -206,7 +207,7 @@ def main():
             y_use = y[valid]
             x_show = x_display.loc[valid] if hasattr(x_display, "loc") else x_display[valid]
 
-            span = 1.417 * window / len(x_use)
+            span = factor * window / len(x_use)
             span = min(max(span, 0.001), 1.0)
 
             y_loess = loess_smooth(x_use, y_use, span)
@@ -246,7 +247,7 @@ def main():
             )
 
     st.caption(
-        "Span formula: 1.417 × window / len(t)"
+        f"Span formula: {factor} × window / len(t)"
         + ("  |  Using skmisc.loess" if SKMISC_AVAILABLE else "  |  Using fallback LOESS")
     )
 
