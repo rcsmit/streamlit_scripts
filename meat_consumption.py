@@ -26,6 +26,8 @@ def prepare_data():
     url_education_expected = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\expected-years-of-schooling.csv"
     url_country = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\country_codes.csv"
     url_country_wikipedia = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\country_wikipedia.csv"
+    url_diet = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption/dietary-composition-by-country.csv"
+    df_diet = pd.read_csv(url_dairy, delimiter=',')
     df =     pd.read_csv(url_education_expected, delimiter=',')
     df_country =  pd.read_csv(url_country, delimiter=',')
     
@@ -75,6 +77,7 @@ def get_data(join_how):
     url_education_expected = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/meat_consumption/expected-years-of-schooling.csv"
     url_length = 'https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/meat_consumption/length_male.csv'
     url_length_eur = 'https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/meat_consumption/length_male_europe.csv'
+    url_diet =       "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/meat_consumption/dietary-composition-by-country.csv"
     
     #url_length_eur = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\length_male_europe.csv"
     #url_length = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\length_male.csv"
@@ -94,8 +97,28 @@ def get_data(join_how):
     
 
     df_meat =  pd.read_csv(url_meat, delimiter=',')
-
     
+    df_diet = pd.read_csv(url_diet, delimiter=',')
+    # https://ourworldindata.org/diet-compositions (chart 6, may 2026)
+    
+    # Hernoem Code naar iso_3
+    df_diet = df_diet.rename(columns={"Code": "iso_3"})
+
+    # Pak het laatste beschikbare jaar per land
+    df_diet_latest = (
+        df_diet
+        .dropna(subset=["iso_3"])
+        .sort_values("Year")
+        .groupby("iso_3")
+        .last()
+        .reset_index()
+    )
+
+    # Optioneel: jaar zichtbaar houden
+    df_diet_latest = df_diet_latest.rename(columns={"Year": "diet_year"})
+
+    # Verwijder Entity want die geeft naamsconflicten
+    df_diet_latest = df_diet_latest.drop(columns=["Entity"], errors="ignore")
 
     # gapminder dataset 
     # https://www.kaggle.com/datasets/albertovidalrod/gapminder-dataset?resource=download
@@ -147,6 +170,7 @@ def get_data(join_how):
     df = merged_df_4.merge(df_education_expected, on="iso_3", how=join_how)
     df["education_index"] = ((df["schooling_expected"] / 18) + (df["schooling_mean"] /15) )/2
 
+    df = df.merge(df_diet_latest, on="iso_3", how="left")  # left: behoud alle landen
     # # Find countries in df but not in df_gm
     # countries_in_df_not_in_df_gm = df[~df['country'].isin(df_health['country'])]
 
@@ -272,6 +296,11 @@ def multiple_lineair_regression(df, show_log_x, show_log_y):
     st.subheader("Multiple Lineair Regression")
     y_value_ = st.selectbox("Y value", ['life_exp',"life_exp_birth","life_exp_5","mort_under_5", "Height"],1)
     x_values_options =  ["meat_cons","cal_day","gdpppp _2011","urban_pop","bmi_over_30","cho_crops","prim_educ_over_25","health_eff_index_rank" ,"health_eff_index","hdi_index","co2_consump","gdp_y","services", 'education_index', 'schooling_mean', 'schooling_expected']
+    columns_diet = ["Milk", "Eggs", "Fish and seafood", "Vegetable oils", 
+                "Animal fats", "Alcoholic beverages", "Pulses", 
+                "Nuts", "Fruit", "Vegetables"]
+
+    x_values_options = x_values_options + columns_diet
     x_values_default = ['meat_cons',"cal_day","gdpppp _2011","urban_pop","bmi_over_30","cho_crops", 'health_eff_index','education_index']
     x_values = st.multiselect("X values", x_values_options, x_values_default)
     standard=  st.sidebar.checkbox("Standardizing dataframe", True)
@@ -347,6 +376,11 @@ def multiple_lineair_regression_sklearn(df_, show_log_x, show_log_y):
     st.subheader("Multiple Lineair Regression")
     y_value = st.selectbox("Y value", ['life_exp',"life_exp_birth","life_exp_5","mort_under_5", "Height"],1)
     x_values_options =  ["meat_cons","cal_day","gdpppp _2011","urban_pop","bmi_over_30","cho_crops","prim_educ_over_25","health_eff_index_rank" ,"health_eff_index","hdi_index","co2_consump","gdp_y","services", 'education_index', 'schooling_mean', 'schooling_expected']
+    columns_diet = ["Milk", "Eggs", "Fish and seafood", "Vegetable oils", 
+                "Animal fats", "Alcoholic beverages", "Pulses", 
+                "Nuts", "Fruit", "Vegetables"]
+
+    x_values_options = x_values_options + columns_diet
     x_values_default = ['meat_cons',"cal_day","gdpppp _2011","urban_pop","bmi_over_30","cho_crops", 'health_eff_index','education_index']
     x_values = st.multiselect("X values", x_values_options, x_values_default)
     
@@ -381,6 +415,11 @@ def pca_analysis(df, show_log_x, show_log_y):
         "co2_consump", "gdp_y", "services", "education_index",
         "schooling_mean", "schooling_expected"
     ]
+    columns_diet = ["Milk", "Eggs", "Fish and seafood", "Vegetable oils", 
+                "Animal fats", "Alcoholic beverages", "Pulses", 
+                "Nuts", "Fruit", "Vegetables"]
+
+    x_values_options = x_values_options + columns_diet
     x_values_default = [
         'meat_cons', "cal_day", "gdpppp _2011", "urban_pop",
         "bmi_over_30", "cho_crops", "health_eff_index", "education_index"
@@ -391,8 +430,9 @@ def pca_analysis(df, show_log_x, show_log_y):
     n_components = st.slider("Aantal componenten", 2, min(len(x_values), 6), 3)
 
     # Data voorbereiden
-    df_pca = df[["country", "population", y_value] + x_values].dropna()
-
+    df_pca = df[["country", "population", "continent", y_value] + x_values].dropna()
+    # df_pca = df[["country", "population", y_value] + x_values].dropna()
+    df_pca = df_pca.dropna().reset_index(drop=True)
     if show_log_x:
         for c in x_values:
             df_pca[c] = np.log(df_pca[c].replace(0, np.nan))
@@ -454,16 +494,31 @@ def pca_analysis(df, show_log_x, show_log_y):
 
     # --- Biplot PC1 vs PC2 ---
     st.markdown("#### Biplot: landen in PC1 × PC2 ruimte")
-    comp_df["continent"] = df_pca["continent"].values if "continent" in df_pca.columns else "?"
-
+    # comp_df["continent"] = df_pca["continent"].values if "continent" in df_pca.columns else "?"
+    comp_df["continent"] = df_pca["continent"].values
+    # fig_biplot = px.scatter(
+    #     comp_df, x="PC1", y="PC2",
+    #     hover_data=["country"],
+    #     size="population",
+    #     color="continent",
+    #     title="Landen geplot op eerste twee hoofdcomponenten"
+    # )
     fig_biplot = px.scatter(
         comp_df, x="PC1", y="PC2",
-        hover_data=["country"],
+        hover_data=["country", "continent"],
         size="population",
         color="continent",
+        color_discrete_map={
+            "Europe": "#1f77b4",
+            "Asia": "#ff7f0e", 
+            "Africa": "#2ca02c",
+            "North America": "#d62728",
+            "South America": "#9467bd",
+            "Oceania": "#8c564b",
+            "UNKNOWN": "#cccccc"
+        },
         title="Landen geplot op eerste twee hoofdcomponenten"
     )
-
     # Loadingvectoren toevoegen (schaal voor leesbaarheid)
     scale = components[:, 0].std() * 2
     for i, var in enumerate(x_values):
