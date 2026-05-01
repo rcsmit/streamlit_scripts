@@ -75,6 +75,7 @@ def get_data(join_how):
     url_education_expected = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/meat_consumption/expected-years-of-schooling.csv"
     url_length = 'https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/meat_consumption/length_male.csv'
     url_length_eur = 'https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/meat_consumption/length_male_europe.csv'
+    
     #url_length_eur = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\length_male_europe.csv"
     #url_length = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\length_male.csv"
     # url_country = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\country_codes.csv"
