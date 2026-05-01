@@ -92,8 +92,8 @@ def main() -> None:
         # Suggestie: price-to-rent ratio ~25 is NL gemiddeld voor vrije sector
         huur_suggestie = int(round(aankoopprijs / 25 / 12 / 50) * 50)
         huur_maand = st.number_input(
-            "Maandelijkse huur (€)", min_value=500, max_value=5000,
-            value=huur_suggestie, step=50,
+            "Maandelijkse huur (€)", min_value=0, max_value=50000,
+            value=huur_suggestie, step=5,
             help=f"Suggestie op basis van aankoopprijs: €{huur_suggestie:,.0f}/maand "
                  f"(price-to-rent ratio 25, gangbaar NL vrije sector). "
                  f"NL gemiddeld vrije sector 2025: ~€1.400–€1.600/maand."

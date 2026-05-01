@@ -11,6 +11,9 @@ from scipy.stats import linregress
 import statsmodels.api as sm
 from scipy import stats
 
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
 def prepare_data():
 
     """Function to compare the country names in the various files. URL_COUNTRY is leading.
@@ -62,15 +65,16 @@ def get_data(join_how):
     Returns:
         df: the complete dataframe
     """    
+
     #url_country_wikipedia = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\country_wikipedia.csv"
-    url_country = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption/country_codes.csv"
-    url_meat = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption/meat_consumption.csv"
-    url_gm = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption/gapminder_data_graphs.csv"
-    url_health =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption/health_efficiency_index.csv"
-    url_education_mean = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption/mean-years-of-schooling-long-run.csv"
-    url_education_expected = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption/expected-years-of-schooling.csv"
-    url_length = 'https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption/length_male.csv'
-    url_length_eur = 'https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption/length_male_europe.csv'
+    url_country = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/meat_consumption/country_codes.csv"
+    url_meat = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/meat_consumption/meat_consumption.csv"
+    url_gm = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/meat_consumption/gapminder_data_graphs.csv"
+    url_health =  "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/meat_consumption/health_efficiency_index.csv"
+    url_education_mean = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/meat_consumption/mean-years-of-schooling-long-run.csv"
+    url_education_expected = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/meat_consumption/expected-years-of-schooling.csv"
+    url_length = 'https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/meat_consumption/length_male.csv'
+    url_length_eur = 'https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/input/meat_consumption/length_male_europe.csv'
     #url_length_eur = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\length_male_europe.csv"
     #url_length = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\length_male.csv"
     # url_country = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\country_codes.csv"
@@ -356,6 +360,128 @@ def multiple_lineair_regression_sklearn(df_, show_log_x, show_log_y):
     if show_log_y:
         df[y_value] = np.log(df[y_value])
 
+
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+import plotly.graph_objects as go
+
+def pca_analysis(df, show_log_x, show_log_y):
+    st.subheader("PCA Analyse — multicollineariteit aanpakken")
+
+    y_value = st.selectbox(
+        "Y value (PCA)", 
+        ['life_exp', "life_exp_birth", "life_exp_5", "mort_under_5", "Height"], 
+        1, 
+        key="pca_y"
+    )
+    x_values_options = [
+        "meat_cons", "cal_day", "gdpppp _2011", "urban_pop", "bmi_over_30",
+        "cho_crops", "prim_educ_over_25", "health_eff_index", "hdi_index",
+        "co2_consump", "gdp_y", "services", "education_index",
+        "schooling_mean", "schooling_expected"
+    ]
+    x_values_default = [
+        'meat_cons', "cal_day", "gdpppp _2011", "urban_pop",
+        "bmi_over_30", "cho_crops", "health_eff_index", "education_index"
+    ]
+    x_values = st.multiselect(
+        "X values (PCA)", x_values_options, x_values_default, key="pca_x"
+    )
+    n_components = st.slider("Aantal componenten", 2, min(len(x_values), 6), 3)
+
+    # Data voorbereiden
+    df_pca = df[["country", "population", y_value] + x_values].dropna()
+
+    if show_log_x:
+        for c in x_values:
+            df_pca[c] = np.log(df_pca[c].replace(0, np.nan))
+    if show_log_y:
+        df_pca[y_value] = np.log(df_pca[y_value])
+
+    df_pca = df_pca.dropna()
+    st.write(f"Aantal landen in analyse: {len(df_pca)}")
+
+    # Standaardiseren
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(df_pca[x_values])
+
+    # PCA fitten
+    pca = PCA(n_components=n_components)
+    components = pca.fit_transform(X_scaled)
+
+    # --- Verklaarde variantie ---
+    st.markdown("#### Verklaarde variantie per component")
+    explained = pca.explained_variance_ratio_
+    fig_var = px.bar(
+        x=[f"PC{i+1}" for i in range(n_components)],
+        y=explained,
+        labels={"x": "Component", "y": "Verklaarde variantie"},
+        title=f"Totaal verklaard: {sum(explained):.1%}"
+    )
+    st.plotly_chart(fig_var)
+
+    # --- Loadings tabel ---
+    st.markdown("#### Loadings (bijdrage van elke variabele per component)")
+    loadings = pd.DataFrame(
+        pca.components_.T,
+        index=x_values,
+        columns=[f"PC{i+1}" for i in range(n_components)]
+    )
+    st.dataframe(loadings.style.background_gradient(cmap="RdBu", axis=None).format("{:.3f}"))
+
+    # --- Regressie op componenten ---
+    st.markdown("#### Regressie: levensverwachting ~ PCA-componenten")
+    comp_df = pd.DataFrame(
+        components,
+        columns=[f"PC{i+1}" for i in range(n_components)]
+    )
+    comp_df["country"] = df_pca["country"].values
+    comp_df["population"] = df_pca["population"].values
+    comp_df[y_value] = df_pca[y_value].values
+
+    X_reg = comp_df[[f"PC{i+1}" for i in range(n_components)]]
+    y_reg = comp_df[y_value]
+    w_reg = comp_df["population"]
+
+    ols_model = sm.OLS(y_reg, X_reg).fit()
+    st.write("**OLS**")
+    st.write(ols_model.summary())
+
+    wls_model = sm.WLS(y_reg, X_reg, weights=w_reg).fit()
+    st.write("**WLS (gewogen naar bevolkingsomvang)**")
+    st.write(wls_model.summary())
+
+    # --- Biplot PC1 vs PC2 ---
+    st.markdown("#### Biplot: landen in PC1 × PC2 ruimte")
+    comp_df["continent"] = df_pca["continent"].values if "continent" in df_pca.columns else "?"
+
+    fig_biplot = px.scatter(
+        comp_df, x="PC1", y="PC2",
+        hover_data=["country"],
+        size="population",
+        color="continent",
+        title="Landen geplot op eerste twee hoofdcomponenten"
+    )
+
+    # Loadingvectoren toevoegen (schaal voor leesbaarheid)
+    scale = components[:, 0].std() * 2
+    for i, var in enumerate(x_values):
+        fig_biplot.add_annotation(
+            ax=0, ay=0,
+            x=pca.components_[0, i] * scale,
+            y=pca.components_[1, i] * scale,
+            xref="x", yref="y", axref="x", ayref="y",
+            showarrow=True, arrowhead=3, arrowsize=1.5,
+            arrowcolor="gray"
+        )
+        fig_biplot.add_annotation(
+            x=pca.components_[0, i] * scale * 1.1,
+            y=pca.components_[1, i] * scale * 1.1,
+            text=var, showarrow=False,
+            font=dict(size=10, color="gray")
+        )
+    st.plotly_chart(fig_biplot)
+    
 def show_footer():
     """Shows the footer
     """    
@@ -426,6 +552,7 @@ def main():
     make_scatterplot(df, what_x, what_y, show_log_x,show_log_y,trendline_per_continent)
     correlation_matrix(df,show_log_x, show_log_y)
     multiple_lineair_regression(df, show_log_x, show_log_y)
+    pca_analysis(df, show_log_x, show_log_y)
     #multiple_lineair_regression_sklearn(df, show_log_x, show_log_y)
     show_footer()
 
