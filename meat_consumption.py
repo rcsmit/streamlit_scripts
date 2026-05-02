@@ -13,6 +13,8 @@ from scipy import stats
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
+import plotly.graph_objects as go
+
 
 def prepare_data():
 
@@ -27,7 +29,7 @@ def prepare_data():
     url_country = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\country_codes.csv"
     url_country_wikipedia = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\input\meat_consumption\country_wikipedia.csv"
     url_diet = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/main/input/meat_consumption/dietary-composition-by-country.csv"
-    df_diet = pd.read_csv(url_dairy, delimiter=',')
+    df_diet = pd.read_csv(url_diet, delimiter=',')
     df =     pd.read_csv(url_education_expected, delimiter=',')
     df_country =  pd.read_csv(url_country, delimiter=',')
     
@@ -118,8 +120,8 @@ def get_data(join_how):
     df_diet_latest = df_diet_latest.rename(columns={"Year": "diet_year"})
 
     # Verwijder Entity want die geeft naamsconflicten
-    df_diet_latest = df_diet_latest.drop(columns=["Entity"], errors="ignore")
-
+    df_diet_latest = df_diet_latest.drop(columns=["Entity", "Sugar Crops"], errors="ignore") #sugar crops has a lot of None values
+    
     # gapminder dataset 
     # https://www.kaggle.com/datasets/albertovidalrod/gapminder-dataset?resource=download
     # Country (country). Describes the country name
@@ -170,7 +172,8 @@ def get_data(join_how):
     df = merged_df_4.merge(df_education_expected, on="iso_3", how=join_how)
     df["education_index"] = ((df["schooling_expected"] / 18) + (df["schooling_mean"] /15) )/2
 
-    df = df.merge(df_diet_latest, on="iso_3", how="left")  # left: behoud alle landen
+    df = df.merge(df_diet_latest, on="iso_3", how="inner")  # left: behoud alle landen
+   
     # # Find countries in df but not in df_gm
     # countries_in_df_not_in_df_gm = df[~df['country'].isin(df_health['country'])]
 
@@ -210,6 +213,7 @@ def make_scatterplot(df_, x, y, show_log_x,show_log_y,trendline_per_continent):
     """    
     st.subheader("Scatterplot")
     df = df_.dropna(subset=[x,y,"population"])
+    st.write(f"Lengte: {len(df)}")
     # Create a DataFrame (df) using your data
     # Calculate linear regression
     # Calculate log values if selected
@@ -250,7 +254,14 @@ def correlation_matrix(df,show_log_x, show_log_y):
     columns_health = ["health_eff_index_rank" ,"health_eff_index"]
     columns_gm = ["life_exp","hdi_index","co2_consump","gdp_y","services"]
     columns_educ = ["schooling_mean", "schooling_expected","education_index"]
-    columns = columns_meat + columns_health + columns_gm +columns_educ +["Height"]
+      
+    columns_diet = ["Alcoholic beverages","Animal fats","Vegetable oils","Oilcrops",
+                    "Fish and seafood","Sugar and sweeteners","Starchy roots",
+                    "Other meat","Sheep and goat meat","Pork","Poultry meat","Beef and buffalo meat",
+                    "Eggs","Milk","Nuts","Fruit","Vegetables","Pulses","Other cereals","Barley","Maize","Rice","Wheat"]
+
+
+    columns =["Height"] + columns_meat + columns_health + columns_gm +columns_educ + columns_diet
 
     df_corr = df[columns].copy(deep=True)
     if show_log_x and show_log_y:
@@ -292,16 +303,30 @@ def multiple_lineair_regression(df, show_log_x, show_log_y):
 
     Args:
         df_ (df): df with info
-    """    
+    """ 
+     
     st.subheader("Multiple Lineair Regression")
     y_value_ = st.selectbox("Y value", ['life_exp',"life_exp_birth","life_exp_5","mort_under_5", "Height"],1)
     x_values_options =  ["meat_cons","cal_day","gdpppp _2011","urban_pop","bmi_over_30","cho_crops","prim_educ_over_25","health_eff_index_rank" ,"health_eff_index","hdi_index","co2_consump","gdp_y","services", 'education_index', 'schooling_mean', 'schooling_expected']
-    columns_diet = ["Milk", "Eggs", "Fish and seafood", "Vegetable oils", 
-                "Animal fats", "Alcoholic beverages", "Pulses", 
-                "Nuts", "Fruit", "Vegetables"]
+    
+    # columns_diet = ["Alcoholic beverages","Animal fats","Vegetable oils","Oilcrops",
+    #                 "Fish and seafood","Sugar and sweeteners","Starchy roots",
+    #                 "Other meat","Poultry meat","Beef and buffalo meat",
+    #                 "Eggs","Milk","Nuts","Fruit","Vegetables","Pulses","Other cereals","Barley","Maize","Rice","Wheat"]
+
+    columns_diet = ["Animal fats","Vegetable oils","Oilcrops",
+                    "Fish and seafood","Sugar and sweeteners","Starchy roots",
+                    "Poultry meat","Beef and buffalo meat",
+                    "Eggs","Milk","Nuts","Fruit","Vegetables","Pulses","Rice","Wheat"]
 
     x_values_options = x_values_options + columns_diet
-    x_values_default = ['meat_cons',"cal_day","gdpppp _2011","urban_pop","bmi_over_30","cho_crops", 'health_eff_index','education_index']
+    x_values_default = x_values_options
+    
+    # [
+    #     'meat_cons', "cal_day", "gdpppp _2011", "urban_pop",
+    #     "bmi_over_30", "cho_crops", "health_eff_index", "education_index", 
+    #     "Poultry meat","Beef and buffalo meat","Eggs","Milk","Fruit","Vegetables"
+    # ]
     x_values = st.multiselect("X values", x_values_options, x_values_default)
     standard=  st.sidebar.checkbox("Standardizing dataframe", True)
     intercept=  st.sidebar.checkbox("Intercept", False)
@@ -340,10 +365,22 @@ def multiple_lineair_regression(df, show_log_x, show_log_y):
         numeric_columns = numeric_columns.drop(columns=columns_to_exclude)
   
         # Apply Z-score normalization to the selected columns
-        z_scored_df = numeric_columns.apply(stats.zscore)
-   
+        # z_scored_df = numeric_columns.apply(stats.zscore)
+        # z_scored_df = numeric_columns.apply(
+        #     lambda col: stats.zscore(col, nan_policy="omit")
+        # )
+
+        def safe_zscore(col):
+            if col.std(skipna=True) == 0:
+                return col
+            return stats.zscore(col, nan_policy="omit")
+
+        z_scored_df = numeric_columns.apply(safe_zscore)
+
         # Add 'country' and 'population' columns back to the Z-scored DataFrame
         df_standardized = pd.concat([df[['country', 'population']], z_scored_df], axis=1)
+    else:
+        df_standardized = df
     st.write("**DATA**")
     st.write(df_standardized)
     st.write(f"Length : {len(df_standardized)}")
@@ -376,12 +413,21 @@ def multiple_lineair_regression_sklearn(df_, show_log_x, show_log_y):
     st.subheader("Multiple Lineair Regression")
     y_value = st.selectbox("Y value", ['life_exp',"life_exp_birth","life_exp_5","mort_under_5", "Height"],1)
     x_values_options =  ["meat_cons","cal_day","gdpppp _2011","urban_pop","bmi_over_30","cho_crops","prim_educ_over_25","health_eff_index_rank" ,"health_eff_index","hdi_index","co2_consump","gdp_y","services", 'education_index', 'schooling_mean', 'schooling_expected']
-    columns_diet = ["Milk", "Eggs", "Fish and seafood", "Vegetable oils", 
-                "Animal fats", "Alcoholic beverages", "Pulses", 
-                "Nuts", "Fruit", "Vegetables"]
+    
+
+    columns_diet = ["Alcoholic beverages","Animal fats","Vegetable oils","Oilcrops",
+                    "Fish and seafood","Sugar and sweeteners","Starchy roots",
+                    "Other meat","Sheep and goat meat","Pork","Poultry meat","Beef and buffalo meat",
+                    "Eggs","Milk","Nuts","Fruit","Vegetables","Pulses","Other cereals","Barley","Maize","Rice","Wheat"]
+
 
     x_values_options = x_values_options + columns_diet
-    x_values_default = ['meat_cons',"cal_day","gdpppp _2011","urban_pop","bmi_over_30","cho_crops", 'health_eff_index','education_index']
+    x_values_default = [
+        'meat_cons', "cal_day", "gdpppp _2011", "urban_pop",
+        "bmi_over_30", "cho_crops", "health_eff_index", "education_index", 
+        "Other meat","Sheep and goat meat","Pork","Poultry meat","Beef and buffalo meat","Eggs","Milk","Nuts","Fruit","Vegetables"
+    ]
+
     x_values = st.multiselect("X values", x_values_options, x_values_default)
     
    
@@ -396,9 +442,6 @@ def multiple_lineair_regression_sklearn(df_, show_log_x, show_log_y):
         df[y_value] = np.log(df[y_value])
 
 
-from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
-import plotly.graph_objects as go
 
 def pca_analysis(df, show_log_x, show_log_y):
     st.subheader("PCA Analyse — multicollineariteit aanpakken")
@@ -415,14 +458,17 @@ def pca_analysis(df, show_log_x, show_log_y):
         "co2_consump", "gdp_y", "services", "education_index",
         "schooling_mean", "schooling_expected"
     ]
-    columns_diet = ["Milk", "Eggs", "Fish and seafood", "Vegetable oils", 
-                "Animal fats", "Alcoholic beverages", "Pulses", 
-                "Nuts", "Fruit", "Vegetables"]
+    columns_diet = ["Alcoholic beverages","Animal fats","Vegetable oils","Oilcrops",
+                    "Fish and seafood","Sugar and sweeteners","Starchy roots",
+                    "Other meat","Sheep and goat meat","Pork","Poultry meat","Beef and buffalo meat",
+                    "Eggs","Milk","Nuts","Fruit","Vegetables","Pulses","Other cereals","Barley","Maize","Rice","Wheat"]
+
 
     x_values_options = x_values_options + columns_diet
     x_values_default = [
         'meat_cons', "cal_day", "gdpppp _2011", "urban_pop",
-        "bmi_over_30", "cho_crops", "health_eff_index", "education_index"
+        "bmi_over_30", "cho_crops", "health_eff_index", "education_index", 
+        "Other meat","Sheep and goat meat","Pork","Poultry meat","Beef and buffalo meat","Eggs","Milk","Nuts","Fruit","Vegetables"
     ]
     x_values = st.multiselect(
         "X values (PCA)", x_values_options, x_values_default, key="pca_x"
@@ -441,7 +487,7 @@ def pca_analysis(df, show_log_x, show_log_y):
 
     df_pca = df_pca.dropna()
     st.write(f"Aantal landen in analyse: {len(df_pca)}")
-
+    st.write(df_pca)
     # Standaardiseren
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(df_pca[x_values])
@@ -543,6 +589,7 @@ def show_footer():
     """    
     st.subheader("Data Sources")
     st.info("Meat consumption etc. : https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8881926/ (appendix 1)")
+    st.info("Various consumption: https://ourworldindata.org/diet-compositions")
     st.write("* newborn life expectancy (e(0)), life expectancy at 5 years of life (e(5)) and intakes of meat, and carbohydrate crops, respectively. The established risk factors to life expectancy – caloric intake, urbanization, obesity and education levels – were included as the potential confounders.")
     
     st.info("Gapminder data set, values from 2018 : https://www.kaggle.com/datasets/albertovidalrod/gapminder-dataset?resource=download")
@@ -604,7 +651,7 @@ def main():
     df["continent"] = df["continent"].fillna("UNKNOWN")
     df = df.dropna(subset="iso_2")
     df, what_x, what_y, show_log_x, show_log_y, trendline_per_continent = interface(df)
-  
+    
     make_scatterplot(df, what_x, what_y, show_log_x,show_log_y,trendline_per_continent)
     correlation_matrix(df,show_log_x, show_log_y)
     multiple_lineair_regression(df, show_log_x, show_log_y)
