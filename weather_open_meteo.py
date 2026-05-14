@@ -7,9 +7,9 @@
 
 
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime #, timedelta
 import requests
-from bs4 import BeautifulSoup
+#from bs4 import BeautifulSoup
 
 import plotly.express as px
 import plotly.graph_objects as go

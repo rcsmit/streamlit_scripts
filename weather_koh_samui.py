@@ -53,16 +53,16 @@ def read_ogimet():
 
 
     # find station codes here https://www.ogimet.com/indicativos.phtml.en
-    station_code,location_str = "485500-99999", "ko_samui"  
+    #station_code,location_str = "485500-99999", "ko_samui"  
                                    
     # station_code,location_str = "16242","Rome Fiumicino"
-    #station_code,location_str = "48327","chiang_mai"
+    station_code,location_str = "48327","chiang_mai"
     #station_code,location_str = "16105","Venezia"
     station_code,location_str = "72202","Miami"
     start_date = datetime(2015, 1,1 )
     #start_date = datetime(1900, 1, 1)
 
-    end_date = datetime(2019, 12, 31)
+    end_date = datetime(2026, 12, 9)
     end_date = datetime.today()  # You could use the desired end date
     number_of_days = (end_date - start_date).days 
     batches = int(number_of_days / 50)+1 # number of batches
@@ -663,6 +663,6 @@ def main():
     show_info()
 
 if __name__ == "__main__":
-    #read_ogimet()
-    main()
+    read_ogimet()
+    # main()
     
