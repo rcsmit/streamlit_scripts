@@ -778,12 +778,12 @@ def main_():
     stn = 260
     start_ = "2026-01-01"
     today = datetime.today().strftime("%Y-%m-%d")
-    from_ = st.sidebar.text_input("startdatum (yyyy-mm-dd) from 1-1-1900", start_)
-    until_ = st.sidebar.text_input("enddatum (yyyy-mm-dd)", today)
+    from__ = st.sidebar.text_input("start datum (yyyy-mm-dd) from 1-1-1900", start_, key="wbgt1")
+    until__ = st.sidebar.text_input("end datum (yyyy-mm-dd)", today, key="wbgt2")
 
     #fromx, until = check_from_until(from_, until_)
-    fromx = from_.replace("-", "")
-    until = until_.replace("-", "")
+    fromx = from__.replace("-", "")
+    until = until__.replace("-", "")
     url = f"https://www.daggegevens.knmi.nl/klimatologie/uurgegevens?stns={stn}&vars=T:U:FH:Q&start={fromx}11&end={until}17"
     # st.write(url)    
     df = pd.read_csv(
