@@ -1,5 +1,4 @@
 from __future__ import annotations
-from utils import get_data, getdata_wrapper, check_from_until, calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
 
 import math
 from dataclasses import dataclass
@@ -12,7 +11,13 @@ import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
 
+try:
+    from utils import get_data, getdata_wrapper, check_from_until, calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
+except:
+    from show_knmi_functions.utils import calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
 
+
+from solar_app import solar_wrapper
 # version : 20260526-120000 - Initial version: WBGT berekening met KNMI dagdata
 current_version = "20260526-120000"
 
@@ -723,6 +728,48 @@ def referentie_tabel():
     )
 
     st.plotly_chart(fig, width="stretch")
+
+def feels_like_all(temp_c: float, rh_pct: float, wind_ms: float, q_wm2: float) -> dict:
+    """Bereken alle vier temperatuurindices voor gegeven omstandigheden.
+
+    Args:
+        temp_c:   Luchttemperatuur in °C
+        rh_pct:   Relatieve vochtigheid in % (0–100)
+        wind_ms:  Windsnelheid in m/s
+        q_wm2:    Globale straling in W/m²
+
+    Returns:
+        Dictionary met wbgt_buiten, wbgt_schaduw, wbgt_bernard, feels_like
+    """
+    return {
+        "wbgt_buiten":  round(wbgt_buiten(temp_c, rh_pct, wind_ms, q_wm2), 1),
+        "wbgt_schaduw": round(wbgt_schaduw(temp_c, rh_pct), 1),
+        "wbgt_bernard": round(wbgt_bernard(temp_c, rh_pct), 1),
+        "feels_like":   round(feels_like_temperature(temp_c, rh_pct, wind_ms), 1),
+    }
+    
+def feels_like_calculator():
+    st.subheader(":material/thermostat: Voeltemperatuur calculator")
+
+    c1, c2, c3, c4 = st.columns(4)
+    temp_c  = c1.number_input("Temperatuur (°C)",  value=28.0, min_value=-20.0, max_value=50.0, step=0.5)
+    rh_pct  = c2.number_input("Luchtvochtigheid (%)", value=50.0, min_value=0.0,  max_value=100.0, step=1.0)
+    wind_ms = c3.number_input("Windsnelheid (m/s)", value=2.0,  min_value=0.0,  max_value=30.0, step=0.5)
+    q_wm2   = c4.number_input("Straling (W/m²)",   value=800.0, min_value=0.0,  max_value=1400.0, step=10.0)
+
+    result = feels_like_all(temp_c, rh_pct, wind_ms, q_wm2)
+
+    niveau, _ = wbgt_risico(result["wbgt_buiten"])
+    badge_kleur = BADGE_KLEUREN.get(niveau, "gray")
+
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric(":material/wb_sunny: WBGT buiten",  f"{result['wbgt_buiten']} °C",  border=True)
+    c2.metric(":material/home: WBGT schaduw",     f"{result['wbgt_schaduw']} °C", border=True)
+    c3.metric(":material/science: WBGT Bernard",  f"{result['wbgt_bernard']} °C", border=True)
+    c4.metric(":material/air: Feels like",         f"{result['feels_like']} °C",   border=True)
+
+    st.markdown(f"Risiconiveau: :{badge_kleur}-badge[{niveau}]")
+
 # ---------------------------------------------------------------------------
 # CLI-demo / quick test
 # ---------------------------------------------------------------------------
@@ -776,12 +823,21 @@ def main_():
     scatterplots(df_dagmax, "webgt_buiten-max")
     scatterplots(df_result, "alle waardes")
     info()
-def main():
-    tab1,tab2=st.tabs(["Main", "Tabel"])
+
+
+def wbgt_knmi():
+    tab1,tab2, tab3,tab4=st.tabs(["Main", "Tabel", "Calculator", "Solarinfo"])
     with tab2:
         referentie_tabel()
+    with tab3:
+        feels_like_calculator()
+    with tab4:
+        solar_wrapper()
+    
     with tab1:
         main_()
     
+def main():
+    wbgt_knmi()
 if __name__=="__main__":
     main()

@@ -24,6 +24,7 @@ from show_knmi_functions.normaal_verdeeld import normaal_verdeeld
 #from show_knmi_functions.show_extremen import show_extremen
 from show_knmi_functions.neerslagtekort import neerslagtekort, neerslagtekort_meerdere_stations
 from show_knmi_functions.show_calender_heatmap import show_calender_heatmap
+from show_knmi_functions.wbgt_knmi import wbgt_knmi
 
 # except:
 #     from utils import show_weerstations, help,  list_to_text,check_from_until, find_date_for_title, download_button,get_weerstations, get_data
@@ -73,7 +74,7 @@ def interface():
                                         "jaargemiddelde", "maandgemiddelde", "per dag in div jaren", "per week in div jaren", 
                                         "per maand in div jaren","maand_per_jaar",  "spaghetti plot","anomaly", "percentiles", 
                                         "polar plot/radar chart", "show year histogram animation", "calender heatmap", 
-                                        "does rain predict rain","warme dagen", "neerslagtekort","neerslagtekort_meerdere", "normaal_verdeeld", "gamma_distribution", "warmingstripes","extremen",
+                                        "does rain predict rain","warme dagen", "neerslagtekort","neerslagtekort_meerdere", "normaal_verdeeld", "gamma_distribution", "warmingstripes","extremen","wbgt knmi",
                                         "show weerstations", "help", "polar_debug"], index=0
     )
     if mode !=  "neerslagtekort_meerdere":
@@ -287,6 +288,9 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
             "Scatter / line", ["scatter", "line"], index=0
             )
         polar_plot(df,  what_to_show, how)
+    elif mode == "wbgt knmi":
+        wbgt_knmi()
+       
     elif mode == "polar_debug":
        
         polar_debug(df)
