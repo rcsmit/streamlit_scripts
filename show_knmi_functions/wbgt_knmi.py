@@ -13,11 +13,11 @@ import plotly.graph_objects as go
 
 try:
     from utils import get_data, getdata_wrapper, check_from_until, calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
+    from solar_app import solar_wrapper
 except:
     from show_knmi_functions.utils import calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
+    from show_knmi_functions.solar_app import solar_wrapper
 
-
-from solar_app import solar_wrapper
 # version : 20260526-120000 - Initial version: WBGT berekening met KNMI dagdata
 current_version = "20260526-120000"
 
