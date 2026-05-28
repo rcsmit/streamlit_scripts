@@ -15,22 +15,65 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 
-# try:
-if 1==1:
-    from wbgt_knmi import wbgt_risico, BADGE_KLEUREN_KNMI
-
+try:
+# if 1==1:
+   
     from utils import get_data, getdata_wrapper, check_from_until, calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
     from solar_app import solar_wrapper
     from liljegren_wbgt import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
     from select_time_place import select_time_place
-# except:
-#     from show_knmi_functions.wbgt_knmi import wbgt_risico, BADGE_KLEUREN_KNMI
+except:
 
-#     from show_knmi_functions.utils import get_data, calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
-#     from show_knmi_functions.solar_app import solar_wrapper
-#     from show_knmi_functions.liljegren_wbgt import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
-#     from show_knmi_functions.select_time_place import select_time_place
+    from show_knmi_functions.utils import get_data, calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
+    from show_knmi_functions.solar_app import solar_wrapper
+    from show_knmi_functions.liljegren_wbgt import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
+    from show_knmi_functions.select_time_place import select_time_place
 
+# ======================== DUBBELOP maar zorgt voor kring-imports
+BADGE_KLEUREN_KNMI = {
+    "HK 0":  "#8FD14F",   
+    "HK 1":  "#8FD14F",
+    "HK 2":  "#4A8A2A",
+    "HK 3":  "#F5E642",
+    "HK 4":  "#F5B800",
+    "HK 5":  "#F08000",
+    "HK 6":  "#C85A00",
+    "HK 7":  "#A03000",
+    "HK 8":  "#7A1A1A",
+    "HK 9":  "#4A0A0A",
+    "HK 10": "#000000",
+}
+KNMI_DREMPELWAARDEN = [
+    
+    (14.0, "HK 0", "Laag risico"),
+    (16.0, "HK 1", "Laag risico"),
+    (18.0, "HK 2", "Laag risico"),
+    (20.0, "HK 3", "Matig risico"),
+    (22.0, "HK 4", "Matig risico"),
+    (24.0, "HK 5", "Matig risico"),
+    (26.0, "HK 6", "Hoog"),
+    (28.0, "HK 7", "Hoog"),
+    (30.0, "HK 8", "Zeer hoog"),
+    (32.0, "HK 9", "Zeer hoog"),
+    (float("inf"), "HK 10", "Gevaarlijk"),
+]
+
+
+def wbgt_risico(wbgt: float) -> tuple[str, str]:
+    """Geeft risiconiveau en advies bij een WBGT-waarde.
+
+    Args:
+        wbgt: WBGT in °C.
+
+    Returns:
+        Tuple (risiconiveau: str, advies: str).
+    """
+    for grens, niveau, advies in KNMI_DREMPELWAARDEN:
+        if wbgt < grens:
+            return niveau, advies
+    return "Gevaarlijk", "Vermijd fysieke inspanning buitenshuis"
+
+# =======================================
 
 def prepare_data():
     # https://www.daggegevens.knmi.nl/klimatologie/uurgegevens?stns=260&vars=T:U:FH:Q&start=2011010100&end=2025070323
