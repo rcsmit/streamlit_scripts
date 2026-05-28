@@ -55,61 +55,13 @@ def compute_day_curve(lat: float, lon: float, selected_date: date, tz: ZoneInfo)
     return pd.DataFrame(rows)
 
 
-def solar_wrapper():
-    LOCATIONS = [
-        {"name": "Koh Phangan",      "lat":   9.7551,  "lon":  99.9609, "timezone": "Asia/Bangkok"},
-        {"name": "Koh Chang",        "lat":  12.1036,  "lon": 102.3519, "timezone": "Asia/Bangkok"},
-        {"name": "Chiang Mai",       "lat":  18.7932,  "lon":  98.9774, "timezone": "Asia/Bangkok"},
-        {"name": "Da Nang",          "lat":  16.0471,  "lon": 108.2062, "timezone": "Asia/Ho_Chi_Minh"},
-        {"name": "Ubud",             "lat":  -8.4960,  "lon": 115.2248, "timezone": "Asia/Makassar"},
-        {"name": "Amsterdam",        "lat":  52.3676,  "lon":   4.9041, "timezone": "Europe/Amsterdam"},
-        {"name": "Lisbon",           "lat":  38.7169,  "lon":  -9.1399, "timezone": "Europe/Lisbon"},
-        {"name": "Rome",             "lat":  41.9102,  "lon":  12.3712, "timezone": "Europe/Rome"},
-        {"name": "Venezia",          "lat":  45.4408,  "lon":  12.3155, "timezone": "Europe/Rome"},
-        {"name": "Hoi An",           "lat":  15.8801,  "lon": 108.3380, "timezone": "Asia/Ho_Chi_Minh"},
-        {"name": "Ho Chi Minh City", "lat":  10.7769,  "lon": 106.7009, "timezone": "Asia/Ho_Chi_Minh"},
-        {"name": "Hanoi",            "lat":  21.0285,  "lon": 105.8542, "timezone": "Asia/Bangkok"},
-        {"name": "Manila",           "lat":  14.5995,  "lon": 120.9842, "timezone": "Asia/Manila"},
-        {"name": "Taipei",           "lat":  25.0330,  "lon": 121.5654, "timezone": "Asia/Taipei"},
-        {"name": "Kathmandu",        "lat":  27.7172,  "lon":  85.3240, "timezone": "Asia/Kathmandu"},
-        {"name": "Colombo",          "lat":   6.9271,  "lon":  79.8612, "timezone": "Asia/Colombo"},
-        {"name": "London",           "lat":  51.5072,  "lon":  -0.1276, "timezone": "Europe/London"},
-        {"name": "New York",         "lat":  40.7128,  "lon": -74.0060, "timezone": "America/New_York"},
-        {"name": "Tokyo",            "lat":  35.6762,  "lon": 139.6503, "timezone": "Asia/Tokyo"},
-        {"name": "Sydney",           "lat": -33.8688,  "lon": 151.2093, "timezone": "Australia/Sydney"},
-        {"name": "Cape Town",        "lat": -33.9249,  "lon":  18.4241, "timezone": "Africa/Johannesburg"},
-        {"name": "São Paulo",        "lat": -23.5505,  "lon": -46.6333, "timezone": "America/Sao_Paulo"},
-        {"name": "Istanbul",         "lat":  41.0082,  "lon":  28.9784, "timezone": "Europe/Istanbul"},
-        {"name": "— custom —",       "lat":  52.3676,  "lon":   4.9041, "timezone": "UTC"},
-    ]
-
-    LOC_NAMES = [loc["name"] for loc in LOCATIONS]
-
+def solar_wrapper(lat,lon,utc_dt, loc_name, selected_date, selected_time,tz,LOCATIONS):
+    
     # ---------------------------------------------------------------------------
     # Sidebar — invoer
     # ---------------------------------------------------------------------------
     st.title(":material/wb_sunny: Solar radiation")
-
-    col1,col2=st.columns(2)
-
-    with col1:
-        
-        loc_name = st.selectbox("Locatie", LOC_NAMES, index=5)
-        loc = next(l for l in LOCATIONS if l["name"] == loc_name)
-        if loc_name == "— custom —":
-            lat = st.number_input("Breedtegraad", value=52.3676, min_value=-90.0, max_value=90.0, step=0.0001, format="%.4f")
-            lon = st.number_input("Lengtegraad",  value=4.9041,  min_value=-180.0, max_value=180.0, step=0.0001, format="%.4f")
-            tz_name = st.text_input("Tijdzone (bijv. Europe/Amsterdam)", value="UTC")
-        else:
-            lat = loc["lat"]
-            lon = loc["lon"]
-            tz_name = loc["timezone"]
-            st.caption(f"📍 {lat:.4f}°, {lon:.4f}°")
-            st.caption(f"🕐 {tz_name}")
-    with col2:
-        selected_date = st.date_input("Datum", value=date.today())
-        selected_time = st.time_input("Tijd (lokaal)", value=time(12, 0), step=900)
-
+    st.write(f"{loc_name} - lat:{lat},lon:{lon},UTC:{utc_dt}")
     with st.expander(":material/tune: Atmosfeer"):
         pressure    = st.slider("Luchtdruk (hPa)", 800, 1050, 1013)
         temperature = st.slider("Temperatuur (°C)", -20, 50, 20)
@@ -118,25 +70,6 @@ def solar_wrapper():
 
     show_curve = st.toggle(":material/show_chart: Dagcurve tonen", value=True)
     st.caption(f"v{current_version}")
-
-    # ---------------------------------------------------------------------------
-    # Tijdzone laden
-    # ---------------------------------------------------------------------------
-    try:
-        tz = ZoneInfo(tz_name)
-    except ZoneInfoNotFoundError:
-        st.error(f"Onbekende tijdzone: `{tz_name}`")
-        st.stop()
-
-    # ---------------------------------------------------------------------------
-    # Berekening
-    # ---------------------------------------------------------------------------
-    local_dt = datetime(
-        selected_date.year, selected_date.month, selected_date.day,
-        selected_time.hour, selected_time.minute,
-        tzinfo=tz,
-    )
-    utc_dt = local_dt.astimezone(timezone.utc).replace(tzinfo=None)
 
     result = solar_radiation(utc_dt, lat, lon, pressure_hpa=pressure,
                             temperature_c=temperature, turbidity=turbidity)
@@ -225,13 +158,21 @@ def solar_wrapper():
             if loc_i["name"] == "— custom —":
                 continue
             tz_i = ZoneInfo(loc_i["timezone"])
-            local_i = datetime(selected_date.year, selected_date.month, selected_date.day,
-                            selected_time.hour, selected_time.minute, tzinfo=tz_i)
-            utc_i = local_i.astimezone(timezone.utc).replace(tzinfo=None)
+            # utc_i is je gegeven UTC tijd (naive)
+            utc_i = datetime(selected_date.year, selected_date.month, selected_date.day,
+                            selected_time.hour, selected_time.minute, tzinfo=timezone.utc)
+            # local_time_i = utc_i.astimezone(tz_i)
+
+                        # utc_dt komt al uit select_time_place() als naive UTC
+            utc_aware = utc_dt.replace(tzinfo=timezone.utc)
+            local_time_i = utc_aware.astimezone(tz_i)
             r = solar_radiation(utc_i, loc_i["lat"], loc_i["lon"],
                                 pressure_hpa=pressure, temperature_c=temperature, turbidity=turbidity)
             rows.append({
                 "Locatie":       loc_i["name"],
+                
+                "Lokale tijd":       local_time_i.strftime("%H:%M"),
+                
                 "Elevatie (°)":  r["solar_elevation_deg"],
                 "GHI (W/m²)":   r["clear_sky_ghi"],
                 "DNI (W/m²)":   r["clear_sky_dni"],
