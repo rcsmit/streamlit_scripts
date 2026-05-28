@@ -13,7 +13,7 @@ import numpy as np
 import plotly.graph_objects as go
 
 # try:
-# if 1==1:
+if 1==1:
     from utils import get_data, getdata_wrapper, check_from_until, calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
     from solar_app import solar_wrapper
     from liljegren_wbgt import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
