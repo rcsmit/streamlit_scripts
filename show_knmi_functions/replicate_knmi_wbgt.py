@@ -234,8 +234,9 @@ def make_histogram_wind_q(df_risico, what):
 
 @st.cache_data()
 def get_data():
-    url=r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\show_knmi_functions\wbgt_results_1990_2026.csv"
-
+    # url=r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\show_knmi_functions\wbgt_results_1990_2026.csv"
+    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/show_knmi_functions/wbgt_results_1990_2026.csv"
+    
     df = pd.read_csv(url, delimiter=",",
                
                 comment="#",
