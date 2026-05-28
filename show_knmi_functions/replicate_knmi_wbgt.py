@@ -15,21 +15,21 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 
-try:
-# if 1==1:
+# try:
+if 1==1:
     from wbgt_knmi import wbgt_risico, BADGE_KLEUREN_KNMI
 
     from utils import get_data, getdata_wrapper, check_from_until, calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
     from solar_app import solar_wrapper
     from liljegren_wbgt import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
     from select_time_place import select_time_place
-except:
-    from show_knmi_functions.wbgt_knmi import wbgt_risico, BADGE_KLEUREN_KNMI
+# except:
+#     from show_knmi_functions.wbgt_knmi import wbgt_risico, BADGE_KLEUREN_KNMI
 
-    from show_knmi_functions.utils import get_data, calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
-    from show_knmi_functions.solar_app import solar_wrapper
-    from show_knmi_functions.liljegren_wbgt import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
-    from show_knmi_functions.select_time_place import select_time_place
+#     from show_knmi_functions.utils import get_data, calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
+#     from show_knmi_functions.solar_app import solar_wrapper
+#     from show_knmi_functions.liljegren_wbgt import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
+#     from show_knmi_functions.select_time_place import select_time_place
 
 
 def prepare_data():
