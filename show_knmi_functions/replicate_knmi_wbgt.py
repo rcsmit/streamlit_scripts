@@ -5,7 +5,7 @@ import pandas as pd
 
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo   
-from wbgt_knmi import *
+
 
 import math
 from dataclasses import dataclass
