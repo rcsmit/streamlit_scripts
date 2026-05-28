@@ -18,12 +18,13 @@ try:
     from solar_app import solar_wrapper
     from liljegren_wbgt import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
     from select_time_place import select_time_place
+    from replicate_knmi_wbgt import show_historical_data
 except:
     from show_knmi_functions.utils import calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
     from show_knmi_functions.solar_app import solar_wrapper
     from show_knmi_functions.liljegren_wbgt import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
     from show_knmi_functions.select_time_place import select_time_place
-
+    from show_knmi_functions.replicate_knmi_wbgt import show_historical_data
 # version : 20260526-120000 - Initial version: WBGT berekening met KNMI dagdata
 current_version = "20260526-120000"
 
@@ -1288,11 +1289,12 @@ def show_info():
     st.subheader("Info")
     st.info("Voor uitleg, achtergrond informatie en referenties: https://rene-smit.com/hitte-meet-je-niet-met-een-thermometer/")
     st.info("Script : https://github.com/rcsmit/streamlit_scripts/blob/main/show_knmi_functions/wbgt_knmi.py (zie ook de scripts bij imports, in dezelfde directory)")
+
 def wbgt_knmi():
     with st.sidebar:
         lat,lon,utc_dt, loc_name, selected_date, selected_time,tz,LOCATIONS = select_time_place()
 
-    tab1,tab2, tab3,tab4,tab5=st.tabs(["Main", "Tabel", "Calculator", "Solarinfo","INFO"])
+    tab1,tab2, tab3,tab4,tab5,tab6=st.tabs(["Main", "Tabel", "Calculator", "Solarinfo","1991-2025","INFO"])
     with tab2:
         referentie_tabel(lat,lon,utc_dt)
     with tab3:
@@ -1300,6 +1302,8 @@ def wbgt_knmi():
     with tab4:
         solar_wrapper(lat,lon,utc_dt, loc_name, selected_date, selected_time,tz,LOCATIONS)
     with tab5:
+        show_historical_data()
+    with tab6:
         show_info()
         info()
     with tab1:

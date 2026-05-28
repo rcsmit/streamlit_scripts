@@ -31,7 +31,8 @@ except:
 
 def prepare_data():
     # https://www.daggegevens.knmi.nl/klimatologie/uurgegevens?stns=260&vars=T:U:FH:Q&start=2011010100&end=2025070323
-    url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\show_knmi_functions\data_wbgt_1991_2026.csv"
+    # url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\show_knmi_functions\data_wbgt_1991_2026.csv"
+    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/show_knmi_functions/wbgt_results_1990_2026.csv"
     df = pd.read_csv(url, delimiter=",",
                 header= None,
                 comment="#",
@@ -98,7 +99,6 @@ def histogram_risico(df: pd.DataFrame) -> None:
     )
 
     st.plotly_chart(fig, width="stretch")
-
 
 def histogram_wbgt(df_risico, gemiddeld_wbgt) -> None:
     # Histogram
@@ -194,7 +194,7 @@ def get_data():
                
                 comment="#",
                 low_memory=False,)
-    st.write(df)
+    # st.write(df)
     # df = df[df["dt_utc"] <= pd.Timestamp("2025-07-03")]
     df = df[df["dt_utc"] >= "1991-01-01 00:00:01"]
     df = df[df["dt_utc"] <= "2025-07-03 23:59:59"]
@@ -202,10 +202,26 @@ def get_data():
     
     return df, df_dagmax
 def show_historical_data():
+    st.subheader("Informatie over data 1991-2025")
+    st.write("We repliceren enkele grafieken van het RIVM rapport over hittekracht en voegen enkele nieuwe inzichten toe")
+    _KNMI_DREMPELWAARDEN = [
+        
+        (14.0, "HK 0", "Laag risico"),
+        (16.0, "HK 1", "Laag risico"),
+        (18.0, "HK 2", "Laag risico"),
+        (20.0, "HK 3", "Matig risico"),
+        (22.0, "HK 4", "Matig risico"),
+        (24.0, "HK 5", "Matig risico"),
+        (26.0, "HK 6", "Hoog"),
+        (28.0, "HK 7", "Hoog"),
+        (30.0, "HK 8", "Zeer hoog"),
+        (32.0, "HK 9", "Zeer hoog"),
+        (float("inf"), "HK 10", "Gevaarlijk"),
+    ]
+
     df,df_dagmax= get_data()
     # tabel B1
     col1,col2=st.columns(2)
-
     with col1:
         for w in ["wbgt_risico_niveau", "wbgt_risico_advies"]:
             counts = df.groupby(w).size().reset_index(name="aantal")
@@ -221,6 +237,7 @@ def show_historical_data():
             st.write(f"{w} (dagmax)")
             st.write (counts)
 
+    
     make_histogram_temp_rh(df, "alle waardes")
     
     make_histogram_temp_rh(df_dagmax, "dagmax")
@@ -231,22 +248,10 @@ def show_historical_data():
     with col2:
 
         rh = st.number_input("RH",0,100,50)
+
     df_risico=df[(df["temp_c"] > temp-.5) & (df["temp_c"] < temp+.5) & (df["rh_pct"] > rh-2.5) & (df["rh_pct"] < rh+2.5)]
-    make_histogram_wind_q(df_risico, f"selected {temp} {rh}")
-    _KNMI_DREMPELWAARDEN = [
-        
-        (14.0, "HK 0", "Laag risico"),
-        (16.0, "HK 1", "Laag risico"),
-        (18.0, "HK 2", "Laag risico"),
-        (20.0, "HK 3", "Matig risico"),
-        (22.0, "HK 4", "Matig risico"),
-        (24.0, "HK 5", "Matig risico"),
-        (26.0, "HK 6", "Hoog"),
-        (28.0, "HK 7", "Hoog"),
-        (30.0, "HK 8", "Zeer hoog"),
-        (32.0, "HK 9", "Zeer hoog"),
-        (float("inf"), "HK 10", "Gevaarlijk"),
-    ]
+    make_histogram_wind_q(df_risico, f"[selected temp={temp}, rh={rh}]")
+    
     gemiddeld_wbgt = df_risico["wbgt_buiten"].mean()
     
     
