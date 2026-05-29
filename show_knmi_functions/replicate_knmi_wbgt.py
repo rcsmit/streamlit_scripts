@@ -412,6 +412,7 @@ def show_historical_data():
 
     df,df_dagmax= get_data()
 
+
     referentie_tabel_based_on_history(df)
     # tabel B1
     col1,col2=st.columns(2)
