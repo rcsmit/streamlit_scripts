@@ -18,19 +18,19 @@ import plotly.graph_objects as go
 try:
 # if 1==1:
    
-    from utils import get_data, getdata_wrapper, check_from_until, calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
-    from solar_app import solar_wrapper
-    from liljegren_wbgt import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
-    from select_time_place import select_time_place
-    from wbgt_utils import maak_wbgt_barchart, wbgt_risico, KNMI_DREMPELWAARDEN,BADGE_KLEUREN_KNMI, BADGE_KLEUREN_WBGT, ZONE_KLEUREN_WBGT, ZONE_KLEUREN_KNMI
+    # from utils import get_data, getdata_wrapper, check_from_until, calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
+    # from solar_app import solar_wrapper
+    # from liljegren_wbgt import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
+    # from select_time_place import select_time_place
+    from wbgt_utils import maak_wbgt_barchart, wbgt_risico, KNMI_DREMPELWAARDEN,BADGE_KLEUREN_KNMI, BADGE_KLEUREN_WBGT, ZONE_KLEUREN_WBGT, ZONE_KLEUREN_KNMI, RISICO_ZONES_KNMI, RISICO_ZONES_WBGT
     
 except:
 
-    from show_knmi_functions.utils import get_data, calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
-    from show_knmi_functions.solar_app import solar_wrapper
-    from show_knmi_functions.liljegren_wbgt import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
-    from show_knmi_functions.select_time_place import select_time_place
-    from show_knmi_functions.wbgt_utils import maak_wbgt_barchart,wbgt_risico, KNMI_DREMPELWAARDEN,BADGE_KLEUREN_KNMI, BADGE_KLEUREN_WBGT, ZONE_KLEUREN_WBGT, ZONE_KLEUREN_KNMI
+    # from show_knmi_functions.utils import get_data, calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
+    # from show_knmi_functions.solar_app import solar_wrapper
+    # from show_knmi_functions.liljegren_wbgt import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
+    # from show_knmi_functions.select_time_place import select_time_place
+    from show_knmi_functions.wbgt_utils import maak_wbgt_barchart,wbgt_risico, KNMI_DREMPELWAARDEN,BADGE_KLEUREN_KNMI, BADGE_KLEUREN_WBGT, ZONE_KLEUREN_WBGT, ZONE_KLEUREN_KNMI, RISICO_ZONES_KNMI, RISICO_ZONES_WBGT
 # ======================== DUBBELOP maar zorgt voor kring-imports
 
 
@@ -345,6 +345,10 @@ def get_data():
     # url=r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\show_knmi_functions\wbgt_results_1990_2026.csv"
     url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/show_knmi_functions/wbgt_results_1990_2026.csv"
     
+    # 0,260,1990-01-01,1,5,4,0,93,1990,1,1,1,1,0.4,0.5,93,0.0,1990-01-01 01:00:00,-0.9,-0.1,6.5,0.4,HK 0,Laag risico
+    # tot
+    # 319079,260,2026-05-26,24,30,183,0,79,2026,5,26,146,319080,18.3,3.0,79,0.0,2026-05-27 00:00:00,16.4,16.5,20.8,18.3,HK 2,Laag risico
+
     df = pd.read_csv(url, delimiter=",",
                
                 comment="#",
@@ -352,6 +356,7 @@ def get_data():
     # st.write(df)
     # df = df[df["dt_utc"] <= pd.Timestamp("2025-07-03")]
     # st.write(f"Lengte voor selectie {len(df)}")
+    
     # dit zijn de afkappunten zoals in het KNMI rapport (WR02-2026)
     df = df[df["dt_utc"] >= "1991-01-01 00:00:01"]
     df = df[df["dt_utc"] <= "2025-07-03 23:59:59"]

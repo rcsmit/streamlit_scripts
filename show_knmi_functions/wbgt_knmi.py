@@ -14,19 +14,19 @@ import plotly.graph_objects as go
 
 # try:
 if 1==1:
-    from utils import get_data, getdata_wrapper, check_from_until, calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
+    from utils import  calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
     from solar_app import solar_wrapper
     from liljegren_wbgt import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
     from select_time_place import select_time_place
     from replicate_knmi_wbgt import show_historical_data
-    from wbgt_utils import maak_wbgt_barchart,wbgt_risico, KNMI_DREMPELWAARDEN,BADGE_KLEUREN_KNMI, BADGE_KLEUREN_WBGT, ZONE_KLEUREN_WBGT, ZONE_KLEUREN_KNMI
+    from wbgt_utils import maak_wbgt_barchart,wbgt_risico, KNMI_DREMPELWAARDEN,BADGE_KLEUREN_KNMI, BADGE_KLEUREN_WBGT, ZONE_KLEUREN_WBGT, ZONE_KLEUREN_KNMI, RISICO_ZONES_KNMI, RISICO_ZONES_WBGT
 # except:
 #     from show_knmi_functions.utils import calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
 #     from show_knmi_functions.solar_app import solar_wrapper
 #     from show_knmi_functions.liljegren_wbgt import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
 #     from show_knmi_functions.select_time_place import select_time_place
 #     from show_knmi_functions.replicate_knmi_wbgt import show_historical_data
-# from show_knmi_functions.wbgt_utils import maak_wbgt_barchart,wbgt_risico, KNMI_DREMPELWAARDEN,BADGE_KLEUREN_KNMI, BADGE_KLEUREN_WBGT, ZONE_KLEUREN_WBGT, ZONE_KLEUREN_KNMI
+# from show_knmi_functions.wbgt_utils import maak_wbgt_barchart,wbgt_risico, KNMI_DREMPELWAARDEN,BADGE_KLEUREN_KNMI, BADGE_KLEUREN_WBGT, ZONE_KLEUREN_WBGT, ZONE_KLEUREN_KNMI, RISICO_ZONES_KNMI, RISICO_ZONES_WBGT
 # version : 20260526-120000 - Initial version: WBGT berekening met KNMI dagdata
 current_version = "20260526-120000"
 
@@ -1064,7 +1064,6 @@ def main_():
     from__ = st.sidebar.text_input("start datum (yyyy-mm-dd) from 1-1-1900", start_, key="wbgt1")
     until__ = st.sidebar.text_input("end datum (yyyy-mm-dd)", today, key="wbgt2")
 
-    #fromx, until = check_from_until(from_, until_)
     fromx = from__.replace("-", "")
     until = until__.replace("-", "")
     only_dagmax = st.sidebar.toggle("Alleen maximale HK's per dag",value=True)

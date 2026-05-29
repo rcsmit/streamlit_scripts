@@ -18,7 +18,6 @@ import plotly.graph_objects as go
 # FUNCTIES EN CONSTANTEN DIE IN MEERDERE BESTANDEN WORDEN GEBRUIKT
 
 
-
 # ---------------------------------------------------------------------------
 # Risicozones (WBGT-drempelwaarden, ISO 7243)
 # ---------------------------------------------------------------------------
