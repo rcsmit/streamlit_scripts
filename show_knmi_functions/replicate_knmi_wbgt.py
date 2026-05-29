@@ -22,56 +22,17 @@ try:
     from solar_app import solar_wrapper
     from liljegren_wbgt import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
     from select_time_place import select_time_place
+    from wbgt_utils import maak_wbgt_barchart, wbgt_risico, KNMI_DREMPELWAARDEN,BADGE_KLEUREN_KNMI, BADGE_KLEUREN_WBGT, ZONE_KLEUREN_WBGT, ZONE_KLEUREN_KNMI
+    
 except:
 
     from show_knmi_functions.utils import get_data, calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
     from show_knmi_functions.solar_app import solar_wrapper
     from show_knmi_functions.liljegren_wbgt import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
     from show_knmi_functions.select_time_place import select_time_place
-
+    from show_knmi_functions.wbgt_utils import maak_wbgt_barchart,wbgt_risico, KNMI_DREMPELWAARDEN,BADGE_KLEUREN_KNMI, BADGE_KLEUREN_WBGT, ZONE_KLEUREN_WBGT, ZONE_KLEUREN_KNMI
 # ======================== DUBBELOP maar zorgt voor kring-imports
-BADGE_KLEUREN_KNMI = {
-    "HK 0":  "#8FD14F",   
-    "HK 1":  "#8FD14F",
-    "HK 2":  "#4A8A2A",
-    "HK 3":  "#F5E642",
-    "HK 4":  "#F5B800",
-    "HK 5":  "#F08000",
-    "HK 6":  "#C85A00",
-    "HK 7":  "#A03000",
-    "HK 8":  "#7A1A1A",
-    "HK 9":  "#4A0A0A",
-    "HK 10": "#000000",
-}
-KNMI_DREMPELWAARDEN = [
-    
-    (14.0, "HK 0", "Laag risico"),
-    (16.0, "HK 1", "Laag risico"),
-    (18.0, "HK 2", "Laag risico"),
-    (20.0, "HK 3", "Matig risico"),
-    (22.0, "HK 4", "Matig risico"),
-    (24.0, "HK 5", "Matig risico"),
-    (26.0, "HK 6", "Hoog"),
-    (28.0, "HK 7", "Hoog"),
-    (30.0, "HK 8", "Zeer hoog"),
-    (32.0, "HK 9", "Zeer hoog"),
-    (float("inf"), "HK 10", "Gevaarlijk"),
-]
 
-
-def wbgt_risico(wbgt: float) -> tuple[str, str]:
-    """Geeft risiconiveau en advies bij een WBGT-waarde.
-
-    Args:
-        wbgt: WBGT in °C.
-
-    Returns:
-        Tuple (risiconiveau: str, advies: str).
-    """
-    for grens, niveau, advies in KNMI_DREMPELWAARDEN:
-        if wbgt < grens:
-            return niveau, advies
-    return "Gevaarlijk", "Vermijd fysieke inspanning buitenshuis"
 
 # =======================================
 
@@ -121,8 +82,12 @@ def referentie_tabel_based_on_history(df):
     wordt de gemiddelde wbgt_buiten berekend en in de tabel gezet. Hierdoor kan de gebruiker een inschatting maken
     van de hittekracht zonder de straling en de wind te hoeven te weten. De inschatting is veelal  +/- 1 zoals in een andere
     grafiek op deze pagina te zien is"""
-
-
+    st.subheader("Referentie tabel gebaseerd op de geschiedenis 1991-2025")
+    st.info(
+"""We maken een referentie tabel, gebaseerd op de gegevens 1991-2025. Voor elke temperatuur/RH combinatie
+    wordt de gemiddelde wbgt_buiten berekend en in de tabel gezet. Hierdoor kan de gebruiker een inschatting maken
+    van de hittekracht zonder de straling en de wind te hoeven te weten. De inschatting is veelal  +/- 1 zoals in een andere
+    grafiek op deze pagina te zien is""")
     temps = list(range(16, 36, 2))
     rhs   = list(range(20, 105, 5))
     z = []
@@ -157,18 +122,14 @@ def referentie_tabel_based_on_history(df):
         z_sd.append(rij_sd)
         z_median.append(rij_median)
         z_aantal.append(rij_aantal)
-    
-
     zmin, zmax = 14, 32
 
     def naar_schaal(v):
         return (v - zmin) / (zmax - zmin)
     
-    
-
     colorscale_knmi = [
         [0.0,                    "#FFFFFF"],   # None
-     
+
         # [0.0000001,        "#E7FFCF"],   # HK 0: <14
         [naar_schaal(14),        "#E7FFCF"],   # HK 0: <14
         [naar_schaal(14),        "#8FD14F"],   # HK 1: 14-16
@@ -191,7 +152,6 @@ def referentie_tabel_based_on_history(df):
         [naar_schaal(32),        "#000000"],   # HK 10: ≥ 32
         [1.0,                    "#000000"],
     ]
-
 
     zmin, zmax = 14, 32
     colorscale = colorscale_knmi
@@ -257,6 +217,7 @@ def referentie_tabel_based_on_history(df):
 def histogram_risico(df: pd.DataFrame) -> None:
     """Toon histogram van wbgt_risico_niveau voor gegeven temp_c en rh_pct."""
     
+    st.info("Histogram van wbgt_risico_niveau voor gegeven temp_c en rh_pct")
     volgorde = ["HK 0", "HK 1", "HK 2", "HK 3", "HK 4", "HK 5",
                 "HK 6", "HK 7", "HK 8", "HK 9", "HK 10"]
     kleuren = BADGE_KLEUREN_KNMI  # jouw bestaande dict
@@ -290,6 +251,7 @@ def histogram_risico(df: pd.DataFrame) -> None:
 
 def histogram_wbgt(df_risico, gemiddeld_wbgt) -> None:
     # Histogram
+    st.info("Histogram van de wbgt_buiten-waardes  voor gegeven temp_c en rh_pct")
     fig = go.Figure(go.Histogram(
         x=df_risico["wbgt_buiten"],
         xbins=dict(start=df_risico["wbgt_buiten"].min(), size=0.5),
@@ -313,6 +275,8 @@ def histogram_wbgt(df_risico, gemiddeld_wbgt) -> None:
     st.plotly_chart(fig, width="stretch")
     
 def make_histogram_temp_rh(df_risico, what):
+    st.info("Histogram van de temperaturen en luchtvochtigheid voor de gehele database en de hoogste wbgt-buiten per dag")
+    
     fig_t = go.Figure(go.Histogram(
         x=df_risico["temp_c"],
         xbins=dict(size=0.5),
@@ -344,6 +308,8 @@ def make_histogram_temp_rh(df_risico, what):
         st.plotly_chart(fig_rh, width="stretch")
 
 def make_histogram_wind_q(df_risico, what):
+    st.info("Histogram van de wind en straling voor een gegeven temp en RH combinatie")
+    
     fig_t = go.Figure(go.Histogram(
         x=df_risico["wind_ms"],
         xbins=dict(size=0.5),
@@ -385,61 +351,39 @@ def get_data():
                 low_memory=False,)
     # st.write(df)
     # df = df[df["dt_utc"] <= pd.Timestamp("2025-07-03")]
+    # st.write(f"Lengte voor selectie {len(df)}")
+    # dit zijn de afkappunten zoals in het KNMI rapport (WR02-2026)
     df = df[df["dt_utc"] >= "1991-01-01 00:00:01"]
     df = df[df["dt_utc"] <= "2025-07-03 23:59:59"]
+    # st.write(f"Lengte na selectie {len(df)}")
+    
+    # Per dag de rij selecteren waarop wbgt_buiten het hoogst is (doorgaans vroege middag).
+    # Hierdoor bevat df_dagmax één rij per dag, met alle bijbehorende waarden (T, RH, wind, Q)
+    # op het moment van de dagelijkse piek — niet alleen de piekwaarde zelf.
     df_dagmax = df.loc[df.groupby("YYYYMMDD")["wbgt_buiten"].idxmax()].reset_index(drop=True)
     
     return df, df_dagmax
-def show_historical_data():
-    st.subheader("Informatie over data 1991-2025")
-    st.write("We repliceren enkele grafieken van het RIVM rapport over hittekracht en voegen enkele nieuwe inzichten toe")
-    
-    
-    _KNMI_DREMPELWAARDEN = [
-        
-        (14.0, "HK 0", "Laag risico"),
-        (16.0, "HK 1", "Laag risico"),
-        (18.0, "HK 2", "Laag risico"),
-        (20.0, "HK 3", "Matig risico"),
-        (22.0, "HK 4", "Matig risico"),
-        (24.0, "HK 5", "Matig risico"),
-        (26.0, "HK 6", "Hoog"),
-        (28.0, "HK 7", "Hoog"),
-        (30.0, "HK 8", "Zeer hoog"),
-        (32.0, "HK 9", "Zeer hoog"),
-        (float("inf"), "HK 10", "Gevaarlijk"),
-    ]
 
-    df,df_dagmax= get_data()
 
-    referentie_tabel_based_on_history(df)
-    # tabel B1
-    col1,col2=st.columns(2)
-    with col1:
-        for w in ["wbgt_risico_niveau", "wbgt_risico_advies"]:
-            counts = df.groupby(w).size().reset_index(name="aantal")
-            counts["pct"] = (counts["aantal"] / len(df) * 100).round(2)
-            # with st.expander(f"Opgeslitst naar {w}"):
-            st.write(f"{w} Alle waardes")
-            st.write (counts)
-    with col2:
-        for w in ["wbgt_risico_niveau", "wbgt_risico_advies"]:
-            counts = df_dagmax.groupby(w).size().reset_index(name="aantal")
-            counts["pct"] = (counts["aantal"] / len(df_dagmax) * 100).round(2)
-            # with st.expander(f"Opgeslitst naar {w}"):
-            st.write(f"{w} (dagmax)")
-            st.write (counts)
+def toon_temperatuur_rh_combinatie(df: pd.DataFrame) -> None:
+    """Toon analyse voor een door de gebruiker gekozen temperatuur/RH-combinatie.
 
-    
-    make_histogram_temp_rh(df, "alle waardes")
-    
-    make_histogram_temp_rh(df_dagmax, "dagmax")
+    De gebruiker kiest een temperatuur en relatieve vochtigheid. Alle uurwaardes
+    binnen +/-0,5 gr. C en +/-2,5 % RH worden geselecteerd. Voor die selectie worden
+    getoond:
+    - Histogram van wind en straling (Q)
+    - Gemiddelde WBGT met bijbehorend risiconiveau als gekleurde badge
+    - Histogram van de WBGT-waardes met verticale lijn op het gemiddelde
+    - Histogram van de WBGT-risiconiveaus
 
+    Args:
+        df: DataFrame met uurwaardes, inclusief temp_c, rh_pct en wbgt_buiten.
+    """
+    st.subheader("Temperatuur - RH combinatie")
     col1,col2=st.columns(2)
     with col1:
         temp = st.number_input("temperatuur", 0,100,25)
     with col2:
-
         rh = st.number_input("RH",0,100,50)
 
     df_risico=df[(df["temp_c"] > temp-.5) & (df["temp_c"] < temp+.5) & (df["rh_pct"] > rh-2.5) & (df["rh_pct"] < rh+2.5)]
@@ -463,8 +407,102 @@ def show_historical_data():
         histogram_wbgt(df_risico,gemiddeld_wbgt)
     with col2:
         histogram_risico(df_risico)
+
+def toon_verdeling_waardes(df: pd.DataFrame, df_dagmax: pd.DataFrame) -> None:
+    """Toon de verdeling van WBGT-risiconiveaus en -adviezen in twee kolommen.
+
+    Links: verdeling over alle uurwaardes in df.
+    Rechts: verdeling over de dagmaxima in df_dagmax.
+
+    Per kolom worden twee tabellen getoond: één voor wbgt_risico_niveau
+    en één voor wbgt_risico_advies, met het aantal uren en het percentage.
+
+    Args:
+        df:        DataFrame met alle uurwaardes, inclusief wbgt_risico_niveau en wbgt_risico_advies.
+        df_dagmax: DataFrame met één rij per dag (de dagelijkse WBGT-piek), inclusief dezelfde risicokolommen.
+    """
+
+    st.info("We vertonen de verdeling van de waardes tussen 1991 en 2025 zoals in tabel B1 in het RIVM rapport")
     
+    col1,col2=st.columns(2)
+    with col1:
+        for w in ["wbgt_risico_niveau", "wbgt_risico_advies"]:
+            counts = df.groupby(w).size().reset_index(name="aantal")
+            counts["pct"] = (counts["aantal"] / len(df) * 100).round(2)
+            # with st.expander(f"Opgeslitst naar {w}"):
+            st.write(f"{w} Alle waardes")
+            st.write (counts)
+    with col2:
+        for w in ["wbgt_risico_niveau", "wbgt_risico_advies"]:
+            counts = df_dagmax.groupby(w).size().reset_index(name="aantal")
+            counts["pct"] = (counts["aantal"] / len(df_dagmax) * 100).round(2)
+            # with st.expander(f"Opgeslitst naar {w}"):
+            st.write(f"{w} (dagmax)")
+            st.write (counts)
+
+    
+def toon_250719(df):
+    """Wrapper voor het repliceren van figuur B2, HK per uur voor een bepaalde dag"""
+    st.info("Replicatie van figuur B2, HK per uur voor 25 juli 2019")
+   
+    fig = maak_wbgt_barchart(df, "2019-07-25")
+    st.plotly_chart(fig, width="stretch")
+
+def boxplot_wbgt_per_maand(df_dagmax: pd.DataFrame) -> None:
+    """Boxplot van dagelijkse maximale WBGT per maand (replicatie Figuur B1 RIVM-rapport)."""
+    st.info("Boxplot van dagelijkse maximale WBGT per maand (replicatie Figuur B1 RIVM-rapport).")
+    maand_namen = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+
+    fig = go.Figure()
+    for m in range(1, 13):
+        waarden = df_dagmax[df_dagmax["MM"] == m]["wbgt_buiten"].dropna()
+        fig.add_trace(go.Box(
+            y=waarden,
+            name=maand_namen[m - 1],
+            marker_color="black",
+            line_color="black",
+            fillcolor="white",
+            boxpoints="outliers",
+            marker=dict(size=3, color="black"),
+        ))
+
+    fig.update_layout(
+        title="Figuur B1: Boxplot van dagelijkse maximale WBGT per maand, De Bilt (1991–2025)",
+        xaxis_title="Maand",
+        yaxis_title="Maximale WBGT (°C)",
+        plot_bgcolor="white",
+        showlegend=False,
+        height=450,
+        margin=dict(l=60, r=40, t=80, b=60),
+    )
+    fig.update_xaxes(showgrid=False)
+    fig.update_yaxes(showgrid=True, gridcolor="#dddddd", zeroline=True, zerolinecolor="#aaaaaa")
+
+    st.plotly_chart(fig, width="stretch")
+
+def show_historical_data():
+    st.subheader("Informatie over data 1991-2025")
+    st.write("We repliceren enkele grafieken van het RIVM rapport over hittekracht en voegen enkele nieuwe inzichten toe")
+    st.write("De dagmax waardes zijn de rijen met de hoogste wbgt-buiten-waarde per dag")
+  
+    df,df_dagmax= get_data()
+    st.stop()
+    referentie_tabel_based_on_history(df)
+    
+    toon_verdeling_waardes(df, df_dagmax)
+    
+    make_histogram_temp_rh(df, "alle waardes")
+    
+    make_histogram_temp_rh(df_dagmax, "dagmax")
+
+    toon_temperatuur_rh_combinatie(df)
+    boxplot_wbgt_per_maand(df_dagmax)
+    
+    toon_250719(df)
+
 def main():
     show_historical_data()
+    st.info("Carolina Pereira Marghidan, Lone Mokkenstorm. Hittewaarschuwingen: Doorontwikkeling Nationaal Hitteplan RIVM en verdere integratie met waarschuwingssystematiek KNMI KNMI number: WR-26-02, Year: 2026, Pages: 47 - https://www.knmi.nl/kennis-en-datacentrum/publicatie/hittewaarschuwingen-doorontwikkeling-nationaal-hitteplan-rivm-en-verdere-integratie-met-waarschuwingssystematiek-knmi")
+
 if __name__=="__main__":
     main()
