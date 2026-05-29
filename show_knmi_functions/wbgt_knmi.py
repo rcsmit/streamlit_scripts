@@ -1118,7 +1118,9 @@ def main_():
             st.write (counts)
     scatterplots(df_dagmax, "webgt_buiten-max")
     scatterplots(df_result, "alle waardes")
-
+       
+    fig = maak_wbgt_barchart(df, until__)
+    st.plotly_chart(fig, width="stretch")
 def show_info():
     st.subheader("Info")
     st.info("Voor uitleg, achtergrond informatie en referenties: https://rene-smit.com/hitte-meet-je-niet-met-een-thermometer/")
