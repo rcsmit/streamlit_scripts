@@ -522,8 +522,6 @@ def maak_wbgt_figuur(df: pd.DataFrame, toon_temp: bool = True) -> go.Figure:
 
     return fig
 
-
-
 def maak_wbgt_maand_barchart(df: pd.DataFrame) -> go.Figure:
     """Gestapeld 100%-staafdiagram van hittekracht per maand.
 
@@ -548,7 +546,7 @@ def maak_wbgt_maand_barchart(df: pd.DataFrame) -> go.Figure:
     }
 
     # Alle HK-niveaus in volgorde
-    alle_niveaus = [f"HK {i}" for i in range(1, 11)]
+    alle_niveaus = [f"HK {i}" for i in range(0, 11)]
     alle_maanden = list(range(1, 13))
 
     # Tel uren per maand per niveau
@@ -657,11 +655,12 @@ def _bereken_kpis(df: pd.DataFrame) -> dict:
 # Publieke render-functie
 # ---------------------------------------------------------------------------
 
-def render_wbgt_chart(df: pd.DataFrame) -> None:
+def render_wbgt_chart(df, only_dagmax) -> None:
     """Render de volledige WBGT-sectie in Streamlit.
 
     Args:
         df: DataFrame zoals geproduceerd door wbgt_bereken_df().
+        only_dagmax : Boolean - alleen max waardes?
     """
     # --- Filters in sidebar ---
     with st.sidebar:
@@ -799,14 +798,18 @@ def render_wbgt_chart(df: pd.DataFrame) -> None:
         )
 
     # --- Dagselectie voor barchart ---
+    
     beschikbare_dagen = sorted(df["dt_utc"].dt.strftime("%Y-%m-%d").unique())
     gekozen_dag = st.selectbox(
         "Dag voor uurdiagram",
         beschikbare_dagen,
         index=len(beschikbare_dagen) - 2,
     )
-    fig_bar = maak_wbgt_barchart(df, datum=gekozen_dag)
-    st.plotly_chart(fig_bar, width="stretch")
+    if only_dagmax:
+        st.info("Deselecteer _alleen maximale waardes_ om een uurgrafiek te zien")
+    else:
+        fig_bar = maak_wbgt_barchart(df, datum=gekozen_dag)
+        st.plotly_chart(fig_bar, width="stretch")
 
     fig_maand = maak_wbgt_maand_barchart(df)
     st.plotly_chart(fig_maand, width="stretch")
@@ -1104,23 +1107,25 @@ def main_():
     df["id"] =  range(1, len(df) + 1)
     # df_result = wbgt_bereken_df(df)
     df_result = wbgt_bereken_df(df, stn=260)
+
     if only_dagmax:
         df_dagmax = df_result.loc[df_result.groupby("YYYYMMDD")["wbgt_buiten"].idxmax()].reset_index(drop=True)
     else:
         df_dagmax = df_result
     # print (df_result.dtypes)
-    render_wbgt_chart(df_dagmax)
+    render_wbgt_chart(df_dagmax,only_dagmax)
   
     for w in ["wbgt_risico_niveau", "wbgt_risico_advies"]:
         counts = df_dagmax.groupby(w).size().reset_index(name="aantal")
         counts["pct"] = (counts["aantal"] / len(df_dagmax) * 100).round(2)
         with st.expander(f"Opgeslitst naar {w}"):
             st.write (counts)
-    scatterplots(df_dagmax, "webgt_buiten-max")
-    scatterplots(df_result, "alle waardes")
-       
-    fig = maak_wbgt_barchart(df_result, until__)
-    st.plotly_chart(fig, width="stretch")
+
+    c1,c2 = st.columns(2)
+    with c1:
+        scatterplots(df_dagmax, "webgt_buiten-max")
+    with c2:
+        scatterplots(df_result, "alle waardes")
     
 def show_info():
     st.subheader("Info")
