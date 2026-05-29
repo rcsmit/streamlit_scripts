@@ -1074,32 +1074,6 @@ def referentie_tabel(lat,lon,dt_ref):
         [1.0,                    "#b40000"],
     ]
     
-
-
-    colorscale_knmi = [
-        [0.0,                    "#ffffff"],   # HK 0 : < 14
-        [naar_schaal(14),        "#ffffff"],
-        [naar_schaal(16),        "#8FD14F"],   # HK 1: 14-16
-        [naar_schaal(18),        "#8FD14F"],
-        [naar_schaal(18),        "#4A8A2A"],   # HK 2: 16–18
-        [naar_schaal(20),        "#4A8A2A"],
-        [naar_schaal(20),        "#F5E642"],   # HK 3: 18–20
-        [naar_schaal(22),        "#F5E642"],
-        [naar_schaal(22),        "#F5B800"],   # HK 4: 20–22
-        [naar_schaal(24),        "#F5B800"],
-        [naar_schaal(24),        "#F08000"],   # HK 5: 22–24
-        [naar_schaal(26),        "#F08000"],
-        [naar_schaal(26),        "#C85A00"],   # HK 6: 24–26
-        [naar_schaal(28),        "#C85A00"],
-        [naar_schaal(28),        "#A03000"],   # HK 7: 26–28
-        [naar_schaal(30),        "#A03000"],
-        [naar_schaal(30),        "#7A1A1A"],   # HK 8: 28–30
-        [naar_schaal(32),        "#7A1A1A"],
-        [naar_schaal(32),        "#4A0A0A"],   # HK 9: 30–32
-        [naar_schaal(32),        "#000000"],   # HK 10: ≥ 32
-        [1.0,                    "#000000"],
-    ]
-
     colorscale_knmi = [
         [0.0,                    "#8FD14F"],   # < 14
         # [naar_schaal(14),        "#ffffff"],
