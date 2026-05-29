@@ -356,7 +356,7 @@ def get_data():
     # st.write(df)
     # df = df[df["dt_utc"] <= pd.Timestamp("2025-07-03")]
     # st.write(f"Lengte voor selectie {len(df)}")
-    
+
     # dit zijn de afkappunten zoals in het KNMI rapport (WR02-2026)
     df = df[df["dt_utc"] >= "1991-01-01 00:00:01"]
     df = df[df["dt_utc"] <= "2025-07-03 23:59:59"]
@@ -491,7 +491,7 @@ def show_historical_data():
     st.write("De dagmax waardes zijn de rijen met de hoogste wbgt-buiten-waarde per dag")
   
     df,df_dagmax= get_data()
-    st.stop()
+    
     referentie_tabel_based_on_history(df)
     
     toon_verdeling_waardes(df, df_dagmax)

@@ -1129,20 +1129,23 @@ def wbgt_knmi():
         lat,lon,utc_dt, loc_name, selected_date, selected_time,tz,LOCATIONS = select_time_place()
 
     tab1,tab2, tab3,tab4,tab5,tab6=st.tabs(["Main", "Tabel", "Calculator", "Solarinfo","1991-2025","INFO"])
+
+    with tab6:
+        show_info()
+        info()
+
     with tab2:
         referentie_tabel(lat,lon,utc_dt)
     with tab3:
         feels_like_calculator(lat,lon,utc_dt)
     with tab4:
         solar_wrapper(lat,lon,utc_dt, loc_name, selected_date, selected_time,tz,LOCATIONS)
-    with tab5:
-        show_historical_data()
-    with tab6:
-        show_info()
-        info()
     with tab1:
         main_()
     
+    with tab5:
+        show_historical_data()
+        
 def main():
     wbgt_knmi()
 if __name__=="__main__":
