@@ -84,28 +84,14 @@ def referentie_tabel_based_on_history(df):
     grafiek op deze pagina te zien is."""
     st.subheader("Referentie tabel gebaseerd op de geschiedenis 1991-2025")
     st.info(
-<<<<<<< HEAD
         "We maken een referentie tabel, gebaseerd op de gegevens 1991-2025. Voor elke temperatuur/RH combinatie "
         "wordt de gemiddelde wbgt_buiten berekend en in de tabel gezet. Hierdoor kan de gebruiker een inschatting maken "
         "van de hittekracht zonder de straling en de wind te hoeven te weten. De inschatting is veelal +/- 1 zoals in een andere "
         "grafiek op deze pagina te zien is."
     )
 
-    temps = list(range(16, 36, 2))
-    rhs   = list(range(20, 105, 5))
-=======
-"""We maken een referentie tabel, gebaseerd op de gegevens 1991-2025. Voor elke temperatuur/RH combinatie
-    wordt de gemiddelde wbgt_buiten berekend en in de tabel gezet. Hierdoor kan de gebruiker een inschatting maken
-    van de hittekracht zonder de straling en de wind te hoeven te weten. De inschatting is veelal  +/- 1 zoals in een andere
-    grafiek op deze pagina te zien is""")
-    temps = list(range(16, 38, 1))
+    temps = list(range(16, 39, 1))
     rhs   = list(range(10, 105, 5))
-    z = []
-    z_sd =[]
-    z_median=[]
-    z_aantal=[]
-    for rh in rhs:
->>>>>>> ead903ea43058f10b670b1654c9fed9d31f58fb4
 
     z         = []
     z_sd      = []
