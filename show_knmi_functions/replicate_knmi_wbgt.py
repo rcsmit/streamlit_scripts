@@ -88,8 +88,8 @@ def referentie_tabel_based_on_history(df):
     wordt de gemiddelde wbgt_buiten berekend en in de tabel gezet. Hierdoor kan de gebruiker een inschatting maken
     van de hittekracht zonder de straling en de wind te hoeven te weten. De inschatting is veelal  +/- 1 zoals in een andere
     grafiek op deze pagina te zien is""")
-    temps = list(range(16, 36, 2))
-    rhs   = list(range(20, 105, 5))
+    temps = list(range(16, 38, 1))
+    rhs   = list(range(10, 105, 5))
     z = []
     z_sd =[]
     z_median=[]
