@@ -589,7 +589,9 @@ def show_historical_data():
     st.write("De dagmax waardes zijn de rijen met de hoogste wbgt-buiten-waarde per dag")
   
     df,df_dagmax= get_data()
-    
+    with st.container("Waardes"):
+        st.write (df)
+        
     referentie_tabel_based_on_history(df)
     
     toon_verdeling_waardes(df, df_dagmax)
