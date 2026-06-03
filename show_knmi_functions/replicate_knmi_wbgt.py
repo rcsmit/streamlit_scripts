@@ -78,50 +78,104 @@ def prepare_data():
     st.write("DONE")
 
 def referentie_tabel_based_on_history(df):
-    """ We maken een referentie tabel, gebaseerd op de gegevens 1991-2025. Voor elke temperatuur/RH combinatie
+    """We maken een referentie tabel, gebaseerd op de gegevens 1991-2025. Voor elke temperatuur/RH combinatie
     wordt de gemiddelde wbgt_buiten berekend en in de tabel gezet. Hierdoor kan de gebruiker een inschatting maken
-    van de hittekracht zonder de straling en de wind te hoeven te weten. De inschatting is veelal  +/- 1 zoals in een andere
-    grafiek op deze pagina te zien is"""
+    van de hittekracht zonder de straling en de wind te hoeven te weten. De inschatting is veelal +/- 1 zoals in een andere
+    grafiek op deze pagina te zien is."""
     st.subheader("Referentie tabel gebaseerd op de geschiedenis 1991-2025")
     st.info(
-"""We maken een referentie tabel, gebaseerd op de gegevens 1991-2025. Voor elke temperatuur/RH combinatie
-    wordt de gemiddelde wbgt_buiten berekend en in de tabel gezet. Hierdoor kan de gebruiker een inschatting maken
-    van de hittekracht zonder de straling en de wind te hoeven te weten. De inschatting is veelal  +/- 1 zoals in een andere
-    grafiek op deze pagina te zien is""")
+        "We maken een referentie tabel, gebaseerd op de gegevens 1991-2025. Voor elke temperatuur/RH combinatie "
+        "wordt de gemiddelde wbgt_buiten berekend en in de tabel gezet. Hierdoor kan de gebruiker een inschatting maken "
+        "van de hittekracht zonder de straling en de wind te hoeven te weten. De inschatting is veelal +/- 1 zoals in een andere "
+        "grafiek op deze pagina te zien is."
+    )
+
     temps = list(range(16, 36, 2))
     rhs   = list(range(20, 105, 5))
-    z = []
-    z_sd =[]
-    z_median=[]
-    z_aantal=[]
-    for rh in rhs:
 
-        rij = []
-        rij_sd = []
-        rij_median=[]
-        rij_aantal=[]
+    z         = []
+    z_sd      = []
+    z_median  = []
+    z_aantal  = []
+    z_iswaarde       = []
+    z_outlier        = []
+    z_is_plus_min_een = []
+
+    for rh in rhs:
+        rij               = []
+        rij_sd            = []
+        rij_median        = []
+        rij_aantal        = []
+        rij_iswaarde       = []
+        rij_outlier        = []
+        rij_is_plus_min_een = []
+
         for temp in temps:
-    
-            df_temp=df[(df["temp_c"] > temp-1) & (df["temp_c"] < temp+1) & (df["rh_pct"] > rh-2.5) & (df["rh_pct"] < rh+2.5)]
-            if len(df_temp)>0:
-                waarde = df_temp["wbgt_buiten"].mean()
-                waarde_median = df_temp["wbgt_buiten"].median()
-                waarde_stdev = df_temp["wbgt_buiten"].std()
-                waarde_aantal = len(df_temp)
+            df_temp = df[
+                (df["temp_c"]  > temp - 1)   & (df["temp_c"]  < temp + 1) &
+                (df["rh_pct"]  > rh   - 2.5) & (df["rh_pct"]  < rh   + 2.5)
+            ]
+
+            if len(df_temp) > 0:
+                waarde         = df_temp["wbgt_buiten"].mean()
+                waarde_median  = df_temp["wbgt_buiten"].median()
+                waarde_stdev   = df_temp["wbgt_buiten"].std()
+                waarde_aantal  = len(df_temp)
+
+                # HK van het gemiddelde
+                hk_gemiddeld = float(np.clip((waarde - 13) / 2, 0, 10))
+                hk_gemiddeld_int = round(hk_gemiddeld)   # naar dichtstbijzijnde int voor vergelijking
+
+                # HK per rij (vectorized)
+                hk_rij = np.clip((df_temp["wbgt_buiten"] - 13) / 2, 0, 10).round()
+
+                # # z_iswaarde: rijen waarbij HK exact overeenkomt met hk_gemiddeld
+                # iswaarde        = int((hk_rij == hk_gemiddeld_int).sum())
+
+                # # z_is_plus_min_een: rijen waarbij HK binnen ±1 van hk_gemiddeld valt
+                # is_plus_min_een = int((hk_rij.between(hk_gemiddeld_int - 1, hk_gemiddeld_int + 1)).sum())
+
+                # # z_outlier: rijen waarbij HK buiten ±1 van hk_gemiddeld valt
+                # outlier         = int((~hk_rij.between(hk_gemiddeld_int - 1, hk_gemiddeld_int + 1)).sum())
+
+                n = len(df_temp)
+
+                # z_iswaarde: % rijen waarbij HK exact overeenkomt met hk_gemiddeld
+                iswaarde        = round((hk_rij == hk_gemiddeld_int).sum() / n * 100, 1)
+
+                # z_is_plus_min_een: % rijen waarbij HK binnen ±1 van hk_gemiddeld valt
+                is_plus_min_een = round(hk_rij.between(hk_gemiddeld_int - 1, hk_gemiddeld_int + 1).sum() / n * 100, 1)
+
+                # z_outlier: % rijen waarbij HK buiten ±1 van hk_gemiddeld valt
+                outlier         = round((~hk_rij.between(hk_gemiddeld_int - 1, hk_gemiddeld_int + 1)).sum() / n * 100, 1)
+
             else:
-                waarde = 0
-                waarde_stdev = 0
-                waarde_median=0
-                waarde_aantal=0
+                waarde          = 0.0
+                waarde_stdev    = 0.0
+                waarde_median   = 0.0
+                waarde_aantal   = 0
+                hk_gemiddeld    = 0.0
+                iswaarde        = 0
+                is_plus_min_een = 0
+                outlier         = 0
+
             rij.append(round(waarde, 1))
             rij_sd.append(round(waarde_stdev, 1))
             rij_median.append(round(waarde_median, 1))
-            rij_aantal.append(round(waarde_aantal, 0))
+            rij_aantal.append(int(waarde_aantal))
+            rij_iswaarde.append(iswaarde)
+            rij_is_plus_min_een.append(is_plus_min_een)
+            rij_outlier.append(outlier)
 
         z.append(rij)
         z_sd.append(rij_sd)
         z_median.append(rij_median)
         z_aantal.append(rij_aantal)
+        z_iswaarde.append(rij_iswaarde)
+        z_is_plus_min_een.append(rij_is_plus_min_een)
+        z_outlier.append(rij_outlier)
+
+
     zmin, zmax = 14, 32
 
     def naar_schaal(v):
@@ -157,21 +211,39 @@ def referentie_tabel_based_on_history(df):
     colorscale = colorscale_knmi
     title = f"KNMI Hitte Kracht, de gemiddelde waardes 1991-2025 voor een bepaalde T and RH combinatie"
 
-    def _maak_heatmap(z, temps, rhs, title, colorscale=None, zmin=None, zmax=None) -> go.Figure:
-        fig = go.Figure(go.Heatmap(
-            z=z,
-            x=temps,
-            y=rhs,
-            text=[[str(v) if v != 0 else "" for v in rij] for rij in z],
-            texttemplate="%{text}",
-            textfont=dict(size=11),
-            colorscale=colorscale,
-            zmin=zmin,
-            zmax=zmax,
-            showscale=False,
-            xgap=1,
-            ygap=1,
-        ))
+    def _maak_heatmap(z, temps, rhs, title, show_hk, colorscale=None, zmin=None, zmax=None) -> go.Figure:
+        
+        if show_hk:
+            fig = go.Figure(go.Heatmap(
+                z=z,
+                x=temps,
+                y=rhs,
+                text=[[str(round(np.clip((v - 13) / 2, 0, 10))) if v != 0 else "" for v in rij] for rij in z],
+                texttemplate="%{text}",
+                textfont=dict(size=11),
+                colorscale=colorscale,
+                zmin=zmin,
+                zmax=zmax,
+                showscale=False,
+                xgap=1,
+                ygap=1,
+            ))
+        else:
+            fig = go.Figure(go.Heatmap(
+                z=z,
+                x=temps,
+                y=rhs,
+                text=[[str(v) if v != 0 else "" for v in rij] for rij in z],
+                texttemplate="%{text}",
+                textfont=dict(size=11),
+                colorscale=colorscale,
+                zmin=zmin,
+                zmax=zmax,
+                showscale=False,
+                xgap=1,
+                ygap=1,
+            ))
+
         fig.update_layout(
             title=dict(text=title,  font_size=14), # x=0, y=0,
             xaxis=dict(showgrid=True, zeroline=True, title="Temperatuur (°C)",
@@ -186,6 +258,7 @@ def referentie_tabel_based_on_history(df):
     number_of_charts=3
     if number_of_charts==4:
         # Aanroepen:
+        show_hk=False
         panels = [
             (z,        title,    colorscale, zmin, zmax),
             (z_median, "Median", colorscale, zmin, zmax),
@@ -199,20 +272,45 @@ def referentie_tabel_based_on_history(df):
             panels[1::2],
         ):
             with za:
-                st.plotly_chart(_maak_heatmap(z1, temps, rhs, t1, cs1, mn1, mx1), width="stretch")
+                st.plotly_chart(_maak_heatmap(z1, temps, rhs, show_hk, t1, cs1, mn1, mx1), width="stretch")
             with zb:
-                st.plotly_chart(_maak_heatmap(z2, temps, rhs, t2, cs2, mn2, mx2), width="stretch")
+                st.plotly_chart(_maak_heatmap(z2, temps, rhs, show_hk,t2, cs2, mn2, mx2), width="stretch")
     else:
-        panels = [
+        panels_1 = [
             (z,        title,  colorscale, zmin, zmax),
             (z_sd,     "Standard deviatie van de wbgt_buiten-waardes",   None,       None, None),
             (z_aantal, "Aantal van een bepaalde Temp en RH combinatie", None,     None, None),
         ]
 
-        c1, c2, c3 = st.columns(3)
-        for col, (z_, t_, cs_, mn_, mx_) in zip([c1, c2, c3], panels):
-            with col:
-                st.plotly_chart(_maak_heatmap(z_, temps, rhs, t_, cs_, mn_, mx_), width="stretch")
+        panels_2 = [
+            (z_iswaarde,        "% is de waarde",  None, None, None),
+            (z_is_plus_min_een,     "% exact en plus of min een",   None,       None, None),
+            (z_outlier, "% outliers", None,     None, None),
+        ]
+
+        
+       
+        # for p_ in [panels_1, panels_2]:
+
+        #     c1, c2, c3 = st.columns(3)
+        #     for col, (z_, t_, cs_, mn_, mx_) in zip([c1, c2, c3], p_):
+        #         with col:
+        #             st.plotly_chart(_maak_heatmap(z_, temps, rhs,show_hk, t_, cs_, mn_, mx_), width="stretch")
+        
+        panels_x = [
+            (z,        "Hittekracht, gebaseerd op 1991-2025, werkelijke waarde kan veelal 1 cijfer hoger of lager zijn",  colorscale, zmin, zmax),
+            (z_sd,     "Standard deviatie van de wbgt_buiten-waardes",   None,       None, None),
+            (z_aantal, "Aantal van een bepaalde Temp en RH combinatie", None,     None, None),
+            (z_iswaarde,        "% is de waarde",  None, None, None),
+            (z_is_plus_min_een,     "% exact en plus of min een",   None,       None, None),
+            (z_outlier, "% outliers", None,     None, None),]
+
+        for z_, t_, cs_, mn_, mx_ in panels_x:
+            if t_=="Hittekracht, gebaseerd op 1991-2025, werkelijke waarde kan veelal 1 cijfer hoger of lager zijn":
+                show_hk = True
+            else:
+                show_hk = False
+            st.plotly_chart(_maak_heatmap(z_, temps, rhs, t_,show_hk, cs_, mn_, mx_), width="stretch")   
     
 def histogram_risico(df: pd.DataFrame) -> None:
     """Toon histogram van wbgt_risico_niveau voor gegeven temp_c en rh_pct."""
