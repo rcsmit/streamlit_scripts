@@ -68,7 +68,7 @@ def list_dataset_files(
     logger.info(f"Retrieve dataset files with query params: {params}")
 
     list_files_endpoint = f"{base_url}/datasets/{dataset_name}/versions/{dataset_version}/files"
-    list_files_endpoint = "https://api.dataplatform.knmi.nl/open-data/v1/datasets/wet_bulb_globe_temperature/versions/2.0/files"
+    list_files_endpoint = "https://api.dataplatform.knmi.nl/open-data/v1/datasets/wet_bulb_globe_temperature/versions/3.0/files"
     list_files_response = session.get(list_files_endpoint, params=params)
 
     if list_files_response.status_code != 200:
@@ -95,17 +95,17 @@ def get_max_worker_count(filesizes):
     return threads
 
 
-async def main():
-    api_key = "eyJvcmciOiI1ZTU1NGUxOTI3NGE5NjAwMDEyYTNlYjEiLCJpZCI6ImVlNDFjMWI0MjlkODQ2MThiNWI4ZDViZDAyMTM2YTM3IiwiaCI6Im11cm11cjEyOCJ9"
+async def main_download():
+    api_key = "eyJvcmciOiI1ZTU1NGUxOTI3NGE5NjAwMDEyYTNlYjEiLCJpZCI6ImVlNDFjMWI0MjlkODQ2MThiNWI4ZDViZDAyMTM2YTM3IiwiaCI6Im11cm11cjEyOCJ9"   
     dataset_name = "wet_bulb_globe_temperature"
-    dataset_version = "3.0"
+    dataset_version = "1.0"
               # https://api.dataplatform.knmi.nl/open-data/v1/datasets/wet_bulb_globe_temperature/versions/3.0/files
     base_url = "https://api.dataplatform.knmi.nl/open-data/v1"
     # When set to True, if a file with the same name exists the output is written over the file.
     # To prevent unnecessary bandwidth usage, leave it set to False.
     overwrite = False
 
-    download_directory = r"C:\\Users\\rcxsm\\Downloads\\knmi"
+    download_directory = r"C:\\Users\\rcxsm\\Downloads\\knmi10"
 
     # Make sure to send the API key with every HTTP request
     session = requests.Session()
@@ -174,6 +174,63 @@ async def main():
         logger.warning("Failed to download the following dataset files:")
         logger.warning(list(map(lambda x: x[1], failed_downloads)))
 
+def make_dataframe():
+    # version = "20260603120000"
+
+    import os
+    import re
+    import pandas as pd
+    import numpy as np
+    FOLDER = r"C:\Users\rcxsm\Downloads\knmi20"
+    STATION = "06260"
+
+    records = []
+
+    pattern = re.compile(r"wbgt_(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})\.csv$")
+    pattern = re.compile(r"wbgt_(\d{4})(\d{2})(\d{2})(\d{2})00\.csv$")
+
+    for fname in os.listdir(FOLDER):
+        m = pattern.match(fname)
+        if not m:
+            continue  # sla bestanden met mm≠00 over
+
+        yyyy, mm, dd, hh = m.groups()
+        date_str = f"{yyyy}-{mm}-{dd}"
+        hour = int(hh)
+        # minutes = int(mm)
+
+        fpath = os.path.join(FOLDER, fname)
+        df = pd.read_csv(fpath, dtype={"station": str})
+
+        row = df[df["station"] == STATION]
+        if row.empty:
+            continue
+
+        wbgt = row["wbgt"].values[0]
+        #hk   = row["heat_force"].values[0]
+        hk = round(np.clip((wbgt - 13) / 2, 0, 10))
+        records.append({
+            "datum":  date_str,
+            "uur":    hour,
+           
+            "wbgt":   wbgt,
+            "hk":     hk,
+        })
+
+    result = pd.DataFrame(records, columns=["datum", "uur", "wbgt", "hk"])
+    result = result.sort_values(["datum", "uur"]).reset_index(drop=True)
+
+    print(result)
+    if not result.empty:
+        begin = result["datum"].min().replace("-", "")
+        eind  = result["datum"].max().replace("-", "")
+        fname_out = f"wbgt_knmi_{begin}_{eind}.csv"
+        fpath_out = os.path.join(FOLDER, fname_out)
+        result.to_csv(fpath_out, index=False)
+        print(f"Opgeslagen als: {fpath_out}")
+    else:
+        print("Geen data gevonden voor station", STATION)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(main_download())
+    make_dataframe()

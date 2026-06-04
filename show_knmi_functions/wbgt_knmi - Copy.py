@@ -13,9 +13,7 @@ import numpy as np
 import plotly.graph_objects as go
 
 from liljegren_wbgt import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
-
-#from liljegren_wbgt_opus import wbgt_liljegren_opus, wbgt_liljegren_from_station, KNMI_STATIONS
-  
+    
 
 try:
 # if 1==1:
@@ -32,7 +30,7 @@ except:
     from show_knmi_functions.replicate_knmi_wbgt import show_historical_data
     from show_knmi_functions.wbgt_utils import maak_wbgt_barchart,wbgt_risico, KNMI_DREMPELWAARDEN,BADGE_KLEUREN_KNMI, BADGE_KLEUREN_WBGT, ZONE_KLEUREN_WBGT, ZONE_KLEUREN_KNMI, RISICO_ZONES_KNMI, RISICO_ZONES_WBGT
 # version : 20260526-120000 - Initial version: WBGT berekening met KNMI dagdata
-current_version = "20260604-160000"
+current_version = "20260526-120000"
 
 
 
@@ -173,15 +171,14 @@ def wbgt_buiten(
     rh_pct: float,
     wind_ms: float,
     q_wm2: float,
-    stn: int = 260,
-    dt: "datetime | None" = None,
+    stn: int = 260,           # KNMI-stationnummer (default De Bilt)
+    dt: "datetime | None" = None,   # UTC datetime; None → gebruik nu
     pressure_hpa: float = 1013.25,
-    fdir_mode: str = "knmi_obs",
 ) -> float:
     """WBGT buiten (zon) — volledige Liljegren et al. (2008) methode.
-
+ 
     WBGT = 0.7·Tw + 0.2·Tg + 0.1·Ta
-
+ 
     Inputs:
         temp_c:       Droge-bol temperatuur [°C].
         rh_pct:       Relatieve vochtigheid [%].
@@ -190,17 +187,16 @@ def wbgt_buiten(
         stn:          KNMI-stationnummer voor lat/lon lookup.
         dt:           UTC datum/tijd van de meting.
         pressure_hpa: Luchtdruk [hPa].
-        fdir_mode:    'knmi_obs' (default): vaste fdir=0.8 conform KNMI TR-26-04 §3.5.2.
-                      'berekend': dynamisch via Liljegren Eq. 13.
-
+ 
     Returns:
         WBGT [°C].
     """
     from datetime import datetime as _dt
     if dt is None:
         dt = _dt.utcnow()
+        #dt = _dt.now(datetime.timezone.utc)
     return wbgt_liljegren_from_station(
-        temp_c, rh_pct, wind_ms, q_wm2, stn, dt, pressure_hpa, fdir_mode
+        temp_c, rh_pct, wind_ms, q_wm2, stn, dt, pressure_hpa
     )
  
 def wbgt_buiten_oud(temp_c: float, rh_pct: float, wind_ms: float, q_wm2: float) -> float:
@@ -334,11 +330,7 @@ def wbgt_bereken_df(df: pd.DataFrame, stn: int = 260) -> pd.DataFrame:
 
     # Converteer KNMI-eenheden
     result["temp_c"]   = result["T"] / 10.0
-    # Windsnelheid: KNMI meet op 10m, Liljegren vereist 2m-hoogte.
-    # KNMI TR-26-04 §3.7: minimum 0.62 m/s op 10m (≈ 0.5 m/s op 2m).
-    # EPA power-law klasse D rural (exponent 0.15) conform Liljegren 2008 Table III.
-    wind_10m = (result["F"] / 10.0).clip(lower=0.62)
-    result["wind_ms"]  = wind_10m * (2.0 / 10.0) ** 0.15
+    result["wind_ms"]  = result["F"] / 10.0
 
     # hoogte station 06260 (De Bilt) = 2m, verwaarloosbaar
     # voor hogere stations (bijv. Maastricht 114m) wel corrigeren:
@@ -367,15 +359,9 @@ def wbgt_bereken_df(df: pd.DataFrame, stn: int = 260) -> pd.DataFrame:
     #     from datetime import datetime
  
     def _row_wbgt(r):
-        """Bereken WBGT op het einde-uur-tijdstip (KNMI HH-conventie, UTC).
-
-        KNMI rapporteert de instantane waarde op het exacte tijdstip,
-        niet op het midden van het uur. dt_utc is al het einde-uur-tijdstip.
-        """
         dt = r["dt_utc"].to_pydatetime()
         return wbgt_buiten(r["temp_c"], r["rh_pct"], r["wind_ms"], r["q_wm2"],
-                           stn, dt, r["pressure_hpa"])
-
+                        260, dt, r["pressure_hpa"])
     def _row_wbgt_oud(r):
         try:
             # Bouw UTC datetime uit YYYYMMDD + HH (KNMI uurdata kolom HH = 1–24)
@@ -1073,6 +1059,16 @@ def feels_like_calculator(lat,lon,utc_dt):
     wind_ms = c3.number_input("Windsnelheid (m/s)", value=2.0,  min_value=0.5,  max_value=30.0, step=0.5)
     q_wm2   = c4.number_input("Straling (W/m²)",   value=800.0, min_value=0.0,  max_value=1400.0, step=10.0)
 
+    # col1,col2,col3=st.columns(3)
+    # with col1:
+    #     datum_str = st.text_input("Datum referentietabel", "2024-07-15")
+    # with col2:
+    #     tijd_str  = st.text_input("Tijd (lokaal, NL)", "13:00")
+    # with col3:
+    #     lokaal = datetime.strptime(f"{datum_str} {tijd_str}", "%Y-%m-%d %H:%M")
+    #     lokaal_tz = lokaal.replace(tzinfo=ZoneInfo("Europe/Amsterdam"))
+    #     dt_ref = lokaal_tz.astimezone(ZoneInfo("UTC")).replace(tzinfo=None)
+    #     st.write(f"UTC:{dt_ref}")
     result = feels_like_all(temp_c, rh_pct, wind_ms, q_wm2, lat,lon,utc_dt)
 
     niveau, _ = wbgt_risico(result["wbgt_buiten"])
@@ -1204,3 +1200,4 @@ def main():
     wbgt_knmi()
 if __name__=="__main__":
     main()
+    

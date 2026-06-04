@@ -25,9 +25,7 @@ import math
 from datetime import datetime #, timezone
 from typing import Optional
 from datetime import datetime, timedelta
-# from liljegren_wbgt_opus import wbgt_liljegren
-
-current_version = "20260604-150000"
+current_version = "20260528-130000"
 
 # ---------------------------------------------------------------------------
 # Fysische constanten
@@ -51,7 +49,7 @@ EPS_WICK   = 0.95        # emissiviteit wick
 ALPHA_WICK = 0.40        # albedo wick
 EPS_GLOBE  = 0.95        # emissiviteit globe
 ALPHA_GLOBE= 0.05        # albedo globe (zwarte bol)
-ALPHA_SFC  = 0.45        # oppervlakte-albedo (Liljegren 2008 p.648; incl. wit instrument-platform)
+ALPHA_SFC  = 0.20        # oppervlakte-albedo (incl. instrument-effect)
 
 # Standaard KNMI-stationscoördinaten (station → (lat, lon, hoogte_m))
 KNMI_STATIONS: dict[int, tuple[float, float, float]] = {
@@ -219,41 +217,6 @@ def _air_properties(T_film_K: float, P_Pa: float) -> tuple[float, float, float, 
 # Hulpfuncties: fdir-opsplitsing (Liljegren 2008, Eq. 13–14)
 # ---------------------------------------------------------------------------
 
-def _coszda(dt_end: datetime, lat_deg: float, lon_deg: float,
-            interval_min: int = 60, step_min: int = 10) -> float:
-    """Gemiddelde cos(θ) over alleen de belichte sub-stappen in het interval.
-
-    Dit is de `coszda`-aanpak van Kong & Huber (2022) / KNMI:
-    bij zonsopgang/-ondergang zijn maar een paar sub-stappen belicht;
-    door alleen die te middelen voorkom je de cos(θ)→0-explosie in de
-    directe-stralingsterm (1/cos θ) die anders tot te hoge WBGT leidt.
-
-    Args:
-        dt_end:       Einde-uur-tijdstip (UTC, KNMI HH-conventie).
-        lat_deg:      Breedtegraad [°N].
-        lon_deg:      Lengtegraad  [°E].
-        interval_min: Interval in minuten (standaard 60 = uurdata).
-        step_min:     Sub-stapgrootte in minuten (standaard 10).
-
-    Returns:
-        Gemiddelde cos(θ) over belichte sub-stappen ∈ (0, 1].
-        Retourneert -0.5 als de zon het hele interval onder de horizon is
-        (conform Kong & Huber implementatie om deling door nul te vermijden).
-    """
-    dt_begin = dt_end - timedelta(minutes=interval_min)
-    cos_vals = []
-    for i in range(0, interval_min, step_min):
-        # Midden van elk sub-interval
-        dt_sub = dt_begin + timedelta(minutes=i + step_min / 2.0)
-        theta_sub = solar_zenith_angle(dt_sub, lat_deg, lon_deg)
-        cos_t = math.cos(theta_sub)
-        if cos_t > 0.0:   # alleen belichte tijdstippen meenemen
-            cos_vals.append(cos_t)
-    if not cos_vals:
-        return -0.5  # zon geheel onder horizon
-    return sum(cos_vals) / len(cos_vals)
-
-
 def _fdir(S: float, theta: float, d_AU: float) -> float:
     """Fractie directe straling in totale horizontale straling.
 
@@ -275,7 +238,7 @@ def _fdir(S: float, theta: float, d_AU: float) -> float:
         return 0.0
     # Liljegren Eq. 13
     fd = math.exp(3.0 - 1.34 * S_star - 1.65 / S_star)
-    return max(0.0, min(0.9, fd))  # KNMI TR-26-04 §3.6: FDIR begrensd op [0, 0.9]
+    return max(0.0, min(1.0, fd))
 
 
 # ---------------------------------------------------------------------------
@@ -316,13 +279,17 @@ def _globe_temp_liljegren(
         Nu = 2.0 + 0.6 * Re**0.5 * Pr**(1.0 / 3.0)
         h  = k / D_GLOBE * Nu
 
-        # Stralingsterm (Liljegren Eq. 17, herschikt).
-        # theta is hier theta_eff afgeleid van czda — nooit <5° effectieve
-        # zonshoogte, dus cos_theta is altijd veilig positief.
+        # Stralingsterm (Liljegren Eq. 17, herschikt)
         cos_theta = math.cos(theta) if theta < math.radians(89.5) else 0.0
 
+        # Directe stralingsterm begrenzen: cos(θ) minimaal 0.087 (= 85°)
+        # zodat 1/(2*cos) maximaal ~5.7 wordt — fysisch realistisch
+        cos_theta_clamped = max(cos_theta, math.cos(math.radians(85.0)))
+        # Begrens 1/(2cosθ) tegen de geometrische explosie bij lage zon.
+        # cos_theta_clamped = max(cos_theta, math.cos(math.radians(80.0)))
+
         solar_term = (S / (2.0 * EPS_GLOBE * SIGMA)) * (1.0 - ALPHA_GLOBE) * (
-            1.0 + (1.0 / (2.0 * max(cos_theta, 1e-6)) - 1.0) * fdir + ALPHA_SFC
+            1.0 + (1.0 / (2.0 * cos_theta_clamped) - 1.0) * fdir + ALPHA_SFC
         )
 
         T_g_base = (
@@ -443,11 +410,6 @@ def _nat_bol_temp_liljegren(
 # ---------------------------------------------------------------------------
 
    
-# Constante fdir voor KNMI 10-minutenwaarnemingen (TR-26-04 §3.5.2).
-# Geen directe stralingsmeting beschikbaar → vaste waarde 0.8.
-FDIR_KNMI_OBS = 0.8
-
-
 def wbgt_liljegren(
     temp_c: float,
     rh_pct: float,
@@ -457,7 +419,7 @@ def wbgt_liljegren(
     lon: float,
     dt: datetime,
     pressure_hpa: float = 1013.25,
-    fdir_mode: str = "knmi_obs",
+    use_solar_geometry: bool = False,
 ) -> float:
     """Bereken WBGT (buiten, zon) via de volledige Liljegren (2008) methode.
 
@@ -470,14 +432,9 @@ def wbgt_liljegren(
         q_wm2:        Totale horizontale straling [W m⁻²].
         lat:          Breedtegraad [°N].
         lon:          Lengtegraad  [°E].
-        dt:           UTC datum/tijd (einde-uur, KNMI HH-conventie).
+        dt:           UTC datum/tijd.
         pressure_hpa: Luchtdruk [hPa], standaard 1013.25.
-        fdir_mode:    Methode voor fractie directe straling:
-                      - 'knmi_obs' (default): vaste waarde 0.8, conform KNMI TR-26-04
-                        §3.5.2 voor 10-minutenwaarnemingen zonder directe stralingsmeting.
-                      - 'berekend': dynamische berekening via Liljegren Eq. 13 op basis
-                        van S/S_max. Fysisch correcter bij heldere omstandigheden en
-                        voor gebruik met modelverwachtingen die fdir wel leveren.
+        use_solar_geometry: True als het berekend moet worden met tijd, False als de gegeven waarde wordt genomen
 
     Returns:
         WBGT [°C].
@@ -487,45 +444,38 @@ def wbgt_liljegren(
     P_Pa  = pressure_hpa * 100.0
     S     = max(q_wm2, 0.0)
     wind_ms = max(wind_ms, 0.5)   # Liljegren: methode niet geldig < 0.5 m/s
-
-    # Sensorkalibratiecorrectie (Liljegren C-code, calc_solar_parameters):
-    # als S/S_max > NORMSOLAR_MAX (0.85) dan wordt S afgekapt.
-    NORMSOLAR_MAX = 0.85
-
+    
     # Zonnegeometrie
-    doy  = _day_of_year(dt)
-    d_AU = _earth_sun_distance(doy)
+    doy   = _day_of_year(dt)
+    d_AU  = _earth_sun_distance(doy)
+   
+    
+    # theta = solar_zenith_angle(dt, lat, lon)
+    # gebruik het midden van het uurinterval
+    # KNMI labelt HH als einde van het uurinterval (HH=6 → 05:00-06:00).
+    # Neem het midden van het interval; data en solver zijn beide in UTC.
+    # dt = dt - timedelta(minutes=30) # 120 minutes for utc vs est. 30 min to be in the middle of the hour
 
-    # coszda: gemiddelde cos(θ) over alleen belichte sub-stappen (Kong & Huber 2022 / KNMI).
-    czda = _coszda(dt, lat, lon)
+    theta = solar_zenith_angle(dt, lat, lon)
+    # theta = theta - math.radians(2)
+    # if theta >= math.radians(89.5):
+    #     S = 0.0   # zon onder horizon: negeer eventuele reststraling
 
-    if czda <= 0.0:
-        # Zon geheel onder horizon
-        theta_eff = math.radians(90.0)
-        fd = 0.0
-    else:
-        theta_eff = math.acos(min(czda, 1.0))
-        # Sensorkalibratiecorrectie: begrens S op NORMSOLAR_MAX * S_max
-        S_max = S0 * czda / d_AU**2
-        if S_max > 0.0:
-            normsolar = min(S / S_max, NORMSOLAR_MAX)
-            S = normsolar * S_max
+    fd    = _fdir(S, theta, d_AU)
+    # fd=1
 
-        if fdir_mode == "knmi_obs":
-            # KNMI TR-26-04 §3.5.2: vaste fdir=0.8 voor 10-minutenwaarnemingen
-            fd = FDIR_KNMI_OBS if S > 0.0 else 0.0
-        else:
-            # Dynamisch berekend via Liljegren Eq. 13
-            fd = _fdir(S, theta_eff, d_AU)
+    # S_max_ref = S0 / d_AU**2  # maximale straling bij θ=0, geen atmosfeer
+    # S_star = S / S_max_ref    # 0..1 onafhankelijk van tijdstip
+    # fd = math.exp(3 - 1.34*S_star - 1.65/S_star) if 0 < S_star < 1 else (1.0 if S_star >= 1 else 0.0)
 
     # Atmosferische emissiviteit (Liljegren 2008, p. 648)
-    e_a     = RH * _saturation_vapor_pressure(T_a)   # [Pa]
-    e_a_hPa = e_a / 100.0                             # [hPa]
-    eps_a   = 0.575 * e_a_hPa**0.143
+    e_a   = RH * _saturation_vapor_pressure(T_a)          # [Pa]
+    e_a_hPa = e_a / 100.0                                  # [hPa]
+    eps_a = 0.575 * e_a_hPa**0.143
 
-    # Submodellen — theta_eff op basis van coszda, nooit kleiner dan ~cos(85°)
-    T_g = _globe_temp_liljegren(T_a, wind_ms, S, fd, theta_eff, P_Pa, eps_a)
-    T_w = _nat_bol_temp_liljegren(T_a, RH, wind_ms, S, fd, theta_eff, P_Pa, eps_a)
+    # Submodellen
+    T_g = _globe_temp_liljegren(T_a, wind_ms, S, fd, theta, P_Pa, eps_a)
+    T_w = _nat_bol_temp_liljegren(T_a, RH, wind_ms, S, fd, theta, P_Pa, eps_a)
 
     # WBGT (Liljegren Eq. 1)
     wbgt_K = 0.7 * T_w + 0.2 * T_g + 0.1 * T_a
@@ -540,13 +490,11 @@ def wbgt_liljegren_from_station(
     stn: int,
     dt: datetime,
     pressure_hpa: float = 1013.25,
-    fdir_mode: str = "knmi_obs",
 ) -> float:
     """Zelfde als wbgt_liljegren maar met KNMI-stationnummer als locatie-input.
 
     Args:
-        stn:       KNMI-stationnummer (bijv. 260 voor De Bilt).
-        fdir_mode: Zie wbgt_liljegren(); default 'knmi_obs'.
+        stn: KNMI-stationnummer (bijv. 260 voor De Bilt).
 
     Raises:
         KeyError: als het stationnummer niet bekend is.
@@ -557,7 +505,7 @@ def wbgt_liljegren_from_station(
             f"Bekende stations: {sorted(KNMI_STATIONS.keys())}"
         )
     lat, lon, _ = KNMI_STATIONS[stn]
-    return wbgt_liljegren(temp_c, rh_pct, wind_ms, q_wm2, lat, lon, dt, pressure_hpa, fdir_mode)
+    return wbgt_liljegren(temp_c, rh_pct, wind_ms, q_wm2, lat, lon, dt, pressure_hpa)
 
 
 # ---------------------------------------------------------------------------

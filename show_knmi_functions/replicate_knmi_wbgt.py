@@ -90,8 +90,8 @@ def referentie_tabel_based_on_history(df):
         "grafiek op deze pagina te zien is."
     )
 
-    temps = list(range(16, 39, 1))
-    rhs   = list(range(10, 105, 5))
+    temps = list(range(16, 38, 1))
+    rhs   = list(range(15, 105, 5))
 
     z         = []
     z_sd      = []
@@ -112,8 +112,8 @@ def referentie_tabel_based_on_history(df):
 
         for temp in temps:
             df_temp = df[
-                (df["temp_c"]  > temp - 1)   & (df["temp_c"]  < temp + 1) &
-                (df["rh_pct"]  > rh   - 2.5) & (df["rh_pct"]  < rh   + 2.5)
+                (df["temp_c"]  >= temp - 0.5)   & (df["temp_c"]  < temp + 0.5) &
+                (df["rh_pct"]  >= rh   - 2.5) & (df["rh_pct"]  < rh   + 2.5)
             ]
 
             if len(df_temp) > 0:
@@ -589,9 +589,9 @@ def show_historical_data():
     st.write("De dagmax waardes zijn de rijen met de hoogste wbgt-buiten-waarde per dag")
   
     df,df_dagmax= get_data()
-    with st.container("Waardes"):
-        st.write (df)
-        
+    df = df.sort_values(by='wbgt_buiten', ascending=False)
+    st.write (df)
+
     referentie_tabel_based_on_history(df)
     
     toon_verdeling_waardes(df, df_dagmax)
