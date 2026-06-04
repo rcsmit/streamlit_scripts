@@ -10,7 +10,7 @@ import plotly.graph_objects as go
 import streamlit as st
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
-from wbgt_knmi import wbgt_bereken_df
+from wbgt_utils import wbgt_bereken_df
 from datetime import datetime, timedelta
 st.set_page_config(
     page_title="Vergelijk WBGT",
@@ -22,7 +22,12 @@ FOLDER_DEFAULT = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\sho
 
 
 def download_voor_vergelijking():
+    """Laad daggegevens en bereken WBGT.
+    Returns:
+        df: daggegevens + wbgt + hk
+    """
     
+
     stn = 260
     start_ = "2026-01-01"
     start_ = "2026-05-20"
@@ -67,18 +72,9 @@ def download_voor_vergelijking():
     df["DD"] = df["YYYYMMDD"].dt.day
     df["dayofyear"] = df["YYYYMMDD"].dt.dayofyear
     df["id"] =  range(1, len(df) + 1)
-    # df_result = wbgt_bereken_df(df)
-    # windsnelheid corrigeren van 10m naar 2m (EPA power-law, klasse D, rural)
-    # df["F"] = df["F"] * (2.0 / 10.0) ** 0.15
+   
     df_result = wbgt_bereken_df(df, stn=260)
-    # save_df = True
-
-    # if save_df:
-    #     begin = df_result["YYYYMMDD"].min()#.replace("-", "")
-    #     eind  = df_result["YYYYMMDD"].max()#.replace("-", "")
-        # fname_out = "wbgt_knmi_script_20260520_20260601.csv"
-        # df_result.to_csv(fname_out)
-        # print("Info downloaded")
+   
     return df_result
         
 # ── helpers ──────────────────────────────────────────────────────────────────
@@ -225,159 +221,159 @@ def in_de_tijd_plot(df):
         st.plotly_chart(fig, width="stretch")
 
 # ── UI ───────────────────────────────────────────────────────────────────────
+def vergelijk_script_met_knmi_download():
+    st.title("Vergelijk WBGT: script vs KNMI download")
 
-st.title("Vergelijk WBGT: script vs KNMI download")
+    # with st.sidebar:
+    #     st.subheader(":material/folder_open: Bestanden")
+        # folder = st.text_input("Map", value=FOLDER_DEFAULT)
 
-with st.sidebar:
-    st.subheader(":material/folder_open: Bestanden")
-    folder = st.text_input("Map", value=FOLDER_DEFAULT)
+        # csv_files = []
+        # if os.path.isdir(folder):
+        #     csv_files = sorted([f for f in os.listdir(folder) if f.endswith(".csv")])
 
-    csv_files = []
-    if os.path.isdir(folder):
-        csv_files = sorted([f for f in os.listdir(folder) if f.endswith(".csv")])
+        # if csv_files:
+        #     file_knmi   = st.selectbox("KNMI CSV",   csv_files,
+        #                                index=next((i for i, f in enumerate(csv_files) if "script" not in f and "wbgt_knmi" in f), 0))
+        # else:
+        #     st.warning("Geen CSV-bestanden gevonden in deze map.")
+        #     st.stop()
 
-    if csv_files:
-        file_knmi   = st.selectbox("KNMI CSV",   csv_files,
-                                   index=next((i for i, f in enumerate(csv_files) if "script" not in f and "wbgt_knmi" in f), 0))
+    # pad_script = os.path.join(folder, file_script)
+    # pad_knmi   = os.path.join(folder, file_knmi)
+    version = st.sidebar.selectbox("version", ["2.0", "3.0"], 1)
+
+    if version=="2.0":
+        pad_knmi = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/show_knmi_functions/wbgt_knmi_20260520_20260603_v20.csv"
     else:
-        st.warning("Geen CSV-bestanden gevonden in deze map.")
-        st.stop()
+        pad_knmi = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/show_knmi_functions/wbgt_knmi_20260520_20260603.csv"
 
-# pad_script = os.path.join(folder, file_script)
-pad_knmi   = os.path.join(folder, file_knmi)
+    with st.spinner("Bestanden laden en mergen..."):
+        try:
+            merged, df_knmi = laad_en_merge(pad_knmi)
+        except Exception as e:
+            st.error(f"Fout bij laden: {e}")
+            st.stop()
 
-with st.spinner("Bestanden laden en mergen..."):
-    try:
-        merged, df_knmi = laad_en_merge(pad_knmi)
-    except Exception as e:
-        st.error(f"Fout bij laden: {e}")
-        st.stop()
+    st.success(f":material/check_circle: {len(merged)} rijen gemerged", icon=":material/check:")
 
-st.success(f":material/check_circle: {len(merged)} rijen gemerged", icon=":material/check:")
+    # ── KPI-rij ──────────────────────────────────────────────────────────────────
+    with st.container(horizontal=True):
+        st.metric("Rijen", len(merged), border=True)
+        st.metric("Gem. WBGT script", f"{merged['wbgt_script'].mean():.2f} °C", border=True)
+        st.metric("Gem. WBGT KNMI",   f"{merged['wbgt_knmi'].mean():.2f} °C", border=True)
+        st.metric("Gem. % verschil",  f"{merged['wbgt_pct_diff_abs'].mean():.2f} %", border=True)
 
-# ── KPI-rij ──────────────────────────────────────────────────────────────────
-with st.container(horizontal=True):
-    st.metric("Rijen", len(merged), border=True)
-    st.metric("Gem. WBGT script", f"{merged['wbgt_script'].mean():.2f} °C", border=True)
-    st.metric("Gem. WBGT KNMI",   f"{merged['wbgt_knmi'].mean():.2f} °C", border=True)
-    st.metric("Gem. % verschil",  f"{merged['wbgt_pct_diff_abs'].mean():.2f} %", border=True)
+    st.space("small")
 
-st.space("small")
 
-# ── Tabs ─────────────────────────────────────────────────────────────────────
-tab1, tab2, tab3, tab4, tab5,tab6 = st.tabs([
-    ":material/scatter_plot: WBGT scatter",
-    ":material/scatter_plot: HK scatter",
-    ":material/scatter_plot: Uur vs verschil",
-    ":material/bar_chart: Regressie",
-    ":material/table: Data",
-    ":material/scatter_plot: KNMI Data",
-])
+    with st.expander( ":material/scatter_plot: WBGT scatter"):
+        
+        fig_wbgt = scatter_plot(merged, "wbgt_script", "wbgt_knmi", "WBGT script vs KNMI-value")
+        st.plotly_chart(fig_wbgt, width="stretch")
 
-with tab1:
-    
-    fig_wbgt = scatter_plot(merged, "wbgt_script", "wbgt_knmi", "WBGT script vs KNMI-value")
-    st.plotly_chart(fig_wbgt, width="stretch")
+        fig_wbgt = scatter_plot(merged, "temp_c", "wbgt_knmi", "KNMI-value vs real tempeature")
+        st.plotly_chart(fig_wbgt, width="stretch")
 
-    fig_wbgt = scatter_plot(merged, "temp_c", "wbgt_knmi", "KNMI-value vs real tempeature")
-    st.plotly_chart(fig_wbgt, width="stretch")
+        fig_wbgt = scatter_plot(merged, "temp_c","wbgt_script", "WBGT script vs real temperature")
+        st.plotly_chart(fig_wbgt, width="stretch")
 
-    fig_wbgt = scatter_plot(merged, "temp_c","wbgt_script", "WBGT script vs real temperature")
-    st.plotly_chart(fig_wbgt, width="stretch")
-
-    fig_wbgt = px.scatter(
-            merged,
-            x="uur",
-            y="wbgt_pct_diff")
-    
-    st.plotly_chart(fig_wbgt, width="stretch")
-
-with tab2:
-    fig_hk = scatter_plot(merged, "hk_script", "hk_knmi", "Hittekracht (HK) script vs KNMI")
-    st.plotly_chart(fig_hk, width="stretch")
-
-with tab3:
-    for w in ["wbgt_pct_diff", "hk_abs_diff"]:
-        fig_uur = px.scatter(
-            merged,
-            x="uur",
-            y=w,
-            color="solar_elevation",          # ← dit toevoegen
-            color_continuous_scale="RdYlBu_r",
-            range_color=[-10, 60],
-         
-            hover_data=["datum"] + [c for c in ["temp_c", "wind_ms", "rh_pct", "q_wm2"] if c in merged.columns],
-            opacity=0.6,
-            title=f"{w} vs Uur van de dag",
-            labels={"uur": "Uur (UTC)", "wbgt_pct_diff": "WBGT verschil (%)"},
-        )
-        fig_uur.add_hline(y=0, line_dash="dash", line_color="black", line_width=1)
-        fig_uur.update_layout(height=450, xaxis=dict(tickmode="linear", dtick=1))
-        st.plotly_chart(fig_uur, width="stretch")
-
-    
-    st.info("Negatief : KNMI hoger")
-    for w in ["temp_c","wind_ms", "rh_pct", "q_wm2","solar_elevation" ]:
-        fig_uur = px.scatter(
+        fig_wbgt = px.scatter(
                 merged,
-                x=w,
-                y="wbgt_pct_diff",
-                
-                title=f" wbgt pct diff vs {w} ",
+                x="uur",
+                y="wbgt_pct_diff")
+        
+        st.plotly_chart(fig_wbgt, width="stretch")
+
+    with st.expander(":material/scatter_plot: HK scatter"):
+        fig_hk = scatter_plot(merged, "hk_script", "hk_knmi", "Hittekracht (HK) script vs KNMI")
+        st.plotly_chart(fig_hk, width="stretch")
+
+    with st.expander(":material/scatter_plot: Uur vs verschil"):
+        for w in ["wbgt_pct_diff", "hk_abs_diff"]:
+            fig_uur = px.scatter(
+                merged,
+                x="uur",
+                y=w,
+                color="solar_elevation",          # ← dit toevoegen
+                color_continuous_scale="RdYlBu_r",
+                range_color=[-10, 60],
+            
+                hover_data=["datum"] + [c for c in ["temp_c", "wind_ms", "rh_pct", "q_wm2"] if c in merged.columns],
+                opacity=0.6,
+                title=f"{w} vs Uur van de dag",
                 labels={"uur": "Uur (UTC)", "wbgt_pct_diff": "WBGT verschil (%)"},
             )
-            
-        st.plotly_chart(fig_uur, width="stretch")
-    for col, label in [("wbgt_pct_diff", "WBGT % verschil"), ("hk_abs_diff", "HK absoluut verschil")]:
-        fig = px.histogram(
-            merged, x=col,
-            nbins=50,
-            title=f"Verdeling {label}",
-            labels={col: label},
-        )
-        fig.add_vline(x=0, line_dash="dash", line_color="black")
-        fig.add_vline(x=merged[col].mean(), line_dash="dot", line_color="red",
-                    annotation_text=f"gem={merged[col].mean():.2f}", annotation_position="top right")
-        fig.update_layout(height=400)
-        st.plotly_chart(fig, width="stretch")
-with tab4:
-    if not all(c in merged.columns for c in ["temp_c", "wind_ms", "rh_pct", "q_wm2"]):
-        st.warning("Meteo-kolommen (temp_c, wind_ms, rh_pct, q_wm2) niet gevonden in script CSV.")
-    else:
-        fig_reg, stats = regressie_plot(merged)
-        st.plotly_chart(fig_reg, width="stretch")
+            fig_uur.add_hline(y=0, line_dash="dash", line_color="black", line_width=1)
+            fig_uur.update_layout(height=450, xaxis=dict(tickmode="linear", dtick=1))
+            st.plotly_chart(fig_uur, width="stretch")
 
-        with st.expander(":material/info: Regressie-details"):
-            col_a, col_b = st.columns(2)
-            with col_a:
-                st.metric("R²",        f"{stats['r2']:.4f}", border=True)
-                st.metric("N",         stats["n"],           border=True)
-                st.metric("Intercept", f"{stats['intercept']:.4f}", border=True)
-            with col_b:
-                st.dataframe(
-                    pd.DataFrame.from_dict(stats["coef"], orient="index", columns=["coëfficiënt"]).round(4),
-                    hide_index=False,
-                    width="stretch",
+        
+        st.info("Negatief : KNMI hoger")
+        for w in ["temp_c","wind_ms", "rh_pct", "q_wm2","solar_elevation" ]:
+            fig_uur = px.scatter(
+                    merged,
+                    x=w,
+                    y="wbgt_pct_diff",
+                    
+                    title=f" wbgt pct diff vs {w} ",
+                    labels={"uur": "Uur (UTC)", "wbgt_pct_diff": "WBGT verschil (%)"},
                 )
+                
+            st.plotly_chart(fig_uur, width="stretch")
+        for col, label in [("wbgt_pct_diff", "WBGT % verschil"), ("hk_abs_diff", "HK absoluut verschil")]:
+            fig = px.histogram(
+                merged, x=col,
+                nbins=50,
+                title=f"Verdeling {label}",
+                labels={col: label},
+            )
+            fig.add_vline(x=0, line_dash="dash", line_color="black")
+            fig.add_vline(x=merged[col].mean(), line_dash="dot", line_color="red",
+                        annotation_text=f"gem={merged[col].mean():.2f}", annotation_position="top right")
+            fig.update_layout(height=400)
+            st.plotly_chart(fig, width="stretch")
+    with st.expander(":material/bar_chart: Regressie"):
+        if not all(c in merged.columns for c in ["temp_c", "wind_ms", "rh_pct", "q_wm2"]):
+            st.warning("Meteo-kolommen (temp_c, wind_ms, rh_pct, q_wm2) niet gevonden in script CSV.")
+        else:
+            fig_reg, stats = regressie_plot(merged)
+            st.plotly_chart(fig_reg, width="stretch")
 
-with tab5:
-    st.dataframe(
-        merged.round(3),
-        hide_index=True,
-        width="stretch",
-        column_config={
-            "wbgt_pct_diff": st.column_config.NumberColumn("% verschil WBGT", format="%.2f %%"),
-            "wbgt_script":   st.column_config.NumberColumn("WBGT script",     format="%.2f"),
-            "wbgt_knmi":     st.column_config.NumberColumn("WBGT KNMI",       format="%.2f"),
-        },
-    )
-    st.download_button(
-        label=":material/download: Download CSV",
-        data=merged.to_csv(index=False).encode("utf-8"),
-        file_name="wbgt_vergelijking.csv",
-        mime="text/csv",
-    )
+            with st.expander(":material/info: Regressie-details"):
+                col_a, col_b = st.columns(2)
+                with col_a:
+                    st.metric("R²",        f"{stats['r2']:.4f}", border=True)
+                    st.metric("N",         stats["n"],           border=True)
+                    st.metric("Intercept", f"{stats['intercept']:.4f}", border=True)
+                with col_b:
+                    st.dataframe(
+                        pd.DataFrame.from_dict(stats["coef"], orient="index", columns=["coëfficiënt"]).round(4),
+                        hide_index=False,
+                        width="stretch",
+                    )
 
-with tab6:
-    in_de_tijd_plot(merged)
-    
+    with st.expander(":material/table: Data"):
+        st.dataframe(
+            merged.round(3),
+            hide_index=True,
+            width="stretch",
+            column_config={
+                "wbgt_pct_diff": st.column_config.NumberColumn("% verschil WBGT", format="%.2f %%"),
+                "wbgt_script":   st.column_config.NumberColumn("WBGT script",     format="%.2f"),
+                "wbgt_knmi":     st.column_config.NumberColumn("WBGT KNMI",       format="%.2f"),
+            },
+        )
+        st.download_button(
+            label=":material/download: Download CSV",
+            data=merged.to_csv(index=False).encode("utf-8"),
+            file_name="wbgt_vergelijking.csv",
+            mime="text/csv",
+        )
+
+    with st.expander(":material/scatter_plot: KNMI Data"):
+        in_de_tijd_plot(merged)
+
+
+if __name__=="__main__":
+    vergelijk_script_met_knmi_download()      

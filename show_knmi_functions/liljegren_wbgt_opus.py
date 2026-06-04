@@ -64,6 +64,46 @@ TRUE = 1
 FALSE = 0
 
 
+# Standaard KNMI-stationscoördinaten (station → (lat, lon, hoogte_m))
+KNMI_STATIONS: dict[int, tuple[float, float, float]] = {
+    210: (52.165,  4.419,  -0.2),   # Valkenburg
+    235: (52.924,  4.781,   1.2),   # De Kooy
+    240: (52.318,  4.790,  -3.3),   # Schiphol
+    242: (53.241,  4.897,  10.8),   # Vlieland
+    249: (52.644,  4.979,   2.4),   # Berkhout
+    251: (53.392,  5.346,   0.7),   # Hoorn (Terschelling)
+    257: (52.506,  5.747,   1.3),   # Wijk aan Zee
+    258: (52.047,  5.177,   1.9),   # De Bilt (hoofdstation)
+    260: (52.100,  5.180,   2.0),   # De Bilt (uurdata)
+    265: (52.130,  5.274,   1.9),   # Soesterberg
+    267: (52.898,  5.384,  -1.3),   # Stavoren
+    269: (52.458,  5.520,  -3.7),   # Lelystad
+    270: (53.224,  5.752,   1.2),   # Leeuwarden
+    273: (52.703,  5.888,  -3.3),   # Marknesse
+    275: (52.056,  5.888,  48.2),   # Deelen
+    277: (53.413,  6.200,   2.9),   # Lauwersoog
+    278: (52.435,  6.259,   3.6),   # Heino
+    279: (52.750,  6.574,  15.8),   # Hoogeveen
+    280: (53.125,  6.585,   5.2),   # Eelde
+    283: (52.644,  6.657,  29.1),   # Hupsel
+    286: (53.198,  7.150,   0.0),   # Nieuw Beerta
+    290: (52.274,  6.891,  34.8),   # Twenthe
+    310: (51.442,  3.596,   8.0),   # Vlissingen
+    319: (51.226,  3.861,   1.7),   # Westdorpe
+    323: (51.527,  3.884,   1.4),   # Wilhelminadorp
+    330: (51.992,  4.122,  11.9),   # Hoek van Holland
+    340: (51.449,  4.342,  19.2),   # Woensdrecht
+    344: (51.962,  4.447,  -4.3),   # Rotterdam
+    348: (51.971,  4.926,  -0.7),   # Cabauw
+    350: (51.566,  4.936,  14.9),   # Gilze-Rijen
+    356: (51.859,  5.146,   7.5),   # Herwijnen
+    370: (51.451,  5.377,  22.6),   # Eindhoven
+    375: (51.659,  5.707,  26.8),   # Volkel
+    377: (51.198,  5.762,  30.0),   # Ell
+    380: (50.906,  5.762, 114.3),   # Maastricht
+    391: (51.499,  6.197,  19.5),   # Arcen
+}
+
 # ---------------------------------------------------------------------------
 # Thermofysische eigenschappen van lucht en water
 # ---------------------------------------------------------------------------
@@ -82,9 +122,22 @@ def esat(tk: float, phase: int) -> float:
     es = 1.004 * es
     return es
 
-
 def dew_point(e: float, phase: int) -> float:
     """Dauwpunt (phase=0) of vriespunt (phase=1) in K."""
+    if phase == 0:
+        e = max(e, 1e-6)          # guard against log(0) at RH≈0
+        z = math.log(e / (6.1121 * 1.004))
+        tdk = 273.15 + 240.97 * z / (17.502 - z)
+    else:
+        e = max(e, 1e-6)
+        z = math.log(e / (6.1115 * 1.004))
+        tdk = 273.15 + 272.55 * z / (22.452 - z)
+    return tdk
+
+def dew_point_(e: float, phase: int) -> float:
+    """Dauwpunt (phase=0) of vriespunt (phase=1) in K."""
+
+    # gives math domain error
     if phase == 0:  # dauwpunt
         z = math.log(e / (6.1121 * 1.004))
         tdk = 273.15 + 240.97 * z / (17.502 - z)
@@ -136,9 +189,14 @@ def evap(Tair: float) -> float:
 
 def emis_atm(Tair: float, rh: float) -> float:
     """Atmosferische emissiviteit. Referentie: Oke (2e ed.), p. 373."""
+    #might give math domain error
     e = rh * esat(Tair, 0)
     return 0.575 * e ** 0.143
 
+def emis_atm(Tair: float, rh: float) -> float:
+    """Atmosferische emissiviteit. Referentie: Oke (2e ed.), p. 373."""
+    e = max(rh * esat(Tair, 0), 1e-6)
+    return 0.575 * e ** 0.143
 
 # ---------------------------------------------------------------------------
 # Convectieve warmteoverdrachtscoëfficiënten
@@ -625,7 +683,7 @@ def wbgt_liljegren_opus(
 
 
 
-def wbgt_liljegren_from_station(
+def wbgt_liljegren_from_station_opus(
     temp_c: float,
     rh_pct: float,
     wind_ms: float,
@@ -653,49 +711,10 @@ def wbgt_liljegren_from_station(
     return wbgt_liljegren_opus(temp_c, rh_pct, wind_ms, q_wm2, lat, lon, dt, pressure_hpa)
 
 
-# Standaard KNMI-stationscoördinaten (station → (lat, lon, hoogte_m))
-KNMI_STATIONS: dict[int, tuple[float, float, float]] = {
-    210: (52.165,  4.419,  -0.2),   # Valkenburg
-    235: (52.924,  4.781,   1.2),   # De Kooy
-    240: (52.318,  4.790,  -3.3),   # Schiphol
-    242: (53.241,  4.897,  10.8),   # Vlieland
-    249: (52.644,  4.979,   2.4),   # Berkhout
-    251: (53.392,  5.346,   0.7),   # Hoorn (Terschelling)
-    257: (52.506,  5.747,   1.3),   # Wijk aan Zee
-    258: (52.047,  5.177,   1.9),   # De Bilt (hoofdstation)
-    260: (52.100,  5.180,   2.0),   # De Bilt (uurdata)
-    265: (52.130,  5.274,   1.9),   # Soesterberg
-    267: (52.898,  5.384,  -1.3),   # Stavoren
-    269: (52.458,  5.520,  -3.7),   # Lelystad
-    270: (53.224,  5.752,   1.2),   # Leeuwarden
-    273: (52.703,  5.888,  -3.3),   # Marknesse
-    275: (52.056,  5.888,  48.2),   # Deelen
-    277: (53.413,  6.200,   2.9),   # Lauwersoog
-    278: (52.435,  6.259,   3.6),   # Heino
-    279: (52.750,  6.574,  15.8),   # Hoogeveen
-    280: (53.125,  6.585,   5.2),   # Eelde
-    283: (52.644,  6.657,  29.1),   # Hupsel
-    286: (53.198,  7.150,   0.0),   # Nieuw Beerta
-    290: (52.274,  6.891,  34.8),   # Twenthe
-    310: (51.442,  3.596,   8.0),   # Vlissingen
-    319: (51.226,  3.861,   1.7),   # Westdorpe
-    323: (51.527,  3.884,   1.4),   # Wilhelminadorp
-    330: (51.992,  4.122,  11.9),   # Hoek van Holland
-    340: (51.449,  4.342,  19.2),   # Woensdrecht
-    344: (51.962,  4.447,  -4.3),   # Rotterdam
-    348: (51.971,  4.926,  -0.7),   # Cabauw
-    350: (51.566,  4.936,  14.9),   # Gilze-Rijen
-    356: (51.859,  5.146,   7.5),   # Herwijnen
-    370: (51.451,  5.377,  22.6),   # Eindhoven
-    375: (51.659,  5.707,  26.8),   # Volkel
-    377: (51.198,  5.762,  30.0),   # Ell
-    380: (50.906,  5.762, 114.3),   # Maastricht
-    391: (51.499,  6.197,  19.5),   # Arcen
-}
 
 if __name__ == "__main__":
     # Validatievoorbeeld: warme zomermiddag, Nederland.
-    demo = wbgt_liljegren(
+    demo = wbgt_liljegren_opus(
         temp_c=30.0,
         rh_pct=50.0,
         wind_ms=1.0,
