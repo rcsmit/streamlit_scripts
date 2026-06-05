@@ -38,7 +38,7 @@ def prepare_data():
     het zou waarschijnlijk ook automatisch kunnen. """
     # https://www.daggegevens.knmi.nl/klimatologie/uurgegevens?stns=260&vars=T:U:FH:Q&start=2011010100&end=2025070323
     url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\show_knmi_functions\wbgt_data_daggegevens_1991_2026.csv"
-    # url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/show_knmi_functions/wbgt_results_1990_2026.csv"
+    # url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/wbgt/wbgt_results_1990_2026.csv"
     df = pd.read_csv(url, delimiter=",",
                 header= None,
                 comment="#",
@@ -77,7 +77,7 @@ def prepare_data():
 def get_data():
     """"Laad de berekende data"""
     # url=r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\show_knmi_functions\wbgt_results_1990_2026.csv"
-    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/show_knmi_functions/wbgt_results_1990_2026.csv"
+    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/wbgt/wbgt_results_1990_2026.csv"
     
     # 0,260,1990-01-01,1,5,4,0,93,1990,1,1,1,1,0.4,0.5,93,0.0,1990-01-01 01:00:00,-0.9,-0.1,6.5,0.4,HK 0,Laag risico
     # tot
