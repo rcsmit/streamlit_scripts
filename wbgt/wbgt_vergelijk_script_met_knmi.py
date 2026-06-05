@@ -74,7 +74,8 @@ def download_voor_vergelijking():
     df["id"] =  range(1, len(df) + 1)
    
     df_result = wbgt_bereken_df(df, stn=260)
-   
+    
+
     return df_result
         
 # ── helpers ──────────────────────────────────────────────────────────────────
@@ -127,6 +128,11 @@ def laad_en_merge( pad_knmi: str) -> pd.DataFrame:
 
     merged["solar_elevation"] = merged.apply(_elevatie, axis=1)
     # merged = merged[(merged["uur"]>=8) & (merged["uur"]<=20)]
+    
+    min,max = st.slider('Minimaal uren - max uren (incl.)', min_value=0, max_value=24, value=(0, 24))
+
+    merged = merged[(merged["uur"]>= min) & (merged["uur"]<= max)]
+
     return merged, df_knmi
 
 
@@ -241,7 +247,7 @@ def vergelijk_script_met_knmi_download():
 
     # pad_script = os.path.join(folder, file_script)
     # pad_knmi   = os.path.join(folder, file_knmi)
-    version = st.sidebar.selectbox("version", ["2.0", "3.0"], 1)
+    version = st.selectbox("version KNMI dataset", ["2.0", "3.0"], 1)
 
     if version=="2.0":
         pad_knmi = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/wbgt/wbgt_knmi_20260520_20260603_v20.csv"
@@ -249,11 +255,11 @@ def vergelijk_script_met_knmi_download():
         pad_knmi = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/wbgt/wbgt_knmi_20260520_20260603_v30.csv"
 
     with st.spinner("Bestanden laden en mergen..."):
-        try:
-            merged, df_knmi = laad_en_merge(pad_knmi)
-        except Exception as e:
-            st.error(f"Fout bij laden: {e}")
-            st.stop()
+        # try:
+        merged, df_knmi = laad_en_merge(pad_knmi)
+        # except Exception as e:
+        #     st.error(f"Fout bij laden: {e}")
+        #     st.stop()
 
     st.success(f":material/check_circle: {len(merged)} rijen gemerged", icon=":material/check:")
 

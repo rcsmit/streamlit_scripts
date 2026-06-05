@@ -27,7 +27,7 @@ try:
 # if 1==1:
     from wbgt_utils import wbgt_bereken_df,maak_wbgt_barchart, wbgt_risico, KNMI_DREMPELWAARDEN,BADGE_KLEUREN_KNMI, BADGE_KLEUREN_WBGT, ZONE_KLEUREN_WBGT, ZONE_KLEUREN_KNMI, RISICO_ZONES_KNMI, RISICO_ZONES_WBGT
 except:
-    from show_knmi_functions.wbgt_utils import wbgt_bereken_df,maak_wbgt_barchart, wbgt_risico, KNMI_DREMPELWAARDEN,BADGE_KLEUREN_KNMI, BADGE_KLEUREN_WBGT, ZONE_KLEUREN_WBGT, ZONE_KLEUREN_KNMI, RISICO_ZONES_KNMI, RISICO_ZONES_WBGT
+    from wbgt.wbgt_utils import wbgt_bereken_df,maak_wbgt_barchart, wbgt_risico, KNMI_DREMPELWAARDEN,BADGE_KLEUREN_KNMI, BADGE_KLEUREN_WBGT, ZONE_KLEUREN_WBGT, ZONE_KLEUREN_KNMI, RISICO_ZONES_KNMI, RISICO_ZONES_WBGT
 
 # =======================================
 

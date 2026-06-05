@@ -29,9 +29,9 @@ try:
 # try:
 #     print ("")    
 except:
-    from show_knmi_functions.utils import calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
-    from show_knmi_functions.wbgt_solar_app import solar_wrapper
-    from show_knmi_functions.wbgt_liljegren import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
+    from wbgt.utils import calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
+    from wbgt.wbgt_solar_app import solar_wrapper
+    from wbgt.wbgt_liljegren import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
 
 # # version : 20260526-120000 - Initial version: WBGT berekening met KNMI dagdata
 current_version = "20260604-160000"
@@ -720,7 +720,8 @@ def render_wbgt_chart(df, only_dagmax) -> None:
         only_dagmax : Boolean - alleen max waardes?
     """
     # --- Filters in sidebar ---
-    with st.sidebar:
+    c1,c2,c3=st.columns([1,2,1])
+    with c1:
         st.subheader(":material/thermostat: Filters")
 
         jaren = sorted(df["YYYY"].unique()) if "YYYY" in df.columns else []
@@ -729,7 +730,7 @@ def render_wbgt_chart(df, only_dagmax) -> None:
                 "Jaar", jaren, default=jaren[-3:] if len(jaren) >= 3 else jaren
             )
             df = df[df["YYYY"].isin(jaar_keuze)] if jaar_keuze else df
-
+    with c2:
         maanden = list(range(1, 13))
         maand_labels = {
             1: "Jan", 2: "Feb", 3: "Mrt", 4: "Apr",
@@ -744,10 +745,10 @@ def render_wbgt_chart(df, only_dagmax) -> None:
         )
         if maand_keuze and "MM" in df.columns:
             df = df[df["MM"].isin(maand_keuze)]
-
+    with c3:
         toon_temp = st.toggle("Toon luchttemperatuur", value=True)
 
-        st.caption(f"v{current_version}")
+        
 
     if df.empty:
         st.warning("Geen data voor de geselecteerde filters.")
@@ -1113,12 +1114,16 @@ def main_():
     start_ = "2026-05-20"
     
     today = datetime.today().strftime("%Y-%m-%d")
-    from__ = st.sidebar.text_input("start datum (yyyy-mm-dd) from 1-1-1900", start_, key="wbgt1")
-    until__ = st.sidebar.text_input("end datum (yyyy-mm-dd)", today, key="wbgt2")
+    c1,c2,c3=st.columns(3)
+    with c1:
+        from__ = st.text_input("start datum (yyyy-mm-dd) ", start_, key="wbgt1")
+    with c2:
+        until__ = st.text_input("end datum (yyyy-mm-dd)", today, key="wbgt2")
 
     fromx = from__.replace("-", "")
     until = until__.replace("-", "")
-    only_dagmax = st.sidebar.toggle("Alleen maximale HK's per dag",value=True)
+    with c3:
+        only_dagmax = st.sidebar.toggle("Alleen maximale HK's per dag",value=True)
     
     url = f"https://www.daggegevens.knmi.nl/klimatologie/uurgegevens?stns={stn}&vars=T:U:FF:Q:P&start={fromx}00&end={until}23"
     try:
