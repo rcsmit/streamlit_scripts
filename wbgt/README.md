@@ -26,10 +26,14 @@ Gebaseerd op:
 | Afhankelijkheden | stdlib + numpy | stdlib | numpy + coszenith-kernel |
 | Batchverwerking | nee (scalar) | nee (scalar) | via 3D array |
 | Gebruik in productie | primair | alternatief/validatie | voor klimaatdata (GCM) |
+| MAE vs KNMI (alle uren) | n.v.t. | **0.37 °C** | 0.58 °C |
+| RMSE vs KNMI (alle uren) | n.v.t. | **0.58 °C** | 1.49 °C |
+| RMSE vs KNMI (overdag, Q>50) | n.v.t. | **0.64 °C** | 1.75 °C |
+| Max. afwijking vs KNMI | n.v.t. | 3.5 °C | 20.8 °C |
 
-`wbgt_utils.py` roept standaard `wbgt_liljegren_from_station_cython()` aan (Cython-variant) en valt terug op `wbgt_liljegren_from_station_opus()` (C-code port).
+`wbgt_liljegren_c_code.py` (`wbgt_liljegren_opus`) is de meest nauwkeurige engine ten opzichte van de KNMI-referentiewaarden. De Cython-wrapper heeft bij lage zonshooek (ochtend 05–07u, avond 19–21u) grotere uitschieters door de `0.5/cos(θ)` term in `_Tg_Liljegren_core` die bij `cosz → 0` kan exploderen. De C-code port vangt dit af via de `CZA_MIN = 0.00873` ondergrens.
 
-De drie scripts hebben een hoge correlatie, ook met de KNMI-waardes. Echter in de ochtend (5-7am en avond (7-9pm) zijn er verschillen, door de lage zonnehoek en de manier waarop de scripts er mee omgaan.
+`wbgt_utils.py` roept standaard `wbgt_liljegren_from_station_cython()` aan en valt terug op `wbgt_liljegren_from_station_opus()`.
 ---
 
 ## Bestandsstructuur
