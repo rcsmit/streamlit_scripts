@@ -15,6 +15,21 @@ Gebaseerd op:
 - Liljegren et al. — de oorspronkelijke WBGT-formules
 - Bird & Hulstrom (1981) / Spencer (1971) — clear-sky zonnestraling
 
+
+---
+
+## De drie WBGT-engines vergeleken
+
+| | `wbgt_liljegren.py` | `wbgt_liljegren_c_code.py` | `wbgt_liljegren_cython_wrapper.py` |
+|--|--|--|--|
+| Implementatiebasis | Eigen Python-vertaling | Directe C-code port | Kong & Huber (2022) Cython |
+| Afhankelijkheden | stdlib + numpy | stdlib | numpy + coszenith-kernel |
+| Batchverwerking | nee (scalar) | nee (scalar) | via 3D array |
+| Gebruik in productie | primair | alternatief/validatie | voor klimaatdata (GCM) |
+
+`wbgt_utils.py` roept standaard `wbgt_liljegren_from_station_cython()` aan (Cython-variant) en valt terug op `wbgt_liljegren_from_station_opus()` (C-code port).
+
+De drie scripts hebben een hoge correlatie, ook met de KNMI-waardes. Echter in de ochtend (5-7am en avond (7-9pm) zijn er verschillen, door de lage zonnehoek en de manier waarop de scripts er mee omgaan.
 ---
 
 ## Bestandsstructuur
@@ -356,18 +371,6 @@ Voor de Cython-kernels (`wbgt_liljegren_from_cython`, `wbgt_coszenith_from_cytho
 
 ---
 
-## De drie WBGT-engines vergeleken
-
-| | `wbgt_liljegren.py` | `wbgt_liljegren_c_code.py` | `wbgt_liljegren_cython_wrapper.py` |
-|--|--|--|--|
-| Implementatiebasis | Eigen Python-vertaling | Directe C-code port | Kong & Huber (2022) Cython |
-| Afhankelijkheden | stdlib + numpy | stdlib | numpy + coszenith-kernel |
-| Batchverwerking | nee (scalar) | nee (scalar) | via 3D array |
-| Gebruik in productie | primair | alternatief/validatie | voor klimaatdata (GCM) |
-
-`wbgt_utils.py` roept standaard `wbgt_liljegren_from_station_cython()` aan (Cython-variant) en valt terug op `wbgt_liljegren_from_station_opus()` (C-code port).
-
----
 
 ## Gegevensstroom: één WBGT-berekening
 
@@ -406,3 +409,8 @@ wbgt_liljegren_cython_wrapper.wbgt_liljegren_from_cython()
 - Spencer, J.W. (1971). Fourier series representation of the position of the sun. *Search*, 2(5), 172.  
 - Bird, R.E. & Hulstrom, R.L. (1981). *A simplified clear sky model for direct and diffuse insolation on horizontal surfaces.* SERI/TR-642-761.  
 - Bennett, A.H. (1982). Refraction correction formulas.
+
+- Pereira Marghidan, C., Mokkenstorm, L., (2026) Hittewaarschuwingen: Doorontwikkeling Nationaal Hitteplan RIVM en verdere integratie met waarschuwingssystematiek, KNMI De Bilt,| Wetenschappelijk rapport; WR-26-02 https://cdn.knmi.nl/system/data_center_publications/files/000/072/492/original/WR26-02.pdf?1775760740
+
+- Pereira Marghidan C. et al. (2026) Van Wet Bulb Globe Temperature (WBGT) naar hittekracht
+KNMI number: TR-26-04, https://cdn.knmi.nl/system/data_center_publications/files/000/072/495/original/TR-26-04.pdf?1779885454
