@@ -244,9 +244,9 @@ def vergelijk_script_met_knmi_download():
     version = st.sidebar.selectbox("version", ["2.0", "3.0"], 1)
 
     if version=="2.0":
-        pad_knmi = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/show_knmi_functions/wbgt_knmi_20260520_20260603_v20.csv"
+        pad_knmi = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/wbgt/wbgt_knmi_20260520_20260603_v20.csv"
     else:
-        pad_knmi = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/show_knmi_functions/wbgt_knmi_20260520_20260603_v30.csv"
+        pad_knmi = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/wbgt/wbgt_knmi_20260520_20260603_v30.csv"
 
     with st.spinner("Bestanden laden en mergen..."):
         try:
