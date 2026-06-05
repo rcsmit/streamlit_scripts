@@ -14,6 +14,7 @@ except:
     from show_knmi_functions.wbgt_vergelijk_script_met_knmi import vergelijk_script_met_knmi_download
 def wbgt_knmi():
     with st.sidebar:
+        st.write("Used for tab2,3 and 4")
         lat,lon,utc_dt, loc_name, selected_date, selected_time,tz,LOCATIONS = select_time_place()
 
     tab1,tab2, tab3,tab4,tab5,tab6,tab7=st.tabs(["Main", "Tabel", "Calculator", "Solarinfo","1991-2025","script vs knmi","INFO"])

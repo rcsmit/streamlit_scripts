@@ -246,7 +246,7 @@ def vergelijk_script_met_knmi_download():
     if version=="2.0":
         pad_knmi = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/show_knmi_functions/wbgt_knmi_20260520_20260603_v20.csv"
     else:
-        pad_knmi = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/show_knmi_functions/wbgt_knmi_20260520_20260603.csv"
+        pad_knmi = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/show_knmi_functions/wbgt_knmi_20260520_20260603_v30.csv"
 
     with st.spinner("Bestanden laden en mergen..."):
         try:
@@ -380,8 +380,7 @@ def vergelijk_script_met_knmi_download():
             merged,
             "wbgt_script",
             "wbgt_buiten_cython",
-            
-            title=f"Values Kong (Cython) vs values Liljegren (C)",
+            f"Values Kong (Cython) vs values Liljegren (C)",
             
         )
         st.plotly_chart(fig_uur, width="stretch")
