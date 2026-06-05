@@ -17,9 +17,9 @@ import plotly.graph_objects as go
 
 try:
 # if 1==1:
-    from wbgt_utils import maak_wbgt_barchart, wbgt_risico, KNMI_DREMPELWAARDEN,BADGE_KLEUREN_KNMI, BADGE_KLEUREN_WBGT, ZONE_KLEUREN_WBGT, ZONE_KLEUREN_KNMI, RISICO_ZONES_KNMI, RISICO_ZONES_WBGT
+    from wbgt_utils import wbgt_bereken_df,maak_wbgt_barchart, wbgt_risico, KNMI_DREMPELWAARDEN,BADGE_KLEUREN_KNMI, BADGE_KLEUREN_WBGT, ZONE_KLEUREN_WBGT, ZONE_KLEUREN_KNMI, RISICO_ZONES_KNMI, RISICO_ZONES_WBGT
 except:
-    from show_knmi_functions.utils import maak_wbgt_barchart, wbgt_risico, KNMI_DREMPELWAARDEN,BADGE_KLEUREN_KNMI, BADGE_KLEUREN_WBGT, ZONE_KLEUREN_WBGT, ZONE_KLEUREN_KNMI, RISICO_ZONES_KNMI, RISICO_ZONES_WBGT
+    from show_knmi_functions.utils import wbgt_bereken_df,maak_wbgt_barchart, wbgt_risico, KNMI_DREMPELWAARDEN,BADGE_KLEUREN_KNMI, BADGE_KLEUREN_WBGT, ZONE_KLEUREN_WBGT, ZONE_KLEUREN_KNMI, RISICO_ZONES_KNMI, RISICO_ZONES_WBGT
 
 # =======================================
 
@@ -29,8 +29,8 @@ def prepare_data():
     De link geeft waarschijnlijk rond de 10 jaar aan data door. Het gebruikte bestand is handmatig opgehaald, maar
     het zou waarschijnlijk ook automatisch kunnen. """
     # https://www.daggegevens.knmi.nl/klimatologie/uurgegevens?stns=260&vars=T:U:FH:Q&start=2011010100&end=2025070323
-    # url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\show_knmi_functions\data_wbgt_1991_2026.csv"
-    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/show_knmi_functions/wbgt_results_1990_2026.csv"
+    url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\show_knmi_functions\data_wbgt_1991_2026.csv"
+    # url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/show_knmi_functions/wbgt_results_1990_2026.csv"
     df = pd.read_csv(url, delimiter=",",
                 header= None,
                 comment="#",
@@ -598,3 +598,5 @@ def main():
 
 if __name__=="__main__":
     main()
+
+    # prepare_data()

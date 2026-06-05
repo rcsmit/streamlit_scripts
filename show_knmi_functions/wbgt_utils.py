@@ -356,6 +356,9 @@ def wbgt_bereken_df(df: pd.DataFrame, stn: int = 260) -> pd.DataFrame:
         return wbgt_liljegren_from_station_opus(r["temp_c"], r["rh_pct"], r["wind_ms"], r["q_wm2"],
                            stn, dt, r["pressure_hpa"])
 
+        # to be used when there is no P. Comment also the line above out
+        # return wbgt_liljegren_from_station_opus(r["temp_c"], r["rh_pct"], r["wind_ms"], r["q_wm2"],
+        #                    stn, dt,1013.25)
     
  
     result["wbgt_buiten"] = result.apply(_row_wbgt, axis=1).round(1)
