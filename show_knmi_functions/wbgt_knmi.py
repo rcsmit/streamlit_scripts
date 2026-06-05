@@ -1,8 +1,15 @@
 import streamlit as st
-from wbgt_utils import show_info, info, referentie_tabel, feels_like_calculator, solar_wrapper, main_
-from select_time_place import select_time_place
-from replicate_knmi_wbgt import show_historical_data
-from wbgt_vergelijk_script_met_knmi import vergelijk_script_met_knmi_download
+try:
+    from wbgt_utils import show_info, info, referentie_tabel, feels_like_calculator, solar_wrapper, main_
+    from select_time_place import select_time_place
+    from replicate_knmi_wbgt import show_historical_data
+    from wbgt_vergelijk_script_met_knmi import vergelijk_script_met_knmi_download
+
+except:
+    from show_knmi_functions.wbgt_utils import show_info, info, referentie_tabel, feels_like_calculator, solar_wrapper, main_
+    from show_knmi_functions.select_time_place import select_time_place
+    from show_knmi_functions.replicate_knmi_wbgt import show_historical_data
+    from show_knmi_functions.wbgt_vergelijk_script_met_knmi import vergelijk_script_met_knmi_download
 def wbgt_knmi():
     with st.sidebar:
         lat,lon,utc_dt, loc_name, selected_date, selected_time,tz,LOCATIONS = select_time_place()

@@ -17,15 +17,15 @@ import plotly.graph_objects as go
 
   
 
-# try:
-if 1==1:
+try:
+# if 1==1:
     from utils import  calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
     from solar_app import solar_wrapper
     #from liljegren_wbgt import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
     from liljegren_wbgt_opus import wbgt_liljegren_opus, wbgt_liljegren_from_station_opus, KNMI_STATIONS
 
-try:
-    print ("")    
+# try:
+#     print ("")    
 except:
     from show_knmi_functions.utils import calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
     from show_knmi_functions.solar_app import solar_wrapper
