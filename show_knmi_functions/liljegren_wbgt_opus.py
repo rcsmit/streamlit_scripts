@@ -404,10 +404,12 @@ def calc_solar_parameters(
         if normsolar > 0.0:
             fdir = math.exp(3.0 - 1.34 * normsolar - 1.65 / normsolar)
             fdir = max(min(fdir, 0.9), 0.0)
+            
         else:
             fdir = 0.0
     else:
         fdir = 0.0
+     fdir = 0.8 # p.13 TR 26-04
 
     return (solar, cza, fdir)
 
