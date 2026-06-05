@@ -11,6 +11,12 @@
 #     prediction models. Int J Biometeorol 64, 1233–1245 (2020).
 
 # Original Cython code by Qinqin Kong (07-04-2021)
+# Kong, Qinqin, and Matthew Huber. 
+# “Explicit Calculations of Wet Bulb Globe Temperature Compared with 
+# Approximations and Why It Matters for Labor Productivity.” 
+# Earth’s Future, January 31, 2022. https://doi.org/10.1029/2021EF002334
+#
+
 # Translated to pure Python by Claude (2026-06-04)
 
 import math

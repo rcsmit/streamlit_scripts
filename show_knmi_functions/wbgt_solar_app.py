@@ -13,9 +13,9 @@ import pandas as pd
 import streamlit as st
 
 try:
-    from solar_radiation import solar_radiation
+    from wbgt_solar_radiation import solar_radiation
 except:
-    from show_knmi_functions.solar_radiation import solar_radiation
+    from show_knmi_functions.wbgt_solar_radiation import solar_radiation
 # ---------------------------------------------------------------------------
 # Configuratie
 # ---------------------------------------------------------------------------

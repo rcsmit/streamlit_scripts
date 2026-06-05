@@ -7,6 +7,10 @@ from typing import Any
 
 import requests
 from requests import Session
+import os
+import re
+import pandas as pd
+import numpy as np
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -96,16 +100,20 @@ def get_max_worker_count(filesizes):
 
 
 async def main_download():
+    """Download alle bestanden van het KNMI WBGT dataset en sla deze op in een lokale map."""
+
+    # Dit is een publieke API key, vervang door je eigen
     api_key = "eyJvcmciOiI1ZTU1NGUxOTI3NGE5NjAwMDEyYTNlYjEiLCJpZCI6ImVlNDFjMWI0MjlkODQ2MThiNWI4ZDViZDAyMTM2YTM3IiwiaCI6Im11cm11cjEyOCJ9"   
+    
     dataset_name = "wet_bulb_globe_temperature"
-    dataset_version = "1.0"
+    dataset_version = "3.0"
               # https://api.dataplatform.knmi.nl/open-data/v1/datasets/wet_bulb_globe_temperature/versions/3.0/files
     base_url = "https://api.dataplatform.knmi.nl/open-data/v1"
     # When set to True, if a file with the same name exists the output is written over the file.
     # To prevent unnecessary bandwidth usage, leave it set to False.
     overwrite = False
 
-    download_directory = r"C:\\Users\\rcxsm\\Downloads\\knmi10"
+    download_directory = r"C:\\Users\\rcxsm\\Downloads\\knmi"
 
     # Make sure to send the API key with every HTTP request
     session = requests.Session()
@@ -175,12 +183,10 @@ async def main_download():
         logger.warning(list(map(lambda x: x[1], failed_downloads)))
 
 def make_dataframe():
+    """Na het downloaden van alle bestanden, kunnen we deze samenvoegen tot 1 dataframe."""
     # version = "20260603120000"
 
-    import os
-    import re
-    import pandas as pd
-    import numpy as np
+ 
     FOLDER = r"C:\Users\rcxsm\Downloads\knmi20"
     STATION = "06260"
 

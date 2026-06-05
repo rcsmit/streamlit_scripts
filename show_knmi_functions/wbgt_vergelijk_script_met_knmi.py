@@ -115,7 +115,7 @@ def laad_en_merge( pad_knmi: str) -> pd.DataFrame:
 
     merged["wbgt_pct_diff_abs"] = merged["wbgt_pct_diff"].abs()
     merged["hk_abs_diff_abs"] = merged["hk_abs_diff"].abs()
-    from liljegren_wbgt import solar_zenith_angle
+    from wbgt_liljegren import solar_zenith_angle
     import math
     from datetime import datetime
 
@@ -373,6 +373,22 @@ def vergelijk_script_met_knmi_download():
 
     with st.expander(":material/scatter_plot: KNMI Data"):
         in_de_tijd_plot(merged)
+
+    with st.expander(":material/scatter_plot: Liljegren vs Kong"):
+        st.write(merged)
+        fig_uur = scatter_plot(
+            merged,
+            "wbgt_script",
+            "wbgt_buiten_cython",
+            
+            title=f"Values Kong (Cython) vs values Liljegren (C)",
+            
+        )
+        st.plotly_chart(fig_uur, width="stretch")
+
+        fig_wbgt = scatter_plot(merged, "wbgt_knmi", "wbgt_buiten_cython", "WBGT Kong vs KNMI-value")
+        st.plotly_chart(fig_wbgt, width="stretch")
+
 
 
 if __name__=="__main__":

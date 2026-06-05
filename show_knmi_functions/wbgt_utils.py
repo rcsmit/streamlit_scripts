@@ -20,16 +20,18 @@ import plotly.graph_objects as go
 try:
 # if 1==1:
     from utils import  calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
-    from solar_app import solar_wrapper
-    #from liljegren_wbgt import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
-    from liljegren_wbgt_opus import wbgt_liljegren_opus, wbgt_liljegren_from_station_opus, KNMI_STATIONS
+    from wbgt_solar_app import solar_wrapper
+    #from wbgt_liljegren import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
+    from wbgt_liljegren_c_code import wbgt_liljegren_opus, wbgt_liljegren_from_station_opus
+    from wbgt_liljegren_cython_wrapper import wbgt_liljegren_from_station_cython
+
 
 # try:
 #     print ("")    
 except:
     from show_knmi_functions.utils import calculate_heat_index, calculate_wind_chill, celsius_to_fahrenheit, fahrenheit_to_celsius
-    from show_knmi_functions.solar_app import solar_wrapper
-    from show_knmi_functions.liljegren_wbgt import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
+    from show_knmi_functions.wbgt_solar_app import solar_wrapper
+    from show_knmi_functions.wbgt_liljegren import wbgt_liljegren_from_station, KNMI_STATIONS, wbgt_liljegren
 
 # # version : 20260526-120000 - Initial version: WBGT berekening met KNMI dagdata
 current_version = "20260604-160000"
@@ -178,7 +180,7 @@ def wbgt_buiten(
     pressure_hpa: float = 1013.25,
     fdir_mode: str = "knmi_obs",
 ) -> float:
-    """WBGT buiten (zon) — volledige Liljegren et al. (2008) methode. Roept wbgt_liljegren_from_station_opus aan
+    """WBGT buiten (zon) — volledige Liljegren et al. (2008) methode. Roept wbgt_liljegren_from_station_c_code aan
 
     WBGT = 0.7·Tw + 0.2·Tg + 0.1·Ta
 
@@ -241,6 +243,46 @@ def wbgt_bernard(temp_c: float, rh_pct: float) -> float:
     return 0.567 * temp_c + 0.393 * e + 3.94
 
 
+
+# Standaard KNMI-stationscoördinaten (station → (lat, lon, hoogte_m))
+KNMI_STATIONS: dict[int, tuple[float, float, float]] = {
+    210: (52.165,  4.419,  -0.2),   # Valkenburg
+    235: (52.924,  4.781,   1.2),   # De Kooy
+    240: (52.318,  4.790,  -3.3),   # Schiphol
+    242: (53.241,  4.897,  10.8),   # Vlieland
+    249: (52.644,  4.979,   2.4),   # Berkhout
+    251: (53.392,  5.346,   0.7),   # Hoorn (Terschelling)
+    257: (52.506,  5.747,   1.3),   # Wijk aan Zee
+    258: (52.047,  5.177,   1.9),   # De Bilt (hoofdstation)
+    260: (52.100,  5.180,   2.0),   # De Bilt (uurdata)
+    265: (52.130,  5.274,   1.9),   # Soesterberg
+    267: (52.898,  5.384,  -1.3),   # Stavoren
+    269: (52.458,  5.520,  -3.7),   # Lelystad
+    270: (53.224,  5.752,   1.2),   # Leeuwarden
+    273: (52.703,  5.888,  -3.3),   # Marknesse
+    275: (52.056,  5.888,  48.2),   # Deelen
+    277: (53.413,  6.200,   2.9),   # Lauwersoog
+    278: (52.435,  6.259,   3.6),   # Heino
+    279: (52.750,  6.574,  15.8),   # Hoogeveen
+    280: (53.125,  6.585,   5.2),   # Eelde
+    283: (52.644,  6.657,  29.1),   # Hupsel
+    286: (53.198,  7.150,   0.0),   # Nieuw Beerta
+    290: (52.274,  6.891,  34.8),   # Twenthe
+    310: (51.442,  3.596,   8.0),   # Vlissingen
+    319: (51.226,  3.861,   1.7),   # Westdorpe
+    323: (51.527,  3.884,   1.4),   # Wilhelminadorp
+    330: (51.992,  4.122,  11.9),   # Hoek van Holland
+    340: (51.449,  4.342,  19.2),   # Woensdrecht
+    344: (51.962,  4.447,  -4.3),   # Rotterdam
+    348: (51.971,  4.926,  -0.7),   # Cabauw
+    350: (51.566,  4.936,  14.9),   # Gilze-Rijen
+    356: (51.859,  5.146,   7.5),   # Herwijnen
+    370: (51.451,  5.377,  22.6),   # Eindhoven
+    375: (51.659,  5.707,  26.8),   # Volkel
+    377: (51.198,  5.762,  30.0),   # Ell
+    380: (50.906,  5.762, 114.3),   # Maastricht
+    391: (51.499,  6.197,  19.5),   # Arcen
+}
 # ---------------------------------------------------------------------------
 # Risicoclassificatie (ISO 7243 / OSHA richtlijnen)
 # ---------------------------------------------------------------------------
@@ -343,10 +385,16 @@ def wbgt_bereken_df(df: pd.DataFrame, stn: int = 260) -> pd.DataFrame:
     # WBGT-varianten (rij voor rij via apply voor leesbaarheid)
 
    
-
+    def _row_wbgt_cython(r):
+        """Bereken WBGT op het einde-uur-tijdstip (KNMI HH-conventie, UTC).
+        gebruikt wbgt_liljegren_from_station_cython(_wrapper)
+                """
+        dt = r["dt_utc"].to_pydatetime()
+        return wbgt_liljegren_from_station_cython(r["temp_c"], r["rh_pct"], r["wind_ms"], r["q_wm2"],
+                           stn, dt, r["pressure_hpa"])
   
  
-    def _row_wbgt(r):
+    def _row_wbgt_opus(r):
         """Bereken WBGT op het einde-uur-tijdstip (KNMI HH-conventie, UTC).
         gebruikt wbgt_liljegren_from_station_opus
         KNMI rapporteert de instantane waarde op het exacte tijdstip,
@@ -361,7 +409,8 @@ def wbgt_bereken_df(df: pd.DataFrame, stn: int = 260) -> pd.DataFrame:
         #                    stn, dt,1013.25)
     
  
-    result["wbgt_buiten"] = result.apply(_row_wbgt, axis=1).round(1)
+    result["wbgt_buiten"] = result.apply(_row_wbgt_opus, axis=1).round(1)
+    result["wbgt_buiten_cython"] = result.apply(_row_wbgt_cython, axis=1).round(1)
     
 
     result["wbgt_schaduw"] = result.apply(

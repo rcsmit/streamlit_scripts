@@ -1,3 +1,11 @@
+# REPLICATIE VAN HET RAPPORT VAN KNMI GEBASEERD OP DATA 1991-2025
+# Carolina Pereira Marghidan, Lone Mokkenstorm. 
+# Hittewaarschuwingen: Doorontwikkeling Nationaal Hitteplan RIVM en verdere 
+# integratie met waarschuwingssystematiek KNMI KNMI number: WR-26-02, 
+# Year: 2026, Pages: 47 - 
+# https://www.knmi.nl/kennis-en-datacentrum/publicatie/hittewaarschuwingen-doorontwikkeling-nationaal-hitteplan-rivm-en-verdere-integratie-met-waarschuwingssystematiek-knmi
+
+
 from __future__ import annotations
 
 import streamlit as st
@@ -19,7 +27,7 @@ try:
 # if 1==1:
     from wbgt_utils import wbgt_bereken_df,maak_wbgt_barchart, wbgt_risico, KNMI_DREMPELWAARDEN,BADGE_KLEUREN_KNMI, BADGE_KLEUREN_WBGT, ZONE_KLEUREN_WBGT, ZONE_KLEUREN_KNMI, RISICO_ZONES_KNMI, RISICO_ZONES_WBGT
 except:
-    from show_knmi_functions.utils import wbgt_bereken_df,maak_wbgt_barchart, wbgt_risico, KNMI_DREMPELWAARDEN,BADGE_KLEUREN_KNMI, BADGE_KLEUREN_WBGT, ZONE_KLEUREN_WBGT, ZONE_KLEUREN_KNMI, RISICO_ZONES_KNMI, RISICO_ZONES_WBGT
+    from show_knmi_functions.wbgt_utils import wbgt_bereken_df,maak_wbgt_barchart, wbgt_risico, KNMI_DREMPELWAARDEN,BADGE_KLEUREN_KNMI, BADGE_KLEUREN_WBGT, ZONE_KLEUREN_WBGT, ZONE_KLEUREN_KNMI, RISICO_ZONES_KNMI, RISICO_ZONES_WBGT
 
 # =======================================
 
@@ -29,7 +37,7 @@ def prepare_data():
     De link geeft waarschijnlijk rond de 10 jaar aan data door. Het gebruikte bestand is handmatig opgehaald, maar
     het zou waarschijnlijk ook automatisch kunnen. """
     # https://www.daggegevens.knmi.nl/klimatologie/uurgegevens?stns=260&vars=T:U:FH:Q&start=2011010100&end=2025070323
-    url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\show_knmi_functions\data_wbgt_1991_2026.csv"
+    url = r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\show_knmi_functions\wbgt_data_daggegevens_1991_2026.csv"
     # url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/show_knmi_functions/wbgt_results_1990_2026.csv"
     df = pd.read_csv(url, delimiter=",",
                 header= None,
@@ -57,12 +65,41 @@ def prepare_data():
     df["dayofyear"] = df["YYYYMMDD"].dt.dayofyear
     df["id"] =  range(1, len(df) + 1)
     st.write (df)
-    # df_result = wbgt_bereken_df(df)
+    
     df_result = wbgt_bereken_df(df, stn=260)
     st.write(df_result)
     
     df_result.to_csv("wbgt_results_1990_2026.csv", index=True)
     st.write("DONE")
+
+
+@st.cache_data()
+def get_data():
+    """"Laad de berekende data"""
+    # url=r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\show_knmi_functions\wbgt_results_1990_2026.csv"
+    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/show_knmi_functions/wbgt_results_1990_2026.csv"
+    
+    # 0,260,1990-01-01,1,5,4,0,93,1990,1,1,1,1,0.4,0.5,93,0.0,1990-01-01 01:00:00,-0.9,-0.1,6.5,0.4,HK 0,Laag risico
+    # tot
+    # 319079,260,2026-05-26,24,30,183,0,79,2026,5,26,146,319080,18.3,3.0,79,0.0,2026-05-27 00:00:00,16.4,16.5,20.8,18.3,HK 2,Laag risico
+
+    df = pd.read_csv(url, delimiter=",",
+               
+                comment="#",
+                low_memory=False,)
+
+    # dit zijn de afkappunten zoals in het KNMI rapport (WR02-2026)
+    df = df[df["dt_utc"] >= "1991-01-01 00:00:01"]
+    df = df[df["dt_utc"] <= "2025-07-03 23:59:59"]
+    # st.write(f"Lengte na selectie {len(df)}")
+    
+    # Per dag de rij selecteren waarop wbgt_buiten het hoogst is (doorgaans vroege middag).
+    # Hierdoor bevat df_dagmax één rij per dag, met alle bijbehorende waarden (T, RH, wind, Q)
+    # op het moment van de dagelijkse piek — niet alleen de piekwaarde zelf.
+    df_dagmax = df.loc[df.groupby("YYYYMMDD")["wbgt_buiten"].idxmax()].reset_index(drop=True)
+    
+    return df, df_dagmax
+
 
 def referentie_tabel_based_on_history(df):
     """We maken een referentie tabel, gebaseerd op de gegevens 1991-2025. Voor elke temperatuur/RH combinatie
@@ -424,35 +461,6 @@ def make_histogram_wind_q(df_risico, what):
         st.plotly_chart(fig_t, width="stretch")
     with c2:
         st.plotly_chart(fig_rh, width="stretch")
-
-@st.cache_data()
-def get_data():
-    # url=r"C:\Users\rcxsm\Documents\python_scripts\streamlit_scripts\show_knmi_functions\wbgt_results_1990_2026.csv"
-    url = "https://raw.githubusercontent.com/rcsmit/streamlit_scripts/refs/heads/main/show_knmi_functions/wbgt_results_1990_2026.csv"
-    
-    # 0,260,1990-01-01,1,5,4,0,93,1990,1,1,1,1,0.4,0.5,93,0.0,1990-01-01 01:00:00,-0.9,-0.1,6.5,0.4,HK 0,Laag risico
-    # tot
-    # 319079,260,2026-05-26,24,30,183,0,79,2026,5,26,146,319080,18.3,3.0,79,0.0,2026-05-27 00:00:00,16.4,16.5,20.8,18.3,HK 2,Laag risico
-
-    df = pd.read_csv(url, delimiter=",",
-               
-                comment="#",
-                low_memory=False,)
-    # st.write(df)
-    # df = df[df["dt_utc"] <= pd.Timestamp("2025-07-03")]
-    # st.write(f"Lengte voor selectie {len(df)}")
-
-    # dit zijn de afkappunten zoals in het KNMI rapport (WR02-2026)
-    df = df[df["dt_utc"] >= "1991-01-01 00:00:01"]
-    df = df[df["dt_utc"] <= "2025-07-03 23:59:59"]
-    # st.write(f"Lengte na selectie {len(df)}")
-    
-    # Per dag de rij selecteren waarop wbgt_buiten het hoogst is (doorgaans vroege middag).
-    # Hierdoor bevat df_dagmax één rij per dag, met alle bijbehorende waarden (T, RH, wind, Q)
-    # op het moment van de dagelijkse piek — niet alleen de piekwaarde zelf.
-    df_dagmax = df.loc[df.groupby("YYYYMMDD")["wbgt_buiten"].idxmax()].reset_index(drop=True)
-    
-    return df, df_dagmax
 
 
 def toon_temperatuur_rh_combinatie(df: pd.DataFrame) -> None:

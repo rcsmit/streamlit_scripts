@@ -1,14 +1,16 @@
 import streamlit as st
 try:
+# if 1==1:
     from wbgt_utils import show_info, info, referentie_tabel, feels_like_calculator, solar_wrapper, main_
-    from select_time_place import select_time_place
-    from replicate_knmi_wbgt import show_historical_data
+    from wbgt_select_time_place import select_time_place
+    from wbgt_replicate_knmi import show_historical_data
     from wbgt_vergelijk_script_met_knmi import vergelijk_script_met_knmi_download
 
 except:
+# if 1==2:
     from show_knmi_functions.wbgt_utils import show_info, info, referentie_tabel, feels_like_calculator, solar_wrapper, main_
-    from show_knmi_functions.select_time_place import select_time_place
-    from show_knmi_functions.replicate_knmi_wbgt import show_historical_data
+    from show_knmi_functions.wbgt_select_time_place import select_time_place
+    from show_knmi_functions.wbgt_replicate_knmi import show_historical_data
     from show_knmi_functions.wbgt_vergelijk_script_met_knmi import vergelijk_script_met_knmi_download
 def wbgt_knmi():
     with st.sidebar:

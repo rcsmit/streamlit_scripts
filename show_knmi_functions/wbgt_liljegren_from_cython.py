@@ -9,9 +9,20 @@
 #     Liljegren, J. C., Carhart, R. A., Lawday, P., Tschopp, S. & Sharp, R.
 #     Modeling the Wet Bulb Globe Temperature Using Standard Meteorological Measurements.
 #     Journal of Occupational and Environmental Hygiene 5, 645–655 (2008).
-#
+
 # Original Cython code by Qinqin Kong (07-04-2021)
+# Kong, Qinqin, and Matthew Huber. 
+# “Explicit Calculations of Wet Bulb Globe Temperature Compared with 
+# Approximations and Why It Matters for Labor Productivity.” 
+# Earth’s Future, January 31, 2022. https://doi.org/10.1029/2021EF002334
+#
+
 # Translated to pure Python by Claude (2026-06-04)
+
+# GCM = Global Climate Model (ook wel General Circulation Model). 
+# Het is een alternatieve manier om de boltemperatuur (Tg) en de 
+# natte-bol-temperatuur (Tnwb) te berekenen wanneer je volledige 
+# stralingsbalans-uitvoer van een weermodel beschikbaar hebt.
 
 import math
 import numpy as np
@@ -208,7 +219,22 @@ def _fTnwb(x: float, D0: float, D1: float, D2: float, D3: float, D4: float) -> f
 # Scalar solvers
 # ---------------------------------------------------------------------------
 
-def _solve_Tg(C0: float, C1: float, C2: float, C3: float,
+def _solve_Tg(C0, C1, C2, C3, xtol=0.01, rtol=4*np.finfo(float).eps, mitr=1000):
+    xa = C1 - 50
+    xb = C1 + 90
+    return brentq(_fTg, xa, xb, args=(C0, C1, C2, C3),
+                  xtol=xtol, rtol=rtol, maxiter=mitr)
+
+def _solve_Tnwb(D0, D1, D2, D3, D4, hurs, xtol=0.001, rtol=4*np.finfo(float).eps, mitr=1_000_000):
+    xa = D0 - (100 - hurs) / 5.0 - 50
+    xb = min(D0 + 70, 340.0)
+    return brentq(_fTnwb, xa, xb, args=(D0, D1, D2, D3, D4),
+                  xtol=xtol, rtol=rtol, maxiter=mitr)
+
+# De standaardwaarde rtol=0.0 is niet toegestaan in scipy — scipy eist rtol >= 4*eps ≈ 8.88e-16.
+# 4*np.finfo(float).eps is exact de ondergrens die scipy intern gebruikt, dus dit is de minimale geldige waarde. 
+# De Cython-versie gebruikte rtol=0.0 omdat die een eigen Brent-implementatie had zonder die beperking.
+def _solve_Tg_original(C0: float, C1: float, C2: float, C3: float,
               xtol: float = 0.01, rtol: float = 0.0, mitr: int = 1000) -> float:
     """Solve for globe temperature (scalar)."""
     xa = C1 - 50
@@ -217,7 +243,7 @@ def _solve_Tg(C0: float, C1: float, C2: float, C3: float,
                   xtol=xtol, rtol=rtol, maxiter=mitr)
 
 
-def _solve_Tnwb(D0: float, D1: float, D2: float, D3: float, D4: float,
+def _solve_Tnwb_original(D0: float, D1: float, D2: float, D3: float, D4: float,
                 hurs: float,
                 xtol: float = 0.001, rtol: float = 0.0, mitr: int = 1_000_000) -> float:
     """Solve for natural wet-bulb temperature (scalar)."""
@@ -255,7 +281,7 @@ def _Tg_GCM_core(tas, ps, sfcwind, rsds, rsus, rlds, rlus, fdir_arr, cosz_arr,
                       * (1 - fdir_arr[i, j, k] + 0.5 * fdir_arr[i, j, k] / cosz_arr[i, j, k])
                       + (1 - albglobe) / (2 * emisglobe * stefanb) * rsus[i, j, k])
                 result[i, j, k] = _solve_Tg(C0, tas[i, j, k], ps[i, j, k], w,
-                                             xtol=xtol, rtol=rtol, mitr=mitr)
+                                             xtol=xtol,  mitr=mitr)
     return result
 
 
@@ -283,7 +309,7 @@ def _Tg_Liljegren_core(tas, hurs, ps, sfcwind, rsds, fdir_arr, cosz_arr,
                       * (1 - albglobe)
                       * (1 + (0.5 / cosz_arr[i, j, k] - 1) * fdir_arr[i, j, k] + albsfc))
                 result[i, j, k] = _solve_Tg(C0, tas[i, j, k], ps[i, j, k], w,
-                                             xtol=xtol, rtol=rtol, mitr=mitr)
+                                             xtol=xtol, mitr=mitr)
     return result
 
 
@@ -319,7 +345,7 @@ def _Tnwb_GCM_core(tas, hurs, ps, sfcwind, rsds, rsus, rlds, rlus, fdir_arr, cos
                       + (1 - albwick) * rsus[i, j, k])
                 result[i, j, k] = _solve_Tnwb(D0, D1, D2, D3, D4,
                                                hurs[i, j, k],
-                                               xtol=xtol, rtol=rtol, mitr=mitr)
+                                               xtol=xtol, mitr=mitr)
     return result
 
 
@@ -354,7 +380,7 @@ def _Tnwb_Liljegren_core(tas, hurs, ps, sfcwind, rsds, fdir_arr, cosz_arr,
                          + albsfc))
                 result[i, j, k] = _solve_Tnwb(D0, D1, D2, D3, D4,
                                                hurs[i, j, k],
-                                               xtol=xtol, rtol=rtol, mitr=mitr)
+                                               xtol=xtol,  mitr=mitr)
     return result
 
 

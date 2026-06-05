@@ -18,6 +18,47 @@ current_version = "20260604-000000"
 import math
 from datetime import datetime
 
+
+# Standaard KNMI-stationscoördinaten (station → (lat, lon, hoogte_m))
+KNMI_STATIONS: dict[int, tuple[float, float, float]] = {
+    210: (52.165,  4.419,  -0.2),   # Valkenburg
+    235: (52.924,  4.781,   1.2),   # De Kooy
+    240: (52.318,  4.790,  -3.3),   # Schiphol
+    242: (53.241,  4.897,  10.8),   # Vlieland
+    249: (52.644,  4.979,   2.4),   # Berkhout
+    251: (53.392,  5.346,   0.7),   # Hoorn (Terschelling)
+    257: (52.506,  5.747,   1.3),   # Wijk aan Zee
+    258: (52.047,  5.177,   1.9),   # De Bilt (hoofdstation)
+    260: (52.100,  5.180,   2.0),   # De Bilt (uurdata)
+    265: (52.130,  5.274,   1.9),   # Soesterberg
+    267: (52.898,  5.384,  -1.3),   # Stavoren
+    269: (52.458,  5.520,  -3.7),   # Lelystad
+    270: (53.224,  5.752,   1.2),   # Leeuwarden
+    273: (52.703,  5.888,  -3.3),   # Marknesse
+    275: (52.056,  5.888,  48.2),   # Deelen
+    277: (53.413,  6.200,   2.9),   # Lauwersoog
+    278: (52.435,  6.259,   3.6),   # Heino
+    279: (52.750,  6.574,  15.8),   # Hoogeveen
+    280: (53.125,  6.585,   5.2),   # Eelde
+    283: (52.644,  6.657,  29.1),   # Hupsel
+    286: (53.198,  7.150,   0.0),   # Nieuw Beerta
+    290: (52.274,  6.891,  34.8),   # Twenthe
+    310: (51.442,  3.596,   8.0),   # Vlissingen
+    319: (51.226,  3.861,   1.7),   # Westdorpe
+    323: (51.527,  3.884,   1.4),   # Wilhelminadorp
+    330: (51.992,  4.122,  11.9),   # Hoek van Holland
+    340: (51.449,  4.342,  19.2),   # Woensdrecht
+    344: (51.962,  4.447,  -4.3),   # Rotterdam
+    348: (51.971,  4.926,  -0.7),   # Cabauw
+    350: (51.566,  4.936,  14.9),   # Gilze-Rijen
+    356: (51.859,  5.146,   7.5),   # Herwijnen
+    370: (51.451,  5.377,  22.6),   # Eindhoven
+    375: (51.659,  5.707,  26.8),   # Volkel
+    377: (51.198,  5.762,  30.0),   # Ell
+    380: (50.906,  5.762, 114.3),   # Maastricht
+    391: (51.499,  6.197,  19.5),   # Arcen
+}
+
 # ---------------------------------------------------------------------------
 # Fysische constanten (uit wbgt.h)
 # ---------------------------------------------------------------------------
@@ -64,45 +105,6 @@ TRUE = 1
 FALSE = 0
 
 
-# Standaard KNMI-stationscoördinaten (station → (lat, lon, hoogte_m))
-KNMI_STATIONS: dict[int, tuple[float, float, float]] = {
-    210: (52.165,  4.419,  -0.2),   # Valkenburg
-    235: (52.924,  4.781,   1.2),   # De Kooy
-    240: (52.318,  4.790,  -3.3),   # Schiphol
-    242: (53.241,  4.897,  10.8),   # Vlieland
-    249: (52.644,  4.979,   2.4),   # Berkhout
-    251: (53.392,  5.346,   0.7),   # Hoorn (Terschelling)
-    257: (52.506,  5.747,   1.3),   # Wijk aan Zee
-    258: (52.047,  5.177,   1.9),   # De Bilt (hoofdstation)
-    260: (52.100,  5.180,   2.0),   # De Bilt (uurdata)
-    265: (52.130,  5.274,   1.9),   # Soesterberg
-    267: (52.898,  5.384,  -1.3),   # Stavoren
-    269: (52.458,  5.520,  -3.7),   # Lelystad
-    270: (53.224,  5.752,   1.2),   # Leeuwarden
-    273: (52.703,  5.888,  -3.3),   # Marknesse
-    275: (52.056,  5.888,  48.2),   # Deelen
-    277: (53.413,  6.200,   2.9),   # Lauwersoog
-    278: (52.435,  6.259,   3.6),   # Heino
-    279: (52.750,  6.574,  15.8),   # Hoogeveen
-    280: (53.125,  6.585,   5.2),   # Eelde
-    283: (52.644,  6.657,  29.1),   # Hupsel
-    286: (53.198,  7.150,   0.0),   # Nieuw Beerta
-    290: (52.274,  6.891,  34.8),   # Twenthe
-    310: (51.442,  3.596,   8.0),   # Vlissingen
-    319: (51.226,  3.861,   1.7),   # Westdorpe
-    323: (51.527,  3.884,   1.4),   # Wilhelminadorp
-    330: (51.992,  4.122,  11.9),   # Hoek van Holland
-    340: (51.449,  4.342,  19.2),   # Woensdrecht
-    344: (51.962,  4.447,  -4.3),   # Rotterdam
-    348: (51.971,  4.926,  -0.7),   # Cabauw
-    350: (51.566,  4.936,  14.9),   # Gilze-Rijen
-    356: (51.859,  5.146,   7.5),   # Herwijnen
-    370: (51.451,  5.377,  22.6),   # Eindhoven
-    375: (51.659,  5.707,  26.8),   # Volkel
-    377: (51.198,  5.762,  30.0),   # Ell
-    380: (50.906,  5.762, 114.3),   # Maastricht
-    391: (51.499,  6.197,  19.5),   # Arcen
-}
 
 # ---------------------------------------------------------------------------
 # Thermofysische eigenschappen van lucht en water
@@ -409,7 +411,7 @@ def calc_solar_parameters(
             fdir = 0.0
     else:
         fdir = 0.0
-     fdir = 0.8 # p.13 TR 26-04
+    # fdir = 0.8 # p.13 TR 26-04
 
     return (solar, cza, fdir)
 
