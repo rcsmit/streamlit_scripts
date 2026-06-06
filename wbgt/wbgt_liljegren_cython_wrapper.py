@@ -176,7 +176,7 @@ def wbgt_liljegren_from_cython(
         sfcwind  = np.array([[[wind_ms]]]),
         rsds     = rsds_arr,
         fdir_arr = fdir_val,
-        cosz_arr = cosz_val,
+        cosz_arr = coszda_val,
         is2mwind = is2mwind,
     )
 
