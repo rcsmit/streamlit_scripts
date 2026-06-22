@@ -163,7 +163,7 @@ def neerslagtekort_(df):
 
     return df   
 
-def plot_neerslagtekort(df):
+def plot_neerslagtekort(df, year_zwarte_lijn):
     df['date_1900'] = pd.to_datetime(df['YYYYMMDD'].dt.strftime('%d-%m-1900'), format='%d-%m-%Y')
 
     # Create spaghetti plot with Plotly
@@ -187,7 +187,7 @@ def plot_neerslagtekort(df):
 
     for year, data in df.groupby('year'):
         if like_knmi == True:
-            if year ==2026:
+            if year ==year_zwarte_lijn:
                 fig.add_trace(go.Scatter(x=data['date_1900'], y=data['cumulative_neerslagtekort_off'], mode='lines', line = line_2026, name=f"{str(year)}"))
 
             elif year == 2018:
@@ -345,13 +345,14 @@ def neerslagtekort(df):
 
     """    
     df = neerslagtekort_(df)
+    year_zwarte_lijn = st.sidebar.number_input("Jaar om weer te geven",0,2100,2026)
     df["day_of_year"] = df['YYYYMMDD'].dt.dayofyear
     df["year"] = df['YYYYMMDD'].dt.year
  
-    plot_neerslagtekort(df)
+    plot_neerslagtekort(df, year_zwarte_lijn)
     plot_neerslagtekort_on_certain_day(df, 196)  # 196= 15 juli
     plot_neerslagtekort_on_certain_day(df, 227)  # 227= 15 augustus
-    st.stop()
+  
     spaghetti_plot(df, ['neerslag_etmaalsom'], 3, 3, False, False, True, False, True, False, "Pubu", False)
     spaghetti_plot(df, ['neerslag_etmaalsom'], 3, 3, False, False, True, False, True, False, "Pubu", True)
     spaghetti_plot(df, ['temp_avg'], 3, 3, False, False, True, False, True, False, "Pubu", False)
