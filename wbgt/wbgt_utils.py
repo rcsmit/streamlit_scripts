@@ -169,6 +169,32 @@ def _globe_temp_simpel(temp_c: float, wind_ms: float, q_wm2: float) -> float:
 # ---------------------------------------------------------------------------
 
 
+def wbgt_buiten_simpel(
+    temp_c: float,
+    rh_pct: float,
+    wind_ms: float,
+    q_wm2: float,
+    
+) -> float:
+    """WBGT buiten (zon) —simpele methode
+
+    WBGT = 0.7·Tw + 0.2·Tg + 0.1·Ta
+
+    Inputs:
+        temp_c:       Droge-bol temperatuur [°C].
+        rh_pct:       Relatieve vochtigheid [%].
+        wind_ms:      Windsnelheid [m s⁻¹].
+        q_wm2:        Globale straling [W m⁻²].
+
+    Returns:
+        WBGT [°C].
+    """
+    tg= _globe_temp_simpel(temp_c, wind_ms, q_wm2) 
+    tw= _nat_bol_temp_simpel(temp_c, rh_pct)
+    return 0.7*tw +0.2*tg+0.1*temp_c
+
+
+
 
 def wbgt_buiten(
     temp_c: float,
@@ -1123,7 +1149,7 @@ def main_():
     fromx = from__.replace("-", "")
     until = until__.replace("-", "")
     with c3:
-        only_dagmax = st.sidebar.toggle("Alleen maximale HK's per dag",value=True)
+        only_dagmax = st.toggle("Alleen maximale HK's per dag",value=True)
     
     url = f"https://www.daggegevens.knmi.nl/klimatologie/uurgegevens?stns={stn}&vars=T:U:FF:Q:P&start={fromx}00&end={until}23"
     try:
