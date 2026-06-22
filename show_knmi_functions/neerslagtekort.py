@@ -933,7 +933,7 @@ if __name__ == "__main__":
     UNTIL = dt.datetime.strptime("2026-12-31", "%Y-%m-%d").date()
     df_getdata, url = getdata_wrapper(260, FROM.strftime("%Y%m%d"), UNTIL.strftime("%Y%m%d"))
     df = df_getdata.copy(deep=False)
-    neerslagtekort(df)
+    neerslagtekort(df,2025)
 
     # fromx = dt.datetime.strptime("2000-01-01", "%Y-%m-%d").date()
     # until = dt.datetime.strptime("2025-12-31", "%Y-%m-%d").date()
