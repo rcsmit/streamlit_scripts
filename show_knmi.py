@@ -204,6 +204,7 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
     elif mode == "calender heatmap":
         show_calender_heatmap(df, "YYYYMMDD", what_to_show)
     elif mode == "neerslagtekort":
+        st.subheader("Neerslagtekort 2026")
         neerslagtekort(df)
     elif mode == "extremen":
         st.info("Temporary disabled. Missing required CPU features.")
