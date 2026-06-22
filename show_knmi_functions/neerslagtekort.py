@@ -177,7 +177,7 @@ def plot_neerslagtekort(df):
                         color='rgba(0, 0, 0, 0.5)'
                         )
 
-    line_2025 = dict(width=4,  color='black')
+    line_2026 = dict(width=4,  color='black')
 
 
     line_2018 = dict(width=2, color='grey')
@@ -187,8 +187,8 @@ def plot_neerslagtekort(df):
 
     for year, data in df.groupby('year'):
         if like_knmi == True:
-            if year ==2025:
-                fig.add_trace(go.Scatter(x=data['date_1900'], y=data['cumulative_neerslagtekort_off'], mode='lines', line = line_2025, name=f"{str(year)}"))
+            if year ==2026:
+                fig.add_trace(go.Scatter(x=data['date_1900'], y=data['cumulative_neerslagtekort_off'], mode='lines', line = line_2026, name=f"{str(year)}"))
 
             elif year == 2018:
                 fig.add_trace(go.Scatter(x=data['date_1900'], y=data['cumulative_neerslagtekort_off'], mode='lines', line = line_2018, name=f"{str(year)}"))
@@ -929,7 +929,7 @@ if __name__ == "__main__":
     #main()
     
     FROM = dt.datetime.strptime("1957-01-01", "%Y-%m-%d").date()
-    UNTIL = dt.datetime.strptime("2025-12-31", "%Y-%m-%d").date()
+    UNTIL = dt.datetime.strptime("2026-12-31", "%Y-%m-%d").date()
     df_getdata, url = getdata_wrapper(260, FROM.strftime("%Y%m%d"), UNTIL.strftime("%Y%m%d"))
     df = df_getdata.copy(deep=False)
     neerslagtekort(df)
