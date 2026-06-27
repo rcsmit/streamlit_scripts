@@ -280,7 +280,7 @@ def action(stn, from_, until_, mode,groupby_, wdw, wdw2, sma2_how, what_to_show,
         st.write(gekozen_weerstation)
         title = f"{what_to_show_as_txt} van {from_} - {until_} in {gekozen_weerstation}"
         mode  = st.sidebar.selectbox(
-            "Mode", ["Classic", "New", "Matplotlib"], index=0
+            "Mode", ["Plotly", "Classic", "New", "Matplotlib"], index=0
             )
         show_warmingstripes(df, what_to_show, title,mode )
         
