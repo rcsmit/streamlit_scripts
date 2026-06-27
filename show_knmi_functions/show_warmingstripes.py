@@ -54,7 +54,7 @@ def show_warmingstripes_plotly(df_, what_to_show, title):
                      "heatmap" -> doorlopende band (zoals "Classic")
     """
     style = st.sidebar.selectbox("Kies stijl", ["bar", "heatmap"], index=0, help="Bar = staafjes per jaar (zoals showyourstripes.info), heatmap = doorlopende band (zoals Classic)")
-    modes=st.sidebar.selectbox("Kies modus", ["mean", "max", "min"], index=0, help="Mean = gemiddelde per jaar, max = maximum per jaar, min = minimum per jaar")
+    modus=st.sidebar.selectbox("Kies modus", ["mean", "max", "min"], index=0, help="Mean = gemiddelde per jaar, max = maximum per jaar, min = minimum per jaar")
     for what in what_to_show:
         if modus=="mean":
             df = df_.groupby(df_["YYYY"], sort=True).mean(numeric_only=True).reset_index()
