@@ -124,7 +124,7 @@ def show_warmingstripes_plotly(df_, what_to_show, title):
         st.plotly_chart(fig, use_container_width=True)
 
 
-def show_warmingstripes_matplotlib(df, what):
+def show_warmingstripes_matplotlib(df_, what):
     # https://matplotlib.org/matplotblog/posts/warming-stripes/
     st.subheader(f"Code from Matplotlib site - {what}")
     df = df_.groupby(df_["YYYY"], sort=True).mean(numeric_only = True).reset_index()
@@ -190,7 +190,7 @@ def show_warmingstripes(df_, what_to_show, title, mode):
     """
     for what in what_to_show:
         if mode == "Matplotlib":
-            show_warmingstripes_matplotlib(df_what_to_show)
+            show_warmingstripes_matplotlib(df_,what_to_show)
         elif mode == "plotly":
             show_warmingstripes_plotly(df_, what_to_show, title, style="bar")  
         else:
