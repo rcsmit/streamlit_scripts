@@ -123,20 +123,17 @@ def show_warmingstripes(df_, what_to_show, title, mode):
             if mode == "Classic":
                 fig, ax = plt.subplots()
 
-                fig = ax.imshow(
+                ax.imshow(
                     stacked_temps,
                     cmap=cmap,
                     aspect=40,
                 )
-                plt.gca().set_axis_off()
+                ax.set_axis_off()
+                ax.set_title(what)
+                ax.xaxis.set_major_locator(plt.NullLocator())
+                ax.yaxis.set_major_locator(plt.NullLocator())
 
-                plt.title(what)
-                plt.gca().xaxis.set_major_locator(plt.NullLocator())
-                plt.gca().yaxis.set_major_locator(plt.NullLocator())
-                # plt.show()
-                # st.pyplot(fig) - gives an error
-                st.set_option("deprecation.showPyplotGlobalUse", False)
-                st.pyplot()
+                st.pyplot(fig)
             else:
                 # mode == new
                 # inspired by https://showyourstripes.info/b/europe/netherlands/amsterdam/
