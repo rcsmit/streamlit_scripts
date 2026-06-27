@@ -55,6 +55,7 @@ def show_warmingstripes_plotly(df_, what_to_show, title):
     """
     style = st.sidebar.selectbox("Kies stijl", ["bar", "heatmap"], index=0, help="Bar = staafjes per jaar (zoals showyourstripes.info), heatmap = doorlopende band (zoals Classic)")
     modus=st.sidebar.selectbox("Kies modus", ["mean", "max", "min"], index=0, help="Mean = gemiddelde per jaar, max = maximum per jaar, min = minimum per jaar")
+    modus2=st.sidebar.selectbox("Kies modus2", ["anomaly", "absolute_value"], index=0)
     for what in what_to_show:
         if modus=="mean":
             df = df_.groupby(df_["YYYY"], sort=True).mean(numeric_only=True).reset_index()
@@ -64,8 +65,11 @@ def show_warmingstripes_plotly(df_, what_to_show, title):
             df = df_.groupby(df_["YYYY"], sort=True).min(numeric_only=True).reset_index()
 
         avg = df[what].mean()
-        df["anomaly"] = df[what] - avg
- 
+        if modus2=="anomaly":
+            df["anomaly"] = df[what] - avg
+        elif modus2=="absolute_value":
+            df["anomaly"] = df[what]
+
         years = df["YYYY"].tolist()
         anomaly = df["anomaly"].tolist()
         values = df[what].tolist()
