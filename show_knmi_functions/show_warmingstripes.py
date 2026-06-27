@@ -196,7 +196,7 @@ def show_warmingstripes(df_, what_to_show, title, mode):
         if mode == "Matplotlib":
             show_warmingstripes_matplotlib(df_,what_to_show)
         elif mode == "Plotly":
-            show_warmingstripes_plotly(df_, what_to_show, title, style="bar")  
+            show_warmingstripes_plotly(df_, what_to_show, title)  
         else:
             # mode == "classic" | mode == "new"
 
