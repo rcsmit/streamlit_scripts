@@ -97,7 +97,8 @@ options = [
     ["[81] From SMA to LOESS",              "sma_vs_loess",                "Which LOESS-span for a given SMA?"],
     ["[82] AEX dashboard",                  "aex_dashboard",               "AEX fund performance dashboard"],
     ["[83] Huis model",                     "huis_model",                  "Aankoop huis als belegging?"],
-       ["[84] Loess viewer","loess_viewer", "Plot LOESS lines in a dataset "],
+    ["[84] Loess viewer",                   "loess_viewer",                 "Plot LOESS lines in a dataset "],
+    ["[85] Seizoensbeoordeling",            "bs_en_13549_sample_size",      "Seizoensbeoordeling - AQL-niveau & bonus/malus calculator",
 ]
 
 # ---------------------------------------------------------------------------
@@ -114,7 +115,7 @@ CATEGORIES = [
     ("C", "🔤  Language & Text",       [3, 12, 13, 46, 72],                           "#F7B731"),
     ("D", "🎨  Fun & Creative",        [1, 9, 19, 21, 60, 62, 66, 70],                "#FF6B9D"),
     ("E", "🏃  Health & Lifestyle",    [6, 36, 53],                                    "#55EFC4"),
-    ("F", "🏕️  Camping & Rep life",   [5, 11, 25, 41, 43],                           "#E17055"),
+    ("F", "🏕️  Camping & Rep life",   [5, 11, 25, 41, 43,85],                           "#E17055"),
     ("G", "🌦️  Weather & Nature",      [2, 10, 22, 30, 42, 50, 59, 69, 71],          "#74B9FF"),
     ("H", "📊  Data & Analysis",       [14, 23, 24, 26, 27, 31, 39, 51, 61, 64, 68, 74, 81,84], "#A29BFE"),
     ("I", "🛠️  Tools & Utilities",     [4, 37, 48, 55, 56, 58],                       "#B2BEC3"),
