@@ -36,7 +36,8 @@ from __future__ import annotations
 # version : 20260731-023000 - CSV export now matches the on-screen grid (names as rows, days as columns) instead of a long one-row-per-day format
 # version : 20260731-030000 - Fixed a bug where Fixed-days/Rules/Requests edits (e.g. setting RIPOSO) could occasionally revert: sync functions rebuilt those tables from scratch on every rerun of the whole app, not just when the staff list changed
 # version : 20260731-040000 - Added an "Advanced" tab (last tab): technical reference for every config constant, an explanation of the objective weights, and an algorithm-details box
-current_version = "20260731-040000"
+# version : 20260731-050000 - Advanced tab now also explains the coverage min/max overrides. Performance: dict-based lookups instead of repeated .loc calls, cached shifts-covering-hour table, itertuples instead of iterrows. Added an input-validation pass (duplicate names, bad hours, bad shifts, min>max coverage, duplicate pairs) before solving
+current_version = "20260731-050000"
 
 from dataclasses import dataclass
 from datetime import date, timedelta
@@ -312,6 +313,60 @@ class SolveResult:
     total_overstaffing: int
 
 
+def validate_inputs(
+    staff_df: pd.DataFrame,
+    shift_df: pd.DataFrame,
+    coverage_df: pd.DataFrame,
+    max_staff_df: pd.DataFrame | None,
+    same_shift_df: pd.DataFrame,
+    complementary_df: pd.DataFrame,
+) -> tuple[list[str], list[str]]:
+    """Catch obviously-inconsistent input before handing it to the solver, where a
+    contradiction would otherwise only surface as an opaque INFEASIBLE/UNKNOWN status.
+    Returns (errors, warnings) - errors should block solving, warnings are just FYI."""
+    errors: list[str] = []
+    warnings: list[str] = []
+
+    names = staff_df["Name"].tolist()
+    duplicate_names = {n for n in names if names.count(n) > 1}
+    if duplicate_names:
+        errors.append(f"Duplicate staff name(s): {', '.join(sorted(duplicate_names))}. Names must be unique.")
+
+    bad_hours = staff_df[staff_df["ContractHours"] <= 0]
+    if not bad_hours.empty:
+        errors.append(f"Contract hours must be positive: {', '.join(bad_hours['Name'].tolist())}.")
+
+    bad_shifts = shift_df[shift_df["End"] <= shift_df["Start"]]
+    if not bad_shifts.empty:
+        errors.append(f"Shift(s) with end time not after start time: {', '.join(bad_shifts['Code'].tolist())}.")
+
+    if max_staff_df is not None:
+        violations = []
+        for day in DAYS:
+            for hour in HOURS:
+                min_needed = int(coverage_df.loc[coverage_df["Day"] == day, str(hour)].values[0])
+                max_allowed = int(max_staff_df.loc[max_staff_df["Day"] == day, str(hour)].values[0])
+                if min_needed > max_allowed:
+                    violations.append(f"{day} {hour}h ({min_needed} > {max_allowed})")
+        if violations:
+            shown = ", ".join(violations[:5])
+            more = f", and {len(violations) - 5} more" if len(violations) > 5 else ""
+            errors.append(f"Minimum coverage exceeds the maximum for {len(violations)} hour block(s): {shown}{more}.")
+
+    for label, pair_df in (("same-shift", same_shift_df), ("complementary", complementary_df)):
+        if pair_df.empty:
+            continue
+        self_paired = pair_df[pair_df["Name1"] == pair_df["Name2"]]
+        if not self_paired.empty:
+            warnings.append(f"{len(self_paired)} {label} row(s) pair someone with themselves - ignored.")
+        pairs_only = pair_df[["Name1", "Name2"]].apply(lambda r: tuple(sorted(r)), axis=1)
+        dupes = pairs_only[pairs_only.duplicated()]
+        if not dupes.empty:
+            warnings.append(f"{len(dupes)} duplicate {label} pair(s) - harmless, but can be tidied up.")
+
+    return errors, warnings
+
+
 def solve_schedule(
     staff_df: pd.DataFrame,
     shift_df: pd.DataFrame,
@@ -336,16 +391,38 @@ def solve_schedule(
     incompat = incompatible_pairs(shift_catalog, min_break_hours, max_break_hours)
 
     names = staff_df["Name"].tolist()
-    fixed_lookup = fixed_df.set_index("Name")
     split_allowed = dict(zip(staff_df["Name"], staff_df["SplitAllowed"]))
     contract_type = dict(zip(staff_df["Name"], staff_df.get("ContractType", CONTRACT_TYPE_FLEXIBLE)))
     max_closing = dict(zip(staff_df["Name"], staff_df.get("MaxClosingShiftsPerWeek", 0)))
+
+    # Plain dict lookups instead of repeated pandas .loc calls inside the hot loops below -
+    # a DataFrame .loc lookup re-does index alignment on every call, which adds up fast
+    # once you're calling it thousands of times while building the model.
+    fixed: dict[tuple[str, str], str] = {
+        (row.Name, day): getattr(row, day) for row in fixed_df.itertuples() for day in DAYS
+    }
+
+    def is_off_day(name: str, day: str) -> bool:
+        return fixed.get((name, day), "") in ("FERIE", "RECUPERO")
+
+    coverage_min: dict[tuple[str, int], int] = {
+        (day, hour): int(coverage_df.loc[coverage_df["Day"] == day, str(hour)].values[0])
+        for day in DAYS for hour in HOURS
+    }
+    coverage_max: dict[tuple[str, int], int] | None = None
+    if max_staff_df is not None:
+        coverage_max = {
+            (day, hour): int(max_staff_df.loc[max_staff_df["Day"] == day, str(hour)].values[0])
+            for day in DAYS for hour in HOURS
+        }
 
     closing_hour = max(end for _, _, end in shift_catalog)
     closing_codes = [code for code, (start, end) in shift_lookup.items() if end == closing_hour]
     four_hour_codes = [code for code, (start, end) in shift_lookup.items() if end - start == FIXED_SPLIT_SHIFT_HOURS]
     six_hour_codes = [code for code, (start, end) in shift_lookup.items() if end - start == 6]
     all_durations = {end - start for _, start, end in shift_catalog}
+    # cache which shift codes cover each hour once, rather than recomputing per (day, hour) pair
+    covering_by_hour: dict[int, list[str]] = {hour: shifts_covering_hour(shift_catalog, hour) for hour in HOURS}
     # The "3x8h + 2x6h + 1x4h" day-type balancing rule below only makes algebraic
     # sense when every shift is 4h or 6h long and two shifts can't be combined
     # into anything but 8h (i.e. max_daily_hours forbids a 4h+6h=10h day) - both
@@ -365,7 +442,7 @@ def solve_schedule(
     for name in names:
         is_fixed_split = contract_type.get(name) == CONTRACT_TYPE_FIXED_SPLIT
         for day in DAYS:
-            status = fixed_lookup.loc[name, day]
+            status = fixed.get((name, day), "")
             if status in ("FERIE", "RECUPERO"):
                 y[name, day] = model.NewConstant(0)
                 continue
@@ -412,16 +489,12 @@ def solve_schedule(
             model.Add(sum(closing_terms) <= limit)
 
     # minimum rest days per week (fixed FERIE/RECUPERO days don't count towards this rule)
-    for _, row in staff_df.iterrows():
-        name = row["Name"]
-        min_rest = int(row["MinRestDays"])
+    for row in staff_df.itertuples():
+        name = row.Name
+        min_rest = int(row.MinRestDays)
         if contract_type.get(name) == CONTRACT_TYPE_FIXED_SPLIT:
             min_rest = max(min_rest, FIXED_SPLIT_MIN_REST_DAYS)
-        rest_terms = []
-        for day in DAYS:
-            if fixed_lookup.loc[name, day] in ("FERIE", "RECUPERO"):
-                continue
-            rest_terms.append(1 - y[name, day])
+        rest_terms = [1 - y[name, day] for day in DAYS if not is_off_day(name, day)]
         if rest_terms:
             model.Add(sum(rest_terms) >= min_rest)
 
@@ -429,16 +502,16 @@ def solve_schedule(
     # hours as 3 days of 8h, 2 days of 6h, and 1 day of 4h (3*8+2*6+1*4=40).
     # Doesn't apply to the fixed 8h-split contract (that's always 2x4h blocks).
     if day_type_rule_valid:
-        for _, row in staff_df.iterrows():
-            name = row["Name"]
-            if int(row["MinRestDays"]) != 1:
+        for row in staff_df.itertuples():
+            name = row.Name
+            if int(row.MinRestDays) != 1:
                 continue
             if contract_type.get(name) == CONTRACT_TYPE_FIXED_SPLIT:
                 continue
-            if int(round(float(row["ContractHours"]))) != 40:
+            if int(round(float(row.ContractHours))) != 40:
                 continue
 
-            workable_days = [day for day in DAYS if fixed_lookup.loc[name, day] not in ("FERIE", "RECUPERO")]
+            workable_days = [day for day in DAYS if not is_off_day(name, day)]
             if len(workable_days) < len(DAYS):
                 continue  # a FERIE/RECUPERO day lowers this person's target for the week (see below),
                           # which no longer matches the fixed 3*8+2*6+1*4=40 split this rule assumes
@@ -465,9 +538,9 @@ def solve_schedule(
             model.Add(sum(four_hour_terms) == 1)
 
     # maximum consecutive working days (rolling window across the week)
-    for _, row in staff_df.iterrows():
-        name = row["Name"]
-        max_consec = int(row["MaxConsecDays"])
+    for row in staff_df.itertuples():
+        name = row.Name
+        max_consec = int(row.MaxConsecDays)
         window = max_consec + 1
         if window <= len(DAYS):
             for start in range(0, len(DAYS) - window + 1):
@@ -478,17 +551,17 @@ def solve_schedule(
     # HOURS_PER_FERIE_RECUPERO_DAY (a standard working day's worth of hours),
     # rather than forcing the full contract target into fewer available days.
     hours_deviation_terms = []
-    for _, row in staff_df.iterrows():
-        name = row["Name"]
-        target = int(round(float(row["ContractHours"])))
+    for row in staff_df.itertuples():
+        name = row.Name
+        target = int(round(float(row.ContractHours)))
         weekly_terms = []
         for day in DAYS:
-            if fixed_lookup.loc[name, day] in ("FERIE", "RECUPERO"):
+            if is_off_day(name, day):
                 continue
             weekly_terms.extend(x[name, day, c] * (shift_lookup[c][1] - shift_lookup[c][0]) for c in shift_codes)
         total_hours = sum(weekly_terms) if weekly_terms else 0
 
-        available_days = sum(1 for day in DAYS if fixed_lookup.loc[name, day] not in ("FERIE", "RECUPERO"))
+        available_days = sum(1 for day in DAYS if not is_off_day(name, day))
         off_days = len(DAYS) - available_days
         max_possible = available_days * max_daily_hours
         adjusted_target = max(0, target - HOURS_PER_FERIE_RECUPERO_DAY * off_days)
@@ -507,12 +580,12 @@ def solve_schedule(
             hours_deviation_terms.append(abs_dev)
 
     # "same shift" pairs: hard link, on any day where neither has a fixed FERIE/RECUPERO entry
-    for _, row in same_shift_df.iterrows():
-        n1, n2 = row["Name1"], row["Name2"]
+    for row in same_shift_df.itertuples():
+        n1, n2 = row.Name1, row.Name2
         if n1 not in names or n2 not in names or n1 == n2:
             continue
         for day in DAYS:
-            if fixed_lookup.loc[n1, day] in ("FERIE", "RECUPERO") or fixed_lookup.loc[n2, day] in ("FERIE", "RECUPERO"):
+            if is_off_day(n1, day) or is_off_day(n2, day):
                 continue
             for code in shift_codes:
                 model.Add(x[n1, day, code] == x[n2, day, code])
@@ -524,7 +597,7 @@ def solve_schedule(
         key = (name, day, hour)
         if key in workhour_cache:
             return workhour_cache[key]
-        covering = shifts_covering_hour(shift_catalog, hour)
+        covering = covering_by_hour[hour]
         terms = [x[name, day, c] for c in covering if (name, day, c) in x]
         var = model.NewBoolVar(f"work_{name}_{day}_{hour}")
         if terms:
@@ -535,8 +608,8 @@ def solve_schedule(
         return var
 
     complementary_terms = []
-    for _, row in complementary_df.iterrows():
-        n1, n2, weight = row["Name1"], row["Name2"], int(row["Weight"])
+    for row in complementary_df.itertuples():
+        n1, n2, weight = row.Name1, row.Name2, int(row.Weight)
         if n1 not in names or n2 not in names or n1 == n2:
             continue
         for day in DAYS:
@@ -551,12 +624,13 @@ def solve_schedule(
 
     # individual shift / day-off requests (soft)
     request_terms = []
-    for _, row in requests_df.iterrows():
-        name, day, rtype = row["Name"], row["Day"], row["RequestType"]
-        code, priority = row.get("ShiftCode", ""), row.get("Priority", "Low")
+    for row in requests_df.itertuples():
+        name, day, rtype = row.Name, row.Day, row.RequestType
+        code = getattr(row, "ShiftCode", "") or ""
+        priority = getattr(row, "Priority", "Low")
         if name not in names or day not in DAYS:
             continue
-        if fixed_lookup.loc[name, day] in ("FERIE", "RECUPERO"):
+        if is_off_day(name, day):
             continue  # already fixed, request is moot
         weight = PRIORITY_WEIGHTS.get(priority, 1) * REQUEST_WEIGHT_SCALE
         if rtype == "Prefer day off":
@@ -573,13 +647,9 @@ def solve_schedule(
     weighted_overstaff_terms = []
     for day in DAYS:
         for hour in HOURS:
-            covering = shifts_covering_hour(shift_catalog, hour)
-            min_needed = int(coverage_df.loc[coverage_df["Day"] == day, str(hour)].values[0])
-            present_terms = []
-            for name in names:
-                if fixed_lookup.loc[name, day] in ("FERIE", "RECUPERO"):
-                    continue
-                present_terms.extend(x[name, day, c] for c in covering)
+            covering = covering_by_hour[hour]
+            min_needed = coverage_min[day, hour]
+            present_terms = [x[name, day, c] for name in names if not is_off_day(name, day) for c in covering]
             total_present = sum(present_terms) if present_terms else 0
             under = model.NewIntVar(0, len(names), f"under_{day}_{hour}")
             over = model.NewIntVar(0, len(names), f"over_{day}_{hour}")
@@ -588,9 +658,8 @@ def solve_schedule(
             overstaff_terms.append(over)
             weighted_overstaff_terms.append(overstaff_weight_for_hour(hour) * over)
 
-            if max_staff_df is not None:
-                max_allowed = int(max_staff_df.loc[max_staff_df["Day"] == day, str(hour)].values[0])
-                model.Add(total_present <= max_allowed)
+            if coverage_max is not None:
+                model.Add(total_present <= coverage_max[day, hour])
 
     model.Minimize(
         WEIGHT_UNDERSTAFF * sum(understaff_terms)
@@ -611,7 +680,7 @@ def solve_schedule(
     rows = []
     for name in names:
         for day in DAYS:
-            status_val = fixed_lookup.loc[name, day]
+            status_val = fixed.get((name, day), "")
             if status_val in ("FERIE", "RECUPERO"):
                 rows.append({"Name": name, "Day": day, "Shifts": status_val, "Hours": 0})
                 continue
@@ -960,22 +1029,36 @@ def render_results_tab() -> None:
         if st.session_state.staff_df.empty:
             st.warning("Add at least one team member first.")
         else:
-            with st.spinner("Solving with CP-SAT..."):
-                result = solve_schedule(
-                    st.session_state.staff_df,
-                    st.session_state.shift_df,
-                    st.session_state.fixed_df,
-                    st.session_state.coverage_df,
-                    st.session_state.same_shift_df,
-                    st.session_state.complementary_df,
-                    st.session_state.requests_df,
-                    max_staff_df=st.session_state.max_staff_df,
-                    min_break_hours=min_break,
-                    max_break_hours=(max_break if limit_max_break else None),
-                    max_daily_hours=max_daily,
-                    solver_time_limit_sec=time_limit,
-                )
-            st.session_state.result = result
+            errors, warnings = validate_inputs(
+                st.session_state.staff_df,
+                st.session_state.shift_df,
+                st.session_state.coverage_df,
+                st.session_state.max_staff_df,
+                st.session_state.same_shift_df,
+                st.session_state.complementary_df,
+            )
+            for w in warnings:
+                st.warning(w, icon=":material/warning:")
+            if errors:
+                for e in errors:
+                    st.error(e, icon=":material/error:")
+            else:
+                with st.spinner("Solving with CP-SAT..."):
+                    result = solve_schedule(
+                        st.session_state.staff_df,
+                        st.session_state.shift_df,
+                        st.session_state.fixed_df,
+                        st.session_state.coverage_df,
+                        st.session_state.same_shift_df,
+                        st.session_state.complementary_df,
+                        st.session_state.requests_df,
+                        max_staff_df=st.session_state.max_staff_df,
+                        min_break_hours=min_break,
+                        max_break_hours=(max_break if limit_max_break else None),
+                        max_daily_hours=max_daily,
+                        solver_time_limit_sec=time_limit,
+                    )
+                st.session_state.result = result
 
     result: SolveResult | None = st.session_state.result
     if result is None:
@@ -1217,6 +1300,46 @@ def render_advanced_tab() -> None:
   shift(s) in the *current* catalog end at the latest hour — so this keeps working correctly even if you change
   the catalog's closing time.
 
+## Coverage defaults and overrides
+
+The Coverage tab's starting values (both the minimum and maximum tables) aren't one flat number — they're built
+from a small set of constants, then specific hours are overridden on top. This is the part of the config most
+worth understanding if your business has a different daily shape than ours.
+
+**Minimum staffing** (`DEFAULT_HOURLY_MIN_BY_DAY`, built from three pieces):
+
+- `_BASELINE_MIN = {_BASELINE_MIN}` — the fallback minimum for any hour not otherwise specified. Quiet hours
+  (open, mid-afternoon lull, last hour before close) sit at this value by default.
+- `_PEAK_MIN = {_PEAK_MIN}` — the minimum during `_PEAK_HOURS`.
+- `_PEAK_HOURS = {sorted(_PEAK_HOURS)}` — the hour blocks considered "busy": {min(_PEAK_HOURS)}h–{max([h for h in _PEAK_HOURS if h < 13]) + 1}h
+  and {min([h for h in _PEAK_HOURS if h >= 13])}h–{max(_PEAK_HOURS) + 1}h (the two coverage windows from the
+  original brief). Every hour in this set gets `_PEAK_MIN` instead of `_BASELINE_MIN`.
+- `_MIN_OVERRIDES = {_MIN_OVERRIDES}` — applied *last*, after baseline/peak, so it wins over both. Right now
+  this pins hour {list(_MIN_OVERRIDES.keys())[0]} down to {list(_MIN_OVERRIDES.values())[0]} even though it
+  falls inside `_PEAK_HOURS` (which would otherwise give it `_PEAK_MIN = {_PEAK_MIN}`). Add more entries here for
+  any other hour that needs to break the general peak/baseline pattern, on every day at once.
+
+Build order, in plain terms: *start every hour at `_BASELINE_MIN`* → *raise the hours in `_PEAK_HOURS` to
+`_PEAK_MIN`* → *apply `_MIN_OVERRIDES` on top of anything that came before.* The same value currently applies to
+all seven days — the Coverage tab itself lets you diverge per day after the fact (e.g. a busier Saturday), this
+constant just controls what you start from.
+
+**Maximum staffing** (`build_default_max_staff_df`, built from two pieces):
+
+- `DEFAULT_MAX_STAFF_PER_HOUR = {DEFAULT_MAX_STAFF_PER_HOUR}` — the ceiling for every hour by default. Deliberately
+  generous so it rarely binds unless you tighten it.
+- `_MAX_STAFF_OVERRIDES = {_MAX_STAFF_OVERRIDES}` — specific hours pinned to a tighter (or looser) ceiling than
+  the default. Right now: a quiet cap right at opening ({list(_MAX_STAFF_OVERRIDES.keys())[0]}h), a cap matching
+  the {list(_MIN_OVERRIDES.values())[0]}-person minimum above so that hour is pinned exactly
+  ({list(_MAX_STAFF_OVERRIDES.keys())[1]}h), and two quiet hours near close
+  ({list(_MAX_STAFF_OVERRIDES.keys())[2]}h, {list(_MAX_STAFF_OVERRIDES.keys())[3]}h).
+
+Both tables are only *starting points* — every cell in both the minimum and maximum Coverage grids is editable
+per day, per hour, in the UI. These constants just decide what's pre-filled the first time (or after "Reset all
+to code defaults" in the sidebar). If a minimum ever ends up higher than the maximum for the same hour, the
+solver will correctly report `INFEASIBLE` rather than silently picking one — that's a genuine contradiction, not
+a bug.
+
 ## Solver
 
 - `DEFAULT_SOLVER_TIME_LIMIT_SEC = {DEFAULT_SOLVER_TIME_LIMIT_SEC}` — the constant's own default; the actual
@@ -1336,7 +1459,6 @@ def main() -> None:
         render_results_tab()
     with tab_advanced:
         render_advanced_tab()
-
 
 if __name__ == "__main__":
     main()
