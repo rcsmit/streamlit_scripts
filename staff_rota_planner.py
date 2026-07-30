@@ -1379,7 +1379,7 @@ do personal requests matter compared to everything else" — since {PRIORITY_WEI
 (a High request) is still far below {WEIGHT_UNDERSTAFF}, no request can ever be granted at the cost of leaving
 an hour understaffed.
 """)
-
+    st.info("Sript: https://github.com/rcsmit/streamlit_scripts/blob/main/staff_rota_planner.py")
     with st.container(border=True):
         st.markdown("### :material/memory: Box: the algorithm, for the technically curious")
         st.markdown(f"""
