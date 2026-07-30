@@ -1659,7 +1659,10 @@ def find_unequal_rows(df, columm_maxxton, column_csv, name_test):
     # in some rare cases there is a space after KALAHARI2 and KALAHARI1
     columns_to_strip = [columm_maxxton, column_csv]
     for column in columns_to_strip:
-        if df[column].dtype == 'object':
+        # if df[column].dtype == 'object': #incompatible with pandas3
+                
+        if df[column].dtype == 'object' or pd.api.types.is_string_dtype(df[column]):
+
             df[column] = df[column].str.strip()
             df[column] = df[column].str.upper()
     unequal_rows = df[df[columm_maxxton] != df[column_csv]]
