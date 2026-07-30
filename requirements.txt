@@ -29,7 +29,7 @@ pytesseract
 PyPDF2
 pymannkendall
 polars
-plotly-calplot
+# plotly-calplot
 gpxpy
 geopy
 branca
