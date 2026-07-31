@@ -59,7 +59,8 @@ from __future__ import annotations
 # version : 20260731-104500 - Added a "deploying your own copy" box to the Advanced tab: GitHub repo, editing constants, requirements.txt, deploying via share.streamlit.io
 # version : 20260731-110000 - Fixed a KeyError crash for existing sessions/saved files missing newer staff columns (e.g. DaysOffTogether): staff_df schema is now migrated on every load via ensure_staff_columns. Renamed "Kader" to "Box" in the About tab for consistency with the Advanced tab
 # version : 20260731-112000 - Filled in each default staff member's FixedDays with their given day off (RIPOSO): Alessia/Chiara/Ilaria/Nadia->Friday, Bruno/Federico->Wednesday, Davide/Lorenzo->Tuesday, Elena/Giulia->Thursday, Marco->Monday
-current_version = "20260731-112000"
+# version : 20260731-120000 - A "Prefer shift"/"Avoid shift" request now overrules a RIPOSO fixed day (opens that day back up for scheduling) - FERIE/RECUPERO remain untouchable since those are real absences, not just a scheduling default. Re-fixed the About-tab ordering regression (now first again)
+current_version = "20260731-120000"
 
 from dataclasses import dataclass
 from datetime import date, timedelta
@@ -611,6 +612,18 @@ def solve_schedule(
     x: dict[tuple[str, str, str], cp_model.IntVar] = {}
     y: dict[tuple[str, str], cp_model.IntVar] = {}
 
+    # Requests overrule a RIPOSO fixed day (but never FERIE/RECUPERO - those are real
+    # absences, not just a scheduling default). If someone has a "Prefer shift" or
+    # "Avoid shift" request on a day currently marked RIPOSO, that day opens back up
+    # for scheduling instead of being hard-forced to zero hours.
+    riposo_overridden_by_request: set[tuple[str, str]] = set()
+    for row in requests_df.itertuples():
+        name, day, rtype = getattr(row, "Name", None), getattr(row, "Day", None), getattr(row, "RequestType", None)
+        if name not in names or day not in DAYS or rtype not in ("Prefer shift", "Avoid shift"):
+            continue
+        if fixed.get((name, day), "") == "RIPOSO":
+            riposo_overridden_by_request.add((name, day))
+
     for name in names:
         is_fixed_split = contract_type.get(name) == CONTRACT_TYPE_FIXED_SPLIT
         for day in DAYS:
@@ -635,7 +648,7 @@ def solve_schedule(
             daily_hours = sum(x[name, day, c] * (shift_lookup[c][1] - shift_lookup[c][0]) for c in shift_codes)
             model.Add(daily_hours <= max_daily_hours)
 
-            if status == "RIPOSO":
+            if status == "RIPOSO" and (name, day) not in riposo_overridden_by_request:
                 model.Add(sum(day_shifts) == 0)
 
             if is_fixed_split:
@@ -1276,7 +1289,9 @@ def render_rules_tab() -> None:
 
 def render_requests_tab() -> None:
     st.caption("Individual shift or day-off requests. These are soft preferences the solver tries to honour, weighted by priority - "
-               "they never override coverage or rest-day rules, and a higher priority is honoured before a lower one when both can't be satisfied.")
+               "they never override coverage or rest-day rules, and a higher priority is honoured before a lower one when both can't be satisfied. "
+               "A 'Prefer shift' or 'Avoid shift' request *does* overrule a RIPOSO day already set in the Fixed days tab (that's just a "
+               "scheduling default), but never a FERIE or RECUPERO entry - those are real absences.")
     names = st.session_state.staff_df["Name"].tolist()
     shift_codes = [""] + [
         f"{row.Code} ({row.Start}-{row.End})" for row in st.session_state.shift_df.itertuples()
@@ -1405,8 +1420,9 @@ def render_results_tab() -> None:
     
     st.subheader("Staff working per hour", divider=False)
     st.caption("Rows are days, columns are hour blocks - each cell is the number of people working during that hour.")
-    st.dataframe(headcount_grid(cov), width="stretch")
-
+    hc = headcount_grid(cov)
+    st.dataframe(hc, width="stretch")
+    
     hours_summary = result.schedule_df.groupby("Name")["Hours"].sum().reindex(staff_order)
     targets = st.session_state.staff_df.set_index("Name")["ContractHours"].reindex(staff_order)
     summary_df = pd.DataFrame({"Scheduled hours": hours_summary, "Contract target": targets})
@@ -1416,10 +1432,13 @@ def render_results_tab() -> None:
     
 
     csv_bytes = to_csv_bytes(grid)
-    st.download_button("Download CSV", data=csv_bytes, file_name="rota.csv", mime="text/csv",
+    st.download_button("Download rota CSV", data=csv_bytes, file_name="rota.csv", mime="text/csv",
                         width="stretch", icon=":material/download:")
 
-
+    csv_bytes_hc = to_csv_bytes(hc)
+    st.download_button("Download headcount CSV", data=csv_bytes_hc, file_name="headcount.csv", mime="text/csv",
+                            width="stretch", icon=":material/download:")
+    
 SESSION_STATE_KEYS: list[str] = [
     "staff_df", "shift_df", "fixed_df", "coverage_df", "max_staff_df",
     "arrivals_departures_df", "limit_max_break",
@@ -1763,7 +1782,8 @@ def main() -> None:
     st.caption("OR-Tools CP-SAT builds a weekly rota from your team's contract hours, rest-day rules, "
                "fixed vacation/comp days, per-day coverage targets, staff relationships, and shift/day-off requests.")
 
-    tab_staff, tab_shifts, tab_fixed, tab_coverage, tab_rules, tab_requests, tab_results, tab_about,tab_advanced = st.tabs([
+    tab_about, tab_staff, tab_shifts, tab_fixed, tab_coverage, tab_rules, tab_requests, tab_results, tab_advanced = st.tabs([
+        ":material/menu_book: About",
         ":material/group: Staff",
         ":material/schedule: Shift catalog",
         ":material/event_busy: Fixed days",
@@ -1771,7 +1791,6 @@ def main() -> None:
         ":material/link: Rules",
         ":material/how_to_reg: Requests",
         ":material/auto_awesome: Generate & results",
-        ":material/menu_book: About",
         ":material/tune: Advanced",
     ])
 
