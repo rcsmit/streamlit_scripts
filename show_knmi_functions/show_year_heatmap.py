@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import streamlit as st
-from plotly_calplot import calplot
+from plotly_calheatmap import calheatmap
 import plotly.express as px
 import plotly.graph_objects as go
 try:

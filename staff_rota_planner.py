@@ -14,6 +14,15 @@ should work complementary/alternating hours"), and individual shift or
 day-off requests.
 
 Dependencies: streamlit, pandas, ortools
+
+---
+Provided "AS IS", without warranty of any kind, express or implied, including
+but not limited to warranties of merchantability, fitness for a particular
+purpose, and non-infringement. This tool produces a mathematically-consistent
+schedule given the rules you configure - it does not know your local labour
+law, collective agreements, or anything you haven't told it. Always review a
+generated schedule before relying on it operationally.
+---
 """
 
 from __future__ import annotations
@@ -37,7 +46,20 @@ from __future__ import annotations
 # version : 20260731-030000 - Fixed a bug where Fixed-days/Rules/Requests edits (e.g. setting RIPOSO) could occasionally revert: sync functions rebuilt those tables from scratch on every rerun of the whole app, not just when the staff list changed
 # version : 20260731-040000 - Added an "Advanced" tab (last tab): technical reference for every config constant, an explanation of the objective weights, and an algorithm-details box
 # version : 20260731-050000 - Advanced tab now also explains the coverage min/max overrides. Performance: dict-based lookups instead of repeated .loc calls, cached shifts-covering-hour table, itertuples instead of iterrows. Added an input-validation pass (duplicate names, bad hours, bad shifts, min>max coverage, duplicate pairs) before solving
-current_version = "20260731-050000"
+# version : 20260731-053000 - Requests tab's ShiftCode dropdown now shows "CODE (start-end)" (e.g. "M6 (9-13)"); sidebar now expanded by default
+# version : 20260731-060000 - Sidebar reverted to collapsed by default. Coverage tab: added an Arrivals & Departures table that can derive the minimum-coverage grid (departures->morning, arrivals->evening, positive departures-arrivals surplus->afternoon cleaning window)
+# version : 20260731-063000 - Arrivals & Departures section moved to the top of the Coverage tab; derivation simplified to day/total*100 (vs. an even 1/7 share) scaling a single baseline staff count, replacing the per-staff-member ratios
+# version : 20260731-070000 - The existing minimum/maximum coverage tables are now always leading during derivation: the ratio-derived value is clamped to never go below the existing minimum or above the existing maximum, so a 0-arrivals/departures day keeps its configured floor instead of dropping
+# version : 20260731-071500 - Arrivals & Departures table now defaults to 20 for every day/metric instead of 0
+# version : 20260731-074500 - Removed the manual "Baseline staff" field - each window's baseline is now auto-derived from the current average of its own cells (a perfectly even arrivals/departures week leaves coverage unchanged). Button renamed to "Apply". Added a "verify before using" disclaimer under the schedule and an AS-IS disclaimer in the module docstring
+# version : 20260731-081500 - Fixed the Coverage tab's Quick-fill buttons not clearing their editor's cached widget state before rerunning (same class of bug as the earlier RIPOSO issue, now also affecting min/max coverage edits). "Limit max break" checkbox now backed by session state with a real default, resettable from the sidebar. Understaffed-hours message reworded to "X hour blocks are understaffed"
+# version : 20260731-090000 - Arrivals & Departures: Departures now the first row, Arrivals second. Every data_editor table in the app is now wrapped in an st.form with an explicit Save/Apply button, so editing a cell no longer triggers a full-app rerun (and the "enter it twice" symptom) on every keystroke - edits are batched locally until the button is pressed
+# version : 20260731-093000 - Fixed limit_max_break default (True). Every Save/Apply button now toasts a confirmation on submit, distinguishing a genuine change from clicking Save with nothing new (the honest limit: st.form can't show a live "unsaved changes" state before submit, since it doesn't rerun the script while you're still editing)
+# version : 20260731-101500 - DEFAULT_STAFF now carries a per-person FixedDays dict (seeds the Fixed-days grid at startup, supports multiple pre-set days off). New "Days off together" preference (checkbox, only meaningful with 2 days off/week): soft-rewards the 2 rest days being adjacent, or penalises adjacency if unchecked - weighted by WEIGHT_DAYS_OFF_TOGETHER
+# version : 20260731-104500 - Added a "deploying your own copy" box to the Advanced tab: GitHub repo, editing constants, requirements.txt, deploying via share.streamlit.io
+# version : 20260731-110000 - Fixed a KeyError crash for existing sessions/saved files missing newer staff columns (e.g. DaysOffTogether): staff_df schema is now migrated on every load via ensure_staff_columns. Renamed "Kader" to "Box" in the About tab for consistency with the Advanced tab
+# version : 20260731-112000 - Filled in each default staff member's FixedDays with their given day off (RIPOSO): Alessia/Chiara/Ilaria/Nadia->Friday, Bruno/Federico->Wednesday, Davide/Lorenzo->Tuesday, Elena/Giulia->Thursday, Marco->Monday
+current_version = "20260731-112000"
 
 from dataclasses import dataclass
 from datetime import date, timedelta
@@ -49,6 +71,7 @@ from ortools.sat.python import cp_model
 # ============================================================================
 # CONFIGURATION BLOCK - all tunable parameters live here
 # ============================================================================
+
 
 DAYS: list[str] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
@@ -85,6 +108,8 @@ STRICT_WEEKLY_HOURS: bool = True  # if True, everyone's weekly hours must equal 
 WEIGHT_UNDERSTAFF: int = 200
 WEIGHT_OVERSTAFF: int = 5          # default overstaffing penalty, outside the morning/afternoon windows below
 REQUEST_WEIGHT_SCALE: int = 10     # multiplies PRIORITY_WEIGHTS for shift/day-off requests
+WEIGHT_DAYS_OFF_TOGETHER: int = 15  # soft preference weight for someone with 2 days off/week
+                                     # wanting them consecutive (or, if unchecked, kept apart)
 
 # With exact weekly hours enforced, any hours beyond the minimum coverage need
 # have to go *somewhere*. These two windows let extra coverage be steered
@@ -106,52 +131,6 @@ def overstaff_weight_for_hour(hour: int) -> int:
 
 MAX_SHIFT_LENGTH_HOURS: int = 6  # hard cap on how long any single shift block can be
 
-DEFAULT_SHIFT_CATALOG: list[tuple[str, int, int]] = [
-    ("M1", 8, 12), ("M2", 9, 13), ("M3", 9, 15), ("M4", 8, 14),
-    ("M5", 10, 14), ("M6", 10, 16), ("M7", 11, 15),
-    ("A1", 13, 17), ("A2", 13, 19), ("A3", 14, 18), ("A4", 14, 20),
-    ("A6", 15, 19), ("A7", 16, 20), ("A8", 16, 22),
-    ("E1", 18, 22),
-]
-
-# Names below follow the classic 21-letter Italian alphabet order (which has no
-# native words/names starting with H, so it's skipped): A, B, C, D, E, F, G, I, L, M, N.
-DEFAULT_STAFF: list[dict] = [
-    {"Name": "Alessia", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
-     "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK},
-    {"Name": "Bruno", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
-     "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK},
-    {"Name": "Chiara", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
-     "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK},
-    {"Name": "Davide", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
-     "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK},
-    {"Name": "Elena", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
-     "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK},
-    {"Name": "Federico", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
-     "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK},
-    {"Name": "Giulia", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
-     "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK},
-    {"Name": "Ilaria", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
-     "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK},
-    {"Name": "Lorenzo", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
-     "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK},
-    {"Name": "Marco", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
-     "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK},
-    {"Name": "Nadia", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
-     "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK},
-]
-
-# Default staff relationships (both fully editable in the "Rules" tab):
-# - "same shift" pairs must always work identical shift blocks on days neither
-#   has a fixed FERIE/RECUPERO entry.
-# - "complementary" pairs are softly discouraged from working the same hour at
-#   the same time (higher weight = stronger preference for alternating cover).
-DEFAULT_SAME_SHIFT_PAIRS: list[dict] = [
-    {"Name1": "Alessia", "Name2": "Nadia"},
-]
-DEFAULT_COMPLEMENTARY_PAIRS: list[dict] = [
-    {"Name1": "Bruno", "Name2": "Alessia", "Weight": 15},
-]
 
 # Coverage rule: minimum 4 people between 9-13 and between 15-20, every day of
 # the week. Hours outside those windows default to a lower baseline - edit
@@ -176,6 +155,76 @@ DEFAULT_HOURLY_MIN_BY_DAY: dict[str, dict[int, int]] = {
 DEFAULT_MAX_STAFF_PER_HOUR: int = 8
 _MAX_STAFF_OVERRIDES: dict[int, int] = {8: 2, 9: 3, 20: 1, 21: 1}
 
+# Arrivals/departures-driven coverage: three windows reusing the same
+# morning/afternoon/evening split as the peak-hours coverage rule above.
+# - Morning (checkout window) coverage is driven by departures.
+# - Evening (check-in window) coverage is driven by arrivals.
+# - Afternoon (the gap in between) only gets a coverage bump when there are
+#   more departures than arrivals that day (rooms need cleaning before the
+#   next arrivals; if arrivals >= departures there's no such surplus).
+ARRIVAL_DEPARTURE_MORNING_HOURS: set[int] = set(range(9, 13))    # 9,10,11,12
+ARRIVAL_DEPARTURE_AFTERNOON_HOURS: set[int] = set(range(13, 15))  # 13,14 (the cleaning gap)
+ARRIVAL_DEPARTURE_EVENING_HOURS: set[int] = set(range(15, 20))    # 15,16,17,18,19
+DEFAULT_ARRIVALS_DEPARTURES_PER_DAY: int = 20  # starting value for every day in the Arrivals & Departures table
+
+DEFAULT_SHIFT_CATALOG: list[tuple[str, int, int]] = [
+    ("M1", 8, 12), ("M2", 9, 13), ("M3", 9, 15), ("M4", 8, 14),
+    ("M5", 10, 14), ("M6", 10, 16), ("M7", 11, 15),
+    ("A1", 13, 17), ("A2", 13, 19), ("A3", 14, 18), ("A4", 14, 20),
+    ("A6", 15, 19), ("A7", 16, 20), ("A8", 16, 22),
+    ("E1", 18, 22),
+]
+
+# Names below follow the classic 21-letter Italian alphabet order (which has no
+# native words/names starting with H, so it's skipped): A, B, C, D, E, F, G, I, L, M, N.
+DEFAULT_STAFF: list[dict] = [
+    {"Name": "C", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
+     "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK,
+     "FixedDays": {"Friday": "RIPOSO"}, "DaysOffTogether": True},
+    {"Name": "T", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
+     "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK,
+     "FixedDays": {"Wednesday": "RIPOSO"}, "DaysOffTogether": True},
+    {"Name": "So", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
+     "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK,
+     "FixedDays": {"Friday": "RIPOSO"}, "DaysOffTogether": True},
+    {"Name": "I", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
+     "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK,
+     "FixedDays": {"Tuesday": "RIPOSO"}, "DaysOffTogether": True},
+    {"Name": "M", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
+     "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK,
+     "FixedDays": {"Thursday": "RIPOSO"}, "DaysOffTogether": True},
+    {"Name": "E", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
+     "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK,
+     "FixedDays": {"Wednesday": "RIPOSO"}, "DaysOffTogether": True},
+    {"Name": "F", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
+     "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK,
+     "FixedDays": {"Thursday": "RIPOSO"}, "DaysOffTogether": True},
+    {"Name": "Ma", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
+     "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK,
+     "FixedDays": {"Friday": "RIPOSO"}, "DaysOffTogether": True},
+    {"Name": "R", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
+     "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK,
+     "FixedDays": {"Tuesday": "RIPOSO"}, "DaysOffTogether": True},
+    {"Name": "D", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
+     "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK,
+     "FixedDays": {"Monday": "RIPOSO"}, "DaysOffTogether": True},
+    {"Name": "Si", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
+     "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK,
+     "FixedDays": {"Friday": "RIPOSO"}, "DaysOffTogether": True},
+]
+
+# Default staff relationships (both fully editable in the "Rules" tab):
+# - "same shift" pairs must always work identical shift blocks on days neither
+#   has a fixed FERIE/RECUPERO entry.
+# - "complementary" pairs are softly discouraged from working the same hour at
+#   the same time (higher weight = stronger preference for alternating cover).
+#   Sitemanager & Temaleader
+DEFAULT_SAME_SHIFT_PAIRS: list[dict] = [
+    {"Name1": "C", "Name2": "Si"},
+]
+DEFAULT_COMPLEMENTARY_PAIRS: list[dict] = [
+    {"Name1": "C", "Name2": "T", "Weight": 15},
+]
 
 # ============================================================================
 # DATA BUILDERS
@@ -186,11 +235,44 @@ def build_default_shift_df() -> pd.DataFrame:
 
 
 def build_default_staff_df() -> pd.DataFrame:
-    return pd.DataFrame(DEFAULT_STAFF)
+    # FixedDays is deliberately excluded here: it's a one-time seed for the Fixed-days
+    # grid (see build_default_fixed_df below), not an ongoing editable column - a
+    # dict-per-cell column doesn't serialise through st.data_editor anyway.
+    rows = [{k: v for k, v in person.items() if k != "FixedDays"} for person in DEFAULT_STAFF]
+    return pd.DataFrame(rows)
+
+
+STAFF_COLUMN_DEFAULTS: dict[str, object] = {
+    "ContractHours": 30,
+    "MinRestDays": 1,
+    "MaxConsecDays": 6,
+    "SplitAllowed": True,
+    "ContractType": CONTRACT_TYPE_FLEXIBLE,
+    "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK,
+    "DaysOffTogether": True,
+}
+
+
+def ensure_staff_columns(staff_df: pd.DataFrame) -> pd.DataFrame:
+    """Add any staff column that's been introduced since a session (or an old saved
+    copy of this app) was last touched, with a sensible default - prevents a KeyError
+    whenever a newer version adds a column that an existing staff_df doesn't have yet."""
+    for column, default in STAFF_COLUMN_DEFAULTS.items():
+        if column not in staff_df.columns:
+            staff_df[column] = default
+    return staff_df
 
 
 def build_default_fixed_df(names: list[str]) -> pd.DataFrame:
-    rows = [{"Name": name, **{day: "" for day in DAYS}} for name in names]
+    """Seed the fixed-status grid from each default staff member's own `FixedDays`
+    dict (set in DEFAULT_STAFF), e.g. {"Monday": "FERIE"} for someone with a known
+    holiday that week. Names not found in DEFAULT_STAFF (e.g. added later via the
+    Staff tab) simply start blank."""
+    fixed_days_lookup = {person["Name"]: person.get("FixedDays", {}) for person in DEFAULT_STAFF}
+    rows = []
+    for name in names:
+        fixed_days = fixed_days_lookup.get(name, {})
+        rows.append({"Name": name, **{day: fixed_days.get(day, "") for day in DAYS}})
     return pd.DataFrame(rows)
 
 
@@ -212,6 +294,96 @@ def build_default_max_staff_df() -> pd.DataFrame:
             row[str(hour)] = _MAX_STAFF_OVERRIDES.get(hour, DEFAULT_MAX_STAFF_PER_HOUR)
         rows.append(row)
     return pd.DataFrame(rows)
+
+
+def build_default_arrivals_departures_df() -> pd.DataFrame:
+    return pd.DataFrame([
+        {"Metric": "Departures", **{day: DEFAULT_ARRIVALS_DEPARTURES_PER_DAY for day in DAYS}},
+        {"Metric": "Arrivals", **{day: DEFAULT_ARRIVALS_DEPARTURES_PER_DAY for day in DAYS}},
+    ])
+
+
+def _window_baseline(coverage_df: pd.DataFrame, hours: set[int]) -> int:
+    """The 'usual' staffing level for a window, taken as the average of whatever's
+    currently set across all 7 days for those hours. An average day is one where
+    arrivals/departures are equal every day - in that case every day scores exactly
+    this baseline back, i.e. the table comes out unchanged."""
+    values = [
+        int(coverage_df.loc[coverage_df["Day"] == day, str(hour)].values[0])
+        for day in DAYS for hour in hours
+    ]
+    return max(1, round(sum(values) / len(values)))
+
+
+def _scaled_staff(day_value: float, total_value: float, baseline_staff: int, num_days: int = len(DAYS)) -> int:
+    """A day's share of the total (across `num_days` days), as a percentage, compared
+    against an even 1/num_days share - then that ratio scales the baseline staffing
+    level up or down. A day exactly at the average share gets exactly `baseline_staff`."""
+    if total_value <= 0 or num_days <= 0:
+        return baseline_staff
+    even_share_pct = 100 / num_days
+    day_share_pct = day_value / total_value * 100
+    return max(1, round(baseline_staff * day_share_pct / even_share_pct))
+
+
+def derive_coverage_from_arrivals(
+    coverage_df: pd.DataFrame,
+    arrivals_departures_df: pd.DataFrame,
+    max_staff_df: pd.DataFrame | None = None,
+) -> pd.DataFrame:
+    """Adjust the morning/evening (and, when there's a cleaning surplus, afternoon)
+    coverage minimums from arrivals/departures counts. Each day is scaled relative to
+    its own share of the week's total (day/total*100 against an even 1/7 share). The
+    baseline for each window is derived automatically from the average of what's
+    already set there - there's nothing to configure: an average day (equal
+    arrivals/departures every day) leaves the table unchanged.
+
+    The existing minimum and maximum tables are always leading: the ratio-derived
+    value is clamped to never go below whatever minimum is already set for that cell,
+    nor above the maximum if one is given - so even a day with 0 arrivals/departures
+    still gets at least the minimum you already configured, it's never overwritten
+    down to something lower. Hours outside the three windows are left untouched."""
+    result = coverage_df.copy()
+    ad = arrivals_departures_df.set_index("Metric")
+    arrivals = {day: int(ad.loc["Arrivals", day]) for day in DAYS}
+    departures = {day: int(ad.loc["Departures", day]) for day in DAYS}
+    total_arrivals = sum(arrivals.values())
+    total_departures = sum(departures.values())
+    surpluses = {day: max(0, departures[day] - arrivals[day]) for day in DAYS}
+    total_surplus = sum(surpluses.values())
+    days_with_surplus = sum(1 for s in surpluses.values() if s > 0)
+
+    morning_baseline = _window_baseline(coverage_df, ARRIVAL_DEPARTURE_MORNING_HOURS)
+    evening_baseline = _window_baseline(coverage_df, ARRIVAL_DEPARTURE_EVENING_HOURS)
+    afternoon_baseline = _window_baseline(coverage_df, ARRIVAL_DEPARTURE_AFTERNOON_HOURS)
+
+    def apply_clamped(day: str, hour: int, derived_value: int) -> None:
+        floor = int(coverage_df.loc[coverage_df["Day"] == day, str(hour)].values[0])
+        value = max(derived_value, floor)
+        if max_staff_df is not None:
+            ceiling = int(max_staff_df.loc[max_staff_df["Day"] == day, str(hour)].values[0])
+            value = min(value, ceiling)
+        result.loc[result["Day"] == day, str(hour)] = value
+
+    for day in DAYS:
+        morning_min = _scaled_staff(departures[day], total_departures, morning_baseline)
+        evening_min = _scaled_staff(arrivals[day], total_arrivals, evening_baseline)
+        for hour in ARRIVAL_DEPARTURE_MORNING_HOURS:
+            apply_clamped(day, hour, morning_min)
+        for hour in ARRIVAL_DEPARTURE_EVENING_HOURS:
+            apply_clamped(day, hour, evening_min)
+
+        if surpluses[day] > 0 and total_surplus > 0:
+            # compared against the average *among days that have a surplus at all*,
+            # not against 1/7 - otherwise a surplus concentrated on 1-2 days gets
+            # wildly over-scaled just because most days have none
+            afternoon_min = _scaled_staff(surpluses[day], total_surplus, afternoon_baseline, num_days=days_with_surplus)
+            for hour in ARRIVAL_DEPARTURE_AFTERNOON_HOURS:
+                apply_clamped(day, hour, afternoon_min)
+        # no surplus that day: departures and arrivals are roughly back-to-back (no
+        # cleaning gap to staff for) - afternoon hours are left at whatever they were
+
+    return result
 
 
 def build_default_same_shift_df() -> pd.DataFrame:
@@ -546,6 +718,30 @@ def solve_schedule(
             for start in range(0, len(DAYS) - window + 1):
                 model.Add(sum(y[name, DAYS[start + k]] for k in range(window)) <= max_consec)
 
+    # "days off together" (soft): only meaningful with exactly 2 days off/week.
+    # DaysOffTogether=True rewards the 2 rest days landing on adjacent calendar
+    # days (e.g. a Sat+Sun weekend); False rewards them being kept apart instead.
+    days_off_together_terms = []
+    adjacent_day_pairs = list(zip(DAYS[:-1], DAYS[1:]))  # (Mon,Tue), (Tue,Wed), ..., (Sat,Sun)
+    for row in staff_df.itertuples():
+        name = row.Name
+        if int(row.MinRestDays) != 2:
+            continue
+        wants_together = bool(getattr(row, "DaysOffTogether", True))
+        for day1, day2 in adjacent_day_pairs:
+            if is_off_day(name, day1) or is_off_day(name, day2):
+                continue  # a FERIE/RECUPERO day isn't part of this preference
+            rest1 = 1 - y[name, day1]
+            rest2 = 1 - y[name, day2]
+            both_rest = model.NewBoolVar(f"bothrest_{name}_{day1}_{day2}")
+            model.Add(both_rest <= rest1)
+            model.Add(both_rest <= rest2)
+            model.Add(both_rest >= rest1 + rest2 - 1)
+            if wants_together:
+                days_off_together_terms.append(-WEIGHT_DAYS_OFF_TOGETHER * both_rest)  # reward adjacency
+            else:
+                days_off_together_terms.append(WEIGHT_DAYS_OFF_TOGETHER * both_rest)   # penalise adjacency
+
     # weekly contract-hours target: exact and hard when strict_weekly_hours is on.
     # Each FERIE/RECUPERO day lowers that person's target for the week by
     # HOURS_PER_FERIE_RECUPERO_DAY (a standard working day's worth of hours),
@@ -626,7 +822,8 @@ def solve_schedule(
     request_terms = []
     for row in requests_df.itertuples():
         name, day, rtype = row.Name, row.Day, row.RequestType
-        code = getattr(row, "ShiftCode", "") or ""
+        code_display = getattr(row, "ShiftCode", "") or ""
+        code = code_display.split(" ")[0]  # ShiftCode is stored as "CODE (start-end)"; the solver only needs CODE
         priority = getattr(row, "Priority", "Low")
         if name not in names or day not in DAYS:
             continue
@@ -667,6 +864,7 @@ def solve_schedule(
         + 3 * sum(hours_deviation_terms)
         + sum(complementary_terms)
         + sum(request_terms)
+        + sum(days_off_together_terms)
     )
 
     solver = cp_model.CpSolver()
@@ -766,9 +964,26 @@ def to_csv_bytes(grid_df: pd.DataFrame) -> bytes:
 # STREAMLIT UI
 # ============================================================================
 
+def _save_feedback(snapshot_key: str, new_value: pd.DataFrame, label: str) -> None:
+    """Call right after a form is submitted. Toasts a confirmation, and can tell a
+    genuine change apart from clicking Save/Apply with nothing new to save - this is
+    the honest limit of what's detectable: st.form doesn't rerun the script while
+    you're editing, only at submit, so there's no way to show a live "unsaved
+    changes" state before that point (that's the trade-off for fixing the
+    double-entry bug - forms can't watch for changes they haven't been told about)."""
+    previous = st.session_state.get(snapshot_key)
+    changed = previous is None or not new_value.equals(previous)
+    if changed:
+        st.toast(f"{label} saved", icon=":material/check_circle:")
+    else:
+        st.toast(f"No changes to {label.lower()}", icon=":material/info:")
+    st.session_state[snapshot_key] = new_value.copy()
+
+
 def init_session_state() -> None:
     if "staff_df" not in st.session_state:
         st.session_state.staff_df = build_default_staff_df()
+    st.session_state.staff_df = ensure_staff_columns(st.session_state.staff_df)
     if "shift_df" not in st.session_state:
         st.session_state.shift_df = build_default_shift_df()
     if "fixed_df" not in st.session_state:
@@ -777,6 +992,8 @@ def init_session_state() -> None:
         st.session_state.coverage_df = build_default_coverage_df()
     if "max_staff_df" not in st.session_state:
         st.session_state.max_staff_df = build_default_max_staff_df()
+    if "arrivals_departures_df" not in st.session_state:
+        st.session_state.arrivals_departures_df = build_default_arrivals_departures_df()
     if "same_shift_df" not in st.session_state:
         st.session_state.same_shift_df = build_default_same_shift_df()
     if "complementary_df" not in st.session_state:
@@ -788,12 +1005,16 @@ def init_session_state() -> None:
     if "week_start" not in st.session_state:
         today = date.today()
         st.session_state.week_start = today - timedelta(days=today.weekday())
+    if "limit_max_break" not in st.session_state:
+        st.session_state.limit_max_break = True
 
 
 def render_staff_tab() -> None:
     st.caption("One row per team member. Split shifts (e.g. morning + evening) are allowed only when 'SplitAllowed' is checked. "
                "'Days off/week' is 1 or 2. 'Fixed 8h split' overrides SplitAllowed and forces exactly two 4-hour blocks "
-               "with a 1-2h break, plus at least 2 days off/week regardless of what's set here.")
+               "with a 1-2h break, plus at least 2 days off/week regardless of what's set here. 'Days off together' only "
+               "matters with 2 days off/week: checked prefers them consecutive (e.g. weekend), unchecked prefers them apart - "
+               "it's a soft preference, not a hard rule.")
 
     with st.expander("Quick set: days off for everyone", icon=":material/bolt:"):
         col_a, col_b = st.columns([1, 2])
@@ -806,23 +1027,27 @@ def render_staff_tab() -> None:
                 st.session_state.pop("staff_editor", None)
                 st.rerun()
 
-    edited = st.data_editor(
-        st.session_state.staff_df,
-        num_rows="dynamic",
-        width="stretch",
-        hide_index=True,
-        column_config={
-            "Name": st.column_config.TextColumn("Name", required=True),
-            "ContractHours": st.column_config.NumberColumn("Contract hrs/week", min_value=0, max_value=60, step=1),
-            "MinRestDays": st.column_config.SelectboxColumn("Days off/week", options=REST_DAYS_OPTIONS, required=True),
-            "MaxConsecDays": st.column_config.NumberColumn("Max consecutive work days", min_value=1, max_value=7, step=1),
-            "SplitAllowed": st.column_config.CheckboxColumn("Split shift allowed"),
-            "ContractType": st.column_config.SelectboxColumn("Contract type", options=CONTRACT_TYPE_OPTIONS, required=True),
-            "MaxClosingShiftsPerWeek": st.column_config.NumberColumn("Max closing shifts/week (0 = unlimited)",
-                                                                      min_value=0, max_value=7, step=1),
-        },
-        key="staff_editor",
-    )
+    with st.form("staff_form", border=False):
+        edited = st.data_editor(
+            st.session_state.staff_df,
+            num_rows="dynamic",
+            width="stretch",
+            hide_index=True,
+            column_config={
+                "Name": st.column_config.TextColumn("Name", required=True),
+                "ContractHours": st.column_config.NumberColumn("Contract hrs/week", min_value=0, max_value=60, step=1),
+                "MinRestDays": st.column_config.SelectboxColumn("Days off/week", options=REST_DAYS_OPTIONS, required=True),
+                "MaxConsecDays": st.column_config.NumberColumn("Max consecutive work days", min_value=1, max_value=7, step=1),
+                "SplitAllowed": st.column_config.CheckboxColumn("Split shift allowed"),
+                "ContractType": st.column_config.SelectboxColumn("Contract type", options=CONTRACT_TYPE_OPTIONS, required=True),
+                "MaxClosingShiftsPerWeek": st.column_config.NumberColumn("Max closing shifts/week (0 = unlimited)",
+                                                                          min_value=0, max_value=7, step=1),
+                "DaysOffTogether": st.column_config.CheckboxColumn("Days off together (vs. separate)"),
+            },
+            key="staff_editor",
+        )
+        staff_submitted = st.form_submit_button("Save staff", icon=":material/save:")
+
     edited = edited.dropna(subset=["Name"])
     edited = edited[edited["Name"].str.strip() != ""]
     edited["ContractHours"] = edited["ContractHours"].fillna(30)
@@ -831,7 +1056,10 @@ def render_staff_tab() -> None:
     edited["SplitAllowed"] = edited["SplitAllowed"].fillna(True)
     edited["ContractType"] = edited["ContractType"].fillna(CONTRACT_TYPE_FLEXIBLE)
     edited["MaxClosingShiftsPerWeek"] = edited["MaxClosingShiftsPerWeek"].fillna(DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK)
+    edited["DaysOffTogether"] = edited["DaysOffTogether"].fillna(True)
     st.session_state.staff_df = edited.reset_index(drop=True)
+    if staff_submitted:
+        _save_feedback("_snap_staff_df", st.session_state.staff_df, "Staff")
 
     names = st.session_state.staff_df["Name"].tolist()
     st.session_state.fixed_df = sync_fixed_df(st.session_state.fixed_df, names)
@@ -843,18 +1071,21 @@ def render_staff_tab() -> None:
 def render_shift_tab() -> None:
     st.caption(f"Available shift blocks, all within business hours {OPEN_HOUR}:00-{CLOSE_HOUR}:00, "
                f"max {MAX_SHIFT_LENGTH_HOURS}h each. The solver only assigns whole blocks from this catalog.")
-    edited = st.data_editor(
-        st.session_state.shift_df,
-        num_rows="dynamic",
-        width="stretch",
-        hide_index=True,
-        column_config={
-            "Code": st.column_config.TextColumn("Code", required=True),
-            "Start": st.column_config.NumberColumn("Start hour", min_value=OPEN_HOUR, max_value=CLOSE_HOUR - 1, step=1),
-            "End": st.column_config.NumberColumn("End hour", min_value=OPEN_HOUR + 1, max_value=CLOSE_HOUR, step=1),
-        },
-        key="shift_editor",
-    )
+    with st.form("shift_form", border=False):
+        edited = st.data_editor(
+            st.session_state.shift_df,
+            num_rows="dynamic",
+            width="stretch",
+            hide_index=True,
+            column_config={
+                "Code": st.column_config.TextColumn("Code", required=True),
+                "Start": st.column_config.NumberColumn("Start hour", min_value=OPEN_HOUR, max_value=CLOSE_HOUR - 1, step=1),
+                "End": st.column_config.NumberColumn("End hour", min_value=OPEN_HOUR + 1, max_value=CLOSE_HOUR, step=1),
+            },
+            key="shift_editor",
+        )
+        shift_submitted = st.form_submit_button("Save shift catalog", icon=":material/save:")
+
     edited = edited.dropna(subset=["Code", "Start", "End"])
     edited = edited[edited["End"] > edited["Start"]]
     too_long = edited[edited["End"] - edited["Start"] > MAX_SHIFT_LENGTH_HOURS]
@@ -864,6 +1095,8 @@ def render_shift_tab() -> None:
     edited = edited[edited["End"] - edited["Start"] <= MAX_SHIFT_LENGTH_HOURS]
     edited = edited.drop_duplicates(subset=["Code"])
     st.session_state.shift_df = edited.reset_index(drop=True)
+    if shift_submitted:
+        _save_feedback("_snap_shift_df", st.session_state.shift_df, "Shift catalog")
 
 
 def render_fixed_tab() -> None:
@@ -871,29 +1104,77 @@ def render_fixed_tab() -> None:
     column_config = {"Name": st.column_config.TextColumn("Name", disabled=True)}
     for day in DAYS:
         column_config[day] = st.column_config.SelectboxColumn(day, options=FIXED_STATUS_OPTIONS)
-    edited = st.data_editor(
-        st.session_state.fixed_df,
-        width="stretch",
-        hide_index=True,
-        column_config=column_config,
-        key="fixed_editor",
-    )
+    with st.form("fixed_form", border=False):
+        edited = st.data_editor(
+            st.session_state.fixed_df,
+            width="stretch",
+            hide_index=True,
+            column_config=column_config,
+            key="fixed_editor",
+        )
+        fixed_submitted = st.form_submit_button("Save fixed days", icon=":material/save:")
     st.session_state.fixed_df = edited
+    if fixed_submitted:
+        _save_feedback("_snap_fixed_df", st.session_state.fixed_df, "Fixed days")
 
 
 def render_coverage_tab() -> None:
+    st.subheader("Arrivals & departures", divider=False)
+    st.caption(
+        "Optional: derive the minimum-coverage table below from expected guest arrivals/departures instead of "
+        "setting it by hand. Each day is scaled by its own share of the week's total (day/total*100, compared "
+        "against an even 1/7 share) - an average day (equal arrivals/departures every day) leaves the table "
+        "unchanged; busier days get more, quieter days get less. The existing minimum/maximum tables are always "
+        "leading: the derived value never goes below the minimum already set for a cell, or above its maximum - "
+        "so even a day with 0 arrivals/departures keeps at least its current minimum. Departures drive the morning window "
+        f"({min(ARRIVAL_DEPARTURE_MORNING_HOURS)}h-{max(ARRIVAL_DEPARTURE_MORNING_HOURS) + 1}h), arrivals drive "
+        f"the evening window ({min(ARRIVAL_DEPARTURE_EVENING_HOURS)}h-{max(ARRIVAL_DEPARTURE_EVENING_HOURS) + 1}h). "
+        f"The afternoon gap ({min(ARRIVAL_DEPARTURE_AFTERNOON_HOURS)}h-{max(ARRIVAL_DEPARTURE_AFTERNOON_HOURS) + 1}h) "
+        "only gets extra coverage when departures exceed arrivals that day - that surplus means rooms aren't "
+        "turned over back-to-back, so there's cleaning to staff for before the next check-ins."
+    )
+    ad_column_config = {"Metric": st.column_config.TextColumn("", disabled=True)}
+    for day in DAYS:
+        ad_column_config[day] = st.column_config.NumberColumn(day, min_value=0, step=1)
+    with st.form("arrivals_departures_form", border=False):
+        ad_edited = st.data_editor(
+            st.session_state.arrivals_departures_df,
+            width="stretch",
+            hide_index=True,
+            column_config=ad_column_config,
+            key="arrivals_departures_editor",
+        )
+        apply_clicked = st.form_submit_button("Apply", icon=":material/sync:")
+    st.session_state.arrivals_departures_df = ad_edited
+
+    if apply_clicked:
+        st.session_state.coverage_df = derive_coverage_from_arrivals(
+            st.session_state.coverage_df,
+            st.session_state.arrivals_departures_df,
+            max_staff_df=st.session_state.max_staff_df,
+        )
+        st.session_state.pop("coverage_editor", None)
+        st.toast("Minimum coverage updated from arrivals/departures", icon=":material/check_circle:")
+        st.rerun()
+
+    st.space("small")
+    st.subheader("Minimum staff per hour", divider=False)
     st.caption("Minimum number of staff required, per day and per hour block. Defaults already differ per day of the week - edit freely.")
     column_config = {"Day": st.column_config.TextColumn("Day", disabled=True)}
     for hour in HOURS:
         column_config[str(hour)] = st.column_config.NumberColumn(f"{hour}h", min_value=0, max_value=10, step=1, width="small")
-    edited = st.data_editor(
-        st.session_state.coverage_df,
-        width="stretch",
-        hide_index=True,
-        column_config=column_config,
-        key="coverage_editor",
-    )
+    with st.form("coverage_min_form", border=False):
+        edited = st.data_editor(
+            st.session_state.coverage_df,
+            width="stretch",
+            hide_index=True,
+            column_config=column_config,
+            key="coverage_editor",
+        )
+        min_cov_submitted = st.form_submit_button("Save minimum coverage", icon=":material/save:")
     st.session_state.coverage_df = edited
+    if min_cov_submitted:
+        _save_feedback("_snap_coverage_df", st.session_state.coverage_df, "Minimum coverage")
 
     with st.expander("Quick fill (minimum)", icon=":material/bolt:"):
         col1, col2, col3 = st.columns(3)
@@ -909,6 +1190,7 @@ def render_coverage_tab() -> None:
                 for hour in fill_hours:
                     df.loc[df["Day"] == day, str(hour)] = fill_value
             st.session_state.coverage_df = df
+            st.session_state.pop("coverage_editor", None)
             st.rerun()
 
     st.space("small")
@@ -917,14 +1199,18 @@ def render_coverage_tab() -> None:
     max_column_config = {"Day": st.column_config.TextColumn("Day", disabled=True)}
     for hour in HOURS:
         max_column_config[str(hour)] = st.column_config.NumberColumn(f"{hour}h", min_value=0, max_value=20, step=1, width="small")
-    max_edited = st.data_editor(
-        st.session_state.max_staff_df,
-        width="stretch",
-        hide_index=True,
-        column_config=max_column_config,
-        key="max_staff_editor",
-    )
+    with st.form("coverage_max_form", border=False):
+        max_edited = st.data_editor(
+            st.session_state.max_staff_df,
+            width="stretch",
+            hide_index=True,
+            column_config=max_column_config,
+            key="max_staff_editor",
+        )
+        max_cov_submitted = st.form_submit_button("Save maximum coverage", icon=":material/save:")
     st.session_state.max_staff_df = max_edited
+    if max_cov_submitted:
+        _save_feedback("_snap_max_staff_df", st.session_state.max_staff_df, "Maximum coverage")
 
     with st.expander("Quick fill (maximum)", icon=":material/bolt:"):
         col4, col5, col6 = st.columns(3)
@@ -940,6 +1226,7 @@ def render_coverage_tab() -> None:
                 for hour in max_fill_hours:
                     df.loc[df["Day"] == day, str(hour)] = max_fill_value
             st.session_state.max_staff_df = df
+            st.session_state.pop("max_staff_editor", None)
             st.rerun()
 
 
@@ -948,57 +1235,71 @@ def render_rules_tab() -> None:
 
     st.subheader("Same shift", divider=False)
     st.caption("These pairs must always work identical shift blocks (unless one of them has a fixed FERIE/RECUPERO entry that day).")
-    same_edited = st.data_editor(
-        st.session_state.same_shift_df,
-        num_rows="dynamic",
-        width="stretch",
-        hide_index=True,
-        column_config={
-            "Name1": st.column_config.SelectboxColumn("Person 1", options=names, required=True),
-            "Name2": st.column_config.SelectboxColumn("Person 2", options=names, required=True),
-        },
-        key="same_shift_editor",
-    )
+    with st.form("same_shift_form", border=False):
+        same_edited = st.data_editor(
+            st.session_state.same_shift_df,
+            num_rows="dynamic",
+            width="stretch",
+            hide_index=True,
+            column_config={
+                "Name1": st.column_config.SelectboxColumn("Person 1", options=names, required=True),
+                "Name2": st.column_config.SelectboxColumn("Person 2", options=names, required=True),
+            },
+            key="same_shift_editor",
+        )
+        same_shift_submitted = st.form_submit_button("Save same-shift pairs", icon=":material/save:")
     st.session_state.same_shift_df = same_edited.dropna().reset_index(drop=True)
+    if same_shift_submitted:
+        _save_feedback("_snap_same_shift_df", st.session_state.same_shift_df, "Same-shift pairs")
 
     st.space("small")
     st.subheader("Complementary staff", divider=False)
     st.caption("These pairs are softly discouraged from working the exact same hour at the same time - higher weight means a stronger preference for alternating cover.")
-    comp_edited = st.data_editor(
-        st.session_state.complementary_df,
-        num_rows="dynamic",
-        width="stretch",
-        hide_index=True,
-        column_config={
-            "Name1": st.column_config.SelectboxColumn("Person 1", options=names, required=True),
-            "Name2": st.column_config.SelectboxColumn("Person 2", options=names, required=True),
-            "Weight": st.column_config.NumberColumn("Weight", min_value=1, max_value=100, step=1),
-        },
-        key="complementary_editor",
-    )
+    with st.form("complementary_form", border=False):
+        comp_edited = st.data_editor(
+            st.session_state.complementary_df,
+            num_rows="dynamic",
+            width="stretch",
+            hide_index=True,
+            column_config={
+                "Name1": st.column_config.SelectboxColumn("Person 1", options=names, required=True),
+                "Name2": st.column_config.SelectboxColumn("Person 2", options=names, required=True),
+                "Weight": st.column_config.NumberColumn("Weight", min_value=1, max_value=100, step=1),
+            },
+            key="complementary_editor",
+        )
+        complementary_submitted = st.form_submit_button("Save complementary pairs", icon=":material/save:")
     st.session_state.complementary_df = comp_edited.dropna().reset_index(drop=True)
+    if complementary_submitted:
+        _save_feedback("_snap_complementary_df", st.session_state.complementary_df, "Complementary pairs")
 
 
 def render_requests_tab() -> None:
     st.caption("Individual shift or day-off requests. These are soft preferences the solver tries to honour, weighted by priority - "
                "they never override coverage or rest-day rules, and a higher priority is honoured before a lower one when both can't be satisfied.")
     names = st.session_state.staff_df["Name"].tolist()
-    shift_codes = [""] + st.session_state.shift_df["Code"].tolist()
-    edited = st.data_editor(
-        st.session_state.requests_df,
-        num_rows="dynamic",
-        width="stretch",
-        hide_index=True,
-        column_config={
-            "Name": st.column_config.SelectboxColumn("Name", options=names, required=True),
-            "Day": st.column_config.SelectboxColumn("Day", options=DAYS, required=True),
-            "RequestType": st.column_config.SelectboxColumn("Request", options=REQUEST_TYPE_OPTIONS, required=True),
-            "ShiftCode": st.column_config.SelectboxColumn("Shift code (if applicable)", options=shift_codes),
-            "Priority": st.column_config.SelectboxColumn("Priority", options=PRIORITY_OPTIONS, required=True),
-        },
-        key="requests_editor",
-    )
+    shift_codes = [""] + [
+        f"{row.Code} ({row.Start}-{row.End})" for row in st.session_state.shift_df.itertuples()
+    ]
+    with st.form("requests_form", border=False):
+        edited = st.data_editor(
+            st.session_state.requests_df,
+            num_rows="dynamic",
+            width="stretch",
+            hide_index=True,
+            column_config={
+                "Name": st.column_config.SelectboxColumn("Name", options=names, required=True),
+                "Day": st.column_config.SelectboxColumn("Day", options=DAYS, required=True),
+                "RequestType": st.column_config.SelectboxColumn("Request", options=REQUEST_TYPE_OPTIONS, required=True),
+                "ShiftCode": st.column_config.SelectboxColumn("Shift code (if applicable)", options=shift_codes),
+                "Priority": st.column_config.SelectboxColumn("Priority", options=PRIORITY_OPTIONS, required=True),
+            },
+            key="requests_editor",
+        )
+        requests_submitted = st.form_submit_button("Save requests", icon=":material/save:")
     st.session_state.requests_df = edited.dropna(subset=["Name", "Day", "RequestType", "Priority"]).reset_index(drop=True)
+    if requests_submitted:
+        _save_feedback("_snap_requests_df", st.session_state.requests_df, "Requests")
 
 
 def render_results_tab() -> None:
@@ -1015,7 +1316,8 @@ def render_results_tab() -> None:
 
     col4, col5, col6 = st.columns(3)
     with col4:
-        limit_max_break = st.checkbox("Limit max break between split shifts", value=False)
+        limit_max_break = st.checkbox("Limit max break between split shifts",
+                                       value=st.session_state.limit_max_break, key="limit_max_break")
     with col5:
         max_break = st.number_input("Max break (hrs)", min_value=1, max_value=8,
                                      value=DEFAULT_MAX_BREAK_HOURS_OPTION, step=1, disabled=not limit_max_break)
@@ -1085,9 +1387,22 @@ def render_results_tab() -> None:
     staff_order = st.session_state.staff_df["Name"].tolist()
     grid = pivot_grid(result.schedule_df, staff_order, st.session_state.week_start)
     st.dataframe(grid, width="stretch")
+    st.caption(":material/gpp_maybe: **Verify before using.** This schedule is generated automatically from the "
+               "rules you configured - it doesn't know local labour law, verbal agreements, or anything you "
+               "haven't entered. Review it before publishing or relying on it.")
 
     cov = coverage_check_df(result.schedule_df, st.session_state.shift_df, st.session_state.coverage_df)
-
+    
+    gaps = cov[cov["Gap"] < 0]
+    if gaps.empty:
+        st.success("All hours comply to minimum and maximum occupation.", icon=":material/check_circle:")
+    else:
+        with st.expander("Understaffed hours", icon=":material/warning:", expanded=True):
+            st.warning(f"{len(gaps)} hour blocks are understaffed.", icon=":material/warning:")
+            styled_gaps = gaps.style.map(lambda v: "background-color: #ffd6d6; font-weight: bold" if v < 0 else "",
+                                            subset=["Gap"])
+            st.dataframe(styled_gaps, width="stretch", hide_index=True)
+    
     st.subheader("Staff working per hour", divider=False)
     st.caption("Rows are days, columns are hour blocks - each cell is the number of people working during that hour.")
     st.dataframe(headcount_grid(cov), width="stretch")
@@ -1098,15 +1413,7 @@ def render_results_tab() -> None:
     summary_df["Difference"] = summary_df["Scheduled hours"] - summary_df["Contract target"]
     st.dataframe(summary_df, width="stretch")
 
-    gaps = cov[cov["Gap"] < 0]
-    if gaps.empty:
-        st.success("All hours comply to minimum and maximum occupation.", icon=":material/check_circle:")
-    else:
-        with st.expander("Understaffed hours", icon=":material/warning:", expanded=True):
-            st.warning(f"{len(gaps)} hour blocks are below the required coverage.", icon=":material/warning:")
-            styled_gaps = gaps.style.map(lambda v: "background-color: #ffd6d6; font-weight: bold" if v < 0 else "",
-                                          subset=["Gap"])
-            st.dataframe(styled_gaps, width="stretch", hide_index=True)
+    
 
     csv_bytes = to_csv_bytes(grid)
     st.download_button("Download CSV", data=csv_bytes, file_name="rota.csv", mime="text/csv",
@@ -1115,6 +1422,7 @@ def render_results_tab() -> None:
 
 SESSION_STATE_KEYS: list[str] = [
     "staff_df", "shift_df", "fixed_df", "coverage_df", "max_staff_df",
+    "arrivals_departures_df", "limit_max_break",
     "same_shift_df", "complementary_df", "requests_df", "result",
 ]
 
@@ -1232,7 +1540,7 @@ For now: fill in the Staff and Coverage tabs, hit **Generate schedule**, and see
 def render_about_tab() -> None:
     st.markdown(ABOUT_INTRO_MD)
     with st.container(border=True):
-        st.markdown("### :material/engineering: Kader: which engine, and why")
+        st.markdown("### :material/engineering: Box: which engine, and why")
         st.markdown(ABOUT_KADER_MD)
     st.markdown(ABOUT_OUTRO_MD)
 
@@ -1363,6 +1671,7 @@ why it makes the trade-offs it does.
 | hours-deviation weight | **3** (hardcoded) | per hour away from someone's target, but *only* when `STRICT_WEEKLY_HOURS = False`. Irrelevant while hours are a hard constraint. |
 | `REQUEST_WEIGHT_SCALE` | **{REQUEST_WEIGHT_SCALE}** | multiplies `PRIORITY_WEIGHTS` ({PRIORITY_WEIGHTS}) for each request, so Low/Medium/High become {PRIORITY_WEIGHTS['Low']*REQUEST_WEIGHT_SCALE}/{PRIORITY_WEIGHTS['Medium']*REQUEST_WEIGHT_SCALE}/{PRIORITY_WEIGHTS['High']*REQUEST_WEIGHT_SCALE}. |
 | complementary-pair weight | *set per pair in the Rules tab* | penalty for two linked people working the same hour simultaneously; no global constant, it's a column in that table (default {DEFAULT_COMPLEMENTARY_PAIRS[0]['Weight']}). |
+| `WEIGHT_DAYS_OFF_TOGETHER` | **{WEIGHT_DAYS_OFF_TOGETHER}** | per person with exactly 2 days off/week: rewards (or, if their "Days off together" checkbox is unchecked, penalises) their 2 rest days landing on adjacent calendar days. No effect with 1 day off. |
 
 Why {WEIGHT_UNDERSTAFF} for understaffing but only {WEIGHT_OVERSTAFF} for overstaffing? Because with everyone on
 an exact hours target, the total contracted hours in the week is usually well above the *minimum* coverage
@@ -1379,7 +1688,7 @@ do personal requests matter compared to everything else" — since {PRIORITY_WEI
 (a High request) is still far below {WEIGHT_UNDERSTAFF}, no request can ever be granted at the cost of leaving
 an hour understaffed.
 """)
-    st.info("Sript: https://github.com/rcsmit/streamlit_scripts/blob/main/staff_rota_planner.py")
+
     with st.container(border=True):
         st.markdown("### :material/memory: Box: the algorithm, for the technically curious")
         st.markdown(f"""
@@ -1412,9 +1721,34 @@ Docs for the CP-SAT solver specifically: the
 [CP-SAT primer](https://developers.google.com/optimization/cp/cp_solver).
 """)
 
+    with st.container(border=True):
+        st.markdown("### :material/rocket_launch: Box: deploying your own copy (GitHub + Streamlit Cloud)")
+        st.markdown("""
+This app is a single `.py` file with no server-side state beyond one browser session, so putting it online is
+mostly a GitHub + Streamlit Cloud exercise, not a real deployment project.
+
+1. **Get the file into a GitHub repo.** For now it lives alongside other scripts here:
+   [rcsmit/streamlit_scripts/staff_rota_planner.py](https://github.com/rcsmit/streamlit_scripts/blob/main/staff_rota_planner.py).
+   A dedicated repo of its own is a natural next step later, once/if this grows beyond "one script in a shared
+   folder" - nothing about the app itself needs to change for that, it's purely a matter of moving the file and
+   updating the deploy target.
+2. **Adjust the constants for your own situation** directly in that file before deploying - everything in the
+   sections above (business hours, shift catalog, coverage windows, weights, and so on) lives in the
+   configuration block at the top, so there's no code logic to touch, just values. Beware that the information
+   is public, so use abbrevations for privacy reasons etc.
+3. **Add a `requirements.txt`** alongside the script listing `streamlit`, `pandas`, and `ortools` (the three
+   dependencies noted at the top of the file) - Streamlit Cloud installs from this automatically.
+4. **Deploy it**: go to [share.streamlit.io](https://share.streamlit.io), sign in with the GitHub account that
+   owns the repo, click "New app," point it at the repo/branch and at `staff_rota_planner.py`, and deploy. Any
+   push to that branch afterwards redeploys automatically.
+
+Anyone with the app's URL can then use it directly in a browser - no local Python install needed on their end.
+""")
+
 
 def main() -> None:
-    st.set_page_config(page_title="Staff rota planner", page_icon=":material/event_available:", layout="wide")
+    st.set_page_config(page_title="Staff rota planner", page_icon=":material/event_available:", layout="wide",
+                        initial_sidebar_state="collapsed")
     init_session_state()
 
     with st.sidebar:
@@ -1429,15 +1763,15 @@ def main() -> None:
     st.caption("OR-Tools CP-SAT builds a weekly rota from your team's contract hours, rest-day rules, "
                "fixed vacation/comp days, per-day coverage targets, staff relationships, and shift/day-off requests.")
 
-    tab_about, tab_staff, tab_shifts, tab_fixed, tab_coverage, tab_rules, tab_requests, tab_results, tab_advanced = st.tabs([
-        ":material/menu_book: About",
+    tab_staff, tab_shifts, tab_fixed, tab_coverage, tab_rules, tab_requests, tab_results, tab_about,tab_advanced = st.tabs([
         ":material/group: Staff",
         ":material/schedule: Shift catalog",
         ":material/event_busy: Fixed days",
-        ":material/bar_chart: Coverage",
+        ":material/bar_chart: Arrivals, departures & coverage",
         ":material/link: Rules",
         ":material/how_to_reg: Requests",
         ":material/auto_awesome: Generate & results",
+        ":material/menu_book: About",
         ":material/tune: Advanced",
     ])
 
@@ -1459,6 +1793,7 @@ def main() -> None:
         render_results_tab()
     with tab_advanced:
         render_advanced_tab()
+
 
 if __name__ == "__main__":
     main()

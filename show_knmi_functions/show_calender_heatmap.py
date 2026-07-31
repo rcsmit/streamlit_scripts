@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import streamlit as st
-from plotly_calplot import calplot, month_calplot
+from plotly_calheatmap import calheatmap, month_calheatmap
 
 
 try:
@@ -22,7 +22,7 @@ def show_calender_heatmap(df, datefield, what_to_show_, where, percentile_coloma
         # colomap_max=df[what_to_show].max()
         colomap_max = np.percentile(df[what_to_show], percentile_colomap_max)
 
-        fig = month_calplot(df,
+        fig = month_calheatmap(df,
                     x=datefield,
                     y=what_to_show,
                     colorscale="purples",
@@ -56,7 +56,7 @@ def show_calender_heatmap(df, datefield, what_to_show_, where, percentile_coloma
                 # df_year[what_to_show] = np.where(df_year[what_to_show] > percentile_95, percentile_95, df_year[what_to_show])   
 
                 
-                fig = calplot(
+                fig = calheatmap(
                     df_year,
                     x=datefield,
                     y=what_to_show,

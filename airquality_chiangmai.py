@@ -1,6 +1,6 @@
 import pandas as pd
 import streamlit as st
-from plotly_calplot import calplot
+from plotly_calheatmap import calheatmap
 from weather_koh_samui import get_data
 import plotly.express as px
 from datetime import datetime, timedelta
@@ -48,7 +48,7 @@ def show_calender_heatmap(df,what_to_show="pm25"):
             col1,col2=st.columns(2)
             with col1:
             #df_year[what_to_show] = df_year[what_to_show].apply(normalize)
-                fig = calplot(
+                fig = calheatmap(
                         df_year,
                         x="date",
                         y=what_to_show,
@@ -78,7 +78,7 @@ def show_calender_heatmap(df,what_to_show="pm25"):
                 )
                 st.plotly_chart(fig)
             with col2:
-                fig2 = calplot(
+                fig2 = calheatmap(
                         df_year,
                         x="date",
                         y="Vis",
