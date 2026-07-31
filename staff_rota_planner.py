@@ -60,7 +60,10 @@ from __future__ import annotations
 # version : 20260731-110000 - Fixed a KeyError crash for existing sessions/saved files missing newer staff columns (e.g. DaysOffTogether): staff_df schema is now migrated on every load via ensure_staff_columns. Renamed "Kader" to "Box" in the About tab for consistency with the Advanced tab
 # version : 20260731-112000 - Filled in each default staff member's FixedDays with their given day off (RIPOSO): Alessia/Chiara/Ilaria/Nadia->Friday, Bruno/Federico->Wednesday, Davide/Lorenzo->Tuesday, Elena/Giulia->Thursday, Marco->Monday
 # version : 20260731-120000 - A "Prefer shift"/"Avoid shift" request now overrules a RIPOSO fixed day (opens that day back up for scheduling) - FERIE/RECUPERO remain untouchable since those are real absences, not just a scheduling default. Re-fixed the About-tab ordering regression (now first again)
-current_version = "20260731-120000"
+# version : 20260731-124500 - Added DEFAULT_ARRIVALS_DEPARTURES and DEFAULT_REQUESTS dicts (both empty by default, so behaviour is unchanged unless filled in) to pre-seed those two tables. Default week-start date is now the upcoming Monday strictly after today, not the current week's Monday
+# version : 20260731-130000 - Fixed DEFAULT_REQUESTS silently failing to apply: bare shift codes (e.g. "M2") are now auto-translated to the "CODE (start-end)" format the Requests dropdown actually requires, without changing DEFAULT_REQUESTS itself
+# version : 20260731-133000 - If DEFAULT_ARRIVALS_DEPARTURES has been customised away from the flat default, the minimum-coverage table is now derived from it automatically at startup, instead of requiring a manual "Apply" click just to reflect your own configured defaults
+current_version = "20260731-133000"
 
 from dataclasses import dataclass
 from datetime import date, timedelta
@@ -168,11 +171,34 @@ ARRIVAL_DEPARTURE_AFTERNOON_HOURS: set[int] = set(range(13, 15))  # 13,14 (the c
 ARRIVAL_DEPARTURE_EVENING_HOURS: set[int] = set(range(15, 20))    # 15,16,17,18,19
 DEFAULT_ARRIVALS_DEPARTURES_PER_DAY: int = 20  # starting value for every day in the Arrivals & Departures table
 
+# Optional per-day overrides, e.g. {"Monday": {"Arrivals": 25, "Departures": 18}, ...}.
+# Only the days/metrics you fill in are used; anything left out falls back to
+# DEFAULT_ARRIVALS_DEPARTURES_PER_DAY. Leave this empty ({}) to keep the current
+# flat default for every day.
+# DEFAULT_ARRIVALS_DEPARTURES: dict[str, dict[str, int]] = {}
+DEFAULT_ARRIVALS_DEPARTURES: dict[str, dict[str, int]] = { "Monday": {"Arrivals": 34, "Departures": 16},
+                                                            "Tuesday": {"Arrivals": 18, "Departures": 24},
+                                                            "Wednesday": {"Arrivals": 25, "Departures": 26},
+                                                            "Thursday": {"Arrivals": 23, "Departures": 24},
+                                                            "Friday": {"Arrivals": 14, "Departures": 30},
+                                                            "Saturday": {"Arrivals": 35, "Departures": 45},     
+                                                            "Sunday": {"Arrivals": 26, "Departures": 14},}
+
+
+# Optional pre-set requests, e.g.
+# [{"Name": "C", "Day": "Friday", "RequestType": "Prefer day off", "ShiftCode": "", "Priority": "High"}, ...]
+# Leave this empty ([]) to keep the Requests tab starting blank, as now.
+# DEFAULT_REQUESTS: list[dict] = []
+DEFAULT_REQUESTS: list[dict] = [{"Name": "C", "Day": "Monday", "RequestType": "Prefer shift", "ShiftCode": "M2", "Priority": "High"}, 
+    {"Name": "C", "Day": "Monday", "RequestType": "Prefer shift", "ShiftCode": "A3", "Priority": "High"}, 
+    {"Name": "C", "Day": "Wednesday", "RequestType": "Prefer shift", "ShiftCode": "A9", "Priority": "High"}, 
+    {"Name": "C", "Day": "Thursday", "RequestType": "Prefer shift", "ShiftCode": "M2", "Priority": "High"}, 
+    {"Name": "C", "Day": "Thursday", "RequestType": "Prefer shift", "ShiftCode": "A6", "Priority": "High"}, ]
 DEFAULT_SHIFT_CATALOG: list[tuple[str, int, int]] = [
     ("M1", 8, 12), ("M2", 9, 13), ("M3", 9, 15), ("M4", 8, 14),
     ("M5", 10, 14), ("M6", 10, 16), ("M7", 11, 15),
     ("A1", 13, 17), ("A2", 13, 19), ("A3", 14, 18), ("A4", 14, 20),
-    ("A6", 15, 19), ("A7", 16, 20), ("A8", 16, 22),
+    ("A6", 15, 19), ("A7", 15, 20),("A8", 16, 19),("A9", 16, 20), ("10", 16, 22),
     ("E1", 18, 22),
 ]
 
@@ -181,7 +207,7 @@ DEFAULT_SHIFT_CATALOG: list[tuple[str, int, int]] = [
 DEFAULT_STAFF: list[dict] = [
     {"Name": "C", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
      "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK,
-     "FixedDays": {"Friday": "RIPOSO"}, "DaysOffTogether": True},
+     "FixedDays": {"Tuesday": "RIPOSO"}, "DaysOffTogether": True},
     {"Name": "T", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
      "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK,
      "FixedDays": {"Wednesday": "RIPOSO"}, "DaysOffTogether": True},
@@ -211,7 +237,7 @@ DEFAULT_STAFF: list[dict] = [
      "FixedDays": {"Monday": "RIPOSO"}, "DaysOffTogether": True},
     {"Name": "Si", "ContractHours": 40, "MinRestDays": 1, "MaxConsecDays": 6, "SplitAllowed": True,
      "ContractType": CONTRACT_TYPE_FLEXIBLE, "MaxClosingShiftsPerWeek": DEFAULT_MAX_CLOSING_SHIFTS_PER_WEEK,
-     "FixedDays": {"Friday": "RIPOSO"}, "DaysOffTogether": True},
+     "FixedDays": {"Tuesday": "RIPOSO"}, "DaysOffTogether": True},
 ]
 
 # Default staff relationships (both fully editable in the "Rules" tab):
@@ -299,8 +325,12 @@ def build_default_max_staff_df() -> pd.DataFrame:
 
 def build_default_arrivals_departures_df() -> pd.DataFrame:
     return pd.DataFrame([
-        {"Metric": "Departures", **{day: DEFAULT_ARRIVALS_DEPARTURES_PER_DAY for day in DAYS}},
-        {"Metric": "Arrivals", **{day: DEFAULT_ARRIVALS_DEPARTURES_PER_DAY for day in DAYS}},
+        {"Metric": "Departures",
+         **{day: DEFAULT_ARRIVALS_DEPARTURES.get(day, {}).get("Departures", DEFAULT_ARRIVALS_DEPARTURES_PER_DAY)
+            for day in DAYS}},
+        {"Metric": "Arrivals",
+         **{day: DEFAULT_ARRIVALS_DEPARTURES.get(day, {}).get("Arrivals", DEFAULT_ARRIVALS_DEPARTURES_PER_DAY)
+            for day in DAYS}},
     ])
 
 
@@ -396,7 +426,23 @@ def build_default_complementary_df() -> pd.DataFrame:
 
 
 def build_default_requests_df() -> pd.DataFrame:
-    return pd.DataFrame(columns=["Name", "Day", "RequestType", "ShiftCode", "Priority"])
+    if not DEFAULT_REQUESTS:
+        return pd.DataFrame(columns=["Name", "Day", "RequestType", "ShiftCode", "Priority"])
+    # The Requests tab's ShiftCode dropdown only accepts the full "CODE (start-end)"
+    # display string (that's what its SelectboxColumn options list contains), so a
+    # bare code like "M2" in DEFAULT_REQUESTS would silently fail to match and get
+    # blanked out. Auto-translate bare codes here rather than requiring you to write
+    # out the display format (and re-edit it every time the catalog's hours change).
+    shift_hours = {code: (start, end) for code, start, end in DEFAULT_SHIFT_CATALOG}
+    rows = []
+    for request in DEFAULT_REQUESTS:
+        row = dict(request)
+        code = row.get("ShiftCode", "")
+        if code and " (" not in code and code in shift_hours:
+            start, end = shift_hours[code]
+            row["ShiftCode"] = f"{code} ({start}-{end})"
+        rows.append(row)
+    return pd.DataFrame(rows, columns=["Name", "Day", "RequestType", "ShiftCode", "Priority"])
 
 
 def sync_fixed_df(fixed_df: pd.DataFrame, names: list[str]) -> pd.DataFrame:
@@ -1001,12 +1047,22 @@ def init_session_state() -> None:
         st.session_state.shift_df = build_default_shift_df()
     if "fixed_df" not in st.session_state:
         st.session_state.fixed_df = build_default_fixed_df(st.session_state.staff_df["Name"].tolist())
+    coverage_freshly_built = "coverage_df" not in st.session_state
     if "coverage_df" not in st.session_state:
         st.session_state.coverage_df = build_default_coverage_df()
     if "max_staff_df" not in st.session_state:
         st.session_state.max_staff_df = build_default_max_staff_df()
     if "arrivals_departures_df" not in st.session_state:
         st.session_state.arrivals_departures_df = build_default_arrivals_departures_df()
+    if coverage_freshly_built and DEFAULT_ARRIVALS_DEPARTURES:
+        # DEFAULT_ARRIVALS_DEPARTURES has been customised away from the flat default,
+        # so derive the minimum-coverage table from it right away instead of making
+        # you click "Apply" once just to get your own defaults reflected.
+        st.session_state.coverage_df = derive_coverage_from_arrivals(
+            st.session_state.coverage_df,
+            st.session_state.arrivals_departures_df,
+            max_staff_df=st.session_state.max_staff_df,
+        )
     if "same_shift_df" not in st.session_state:
         st.session_state.same_shift_df = build_default_same_shift_df()
     if "complementary_df" not in st.session_state:
@@ -1017,7 +1073,8 @@ def init_session_state() -> None:
         st.session_state.result = None
     if "week_start" not in st.session_state:
         today = date.today()
-        st.session_state.week_start = today - timedelta(days=today.weekday())
+        days_until_next_monday = 7 - today.weekday()  # today.weekday(): Mon=0..Sun=6, always yields 1-7, never 0
+        st.session_state.week_start = today + timedelta(days=days_until_next_monday)
     if "limit_max_break" not in st.session_state:
         st.session_state.limit_max_break = True
 
@@ -1782,8 +1839,8 @@ def main() -> None:
     st.caption("OR-Tools CP-SAT builds a weekly rota from your team's contract hours, rest-day rules, "
                "fixed vacation/comp days, per-day coverage targets, staff relationships, and shift/day-off requests.")
 
-    tab_about, tab_staff, tab_shifts, tab_fixed, tab_coverage, tab_rules, tab_requests, tab_results, tab_advanced = st.tabs([
-        ":material/menu_book: About",
+    tab_staff, tab_shifts, tab_fixed, tab_coverage, tab_rules, tab_requests, tab_results, tab_about, tab_advanced = st.tabs([
+    
         ":material/group: Staff",
         ":material/schedule: Shift catalog",
         ":material/event_busy: Fixed days",
@@ -1791,6 +1848,7 @@ def main() -> None:
         ":material/link: Rules",
         ":material/how_to_reg: Requests",
         ":material/auto_awesome: Generate & results",
+        ":material/menu_book: About",
         ":material/tune: Advanced",
     ])
 
