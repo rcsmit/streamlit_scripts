@@ -98,7 +98,7 @@ options = [
     ["[82] AEX dashboard",                  "aex_dashboard",               "AEX fund performance dashboard"],
     ["[83] Huis model",                     "huis_model",                  "Aankoop huis als belegging?"],
     ["[84] Loess viewer",                   "loess_viewer",                 "Plot LOESS lines in a dataset "],
-    ["[85] Seizoensbeoordeling",            "bs_en_13549_sample_size",      "Seizoensbeoordeling - AQL-niveau & bonus/malus calculator",
+    ["[85] Seizoensbeoordeling",            "bs_en_13549_sample_size",      "Seizoensbeoordeling - AQL-niveau & bonus/malus calculator"],
 ]
 
 # ---------------------------------------------------------------------------
