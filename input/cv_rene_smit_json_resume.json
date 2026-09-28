@@ -10,6 +10,36 @@
     "profiles": []
   },
   "work": [
+     {
+      "name": "Eurocamp",
+      "position": "Camping representative",
+      "startDate": "2026-07-17",
+      "endDate": "2026-10-21",
+      "location": "Camping Village Fabulous, Rome, Italy",
+      "summary": "Seasonal camping host",
+      "highlights": [
+        "Checking and preparing accommodations",
+        "Guest check-in",
+        "Handling guest interactions and issues",
+       
+      ]
+    },
+    
+    {
+      "name": "Eurocamp",
+      "position": "Camping representative",
+      "startDate": "2026-06-11",
+      "endDate": "2025-07-16",
+      "location": "De Twee Bruggen, Winterswijk, Netherlands",
+      "summary": "Seasonal camping host",
+      "highlights": [
+        "Checking, preparing, and cleaning accommodations ",
+        "Guest check-in and check-out ",
+        "Handling guest interactions and issues ",
+       
+      ]
+    },
+  
     {
       "name": "Eurocamp",
       "position": "Camping representative",
